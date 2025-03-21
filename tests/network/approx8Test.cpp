@@ -46,5 +46,5 @@ TEST_F(approx8Test, evaluate) {
 
     EXPECT_DOUBLE_EQ(netOut.composition[nnApprox8::Net::ih1], 0.50166260916650918);
     EXPECT_DOUBLE_EQ(netOut.composition[nnApprox8::Net::ihe4],0.48172270591286032);
-    EXPECT_DOUBLE_EQ(netOut.energy, -1.6433049870528356e+18);
+    EXPECT_DOUBLE_EQ(netOut.energy, 1.6433049870528356e+18);
 }

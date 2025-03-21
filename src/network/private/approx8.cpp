@@ -421,7 +421,7 @@ namespace nnApprox8{
 		for (int i=0; i<Net::niso; i++) { 
 			enuc += Net::mion[i]*dydt[i]; 
 		}
-		dydt[Net::iener] = enuc*avo*clight*clight;
+		dydt[Net::iener] = -enuc*avo*clight*clight;
 	} 
 
 	nuclearNetwork::NetOut Approx8Network::evaluate(const nuclearNetwork::NetIn &netIn) {
