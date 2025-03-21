@@ -1,12 +1,7 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <cmath>
-#include <string>
 #include <stdexcept>
 #include <array>
-#include <numbers>
-#include <utility>
 
 #include <boost/numeric/odeint.hpp>
 #include <boost/phoenix/core.hpp>
