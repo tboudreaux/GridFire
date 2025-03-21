@@ -1,0 +1,93 @@
+#ifndef NETWORK_H
+#define NETWORK_H
+
+#include <vector>
+
+#include "probe.h"
+#include "config.h"
+#include "quill/Logger.h"
+
+namespace nuclearNetwork {
+
+    /**
+     * @struct NetIn
+     * @brief Input structure for the network evaluation.
+     * 
+     * This structure holds the input parameters required for the network evaluation.
+     * 
+     * Example usage:
+     * @code
+     * nuclearNetwork::NetIn netIn;
+     * netIn.composition = {1.0, 0.0, 0.0};
+     * netIn.tmax = 1.0e6;
+     * netIn.dt0 = 1.0e-3;
+     * netIn.temperature = 1.0e8;
+     * netIn.density = 1.0e5;
+     * netIn.energy = 1.0e12;
+     * @endcode
+     */
+    struct NetIn {
+        std::vector<double> composition; ///< Composition of the network
+        double tmax; ///< Maximum time
+        double dt0; ///< Initial time step
+        double temperature; ///< Temperature in Kelvin
+        double density; ///< Density in g/cm^3
+        double energy; ///< Energy in ergs
+    };
+
+    /**
+     * @struct NetOut
+     * @brief Output structure for the network evaluation.
+     * 
+     * This structure holds the output results from the network evaluation.
+     * 
+     * Example usage:
+     * @code
+     * nuclearNetwork::NetOut netOut = network.evaluate(netIn);
+     * std::vector<double> composition = netOut.composition;
+     * int steps = netOut.num_steps;
+     * double energy = netOut.energy;
+     * @endcode
+     */
+    struct NetOut {
+        std::vector<double> composition; ///< Composition of the network after evaluation
+        int num_steps; ///< Number of steps taken in the evaluation
+        double energy; ///< Energy in ergs after evaluation
+    };
+
+    /**
+     * @class Network
+     * @brief Class for network evaluation.
+     * 
+     * This class provides methods to evaluate the network based on the input parameters.
+     * 
+     * Example usage:
+     * @code
+     * nuclearNetwork::Network network;
+     * nuclearNetwork::NetIn netIn;
+     * // Set netIn parameters...
+     * nuclearNetwork::NetOut netOut = network.evaluate(netIn);
+     * @endcode
+     */
+    class Network {
+        public:
+            Network();
+            virtual ~Network() = default;
+
+            /**
+             * @brief Evaluate the network based on the input parameters.
+             * 
+             * @param netIn Input parameters for the network evaluation.
+             * @return NetOut Output results from the network evaluation.
+             */
+            virtual NetOut evaluate(const NetIn &netIn);
+
+        protected:
+            Config& m_config; ///< Configuration instance
+            Probe::LogManager& m_logManager; ///< Log manager instance
+            quill::Logger* m_logger; ///< Logger instance
+    };
+
+} // namespace nuclearNetwork
+
+#endif // NETWORK_H
