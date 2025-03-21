@@ -1,15 +1,21 @@
 # Define the library
 network_sources = files(
   'private/network.cpp',
+  'private/approx8.cpp'
 )
 
 network_headers = files(
-    'public/network.h'
+    'public/network.h',
+    'public/approx8.h'
 )
 
 dependencies = [
     boost_dep,
-    const_dep
+    const_dep,
+    quill_dep,
+    mfem_dep,
+    config_dep,
+    probe_dep
 ]
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
