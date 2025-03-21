@@ -325,7 +325,7 @@ namespace nnApprox8{
             for (int i=0; i<Net::niso; i++) { 
 				J(Net::iener,j) += J(i,j)*Net::mion[i]; 
 			}
-            J(Net::iener,j) *= avo*clight*clight;
+            J(Net::iener,j) *= -avo*clight*clight;
         }
     } 
 
