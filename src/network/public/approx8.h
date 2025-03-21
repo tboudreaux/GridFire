@@ -4,8 +4,6 @@
 #include <array>
 
 #include <boost/numeric/odeint.hpp>
-#include <boost/phoenix/core.hpp>
-#include <boost/phoenix/operator.hpp>
 
 #include "network.h"
 
@@ -301,7 +299,7 @@ namespace nnApprox8{
         vector_type m_y;
         double m_tmax;
         double m_dt0;
-        bool m_stiff;
+        bool m_stiff = false;
 
         /**
          * @brief Converts the input parameters to the internal state vector.

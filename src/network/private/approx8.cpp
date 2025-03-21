@@ -3,8 +3,6 @@
 #include <array>
 
 #include <boost/numeric/odeint.hpp>
-#include <boost/phoenix/core.hpp>
-#include <boost/phoenix/operator.hpp>
 
 #include "const.h"
 #include "config.h"
