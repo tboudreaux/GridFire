@@ -18,8 +18,7 @@
 //   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 // *********************************************************************** */
-#ifndef APPROX8_H
-#define APPROX8_H
+#pragma once
 
 #include <array>
 
@@ -330,5 +329,3 @@ namespace nnApprox8{
     };
 
 } // namespace nnApprox8
-
-#endif
