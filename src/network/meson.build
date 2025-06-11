@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
-libnetwork = static_library('network',
+libnetwork = library('network',
     network_sources, 
     include_directories: include_directories('public'),
     dependencies: dependencies,
