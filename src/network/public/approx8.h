@@ -53,7 +53,7 @@ typedef boost::numeric::ublas::matrix< double > matrix_type;
  */
 typedef std::array<double,7> vec7;
 
-namespace nnApprox8{
+namespace serif::network::approx8{
 
     using namespace boost::numeric::odeint;
 
@@ -294,14 +294,14 @@ namespace nnApprox8{
      * @class Approx8Network
      * @brief Class for the Approx8 nuclear reaction network.
      */
-    class Approx8Network : public nuclearNetwork::Network {
+    class Approx8Network : public Network {
     public:
         /**
          * @brief Evaluates the nuclear network.
          * @param netIn Input parameters for the network.
          * @return Output results from the network.
          */
-        virtual nuclearNetwork::NetOut evaluate(const nuclearNetwork::NetIn &netIn);
+        virtual NetOut evaluate(const NetIn &netIn);
 
         /**
          * @brief Sets whether the solver should use a stiff method.
@@ -325,7 +325,7 @@ namespace nnApprox8{
          * @param netIn Input parameters for the network.
          * @return Internal state vector.
          */
-        vector_type convert_netIn(const nuclearNetwork::NetIn &netIn);
+        vector_type convert_netIn(const NetIn &netIn);
     };
 
 } // namespace nnApprox8

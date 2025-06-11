@@ -72,7 +72,7 @@ The coefficients to the fit are from reaclib.jinaweb.org .
 
 */
 
-namespace nnApprox8{
+namespace serif::network::approx8{
 
 	// using namespace std;
 	using namespace boost::numeric::odeint;
@@ -245,7 +245,7 @@ namespace nnApprox8{
 	// a Jacobian matrix for implicit solvers
 
     void Jacobian::operator() ( const vector_type &y, matrix_type &J, double /* t */, vector_type &dfdt ) {
-        Constants& constants = Constants::getInstance();
+        serif::constant::Constants& constants = serif::constant::Constants::getInstance();
         const double avo = constants.get("N_a").value;
         const double clight = constants.get("c").value;
         // EOS
@@ -350,7 +350,7 @@ namespace nnApprox8{
     } 
 
 	void ODE::operator() ( const vector_type &y, vector_type &dydt, double /* t */) {
-		Constants& constants = Constants::getInstance();
+		serif::constant::Constants& constants = serif::constant::Constants::getInstance();
 		const double avo = constants.get("N_a").value;
 		const double clight = constants.get("c").value;
 
@@ -444,7 +444,7 @@ namespace nnApprox8{
 		dydt[Net::iener] = -enuc*avo*clight*clight;
 	} 
 
-	nuclearNetwork::NetOut Approx8Network::evaluate(const nuclearNetwork::NetIn &netIn) {
+	NetOut Approx8Network::evaluate(const NetIn &netIn) {
 		m_y = convert_netIn(netIn);
 		m_tmax = netIn.tmax;
 		m_dt0 = netIn.dt0;
@@ -488,7 +488,7 @@ namespace nnApprox8{
 			m_y[i] /= ysum;
 		}
 
-		nuclearNetwork::NetOut netOut;
+		NetOut netOut;
 		std::vector<double> outComposition;
 		outComposition.reserve(Net::nvar);
 
@@ -506,7 +506,7 @@ namespace nnApprox8{
 		m_stiff = stiff;
 	}
 
-	vector_type Approx8Network::convert_netIn(const nuclearNetwork::NetIn &netIn) {
+	vector_type Approx8Network::convert_netIn(const NetIn &netIn) {
 		if (netIn.composition.size() != Net::niso) {
 			LOG_ERROR(m_logger, "Error: composition size mismatch in convert_netIn");
 			throw std::runtime_error("Error: composition size mismatch in convert_netIn");

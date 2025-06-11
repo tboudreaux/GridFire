@@ -26,7 +26,7 @@
 #include "config.h"
 #include "quill/Logger.h"
 
-namespace nuclearNetwork {
+namespace serif::network {
 
     /**
      * @struct NetIn
@@ -102,8 +102,8 @@ namespace nuclearNetwork {
             virtual NetOut evaluate(const NetIn &netIn);
 
         protected:
-            Config& m_config; ///< Configuration instance
-            Probe::LogManager& m_logManager; ///< Log manager instance
+            serif::config::Config& m_config; ///< Configuration instance
+            serif::probe::LogManager& m_logManager; ///< Log manager instance
             quill::Logger* m_logger; ///< Logger instance
     };
 
