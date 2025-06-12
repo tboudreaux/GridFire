@@ -1,3 +1,23 @@
+/* ***********************************************************************
+//
+//   Copyright (C) 2025 -- The 4D-STAR Collaboration
+//   File Author: Emily Boudreaux
+//   Last Modified: March 21, 2025
+//
+//   4DSSE is free software; you can use it and/or modify
+//   it under the terms and restrictions the GNU General Library Public
+//   License version 3 (GPLv3) as published by the Free Software Foundation.
+//
+//   4DSSE is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//   See the GNU Library General Public License for more details.
+//
+//   You should have received a copy of the GNU Library General Public License
+//   along with this software; if not, write to the Free Software
+//   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+// *********************************************************************** */
 #include <cmath>
 #include <stdexcept>
 #include <array>
@@ -52,7 +72,7 @@ The coefficients to the fit are from reaclib.jinaweb.org .
 
 */
 
-namespace nnApprox8{
+namespace serif::network::approx8{
 
 	// using namespace std;
 	using namespace boost::numeric::odeint;
@@ -225,7 +245,7 @@ namespace nnApprox8{
 	// a Jacobian matrix for implicit solvers
 
     void Jacobian::operator() ( const vector_type &y, matrix_type &J, double /* t */, vector_type &dfdt ) {
-        Constants& constants = Constants::getInstance();
+        serif::constant::Constants& constants = serif::constant::Constants::getInstance();
         const double avo = constants.get("N_a").value;
         const double clight = constants.get("c").value;
         // EOS
@@ -330,7 +350,7 @@ namespace nnApprox8{
     } 
 
 	void ODE::operator() ( const vector_type &y, vector_type &dydt, double /* t */) {
-		Constants& constants = Constants::getInstance();
+		serif::constant::Constants& constants = serif::constant::Constants::getInstance();
 		const double avo = constants.get("N_a").value;
 		const double clight = constants.get("c").value;
 
@@ -424,7 +444,7 @@ namespace nnApprox8{
 		dydt[Net::iener] = -enuc*avo*clight*clight;
 	} 
 
-	nuclearNetwork::NetOut Approx8Network::evaluate(const nuclearNetwork::NetIn &netIn) {
+	NetOut Approx8Network::evaluate(const NetIn &netIn) {
 		m_y = convert_netIn(netIn);
 		m_tmax = netIn.tmax;
 		m_dt0 = netIn.dt0;
@@ -468,7 +488,7 @@ namespace nnApprox8{
 			m_y[i] /= ysum;
 		}
 
-		nuclearNetwork::NetOut netOut;
+		NetOut netOut;
 		std::vector<double> outComposition;
 		outComposition.reserve(Net::nvar);
 
@@ -486,7 +506,7 @@ namespace nnApprox8{
 		m_stiff = stiff;
 	}
 
-	vector_type Approx8Network::convert_netIn(const nuclearNetwork::NetIn &netIn) {
+	vector_type Approx8Network::convert_netIn(const NetIn &netIn) {
 		if (netIn.composition.size() != Net::niso) {
 			LOG_ERROR(m_logger, "Error: composition size mismatch in convert_netIn");
 			throw std::runtime_error("Error: composition size mismatch in convert_netIn");

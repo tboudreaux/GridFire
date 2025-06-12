@@ -1,5 +1,24 @@
-#ifndef APPROX8_H
-#define APPROX8_H
+/* ***********************************************************************
+//
+//   Copyright (C) 2025 -- The 4D-STAR Collaboration
+//   File Author: Emily Boudreaux
+//   Last Modified: March 21, 2025
+//
+//   4DSSE is free software; you can use it and/or modify
+//   it under the terms and restrictions the GNU General Library Public
+//   License version 3 (GPLv3) as published by the Free Software Foundation.
+//
+//   4DSSE is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//   See the GNU Library General Public License for more details.
+//
+//   You should have received a copy of the GNU Library General Public License
+//   along with this software; if not, write to the Free Software
+//   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+// *********************************************************************** */
+#pragma once
 
 #include <array>
 
@@ -34,7 +53,7 @@ typedef boost::numeric::ublas::matrix< double > matrix_type;
  */
 typedef std::array<double,7> vec7;
 
-namespace nnApprox8{
+namespace serif::network::approx8{
 
     using namespace boost::numeric::odeint;
 
@@ -275,14 +294,14 @@ namespace nnApprox8{
      * @class Approx8Network
      * @brief Class for the Approx8 nuclear reaction network.
      */
-    class Approx8Network : public nuclearNetwork::Network {
+    class Approx8Network : public Network {
     public:
         /**
          * @brief Evaluates the nuclear network.
          * @param netIn Input parameters for the network.
          * @return Output results from the network.
          */
-        virtual nuclearNetwork::NetOut evaluate(const nuclearNetwork::NetIn &netIn);
+        virtual NetOut evaluate(const NetIn &netIn);
 
         /**
          * @brief Sets whether the solver should use a stiff method.
@@ -306,9 +325,7 @@ namespace nnApprox8{
          * @param netIn Input parameters for the network.
          * @return Internal state vector.
          */
-        vector_type convert_netIn(const nuclearNetwork::NetIn &netIn);
+        vector_type convert_netIn(const NetIn &netIn);
     };
 
 } // namespace nnApprox8
-
-#endif
