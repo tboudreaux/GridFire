@@ -30,14 +30,14 @@ TEST_F(approx8Test, setStiff) {
 TEST_F(approx8Test, evaluate) {
     serif::network::approx8::Approx8Network network;
     serif::network::NetIn netIn;
-    
+
     std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
 
     netIn.composition = comp;
     netIn.temperature = 1e7;
     netIn.density = 1e2;
     netIn.energy = 0.0;
-    
+
     netIn.tmax = 3.15e17;
     netIn.dt0 = 1e12;
 
