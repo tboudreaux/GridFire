@@ -31,54 +31,55 @@
  * @brief Header file for the Approx8 nuclear reaction network.
  *
  * This file contains the definitions and declarations for the Approx8 nuclear reaction network.
- * The network is based on Frank Timmes' "aprox8" and includes 8 isotopes and various nuclear reactions.
+ * The network is based on Frank Timmes' "approx8" and includes 8 isotopes and various nuclear reactions.
  * The rates are evaluated using a fitting function with coefficients from reaclib.jinaweb.org.
  */
 
-/**
- * @typedef vector_type
- * @brief Alias for a vector of doubles using Boost uBLAS.
- */
-typedef boost::numeric::ublas::vector< double > vector_type;
-
-/**
- * @typedef matrix_type
- * @brief Alias for a matrix of doubles using Boost uBLAS.
- */
-typedef boost::numeric::ublas::matrix< double > matrix_type;
-
-/**
- * @typedef vec7
- * @brief Alias for a std::array of 7 doubles.
- */
-typedef std::array<double,7> vec7;
 
 namespace serif::network::approx8{
+
+    /**
+     * @typedef vector_type
+     * @brief Alias for a vector of doubles using Boost uBLAS.
+     */
+    typedef boost::numeric::ublas::vector< double > vector_type;
+
+    /**
+     * @typedef matrix_type
+     * @brief Alias for a matrix of doubles using Boost uBLAS.
+     */
+    typedef boost::numeric::ublas::matrix< double > matrix_type;
+
+    /**
+     * @typedef vec7
+     * @brief Alias for a std::array of 7 doubles.
+     */
+    typedef std::array<double,7> vec7;
 
     using namespace boost::numeric::odeint;
 
     /**
-     * @struct Net
+     * @struct Approx8Net
      * @brief Contains constants and arrays related to the nuclear network.
      */
-    struct Net{
-        const static int ih1=0;
-        const static int ihe3=1;
-        const static int ihe4=2;
-        const static int ic12=3;
-        const static int in14=4;
-        const static int io16=5;
-        const static int ine20=6;
-        const static int img24=7;
+    struct Approx8Net{
+        static constexpr int ih1=0;
+        static constexpr int ihe3=1;
+        static constexpr int ihe4=2;
+        static constexpr int ic12=3;
+        static constexpr int in14=4;
+        static constexpr int io16=5;
+        static constexpr int ine20=6;
+        static constexpr int img24=7;
 
-        const static int itemp=img24+1;
-        const static int iden =itemp+1;
-        const static int iener=iden+1;
+        static constexpr int iTemp=img24+1;
+        static constexpr int iDensity =iTemp+1;
+        static constexpr int iEnergy=iDensity+1;
 
-        const static int niso=img24+1; // number of isotopes
-        const static int nvar=iener+1; // number of variables
+        static constexpr int nIso=img24+1; // number of isotopes
+        static constexpr int nVar=iEnergy+1; // number of variables
 
-        static constexpr std::array<int,niso> aion = {
+        static constexpr std::array<int,nIso> aIon = {
             1,
             3,
             4,
@@ -89,7 +90,7 @@ namespace serif::network::approx8{
             24
         };
 
-        static constexpr std::array<double,niso> mion = {
+        static constexpr std::array<double,nIso> mIon = {
             1.67262164e-24, 
             5.00641157e-24, 
             6.64465545e-24, 
@@ -270,10 +271,9 @@ namespace serif::network::approx8{
          * @brief Calculates the Jacobian matrix.
          * @param y State vector.
          * @param J Jacobian matrix.
-         * @param t Time.
          * @param dfdt Derivative of the state vector.
          */
-        void operator() ( const vector_type &y, matrix_type &J, double /* t */, vector_type &dfdt );
+        void operator() ( const vector_type &y, matrix_type &J, double /* t */, vector_type &dfdt ) const;
     };
 
     /**
@@ -285,23 +285,24 @@ namespace serif::network::approx8{
          * @brief Calculates the derivatives of the state vector.
          * @param y State vector.
          * @param dydt Derivative of the state vector.
-         * @param t Time.
          */
-        void operator() ( const vector_type &y, vector_type &dydt, double /* t */);
+        void operator() ( const vector_type &y, vector_type &dydt, double /* t */) const;
     };
 
     /**
      * @class Approx8Network
      * @brief Class for the Approx8 nuclear reaction network.
      */
-    class Approx8Network : public Network {
+    class Approx8Network final : public Network {
     public:
+        Approx8Network();
+
         /**
          * @brief Evaluates the nuclear network.
          * @param netIn Input parameters for the network.
          * @return Output results from the network.
          */
-        virtual NetOut evaluate(const NetIn &netIn);
+        NetOut evaluate(const NetIn &netIn) override;
 
         /**
          * @brief Sets whether the solver should use a stiff method.
@@ -313,11 +314,11 @@ namespace serif::network::approx8{
          * @brief Checks if the solver is using a stiff method.
          * @return Boolean indicating if a stiff method is being used.
          */
-        bool isStiff() { return m_stiff; }
+        bool isStiff() const { return m_stiff; }
     private:
         vector_type m_y;
-        double m_tmax;
-        double m_dt0;
+        double m_tMax = 0;
+        double m_dt0 = 0;
         bool m_stiff = false;
 
         /**
@@ -325,7 +326,8 @@ namespace serif::network::approx8{
          * @param netIn Input parameters for the network.
          * @return Internal state vector.
          */
-        vector_type convert_netIn(const NetIn &netIn);
+        static vector_type convert_netIn(const NetIn &netIn);
     };
+
 
 } // namespace nnApprox8
