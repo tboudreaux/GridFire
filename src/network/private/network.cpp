@@ -19,18 +19,50 @@
 //
 // *********************************************************************** */
 #include "network.h"
+
+#include "approx8.h"
 #include "probe.h"
 #include "quill/LogMacros.h"
 
 namespace serif::network {
-    Network::Network() :
+    Network::Network(const NetworkFormat format) :
         m_config(serif::config::Config::getInstance()),
         m_logManager(serif::probe::LogManager::getInstance()),
-        m_logger(m_logManager.getLogger("log")) {
+        m_logger(m_logManager.getLogger("log")),
+        m_format(format) {
+        if (format == NetworkFormat::UNKNOWN) {
+            LOG_ERROR(m_logger, "nuclearNetwork::Network::Network() called with UNKNOWN format");
+            throw std::runtime_error("nuclearNetwork::Network::Network() called with UNKNOWN format");
+        }
     }
+
+    NetworkFormat Network::getFormat() const {
+        return m_format;
+    }
+
+    NetworkFormat Network::setFormat(const NetworkFormat format) {
+        const NetworkFormat oldFormat = m_format;
+        m_format = format;
+        return oldFormat;
+    }
+
     NetOut Network::evaluate(const NetIn &netIn) {
-        // You can throw an exception here or log a warning if it should never be used.
-        LOG_ERROR(m_logger, "nuclearNetwork::Network::evaluate() is not implemented");
-        throw std::runtime_error("nuclearNetwork::Network::evaluate() is not implemented");
+        NetOut netOut;
+        switch (m_format) {
+            case APPROX8: {
+                approx8::Approx8Network network;
+                netOut = network.evaluate(netIn);
+                break;
+            }
+            case UNKNOWN: {
+                LOG_ERROR(m_logger, "Network format {} is not implemented.", FormatStringLookup.at(m_format));
+                throw std::runtime_error("Network format not implemented.");
+            }
+            default: {
+                LOG_ERROR(m_logger, "Unknown network format.");
+                throw std::runtime_error("Unknown network format.");
+            }
+        }
+        return netOut;
     }
 }

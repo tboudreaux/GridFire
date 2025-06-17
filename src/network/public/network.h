@@ -25,15 +25,27 @@
 #include "probe.h"
 #include "config.h"
 #include "quill/Logger.h"
+#include "composition.h"
+#include <unordered_map>
 
 namespace serif::network {
+
+    enum NetworkFormat {
+        APPROX8, ///< Approx8 nuclear reaction network format.
+        UNKNOWN,
+    };
+
+    static inline std::unordered_map<NetworkFormat, std::string> FormatStringLookup = {
+        {APPROX8, "Approx8"},
+        {UNKNOWN, "Unknown"}
+    };
 
     /**
      * @struct NetIn
      * @brief Input structure for the network evaluation.
-     * 
+     *
      * This structure holds the input parameters required for the network evaluation.
-     * 
+     *
      * Example usage:
      * @code
      * nuclearNetwork::NetIn netIn;
@@ -46,8 +58,8 @@ namespace serif::network {
      * @endcode
      */
     struct NetIn {
-        std::vector<double> composition; ///< Composition of the network
-        double tmax; ///< Maximum time
+        serif::composition::Composition composition; ///< Composition of the network
+        double tMax; ///< Maximum time
         double dt0; ///< Initial time step
         double temperature; ///< Temperature in Kelvin
         double density; ///< Density in g/cm^3
@@ -69,7 +81,7 @@ namespace serif::network {
      * @endcode
      */
     struct NetOut {
-        std::vector<double> composition; ///< Composition of the network after evaluation
+        serif::composition::Composition composition; ///< Composition of the network after evaluation
         int num_steps; ///< Number of steps taken in the evaluation
         double energy; ///< Energy in ergs after evaluation
     };
@@ -90,8 +102,11 @@ namespace serif::network {
      */
     class Network {
         public:
-            Network();
+            explicit Network(const NetworkFormat format = NetworkFormat::APPROX8);
             virtual ~Network() = default;
+
+            NetworkFormat getFormat() const;
+            NetworkFormat setFormat(const NetworkFormat format);
 
             /**
              * @brief Evaluate the network based on the input parameters.
@@ -105,6 +120,10 @@ namespace serif::network {
             serif::config::Config& m_config; ///< Configuration instance
             serif::probe::LogManager& m_logManager; ///< Log manager instance
             quill::Logger* m_logger; ///< Logger instance
+
+            NetworkFormat m_format; ///< Format of the network
     };
+
+
 
 } // namespace nuclearNetwork
