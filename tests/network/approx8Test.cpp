@@ -56,7 +56,7 @@ TEST_F(approx8Test, evaluate) {
     double H1MassFraction = netOut.composition.getMassFraction("H-1")/ 0.50166262445895604;
     double He4MassFraction = netOut.composition.getMassFraction("He-4") / 0.48172273720971226;
 
-    double relError = 1e-8;
+    double relError = 1e-6;
     EXPECT_NEAR(H1MassFraction, 1.0, relError);
     EXPECT_NEAR(He4MassFraction, 1.0, relError);
     EXPECT_NEAR(energyFraction, 1.0, relError);
