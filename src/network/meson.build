@@ -18,6 +18,7 @@ dependencies = [
     probe_dep,
     species_weight_dep,
     composition_dep,
+    reaclib_reactions_dep,
 ]
 
 # Define the libnetwork library so it can be linked against by other parts of the build system

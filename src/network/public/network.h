@@ -26,6 +26,7 @@
 #include "config.h"
 #include "quill/Logger.h"
 #include "composition.h"
+#include "reaclib.h"
 #include <unordered_map>
 
 namespace serif::network {
@@ -105,7 +106,7 @@ namespace serif::network {
             explicit Network(const NetworkFormat format = NetworkFormat::APPROX8);
             virtual ~Network() = default;
 
-            NetworkFormat getFormat() const;
+            [[nodiscard]] NetworkFormat getFormat() const;
             NetworkFormat setFormat(const NetworkFormat format);
 
             /**
@@ -124,6 +125,19 @@ namespace serif::network {
             NetworkFormat m_format; ///< Format of the network
     };
 
+    class ReaclibNetwork final : public Network {
+    public:
+        explicit ReaclibNetwork(const NetworkFormat format = NetworkFormat::APPROX8);
+
+        explicit ReaclibNetwork(serif::composition::Composition composition, const NetworkFormat format = NetworkFormat::APPROX8);
+
+        NetOut evaluate(const NetIn &netIn) override;
+    private:
+        serif::network::reaclib::REACLIBReactionSet m_reactions; ///< Set of REACLIB reactions
+    };
+
+    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition);
+    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition, double culling, double T9 = 1.0);
 
 
 } // namespace nuclearNetwork

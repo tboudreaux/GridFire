@@ -20,9 +20,13 @@
 // *********************************************************************** */
 #include "network.h"
 
+#include <ranges>
+
 #include "approx8.h"
 #include "probe.h"
 #include "quill/LogMacros.h"
+#include "reaclib.h"
+#include "reactions.h"
 
 namespace serif::network {
     Network::Network(const NetworkFormat format) :
@@ -65,4 +69,43 @@ namespace serif::network {
         }
         return netOut;
     }
+
+    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition) {
+        using namespace serif::network::reaclib;
+        REACLIBReactionSet reactions;
+
+        if (!s_initialized) {
+            LOG_INFO(serif::probe::LogManager::getInstance().getLogger("log"), "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
+            initializeAllReaclibReactions();
+        }
+
+        for (const auto &reaction: s_all_reaclib_reactions | std::views::values) {
+            bool gotReaction = true;
+            const auto& reactants = reaction.reactants();
+            for (const auto& reactant : reactants) {
+                if (!composition.contains(reactant)) {
+                    gotReaction = false;
+                    break; // If any reactant is not in the composition, skip this reaction
+                }
+            }
+            if (gotReaction) {
+                reactions.add_reaction(reaction);
+            }
+        }
+        reactions.sort();
+        return reactions;
+    }
+
+    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition, const double culling, const double T9) {
+        using namespace serif::network::reaclib;
+        REACLIBReactionSet allReactions = build_reaclib_nuclear_network(composition);
+        REACLIBReactionSet reactions;
+        for (const auto& reaction : allReactions) {
+            if (reaction.calculate_rate(T9) >= culling) {
+                reactions.add_reaction(reaction);
+            }
+        }
+        return reactions;
+    }
+
 }
