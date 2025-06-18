@@ -1,5 +1,6 @@
 required_headers = [
     'reaclib.h',
+    'reactions.h',
 ]
 
 foreach h : required_headers
