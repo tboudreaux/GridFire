@@ -1,0 +1,1 @@
+Use the utility `utils/reaclib/generateEmbeddedReaclibHeader.py` to generate reaclib.h

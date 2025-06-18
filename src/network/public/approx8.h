@@ -56,8 +56,6 @@ namespace serif::network::approx8{
      */
     typedef std::array<double,7> vec7;
 
-    using namespace boost::numeric::odeint;
-
     /**
      * @struct Approx8Net
      * @brief Contains constants and arrays related to the nuclear network.
