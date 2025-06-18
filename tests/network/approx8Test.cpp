@@ -5,8 +5,12 @@
 #include "config.h"
 #include "network.h"
 #include "composition.h"
+#include "reaclib.h"
+#include "reactions.h"
 
 #include <vector>
+
+#include "reactions.h"
 
 std::string TEST_CONFIG = std::string(getenv("MESON_SOURCE_ROOT")) + "/tests/testsConfig.yaml";
 class approx8Test : public ::testing::Test {};
@@ -60,4 +64,18 @@ TEST_F(approx8Test, evaluate) {
     EXPECT_NEAR(H1MassFraction, 1.0, relError);
     EXPECT_NEAR(He4MassFraction, 1.0, relError);
     EXPECT_NEAR(energyFraction, 1.0, relError);
+}
+
+TEST_F(approx8Test, reaclib) {
+    using namespace serif::network;
+    const std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
+    const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
+
+    serif::composition::Composition composition;
+    composition.registerSymbol(symbols, true);
+    composition.setMassFraction(symbols, comp);
+    bool isFinalized = composition.finalize(true);
+
+    reaclib::REACLIBReactionSet reactionSet = build_reaclib_nuclear_network(composition);
+    std::cout << reactionSet.size() << std::endl;
 }
