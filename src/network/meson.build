@@ -1,12 +1,14 @@
 # Define the library
 network_sources = files(
-  'private/network.cpp',
-  'private/approx8.cpp'
+    'private/network.cpp',
+    'private/approx8.cpp',
+    'private/netgraph.cpp'
 )
 
 network_headers = files(
     'public/network.h',
-    'public/approx8.h'
+    'public/approx8.h',
+    'public/netgraph.h',
 )
 
 dependencies = [

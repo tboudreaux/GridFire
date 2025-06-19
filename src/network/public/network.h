@@ -33,11 +33,13 @@ namespace serif::network {
 
     enum NetworkFormat {
         APPROX8, ///< Approx8 nuclear reaction network format.
+        REACLIB, ///< General REACLIB nuclear reaction network format.
         UNKNOWN,
     };
 
     static inline std::unordered_map<NetworkFormat, std::string> FormatStringLookup = {
         {APPROX8, "Approx8"},
+        {REACLIB, "REACLIB"},
         {UNKNOWN, "Unknown"}
     };
 
