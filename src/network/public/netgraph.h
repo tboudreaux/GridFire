@@ -46,6 +46,7 @@ namespace serif::network {
         std::unordered_map<std::string_view, const reaclib::REACLIBReaction> m_reactionIDMap; ///< Map of reaction IDs to REACLIB reactions.
 
         boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix for the network.
+        boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix for the network.
         std::unordered_map<serif::atomic::Species, size_t> m_speciesToIndexMap; ///< Map of species to their index in the stoichiometry matrix.
 
 
@@ -56,7 +57,13 @@ namespace serif::network {
         void populateSpeciesToIndexMap();
         void buildNetworkGraph();
         bool validateConservation() const;
+
+        // --- Generate the system matrices ---
         void generateStoichiometryMatrix();
+        void generateJacobianMatrix();
+
+        std::vector<double> calculateRHS(const std::vector<double>& Y, const double T9, const double rho) const;
+        double calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<double>& Y, const double T9, const double rho) const;
 
         void pruneNetworkGraph();
     };

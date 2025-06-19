@@ -3,6 +3,7 @@
 #include "reaclib.h"
 #include "network.h"
 #include "species.h"
+#include "const.h"
 
 #include "quill/LogMacros.h"
 
@@ -14,6 +15,8 @@
 #include <string_view>
 #include <cstdint>
 #include <iostream>
+
+#include "const.h"
 
 
 namespace serif::network {
@@ -248,6 +251,99 @@ namespace serif::network {
 
         LOG_INFO(m_logger, "Stoichiometry matrix population complete. Number of non-zero elements: {}.",
                  m_stoichiometryMatrix.nnz()); // Assuming nnz() exists for compressed_matrix
+    }
+
+    void GraphNetwork::generateJacobianMatrix() {
+        LOG_INFO(m_logger, "Generating jacobian matrix...");
+
+        // Task 1: Set dimensions and initialize the matrix
+        size_t numSpecies = m_networkSpecies.size();
+        m_stoichiometryMatrix.resize(numSpecies, numSpecies, false);
+
+        LOG_INFO(m_logger, "Jacobian matrix initialized with dimensions: {} rows (species) x {} columns (species).",
+                 numSpecies, numSpecies);
+    }
+
+    std::vector<double> GraphNetwork::calculateRHS(const std::vector<double>& Y, const double T9, const double rho) const {
+        std::vector<double> dotY(m_networkSpecies.size(), 0.0);
+        const size_t numReactions = m_reactions.size();
+        const size_t numSpecies = m_networkSpecies.size();
+
+        if (m_stoichiometryMatrix.size1() != numSpecies || m_stoichiometryMatrix.size2() != numReactions) {
+            LOG_ERROR(m_logger, "Stoichiometry matrix dimensions do not match network species and reactions sizes.");
+            throw std::runtime_error("Stoichiometry matrix dimensions mismatch.");
+        }
+
+        for (size_t reactionIndex = 0; reactionIndex < numReactions; ++reactionIndex) {
+            const auto& currentReaction = m_reactions[reactionIndex];
+            const double reactionRatePerVolumePerTime = calculateReactionRate(currentReaction, Y, T9, rho);
+
+            // dY_i/dt = ∑ υ_ij * R_j * mass_in_grams
+            // TODO: make sure the unit conversion is correct after calculate reaction rate.
+
+            for (size_t speciesIndex = 0; speciesIndex < numSpecies; ++speciesIndex) {
+                const int nu_ij = m_stoichiometryMatrix(speciesIndex, reactionIndex);
+                if (nu_ij != 0) {
+                    const double speciesAtomicMassAMU = m_networkSpecies[speciesIndex].mass();
+                    dotY[speciesIndex] += (nu_ij * reactionRatePerVolumePerTime * speciesAtomicMassAMU)/rho;
+                }
+            }
+        }
+        return dotY;
+    }
+
+    double GraphNetwork::calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<double> &Y,
+        const double T9, const double rho) const {
+        const auto &constants  = serif::constant::Constants::getInstance();
+
+        constexpr auto u = constants.get("u"); // Atomic mass unit in g/mol
+        const double k_reaction = reaction.calculate_rate(T9); // PERF: Consider precomputing all of these and putting them into an O(1) lookup table.
+
+        double reactant_product = 1.0;
+
+        std::unordered_map<std::string, int> reactant_counts;
+        reactant_counts.reserve(reaction.reactants().size());
+        for (const auto& reactant : reaction.reactants()) {
+            reactant_counts[std::string(reactant.name())]++;
+        }
+
+        for (const auto& [species_name, count] : reactant_counts) {
+            constexpr double minThreshold = 1e-18;
+            auto species_it = m_speciesToIndexMap.find(m_networkSpeciesMap.at(species_name));
+            if (species_it == m_speciesToIndexMap.end()) {
+                LOG_ERROR(m_logger, "Reactant species '{}' not found in species to index map for reaction '{}'.",
+                         species_name, reaction.id());
+                throw std::runtime_error("Reactant species not found in species to index map: " + species_name);
+            }
+            const size_t species_index = species_it->second;
+            const double Yi = Y[species_index];
+            double Ai = m_networkSpecies[species_index].a();
+
+            if (Yi < minThreshold) {
+                return 0.0; // If any reactant is below a threshold, return zero rate.
+            }
+
+            double atomicMassAMU = m_networkSpecies[species_index].mass();
+
+            // Convert to number density
+            double ni;
+            const double denominator = atomicMassAMU * u.value();
+            if (denominator > minThreshold) {
+                ni = (Yi * rho) / (denominator);
+            } else {
+                ni = 0.0;
+            }
+
+            reactant_product *= ni;
+
+            // Apply factorial correction for identical reactions
+            if (count > 1) {
+                reactant_product /= static_cast<double>(std::tgamma(count + 1)); // Gamma function for factorial
+            }
+        }
+        constexpr double Na = constants.get("N_a").value(); // Avogadro's number in mol^-1
+        const double molarCorrectionFactor = std::pow(Na, reaction.reactants().size() - 1);
+        return (reactant_product * k_reaction) / molarCorrectionFactor; // reaction rate in per volume per time (particles/cm^3/s)
     }
 
     NetOut GraphNetwork::evaluate(const NetIn &netIn) {
