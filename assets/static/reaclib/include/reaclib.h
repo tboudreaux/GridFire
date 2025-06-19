@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include "atomicSpecies.h"
 
+#include "cppad/cppad.hpp"
+
 namespace serif::network::reaclib {
     /**
      * @struct RateFitSet
@@ -70,16 +72,17 @@ namespace serif::network::reaclib {
               m_rateSets(sets),
               m_reverse(reverse) {}
 
-        [[nodiscard]] double calculate_rate(const double T9) const {
-            const double T913 = std::pow(T9, 1.0/3.0);
-            const double rateExponent = m_rateSets.a0 +
+        template <typename GeneralScalarType>
+        [[nodiscard]] GeneralScalarType calculate_rate(const GeneralScalarType T9) const {
+            const GeneralScalarType T913 = CppAD::pow(T9, 1.0/3.0);
+            const GeneralScalarType rateExponent = m_rateSets.a0 +
                 m_rateSets.a1 / T9 +
                 m_rateSets.a2 / T913 +
                 m_rateSets.a3 * T913 +
                 m_rateSets.a4 * T9 +
-                m_rateSets.a5 * std::pow(T9, 5.0/3.0) +
-                m_rateSets.a6 * std::log(T9);
-            return std::exp(rateExponent);
+                m_rateSets.a5 * CppAD::pow(T9, 5.0/3.0) +
+                m_rateSets.a6 * CppAD::log(T9);
+            return CppAD::exp(rateExponent);
         }
 
         [[nodiscard]] const std::string& id() const { return m_id; }
