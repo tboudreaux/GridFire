@@ -18,6 +18,7 @@
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
 
 namespace serif::network {
+    template <typename GeneralScalarType>
     class GraphNetwork final : public Network {
     public:
         explicit GraphNetwork(const serif::composition::Composition &composition);
@@ -38,15 +39,15 @@ namespace serif::network {
         reaclib::REACLIBReactionSet m_reactions; ///< Set of REACLIB reactions for the network.
         serif::composition::Composition m_initialComposition;
         serif::composition::Composition m_currentComposition;
-        double m_cullingThreshold; ///< Threshold for culling reactions.
-        double m_T9; ///< Temperature in T9 units to evaluate culling.
+        GeneralScalarType m_cullingThreshold; ///< Threshold for culling reactions.
+        GeneralScalarType m_T9; ///< Temperature in T9 units to evaluate culling.
 
         std::vector<serif::atomic::Species> m_networkSpecies; ///< The species in the network.
         std::unordered_map<std::string_view, serif::atomic::Species> m_networkSpeciesMap;
         std::unordered_map<std::string_view, const reaclib::REACLIBReaction> m_reactionIDMap; ///< Map of reaction IDs to REACLIB reactions.
 
         boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix for the network.
-        boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix for the network.
+        boost::numeric::ublas::compressed_matrix<GeneralScalarType> m_jacobianMatrix; ///< Jacobian matrix for the network.
         std::unordered_map<serif::atomic::Species, size_t> m_speciesToIndexMap; ///< Map of species to their index in the stoichiometry matrix.
 
 
@@ -62,8 +63,8 @@ namespace serif::network {
         void generateStoichiometryMatrix();
         void generateJacobianMatrix();
 
-        std::vector<double> calculateRHS(const std::vector<double>& Y, const double T9, const double rho) const;
-        double calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<double>& Y, const double T9, const double rho) const;
+        std::vector<GeneralScalarType> calculateRHS(const std::vector<GeneralScalarType>& Y, const GeneralScalarType T9, const GeneralScalarType rho) const;
+        GeneralScalarType calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<GeneralScalarType>& Y, const GeneralScalarType T9, const GeneralScalarType rho) const;
 
         void pruneNetworkGraph();
     };

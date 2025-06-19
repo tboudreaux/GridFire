@@ -20,7 +20,8 @@
 
 
 namespace serif::network {
-    GraphNetwork::GraphNetwork(
+    template <typename GeneralScalarType>
+    GraphNetwork<GeneralScalarType>::GraphNetwork(
         const serif::composition::Composition &composition
     ):
      Network(REACLIB),
@@ -32,7 +33,8 @@ namespace serif::network {
         syncInternalMaps();
     }
 
-    GraphNetwork::GraphNetwork(
+    template <typename GeneralScalarType>
+    GraphNetwork<GeneralScalarType>::GraphNetwork(
         const serif::composition::Composition &composition,
         const double cullingThreshold,
         const double T9
@@ -46,14 +48,16 @@ namespace serif::network {
         syncInternalMaps();
     }
 
-    void GraphNetwork::syncInternalMaps() {
+    template <typename GeneralScalarType>
+    void GraphNetwork<GeneralScalarType>::syncInternalMaps() {
         collectNetworkSpecies();
         populateReactionIDMap();
         populateSpeciesToIndexMap();
     }
 
     // --- Network Graph Construction Methods ---
-    void GraphNetwork::collectNetworkSpecies() {
+    template <typename GeneralScalarType>
+    void GraphNetwork<GeneralScalarType>::collectNetworkSpecies() {
         m_networkSpecies.clear();
         m_networkSpeciesMap.clear();
 
@@ -81,7 +85,8 @@ namespace serif::network {
 
     }
 
-    void GraphNetwork::populateReactionIDMap() {
+    template <typename GeneralScalarType>
+    void GraphNetwork<GeneralScalarType>::populateReactionIDMap() {
         LOG_INFO(m_logger, "Populating reaction ID map for REACLIB graph network (serif::network::GraphNetwork)...");
         m_reactionIDMap.clear();
         for (const auto& reaction: m_reactions) {
