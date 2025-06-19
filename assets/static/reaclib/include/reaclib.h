@@ -37,6 +37,9 @@ namespace serif::network::reaclib {
         std::string m_sourceLabel; ///< Source label for the rate data, indicating the origin of the rate coefficients (e.g., "wc12w", "st08").
         RateFitSet m_rateSets; ///< Fitting coefficients for the reaction rate, containing the seven parameters used in the rate calculation.
         bool m_reverse = false; ///< indicates if the reaction is reversed
+
+        friend bool operator==(const REACLIBReaction& lhs, const REACLIBReaction& rhs);
+        friend bool operator!=(const REACLIBReaction& lhs, const REACLIBReaction& rhs);
     public:
         /**
          * @brief Constructs a REACLIBReaction object at compile time.
@@ -79,7 +82,7 @@ namespace serif::network::reaclib {
             return std::exp(rateExponent);
         }
 
-        [[nodiscard]] std::string id() const { return m_id; }
+        [[nodiscard]] const std::string& id() const { return m_id; }
 
         [[nodiscard]] int chapter() const { return m_chapter; }
 
@@ -92,6 +95,12 @@ namespace serif::network::reaclib {
         [[nodiscard]] std::string sourceLabel() const { return m_sourceLabel; }
 
         [[nodiscard]] bool is_reverse() const { return m_reverse; }
+
+        friend std::ostream& operator<<(std::ostream& os, const REACLIBReaction& reaction) {
+            os << "REACLIBReaction(" << reaction.m_id << ", "
+               << "Chapter: " << reaction.m_chapter << ")";
+            return os;
+        }
     };
 
      class REACLIBReactionSet {
@@ -179,4 +188,20 @@ namespace serif::network::reaclib {
     };
     static std::unordered_map<std::string, REACLIBReaction> s_all_reaclib_reactions;
     static bool s_initialized = false;
+
+    inline bool operator==(const REACLIBReaction& lhs, const REACLIBReaction& rhs) {
+        return lhs.m_id == rhs.m_id;
+    }
+    inline bool operator!=(const REACLIBReaction& lhs, const REACLIBReaction& rhs) {
+        return !(lhs == rhs);
+    }
 }
+
+namespace std {
+    template<>
+    struct hash<serif::network::reaclib::REACLIBReaction> {
+        size_t operator()(const serif::network::reaclib::REACLIBReaction& r) const noexcept {
+            return std::hash<std::string>()(r.id());
+        }
+    };
+} // namespace std
