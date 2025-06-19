@@ -296,7 +296,7 @@ namespace serif::network {
         const double T9, const double rho) const {
         const auto &constants  = serif::constant::Constants::getInstance();
 
-        constexpr auto u = constants.get("u"); // Atomic mass unit in g/mol
+        const auto u = constants.get("u"); // Atomic mass unit in g/mol
         const double k_reaction = reaction.calculate_rate(T9); // PERF: Consider precomputing all of these and putting them into an O(1) lookup table.
 
         double reactant_product = 1.0;
@@ -327,7 +327,7 @@ namespace serif::network {
 
             // Convert to number density
             double ni;
-            const double denominator = atomicMassAMU * u.value();
+            const double denominator = atomicMassAMU * u.value;
             if (denominator > minThreshold) {
                 ni = (Yi * rho) / (denominator);
             } else {
@@ -341,7 +341,7 @@ namespace serif::network {
                 reactant_product /= static_cast<double>(std::tgamma(count + 1)); // Gamma function for factorial
             }
         }
-        constexpr double Na = constants.get("N_a").value(); // Avogadro's number in mol^-1
+        const double Na = constants.get("N_a").value; // Avogadro's number in mol^-1
         const double molarCorrectionFactor = std::pow(Na, reaction.reactants().size() - 1);
         return (reactant_product * k_reaction) / molarCorrectionFactor; // reaction rate in per volume per time (particles/cm^3/s)
     }
