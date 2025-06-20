@@ -8,11 +8,10 @@
 // Note: Only reactions with species defined in the atomicSpecies.h header will be included at compile time.
 #pragma once
 #include "atomicSpecies.h"
+#include "species.h"
 #include "reaclib.h"
 
 namespace serif::network::reaclib {
-
-    
     inline void initializeAllReaclibReactions() {
         if (s_initialized) return; // already initialized
         s_initialized = true;

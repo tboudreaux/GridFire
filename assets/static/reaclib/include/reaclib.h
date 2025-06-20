@@ -104,6 +104,10 @@ namespace serif::network::reaclib {
                << "Chapter: " << reaction.m_chapter << ")";
             return os;
         }
+
+        friend bool operator==(const REACLIBReaction& lhs, const REACLIBReaction& rhs);
+
+        friend bool operator!=(const REACLIBReaction& lhs, const REACLIBReaction& rhs);
     };
 
      class REACLIBReactionSet {
@@ -130,6 +134,15 @@ namespace serif::network::reaclib {
         [[nodiscard]] bool contains(const std::string& id) const {
             for (const auto& reaction : m_reactions) {
                 if (reaction.id() == id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        [[nodiscard]] bool contains(const REACLIBReaction& reaction) const {
+            for (const auto& r : m_reactions) {
+                if (r == reaction) {
                     return true;
                 }
             }
@@ -170,6 +183,16 @@ namespace serif::network::reaclib {
             return m_reactions.end();
         }
 
+        bool containsSpecies(const serif::atomic::Species &species) const {
+            for (const auto& reaction : m_reactions) {
+                if (std::ranges::find(reaction.reactants(), species) != reaction.reactants().end() ||
+                    std::ranges::find(reaction.products(), species) != reaction.products().end()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         [[nodiscard]] const REACLIBReaction& operator[](size_t index) const {
             if (index >= m_reactions.size()) {
                 throw std::out_of_range("Index out of range in REACLIBReactionSet.");
@@ -188,6 +211,7 @@ namespace serif::network::reaclib {
         [[nodiscard]] auto end() const {
             return m_reactions.cend();
         }
+
     };
     static std::unordered_map<std::string, REACLIBReaction> s_all_reaclib_reactions;
     static bool s_initialized = false;
@@ -196,6 +220,18 @@ namespace serif::network::reaclib {
         return lhs.m_id == rhs.m_id;
     }
     inline bool operator!=(const REACLIBReaction& lhs, const REACLIBReaction& rhs) {
+        return !(lhs == rhs);
+    }
+
+    inline bool operator==(const REACLIBReactionSet& lhs, const REACLIBReactionSet& rhs) {
+        if (lhs.size() != rhs.size()) return false;
+        for (const auto& reaction : lhs) {
+            if (!rhs.contains(reaction)) return false;
+        }
+        return true;
+    }
+
+    inline bool operator!=(const REACLIBReactionSet& lhs, const REACLIBReactionSet& rhs) {
         return !(lhs == rhs);
     }
 }
