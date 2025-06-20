@@ -306,13 +306,13 @@ namespace serif::network::approx8{
          * @brief Sets whether the solver should use a stiff method.
          * @param stiff Boolean indicating if a stiff method should be used.
          */
-        void setStiff(bool stiff);
+        void setStiff(bool stiff) override;
 
         /**
          * @brief Checks if the solver is using a stiff method.
          * @return Boolean indicating if a stiff method is being used.
          */
-        bool isStiff() const { return m_stiff; }
+        bool isStiff() const override { return m_stiff; }
     private:
         vector_type m_y;
         double m_tMax = 0;

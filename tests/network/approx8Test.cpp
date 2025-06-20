@@ -6,7 +6,7 @@
 #include "network.h"
 #include "composition.h"
 #include "reaclib.h"
-#include "reactions.h"
+#include "netgraph.h"
 
 #include <vector>
 
@@ -74,8 +74,19 @@ TEST_F(approx8Test, reaclib) {
     serif::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
-    bool isFinalized = composition.finalize(true);
+    composition.finalize(true);
 
-    reaclib::REACLIBReactionSet reactionSet = build_reaclib_nuclear_network(composition);
-    std::cout << reactionSet.size() << std::endl;
+    NetIn netIn;
+    netIn.composition = composition;
+    netIn.temperature = 1e7;
+    netIn.density = 1e2;
+    netIn.energy = 0.0;
+
+    netIn.tMax = 3.15e17;
+    netIn.dt0 = 1e12;
+
+    GraphNetwork network(composition);
+    NetOut netOut;
+    netOut = network.evaluate(netIn);
+    std::cout << netOut << std::endl;
 }

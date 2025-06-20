@@ -1,63 +1,54 @@
 #include "netgraph.h"
 #include "atomicSpecies.h"
-#include "reaclib.h"
-#include "network.h"
-#include "species.h"
 #include "const.h"
+#include "network.h"
+#include "reaclib.h"
+#include "species.h"
 
 #include "quill/LogMacros.h"
 
-#include <set>
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <string_view>
 #include <cstdint>
 #include <iostream>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
 
-#include "const.h"
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/odeint.hpp>
 
 
 namespace serif::network {
-    template <typename GeneralScalarType>
-    GraphNetwork<GeneralScalarType>::GraphNetwork(
+    GraphNetwork::GraphNetwork(
         const serif::composition::Composition &composition
     ):
      Network(REACLIB),
-     m_reactions(build_reaclib_nuclear_network(composition)),
-     m_initialComposition(composition),
-     m_currentComposition(composition),
-     m_cullingThreshold(0),
-     m_T9(0) {
+     m_reactions(build_reaclib_nuclear_network(composition)) {
         syncInternalMaps();
     }
 
-    template <typename GeneralScalarType>
-    GraphNetwork<GeneralScalarType>::GraphNetwork(
+    GraphNetwork::GraphNetwork(
         const serif::composition::Composition &composition,
         const double cullingThreshold,
         const double T9
     ):
      Network(REACLIB),
-     m_reactions(build_reaclib_nuclear_network(composition, cullingThreshold, T9)),
-     m_initialComposition(composition),
-     m_currentComposition(composition),
-     m_cullingThreshold(cullingThreshold),
-     m_T9(T9) {
+     m_reactions(build_reaclib_nuclear_network(composition, cullingThreshold, T9)) {
         syncInternalMaps();
     }
 
-    template <typename GeneralScalarType>
-    void GraphNetwork<GeneralScalarType>::syncInternalMaps() {
+    void GraphNetwork::syncInternalMaps() {
         collectNetworkSpecies();
         populateReactionIDMap();
         populateSpeciesToIndexMap();
+        reserveJacobianMatrix();
+        recordADTape();
     }
 
     // --- Network Graph Construction Methods ---
-    template <typename GeneralScalarType>
-    void GraphNetwork<GeneralScalarType>::collectNetworkSpecies() {
+    void GraphNetwork::collectNetworkSpecies() {
         m_networkSpecies.clear();
         m_networkSpeciesMap.clear();
 
@@ -85,8 +76,7 @@ namespace serif::network {
 
     }
 
-    template <typename GeneralScalarType>
-    void GraphNetwork<GeneralScalarType>::populateReactionIDMap() {
+    void GraphNetwork::populateReactionIDMap() {
         LOG_INFO(m_logger, "Populating reaction ID map for REACLIB graph network (serif::network::GraphNetwork)...");
         m_reactionIDMap.clear();
         for (const auto& reaction: m_reactions) {
@@ -102,14 +92,17 @@ namespace serif::network {
         }
     }
 
-    void GraphNetwork::buildNetworkGraph() {
-        LOG_INFO(m_logger, "Building network graph...");
-        m_reactions = build_reaclib_nuclear_network(m_initialComposition, m_cullingThreshold, m_T9);
-        syncInternalMaps();
-        LOG_INFO(m_logger, "Network graph built with {} reactions and {} species.", m_reactions.size(), m_networkSpecies.size());
+    void GraphNetwork::reserveJacobianMatrix() {
+        // The implementation of this function (and others) constrains this nuclear network to a constant temperature and density during
+        // each evaluation.
+        size_t numSpecies = m_networkSpecies.size();
+        m_jacobianMatrix.clear();
+        m_jacobianMatrix.resize(numSpecies, numSpecies, false); // Sparse matrix, no initial values
+        LOG_INFO(m_logger, "Jacobian matrix resized to {} rows and {} columns.",
+                 m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
-        // --- Basic Accessors and Queries ---
 
+    // --- Basic Accessors and Queries ---
     const std::vector<serif::atomic::Species>& GraphNetwork::getNetworkSpecies() const {
         // Returns a constant reference to the vector of unique species in the network.
         LOG_DEBUG(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
@@ -137,7 +130,7 @@ namespace serif::network {
         for (const auto& reactant : reaction.reactants()) {
             auto it = m_networkSpeciesMap.find(reactant.name());
             if (it != m_networkSpeciesMap.end()) {
-                stoichiometry[it->second]--; // Copy Species by value (PERF: Future performance improvements by using pointers or references)
+                stoichiometry[it->second]--; // Copy Species by value (PERF: Future performance improvements by using pointers or references (std::reference_wrapper<const ...>) or something like that)
             } else {
                 LOG_WARNING(m_logger, "Reactant species '{}' in reaction '{}' not found in network species map during stoichiometry calculation.",
                          reactant.name(), reaction.id());
@@ -148,7 +141,7 @@ namespace serif::network {
         for (const auto& product : reaction.products()) {
             auto it = m_networkSpeciesMap.find(product.name());
             if (it != m_networkSpeciesMap.end()) {
-                stoichiometry[it->second]++; // Copy Species by value (PERF: Future performance improvements by using pointers or references)
+                stoichiometry[it->second]++; // Copy Species by value (PERF: Future performance improvements by using pointers or references (std::reference_wrapper<const ...>) or something like that)
             } else {
                 LOG_WARNING(m_logger, "Product species '{}' in reaction '{}' not found in network species map during stoichiometry calculation.",
                          product.name(), reaction.id());
@@ -214,6 +207,21 @@ namespace serif::network {
         return true; // All reactions passed the conservation check
     }
 
+    void GraphNetwork::validateComposition(const serif::composition::Composition &composition, double culling, double T9) {
+
+        // Check if the requested network has already been cached.
+        // PERF: Rebuilding this should be pretty fast but it may be a good point of optimization in the future.
+        const reaclib::REACLIBReactionSet validationReactionSet = build_reaclib_nuclear_network(composition, culling, T9);
+
+
+        // This allows for dynamic network modification while retaining caching for networks which are very similar.
+        if (validationReactionSet != m_reactions) {
+            LOG_INFO(m_logger, "Reaction set not cached. Rebuilding the reaction set for T9={} and culling={}.", T9, culling);
+            m_reactions = validationReactionSet;
+            syncInternalMaps(); // Re-sync internal maps after updating reactions. Note this will also retrace the AD tape.
+        }
+    }
+
     // --- Generate Stoichiometry Matrix ---
     void GraphNetwork::generateStoichiometryMatrix() {
         LOG_INFO(m_logger, "Generating stoichiometry matrix...");
@@ -258,100 +266,191 @@ namespace serif::network {
                  m_stoichiometryMatrix.nnz()); // Assuming nnz() exists for compressed_matrix
     }
 
-    void GraphNetwork::generateJacobianMatrix() {
-        LOG_INFO(m_logger, "Generating jacobian matrix...");
+    void GraphNetwork::generateJacobianMatrix(const std::vector<double> &Y, const double T9,
+        const double rho) {
 
-        // Task 1: Set dimensions and initialize the matrix
-        size_t numSpecies = m_networkSpecies.size();
-        m_stoichiometryMatrix.resize(numSpecies, numSpecies, false);
-
-        LOG_INFO(m_logger, "Jacobian matrix initialized with dimensions: {} rows (species) x {} columns (species).",
-                 numSpecies, numSpecies);
-    }
-
-    std::vector<double> GraphNetwork::calculateRHS(const std::vector<double>& Y, const double T9, const double rho) const {
-        std::vector<double> dotY(m_networkSpecies.size(), 0.0);
-        const size_t numReactions = m_reactions.size();
+        LOG_INFO(m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
-        if (m_stoichiometryMatrix.size1() != numSpecies || m_stoichiometryMatrix.size2() != numReactions) {
-            LOG_ERROR(m_logger, "Stoichiometry matrix dimensions do not match network species and reactions sizes.");
-            throw std::runtime_error("Stoichiometry matrix dimensions mismatch.");
+        // 1. Pack the input variables into a vector for CppAD
+        std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
+        for (size_t i = 0; i < numSpecies; ++i) {
+            adInput[i] = Y[i];
         }
+        adInput[numSpecies]     = T9;  // T9
+        adInput[numSpecies + 1] = rho; // rho
 
-        for (size_t reactionIndex = 0; reactionIndex < numReactions; ++reactionIndex) {
-            const auto& currentReaction = m_reactions[reactionIndex];
-            const double reactionRatePerVolumePerTime = calculateReactionRate(currentReaction, Y, T9, rho);
+        // 2. Calculate the full jacobian
+        const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
 
-            // dY_i/dt = ∑ υ_ij * R_j * mass_in_grams
-            // TODO: make sure the unit conversion is correct after calculate reaction rate.
-
-            for (size_t speciesIndex = 0; speciesIndex < numSpecies; ++speciesIndex) {
-                const int nu_ij = m_stoichiometryMatrix(speciesIndex, reactionIndex);
-                if (nu_ij != 0) {
-                    const double speciesAtomicMassAMU = m_networkSpecies[speciesIndex].mass();
-                    dotY[speciesIndex] += (nu_ij * reactionRatePerVolumePerTime * speciesAtomicMassAMU)/rho;
+        // 3. Pack jacobian vector into sparse matrix
+        m_jacobianMatrix.clear();
+        for (size_t i = 0; i < numSpecies; ++i) {
+            for (size_t j = 0; j < numSpecies; ++j) {
+                const double value = dotY[i * (numSpecies + 2) + j];
+                if (std::abs(value) > MIN_JACOBIAN_THRESHOLD) {
+                    m_jacobianMatrix(i, j) = value;
                 }
             }
         }
-        return dotY;
+        LOG_INFO(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 
-    double GraphNetwork::calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<double> &Y,
-        const double T9, const double rho) const {
-        const auto &constants  = serif::constant::Constants::getInstance();
+    void GraphNetwork::detectStiff(const NetIn &netIn, const double T9, const double numSpecies, const boost::numeric::ublas::vector<double>& Y) {
+        // --- Heuristic for automatic stiffness detection ---
+        const std::vector<double> initial_y_stl(Y.begin(), Y.begin() + numSpecies); // Copy only the species abundances, not the specific energy rate
+        const auto derivatives = calculateAllDerivatives<double>(initial_y_stl, T9, netIn.density);
+        const std::vector<double>& initial_dotY = derivatives.dydt;
 
-        const auto u = constants.get("u"); // Atomic mass unit in g/mol
-        const double k_reaction = reaction.calculate_rate(T9); // PERF: Consider precomputing all of these and putting them into an O(1) lookup table.
+        double min_timescale = std::numeric_limits<double>::max();
+        double max_timescale = 0.0;
 
-        double reactant_product = 1.0;
-
-        std::unordered_map<std::string, int> reactant_counts;
-        reactant_counts.reserve(reaction.reactants().size());
-        for (const auto& reactant : reaction.reactants()) {
-            reactant_counts[std::string(reactant.name())]++;
-        }
-
-        for (const auto& [species_name, count] : reactant_counts) {
-            constexpr double minThreshold = 1e-18;
-            auto species_it = m_speciesToIndexMap.find(m_networkSpeciesMap.at(species_name));
-            if (species_it == m_speciesToIndexMap.end()) {
-                LOG_ERROR(m_logger, "Reactant species '{}' not found in species to index map for reaction '{}'.",
-                         species_name, reaction.id());
-                throw std::runtime_error("Reactant species not found in species to index map: " + species_name);
-            }
-            const size_t species_index = species_it->second;
-            const double Yi = Y[species_index];
-            double Ai = m_networkSpecies[species_index].a();
-
-            if (Yi < minThreshold) {
-                return 0.0; // If any reactant is below a threshold, return zero rate.
-            }
-
-            double atomicMassAMU = m_networkSpecies[species_index].mass();
-
-            // Convert to number density
-            double ni;
-            const double denominator = atomicMassAMU * u.value;
-            if (denominator > minThreshold) {
-                ni = (Yi * rho) / (denominator);
-            } else {
-                ni = 0.0;
-            }
-
-            reactant_product *= ni;
-
-            // Apply factorial correction for identical reactions
-            if (count > 1) {
-                reactant_product /= static_cast<double>(std::tgamma(count + 1)); // Gamma function for factorial
+        for (size_t i = 0; i < numSpecies; ++i) {
+            if (std::abs(initial_dotY[i]) > 0) {
+                const double timescale = std::abs(Y(i) / initial_dotY[i]);
+                if (timescale > max_timescale) {max_timescale = timescale;}
+                if (timescale < min_timescale) {min_timescale = timescale;}
             }
         }
-        const double Na = constants.get("N_a").value; // Avogadro's number in mol^-1
-        const double molarCorrectionFactor = std::pow(Na, reaction.reactants().size() - 1);
-        return (reactant_product * k_reaction) / molarCorrectionFactor; // reaction rate in per volume per time (particles/cm^3/s)
+
+        const double stiffnessRatio = max_timescale / min_timescale;
+
+        // TODO: Pull this out into a configuration option or a more sophisticated heuristic.
+        constexpr double stiffnessThreshold = 1.0e6; // This is a heuristic threshold, can be tuned based on network characteristics.
+
+        LOG_INFO(m_logger, "Stiffness ratio is {} (max timescale: {}, min timescale: {}).", stiffnessRatio, max_timescale, min_timescale);
+        if (stiffnessRatio > stiffnessThreshold) {
+            LOG_INFO(m_logger, "Network is detected to be stiff. Using stiff ODE solver.");
+            m_stiff = true;
+        } else {
+            LOG_INFO(m_logger, "Network is detected to be non-stiff. Using non-stiff ODE solver.");
+            m_stiff = false;
+        }
     }
 
     NetOut GraphNetwork::evaluate(const NetIn &netIn) {
-        return Network::evaluate(netIn);
+        namespace ublas = boost::numeric::ublas;
+        namespace odeint = boost::numeric::odeint;
+
+        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
+        validateComposition(netIn.composition, netIn.culling, T9);
+
+        const double numSpecies = m_networkSpecies.size();
+        constexpr double abs_tol = 1.0e-8;
+        constexpr double rel_tol = 1.0e-8;
+
+        int stepCount = 0;
+
+        // TODO: Pull these out into configuration options
+
+        ODETerm rhs_functor(*this, T9, netIn.density);
+
+
+        ublas::vector<double> Y(numSpecies + 1);
+        for (size_t i = 0; i < numSpecies; ++i) {
+            const auto& species = m_networkSpecies[i];
+            // Get the mass fraction for this specific species from the input object
+            Y(i) = netIn.composition.getMassFraction(std::string(species.name()));
+        }
+        Y(numSpecies) = 0; // initial specific energy rate, will be updated later
+
+        detectStiff(netIn, T9, numSpecies, Y);
+
+        if (m_stiff) {
+            JacobianTerm jacobian_functor(*this, T9, netIn.density);
+            LOG_INFO(m_logger, "Making use of stiff ODE solver for network evaluation.");
+            auto stepper = odeint::make_controlled<odeint::rosenbrock4<double>>(abs_tol, rel_tol);
+            stepCount = odeint::integrate_adaptive(
+                stepper,
+                std::make_pair(rhs_functor, jacobian_functor),
+                Y,
+                0.0, // Start time
+                netIn.tMax,
+                netIn.dt0
+                );
+
+        } else {
+            LOG_INFO(m_logger, "Making use of ODE solver (non-stiff) for network evaluation.");
+            using state_type = ublas::vector<double>;
+            auto stepper = odeint::make_controlled<odeint::runge_kutta_dopri5<state_type>>(abs_tol, rel_tol);
+            stepCount = odeint::integrate_adaptive(
+                stepper,
+                rhs_functor,
+                Y,
+                0.0, // Start time
+                netIn.tMax,
+                netIn.dt0
+            );
+
+
+        }
+
+        double sumY = 0.0;
+        for (int i = 0; i < numSpecies; ++i) { sumY += Y(i); }
+        for (int i = 0; i < numSpecies; ++i) { Y(i) /= sumY; }
+
+        // --- Marshall output variables ---
+        // PERF: Im sure this step could be tuned to avoid so many copies, that is a job for another day
+        std::vector<std::string> speciesNames;
+        speciesNames.reserve(numSpecies);
+        for (const auto& species : m_networkSpecies) {
+            speciesNames.push_back(std::string(species.name()));
+        }
+
+        std::vector<double> finalAbundances(Y.begin(), Y.begin() + numSpecies);
+        serif::composition::Composition outputComposition(speciesNames, finalAbundances);
+        outputComposition.finalize(true);
+
+        NetOut netOut;
+        netOut.composition = outputComposition;
+        netOut.num_steps = stepCount;
+        netOut.energy = Y(numSpecies); // The last element in Y is the specific energy rate
+
+        return netOut;
+
+    }
+
+    void GraphNetwork::recordADTape() {
+        LOG_INFO(m_logger, "Recording AD tape for the RHS calculation...");
+
+        // Task 1: Set dimensions and initialize the matrix
+        const size_t numSpecies = m_networkSpecies.size();
+        if (numSpecies == 0) {
+            LOG_ERROR(m_logger, "Cannot record AD tape: No species in the network.");
+            throw std::runtime_error("Cannot record AD tape: No species in the network.");
+        }
+        const size_t numADInputs = numSpecies + 2; // Note here that by not letting T9 and rho be independent variables, we are constraining the network to a constant temperature and density during each evaluation.
+
+        // --- CppAD Tape Recording ---
+        // 1. Declare independent variable (adY)
+        //    We also initialize the dummy variable for tape recording (these tell CppAD what the derivative chain looks like).
+        //    Their numeric values are irrelevant except for in so far as they avoid numerical instabilities.
+
+        // Distribute total mass fraction uniformly between species in the dummy variable space
+        const auto uniformMassFraction = static_cast<CppAD::AD<double>>(1.0 / numSpecies);
+        std::vector<CppAD::AD<double>> adInput(numADInputs, uniformMassFraction);
+        adInput[numSpecies]     = 1.0; // Dummy T9
+        adInput[numSpecies + 1] = 1.0; // Dummy rho
+
+        // 3. Declare independent variables (what CppAD will differentiate wrt.)
+        //    This also beings the tape recording process.
+        CppAD::Independent(adInput);
+
+        std::vector<CppAD::AD<double>> adY(numSpecies);
+        for(size_t i = 0; i < numSpecies; ++i) {
+            adY[i] = adInput[i];
+        }
+        const CppAD::AD<double> adT9  = adInput[numSpecies];
+        const CppAD::AD<double> adRho = adInput[numSpecies + 1];
+
+
+        // 5. Call the actual templated function
+        // We let T9 and rho be constant, so we pass them as fixed values.
+        auto derivatives = calculateAllDerivatives<CppAD::AD<double>>(adY, adT9, adRho);
+
+        m_rhsADFun.Dependent(adInput, derivatives.dydt);
+
+        LOG_INFO(m_logger, "AD tape recorded successfully for the RHS calculation. Number of independent variables: {}.",
+                 adInput.size());
     }
 }

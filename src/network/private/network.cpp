@@ -33,7 +33,8 @@ namespace serif::network {
         m_config(serif::config::Config::getInstance()),
         m_logManager(serif::probe::LogManager::getInstance()),
         m_logger(m_logManager.getLogger("log")),
-        m_format(format) {
+        m_format(format),
+        m_constants(serif::constant::Constants::getInstance()){
         if (format == NetworkFormat::UNKNOWN) {
             LOG_ERROR(m_logger, "nuclearNetwork::Network::Network() called with UNKNOWN format");
             throw std::runtime_error("nuclearNetwork::Network::Network() called with UNKNOWN format");
@@ -73,6 +74,7 @@ namespace serif::network {
     serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition) {
         using namespace serif::network::reaclib;
         REACLIBReactionSet reactions;
+        auto logger = serif::probe::LogManager::getInstance().getLogger("log");
 
         if (!s_initialized) {
             LOG_INFO(serif::probe::LogManager::getInstance().getLogger("log"), "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
@@ -89,6 +91,7 @@ namespace serif::network {
                 }
             }
             if (gotReaction) {
+                LOG_INFO(logger, "Adding reaction {} to REACLIB reaction set.", reaction.id());
                 reactions.add_reaction(reaction);
             }
         }

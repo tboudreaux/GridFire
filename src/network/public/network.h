@@ -29,6 +29,8 @@
 #include "reaclib.h"
 #include <unordered_map>
 
+#include "const.h"
+
 namespace serif::network {
 
     enum NetworkFormat {
@@ -67,6 +69,7 @@ namespace serif::network {
         double temperature; ///< Temperature in Kelvin
         double density; ///< Density in g/cm^3
         double energy; ///< Energy in ergs
+        double culling = 0.0; ///< Culling threshold for reactions (default is 0.0, meaning no culling)
     };
 
     /**
@@ -87,6 +90,11 @@ namespace serif::network {
         serif::composition::Composition composition; ///< Composition of the network after evaluation
         int num_steps; ///< Number of steps taken in the evaluation
         double energy; ///< Energy in ergs after evaluation
+
+        friend std::ostream& operator<<(std::ostream& os, const NetOut& netOut) {
+            os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", energy=" << netOut.energy << ")";
+            return os;
+        }
     };
 
     /**
@@ -119,12 +127,18 @@ namespace serif::network {
              */
             virtual NetOut evaluate(const NetIn &netIn);
 
+            virtual bool isStiff() const { return m_stiff; }
+            virtual void setStiff(const bool stiff) { m_stiff = stiff; }
+
         protected:
             serif::config::Config& m_config; ///< Configuration instance
             serif::probe::LogManager& m_logManager; ///< Log manager instance
             quill::Logger* m_logger; ///< Logger instance
 
             NetworkFormat m_format; ///< Format of the network
+            serif::constant::Constants& m_constants;
+
+            bool m_stiff = false; ///< Flag indicating if the network is stiff
     };
 
     class ReaclibNetwork final : public Network {
