@@ -36,4 +36,4 @@ network_dep = declare_dependency(
 )
 
 # Make headers accessible
-install_headers(network_headers, subdir : '4DSSE/network')
+install_headers(network_headers, subdir : 'gridfire/gridfire')

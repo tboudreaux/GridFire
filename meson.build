@@ -34,4 +34,15 @@ subdir('assets/static')
 subdir('src')
 subdir('tests')
 
+pkg = import('pkgconfig')
+pkg.generate(
+    name: 'gridfire',
+    description: 'GridFire nuclear reaction network solver',
+    version: meson.project_version(),
+    libraries: [libnetwork, libcomposition],
+    subdirs: ['gridfire'],
+    filebase: 'gridfire',
+    install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+)
+
 
