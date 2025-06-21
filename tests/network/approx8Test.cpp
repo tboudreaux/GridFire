@@ -86,6 +86,7 @@ TEST_F(approx8Test, reaclib) {
     netIn.dt0 = 1e12;
 
     GraphNetwork network(composition);
+    network.exportToDot("Test.dot");
     NetOut netOut;
     netOut = network.evaluate(netIn);
     std::cout << netOut << std::endl;
