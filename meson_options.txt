@@ -1,0 +1,20 @@
+# Build options for the project
+
+# Usage:
+# -Doption_name=value
+
+# -Dbuild_tests=true (default) build tests
+# -Duser_mode=false (default) enable user mode (set mode = 0) If user mode is enabled then the optimization level is set to 3 and the build type is set to release
+# -Dbuild_python=true (default) build Python bindings
+option('build_tests', type: 'boolean', value: true, description: 'Build tests')
+option('user_mode', type: 'boolean', value: false, description: 'Enable user mode (set mode = 0)')
+option('build_python', type: 'boolean', value: true, description: 'Build Python bindings')
+option(
+    'config_error_handling',
+    type: 'combo',
+    choices: [ 'none', 'warn', 'harsh' ],
+    value: 'none',
+    description: 'What to do if a config file fails to load: silent (none), warning (warn), or error (harsh)'
+)
+option('build_post_run_utils', type: 'boolean', value: true, description: 'Build Helper Utilities')
+option('build_debug_utils', type: 'boolean', value: true, description: 'Build Debug Utilities')
