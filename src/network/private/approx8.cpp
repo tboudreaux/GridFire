@@ -72,7 +72,7 @@ The coefficients to the fit are from reaclib.jinaweb.org .
 
 */
 
-namespace serif::network::approx8{
+namespace gridfire::approx8{
 
 	// using namespace std;
 	using namespace boost::numeric::odeint;
@@ -245,7 +245,7 @@ namespace serif::network::approx8{
 	// a Jacobian matrix for implicit solvers
 
     void Jacobian::operator() ( const vector_type &y, matrix_type &J, double /* t */, vector_type &dfdt ) const {
-        serif::constant::Constants& constants = serif::constant::Constants::getInstance();
+        fourdst::constant::Constants& constants = fourdst::constant::Constants::getInstance();
         const double avo = constants.get("N_a").value;
         const double clight = constants.get("c").value;
         // EOS
@@ -350,7 +350,7 @@ namespace serif::network::approx8{
     }
 
 	void ODE::operator() ( const vector_type &y, vector_type &dydt, double /* t */) const {
-		const serif::constant::Constants& constants = serif::constant::Constants::getInstance();
+		const fourdst::constant::Constants& constants = fourdst::constant::Constants::getInstance();
 		const double avo = constants.get("N_a").value;
 		const double clight = constants.get("c").value;
 
@@ -501,7 +501,7 @@ namespace serif::network::approx8{
 		netOut.num_steps = num_steps;
 
 		const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
-		netOut.composition = serif::composition::Composition(symbols, outComposition);
+		netOut.composition = fourdst::composition::Composition(symbols, outComposition);
 
 		return netOut;
 	}

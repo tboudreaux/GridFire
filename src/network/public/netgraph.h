@@ -31,10 +31,10 @@
  * This is a general nuclear reaction network; however, it does not currently manage reverse reactions, weak reactions,
  * or other reactions which become much more relevant for more extreme astrophysical sources.
  *
- * @see serif::network::GraphNetwork
+ * @see gridfire::GraphNetwork
  */
 
-namespace serif::network {
+namespace gridfire {
 
     /**
      * @brief Concept to check if a type is either double or CppAD::AD<double>.
@@ -80,7 +80,7 @@ namespace serif::network {
          * @brief Construct a GraphNetwork from a composition.
          * @param composition The composition specifying the initial isotopic abundances.
          */
-        explicit GraphNetwork(const serif::composition::Composition &composition);
+        explicit GraphNetwork(const fourdst::composition::Composition &composition);
 
         /**
          * @brief Construct a GraphNetwork from a composition with culling and temperature.
@@ -90,7 +90,7 @@ namespace serif::network {
          *
          * @see serif::network::build_reaclib_nuclear_network
          */
-        explicit GraphNetwork(const serif::composition::Composition &composition,
+        explicit GraphNetwork(const fourdst::composition::Composition &composition,
                               const double cullingThreshold, const double T9);
 
         /**
@@ -123,7 +123,7 @@ namespace serif::network {
          * }
          * @endcode
          */
-        [[nodiscard]] const std::vector<serif::atomic::Species>& getNetworkSpecies() const;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const;
 
         /**
          * @brief Get the set of REACLIB reactions in the network.
@@ -149,7 +149,7 @@ namespace serif::network {
          * }
          * @endcode
          */
-        [[nodiscard]] std::unordered_map<serif::atomic::Species, int> getNetReactionStoichiometry(
+        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, int> getNetReactionStoichiometry(
             const reaclib::REACLIBReaction &reaction) const;
 
         /**
@@ -162,7 +162,7 @@ namespace serif::network {
          * if (net.involvesSpecies(mySpecies)) { ... }
          * @endcode
          */
-        [[nodiscard]] bool involvesSpecies(const serif::atomic::Species& species) const;
+        [[nodiscard]] bool involvesSpecies(const fourdst::atomic::Species& species) const;
 
         /**
          * @brief Detect cycles in the reaction network (not implemented).
@@ -190,9 +190,9 @@ namespace serif::network {
         reaclib::REACLIBReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
         std::unordered_map<std::string_view, const reaclib::REACLIBReaction> m_reactionIDMap; ///< Map from reaction ID to REACLIBReaction. //PERF: This makes copies of REACLIBReaction and could be a performance bottleneck.
 
-        std::vector<serif::atomic::Species> m_networkSpecies; ///< Vector of unique species in the network.
-        std::unordered_map<std::string_view, serif::atomic::Species> m_networkSpeciesMap; ///< Map from species name to Species object.
-        std::unordered_map<serif::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
+        std::vector<fourdst::atomic::Species> m_networkSpecies; ///< Vector of unique species in the network.
+        std::unordered_map<std::string_view, fourdst::atomic::Species> m_networkSpeciesMap; ///< Map from species name to Species object.
+        std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
 
         boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix (species x reactions).
         boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
@@ -357,7 +357,7 @@ namespace serif::network {
          * @param culling Culling threshold.
          * @param T9 Temperature in 10^9 K.
          */
-        void validateComposition(const serif::composition::Composition &composition, double culling, double T9);
+        void validateComposition(const fourdst::composition::Composition &composition, double culling, double T9);
 
         // --- Simple Derivative Calculations ---
 
@@ -494,7 +494,7 @@ namespace serif::network {
     template <IsArithmeticOrAD GeneralScalarType>
     GeneralScalarType GraphNetwork::calculateReactionRate(const reaclib::REACLIBReaction &reaction, const std::vector<GeneralScalarType> &Y,
         const GeneralScalarType T9, const GeneralScalarType rho) const {
-        const auto &constants  = serif::constant::Constants::getInstance();
+        const auto &constants  = fourdst::constant::Constants::getInstance();
 
         const auto u = constants.get("u"); // Atomic mass unit in g/mol
         const GeneralScalarType uValue = static_cast<GeneralScalarType>(u.value); // Convert to double for calculations

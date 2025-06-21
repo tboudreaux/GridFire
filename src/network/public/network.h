@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "probe.h"
+#include "logging.h"
 #include "config.h"
 #include "quill/Logger.h"
 #include "composition.h"
@@ -132,7 +132,7 @@ namespace gridfire {
 
         protected:
             fourdst::config::Config& m_config; ///< Configuration instance
-            fourdst::probe::LogManager& m_logManager; ///< Log manager instance
+            fourdst::logging::LogManager& m_logManager; ///< Log manager instance
             quill::Logger* m_logger; ///< Logger instance
 
             NetworkFormat m_format; ///< Format of the network

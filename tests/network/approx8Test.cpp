@@ -19,13 +19,13 @@ class approx8Test : public ::testing::Test {};
  * @brief Test the constructor of the Config class.
  */
 TEST_F(approx8Test, constructor) {
-    serif::config::Config& config = serif::config::Config::getInstance();
+    fourdst::config::Config& config = fourdst::config::Config::getInstance();
     config.loadConfig(TEST_CONFIG);
-    EXPECT_NO_THROW(serif::network::approx8::Approx8Network());
+    EXPECT_NO_THROW(gridfire::approx8::Approx8Network());
 }
 
 TEST_F(approx8Test, setStiff) {
-    serif::network::approx8::Approx8Network network;
+    gridfire::approx8::Approx8Network network;
     EXPECT_NO_THROW(network.setStiff(true));
     EXPECT_TRUE(network.isStiff());
     EXPECT_NO_THROW(network.setStiff(false));
@@ -33,13 +33,13 @@ TEST_F(approx8Test, setStiff) {
 }
 
 TEST_F(approx8Test, evaluate) {
-    serif::network::approx8::Approx8Network network;
-    serif::network::NetIn netIn;
+    gridfire::approx8::Approx8Network network;
+    gridfire::NetIn netIn;
 
     std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
     std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
 
-    serif::composition::Composition composition;
+    fourdst::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
     bool isFinalized = composition.finalize(true);
@@ -53,7 +53,7 @@ TEST_F(approx8Test, evaluate) {
     netIn.tMax = 3.15e17;
     netIn.dt0 = 1e12;
 
-    serif::network::NetOut netOut;
+    gridfire::NetOut netOut;
     EXPECT_NO_THROW(netOut = network.evaluate(netIn));
 
     double energyFraction = netOut.energy / 1.6433051127589775E+18;
@@ -67,11 +67,11 @@ TEST_F(approx8Test, evaluate) {
 }
 
 TEST_F(approx8Test, reaclib) {
-    using namespace serif::network;
+    using namespace gridfire;
     const std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
     const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
 
-    serif::composition::Composition composition;
+    fourdst::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
     composition.finalize(true);

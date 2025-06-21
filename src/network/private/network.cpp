@@ -23,18 +23,17 @@
 #include <ranges>
 
 #include "approx8.h"
-#include "probe.h"
 #include "quill/LogMacros.h"
 #include "reaclib.h"
 #include "reactions.h"
 
-namespace serif::network {
+namespace gridfire {
     Network::Network(const NetworkFormat format) :
-        m_config(serif::config::Config::getInstance()),
-        m_logManager(serif::probe::LogManager::getInstance()),
+        m_config(fourdst::config::Config::getInstance()),
+        m_logManager(fourdst::logging::LogManager::getInstance()),
         m_logger(m_logManager.getLogger("log")),
         m_format(format),
-        m_constants(serif::constant::Constants::getInstance()){
+        m_constants(fourdst::constant::Constants::getInstance()){
         if (format == NetworkFormat::UNKNOWN) {
             LOG_ERROR(m_logger, "nuclearNetwork::Network::Network() called with UNKNOWN format");
             throw std::runtime_error("nuclearNetwork::Network::Network() called with UNKNOWN format");
@@ -71,13 +70,13 @@ namespace serif::network {
         return netOut;
     }
 
-    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition) {
-        using namespace serif::network::reaclib;
+    reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition) {
+        using namespace reaclib;
         REACLIBReactionSet reactions;
-        auto logger = serif::probe::LogManager::getInstance().getLogger("log");
+        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
         if (!s_initialized) {
-            LOG_INFO(serif::probe::LogManager::getInstance().getLogger("log"), "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
+            LOG_INFO(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
             initializeAllReaclibReactions();
         }
 
@@ -99,8 +98,8 @@ namespace serif::network {
         return reactions;
     }
 
-    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition, const double culling, const double T9) {
-        using namespace serif::network::reaclib;
+    reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, const double culling, const double T9) {
+        using namespace reaclib;
         REACLIBReactionSet allReactions = build_reaclib_nuclear_network(composition);
         REACLIBReactionSet reactions;
         for (const auto& reaction : allReactions) {

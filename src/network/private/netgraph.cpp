@@ -21,9 +21,9 @@
 #include <boost/numeric/odeint.hpp>
 
 
-namespace serif::network {
+namespace gridfire {
     GraphNetwork::GraphNetwork(
-        const serif::composition::Composition &composition
+        const fourdst::composition::Composition &composition
     ):
      Network(REACLIB),
      m_reactions(build_reaclib_nuclear_network(composition)) {
@@ -31,7 +31,7 @@ namespace serif::network {
     }
 
     GraphNetwork::GraphNetwork(
-        const serif::composition::Composition &composition,
+        const fourdst::composition::Composition &composition,
         const double cullingThreshold,
         const double T9
     ):
@@ -65,8 +65,8 @@ namespace serif::network {
         }
 
         for (const auto& name: uniqueSpeciesNames) {
-            auto it = serif::atomic::species.find(name);
-            if (it != serif::atomic::species.end()) {
+            auto it = fourdst::atomic::species.find(name);
+            if (it != fourdst::atomic::species.end()) {
                 m_networkSpecies.push_back(it->second);
                 m_networkSpeciesMap.insert({name, it->second});
             } else {
@@ -104,7 +104,7 @@ namespace serif::network {
     }
 
     // --- Basic Accessors and Queries ---
-    const std::vector<serif::atomic::Species>& GraphNetwork::getNetworkSpecies() const {
+    const std::vector<fourdst::atomic::Species>& GraphNetwork::getNetworkSpecies() const {
         // Returns a constant reference to the vector of unique species in the network.
         LOG_DEBUG(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
         return m_networkSpecies;
@@ -116,16 +116,16 @@ namespace serif::network {
         return m_reactions;
     }
 
-    bool GraphNetwork::involvesSpecies(const serif::atomic::Species& species) const {
+    bool GraphNetwork::involvesSpecies(const fourdst::atomic::Species& species) const {
         // Checks if a given species is present in the network's species map for efficient lookup.
         const bool found = m_networkSpeciesMap.contains(species.name());
         LOG_DEBUG(m_logger, "Checking if species '{}' is involved in the network: {}.", species.name(), found ? "Yes" : "No");
         return found;
     }
 
-    std::unordered_map<serif::atomic::Species, int> GraphNetwork::getNetReactionStoichiometry(const reaclib::REACLIBReaction& reaction) const {
+    std::unordered_map<fourdst::atomic::Species, int> GraphNetwork::getNetReactionStoichiometry(const reaclib::REACLIBReaction& reaction) const {
         // Calculates the net stoichiometric coefficients for species in a given reaction.
-        std::unordered_map<serif::atomic::Species, int> stoichiometry;
+        std::unordered_map<fourdst::atomic::Species, int> stoichiometry;
 
         // Iterate through reactants, decrementing their counts
         for (const auto& reactant : reaction.reactants()) {
@@ -208,7 +208,7 @@ namespace serif::network {
         return true; // All reactions passed the conservation check
     }
 
-    void GraphNetwork::validateComposition(const serif::composition::Composition &composition, double culling, double T9) {
+    void GraphNetwork::validateComposition(const fourdst::composition::Composition &composition, double culling, double T9) {
 
         // Check if the requested network has already been cached.
         // PERF: Rebuilding this should be pretty fast but it may be a good point of optimization in the future.
@@ -246,11 +246,11 @@ namespace serif::network {
         size_t reactionColumnIndex = 0;
         for (const auto& reaction : m_reactions) {
             // Get the net stoichiometry for the current reaction
-            std::unordered_map<serif::atomic::Species, int> netStoichiometry = getNetReactionStoichiometry(reaction);
+            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = getNetReactionStoichiometry(reaction);
 
             // Iterate through the species and their coefficients in the stoichiometry map
             for (const auto& pair : netStoichiometry) {
-                const serif::atomic::Species& species = pair.first; // The Species object
+                const fourdst::atomic::Species& species = pair.first; // The Species object
                 const int coefficient = pair.second;                // The stoichiometric coefficient
 
                 // Find the row index for this species
@@ -452,7 +452,7 @@ namespace serif::network {
         }
 
         std::vector<double> finalAbundances(Y.begin(), Y.begin() + numSpecies);
-        serif::composition::Composition outputComposition(speciesNames, finalAbundances);
+        fourdst::composition::Composition outputComposition(speciesNames, finalAbundances);
         outputComposition.finalize(true);
 
         NetOut netOut;
