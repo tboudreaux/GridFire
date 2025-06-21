@@ -118,8 +118,9 @@ file generated during the installation of GridFire will take care of this for yo
 compile this example):
 
 ```c++
-#include <netgraph.h>
-#include <composition.h>
+#include <gridfire/netgraph.h>
+#include <fourdst/composition/composition.h>
+
 #include <iostream>
 #include <vector>
 #include <string>
