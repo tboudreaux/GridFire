@@ -31,7 +31,7 @@
 
 #include "const.h"
 
-namespace serif::network {
+namespace gridfire {
 
     enum NetworkFormat {
         APPROX8, ///< Approx8 nuclear reaction network format.
@@ -63,7 +63,7 @@ namespace serif::network {
      * @endcode
      */
     struct NetIn {
-        serif::composition::Composition composition; ///< Composition of the network
+        fourdst::composition::Composition composition; ///< Composition of the network
         double tMax; ///< Maximum time
         double dt0; ///< Initial time step
         double temperature; ///< Temperature in Kelvin
@@ -87,7 +87,7 @@ namespace serif::network {
      * @endcode
      */
     struct NetOut {
-        serif::composition::Composition composition; ///< Composition of the network after evaluation
+        fourdst::composition::Composition composition; ///< Composition of the network after evaluation
         int num_steps; ///< Number of steps taken in the evaluation
         double energy; ///< Energy in ergs after evaluation
 
@@ -131,12 +131,12 @@ namespace serif::network {
             virtual void setStiff(const bool stiff) { m_stiff = stiff; }
 
         protected:
-            serif::config::Config& m_config; ///< Configuration instance
-            serif::probe::LogManager& m_logManager; ///< Log manager instance
+            fourdst::config::Config& m_config; ///< Configuration instance
+            fourdst::probe::LogManager& m_logManager; ///< Log manager instance
             quill::Logger* m_logger; ///< Logger instance
 
             NetworkFormat m_format; ///< Format of the network
-            serif::constant::Constants& m_constants;
+            fourdst::constant::Constants& m_constants;
 
             bool m_stiff = false; ///< Flag indicating if the network is stiff
     };
@@ -145,15 +145,15 @@ namespace serif::network {
     public:
         explicit ReaclibNetwork(const NetworkFormat format = NetworkFormat::APPROX8);
 
-        explicit ReaclibNetwork(serif::composition::Composition composition, const NetworkFormat format = NetworkFormat::APPROX8);
+        explicit ReaclibNetwork(fourdst::composition::Composition composition, const NetworkFormat format = NetworkFormat::APPROX8);
 
         NetOut evaluate(const NetIn &netIn) override;
     private:
-        serif::network::reaclib::REACLIBReactionSet m_reactions; ///< Set of REACLIB reactions
+        reaclib::REACLIBReactionSet m_reactions; ///< Set of REACLIB reactions
     };
 
-    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition);
-    serif::network::reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const serif::composition::Composition &composition, double culling, double T9 = 1.0);
+    reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition);
+    reaclib::REACLIBReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, double culling, double T9 = 1.0);
 
 
 } // namespace nuclearNetwork

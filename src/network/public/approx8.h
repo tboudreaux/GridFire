@@ -36,7 +36,7 @@
  */
 
 
-namespace serif::network::approx8{
+namespace gridfire::approx8{
 
     /**
      * @typedef vector_type
