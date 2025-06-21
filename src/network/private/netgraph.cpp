@@ -15,6 +15,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+#include <fstream>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/odeint.hpp>
@@ -212,6 +213,12 @@ namespace serif::network {
         // Check if the requested network has already been cached.
         // PERF: Rebuilding this should be pretty fast but it may be a good point of optimization in the future.
         const reaclib::REACLIBReactionSet validationReactionSet = build_reaclib_nuclear_network(composition, culling, T9);
+        // TODO: need some more robust method here to
+        //       A. Build the basic network from the composition's species with non zero mass fractions.
+        //       B. rebuild a new composition from the reaction set's reactants + products (with the mass fractions from the things that are only products set to 0)
+        //       C. Rebuild the reaction set from the new composition
+        //       D. Cull reactions where all reactants have mass fractions below the culling threshold.
+        //       E. Be careful about maintaining caching through all of this
 
 
         // This allows for dynamic network modification while retaining caching for networks which are very similar.
@@ -326,6 +333,53 @@ namespace serif::network {
             LOG_INFO(m_logger, "Network is detected to be non-stiff. Using non-stiff ODE solver.");
             m_stiff = false;
         }
+    }
+
+    void GraphNetwork::exportToDot(const std::string &filename) const {
+        LOG_INFO(m_logger, "Exporting network graph to DOT file: {}", filename);
+
+        std::ofstream dotFile(filename);
+        if (!dotFile.is_open()) {
+            LOG_ERROR(m_logger, "Failed to open file for writing: {}", filename);
+            throw std::runtime_error("Failed to open file for writing: " + filename);
+        }
+
+        dotFile << "digraph NuclearReactionNetwork {\n";
+        dotFile << "    graph [rankdir=LR, splines=true, overlap=false, bgcolor=\"#f0f0f0\"];\n";
+        dotFile << "    node [shape=circle, style=filled, fillcolor=\"#a7c7e7\", fontname=\"Helvetica\"];\n";
+        dotFile << "    edge [fontname=\"Helvetica\", fontsize=10];\n\n";
+
+        // 1. Define all species as nodes
+        dotFile << "    // --- Species Nodes ---\n";
+        for (const auto& species : m_networkSpecies) {
+            dotFile << "    \"" << species.name() << "\" [label=\"" << species.name() << "\"];\n";
+        }
+        dotFile << "\n";
+
+        // 2. Define all reactions as intermediate nodes and connect them
+        dotFile << "    // --- Reaction Edges ---\n";
+        for (const auto& reaction : m_reactions) {
+            // Create a unique ID for the reaction node
+            std::string reactionNodeId = "reaction_" + std::string(reaction.id());
+
+            // Define the reaction node (small, black dot)
+            dotFile << "    \"" << reactionNodeId << "\" [shape=point, fillcolor=black, width=0.1, height=0.1, label=\"\"];\n";
+
+            // Draw edges from reactants to the reaction node
+            for (const auto& reactant : reaction.reactants()) {
+                dotFile << "    \"" << reactant.name() << "\" -> \"" << reactionNodeId << "\";\n";
+            }
+
+            // Draw edges from the reaction node to products
+            for (const auto& product : reaction.products()) {
+                dotFile << "    \"" << reactionNodeId << "\" -> \"" << product.name() << "\" [label=\"" << reaction.qValue() << " MeV\"];\n";
+            }
+            dotFile << "\n";
+        }
+
+        dotFile << "}\n";
+        dotFile.close();
+        LOG_INFO(m_logger, "Successfully exported network to {}", filename);
     }
 
     NetOut GraphNetwork::evaluate(const NetIn &netIn) {
