@@ -1,16 +1,16 @@
-#include <gtest/gtest.h>
 #include <string>
+#include <gtest/gtest.h>
 
-#include "approx8.h"
-#include "config.h"
-#include "network.h"
-#include "composition.h"
-#include "reaclib.h"
-#include "netgraph.h"
+#include "fourdst/composition/composition.h"
+#include "fourdst/config/config.h"
+#include "gridfire/approx8.h"
+#include "gridfire/netgraph.h"
+#include "gridfire/network.h"
+#include "gridfire/reaclib.h"
 
 #include <vector>
 
-#include "reactions.h"
+#include "gridfire/reactions.h"
 
 std::string TEST_CONFIG = std::string(getenv("MESON_SOURCE_ROOT")) + "/tests/testsConfig.yaml";
 class approx8Test : public ::testing::Test {};
@@ -68,13 +68,14 @@ TEST_F(approx8Test, evaluate) {
 
 TEST_F(approx8Test, reaclib) {
     using namespace gridfire;
-    const std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
-    const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
+    const std::vector<double> comp = {0.708, 0.0, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
+    const std::vector<std::string> symbols = {"H-1", "H-2", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
 
     fourdst::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
     composition.finalize(true);
+
 
     NetIn netIn;
     netIn.composition = composition;
@@ -86,7 +87,6 @@ TEST_F(approx8Test, reaclib) {
     netIn.dt0 = 1e12;
 
     GraphNetwork network(composition);
-    network.exportToDot("Test.dot");
     NetOut netOut;
     netOut = network.evaluate(netIn);
     std::cout << netOut << std::endl;

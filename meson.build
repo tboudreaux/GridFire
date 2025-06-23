@@ -39,7 +39,7 @@ pkg.generate(
     name: 'gridfire',
     description: 'GridFire nuclear reaction network solver',
     version: meson.project_version(),
-    libraries: [libnetwork, libcomposition],
+    libraries: [libnetwork, libcomposition, libconfig, libconst, liblogging],
     subdirs: ['gridfire'],
     filebase: 'gridfire',
     install_dir: join_paths(get_option('libdir'), 'pkgconfig')

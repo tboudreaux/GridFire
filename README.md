@@ -156,9 +156,17 @@ int main() {
 ```
 Save that file to `main.cpp` and compile it with the following command:
 ```bash
-g++ main.cpp $(pkg-config --cflags --libs gridfire) -o main
+clang++ main.cpp $(pkg-config --cflags --libs gridfire) -I/opt/homebrew/include -o main -std=c++23
 ./main
 ```
+> Note that here I have included the `-I/opt/homebrew/include` flag to specify the header location for boost
+> on my system. This very well may already be in your compiler's include path, or if not it might be in a different
+> location. That is all very system dependent. You can try to get a sense of where the boost headers are located
+> by looking at the `build/compile-commmands.json` file generate by meson after running `meson setup build`.
+
+ 
+> -std=c++23 or -std=c++20 is required as we use some C++20 feature in GridFire (specifically concepts). Compiling with
+> C++23 is **strongly** recommended.
 
 Using a different network is as simple as changing the type of the `network` variable to the desired network type. For
 example, if you wanted to use the `gridfire::Approx8Network`, you would change the line

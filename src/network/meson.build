@@ -1,15 +1,10 @@
 # Define the library
 network_sources = files(
-    'private/network.cpp',
-    'private/approx8.cpp',
-    'private/netgraph.cpp'
+    'lib/network.cpp',
+    'lib/approx8.cpp',
+    'lib/netgraph.cpp'
 )
 
-network_headers = files(
-    'public/network.h',
-    'public/approx8.h',
-    'public/netgraph.h',
-)
 
 dependencies = [
     boost_dep,
@@ -24,16 +19,21 @@ dependencies = [
 # Define the libnetwork library so it can be linked against by other parts of the build system
 libnetwork = library('network',
     network_sources, 
-    include_directories: include_directories('public'),
+    include_directories: include_directories('include'),
     dependencies: dependencies,
     install : true)
 
 network_dep = declare_dependency(
-    include_directories: include_directories('public'),
+    include_directories: include_directories('include'),
     link_with: libnetwork,
     sources: network_sources,
     dependencies: dependencies,
 )
 
 # Make headers accessible
+network_headers = files(
+    'include/gridfire/network.h',
+    'include/gridfire/approx8.h',
+    'include/gridfire/netgraph.h',
+)
 install_headers(network_headers, subdir : 'gridfire/gridfire')
