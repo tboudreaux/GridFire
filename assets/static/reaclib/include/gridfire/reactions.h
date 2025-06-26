@@ -9,12 +9,15 @@
 #pragma once
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/species.h"
-#include "reaclib.h"
+#include "gridfire/reaction/reaction.h"
 
 namespace gridfire::reaclib {
+    static std::unordered_map<std::string, reaction::REACLIBReaction> s_all_reaclib_reactions;
+    static bool s_initialized = false;
 
     
     inline void initializeAllReaclibReactions() {
+        using namespace reaction;
         if (s_initialized) return; // already initialized
         s_initialized = true;
         s_all_reaclib_reactions.clear();

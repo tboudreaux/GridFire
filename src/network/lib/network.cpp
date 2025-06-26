@@ -19,13 +19,13 @@
 //
 // *********************************************************************** */
 #include "gridfire/network.h"
+#include "gridfire/reactions.h"
+#include "../include/gridfire/reaction/reaction.h"
 
 #include <ranges>
+#include <fstream>
 
-#include "gridfire/approx8.h"
 #include "quill/LogMacros.h"
-#include "gridfire/reaclib.h"
-#include "gridfire/reactions.h"
 
 namespace gridfire {
     Network::Network(const NetworkFormat format) :
@@ -50,231 +50,20 @@ namespace gridfire {
         return oldFormat;
     }
 
-    NetOut Network::evaluate(const NetIn &netIn) {
-        NetOut netOut;
-        switch (m_format) {
-            case APPROX8: {
-                approx8::Approx8Network network;
-                netOut = network.evaluate(netIn);
-                break;
-            }
-            case UNKNOWN: {
-                LOG_ERROR(m_logger, "Network format {} is not implemented.", FormatStringLookup.at(m_format));
-                throw std::runtime_error("Network format not implemented.");
-            }
-            default: {
-                LOG_ERROR(m_logger, "Unknown network format.");
-                throw std::runtime_error("Unknown network format.");
-            }
-        }
-        return netOut;
-    }
-
-    LogicalReaction::LogicalReaction(const std::vector<reaclib::REACLIBReaction> &reactions) {
-        if (reactions.empty()) {
-            LOG_ERROR(m_logger, "Empty reaction set provided to LogicalReaction constructor.");
-            throw std::runtime_error("Empty reaction set provided to LogicalReaction constructor.");
-        }
-
-        const auto& first_reaction = reactions.front();
-        m_peID = first_reaction.peName();
-        m_reactants = first_reaction.reactants();
-        m_products = first_reaction.products();
-        m_qValue = first_reaction.qValue();
-        m_reverse = first_reaction.is_reverse();
-        m_chapter = first_reaction.chapter();
-        m_rates.reserve(reactions.size());
-        for (const auto& reaction : reactions) {
-            m_rates.push_back(reaction.rateFits());
-            if (std::abs(reaction.qValue() - m_qValue) > 1e-6) {
-                LOG_ERROR(m_logger, "Inconsistent Q-values in reactions {}. All reactions must have the same Q-value.", m_peID);
-                throw std::runtime_error("Inconsistent Q-values in reactions. All reactions must have the same Q-value.");
-            }
-        }
-    }
-
-    LogicalReaction::LogicalReaction(const reaclib::REACLIBReaction &first_reaction) {
-        m_peID = first_reaction.peName();
-        m_reactants = first_reaction.reactants();
-        m_products = first_reaction.products();
-        m_qValue = first_reaction.qValue();
-        m_reverse = first_reaction.is_reverse();
-        m_chapter = first_reaction.chapter();
-        m_rates.reserve(1);
-        m_rates.push_back(first_reaction.rateFits());
-
-    }
-
-    void LogicalReaction::add_reaction(const reaclib::REACLIBReaction &reaction) {
-        if (std::abs(reaction.qValue() - m_qValue > 1e-6)) {
-            LOG_ERROR(m_logger, "Inconsistent Q-values in reactions {}. All reactions must have the same Q-value.", m_peID);
-            throw std::runtime_error("Inconsistent Q-values in reactions. All reactions must have the same Q-value.");
-        }
-        m_rates.push_back(reaction.rateFits());
-    }
-
-    auto LogicalReaction::begin() {
-        return m_rates.begin();
-    }
-    auto LogicalReaction::begin() const {
-        return m_rates.cbegin();
-    }
-    auto LogicalReaction::end() {
-        return m_rates.end();
-    }
-    auto LogicalReaction::end() const {
-        return m_rates.cend();
-    }
-
-    LogicalReactionSet::LogicalReactionSet(const std::vector<LogicalReaction> &reactions) {
-        if (reactions.empty()) {
-            LOG_ERROR(m_logger, "Empty reaction set provided to LogicalReactionSet constructor.");
-            throw std::runtime_error("Empty reaction set provided to LogicalReactionSet constructor.");
-        }
-
-        for (const auto& reaction : reactions) {
-            m_reactions.push_back(reaction);
-        }
-
-        m_reactionNameMap.reserve(m_reactions.size());
-        for (const auto& reaction : m_reactions) {
-            if (m_reactionNameMap.contains(reaction.id())) {
-                LOG_ERROR(m_logger, "Duplicate reaction ID '{}' found in LogicalReactionSet.", reaction.id());
-                throw std::runtime_error("Duplicate reaction ID found in LogicalReactionSet: " + std::string(reaction.id()));
-            }
-            m_reactionNameMap[reaction.id()] = reaction;
-        }
-    }
-
-    LogicalReactionSet::LogicalReactionSet(const std::vector<reaclib::REACLIBReaction> &reactions) {
-        std::vector<std::string_view> uniquePeNames;
-        for (const auto& reaction: reactions) {
-            if (uniquePeNames.empty()) {
-                uniquePeNames.emplace_back(reaction.peName());
-            } else if (std::ranges::find(uniquePeNames, reaction.peName()) == uniquePeNames.end()) {
-                uniquePeNames.emplace_back(reaction.peName());
-            }
-        }
-
-        for (const auto& peName : uniquePeNames) {
-            std::vector<reaclib::REACLIBReaction> reactionsForPe;
-            for (const auto& reaction : reactions) {
-                if (reaction.peName() == peName) {
-                    reactionsForPe.push_back(reaction);
-                }
-            }
-            m_reactions.emplace_back(reactionsForPe);
-        }
-
-        m_reactionNameMap.reserve(m_reactions.size());
-        for (const auto& reaction : m_reactions) {
-            if (m_reactionNameMap.contains(reaction.id())) {
-                LOG_ERROR(m_logger, "Duplicate reaction ID '{}' found in LogicalReactionSet.", reaction.id());
-                throw std::runtime_error("Duplicate reaction ID found in LogicalReactionSet: " + std::string(reaction.id()));
-            }
-            m_reactionNameMap[reaction.id()] = reaction;
-        }
-    }
-
-    LogicalReactionSet::LogicalReactionSet(const reaclib::REACLIBReactionSet &reactionSet) {
-        LogicalReactionSet(reactionSet.get_reactions());
-    }
-
-    void LogicalReactionSet::add_reaction(const LogicalReaction& reaction) {
-        if (m_reactionNameMap.contains(reaction.id())) {
-            LOG_WARNING(m_logger, "Reaction {} already exists in the set. Not adding again.", reaction.id());
-            std::cerr << "Warning: Reaction " << reaction.id() << " already exists in the set. Not adding again." << std::endl;
-            return;
-        }
-        m_reactions.push_back(reaction);
-        m_reactionNameMap[reaction.id()] = reaction;
-    }
-
-    void LogicalReactionSet::add_reaction(const reaclib::REACLIBReaction& reaction) {
-        if (m_reactionNameMap.contains(reaction.id())) {
-            m_reactionNameMap[reaction.id()].add_reaction(reaction);
-        } else {
-            const LogicalReaction logicalReaction(reaction);
-            m_reactions.push_back(logicalReaction);
-            m_reactionNameMap[reaction.id()] = logicalReaction;
-        }
-    }
-
-    bool LogicalReactionSet::contains(const std::string_view &id) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.id() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool LogicalReactionSet::contains(const LogicalReaction &reactions) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.id() == reactions.id()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool LogicalReactionSet::contains_species(const fourdst::atomic::Species &species) const {
-        return contains_reactant(species) || contains_product(species);
-    }
-
-    bool LogicalReactionSet::contains_reactant(const fourdst::atomic::Species &species) const {
-        for (const auto& reaction : m_reactions) {
-            if (std::ranges::find(reaction.reactants(), species) != reaction.reactants().end()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool LogicalReactionSet::contains_product(const fourdst::atomic::Species &species) const {
-        for (const auto& reaction : m_reactions) {
-            if (std::ranges::find(reaction.products(), species) != reaction.products().end()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    const LogicalReaction & LogicalReactionSet::operator[](size_t index) const {
-        return m_reactions.at(index);
-    }
-
-    const LogicalReaction & LogicalReactionSet::operator[](const std::string_view &id) const {
-        return m_reactionNameMap.at(id);
-    }
-
-    auto LogicalReactionSet::begin() {
-        return m_reactions.begin();
-    }
-
-    auto LogicalReactionSet::begin() const {
-        return m_reactions.cbegin();
-    }
-
-    auto LogicalReactionSet::end() {
-        return m_reactions.end();
-    }
-
-    auto LogicalReactionSet::end() const {
-        return m_reactions.cend();
-    }
-
-    LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition) {
-        using namespace reaclib;
-        REACLIBReactionSet reactions;
+    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse) {
+        using namespace reaction;
+        std::vector<reaction::REACLIBReaction> reaclibReactions;
         auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
-        if (!s_initialized) {
-            LOG_INFO(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
-            initializeAllReaclibReactions();
+        if (!reaclib::s_initialized) {
+            LOG_DEBUG(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
+            reaclib::initializeAllReaclibReactions();
         }
 
-        for (const auto &reaction: s_all_reaclib_reactions | std::views::values) {
+        for (const auto &reaction: reaclib::s_all_reaclib_reactions | std::views::values) {
+            if (reaction.is_reverse() != reverse) {
+                continue; // Skip reactions that do not match the requested direction
+            }
             bool gotReaction = true;
             const auto& reactants = reaction.reactants();
             for (const auto& reactant : reactants) {
@@ -284,24 +73,85 @@ namespace gridfire {
                 }
             }
             if (gotReaction) {
-                LOG_INFO(logger, "Adding reaction {} to REACLIB reaction set.", reaction.peName());
-                reactions.add_reaction(reaction);
+                LOG_TRACE_L3(logger, "Adding reaction {} to REACLIB reaction set.", reaction.peName());
+                reaclibReactions.push_back(reaction);
             }
         }
-        reactions.sort();
-        return LogicalReactionSet(reactions);
+        const REACLIBReactionSet reactionSet(reaclibReactions);
+        return REACLIBLogicalReactionSet(reactionSet);
     }
 
-    LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, const double culling, const double T9) {
-        using namespace reaclib;
-        LogicalReactionSet allReactions = build_reaclib_nuclear_network(composition);
-        LogicalReactionSet reactions;
-        for (const auto& reaction : allReactions) {
-            if (reaction.calculate_rate(T9) >= culling) {
-                reactions.add_reaction(reaction);
+    // Trim whitespace from both ends of a string
+    std::string trim_whitespace(const std::string& str) {
+        auto startIt = str.begin();
+        auto endIt   = str.end();
+
+        while (startIt != endIt && std::isspace(static_cast<unsigned char>(*startIt))) {
+            ++startIt;
+        }
+        if (startIt == endIt) {
+            return "";
+        }
+        auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
+                                 [](unsigned char ch){ return !std::isspace(ch); });
+        return std::string(startIt, ritr.base());
+    }
+
+    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network_from_file(const std::string& filename, bool reverse) {
+        const auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        std::vector<std::string> reactionPENames;
+        std::ifstream infile(filename, std::ios::in);
+        if (!infile.is_open()) {
+            LOG_ERROR(logger, "Failed to open network definition file: {}", filename);
+            throw std::runtime_error("Failed to open network definition file: " + filename);
+        }
+        std::string line;
+        while (std::getline(infile, line)) {
+            std::string trimmedLine = trim_whitespace(line);
+            if (trimmedLine.empty() || trimmedLine.starts_with('#')) {
+                continue; // Skip empty lines and comments
+            }
+            reactionPENames.push_back(trimmedLine);
+        }
+        infile.close();
+        std::vector<reaction::REACLIBReaction> reaclibReactions;
+
+        if (reactionPENames.empty()) {
+            LOG_ERROR(logger, "No reactions found in the network definition file: {}", filename);
+            throw std::runtime_error("No reactions found in the network definition file: " + filename);
+        }
+
+        if (!reaclib::s_initialized) {
+            LOG_DEBUG(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
+            reaclib::initializeAllReaclibReactions();
+        } else {
+            LOG_DEBUG(logger, "REACLIB reactions already initialized.");
+        }
+
+        for (const auto& peName : reactionPENames) {
+            bool found = false;
+            for (const auto& reaction : reaclib::s_all_reaclib_reactions | std::views::values) {
+                if (reaction.peName() == peName && reaction.is_reverse() == reverse) {
+                    reaclibReactions.push_back(reaction);
+                    found = true;
+                    LOG_TRACE_L3(logger, "Found reaction {} (version {}) in REACLIB database.", peName, reaction.sourceLabel());
+                }
+            }
+            if (!found) {
+                LOG_ERROR(logger, "Reaction {} not found in REACLIB database. Skipping...", peName);
+                throw std::runtime_error("Reaction not found in REACLIB database.");
             }
         }
-        return reactions;
+
+
+        // Log any reactions that were not found in the REACLIB database
+        for (const auto& peName : reactionPENames) {
+            if (std::ranges::find(reaclibReactions, peName, &reaction::REACLIBReaction::peName) == reaclibReactions.end()) {
+                LOG_WARNING(logger, "Reaction {} not found in REACLIB database.", peName);
+            }
+        }
+        const reaction::REACLIBReactionSet reactionSet(reaclibReactions);
+        return reaction::REACLIBLogicalReactionSet(reactionSet);
     }
 
 }

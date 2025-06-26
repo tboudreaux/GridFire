@@ -24,6 +24,31 @@ project('GridFire', 'cpp', version: '0.0.1a', default_options: ['cpp_std=c++23']
 add_project_arguments('-fvisibility=default', language: 'cpp')
 # We disable these because of CppAD
 add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+llevel = get_option('log_level')
+
+logbase='QUILL_COMPILE_ACTIVE_LOG_LEVEL_'
+
+if (llevel == 'traceL3')
+    log_argument = logbase + 'TRACE_L3'
+elif (llevel == 'traceL2')
+    log_argument = logbase + 'TRACE_L2'
+elif (llevel == 'traceL1')
+    log_argument = logbase + 'TRACE_L1'
+elif (llevel == 'debug')
+    log_argument = logbase + 'DEBUG'
+elif (llevel == 'info')
+    log_argument = logbase + 'INFO'
+elif (llevel == 'warning')
+    log_argument = logbase + 'WARNING'
+elif (llevel == 'error')
+    log_argument = logbase + 'ERROR'
+elif (llevel == 'critical')
+    log_argument = logbase + 'CRITICAL'
+endif
+
+log_argument = '-DQUILL_COMPILE_ACTIVE_LOG_LEVEL=' + log_argument
+add_project_arguments(log_argument, language: 'cpp')
+
 cpp = meson.get_compiler('cpp')
 
 subdir('build-config')

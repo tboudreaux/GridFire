@@ -1,5 +1,4 @@
 required_headers = [
-    'gridfire/reaclib.h',
     'gridfire/reactions.h',
 ]
 
@@ -14,7 +13,6 @@ reaclib_reactions_dep = declare_dependency(
 message('✅ GridFire reaclib_reactions dependency declared')
 
 to_install_headers = [
-    'include/gridfire/reaclib.h',
     'include/gridfire/reactions.h',
 ]
 install_headers(to_install_headers, subdir: 'gridfire/gridfire')

@@ -3,10 +3,9 @@
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/config/config.h"
-#include "gridfire/approx8.h"
-#include "gridfire/netgraph.h"
+#include "../../src/network/include/gridfire/engine/engine_approx8.h"
+#include "../../src/network/include/gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
-#include "gridfire/reaclib.h"
 
 #include <vector>
 
@@ -86,7 +85,7 @@ TEST_F(approx8Test, reaclib) {
     netIn.tMax = 3.15e17;
     netIn.dt0 = 1e12;
 
-    GraphNetwork network(composition);
+    GraphEngine network(composition);
     NetOut netOut;
     netOut = network.evaluate(netIn);
     std::cout << netOut << std::endl;

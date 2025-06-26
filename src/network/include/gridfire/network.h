@@ -25,12 +25,15 @@
 #include "fourdst/logging/logging.h"
 #include "fourdst/config/config.h"
 #include "fourdst/composition/species.h"
-#include "quill/Logger.h"
 #include "fourdst/composition/composition.h"
-#include "gridfire/reaclib.h"
+#include "fourdst/constants/const.h"
+
+#include "gridfire/reaction/reaction.h"
+
+#include "quill/Logger.h"
+
 #include <unordered_map>
 
-#include "fourdst/constants/const.h"
 
 namespace gridfire {
 
@@ -127,7 +130,7 @@ namespace gridfire {
              * @param netIn Input parameters for the network evaluation.
              * @return NetOut Output results from the network evaluation.
              */
-            virtual NetOut evaluate(const NetIn &netIn);
+            virtual NetOut evaluate(const NetIn &netIn) = 0;
 
             virtual bool isStiff() const { return m_stiff; }
             virtual void setStiff(const bool stiff) { m_stiff = stiff; }
@@ -143,105 +146,9 @@ namespace gridfire {
             bool m_stiff = false; ///< Flag indicating if the network is stiff
     };
 
-    class LogicalReaction {
-    public:
-        explicit LogicalReaction(const std::vector<reaclib::REACLIBReaction> &reactions);
-        explicit LogicalReaction(const reaclib::REACLIBReaction &reaction);
-        void add_reaction(const reaclib::REACLIBReaction& reaction);
 
-        template <typename T>
-        [[nodiscard]] T calculate_rate(const T T9) const {
-            T sum = static_cast<T>(0.0);
-            const T T913 = CppAD::pow(T9, 1.0/3.0);
-            const T T953 = CppAD::pow(T9, 5.0/3.0);
-            const T logT9 = CppAD::log(T9);
-            for (const auto& rate : m_rates) {
-                const T exponent = rate.a0 +
-                       rate.a1 / T9 +
-                       rate.a2 / T913 +
-                       rate.a3 * T913 +
-                       rate.a4 * T9 +
-                       rate.a5 * T953 +
-                       rate.a6 * logT9;
-                sum += CppAD::exp(exponent);
-            }
-            return sum;
-        }
-
-        [[nodiscard]] const std::string& id() const {return std::string(m_peID); }
-
-        [[nodiscard]] std::string_view peName() const { return m_peID; }
-
-        [[nodiscard]] int chapter() const { return m_chapter; }
-
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& reactants() const { return m_reactants; }
-
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& products() const { return m_products; }
-
-        [[nodiscard]] double qValue() const { return m_qValue; }
-
-        [[nodiscard]] bool is_reverse() const { return m_reverse; }
-
-
-        auto begin();
-        auto begin() const;
-        auto end();
-        auto end() const;
-
-    private:
-        const quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::string_view m_peID;
-        std::vector<fourdst::atomic::Species> m_reactants; ///< Reactants of the reaction
-        std::vector<fourdst::atomic::Species> m_products; ///< Products of the reaction
-        double m_qValue = 0.0; ///< Q-value of the reaction
-        bool m_reverse = false; ///< True if the reaction is reverse
-        int m_chapter;
-
-        std::vector<reaclib::RateFitSet> m_rates;
-
-    };
-
-    class LogicalReactionSet {
-    public:
-        LogicalReactionSet() = default;
-        explicit LogicalReactionSet(const std::vector<LogicalReaction>& reactions);
-        explicit LogicalReactionSet(const std::vector<reaclib::REACLIBReaction>& reactions);
-        explicit LogicalReactionSet(const reaclib::REACLIBReactionSet& reactionSet);
-
-        void add_reaction(const LogicalReaction& reaction);
-        void add_reaction(const reaclib::REACLIBReaction& reaction);
-
-        void remove_reaction(const LogicalReaction& reaction);
-
-        [[nodiscard]] bool contains(const std::string_view& id) const;
-        [[nodiscard]] bool contains(const LogicalReaction& reactions) const;
-        [[nodiscard]] bool contains(const reaclib::REACLIBReaction& reaction) const;
-
-        [[nodiscard]] size_t size() const;
-
-        void sort(double T9=1.0);
-
-        bool contains_species(const fourdst::atomic::Species &species) const;
-        bool contains_reactant(const fourdst::atomic::Species &species) const;
-        bool contains_product(const fourdst::atomic::Species &species) const;
-
-        [[nodiscard]] const LogicalReaction& operator[](size_t index) const;
-        [[nodiscard]] const LogicalReaction& operator[](const std::string_view& id) const;
-
-        auto begin();
-        auto begin() const;
-        auto end();
-        auto end() const;
-
-
-    private:
-        const quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<LogicalReaction> m_reactions;
-        std::unordered_map<std::string_view, LogicalReaction&> m_reactionNameMap;
-    };
-
-    LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition);
-    LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, double culling, double T9 = 1.0);
+    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse);
+    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network_from_file(const std::string& filename, bool reverse);
 
 
 } // namespace nuclearNetwork

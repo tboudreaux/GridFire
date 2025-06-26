@@ -28,7 +28,7 @@
 #include "fourdst/config/config.h"
 #include "quill/LogMacros.h"
 
-#include "gridfire/approx8.h"
+#include "gridfire/engine/engine_approx8.h"
 #include "gridfire/network.h"
 
 /* Nuclear reaction network in cgs units based on Frank Timmes' "approx8".
@@ -131,14 +131,14 @@ namespace gridfire::approx8{
 		return rate_fit(T9,a);
 	}
 
-	// he3(he3,2p)he4
+	// he3(he3,2p)he4 ** (missing both coefficients but have a reaction)
 	double he3he4_rate(const vec7 &T9){
 		constexpr vec7 a1 = {1.560990e+01,0.000000e+00,-1.282710e+01,-3.082250e-02,-6.546850e-01,8.963310e-02,-6.666670e-01};
 		constexpr vec7 a2 = {1.770750e+01,0.000000e+00,-1.282710e+01,-3.812600e+00,9.422850e-02,-3.010180e-03,1.333330e+00};
 		return rate_fit(T9,a1) + rate_fit(T9,a2);
 	}
 
-	// he4 + he4 + he4 -> c12
+	// he4 + he4 + he4 -> c12 ** (missing middle coefficient but have other two)
 	double triple_alpha_rate(const vec7 &T9){
 		constexpr vec7 a1 = {-9.710520e-01,0.000000e+00,-3.706000e+01,2.934930e+01,-1.155070e+02,-1.000000e+01,-1.333330e+00};
 		constexpr vec7 a2 = {-1.178840e+01,-1.024460e+00,-2.357000e+01,2.048860e+01,-1.298820e+01,-2.000000e+01,-2.166670e+00};
@@ -153,7 +153,7 @@ namespace gridfire::approx8{
 		return rate_fit(T9,a1) + rate_fit(T9,a2);
 	}
 
-	// c12 + he4 -> o16
+	// c12 + he4 -> o16 ** (missing first coefficient but have the second)
 	double c12a_rate(const vec7 &T9){
 		constexpr vec7 a1={6.965260e+01,-1.392540e+00,5.891280e+01,-1.482730e+02,9.083240e+00,-5.410410e-01,7.035540e+01};
 		constexpr vec7 a2={2.546340e+02,-1.840970e+00,1.034110e+02,-4.205670e+02,6.408740e+01,-1.246240e+01,1.373030e+02};
@@ -508,26 +508,18 @@ namespace gridfire::approx8{
 
 	vector_type Approx8Network::convert_netIn(const NetIn &netIn) {
 		vector_type y(Approx8Net::nVar, 0.0);
-		y[Approx8Net::ih1] = netIn.composition.getMassFraction("H-1");
-		y[Approx8Net::ihe3] = netIn.composition.getMassFraction("He-3");
-		y[Approx8Net::ihe4] = netIn.composition.getMassFraction("He-4");
-		y[Approx8Net::ic12] = netIn.composition.getMassFraction("C-12");
-		y[Approx8Net::in14] = netIn.composition.getMassFraction("N-14");
-		y[Approx8Net::io16] = netIn.composition.getMassFraction("O-16");
-		y[Approx8Net::ine20] = netIn.composition.getMassFraction("Ne-20");
-		y[Approx8Net::img24] = netIn.composition.getMassFraction("Mg-24");
+		y[Approx8Net::ih1] = netIn.composition.getNumberFraction("H-1");
+		std::cout << "Approx8::convert_netIn -> H-1 fraction: " << y[Approx8Net::ih1] << std::endl;
+		y[Approx8Net::ihe3] = netIn.composition.getNumberFraction("He-3");
+		y[Approx8Net::ihe4] = netIn.composition.getNumberFraction("He-4");
+		y[Approx8Net::ic12] = netIn.composition.getNumberFraction("C-12");
+		y[Approx8Net::in14] = netIn.composition.getNumberFraction("N-14");
+		y[Approx8Net::io16] = netIn.composition.getNumberFraction("O-16");
+		y[Approx8Net::ine20] = netIn.composition.getNumberFraction("Ne-20");
+		y[Approx8Net::img24] = netIn.composition.getNumberFraction("Mg-24");
 		y[Approx8Net::iTemp] = netIn.temperature;
 		y[Approx8Net::iDensity] = netIn.density;
 		y[Approx8Net::iEnergy] = netIn.energy;
-
-		double ySum = 0.0;
-		for (int i = 0; i < Approx8Net::nIso; i++) {
-			y[i] /= Approx8Net::aIon[i];
-			ySum += y[i];
-		 }
-		for (int i = 0; i < Approx8Net::nIso; i++) {
-			y[i] /= ySum;
-		}
 
 		return y;
 	}
