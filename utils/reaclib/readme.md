@@ -18,7 +18,7 @@ Assuming you download that file to your ~/Downloads directory, and it is called 
 `results123` then usage is as simple as
 
 ```bash
-python generateEmbeddedReaclibHeader.py ~/Downloads/results123 -o reaclib.h -c 1e-8 -T 0.1
+python format.py ~/Downloads/results123 -o reaclib.h
 ```
 
 This will generate the `reaclib.h` header file in your current directory.

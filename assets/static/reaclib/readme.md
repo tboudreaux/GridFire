@@ -1,1 +1,1 @@
-Use the utility `utils/reaclib/generateEmbeddedReaclibHeader.py` to generate reaclib.h
+Use the utility `utils/reaclib/format.py` to generate reacitons.bin

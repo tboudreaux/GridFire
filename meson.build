@@ -24,6 +24,10 @@ project('GridFire', 'cpp', version: '0.0.1a', default_options: ['cpp_std=c++23']
 add_project_arguments('-fvisibility=default', language: 'cpp')
 # We disable these because of CppAD
 add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+
+# For Eigen
+add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')
+
 llevel = get_option('log_level')
 
 logbase='QUILL_COMPILE_ACTIVE_LOG_LEVEL_'
@@ -52,9 +56,6 @@ add_project_arguments(log_argument, language: 'cpp')
 cpp = meson.get_compiler('cpp')
 
 subdir('build-config')
-subdir('assets/static')
-
-
 
 subdir('src')
 subdir('tests')
@@ -64,7 +65,13 @@ pkg.generate(
     name: 'gridfire',
     description: 'GridFire nuclear reaction network solver',
     version: meson.project_version(),
-    libraries: [libnetwork, libcomposition, libconfig, libconst, liblogging],
+    libraries: [
+        libnetwork,
+        libcomposition,
+        libconfig,
+        libconst,
+        liblogging
+    ],
     subdirs: ['gridfire'],
     filebase: 'gridfire',
     install_dir: join_paths(get_option('libdir'), 'pkgconfig')
