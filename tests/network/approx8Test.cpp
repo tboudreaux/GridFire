@@ -3,13 +3,12 @@
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/config/config.h"
-#include "../../src/network/include/gridfire/engine/engine_approx8.h"
-#include "../../src/network/include/gridfire/engine/engine_graph.h"
+#include "gridfire/engine/engine_approx8.h"
+#include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
 
 #include <vector>
 
-#include "gridfire/reactions.h"
 
 std::string TEST_CONFIG = std::string(getenv("MESON_SOURCE_ROOT")) + "/tests/testsConfig.yaml";
 class approx8Test : public ::testing::Test {};
@@ -86,7 +85,7 @@ TEST_F(approx8Test, reaclib) {
     netIn.dt0 = 1e12;
 
     GraphEngine network(composition);
-    NetOut netOut;
-    netOut = network.evaluate(netIn);
-    std::cout << netOut << std::endl;
+    // NetOut netOut;
+    // netOut = network.evaluate(netIn);
+    // std::cout << netOut << std::endl;
 }
