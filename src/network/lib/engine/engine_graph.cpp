@@ -18,7 +18,6 @@
 #include <vector>
 #include <fstream>
 
-#include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/odeint.hpp>
 
 
@@ -30,7 +29,7 @@ namespace gridfire {
         syncInternalMaps();
     }
 
-    GraphEngine::GraphEngine(reaction::REACLIBLogicalReactionSet reactions) :
+    GraphEngine::GraphEngine(reaction::LogicalReactionSet reactions) :
         m_reactions(std::move(reactions)) {
             syncInternalMaps();
         }
@@ -61,21 +60,22 @@ namespace gridfire {
         std::set<std::string_view> uniqueSpeciesNames;
 
         for (const auto& reaction: m_reactions) {
-            for (const auto& reactant: reaction->reactants()) {
+            for (const auto& reactant: reaction.reactants()) {
                 uniqueSpeciesNames.insert(reactant.name());
             }
-            for (const auto& product: reaction->products()) {
+            for (const auto& product: reaction.products()) {
                 uniqueSpeciesNames.insert(product.name());
             }
         }
 
         for (const auto& name: uniqueSpeciesNames) {
-            auto it = fourdst::atomic::species.find(name);
+            auto it = fourdst::atomic::species.find(std::string(name));
             if (it != fourdst::atomic::species.end()) {
                 m_networkSpecies.push_back(it->second);
                 m_networkSpeciesMap.insert({name, it->second});
             } else {
                 LOG_ERROR(m_logger, "Species '{}' not found in global atomic species database.", name);
+                m_logger->flush_log();
                 throw std::runtime_error("Species not found in global atomic species database: " + std::string(name));
             }
         }
@@ -85,8 +85,8 @@ namespace gridfire {
     void GraphEngine::populateReactionIDMap() {
         LOG_TRACE_L1(m_logger, "Populating reaction ID map for REACLIB graph network (serif::network::GraphNetwork)...");
         m_reactionIDMap.clear();
-        for (const auto& reaction: m_reactions) {
-            m_reactionIDMap.emplace(reaction->id(), reaction.get());
+        for (auto& reaction: m_reactions) {
+            m_reactionIDMap.emplace(reaction.id(), &reaction);
         }
         LOG_TRACE_L1(m_logger, "Populated {} reactions in the reaction ID map.", m_reactionIDMap.size());
     }
@@ -111,13 +111,13 @@ namespace gridfire {
     // --- Basic Accessors and Queries ---
     const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
         // Returns a constant reference to the vector of unique species in the network.
-        LOG_DEBUG(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
+        LOG_TRACE_L3(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
         return m_networkSpecies;
     }
 
-    const reaction::REACLIBLogicalReactionSet& GraphEngine::getNetworkReactions() const {
+    const reaction::LogicalReactionSet& GraphEngine::getNetworkReactions() const {
         // Returns a constant reference to the set of reactions in the network.
-        LOG_DEBUG(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
+        LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
         return m_reactions;
     }
 
@@ -139,7 +139,7 @@ namespace gridfire {
             uint64_t totalProductZ = 0;
 
             // Calculate total A and Z for reactants
-            for (const auto& reactant : reaction->reactants()) {
+            for (const auto& reactant : reaction.reactants()) {
                 auto it = m_networkSpeciesMap.find(reactant.name());
                 if (it != m_networkSpeciesMap.end()) {
                     totalReactantA += it->second.a();
@@ -148,13 +148,13 @@ namespace gridfire {
                     // This scenario indicates a severe data integrity issue:
                     // a reactant is part of a reaction but not in the network's species map.
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Reactant species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             reactant.name(), reaction->id());
+                             reactant.name(), reaction.id());
                     return false;
                 }
             }
 
             // Calculate total A and Z for products
-            for (const auto& product : reaction->products()) {
+            for (const auto& product : reaction.products()) {
                 auto it = m_networkSpeciesMap.find(product.name());
                 if (it != m_networkSpeciesMap.end()) {
                     totalProductA += it->second.a();
@@ -162,7 +162,7 @@ namespace gridfire {
                 } else {
                     // Similar critical error for product species
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Product species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             product.name(), reaction->id());
+                             product.name(), reaction.id());
                     return false;
                 }
             }
@@ -170,12 +170,12 @@ namespace gridfire {
             // Compare totals for conservation
             if (totalReactantA != totalProductA) {
                 LOG_ERROR(m_logger, "Mass number (A) not conserved for reaction '{}': Reactants A={} vs Products A={}.",
-                         reaction->id(), totalReactantA, totalProductA);
+                         reaction.id(), totalReactantA, totalProductA);
                 return false;
             }
             if (totalReactantZ != totalProductZ) {
                 LOG_ERROR(m_logger, "Atomic number (Z) not conserved for reaction '{}': Reactants Z={} vs Products Z={}.",
-                         reaction->id(), totalReactantZ, totalProductZ);
+                         reaction.id(), totalReactantZ, totalProductZ);
                 return false;
             }
         }
@@ -187,7 +187,7 @@ namespace gridfire {
     void GraphEngine::validateComposition(const fourdst::composition::Composition &composition, double culling, double T9) {
         // Check if the requested network has already been cached.
         // PERF: Rebuilding this should be pretty fast but it may be a good point of optimization in the future.
-        const reaction::REACLIBLogicalReactionSet validationReactionSet = build_reaclib_nuclear_network(composition, false);
+        const reaction::LogicalReactionSet validationReactionSet = build_reaclib_nuclear_network(composition, false);
         // TODO: need some more robust method here to
         //       A. Build the basic network from the composition's species with non zero mass fractions.
         //       B. rebuild a new composition from the reaction set's reactants + products (with the mass fractions from the things that are only products set to 0)
@@ -199,7 +199,7 @@ namespace gridfire {
         // This allows for dynamic network modification while retaining caching for networks which are very similar.
         if (validationReactionSet != m_reactions) {
             LOG_DEBUG(m_logger, "Reaction set not cached. Rebuilding the reaction set for T9={} and culling={}.", T9, culling);
-            m_reactions = validationReactionSet;
+            m_reactions = std::move(validationReactionSet);
             syncInternalMaps(); // Re-sync internal maps after updating reactions. Note this will also retrace the AD tape.
         }
     }
@@ -221,7 +221,7 @@ namespace gridfire {
         size_t reactionColumnIndex = 0;
         for (const auto& reaction : m_reactions) {
             // Get the net stoichiometry for the current reaction
-            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = reaction->stoichiometry();
+            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = reaction.stoichiometry();
 
             // Iterate through the species and their coefficients in the stoichiometry map
             for (const auto& [species, coefficient] : netStoichiometry) {
@@ -234,7 +234,8 @@ namespace gridfire {
                 } else {
                     // This scenario should ideally not happen if m_networkSpeciesMap and m_speciesToIndexMap are correctly synced
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Species '{}' from reaction '{}' stoichiometry not found in species to index map.",
-                             species.name(), reaction->id());
+                             species.name(), reaction.id());
+                    m_logger -> flush_log();
                     throw std::runtime_error("Species not found in species to index map: " + std::string(species.name()));
                 }
             }
@@ -255,8 +256,8 @@ namespace gridfire {
 
     StepDerivatives<ADDouble> GraphEngine::calculateAllDerivatives(
         const std::vector<ADDouble> &Y_in,
-        const ADDouble T9,
-        const ADDouble rho
+        const ADDouble &T9,
+        const ADDouble &rho
     ) const {
         return calculateAllDerivatives<ADDouble>(Y_in, T9, rho);
     }
@@ -300,7 +301,7 @@ namespace gridfire {
                 }
             }
         }
-        LOG_DEBUG(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+        LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 
     double GraphEngine::getJacobianMatrixEntry(const int i, const int j) const {
@@ -309,7 +310,7 @@ namespace gridfire {
 
     std::unordered_map<fourdst::atomic::Species, int> GraphEngine::getNetReactionStoichiometry(
         const reaction::Reaction &reaction
-    ) const {
+    ) {
         return reaction.stoichiometry();
     }
 
@@ -326,6 +327,7 @@ namespace gridfire {
         std::ofstream dotFile(filename);
         if (!dotFile.is_open()) {
             LOG_ERROR(m_logger, "Failed to open file for writing: {}", filename);
+            m_logger->flush_log();
             throw std::runtime_error("Failed to open file for writing: " + filename);
         }
 
@@ -345,19 +347,19 @@ namespace gridfire {
         dotFile << "    // --- Reaction Edges ---\n";
         for (const auto& reaction : m_reactions) {
             // Create a unique ID for the reaction node
-            std::string reactionNodeId = "reaction_" + std::string(reaction->id());
+            std::string reactionNodeId = "reaction_" + std::string(reaction.id());
 
             // Define the reaction node (small, black dot)
             dotFile << "    \"" << reactionNodeId << "\" [shape=point, fillcolor=black, width=0.1, height=0.1, label=\"\"];\n";
 
             // Draw edges from reactants to the reaction node
-            for (const auto& reactant : reaction->reactants()) {
+            for (const auto& reactant : reaction.reactants()) {
                 dotFile << "    \"" << reactant.name() << "\" -> \"" << reactionNodeId << "\";\n";
             }
 
             // Draw edges from the reaction node to products
-            for (const auto& product : reaction->products()) {
-                dotFile << "    \"" << reactionNodeId << "\" -> \"" << product.name() << "\" [label=\"" << reaction->qValue() << " MeV\"];\n";
+            for (const auto& product : reaction.products()) {
+                dotFile << "    \"" << reactionNodeId << "\" -> \"" << product.name() << "\" [label=\"" << reaction.qValue() << " MeV\"];\n";
             }
             dotFile << "\n";
         }
@@ -373,36 +375,32 @@ namespace gridfire {
         std::ofstream csvFile(filename, std::ios::out | std::ios::trunc);
         if (!csvFile.is_open()) {
             LOG_ERROR(m_logger, "Failed to open file for writing: {}", filename);
+            m_logger->flush_log();
             throw std::runtime_error("Failed to open file for writing: " + filename);
         }
         csvFile << "Reaction;Reactants;Products;Q-value;sources;rates\n";
         for (const auto& reaction : m_reactions) {
             // Dynamic cast to REACLIBReaction to access specific properties
-            csvFile << reaction->id() << ";";
+            csvFile << reaction.id() << ";";
             // Reactants
             int count = 0;
-            for (const auto& reactant : reaction->reactants()) {
+            for (const auto& reactant : reaction.reactants()) {
                 csvFile << reactant.name();
-                if (++count < reaction->reactants().size()) {
+                if (++count < reaction.reactants().size()) {
                     csvFile << ",";
                 }
             }
             csvFile << ";";
             count = 0;
-            for (const auto& product : reaction->products()) {
+            for (const auto& product : reaction.products()) {
                 csvFile << product.name();
-                if (++count < reaction->products().size()) {
+                if (++count < reaction.products().size()) {
                     csvFile << ",";
                 }
             }
-            csvFile << ";" << reaction->qValue() << ";";
+            csvFile << ";" << reaction.qValue() << ";";
             // Reaction coefficients
-            auto* reaclibReaction = dynamic_cast<const reaction::REACLIBLogicalReaction*>(reaction.get());
-            if (!reaclibReaction) {
-                LOG_ERROR(m_logger, "Failed to cast Reaction to REACLIBLogicalReaction in GraphNetwork::exportToCSV().");
-                throw std::runtime_error("Failed to cast Reaction to REACLIBLogicalReaction in GraphNetwork::exportToCSV(). This should not happen, please check your reaction setup.");
-            }
-            auto sources = reaclibReaction->sources();
+            auto sources = reaction.sources();
             count = 0;
             for (const auto& source : sources) {
                 csvFile << source;
@@ -413,9 +411,9 @@ namespace gridfire {
             csvFile << ";";
             // Reaction coefficients
             count = 0;
-            for (const auto& rates : *reaclibReaction) {
+            for (const auto& rates : reaction) {
                 csvFile << rates;
-                if (++count < reaclibReaction->size()) {
+                if (++count < reaction.size()) {
                     csvFile << ",";
                 }
             }
@@ -448,6 +446,7 @@ namespace gridfire {
         const size_t numSpecies = m_networkSpecies.size();
         if (numSpecies == 0) {
             LOG_ERROR(m_logger, "Cannot record AD tape: No species in the network.");
+            m_logger->flush_log();
             throw std::runtime_error("Cannot record AD tape: No species in the network.");
         }
         const size_t numADInputs = numSpecies + 2; // Note here that by not letting T9 and rho be independent variables, we are constraining the network to a constant temperature and density during each evaluation.

@@ -21,6 +21,16 @@
 namespace gridfire::solver {
 
     NetOut QSENetworkSolver::evaluate(const NetIn &netIn) {
+        // --- Use the policy to decide whether to update the view ---
+        if (shouldUpdateView(netIn)) {
+            LOG_DEBUG(m_logger, "Solver update policy triggered, network view updating...");
+            m_engine.update(netIn);
+            LOG_DEBUG(m_logger, "Network view updated!");
+
+            m_lastSeenConditions = netIn;
+            m_isViewInitialized = true;
+        }
+        m_engine.generateJacobianMatrix(netIn.MolarAbundance(), netIn.temperature / 1e9, netIn.density);
         using state_type = boost::numeric::ublas::vector<double>;
         using namespace boost::numeric::odeint;
 
@@ -124,10 +134,19 @@ namespace gridfire::solver {
 
         for (size_t i = 0; i < m_engine.getNetworkSpecies().size(); ++i) {
             const auto& species = m_engine.getNetworkSpecies()[i];
-            const double timescale = speciesTimescale[species];
+            const double network_timescale = speciesTimescale.at(species);
             const double abundance = Y[i];
 
-            if (std::isinf(timescale) || abundance < abundanceCutoff || timescale <= timescaleCutoff) {
+            double decay_timescale = std::numeric_limits<double>::infinity();
+            const double half_life = species.halfLife();
+            if (half_life > 0 && !std::isinf(half_life)) {
+                constexpr double LN2 = 0.69314718056;
+                decay_timescale = half_life / LN2;
+            }
+
+            const double final_timescale = std::min(network_timescale, decay_timescale);
+
+            if (std::isinf(final_timescale) || abundance < abundanceCutoff || final_timescale <= timescaleCutoff) {
                 QSESpeciesIndices.push_back(i);
             } else {
                 dynamicSpeciesIndices.push_back(i);
@@ -171,59 +190,13 @@ namespace gridfire::solver {
         const double rho,
         const dynamicQSESpeciesIndices &indices
     ) const {
-        std::vector<double> Y_dyn;
-        Eigen::VectorXd Y_qse_initial(indices.QSESpeciesIndices.size());
-        for (const auto& i : indices.dynamicSpeciesIndices) { Y_dyn.push_back(Y[i]); }
-        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
-            Y_qse_initial(i) = Y[indices.QSESpeciesIndices[i]];
-            if (Y_qse_initial(i) < 1.0e-99) { Y_qse_initial(i) = 1.0e-99; }
-        }
+        LOG_TRACE_L1(m_logger, "Calculating steady state abundances for QSE species...");
+        LOG_WARNING(m_logger, "QSE solver logic not yet implemented, assuming all QSE species have 0 abundance.");
 
-        Eigen::VectorXd v_qse = Y_qse_initial.array().log();
-
-        EigenFunctor<double> qse_problem(m_engine, Y_dyn, indices.dynamicSpeciesIndices, indices.QSESpeciesIndices, T9, rho);
-        LOG_INFO(m_logger, "--- QSE Pre-Solve Diagnostics ---");
-
-        Eigen::VectorXd f_initial(indices.QSESpeciesIndices.size());
-        qse_problem(v_qse, f_initial);
-        LOG_INFO(m_logger, "Initial Guess ||f||: {:0.4e}", f_initial.norm());
-
-        Eigen::MatrixXd J_initial(indices.QSESpeciesIndices.size(), indices.QSESpeciesIndices.size());
-        qse_problem.df(v_qse, J_initial);
-        const Eigen::JacobiSVD<Eigen::MatrixXd> svd(J_initial);
-        double cond = svd.singularValues().maxCoeff() / svd.singularValues().minCoeff();
-        LOG_INFO(m_logger, "Initial Jacobian Condition Number: {:0.4e}", cond);
-        LOG_INFO(m_logger, "Starting QSE solve...");
-
-        Eigen::HybridNonLinearSolver<EigenFunctor<double>> solver(qse_problem);
-        solver.parameters.xtol = 1.0e-8; // Set tolerance
-
-        // 5. Run the solver. It will modify v_qse in place.
-        const int eigenStatus = solver.solve(v_qse);
-
-        // 6. Check for convergence and return the result
-        if(eigenStatus != Eigen::Success) {
-            LOG_WARNING(m_logger, "--- QSE SOLVER FAILED ---");
-            LOG_WARNING(m_logger, "Eigen status code: {}", eigenStatus);
-            LOG_WARNING(m_logger, "Iterations performed: {}", solver.iter);
-
-            // Log the final state that caused the failure
-            Eigen::VectorXd Y_qse_final_fail = v_qse.array().exp();
-            for(long i=0; i<v_qse.size(); ++i) {
-                LOG_WARNING(m_logger, "Final v_qse[{}]: {:0.4e} -> Y_qse[{}]: {:0.4e}", i, v_qse(i), i, Y_qse_final_fail(i));
-            }
-
-            // Log the residual at the final state
-            Eigen::VectorXd f_final(indices.QSESpeciesIndices.size());
-            qse_problem(v_qse, f_final);
-            LOG_WARNING(m_logger, "Final ||f||: {:0.4e}", f_final.norm());
-
-            throw std::runtime_error("Eigen QSE solver did not converge.");
-        }
-        LOG_INFO(m_logger, "Eigen QSE solver converged in {} iterations.", solver.iter);
-
-        return v_qse.array().exp();
-
+        // --- Prepare the QSE species vector ---
+        Eigen::VectorXd v_qse(indices.QSESpeciesIndices.size());
+        v_qse.setZero();
+        return v_qse.array();
     }
 
     NetOut QSENetworkSolver::initializeNetworkWithShortIgnition(const NetIn &netIn) const {
@@ -265,6 +238,48 @@ namespace gridfire::solver {
         return postIgnition;
     }
 
+    bool QSENetworkSolver::shouldUpdateView(const NetIn &conditions) const {
+        // Policy 1: If the view has never been initialized, we must update.
+        if (!m_isViewInitialized) {
+            return true;
+        }
+
+        // Policy 2: Check for significant relative change in temperature.
+        // Reaction rates are exponentially sensitive to temperature, so we use a tight threshold.
+        const double temp_threshold = m_config.get<double>("gridfire:solver:policy:temp_threshold", 0.05); // 5%
+        const double temp_relative_change = std::abs(conditions.temperature - m_lastSeenConditions.temperature) / m_lastSeenConditions.temperature;
+        if (temp_relative_change > temp_threshold) {
+            LOG_DEBUG(m_logger, "Temperature changed by {:.1f}%, triggering view update.", temp_relative_change * 100);
+            return true;
+        }
+
+        // Policy 3: Check for significant relative change in density.
+        const double rho_threshold = m_config.get<double>("gridfire:solver:policy:rho_threshold", 0.10); // 10%
+        const double rho_relative_change = std::abs(conditions.density - m_lastSeenConditions.density) / m_lastSeenConditions.density;
+        if (rho_relative_change > rho_threshold) {
+            LOG_DEBUG(m_logger, "Density changed by {:.1f}%, triggering view update.", rho_relative_change * 100);
+            return true;
+        }
+
+        // Policy 4: Check for fuel depletion.
+        // If a primary fuel source changes significantly, the network structure may change.
+        const double fuel_threshold = m_config.get<double>("gridfire:solver:policy:fuel_threshold", 0.15); // 15%
+
+        // Example: Check hydrogen abundance
+        const double h1_old = m_lastSeenConditions.composition.getMassFraction("H-1");
+        const double h1_new = conditions.composition.getMassFraction("H-1");
+        if (h1_old > 1e-12) { // Avoid division by zero
+            const double h1_relative_change = std::abs(h1_new - h1_old) / h1_old;
+            if (h1_relative_change > fuel_threshold) {
+                LOG_DEBUG(m_logger, "H-1 mass fraction changed by {:.1f}%, triggering view update.", h1_relative_change * 100);
+                return true;
+            }
+        }
+
+        // If none of the above conditions are met, the current view is still good enough.
+        return false;
+    }
+
     void QSENetworkSolver::RHSFunctor::operator()(
         const boost::numeric::ublas::vector<double> &YDynamic,
         boost::numeric::ublas::vector<double> &dYdtDynamic,
@@ -294,6 +309,7 @@ namespace gridfire::solver {
         namespace ublas = boost::numeric::ublas;
         namespace odeint = boost::numeric::odeint;
         using fourdst::composition::Composition;
+
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
         const unsigned long numSpecies = m_engine.getNetworkSpecies().size();
@@ -363,7 +379,7 @@ namespace gridfire::solver {
         const std::vector<double> y(Y.begin(), m_numSpecies + Y.begin());
         auto [dydt, eps] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
         dYdt.resize(m_numSpecies + 1);
-        std::ranges::copy(dydt, dydt.begin());
+        std::ranges::copy(dydt, dYdt.begin());
         dYdt(m_numSpecies) = eps;
     }
 
@@ -373,10 +389,10 @@ namespace gridfire::solver {
         double t,
         boost::numeric::ublas::vector<double> &dfdt
     ) const {
-        J.resize(m_numSpecies + 1, m_numSpecies + 1);
+        J.resize(m_numSpecies+1, m_numSpecies+1);
         J.clear();
-        for (int i = 0; i < m_numSpecies + 1; ++i) {
-            for (int j = 0; j < m_numSpecies + 1; ++j) {
+        for (int i = 0; i < m_numSpecies; ++i) {
+            for (int j = 0; j < m_numSpecies; ++j) {
                 J(i, j) = m_engine.getJacobianMatrixEntry(i, j);
             }
         }

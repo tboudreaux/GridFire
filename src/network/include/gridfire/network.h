@@ -50,23 +50,6 @@ namespace gridfire {
         {UNKNOWN, "Unknown"}
     };
 
-    /**
-     * @struct NetIn
-     * @brief Input structure for the network evaluation.
-     *
-     * This structure holds the input parameters required for the network evaluation.
-     *
-     * Example usage:
-     * @code
-     * nuclearNetwork::NetIn netIn;
-     * netIn.composition = {1.0, 0.0, 0.0};
-     * netIn.tmax = 1.0e6;
-     * netIn.dt0 = 1.0e-3;
-     * netIn.temperature = 1.0e8;
-     * netIn.density = 1.0e5;
-     * netIn.energy = 1.0e12;
-     * @endcode
-     */
     struct NetIn {
         fourdst::composition::Composition composition; ///< Composition of the network
         double tMax; ///< Maximum time
@@ -75,22 +58,10 @@ namespace gridfire {
         double density; ///< Density in g/cm^3
         double energy; ///< Energy in ergs
         double culling = 0.0; ///< Culling threshold for reactions (default is 0.0, meaning no culling)
+
+        std::vector<double> MolarAbundance() const;
     };
 
-    /**
-     * @struct NetOut
-     * @brief Output structure for the network evaluation.
-     * 
-     * This structure holds the output results from the network evaluation.
-     * 
-     * Example usage:
-     * @code
-     * nuclearNetwork::NetOut netOut = network.evaluate(netIn);
-     * std::vector<double> composition = netOut.composition;
-     * int steps = netOut.num_steps;
-     * double energy = netOut.energy;
-     * @endcode
-     */
     struct NetOut {
         fourdst::composition::Composition composition; ///< Composition of the network after evaluation
         int num_steps; ///< Number of steps taken in the evaluation
@@ -102,20 +73,6 @@ namespace gridfire {
         }
     };
 
-    /**
-     * @class Network
-     * @brief Class for network evaluation.
-     * 
-     * This class provides methods to evaluate the network based on the input parameters.
-     * 
-     * Example usage:
-     * @code
-     * nuclearNetwork::Network network;
-     * nuclearNetwork::NetIn netIn;
-     * // Set netIn parameters...
-     * nuclearNetwork::NetOut netOut = network.evaluate(netIn);
-     * @endcode
-     */
     class Network {
         public:
             explicit Network(const NetworkFormat format = NetworkFormat::APPROX8);
@@ -147,8 +104,7 @@ namespace gridfire {
     };
 
 
-    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse);
-    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network_from_file(const std::string& filename, bool reverse);
+    reaction::LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse);
 
 
 } // namespace nuclearNetwork

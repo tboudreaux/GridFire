@@ -19,15 +19,25 @@
 //
 // *********************************************************************** */
 #include "gridfire/network.h"
-#include "gridfire/reactions.h"
-#include "../include/gridfire/reaction/reaction.h"
+#include "gridfire/reaction/reaclib.h"
+#include "gridfire/reaction/reaction.h"
 
 #include <ranges>
-#include <fstream>
 
 #include "quill/LogMacros.h"
 
 namespace gridfire {
+    std::vector<double> NetIn::MolarAbundance() const {
+        std::vector <double> y;
+        y.reserve(composition.getRegisteredSymbols().size());
+        const auto [fst, snd] = composition.getComposition();
+        for (const auto &name: fst | std::views::keys) {
+            y.push_back(composition.getMolarAbundance(name));
+        }
+        return y;
+    }
+
+
     Network::Network(const NetworkFormat format) :
         m_config(fourdst::config::Config::getInstance()),
         m_logManager(fourdst::logging::LogManager::getInstance()),
@@ -36,6 +46,7 @@ namespace gridfire {
         m_constants(fourdst::constant::Constants::getInstance()){
         if (format == NetworkFormat::UNKNOWN) {
             LOG_ERROR(m_logger, "nuclearNetwork::Network::Network() called with UNKNOWN format");
+            m_logger->flush_log();
             throw std::runtime_error("nuclearNetwork::Network::Network() called with UNKNOWN format");
         }
     }
@@ -50,17 +61,12 @@ namespace gridfire {
         return oldFormat;
     }
 
-    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse) {
+    reaction::LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse) {
         using namespace reaction;
-        std::vector<reaction::REACLIBReaction> reaclibReactions;
+        std::vector<Reaction> reaclibReactions;
         auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
-        if (!reaclib::s_initialized) {
-            LOG_DEBUG(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
-            reaclib::initializeAllReaclibReactions();
-        }
-
-        for (const auto &reaction: reaclib::s_all_reaclib_reactions | std::views::values) {
+        for (const auto &reaction: reaclib::get_all_reactions()) {
             if (reaction.is_reverse() != reverse) {
                 continue; // Skip reactions that do not match the requested direction
             }
@@ -77,8 +83,8 @@ namespace gridfire {
                 reaclibReactions.push_back(reaction);
             }
         }
-        const REACLIBReactionSet reactionSet(reaclibReactions);
-        return REACLIBLogicalReactionSet(reactionSet);
+        const ReactionSet reactionSet(reaclibReactions);
+        return LogicalReactionSet(reactionSet);
     }
 
     // Trim whitespace from both ends of a string
@@ -95,63 +101,6 @@ namespace gridfire {
         auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
                                  [](unsigned char ch){ return !std::isspace(ch); });
         return std::string(startIt, ritr.base());
-    }
-
-    reaction::REACLIBLogicalReactionSet build_reaclib_nuclear_network_from_file(const std::string& filename, bool reverse) {
-        const auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<std::string> reactionPENames;
-        std::ifstream infile(filename, std::ios::in);
-        if (!infile.is_open()) {
-            LOG_ERROR(logger, "Failed to open network definition file: {}", filename);
-            throw std::runtime_error("Failed to open network definition file: " + filename);
-        }
-        std::string line;
-        while (std::getline(infile, line)) {
-            std::string trimmedLine = trim_whitespace(line);
-            if (trimmedLine.empty() || trimmedLine.starts_with('#')) {
-                continue; // Skip empty lines and comments
-            }
-            reactionPENames.push_back(trimmedLine);
-        }
-        infile.close();
-        std::vector<reaction::REACLIBReaction> reaclibReactions;
-
-        if (reactionPENames.empty()) {
-            LOG_ERROR(logger, "No reactions found in the network definition file: {}", filename);
-            throw std::runtime_error("No reactions found in the network definition file: " + filename);
-        }
-
-        if (!reaclib::s_initialized) {
-            LOG_DEBUG(logger, "REACLIB reactions not initialized. Calling initializeAllReaclibReactions()...");
-            reaclib::initializeAllReaclibReactions();
-        } else {
-            LOG_DEBUG(logger, "REACLIB reactions already initialized.");
-        }
-
-        for (const auto& peName : reactionPENames) {
-            bool found = false;
-            for (const auto& reaction : reaclib::s_all_reaclib_reactions | std::views::values) {
-                if (reaction.peName() == peName && reaction.is_reverse() == reverse) {
-                    reaclibReactions.push_back(reaction);
-                    found = true;
-                    LOG_TRACE_L3(logger, "Found reaction {} (version {}) in REACLIB database.", peName, reaction.sourceLabel());
-                }
-            }
-            if (!found) {
-                LOG_ERROR(logger, "Reaction {} not found in REACLIB database. Skipping...", peName);
-                throw std::runtime_error("Reaction not found in REACLIB database.");
-            }
-        }
-
-
-        // Log any reactions that were not found in the REACLIB database
-        for (const auto& peName : reactionPENames) {
-            if (std::ranges::find(reaclibReactions, peName, &reaction::REACLIBReaction::peName) == reaclibReactions.end()) {
-                LOG_WARNING(logger, "Reaction {} not found in REACLIB database.", peName);
-            }
-        }
-        const reaction::REACLIBReactionSet reactionSet(reaclibReactions);
-        return reaction::REACLIBLogicalReactionSet(reactionSet);
     }
 
 }

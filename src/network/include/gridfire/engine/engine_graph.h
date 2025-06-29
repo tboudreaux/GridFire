@@ -23,35 +23,148 @@
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
 
 namespace gridfire {
-    typedef CppAD::AD<double> ADDouble; ///< Alias for CppAD AD type for double precision.
+    /**
+     * @brief Alias for CppAD AD type for double precision.
+     *
+     * This alias simplifies the use of the CppAD automatic differentiation type.
+     */
+    typedef CppAD::AD<double> ADDouble;
 
     using fourdst::config::Config;
     using fourdst::logging::LogManager;
     using fourdst::constant::Constants;
 
+    /**
+     * @brief Minimum density threshold below which reactions are ignored.
+     *
+     * Reactions are not calculated if the density falls below this threshold.
+     * This helps to improve performance by avoiding unnecessary calculations
+     * in very low-density regimes.
+     */
     static constexpr double MIN_DENSITY_THRESHOLD = 1e-18;
+
+    /**
+     * @brief Minimum abundance threshold below which species are ignored.
+     *
+     * Species with abundances below this threshold are treated as zero in
+     * reaction rate calculations. This helps to improve performance by
+     * avoiding unnecessary calculations for trace species.
+     */
     static constexpr double MIN_ABUNDANCE_THRESHOLD = 1e-18;
+
+    /**
+     * @brief Minimum value for Jacobian matrix entries.
+     *
+     * Jacobian matrix entries with absolute values below this threshold are
+     * treated as zero to maintain sparsity and improve performance.
+     */
     static constexpr double MIN_JACOBIAN_THRESHOLD = 1e-24;
 
+    /**
+     * @class GraphEngine
+     * @brief A reaction network engine that uses a graph-based representation.
+     *
+     * The GraphEngine class implements the DynamicEngine interface using a
+     * graph-based representation of the reaction network. It uses sparse
+     * matrices for efficient storage and computation of the stoichiometry
+     * and Jacobian matrices. Automatic differentiation (AD) is used to
+     * calculate the Jacobian matrix.
+     *
+     * The engine supports:
+     *   - Calculation of the right-hand side (dY/dt) and energy generation rate.
+     *   - Generation and access to the Jacobian matrix.
+     *   - Generation and access to the stoichiometry matrix.
+     *   - Calculation of molar reaction flows.
+     *   - Access to the set of logical reactions in the network.
+     *   - Computation of timescales for each species.
+     *   - Exporting the network to DOT and CSV formats for visualization and analysis.
+     *
+     * @implements DynamicEngine
+     *
+     * @see engine_abstract.h
+     */
     class GraphEngine final : public DynamicEngine{
     public:
+        /**
+         * @brief Constructs a GraphEngine from a composition.
+         *
+         * @param composition The composition of the material.
+         *
+         * This constructor builds the reaction network from the given composition
+         * using the `build_reaclib_nuclear_network` function.
+         *
+         * @see build_reaclib_nuclear_network
+         */
         explicit GraphEngine(const fourdst::composition::Composition &composition);
-        explicit GraphEngine(reaction::REACLIBLogicalReactionSet reactions);
 
+        /**
+         * @brief Constructs a GraphEngine from a set of reactions.
+         *
+         * @param reactions The set of reactions to use in the network.
+         *
+         * This constructor uses the given set of reactions to construct the
+         * reaction network.
+         */
+        explicit GraphEngine(reaction::LogicalReactionSet reactions);
+
+        /**
+         * @brief Calculates the right-hand side (dY/dt) and energy generation rate.
+         *
+         * @param Y Vector of current abundances for all species.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return StepDerivatives<double> containing dY/dt and energy generation rate.
+         *
+         * This method calculates the time derivatives of all species and the
+         * specific nuclear energy generation rate for the current state.
+         *
+         * @see StepDerivatives
+         */
         StepDerivatives<double> calculateRHSAndEnergy(
             const std::vector<double>& Y,
             const double T9,
             const double rho
         ) const override;
 
+        /**
+         * @brief Generates the Jacobian matrix for the current state.
+         *
+         * @param Y Vector of current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         *
+         * This method computes and stores the Jacobian matrix (∂(dY/dt)_i/∂Y_j)
+         * for the current state using automatic differentiation. The matrix can
+         * then be accessed via `getJacobianMatrixEntry()`.
+         *
+         * @see getJacobianMatrixEntry()
+         */
         void generateJacobianMatrix(
             const std::vector<double>& Y,
             const double T9,
             const double rho
         ) override;
 
+        /**
+         * @brief Generates the stoichiometry matrix for the network.
+         *
+         * This method computes and stores the stoichiometry matrix,
+         * which encodes the net change of each species in each reaction.
+         */
         void generateStoichiometryMatrix() override;
 
+        /**
+         * @brief Calculates the molar reaction flow for a given reaction.
+         *
+         * @param reaction The reaction for which to calculate the flow.
+         * @param Y Vector of current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Molar flow rate for the reaction (e.g., mol/g/s).
+         *
+         * This method computes the net rate at which the given reaction proceeds
+         * under the current state.
+         */
         double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
             const std::vector<double>&Y,
@@ -59,39 +172,130 @@ namespace gridfire {
             const double rho
         ) const override;
 
+        /**
+         * @brief Gets the list of species in the network.
+         * @return Vector of Species objects representing all network species.
+         */
         [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
-        [[nodiscard]] const reaction::REACLIBLogicalReactionSet& getNetworkReactions() const override;
+
+        /**
+         * @brief Gets the set of logical reactions in the network.
+         * @return Reference to the LogicalReactionSet containing all reactions.
+         */
+        [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
+
+        /**
+         * @brief Gets an entry from the previously generated Jacobian matrix.
+         *
+         * @param i Row index (species index).
+         * @param j Column index (species index).
+         * @return Value of the Jacobian matrix at (i, j).
+         *
+         * The Jacobian must have been generated by `generateJacobianMatrix()` before calling this.
+         *
+         * @see generateJacobianMatrix()
+         */
         [[nodiscard]] double getJacobianMatrixEntry(
             const int i,
             const int j
         ) const override;
-        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, int> getNetReactionStoichiometry(
+
+        /**
+         * @brief Gets the net stoichiometry for a given reaction.
+         *
+         * @param reaction The reaction for which to get the stoichiometry.
+         * @return Map of species to their stoichiometric coefficients.
+         */
+        [[nodiscard]] static std::unordered_map<fourdst::atomic::Species, int> getNetReactionStoichiometry(
             const reaction::Reaction& reaction
-        ) const;
+        );
+
+        /**
+         * @brief Gets an entry from the stoichiometry matrix.
+         *
+         * @param speciesIndex Index of the species.
+         * @param reactionIndex Index of the reaction.
+         * @return Stoichiometric coefficient for the species in the reaction.
+         *
+         * The stoichiometry matrix must have been generated by `generateStoichiometryMatrix()`.
+         *
+         * @see generateStoichiometryMatrix()
+         */
         [[nodiscard]] int getStoichiometryMatrixEntry(
             const int speciesIndex,
             const int reactionIndex
         ) const override;
+
+        /**
+         * @brief Computes timescales for all species in the network.
+         *
+         * @param Y Vector of current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Map from Species to their characteristic timescales (s).
+         *
+         * This method estimates the timescale for abundance change of each species,
+         * which can be used for timestep control or diagnostics.
+         */
         [[nodiscard]] std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
             const std::vector<double>& Y,
             double T9,
             double rho
         ) const override;
 
+        /**
+         * @brief Checks if a given species is involved in the network.
+         *
+         * @param species The species to check.
+         * @return True if the species is involved in the network, false otherwise.
+         */
         [[nodiscard]] bool involvesSpecies(
             const fourdst::atomic::Species& species
         ) const;
 
+        /**
+         * @brief Exports the network to a DOT file for visualization.
+         *
+         * @param filename The name of the DOT file to create.
+         *
+         * This method generates a DOT file that can be used to visualize the
+         * reaction network as a graph. The DOT file can be converted to a
+         * graphical image using Graphviz.
+         *
+         * @throws std::runtime_error If the file cannot be opened for writing.
+         *
+         * Example usage:
+         * @code
+         * engine.exportToDot("network.dot");
+         * @endcode
+         */
         void exportToDot(
             const std::string& filename
         ) const;
+
+        /**
+         * @brief Exports the network to a CSV file for analysis.
+         *
+         * @param filename The name of the CSV file to create.
+         *
+         * This method generates a CSV file containing information about the
+         * reactions in the network, including the reactants, products, Q-value,
+         * and reaction rate coefficients.
+         *
+         * @throws std::runtime_error If the file cannot be opened for writing.
+         *
+         * Example usage:
+         * @code
+         * engine.exportToCSV("network.csv");
+         * @endcode
+         */
         void exportToCSV(
             const std::string& filename
         ) const;
 
 
     private:
-        reaction::REACLIBLogicalReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
+        reaction::LogicalReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
         std::unordered_map<std::string_view, reaction::Reaction*> m_reactionIDMap; ///< Map from reaction ID to REACLIBReaction. //PERF: This makes copies of REACLIBReaction and could be a performance bottleneck.
 
         std::vector<fourdst::atomic::Species> m_networkSpecies; ///< Vector of unique species in the network.
@@ -108,20 +312,100 @@ namespace gridfire {
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
     private:
+        /**
+         * @brief Synchronizes the internal maps.
+         *
+         * This method synchronizes the internal maps used by the engine,
+         * including the species map, reaction ID map, and species-to-index map.
+         * It also generates the stoichiometry matrix and records the AD tape.
+         */
         void syncInternalMaps();
+
+        /**
+         * @brief Collects the unique species in the network.
+         *
+         * This method collects the unique species in the network from the
+         * reactants and products of all reactions.
+         */
         void collectNetworkSpecies();
+
+        /**
+         * @brief Populates the reaction ID map.
+         *
+         * This method populates the reaction ID map, which maps reaction IDs
+         * to REACLIBReaction objects.
+         */
         void populateReactionIDMap();
+
+        /**
+         * @brief Populates the species-to-index map.
+         *
+         * This method populates the species-to-index map, which maps species
+         * to their index in the stoichiometry matrix.
+         */
         void populateSpeciesToIndexMap();
+
+        /**
+         * @brief Reserves space for the Jacobian matrix.
+         *
+         * This method reserves space for the Jacobian matrix, which is used
+         * to store the partial derivatives of the right-hand side of the ODE
+         * with respect to the species abundances.
+         */
         void reserveJacobianMatrix();
+
+        /**
+         * @brief Records the AD tape for the right-hand side of the ODE.
+         *
+         * This method records the AD tape for the right-hand side of the ODE,
+         * which is used to calculate the Jacobian matrix using automatic
+         * differentiation.
+         *
+         * @throws std::runtime_error If there are no species in the network.
+         */
         void recordADTape();
 
+        /**
+         * @brief Validates mass and charge conservation across all reactions.
+         *
+         * @return True if all reactions conserve mass and charge, false otherwise.
+         *
+         * This method checks that all reactions in the network conserve mass
+         * and charge. If any reaction does not conserve mass or charge, an
+         * error message is logged and false is returned.
+         */
         [[nodiscard]] bool validateConservation() const;
+
+        /**
+         * @brief Validates the composition against the current reaction set.
+         *
+         * @param composition The composition to validate.
+         * @param culling The culling threshold to use.
+         * @param T9 The temperature to use.
+         *
+         * This method validates the composition against the current reaction set.
+         * If the composition is not compatible with the reaction set, the
+         * reaction set is rebuilt from the composition.
+         */
         void validateComposition(
             const fourdst::composition::Composition &composition,
             double culling,
             double T9
         );
 
+        /**
+         * @brief Calculates the molar reaction flow for a given reaction.
+         *
+         * @tparam T The numeric type to use for the calculation.
+         * @param reaction The reaction for which to calculate the flow.
+         * @param Y Vector of current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Molar flow rate for the reaction (e.g., mol/g/s).
+         *
+         * This method computes the net rate at which the given reaction proceeds
+         * under the current state.
+         */
         template <IsArithmeticOrAD T>
         T calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
@@ -130,6 +414,18 @@ namespace gridfire {
             const T rho
         ) const;
 
+        /**
+         * @brief Calculates all derivatives (dY/dt) and the energy generation rate.
+         *
+         * @tparam T The numeric type to use for the calculation.
+         * @param Y_in Vector of current abundances for all species.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return StepDerivatives<T> containing dY/dt and energy generation rate.
+         *
+         * This method calculates the time derivatives of all species and the
+         * specific nuclear energy generation rate for the current state.
+         */
         template<IsArithmeticOrAD T>
         StepDerivatives<T> calculateAllDerivatives(
             const std::vector<T> &Y_in,
@@ -137,16 +433,40 @@ namespace gridfire {
             T rho
         ) const;
 
+        /**
+         * @brief Calculates all derivatives (dY/dt) and the energy generation rate (double precision).
+         *
+         * @param Y_in Vector of current abundances for all species.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return StepDerivatives<double> containing dY/dt and energy generation rate.
+         *
+         * This method calculates the time derivatives of all species and the
+         * specific nuclear energy generation rate for the current state using
+         * double precision arithmetic.
+         */
         StepDerivatives<double> calculateAllDerivatives(
             const std::vector<double>& Y_in,
             const double T9,
             const double rho
         ) const;
 
+        /**
+         * @brief Calculates all derivatives (dY/dt) and the energy generation rate (automatic differentiation).
+         *
+         * @param Y_in Vector of current abundances for all species.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return StepDerivatives<ADDouble> containing dY/dt and energy generation rate.
+         *
+         * This method calculates the time derivatives of all species and the
+         * specific nuclear energy generation rate for the current state using
+         * automatic differentiation.
+         */
         StepDerivatives<ADDouble> calculateAllDerivatives(
             const std::vector<ADDouble>& Y_in,
-            const ADDouble T9,
-            const ADDouble rho
+            const ADDouble &T9,
+            const ADDouble &rho
         ) const;
     };
 

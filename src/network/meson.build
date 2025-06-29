@@ -3,7 +3,9 @@ network_sources = files(
     'lib/network.cpp',
     'lib/engine/engine_approx8.cpp',
     'lib/engine/engine_graph.cpp',
+    'lib/engine/engine_adaptive.cpp',
     'lib/reaction/reaction.cpp',
+    'lib/reaction/reaclib.cpp',
     'lib/solver/solver.cpp',
 )
 
@@ -13,7 +15,6 @@ dependencies = [
     const_dep,
     config_dep,
     composition_dep,
-    reaclib_reactions_dep,
     cppad_dep,
     log_dep,
     xxhash_dep,
@@ -38,9 +39,12 @@ network_dep = declare_dependency(
 network_headers = files(
     'include/gridfire/network.h',
     'include/gridfire/engine/engine_abstract.h',
+    'include/gridfire/engine/engine_view_abstract.h',
     'include/gridfire/engine/engine_approx8.h',
     'include/gridfire/engine/engine_graph.h',
+    'include/gridfire/engine/engine_adaptive.h',
     'include/gridfire/reaction/reaction.h',
+    'include/gridfire/reaction/reaclib.h',
     'include/gridfire/solver/solver.h',
 )
 install_headers(network_headers, subdir : 'gridfire')
