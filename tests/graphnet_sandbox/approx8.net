@@ -1,0 +1,26 @@
+# Reaction network definition for the approx8 network.
+# This file lists the reactions to be included for a direct
+# comparison with the hard-coded approx8 network.
+
+# --- PP Chain ---
+p(p,e+)d
+d(p,g)he3
+he3(he3,2p)he4
+
+# --- CNO Cycle ---
+# Note: approx8 simplifies the CNO cycle using branching fractions,
+# but these are the primary gateway reactions.
+c12(p,g)n13
+n14(p,g)o15
+n14(a,g)f18
+o16(p,g)f17
+
+# --- Alpha Captures & Triple Alpha ---
+c12(a,g)o16
+n14(a,g)f18
+o16(a,g)ne20
+ne20(a,g)mg24
+
+# --- Carbon & Oxygen Burning ---
+c12(c12,a)ne20
+o16(c12,a)mg24

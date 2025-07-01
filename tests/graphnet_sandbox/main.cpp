@@ -3,7 +3,9 @@
 
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/engine/engine_approx8.h"
-#include "gridfire/engine/engine_adaptive.h"
+#include "gridfire/engine/views/engine_adaptive.h"
+#include "gridfire/engine/views/engine_defined.h"
+#include "gridfire/io/network_file.h"
 
 #include "gridfire/solver/solver.h"
 
@@ -39,7 +41,7 @@ void quill_terminate_handler()
 int main() {
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL1);
+    logger->set_log_level(quill::LogLevel::Debug);
     LOG_DEBUG(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -62,16 +64,22 @@ int main() {
     netIn.dt0 = 1e12;
 
     NetOut netOut;
+
+    netIn.dt0 = 1e12;
     // approx8::Approx8Network approx8Network;
     // netOut = approx8Network.evaluate(netIn);
-    // std::cout << "Approx8 Network Output: " << netOut << std::endl;
+    // std::cout << "Approx8 Network H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
+
 
     netIn.dt0 = 1e-15;
 
     GraphEngine ReaclibEngine(composition);
-    AdaptiveEngineView adaptiveEngine(ReaclibEngine);
-    solver::QSENetworkSolver solver(adaptiveEngine);
+    // AdaptiveEngineView adaptiveEngine(ReaclibEngine);
+    io::SimpleReactionListFileParser parser{};
+    FileDefinedEngineView approx8EngineView(ReaclibEngine, "approx8.net", parser);
+    approx8EngineView.setScreeningModel(screening::ScreeningType::WEAK);
+    solver::QSENetworkSolver solver(approx8EngineView);
 
     netOut = solver.evaluate(netIn);
-    std::cout << "QSE Graph Network Output: " << netOut << std::endl;
+    std::cout << "QSE Graph Network H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
 }
