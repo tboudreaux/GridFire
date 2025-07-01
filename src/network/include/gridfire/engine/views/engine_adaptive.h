@@ -225,23 +225,59 @@ namespace gridfire {
          */
         [[nodiscard]] const DynamicEngine& getBaseEngine() const override { return m_baseEngine; }
 
+        /**
+         * @brief Sets the screening model for the base engine.
+         *
+         * This method delegates the call to the base engine to set the electron screening model.
+         *
+         * @param model The electron screening model to set.
+         *
+         * @par Usage Example:
+         * @code
+         * AdaptiveEngineView engineView(...);
+         * engineView.setScreeningModel(screening::ScreeningType::WEAK);
+         * @endcode
+         *
+         * @post The screening model of the base engine is updated.
+         */
         void setScreeningModel(screening::ScreeningType model) override;
 
+        /**
+         * @brief Gets the screening model from the base engine.
+         *
+         * This method delegates the call to the base engine to get the screening model.
+         *
+         * @return The current screening model type.
+         *
+         * @par Usage Example:
+         * @code
+         * AdaptiveEngineView engineView(...);
+         * screening::ScreeningType model = engineView.getScreeningModel();
+         * @endcode
+         */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
+        /** @brief A reference to the singleton Config instance, used for retrieving configuration parameters. */
         Config& m_config = Config::getInstance();
+        /** @brief A pointer to the logger instance, used for logging messages. */
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
+        /** @brief The underlying engine to which this view delegates calculations. */
         DynamicEngine& m_baseEngine;
 
+        /** @brief The set of species that are currently active in the network. */
         std::vector<fourdst::atomic::Species> m_activeSpecies;
+        /** @brief The set of reactions that are currently active in the network. */
         reaction::LogicalReactionSet m_activeReactions;
 
+        /** @brief A map from the indices of the active species to the indices of the corresponding species in the full network. */
         std::vector<size_t> m_speciesIndexMap;
+        /** @brief A map from the indices of the active reactions to the indices of the corresponding reactions in the full network. */
         std::vector<size_t> m_reactionIndexMap;
 
+        /** @brief A flag indicating whether the view is stale and needs to be updated. */
         bool m_isStale = true;
 
     private:
@@ -322,19 +358,92 @@ namespace gridfire {
          */
         void validateState() const;
 
+        /**
+         * @brief Calculates the molar reaction flow rate for all reactions in the full network.
+         *
+         * This method iterates through all reactions in the base engine's network and calculates
+         * their molar flow rates based on the provided network input conditions (temperature, density,
+         * and composition). It also constructs a vector of molar abundances for all species in the
+         * full network.
+         *
+         * @param netIn The current network input, containing temperature, density, and composition.
+         * @param out_Y_Full A vector that will be populated with the molar abundances of all species in the full network.
+         * @return A vector of ReactionFlow structs, each containing a pointer to a reaction and its calculated flow rate.
+         *
+         * @par Algorithm:
+         * 1. Clears and reserves space in `out_Y_Full`.
+         * 2. Iterates through all species in the base engine's network.
+         * 3. For each species, it retrieves the molar abundance from `netIn.composition`. If the species is not found, its abundance is set to 0.0.
+         * 4. Converts the temperature from Kelvin to T9.
+         * 5. Iterates through all reactions in the base engine's network.
+         * 6. For each reaction, it calls the base engine's `calculateMolarReactionFlow` to get the flow rate.
+         * 7. Stores the reaction pointer and its flow rate in a `ReactionFlow` struct and adds it to the returned vector.
+         */
         std::vector<ReactionFlow> calculateAllReactionFlows(
             const NetIn& netIn,
             std::vector<double>& out_Y_Full
         ) const;
+        /**
+         * @brief Finds all species that are reachable from the initial fuel through the reaction network.
+         *
+         * This method performs a connectivity analysis to identify all species that can be produced
+         * starting from the initial fuel species. A species is considered part of the initial fuel if its
+         * mass fraction is above a certain threshold (`ABUNDANCE_FLOOR`).
+         *
+         * @param netIn The current network input, containing the initial composition.
+         * @return An unordered set of all reachable species.
+         *
+         * @par Algorithm:
+         * 1. Initializes a set `reachable` and a queue `to_visit` with the initial fuel species.
+         * 2. Iteratively processes the reaction network until no new species can be reached.
+         * 3. In each pass, it iterates through all reactions in the base engine's network.
+         * 4. If all reactants of a reaction are in the `reachable` set, all products of that reaction are added to the `reachable` set.
+         * 5. The process continues until a full pass over all reactions does not add any new species to the `reachable` set.
+         */
         [[nodiscard]] std::unordered_set<fourdst::atomic::Species> findReachableSpecies(
             const NetIn& netIn
         ) const;
+        /**
+         * @brief Culls reactions from the network based on their flow rates.
+         *
+         * This method filters the list of all reactions, keeping only those with a flow rate
+         * above an absolute culling threshold. The threshold is calculated by multiplying the
+         * maximum flow rate by a relative culling threshold read from the configuration.
+         *
+         * @param allFlows A vector of all reactions and their flow rates.
+         * @param reachableSpecies A set of all species reachable from the initial fuel.
+         * @param Y_full A vector of molar abundances for all species in the full network.
+         * @param maxFlow The maximum reaction flow rate in the network.
+         * @return A vector of pointers to the reactions that have been kept after culling.
+         *
+         * @par Algorithm:
+         * 1. Retrieves the `RelativeCullingThreshold` from the configuration.
+         * 2. Calculates the `absoluteCullingThreshold` by multiplying `maxFlow` with the relative threshold.
+         * 3. Iterates through `allFlows`.
+         * 4. A reaction is kept if its `flowRate` is greater than the `absoluteCullingThreshold`.
+         * 5. The pointers to the kept reactions are stored in a vector and returned.
+         */
         [[nodiscard]] std::vector<const reaction::LogicalReaction*> cullReactionsByFlow(
             const std::vector<ReactionFlow>& allFlows,
             const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
             const std::vector<double>& Y_full,
             double maxFlow
         ) const;
+        /**
+         * @brief Finalizes the set of active species and reactions.
+         *
+         * This method takes the final list of culled reactions and populates the
+         * `m_activeReactions` and `m_activeSpecies` members. The active species are
+         * determined by collecting all reactants and products from the final reactions.
+         * The active species list is then sorted by mass.
+         *
+         * @param finalReactions A vector of pointers to the reactions to be included in the active set.
+         *
+         * @post
+         * - `m_activeReactions` is cleared and populated with the reactions from `finalReactions`.
+         * - `m_activeSpecies` is cleared and populated with all unique species present in `finalReactions`.
+         * - `m_activeSpecies` is sorted by atomic mass.
+         */
         void finalizeActiveSet(
             const std::vector<const reaction::LogicalReaction*>& finalReactions
         );

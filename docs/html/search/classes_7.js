@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['jacobian_0',['Jacobian',['../structgridfire_1_1approx8_1_1_jacobian.html',1,'gridfire::approx8']]],
-  ['jacobianfunctor_1',['JacobianFunctor',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_jacobian_functor.html',1,'gridfire::solver::DirectNetworkSolver::JacobianFunctor'],['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_jacobian_functor.html',1,'gridfire::solver::QSENetworkSolver::JacobianFunctor']]]
+  ['hash_3c_20gridfire_3a_3areaction_3a_3alogicalreactionset_20_3e_0',['hash&lt; gridfire::reaction::LogicalReactionSet &gt;',['../structstd_1_1hash_3_01gridfire_1_1reaction_1_1_logical_reaction_set_01_4.html',1,'std']]],
+  ['hash_3c_20gridfire_3a_3areaction_3a_3areaction_20_3e_1',['hash&lt; gridfire::reaction::Reaction &gt;',['../structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html',1,'std']]],
+  ['hash_3c_20gridfire_3a_3areaction_3a_3areactionset_20_3e_2',['hash&lt; gridfire::reaction::ReactionSet &gt;',['../structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html',1,'std']]]
 ];

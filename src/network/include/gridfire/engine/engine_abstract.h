@@ -214,10 +214,56 @@ namespace gridfire {
             double rho
         ) const = 0;
 
+        /**
+         * @brief Update the internal state of the engine.
+         *
+         * @param netIn A struct containing the current network input, such as
+         *              temperature, density, and composition.
+         *
+         * This method is intended to be implemented by derived classes to update
+         * their internal state based on the provided network conditions. For example,
+         * an adaptive engine might use this to re-evaluate which reactions and species
+         * are active. For other engines that do not support manually updating, this
+         * method might do nothing.
+         *
+         * @par Usage Example:
+         * @code
+         * NetIn input = { ... };
+         * myEngine.update(input);
+         * @endcode
+         *
+         * @post The internal state of the engine is updated to reflect the new conditions.
+         */
         virtual void update(const NetIn& netIn) = 0;
 
+        /**
+         * @brief Set the electron screening model.
+         *
+         * @param model The type of screening model to use for reaction rate calculations.
+         *
+         * This method allows changing the screening model at runtime. Screening corrections
+         * account for the electrostatic shielding of nuclei by electrons, which affects
+         * reaction rates in dense stellar plasmas.
+         *
+         * @par Usage Example:
+         * @code
+         * myEngine.setScreeningModel(screening::ScreeningType::WEAK);
+         * @endcode
+         *
+         * @post The engine will use the specified screening model for subsequent rate calculations.
+         */
         virtual void setScreeningModel(screening::ScreeningType model) = 0;
 
+        /**
+         * @brief Get the current electron screening model.
+         *
+         * @return The currently active screening model type.
+         *
+         * @par Usage Example:
+         * @code
+         * screening::ScreeningType currentModel = myEngine.getScreeningModel();
+         * @endcode
+         */
         [[nodiscard]] virtual screening::ScreeningType getScreeningModel() const = 0;
     };
 }

@@ -19,6 +19,7 @@ var searchData=
   ['io16_16',['io16',['../structgridfire_1_1approx8_1_1_approx8_net.html#ab4e95622dc0414ad7e636ef811e600af',1,'gridfire::approx8::Approx8Net']]],
   ['is_5freverse_17',['is_reverse',['../classgridfire_1_1reaction_1_1_reaction.html#aa67d05dfabf007c1acad34052d9a1dba',1,'gridfire::reaction::Reaction']]],
   ['isarithmeticorad_18',['IsArithmeticOrAD',['../conceptgridfire_1_1_is_arithmetic_or_a_d.html',1,'gridfire']]],
-  ['isstiff_19',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]],
-  ['itemp_20',['iTemp',['../structgridfire_1_1approx8_1_1_approx8_net.html#a010df59d40b3bc8a802224968922ebde',1,'gridfire::approx8::Approx8Net']]]
+  ['isprecomputationenabled_19',['isPrecomputationEnabled',['../classgridfire_1_1_graph_engine.html#a015f8975701f028c29835d3a9794e00f',1,'gridfire::GraphEngine']]],
+  ['isstiff_20',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]],
+  ['itemp_21',['iTemp',['../structgridfire_1_1approx8_1_1_approx8_net.html#a010df59d40b3bc8a802224968922ebde',1,'gridfire::approx8::Approx8Net']]]
 ];

@@ -79,10 +79,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2network_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
-"classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be",
-"classgridfire_1_1reaction_1_1_templated_reaction_set.html#aac76ec883b4ecebb2a94b2485dae7105",
-"namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31",
-"structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_jacobian_functor.html#a2071ce797f94ae1a3ea6d934748672ce"
+"classgridfire_1_1_graph_engine.html#a95563f6bc86007d9ee053a0f1e15b889",
+"classgridfire_1_1reaction_1_1_templated_reaction_set.html#a5fda3af5ea9ae0ecfb60a61a9e07f5b4",
+"namespacegridfire_1_1approx8.html#ad7a6f894fa4bdeebb4cae0eba3b2c210",
+"structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#a08ce53701b152f3ce108c1c18ce64de2"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

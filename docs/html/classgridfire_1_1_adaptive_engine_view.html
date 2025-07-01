@@ -171,8 +171,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aee095b30a9dce5fcb5ae2fa1d2aa192c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the base engine.  <br /></td></tr>
 <tr class="separator:aee095b30a9dce5fcb5ae2fa1d2aa192c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae4ddbef1c4e2202fd236221a4bf376b" id="r_aae4ddbef1c4e2202fd236221a4bf376b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae4ddbef1c4e2202fd236221a4bf376b">setScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model) override</td></tr>
+<tr class="memdesc:aae4ddbef1c4e2202fd236221a4bf376b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the screening model for the base engine.  <br /></td></tr>
 <tr class="separator:aae4ddbef1c4e2202fd236221a4bf376b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ab1199f900a58f309c3c36532c9164f" id="r_a0ab1199f900a58f309c3c36532c9164f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ab1199f900a58f309c3c36532c9164f">getScreeningModel</a> () const override</td></tr>
+<tr class="memdesc:a0ab1199f900a58f309c3c36532c9164f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the screening model from the base engine.  <br /></td></tr>
 <tr class="separator:a0ab1199f900a58f309c3c36532c9164f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
@@ -214,31 +216,43 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:aedc0dedb51c81e03f253cc409a5d5c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is not stale.  <br /></td></tr>
 <tr class="separator:aedc0dedb51c81e03f253cc409a5d5c40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdbaf4b87629efe43ac1255dad424c0c" id="r_abdbaf4b87629efe43ac1255dad424c0c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html">ReactionFlow</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdbaf4b87629efe43ac1255dad424c0c">calculateAllReactionFlows</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, std::vector&lt; double &gt; &amp;out_Y_Full) const</td></tr>
+<tr class="memdesc:abdbaf4b87629efe43ac1255dad424c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow rate for all reactions in the full network.  <br /></td></tr>
 <tr class="separator:abdbaf4b87629efe43ac1255dad424c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ed21f7e7c1034fc87b40d4116c4221b" id="r_a0ed21f7e7c1034fc87b40d4116c4221b"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ed21f7e7c1034fc87b40d4116c4221b">findReachableSpecies</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const</td></tr>
+<tr class="memdesc:a0ed21f7e7c1034fc87b40d4116c4221b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds all species that are reachable from the initial fuel through the reaction network.  <br /></td></tr>
 <tr class="separator:a0ed21f7e7c1034fc87b40d4116c4221b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42417e96fe9fd623458af109401daf08" id="r_a42417e96fe9fd623458af109401daf08"><td class="memItemLeft" align="right" valign="top">std::vector&lt; const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42417e96fe9fd623458af109401daf08">cullReactionsByFlow</a> (const std::vector&lt; <a class="el" href="structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html">ReactionFlow</a> &gt; &amp;allFlows, const std::unordered_set&lt; fourdst::atomic::Species &gt; &amp;reachableSpecies, const std::vector&lt; double &gt; &amp;Y_full, double maxFlow) const</td></tr>
+<tr class="memdesc:a42417e96fe9fd623458af109401daf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Culls reactions from the network based on their flow rates.  <br /></td></tr>
 <tr class="separator:a42417e96fe9fd623458af109401daf08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa79fb382c98461b02a2c30668491e6c5" id="r_aa79fb382c98461b02a2c30668491e6c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa79fb382c98461b02a2c30668491e6c5">finalizeActiveSet</a> (const std::vector&lt; const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a> * &gt; &amp;finalReactions)</td></tr>
+<tr class="memdesc:aa79fb382c98461b02a2c30668491e6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalizes the set of active species and reactions.  <br /></td></tr>
 <tr class="separator:aa79fb382c98461b02a2c30668491e6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a14171a9ccc45a63996a967c72983de30" id="r_a14171a9ccc45a63996a967c72983de30"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#afec39b2faa34ea65c5488dd8e11ba3c3">Config</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14171a9ccc45a63996a967c72983de30">m_config</a> = Config::getInstance()</td></tr>
+<tr class="memdesc:a14171a9ccc45a63996a967c72983de30"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the singleton <a class="el" href="#afec39b2faa34ea65c5488dd8e11ba3c3">Config</a> instance, used for retrieving configuration parameters.  <br /></td></tr>
 <tr class="separator:a14171a9ccc45a63996a967c72983de30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5bdbe46f87d38d9f23ece5743dcd193" id="r_ac5bdbe46f87d38d9f23ece5743dcd193"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5bdbe46f87d38d9f23ece5743dcd193">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
+<tr class="memdesc:ac5bdbe46f87d38d9f23ece5743dcd193"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the logger instance, used for logging messages.  <br /></td></tr>
 <tr class="separator:ac5bdbe46f87d38d9f23ece5743dcd193"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d38b46be9f25c7afe7ddd2b284253f8" id="r_a4d38b46be9f25c7afe7ddd2b284253f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d38b46be9f25c7afe7ddd2b284253f8">m_baseEngine</a></td></tr>
+<tr class="memdesc:a4d38b46be9f25c7afe7ddd2b284253f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The underlying engine to which this view delegates calculations.  <br /></td></tr>
 <tr class="separator:a4d38b46be9f25c7afe7ddd2b284253f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4bc9fc6e4afcd6a53c49ca6e2a95940" id="r_af4bc9fc6e4afcd6a53c49ca6e2a95940"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4bc9fc6e4afcd6a53c49ca6e2a95940">m_activeSpecies</a></td></tr>
+<tr class="memdesc:af4bc9fc6e4afcd6a53c49ca6e2a95940"><td class="mdescLeft">&#160;</td><td class="mdescRight">The set of species that are currently active in the network.  <br /></td></tr>
 <tr class="separator:af4bc9fc6e4afcd6a53c49ca6e2a95940"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19fc7e02e216b797aa643fa35e429800" id="r_a19fc7e02e216b797aa643fa35e429800"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19fc7e02e216b797aa643fa35e429800">m_activeReactions</a></td></tr>
+<tr class="memdesc:a19fc7e02e216b797aa643fa35e429800"><td class="mdescLeft">&#160;</td><td class="mdescRight">The set of reactions that are currently active in the network.  <br /></td></tr>
 <tr class="separator:a19fc7e02e216b797aa643fa35e429800"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f66204a0ff5b27eed243afddecb0093" id="r_a5f66204a0ff5b27eed243afddecb0093"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f66204a0ff5b27eed243afddecb0093">m_speciesIndexMap</a></td></tr>
+<tr class="memdesc:a5f66204a0ff5b27eed243afddecb0093"><td class="mdescLeft">&#160;</td><td class="mdescRight">A map from the indices of the active species to the indices of the corresponding species in the full network.  <br /></td></tr>
 <tr class="separator:a5f66204a0ff5b27eed243afddecb0093"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21c6e33bbf8c18fd5b5eaabb469054de" id="r_a21c6e33bbf8c18fd5b5eaabb469054de"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21c6e33bbf8c18fd5b5eaabb469054de">m_reactionIndexMap</a></td></tr>
+<tr class="memdesc:a21c6e33bbf8c18fd5b5eaabb469054de"><td class="mdescLeft">&#160;</td><td class="mdescRight">A map from the indices of the active reactions to the indices of the corresponding reactions in the full network.  <br /></td></tr>
 <tr class="separator:a21c6e33bbf8c18fd5b5eaabb469054de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63580db57e0f48f508906a11ccfd465e" id="r_a63580db57e0f48f508906a11ccfd465e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63580db57e0f48f508906a11ccfd465e">m_isStale</a> = true</td></tr>
+<tr class="memdesc:a63580db57e0f48f508906a11ccfd465e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A flag indicating whether the view is stale and needs to be updated.  <br /></td></tr>
 <tr class="separator:a63580db57e0f48f508906a11ccfd465e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -281,7 +295,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00232">232</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00260">260</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -305,7 +319,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00233">233</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00261">261</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -373,6 +387,27 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Calculates the molar reaction flow rate for all reactions in the full network. </p>
+<p>This method iterates through all reactions in the base engine's network and calculates their molar flow rates based on the provided network input conditions (temperature, density, and composition). It also constructs a vector of molar abundances for all species in the full network.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The current network input, containing temperature, density, and composition. </td></tr>
+    <tr><td class="paramname">out_Y_Full</td><td>A vector that will be populated with the molar abundances of all species in the full network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of <a class="el" href="structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html" title="A struct to hold a reaction and its flow rate.">ReactionFlow</a> structs, each containing a pointer to a reaction and its calculated flow rate.</dd></dl>
+<dl class="section user"><dt>Algorithm:</dt><dd><ol type="1">
+<li>Clears and reserves space in <code>out_Y_Full</code>.</li>
+<li>Iterates through all species in the base engine's network.</li>
+<li>For each species, it retrieves the molar abundance from <code>netIn.composition</code>. If the species is not found, its abundance is set to 0.0.</li>
+<li>Converts the temperature from Kelvin to T9.</li>
+<li>Iterates through all reactions in the base engine's network.</li>
+<li>For each reaction, it calls the base engine's <code>calculateMolarReactionFlow</code> to get the flow rate.</li>
+<li>Stores the reaction pointer and its flow rate in a <code><a class="el" href="structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html" title="A struct to hold a reaction and its flow rate.">ReactionFlow</a></code> struct and adds it to the returned vector. </li>
+</ol>
+</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00268">268</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
@@ -599,6 +634,27 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Culls reactions from the network based on their flow rates. </p>
+<p>This method filters the list of all reactions, keeping only those with a flow rate above an absolute culling threshold. The threshold is calculated by multiplying the maximum flow rate by a relative culling threshold read from the configuration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allFlows</td><td>A vector of all reactions and their flow rates. </td></tr>
+    <tr><td class="paramname">reachableSpecies</td><td>A set of all species reachable from the initial fuel. </td></tr>
+    <tr><td class="paramname">Y_full</td><td>A vector of molar abundances for all species in the full network. </td></tr>
+    <tr><td class="paramname">maxFlow</td><td>The maximum reaction flow rate in the network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of pointers to the reactions that have been kept after culling.</dd></dl>
+<dl class="section user"><dt>Algorithm:</dt><dd><ol type="1">
+<li>Retrieves the <code>RelativeCullingThreshold</code> from the configuration.</li>
+<li>Calculates the <code>absoluteCullingThreshold</code> by multiplying <code>maxFlow</code> with the relative threshold.</li>
+<li>Iterates through <code>allFlows</code>.</li>
+<li>A reaction is kept if its <code>flowRate</code> is greater than the <code>absoluteCullingThreshold</code>.</li>
+<li>The pointers to the kept reactions are stored in a vector and returned. </li>
+</ol>
+</dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00342">342</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
@@ -626,6 +682,21 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Finalizes the set of active species and reactions. </p>
+<p>This method takes the final list of culled reactions and populates the <code>m_activeReactions</code> and <code>m_activeSpecies</code> members. The active species are determined by collecting all reactants and products from the final reactions. The active species list is then sorted by mass.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">finalReactions</td><td>A vector of pointers to the reactions to be included in the active set.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><ul>
+<li><code>m_activeReactions</code> is cleared and populated with the reactions from <code>finalReactions</code>.</li>
+<li><code>m_activeSpecies</code> is cleared and populated with all unique species present in <code>finalReactions</code>.</li>
+<li><code>m_activeSpecies</code> is sorted by atomic mass. </li>
+</ul>
+</dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00385">385</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
@@ -652,6 +723,24 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Finds all species that are reachable from the initial fuel through the reaction network. </p>
+<p>This method performs a connectivity analysis to identify all species that can be produced starting from the initial fuel species. A species is considered part of the initial fuel if its mass fraction is above a certain threshold (<code>ABUNDANCE_FLOOR</code>).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The current network input, containing the initial composition. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An unordered set of all reachable species.</dd></dl>
+<dl class="section user"><dt>Algorithm:</dt><dd><ol type="1">
+<li>Initializes a set <code>reachable</code> and a queue <code>to_visit</code> with the initial fuel species.</li>
+<li>Iteratively processes the reaction network until no new species can be reached.</li>
+<li>In each pass, it iterates through all reactions in the base engine's network.</li>
+<li>If all reactants of a reaction are in the <code>reachable</code> set, all products of that reaction are added to the <code>reachable</code> set.</li>
+<li>The process continues until a full pass over all reactions does not add any new species to the <code>reachable</code> set. </li>
+</ol>
+</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00299">299</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
@@ -922,6 +1011,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Gets the screening model from the base engine. </p>
+<p>This method delegates the call to the base engine to get the screening model.</p>
+<dl class="section return"><dt>Returns</dt><dd>The current screening model type.</dd></dl>
+<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#ad599363cdd457e72e2e2937b0222c455">AdaptiveEngineView</a> engineView(...);</div>
+<div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model = engineView.getScreeningModel();</div>
+<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html_ad599363cdd457e72e2e2937b0222c455"><div class="ttname"><a href="#ad599363cdd457e72e2e2937b0222c455">gridfire::AdaptiveEngineView::AdaptiveEngineView</a></div><div class="ttdeci">AdaptiveEngineView(DynamicEngine &amp;baseEngine)</div><div class="ttdoc">Constructs an AdaptiveEngineView.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8cpp_source.html#l00013">engine_adaptive.cpp:13</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00015">screening_types.h:15</a></div></div>
+</div><!-- fragment --> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a7a203f8e0f3a6744ddc912dfbcfdbcc0">gridfire::DynamicEngine</a>.</p>
 
@@ -1216,6 +1314,20 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the screening model for the base engine. </p>
+<p>This method delegates the call to the base engine to set the electron screening model.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">model</td><td>The electron screening model to set.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#ad599363cdd457e72e2e2937b0222c455">AdaptiveEngineView</a> engineView(...);</div>
+<div class="line">engineView.setScreeningModel(<a class="code hl_enumvalue" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">screening::ScreeningType::WEAK</a>);</div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00035">screening_types.h:35</a></div></div>
+</div><!-- fragment --></dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>The screening model of the base engine is updated. </dd></dl>
+
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a3fb44b6f55563a2f590f31916528f2bd">gridfire::DynamicEngine</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00216">216</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
@@ -1331,7 +1443,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00240">240</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>The set of reactions that are currently active in the network. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00273">273</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1355,7 +1469,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00239">239</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>The set of species that are currently active in the network. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00271">271</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1379,7 +1495,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00237">237</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>The underlying engine to which this view delegates calculations. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00268">268</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1403,7 +1521,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00234">234</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>A reference to the singleton <a class="el" href="#afec39b2faa34ea65c5488dd8e11ba3c3">Config</a> instance, used for retrieving configuration parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00263">263</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1427,7 +1547,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00245">245</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>A flag indicating whether the view is stale and needs to be updated. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00281">281</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1451,7 +1573,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00235">235</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>A pointer to the logger instance, used for logging messages. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00265">265</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1475,7 +1599,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00243">243</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>A map from the indices of the active reactions to the indices of the corresponding reactions in the full network. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00278">278</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1499,7 +1625,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00242">242</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p>A map from the indices of the active species to the indices of the corresponding species in the full network. </p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00276">276</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>

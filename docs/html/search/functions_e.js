@@ -8,6 +8,7 @@ var searchData=
   ['populatereactionidmap_5',['populateReactionIDMap',['../classgridfire_1_1_graph_engine.html#a26602e1b3c610780a47b5a6511d6d567',1,'gridfire::GraphEngine']]],
   ['populatespeciestoindexmap_6',['populateSpeciesToIndexMap',['../classgridfire_1_1_graph_engine.html#a47202c43342b96480070874bffce1391',1,'gridfire::GraphEngine']]],
   ['pp_5frate_7',['pp_rate',['../namespacegridfire_1_1approx8.html#a16739298c01e56967ce784a9a957439f',1,'gridfire::approx8']]],
-  ['product_5fspecies_8',['product_species',['../classgridfire_1_1reaction_1_1_reaction.html#a01c67726efbaa2ff8e4d6f2c965f485c',1,'gridfire::reaction::Reaction']]],
-  ['products_9',['products',['../classgridfire_1_1reaction_1_1_reaction.html#a6e2ff61b9e8409f2a561663628b8ce02',1,'gridfire::reaction::Reaction']]]
+  ['precomputenetwork_8',['precomputeNetwork',['../classgridfire_1_1_graph_engine.html#a92644bc333bff69c5685be4552ca12fd',1,'gridfire::GraphEngine']]],
+  ['product_5fspecies_9',['product_species',['../classgridfire_1_1reaction_1_1_reaction.html#a01c67726efbaa2ff8e4d6f2c965f485c',1,'gridfire::reaction::Reaction']]],
+  ['products_10',['products',['../classgridfire_1_1reaction_1_1_reaction.html#a6e2ff61b9e8409f2a561663628b8ce02',1,'gridfire::reaction::Reaction']]]
 ];
