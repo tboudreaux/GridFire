@@ -1,4 +1,4 @@
-#include "gridfire/engine/engine_adaptive.h"
+#include "../../../include/gridfire/engine/views/engine_adaptive.h"
 
 #include <ranges>
 #include <queue>
@@ -83,137 +83,34 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::update(const NetIn& netIn) {
-        LOG_TRACE_L1(m_logger, "Updating adaptive engine view...");
+        LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 
-        const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
-        std::vector<double>Y_full;
-        Y_full.reserve(fullSpeciesList.size());
+        std::vector<double> Y_Full;
+        std::vector<ReactionFlow> allFlows = calculateAllReactionFlows(netIn, Y_Full);
 
-        for (const auto& species : fullSpeciesList) {
-            if (netIn.composition.contains(species)) {
-                Y_full.push_back(netIn.composition.getMolarAbundance(std::string(species.name())));
-            } else {
-                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Setting abundance to 0.0.", species.name());
-                Y_full.push_back(0.0);
+        double maxFlow = 0.0;
+
+        for (const auto&[reactionPtr, flowRate]: allFlows) {
+            if (flowRate > maxFlow) {
+                maxFlow = flowRate;
             }
         }
+        LOG_DEBUG(m_logger, "Maximum reaction flow rate in adaptive engine view: {:0.3E} [mol/s]", maxFlow);
 
-        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
-        const double rho = netIn.density; // Density in g/cm^3
+        const std::unordered_set<Species> reachableSpecies = findReachableSpecies(netIn);
+        LOG_DEBUG(m_logger, "Found {} reachable species in adaptive engine view.", reachableSpecies.size());
 
+        const std::vector<const reaction::LogicalReaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, Y_Full, maxFlow);
 
-        std::vector<ReactionFlow> reactionFlows;
-        const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
-        reactionFlows.reserve(fullReactionSet.size());
+        finalizeActiveSet(finalReactions);
 
-        for (const auto& reactionPtr : fullReactionSet) {
-            const double flow = m_baseEngine.calculateMolarReactionFlow(reactionPtr, Y_full, T9, rho);
-            reactionFlows.push_back({&reactionPtr, flow});
-        }
-
-        double max_flow = 0.0;
-        double min_flow = std::numeric_limits<double>::max();
-        double flowSum = 0.0;
-        for (const auto&[reactionPtr, flowRate] : reactionFlows) {
-            if (flowRate > max_flow) {
-                max_flow = flowRate;
-            } else if (flowRate < min_flow) {
-                min_flow = flowRate;
-            }
-            flowSum += flowRate;
-            LOG_TRACE_L2(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s]", reactionPtr->id(), flowRate);
-        }
-        flowSum /= reactionFlows.size();
-
-        LOG_DEBUG(m_logger, "Maximum reaction flow rate in adaptive engine view: {:0.3E} [mol/s]", max_flow);
-        LOG_DEBUG(m_logger, "Minimum reaction flow rate in adaptive engine view: {:0.3E} [mol/s]", min_flow);
-        LOG_DEBUG(m_logger, "Average reaction flow rate in adaptive engine view: {:0.3E} [mol/s]", flowSum);
-
-        const double relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
-
-        double absoluteCullingThreshold = relative_culling_threshold * max_flow;
-        LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
-
-        // --- Reaction Culling ---
-        LOG_TRACE_L1(m_logger, "Culling reactions based on reaction flow rates...");
-        std::vector<const reaction::Reaction*> flowCulledReactions;
-        for (const auto&[reactionPtr, flowRate] : reactionFlows) {
-            if (flowRate > absoluteCullingThreshold) {
-                LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with relative (abs) flow rate: {:0.3E} ({:0.3E} [mol/s])", reactionPtr->id(), flowRate/max_flow, flowRate);
-                flowCulledReactions.push_back(reactionPtr);
-            }
-        }
-        LOG_DEBUG(m_logger, "Selected {} (total: {}, culled: {}) reactions based on flow rates.", flowCulledReactions.size(), fullReactionSet.size(), fullReactionSet.size() - flowCulledReactions.size());
-
-        // --- Connectivity Analysis ---
-        std::queue<Species> species_to_visit;
-        std::unordered_set<Species> reachable_species;
-
-        constexpr double ABUNDANCE_FLOOR = 1e-12; // Abundance floor for a species to be considered part of the initial fuel
-        for (const auto& species : fullSpeciesList) {
-            if (netIn.composition.contains(species) && netIn.composition.getMassFraction(std::string(species.name())) > ABUNDANCE_FLOOR) {
-                species_to_visit.push(species);
-                reachable_species.insert(species);
-                LOG_TRACE_L2(m_logger, "Species '{}' is part of the initial fuel.", species.name());
-            }
-        }
-        std::unordered_map<Species, std::vector<const reaction::Reaction*>> reactant_to_reactions_map;
-        for (const auto* reaction_ptr : flowCulledReactions) {
-            for (const auto& reactant : reaction_ptr->reactants()) {
-                reactant_to_reactions_map[reactant].push_back(reaction_ptr);
-            }
-        }
-
-        while (!species_to_visit.empty()) {
-            Species currentSpecies = species_to_visit.front();
-            species_to_visit.pop();
-
-            auto it = reactant_to_reactions_map.find(currentSpecies);
-            if (it == reactant_to_reactions_map.end()) {
-                continue; // The species does not initiate any further reactions
-            }
-
-            const auto& reactions = it->second;
-            for (const auto* reaction_ptr : reactions) {
-                for (const auto& product : reaction_ptr->products()) {
-                    if (!reachable_species.contains(product)) {
-                        reachable_species.insert(product);
-                        species_to_visit.push(product);
-                        LOG_TRACE_L2(m_logger, "Species '{}' is reachable via reaction '{}'.", product.name(), reaction_ptr->id());
-                    }
-                }
-            }
-        }
-        LOG_DEBUG(m_logger, "Reachable species count: {}", reachable_species.size());
-
-        m_activeSpecies.assign(reachable_species.begin(), reachable_species.end());
-        std::ranges::sort(m_activeSpecies,
-                          [](const Species &a, const Species &b) { return a.mass() < b.mass(); });
-
-        m_activeReactions.clear();
-        for (const auto* reaction_ptr : flowCulledReactions) {
-            bool all_reactants_present = true;
-            for (const auto& reactant : reaction_ptr->reactants()) {
-                if (!reachable_species.contains(reactant)) {
-                    all_reactants_present = false;
-                    break;
-                }
-            }
-
-            if (all_reactants_present) {
-                m_activeReactions.add_reaction(*reaction_ptr);
-                LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with all reactants present.", reaction_ptr->id());
-            } else {
-                LOG_TRACE_L1(m_logger, "Culling reaction '{}' due to missing reactants.", reaction_ptr->id());
-            }
-        }
-        LOG_DEBUG(m_logger, "Active reactions count: {} (total: {}, culled: {}, culled due to connectivity: {})", m_activeReactions.size(),
-                  fullReactionSet.size(), fullReactionSet.size() - m_activeReactions.size(), flowCulledReactions.size() - m_activeReactions.size());
 
         m_speciesIndexMap = constructSpeciesIndexMap();
         m_reactionIndexMap = constructReactionIndexMap();
 
         m_isStale = false;
+
+        LOG_INFO(m_logger, "AdaptiveEngineView updated successfully with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
     }
 
     const std::vector<Species> & AdaptiveEngineView::getNetworkSpecies() const {
@@ -358,6 +255,144 @@ namespace gridfire {
             m_logger->flush_log();
             throw std::runtime_error("AdaptiveEngineView is stale. Please call update() before calculating RHS and energy.");
         }
+    }
+
+    std::vector<AdaptiveEngineView::ReactionFlow> AdaptiveEngineView::calculateAllReactionFlows(
+        const NetIn &netIn,
+        std::vector<double> &out_Y_Full
+    ) const {
+        const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
+        out_Y_Full.clear();
+        out_Y_Full.reserve(fullSpeciesList.size());
+
+        for (const auto& species: fullSpeciesList) {
+            if (netIn.composition.contains(species)) {
+                out_Y_Full.push_back(netIn.composition.getMolarAbundance(std::string(species.name())));
+            } else {
+                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Setting abundance to 0.0.", species.name());
+                out_Y_Full.push_back(0.0);
+            }
+        }
+
+        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
+        const double rho = netIn.density; // Density in g/cm^3
+
+        std::vector<ReactionFlow> reactionFlows;
+        const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
+        reactionFlows.reserve(fullReactionSet.size());
+        for (const auto& reaction : fullReactionSet) {
+            const double flow = m_baseEngine.calculateMolarReactionFlow(reaction, out_Y_Full, T9, rho);
+            reactionFlows.push_back({&reaction, flow});
+            LOG_TRACE_L2(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s]", reaction.id(), flow);
+        }
+        return reactionFlows;
+    }
+
+    std::unordered_set<Species> AdaptiveEngineView::findReachableSpecies(
+        const NetIn &netIn
+    ) const {
+        std::unordered_set<Species> reachable;
+        std::queue<Species> to_vist;
+
+        constexpr double ABUNDANCE_FLOOR = 1e-12; // Abundance floor for a species to be considered part of the initial fuel
+        for (const auto& species: m_baseEngine.getNetworkSpecies()) {
+            if (netIn.composition.contains(species) && netIn.composition.getMassFraction(std::string(species.name())) > ABUNDANCE_FLOOR) {
+                if (!reachable.contains(species)) {
+                    to_vist.push(species);
+                    reachable.insert(species);
+                    LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is part of the initial fuel.", species.name());
+                }
+            }
+        }
+
+        bool new_species_found_in_pass = true;
+        while (new_species_found_in_pass) {
+            new_species_found_in_pass = false;
+            for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
+                bool all_reactants_reachable = true;
+                for (const auto& reactant: reaction.reactants()) {
+                    if (!reachable.contains(reactant)) {
+                        all_reactants_reachable = false;
+                        break;
+                    }
+                }
+                if (all_reactants_reachable) {
+                    for (const auto& product: reaction.products()) {
+                        if (!reachable.contains(product)) {
+                            reachable.insert(product);
+                            new_species_found_in_pass = true;
+                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is reachable via reaction '{}'.", product.name(), reaction.id());
+                        }
+                    }
+                }
+            }
+        }
+
+        return reachable;
+    }
+
+    std::vector<const reaction::LogicalReaction *> AdaptiveEngineView::cullReactionsByFlow(
+        const std::vector<ReactionFlow> &allFlows,
+        const std::unordered_set<fourdst::atomic::Species> &reachableSpecies,
+        const std::vector<double> &Y_full,
+        const double maxFlow
+    ) const {
+        LOG_TRACE_L1(m_logger, "Culling reactions based on flow rates...");
+        const double relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
+        double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
+        LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
+        std::vector<const reaction::LogicalReaction*> culledReactions;
+        for (const auto& [reactionPtr, flowRate]: allFlows) {
+            bool keepReaction = false;
+            if (flowRate > absoluteCullingThreshold) {
+                LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with relative (abs) flow rate: {:0.3E} ({:0.3E} [mol/s])", reactionPtr->id(), flowRate/maxFlow, flowRate);
+                keepReaction = true;
+            } else {
+                bool zero_flow_due_to_reachable_reactants = false;
+                if (flowRate < 1e-99) {
+                    for (const auto& reactant: reactionPtr->reactants()) {
+                        const auto it = std::ranges::find(m_baseEngine.getNetworkSpecies(), reactant);
+                        const size_t index = std::distance(m_baseEngine.getNetworkSpecies().begin(), it);
+                        if (Y_full[index] < 1e-99 && reachableSpecies.contains(reactant)) {
+                            LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with zero flow due to reachable reactant '{}'.", reactionPtr->id(), reactant.name());
+                            zero_flow_due_to_reachable_reactants = true;
+                            break;
+                        }
+                    }
+                }
+                if (zero_flow_due_to_reachable_reactants) {
+                    keepReaction = true;
+                }
+            }
+            if (keepReaction) {
+                culledReactions.push_back(reactionPtr);
+            } else {
+                LOG_TRACE_L1(m_logger, "Culling reaction '{}' due to low flow rate or lack of connectivity.", reactionPtr->id());
+            }
+        }
+        LOG_DEBUG(m_logger, "Selected {} (total: {}, culled: {}) reactions based on flow rates.", culledReactions.size(), allFlows.size(), allFlows.size() - culledReactions.size());
+        return culledReactions;
+    }
+
+    void AdaptiveEngineView::finalizeActiveSet(
+        const std::vector<const reaction::LogicalReaction *> &finalReactions
+    ) {
+        std::unordered_set<Species>finalSpeciesSet;
+        m_activeReactions.clear();
+        for (const auto* reactionPtr: finalReactions) {
+            m_activeReactions.add_reaction(*reactionPtr);
+            for (const auto& reactant : reactionPtr->reactants()) {
+                finalSpeciesSet.insert(reactant);
+            }
+            for (const auto& product : reactionPtr->products()) {
+                finalSpeciesSet.insert(product);
+            }
+        }
+        m_activeSpecies.assign(finalSpeciesSet.begin(), finalSpeciesSet.end());
+        std::ranges::sort(
+            m_activeSpecies,
+            [](const Species &a, const Species &b) { return a.mass() < b.mass(); }
+        );
     }
 }
 

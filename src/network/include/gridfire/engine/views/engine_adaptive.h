@@ -1,6 +1,6 @@
 #pragma once
 #include "gridfire/engine/engine_abstract.h"
-#include "gridfire/engine/engine_view_abstract.h"
+#include "engine_view_abstract.h"
 #include "gridfire/network.h"
 
 #include "fourdst/composition/atomicSpecies.h"
@@ -240,6 +240,14 @@ namespace gridfire {
 
     private:
         /**
+         * @brief A struct to hold a reaction and its flow rate.
+         */
+        struct ReactionFlow {
+            const reaction::LogicalReaction* reactionPtr;
+            double flowRate;
+        };
+    private:
+        /**
          * @brief Constructs the species index map.
          *
          * @return A vector mapping culled species indices to full species indices.
@@ -307,13 +315,22 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
         void validateState() const;
-    private:
-        /**
-         * @brief A struct to hold a reaction and its flow rate.
-         */
-        struct ReactionFlow {
-            const reaction::Reaction* reactionPtr;
-            double flowRate;
-        };
+
+        std::vector<ReactionFlow> calculateAllReactionFlows(
+            const NetIn& netIn,
+            std::vector<double>& out_Y_Full
+        ) const;
+        std::unordered_set<fourdst::atomic::Species> findReachableSpecies(
+            const NetIn& netIn
+        ) const;
+        std::vector<const reaction::LogicalReaction*> cullReactionsByFlow(
+            const std::vector<ReactionFlow>& allFlows,
+            const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
+            const std::vector<double>& Y_full,
+            double maxFlow
+        ) const;
+        void finalizeActiveSet(
+            const std::vector<const reaction::LogicalReaction*>& finalReactions
+        );
     };
 }
