@@ -19,8 +19,22 @@
 #include "quill/Backend.h"
 #include "quill/Frontend.h"
 
+#include <chrono>
+#include <functional>
+
 // Keep a copy of the previous handler
 static std::terminate_handler g_previousHandler = nullptr;
+
+void measure_execution_time(const std::function<void()>& callback, const std::string& name)
+{
+    // variable names in camelCase
+    const auto startTime   = std::chrono::steady_clock::now();
+    callback();
+    const auto endTime     = std::chrono::steady_clock::now();
+    const auto duration    = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime);
+    std::cout << "Execution time for " << name << ": "
+              << duration.count()/1e9 << " s\n";
+}
 
 void quill_terminate_handler()
 {
@@ -65,21 +79,28 @@ int main() {
 
     NetOut netOut;
 
-    netIn.dt0 = 1e12;
+    // netIn.dt0 = 1e12;
     // approx8::Approx8Network approx8Network;
-    // netOut = approx8Network.evaluate(netIn);
+    // measure_execution_time([&]() {
+    //     netOut = approx8Network.evaluate(netIn);
+    // }, "Approx8 Network Initialization");
     // std::cout << "Approx8 Network H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
 
 
     netIn.dt0 = 1e-15;
 
     GraphEngine ReaclibEngine(composition);
+    ReaclibEngine.setPrecomputation(true);
     // AdaptiveEngineView adaptiveEngine(ReaclibEngine);
     io::SimpleReactionListFileParser parser{};
     FileDefinedEngineView approx8EngineView(ReaclibEngine, "approx8.net", parser);
     approx8EngineView.setScreeningModel(screening::ScreeningType::WEAK);
     solver::QSENetworkSolver solver(approx8EngineView);
-
     netOut = solver.evaluate(netIn);
-    std::cout << "QSE Graph Network H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
+
+    // measure_execution_time([&]() {
+    //     netOut = solver.evaluate(netIn);
+    // }, "Approx8 Network Evaluation (Precomputation)");
+    // ReaclibEngine.setPrecomputation(false);
+    // std::cout << "Precomputation H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
 }

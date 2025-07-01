@@ -63,6 +63,7 @@ namespace gridfire {
      */
     static constexpr double MIN_JACOBIAN_THRESHOLD = 1e-24;
 
+
     /**
      * @class GraphEngine
      * @brief A reaction network engine that uses a graph-based representation.
@@ -108,7 +109,7 @@ namespace gridfire {
          * This constructor uses the given set of reactions to construct the
          * reaction network.
          */
-        explicit GraphEngine(reaction::LogicalReactionSet reactions);
+        explicit GraphEngine(const reaction::LogicalReactionSet &reactions);
 
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation rate.
@@ -302,8 +303,32 @@ namespace gridfire {
 
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
+        void setPrecomputation(bool precompute);
+
+        [[nodiscard]] bool isPrecomputationEnabled() const;
 
     private:
+        struct PrecomputedReaction {
+            size_t reaction_index;
+            std::vector<size_t> unique_reactant_indices;
+            std::vector<int> reactant_powers;
+            double symmetry_factor;
+            std::vector<size_t> affected_species_indices;
+            std::vector<int> stoichiometric_coefficients;
+        };
+
+        struct constants {
+            const double u = Constants::getInstance().get("u").value; ///< Atomic mass unit in g.
+            const double Na = Constants::getInstance().get("N_a").value; ///< Avogadro's number.
+            const double c = Constants::getInstance().get("c").value; ///< Speed of light in cm/s.
+        };
+
+    private:
+        Config& m_config = Config::getInstance();
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+
+        constants m_constants;
+
         reaction::LogicalReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
         std::unordered_map<std::string_view, reaction::Reaction*> m_reactionIDMap; ///< Map from reaction ID to REACLIBReaction. //PERF: This makes copies of REACLIBReaction and could be a performance bottleneck.
 
@@ -319,9 +344,9 @@ namespace gridfire {
         screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
-        Config& m_config = Config::getInstance();
-        Constants& m_constants = Constants::getInstance(); ///< Access to physical constants.
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
+
+        std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
 
     private:
         /**
@@ -377,6 +402,8 @@ namespace gridfire {
          */
         void recordADTape();
 
+        void precomputeNetwork();
+
         /**
          * @brief Validates mass and charge conservation across all reactions.
          *
@@ -404,6 +431,13 @@ namespace gridfire {
             double culling,
             double T9
         );
+
+        [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
+            const std::vector<double> &Y_in,
+            const std::vector<double>& bare_rates,
+            double T9,
+            double rho
+        ) const;
 
         /**
          * @brief Calculates the molar reaction flow for a given reaction.
@@ -522,9 +556,9 @@ namespace gridfire {
             Y[i] = CppAD::CondExpLt(Y[i], zero, zero, Y[i]); // Ensure no negative abundances
         }
 
-        const T u = static_cast<T>(m_constants.get("u").value); // Atomic mass unit in grams
-        const T N_A = static_cast<T>(m_constants.get("N_a").value); // Avogadro's number in mol^-1
-        const T c = static_cast<T>(m_constants.get("c").value); // Speed of light in cm/s
+        const T u = static_cast<T>(m_constants.u); // Atomic mass unit in grams
+        const T N_A = static_cast<T>(m_constants.Na); // Avogadro's number in mol^-1
+        const T c = static_cast<T>(m_constants.c); // Speed of light in cm/s
 
         // --- SINGLE LOOP OVER ALL REACTIONS ---
         for (size_t reactionIndex = 0; reactionIndex < m_reactions.size(); ++reactionIndex) {
