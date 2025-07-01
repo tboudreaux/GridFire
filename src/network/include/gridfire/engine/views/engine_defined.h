@@ -1,7 +1,9 @@
 #pragma once
 
-#include "engine_view_abstract.h"
-#include "../engine_abstract.h"
+#include "gridfire/engine/views/engine_view_abstract.h"
+#include "gridfire/engine/engine_abstract.h"
+#include "gridfire/io/network_file.h"
+#include "gridfire/network.h"
 
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
@@ -13,7 +15,11 @@
 namespace gridfire{
     class FileDefinedEngineView final: public DynamicEngine, public EngineView<DynamicEngine> {
     public:
-        explicit FileDefinedEngineView(DynamicEngine& baseEngine, const std::string& fileName);
+        explicit FileDefinedEngineView(
+            DynamicEngine& baseEngine,
+            const std::string& fileName,
+            const io::NetworkFileParser& parser
+        );
 
         // --- EngineView Interface ---
         const DynamicEngine& getBaseEngine() const override;
@@ -53,6 +59,14 @@ namespace gridfire{
             const double T9,
             const double rho
         ) const override;
+
+        void update(const NetIn &netIn) override;
+
+        void setNetworkFile(const std::string& fileName);
+
+        void setScreeningModel(screening::ScreeningType model) override;
+
+        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
@@ -60,12 +74,17 @@ namespace gridfire{
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
         DynamicEngine& m_baseEngine;
+        std::string m_fileName; ///< Name of the file defining the reaction set considered by the engine view.
+        const io::NetworkFileParser& m_parser; ///< Parser for the network file.
 
         std::vector<fourdst::atomic::Species> m_activeSpecies; ///< Active species in the defined engine.
         reaction::LogicalReactionSet m_activeReactions; ///< Active reactions in the defined engine.
 
         std::vector<size_t> m_speciesIndexMap; ///< Maps indices of active species to indices in the full network.
         std::vector<size_t> m_reactionIndexMap; ///< Maps indices of active reactions to indices in the full network.
+
+        bool m_isStale = true;
+
     private:
         void buildFromFile(const std::string& fileName);
 
@@ -100,7 +119,7 @@ namespace gridfire{
          * @return A vector of abundances for the full network, with the abundances of the active
          *         species copied from the culled vector.
          */
-        std::vector<double> mapCulledToFull(const std::vector<double>& culled) const;
+        std::vector<double> mapViewToFull(const std::vector<double>& culled) const;
 
         /**
          * @brief Maps a vector of full abundances to a vector of culled abundances.
@@ -109,7 +128,7 @@ namespace gridfire{
          * @return A vector of abundances for the active species, with the abundances of the active
          *         species copied from the full vector.
          */
-        std::vector<double> mapFullToCulled(const std::vector<double>& full) const;
+        std::vector<double> mapFullToView(const std::vector<double>& full) const;
 
         /**
          * @brief Maps a culled species index to a full species index.
@@ -119,7 +138,7 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the culled index is out of bounds for the species index map.
          */
-        size_t mapCulledToFullSpeciesIndex(size_t culledSpeciesIndex) const;
+        size_t mapViewToFullSpeciesIndex(size_t culledSpeciesIndex) const;
 
         /**
          * @brief Maps a culled reaction index to a full reaction index.
@@ -129,7 +148,8 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the culled index is out of bounds for the reaction index map.
          */
-        size_t mapCulledToFullReactionIndex(size_t culledReactionIndex) const;
+        size_t mapViewToFullReactionIndex(size_t culledReactionIndex) const;
 
+        void validateNetworkState() const;
     };
 }

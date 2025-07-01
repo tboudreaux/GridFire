@@ -8,10 +8,13 @@
 #include "gridfire/network.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/screening/screening_abstract.h"
+#include "gridfire/screening/screening_types.h"
 
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 
@@ -120,7 +123,7 @@ namespace gridfire {
          *
          * @see StepDerivatives
          */
-        StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
             const std::vector<double>& Y,
             const double T9,
             const double rho
@@ -165,7 +168,7 @@ namespace gridfire {
          * This method computes the net rate at which the given reaction proceeds
          * under the current state.
          */
-        double calculateMolarReactionFlow(
+        [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
             const std::vector<double>&Y,
             const double T9,
@@ -243,6 +246,8 @@ namespace gridfire {
             double rho
         ) const override;
 
+        void update(const NetIn& netIn) override;
+
         /**
          * @brief Checks if a given species is involved in the network.
          *
@@ -293,6 +298,10 @@ namespace gridfire {
             const std::string& filename
         ) const;
 
+        void setScreeningModel(screening::ScreeningType) override;
+
+        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
+
 
     private:
         reaction::LogicalReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
@@ -306,6 +315,9 @@ namespace gridfire {
         boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
 
         CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
+
+        screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
+        std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         Config& m_config = Config::getInstance();
         Constants& m_constants = Constants::getInstance(); ///< Access to physical constants.
@@ -427,7 +439,7 @@ namespace gridfire {
          * specific nuclear energy generation rate for the current state.
          */
         template<IsArithmeticOrAD T>
-        StepDerivatives<T> calculateAllDerivatives(
+        [[nodiscard]] StepDerivatives<T> calculateAllDerivatives(
             const std::vector<T> &Y_in,
             T T9,
             T rho
@@ -445,7 +457,7 @@ namespace gridfire {
          * specific nuclear energy generation rate for the current state using
          * double precision arithmetic.
          */
-        StepDerivatives<double> calculateAllDerivatives(
+        [[nodiscard]] StepDerivatives<double> calculateAllDerivatives(
             const std::vector<double>& Y_in,
             const double T9,
             const double rho
@@ -463,7 +475,7 @@ namespace gridfire {
          * specific nuclear energy generation rate for the current state using
          * automatic differentiation.
          */
-        StepDerivatives<ADDouble> calculateAllDerivatives(
+        [[nodiscard]] StepDerivatives<ADDouble> calculateAllDerivatives(
             const std::vector<ADDouble>& Y_in,
             const ADDouble &T9,
             const ADDouble &rho
@@ -474,6 +486,13 @@ namespace gridfire {
     template<IsArithmeticOrAD T>
     StepDerivatives<T> GraphEngine::calculateAllDerivatives(
         const std::vector<T> &Y_in, T T9, T rho) const {
+        std::vector<T> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            m_reactions,
+            m_networkSpecies,
+            Y_in,
+            T9,
+            rho
+        );
 
         // --- Setup output derivatives structure ---
         StepDerivatives<T> result;
@@ -512,7 +531,7 @@ namespace gridfire {
             const auto& reaction = m_reactions[reactionIndex];
 
             // 1. Calculate reaction rate
-            const T molarReactionFlow = calculateMolarReactionFlow<T>(reaction, Y, T9, rho);
+            const T molarReactionFlow = screeningFactors[reactionIndex] * calculateMolarReactionFlow<T>(reaction, Y, T9, rho);
 
             // 2. Use the rate to update all relevant species derivatives (dY/dt)
             for (size_t speciesIndex = 0; speciesIndex < m_networkSpecies.size(); ++speciesIndex) {

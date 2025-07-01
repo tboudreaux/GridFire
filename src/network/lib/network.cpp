@@ -84,7 +84,7 @@ namespace gridfire {
             }
         }
         const ReactionSet reactionSet(reaclibReactions);
-        return LogicalReactionSet(reactionSet);
+        return packReactionSetToLogicalReactionSet(reactionSet);
     }
 
     // Trim whitespace from both ends of a string

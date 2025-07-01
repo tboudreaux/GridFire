@@ -213,6 +213,14 @@ namespace gridfire {
 
     }
 
+    void AdaptiveEngineView::setScreeningModel(const screening::ScreeningType model) {
+        m_baseEngine.setScreeningModel(model);
+    }
+
+    screening::ScreeningType AdaptiveEngineView::getScreeningModel() const {
+        return m_baseEngine.getScreeningModel();
+    }
+
     std::vector<double> AdaptiveEngineView::mapCulledToFull(const std::vector<double>& culled) const {
         std::vector<double> full(m_baseEngine.getNetworkSpecies().size(), 0.0);
         for (size_t i_culled = 0; i_culled < culled.size(); ++i_culled) {
@@ -338,7 +346,7 @@ namespace gridfire {
         const double maxFlow
     ) const {
         LOG_TRACE_L1(m_logger, "Culling reactions based on flow rates...");
-        const double relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
+        const auto relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
         double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
         LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
         std::vector<const reaction::LogicalReaction*> culledReactions;

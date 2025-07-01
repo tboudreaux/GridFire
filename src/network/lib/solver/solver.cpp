@@ -2,6 +2,8 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
 
+#include "gridfire/utils/logging.h"
+
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/composition.h"
 #include "fourdst/config/config.h"
@@ -15,6 +17,7 @@
 #include <unordered_map>
 #include <string>
 #include <stdexcept>
+#include <iomanip>
 
 #include "quill/LogMacros.h"
 
@@ -59,6 +62,21 @@ namespace gridfire::solver {
         Eigen::VectorXd Y_QSE;
         try {
             Y_QSE = calculateSteadyStateAbundances(Y_sanitized_initial, T9, rho, indices);
+            LOG_DEBUG(m_logger, "QSE Abundances: {}", [*this](const dynamicQSESpeciesIndices& indices, const Eigen::VectorXd& Y_QSE) -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
+                    ss << std::string(m_engine.getNetworkSpecies()[indices.QSESpeciesIndices[i]].name()) + ": ";
+                    ss << Y_QSE(i);
+                    if (i < indices.QSESpeciesIndices.size() - 2) {
+                        ss << ", ";
+                    } else if (i == indices.QSESpeciesIndices.size() - 2) {
+                        ss << ", and ";
+                    }
+
+                }
+                return ss.str();
+            }(indices, Y_QSE));
         } catch (const std::runtime_error& e) {
             LOG_ERROR(m_logger, "Failed to calculate steady state abundances. Aborting QSE evaluation.");
             m_logger->flush_log();
@@ -185,18 +203,62 @@ namespace gridfire::solver {
     }
 
     Eigen::VectorXd QSENetworkSolver::calculateSteadyStateAbundances(
-        const std::vector<double> &Y,
-        const double T9,
-        const double rho,
-        const dynamicQSESpeciesIndices &indices
+    const std::vector<double> &Y,
+    const double T9,
+    const double rho,
+    const dynamicQSESpeciesIndices &indices
     ) const {
         LOG_TRACE_L1(m_logger, "Calculating steady state abundances for QSE species...");
-        LOG_WARNING(m_logger, "QSE solver logic not yet implemented, assuming all QSE species have 0 abundance.");
 
-        // --- Prepare the QSE species vector ---
-        Eigen::VectorXd v_qse(indices.QSESpeciesIndices.size());
-        v_qse.setZero();
-        return v_qse.array();
+        if (indices.QSESpeciesIndices.empty()) {
+            LOG_DEBUG(m_logger, "No QSE species to solve for.");
+            return Eigen::VectorXd(0);
+        }
+        // Use the EigenFunctor with Eigen's nonlinear solver
+        EigenFunctor<double> functor(
+            m_engine,
+            Y,
+            indices.dynamicSpeciesIndices,
+            indices.QSESpeciesIndices,
+            T9,
+            rho
+        );
+
+        Eigen::VectorXd v_qse_log_initial(indices.QSESpeciesIndices.size());
+        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
+            v_qse_log_initial(i) = std::log(std::max(Y[indices.QSESpeciesIndices[i]], 1e-99));
+        }
+
+        const static std::unordered_map<Eigen::LevenbergMarquardtSpace::Status, const char*> statusMessages = {
+            {Eigen::LevenbergMarquardtSpace::NotStarted, "Not started"},
+            {Eigen::LevenbergMarquardtSpace::Running, "Running"},
+            {Eigen::LevenbergMarquardtSpace::ImproperInputParameters, "Improper input parameters"},
+            {Eigen::LevenbergMarquardtSpace::RelativeReductionTooSmall, "Relative reduction too small"},
+            {Eigen::LevenbergMarquardtSpace::RelativeErrorTooSmall, "Relative error too small"},
+            {Eigen::LevenbergMarquardtSpace::RelativeErrorAndReductionTooSmall, "Relative error and reduction too small"},
+            {Eigen::LevenbergMarquardtSpace::CosinusTooSmall, "Cosine too small"},
+            {Eigen::LevenbergMarquardtSpace::TooManyFunctionEvaluation, "Too many function evaluations"},
+            {Eigen::LevenbergMarquardtSpace::FtolTooSmall, "Function tolerance too small"},
+            {Eigen::LevenbergMarquardtSpace::XtolTooSmall, "X tolerance too small"},
+            {Eigen::LevenbergMarquardtSpace::GtolTooSmall, "Gradient tolerance too small"},
+            {Eigen::LevenbergMarquardtSpace::UserAsked, "User asked to stop"}
+        };
+
+        Eigen::LevenbergMarquardt lm(functor);
+        const Eigen::LevenbergMarquardtSpace::Status info = lm.minimize(v_qse_log_initial);
+
+        if (info <= 0 || info >= 4) {
+            LOG_ERROR(m_logger, "QSE species minimization failed with status: {} ({})",
+                      static_cast<int>(info), statusMessages.at(info));
+            throw std::runtime_error(
+                "QSE species minimization failed with status: " + std::to_string(static_cast<int>(info)) +
+                " (" + std::string(statusMessages.at(info)) + ")"
+            );
+        }
+        LOG_DEBUG(m_logger, "QSE species minimization completed successfully with status: {} ({})",
+                  static_cast<int>(info), statusMessages.at(info));
+        return v_qse_log_initial.array().exp();
+
     }
 
     NetOut QSENetworkSolver::initializeNetworkWithShortIgnition(const NetIn &netIn) const {
@@ -232,9 +294,14 @@ namespace gridfire::solver {
         preIgnition.tMax = ignitionTime;
         preIgnition.dt0 = ignitionStepSize;
 
+        const auto prevScreeningModel = m_engine.getScreeningModel();
+        LOG_DEBUG(m_logger, "Setting screening model to BARE for high temperature and density ignition.");
+        m_engine.setScreeningModel(screening::ScreeningType::BARE);
         DirectNetworkSolver ignitionSolver(m_engine);
         NetOut postIgnition = ignitionSolver.evaluate(preIgnition);
         LOG_INFO(m_logger, "Network ignition completed in {} steps.", postIgnition.num_steps);
+        m_engine.setScreeningModel(prevScreeningModel);
+        LOG_DEBUG(m_logger, "Restoring previous screening model: {}", static_cast<int>(prevScreeningModel));
         return postIgnition;
     }
 
@@ -360,7 +427,8 @@ namespace gridfire::solver {
             speciesNames.push_back(std::string(species.name()));
         }
 
-        Composition outputComposition(speciesNames, finalMassFractions);
+        Composition outputComposition(speciesNames);
+        outputComposition.setMassFraction(speciesNames, finalMassFractions);
         outputComposition.finalize(true);
 
         NetOut netOut;
@@ -377,6 +445,15 @@ namespace gridfire::solver {
         double t
     ) const {
         const std::vector<double> y(Y.begin(), m_numSpecies + Y.begin());
+
+        // std::string timescales = utils::formatNuclearTimescaleLogString(
+        //     m_engine,
+        //     y,
+        //     m_T9,
+        //     m_rho
+        // );
+        // LOG_TRACE_L2(m_logger, "{}", timescales);
+
         auto [dydt, eps] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
         dYdt.resize(m_numSpecies + 1);
         std::ranges::copy(dydt, dYdt.begin());

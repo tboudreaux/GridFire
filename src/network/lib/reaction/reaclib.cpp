@@ -122,10 +122,12 @@ namespace gridfire::reaclib {
         }
 
         // The ReactionSet takes the vector of all individual reactions.
-        reaction::ReactionSet reaction_set(std::move(reaction_list));
+        const reaction::ReactionSet reaction_set(std::move(reaction_list));
 
         // The LogicalReactionSet groups reactions by their peName, which is what we want.
-        s_all_reaclib_reactions_ptr = new reaction::LogicalReactionSet(reaction_set);
+        s_all_reaclib_reactions_ptr = new reaction::LogicalReactionSet(
+            reaction::packReactionSetToLogicalReactionSet(reaction_set)
+        );
 
         s_initialized = true;
     }

@@ -509,7 +509,6 @@ namespace gridfire::approx8{
 	vector_type Approx8Network::convert_netIn(const NetIn &netIn) {
 		vector_type y(Approx8Net::nVar, 0.0);
 		y[Approx8Net::ih1] = netIn.composition.getNumberFraction("H-1");
-		std::cout << "Approx8::convert_netIn -> H-1 fraction: " << y[Approx8Net::ih1] << std::endl;
 		y[Approx8Net::ihe3] = netIn.composition.getNumberFraction("He-3");
 		y[Approx8Net::ihe4] = netIn.composition.getNumberFraction("He-4");
 		y[Approx8Net::ic12] = netIn.composition.getNumberFraction("C-12");

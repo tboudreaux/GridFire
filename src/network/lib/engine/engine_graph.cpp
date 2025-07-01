@@ -1,6 +1,7 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/network.h"
+#include "gridfire/screening/screening_types.h"
 
 #include "fourdst/composition/species.h"
 #include "fourdst/composition/atomicSpecies.h"
@@ -262,6 +263,15 @@ namespace gridfire {
         return calculateAllDerivatives<ADDouble>(Y_in, T9, rho);
     }
 
+    void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
+        m_screeningModel = screening::selectScreeningModel(model);
+        m_screeningType = model;
+    }
+
+    screening::ScreeningType GraphEngine::getScreeningModel() const {
+        return m_screeningType;
+    }
+
     double GraphEngine::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
         const std::vector<double> &Y,
@@ -437,6 +447,10 @@ namespace gridfire {
             speciesTimescales.emplace(species, timescale);
         }
         return speciesTimescales;
+    }
+
+    void GraphEngine::update(const NetIn &netIn) {
+        return; // No-op for GraphEngine, as it does not support manually triggering updates.
     }
 
     void GraphEngine::recordADTape() {

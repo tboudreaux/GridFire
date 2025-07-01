@@ -1,6 +1,8 @@
 #pragma once
 #include "gridfire/engine/engine_abstract.h"
-#include "engine_view_abstract.h"
+#include "gridfire/engine/views/engine_view_abstract.h"
+#include "gridfire/screening/screening_abstract.h"
+#include "gridfire/screening/screening_types.h"
 #include "gridfire/network.h"
 
 #include "fourdst/composition/atomicSpecies.h"
@@ -71,13 +73,13 @@ namespace gridfire {
          * @see AdaptiveEngineView::constructSpeciesIndexMap()
          * @see AdaptiveEngineView::constructReactionIndexMap()
          */
-        void update(const NetIn& netIn);
+        void update(const NetIn& netIn) override;
 
         /**
          * @brief Gets the list of active species in the network.
          * @return A const reference to the vector of active species.
          */
-        const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
 
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation for the active species.
@@ -95,7 +97,7 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          * @see AdaptiveEngineView::update()
          */
-        StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
             const std::vector<double> &Y_culled,
             const double T9,
             const double rho
@@ -134,7 +136,7 @@ namespace gridfire {
          * @throws std::out_of_range If the culled index is out of bounds for the species index map.
          * @see AdaptiveEngineView::update()
          */
-        double getJacobianMatrixEntry(
+        [[nodiscard]] double getJacobianMatrixEntry(
             const int i_culled,
             const int j_culled
         ) const override;
@@ -164,7 +166,7 @@ namespace gridfire {
          * @throws std::out_of_range If the culled index is out of bounds for the species or reaction index map.
          * @see AdaptiveEngineView::update()
          */
-        int getStoichiometryMatrixEntry(
+        [[nodiscard]] int getStoichiometryMatrixEntry(
             const int speciesIndex_culled,
             const int reactionIndex_culled
         ) const override;
@@ -184,7 +186,7 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          * @throws std::runtime_error If the reaction is not part of the active reactions in the adaptive engine view.
          */
-        double calculateMolarReactionFlow(
+        [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
             const std::vector<double> &Y_culled,
             double T9,
@@ -196,7 +198,7 @@ namespace gridfire {
          *
          * @return Reference to the LogicalReactionSet containing all active reactions.
          */
-        const reaction::LogicalReactionSet& getNetworkReactions() const override;
+        [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
 
         /**
          * @brief Computes timescales for all active species in the network.
@@ -211,7 +213,7 @@ namespace gridfire {
          *
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
-        std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
             const std::vector<double> &Y_culled,
             double T9,
             double rho
@@ -221,7 +223,11 @@ namespace gridfire {
          * @brief Gets the base engine.
          * @return A const reference to the base engine.
          */
-        const DynamicEngine& getBaseEngine() const override { return m_baseEngine; }
+        [[nodiscard]] const DynamicEngine& getBaseEngine() const override { return m_baseEngine; }
+
+        void setScreeningModel(screening::ScreeningType model) override;
+
+        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
@@ -257,7 +263,7 @@ namespace gridfire {
          *
          * @see AdaptiveEngineView::update()
          */
-        std::vector<size_t> constructSpeciesIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap() const;
 
         /**
          * @brief Constructs the reaction index map.
@@ -269,7 +275,7 @@ namespace gridfire {
          *
          * @see AdaptiveEngineView::update()
          */
-        std::vector<size_t> constructReactionIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructReactionIndexMap() const;
 
         /**
          * @brief Maps a vector of culled abundances to a vector of full abundances.
@@ -278,7 +284,7 @@ namespace gridfire {
          * @return A vector of abundances for the full network, with the abundances of the active
          *         species copied from the culled vector.
          */
-        std::vector<double> mapCulledToFull(const std::vector<double>& culled) const;
+        [[nodiscard]] std::vector<double> mapCulledToFull(const std::vector<double>& culled) const;
 
         /**
          * @brief Maps a vector of full abundances to a vector of culled abundances.
@@ -287,7 +293,7 @@ namespace gridfire {
          * @return A vector of abundances for the active species, with the abundances of the active
          *         species copied from the full vector.
          */
-        std::vector<double> mapFullToCulled(const std::vector<double>& full) const;
+        [[nodiscard]] std::vector<double> mapFullToCulled(const std::vector<double>& full) const;
 
         /**
          * @brief Maps a culled species index to a full species index.
@@ -297,7 +303,7 @@ namespace gridfire {
          *
          * @throws std::out_of_range If the culled index is out of bounds for the species index map.
          */
-        size_t mapCulledToFullSpeciesIndex(size_t culledSpeciesIndex) const;
+        [[nodiscard]] size_t mapCulledToFullSpeciesIndex(size_t culledSpeciesIndex) const;
 
         /**
          * @brief Maps a culled reaction index to a full reaction index.
@@ -307,7 +313,7 @@ namespace gridfire {
          *
          * @throws std::out_of_range If the culled index is out of bounds for the reaction index map.
          */
-        size_t mapCulledToFullReactionIndex(size_t culledReactionIndex) const;
+        [[nodiscard]] size_t mapCulledToFullReactionIndex(size_t culledReactionIndex) const;
 
         /**
          * @brief Validates that the AdaptiveEngineView is not stale.
@@ -320,10 +326,10 @@ namespace gridfire {
             const NetIn& netIn,
             std::vector<double>& out_Y_Full
         ) const;
-        std::unordered_set<fourdst::atomic::Species> findReachableSpecies(
+        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> findReachableSpecies(
             const NetIn& netIn
         ) const;
-        std::vector<const reaction::LogicalReaction*> cullReactionsByFlow(
+        [[nodiscard]] std::vector<const reaction::LogicalReaction*> cullReactionsByFlow(
             const std::vector<ReactionFlow>& allFlows,
             const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
             const std::vector<double>& Y_full,

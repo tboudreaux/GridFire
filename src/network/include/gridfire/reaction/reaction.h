@@ -11,6 +11,7 @@
 
 
 #include "cppad/cppad.hpp"
+#include "xxhash64.h"
 
 /**
  * @file reaction.h
@@ -252,6 +253,10 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] uint64_t hash(uint64_t seed = 0) const;
 
+        friend std::ostream& operator<<(std::ostream& os, const Reaction& r) {
+            return os << "(Reaction:" << r.m_id << ")";
+        }
+
     protected:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         std::string m_id; ///< Unique identifier for the reaction (e.g., "h1+h1=>h2+e+nu").
@@ -288,162 +293,6 @@ namespace gridfire::reaction {
         }
     };
 
-    /**
-     * @class ReactionSet
-     * @brief A collection of Reaction objects.
-     *
-     * This class manages a set of individual `Reaction` objects, providing
-     * efficient lookup by ID and functionality to query the entire set.
-     *
-     * Example:
-     * @code
-     * ReactionSet my_set({reaction1, reaction2});
-     * my_set.add_reaction(reaction3);
-     * if (my_set.contains("h1(p,g)h2")) {
-     *     const Reaction& r = my_set["h1(p,g)h2"];
-     * }
-     * @endcode
-     */
-    class ReactionSet {
-    public:
-        /**
-         * @brief Constructs a ReactionSet from a vector of reactions.
-         * @param reactions The initial vector of Reaction objects.
-         */
-        explicit ReactionSet(std::vector<Reaction> reactions);
-
-        /**
-         * @brief Copy constructor.
-         * @param other The ReactionSet to copy.
-         */
-        ReactionSet(const ReactionSet& other);
-
-        /**
-         * @brief Copy assignment operator.
-         * @param other The ReactionSet to assign from.
-         * @return A reference to this ReactionSet.
-         */
-        ReactionSet& operator=(const ReactionSet& other);
-
-        /**
-         * @brief Virtual destructor.
-         */
-        virtual ~ReactionSet() = default;
-
-        /**
-         * @brief Adds a reaction to the set.
-         * @param reaction The Reaction to add.
-         */
-        virtual void add_reaction(Reaction reaction);
-
-        /**
-         * @brief Removes a reaction from the set.
-         * @param reaction The Reaction to remove.
-         */
-        virtual void remove_reaction(const Reaction& reaction);
-
-        /**
-         * @brief Checks if the set contains a reaction with the given ID.
-         * @param id The ID of the reaction to find.
-         * @return True if the reaction is in the set, false otherwise.
-         */
-        [[nodiscard]] bool contains(const std::string_view& id) const;
-
-        /**
-         * @brief Checks if the set contains the given reaction.
-         * @param reaction The Reaction to find.
-         * @return True if the reaction is in the set, false otherwise.
-         */
-        [[nodiscard]] bool contains(const Reaction& reaction) const;
-
-        /**
-         * @brief Gets the number of reactions in the set.
-         * @return The size of the set.
-         */
-        [[nodiscard]] virtual size_t size() const { return m_reactions.size(); }
-
-        /**
-         * @brief Removes all reactions from the set.
-         */
-        void clear();
-
-        /**
-         * @brief Checks if any reaction in the set involves the given species.
-         * @param species The species to check for.
-         * @return True if the species is involved in any reaction.
-         */
-        [[nodiscard]] bool contains_species(const fourdst::atomic::Species& species) const;
-
-        /**
-         * @brief Checks if any reaction in the set contains the given species as a reactant.
-         * @param species The species to check for.
-         * @return True if the species is a reactant in any reaction.
-         */
-        [[nodiscard]] bool contains_reactant(const fourdst::atomic::Species& species) const;
-
-        /**
-         * @brief Checks if any reaction in the set contains the given species as a product.
-         * @param species The species to check for.
-         * @return True if the species is a product in any reaction.
-         */
-        [[nodiscard]] bool contains_product(const fourdst::atomic::Species& species) const;
-
-        /**
-         * @brief Accesses a reaction by its index.
-         * @param index The index of the reaction to access.
-         * @return A const reference to the Reaction.
-         * @throws std::out_of_range if the index is out of bounds.
-         */
-        [[nodiscard]] virtual const Reaction& operator[](size_t index) const;
-
-        /**
-         * @brief Accesses a reaction by its ID.
-         * @param id The ID of the reaction to access.
-         * @return A const reference to the Reaction.
-         * @throws std::out_of_range if no reaction with the given ID exists.
-         */
-        [[nodiscard]] const Reaction& operator[](const std::string_view& id) const;
-
-        /**
-         * @brief Compares this set with another for equality.
-         * @param other The other ReactionSet to compare with.
-         * @return True if the sets are equal (same size and hash).
-         */
-        bool operator==(const ReactionSet& other) const;
-
-        /**
-         * @brief Compares this set with another for inequality.
-         * @param other The other ReactionSet to compare with.
-         * @return True if the sets are not equal.
-         */
-        bool operator!=(const ReactionSet& other) const;
-
-        /**
-         * @brief Computes a hash for the entire set.
-         * @param seed The seed for the hash function.
-         * @return A 64-bit hash value.
-         * @details The algorithm computes the hash of each individual reaction,
-         * sorts the hashes, and then computes a final hash over the sorted list
-         * of hashes. This ensures the hash is order-independent.
-         */
-        [[nodiscard]] uint64_t hash(uint64_t seed = 0) const;
-
-        /** @name Iterators
-         *  Provides iterators to loop over the reactions in the set.
-         */
-        ///@{
-        auto begin() { return m_reactions.begin(); }
-        [[nodiscard]] auto begin() const { return m_reactions.cbegin(); }
-        auto end() { return m_reactions.end(); }
-        [[nodiscard]] auto end() const { return m_reactions.cend(); }
-        ///@}
-    private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<Reaction> m_reactions;
-        std::string m_id;
-        std::unordered_map<std::string, Reaction> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
-
-    };
 
 
     /**
@@ -508,6 +357,12 @@ namespace gridfire::reaction {
         auto end() { return m_rates.end(); }
         [[nodiscard]] auto end() const { return m_rates.cend(); }
         ///@}
+        ///
+
+        friend std::ostream& operator<<(std::ostream& os, const LogicalReaction& r) {
+            os << "(LogicalReaction: " << r.id() << ", reverse: " << r.is_reverse() << ")";
+            return os;
+        }
 
     private:
         std::vector<std::string> m_sources; ///< List of source labels.
@@ -543,31 +398,128 @@ namespace gridfire::reaction {
         }
     };
 
-    /**
-     * @class LogicalReactionSet
-     * @brief A collection of LogicalReaction objects.
-     *
-     * This class takes a `ReactionSet` and groups individual `Reaction` objects
-     * into `LogicalReaction` objects based on their `peName`. This provides a
-     * view of the network where all rates for the same physical process are combined.
-     */
-    class LogicalReactionSet final : public ReactionSet {
+    template <typename ReactionT>
+    class TemplatedReactionSet final {
     public:
         /**
-         * @brief Deleted default constructor.
+         * @brief Constructs a ReactionSet from a vector of reactions.
+         * @param reactions The initial vector of Reaction objects.
          */
-        LogicalReactionSet() = delete;
+        explicit TemplatedReactionSet(std::vector<ReactionT> reactions);
 
         /**
-         * @brief Constructs a LogicalReactionSet from a ReactionSet.
-         * @param reactionSet The set of individual reactions to group.
-         * @details This constructor iterates through the provided `ReactionSet`,
-         * groups reactions by their `peName`, and creates a `LogicalReaction` for each group.
+         * @brief Copy constructor.
+         * @param other The ReactionSet to copy.
          */
-        explicit LogicalReactionSet(const ReactionSet& reactionSet);
+        TemplatedReactionSet(const TemplatedReactionSet<ReactionT>& other);
+
+        /**
+         * @brief Copy assignment operator.
+         * @param other The ReactionSet to assign from.
+         * @return A reference to this ReactionSet.
+         */
+        TemplatedReactionSet<ReactionT>& operator=(const TemplatedReactionSet<ReactionT>& other);
+
+        /**
+         * @brief Adds a reaction to the set.
+         * @param reaction The Reaction to add.
+         */
+        void add_reaction(ReactionT reaction);
+
+        /**
+         * @brief Removes a reaction from the set.
+         * @param reaction The Reaction to remove.
+         */
+        void remove_reaction(const ReactionT& reaction);
+
+        /**
+         * @brief Checks if the set contains a reaction with the given ID.
+         * @param id The ID of the reaction to find.
+         * @return True if the reaction is in the set, false otherwise.
+         */
+        [[nodiscard]] bool contains(const std::string_view& id) const;
+
+        /**
+         * @brief Checks if the set contains the given reaction.
+         * @param reaction The Reaction to find.
+         * @return True if the reaction is in the set, false otherwise.
+         */
+        [[nodiscard]] bool contains(const Reaction& reaction) const;
+
+        /**
+         * @brief Gets the number of reactions in the set.
+         * @return The size of the set.
+         */
+        [[nodiscard]] size_t size() const { return m_reactions.size(); }
+
+        /**
+         * @brief Removes all reactions from the set.
+         */
+        void clear();
+
+        /**
+         * @brief Checks if any reaction in the set involves the given species.
+         * @param species The species to check for.
+         * @return True if the species is involved in any reaction.
+         */
+        [[nodiscard]] bool contains_species(const fourdst::atomic::Species& species) const;
+
+        /**
+         * @brief Checks if any reaction in the set contains the given species as a reactant.
+         * @param species The species to check for.
+         * @return True if the species is a reactant in any reaction.
+         */
+        [[nodiscard]] bool contains_reactant(const fourdst::atomic::Species& species) const;
+
+        /**
+         * @brief Checks if any reaction in the set contains the given species as a product.
+         * @param species The species to check for.
+         * @return True if the species is a product in any reaction.
+         */
+        [[nodiscard]] bool contains_product(const fourdst::atomic::Species& species) const;
+
+        /**
+         * @brief Accesses a reaction by its index.
+         * @param index The index of the reaction to access.
+         * @return A const reference to the Reaction.
+         * @throws std::out_of_range if the index is out of bounds.
+         */
+        [[nodiscard]] const ReactionT& operator[](size_t index) const;
+
+        /**
+         * @brief Accesses a reaction by its ID.
+         * @param id The ID of the reaction to access.
+         * @return A const reference to the Reaction.
+         * @throws std::out_of_range if no reaction with the given ID exists.
+         */
+        [[nodiscard]] const ReactionT& operator[](const std::string_view& id) const;
+
+        /**
+         * @brief Compares this set with another for equality.
+         * @param other The other ReactionSet to compare with.
+         * @return True if the sets are equal (same size and hash).
+         */
+        bool operator==(const TemplatedReactionSet& other) const;
+
+        /**
+         * @brief Compares this set with another for inequality.
+         * @param other The other ReactionSet to compare with.
+         * @return True if the sets are not equal.
+         */
+        bool operator!=(const TemplatedReactionSet& other) const;
+
+        /**
+         * @brief Computes a hash for the entire set.
+         * @param seed The seed for the hash function.
+         * @return A 64-bit hash value.
+         * @details The algorithm computes the hash of each individual reaction,
+         * sorts the hashes, and then computes a final hash over the sorted list
+         * of hashes. This ensures the hash is order-independent.
+         */
+        [[nodiscard]] uint64_t hash(uint64_t seed = 0) const;
 
         /** @name Iterators
-         *  Provides iterators to loop over the logical reactions in the set.
+         *  Provides iterators to loop over the reactions in the set.
          */
         ///@{
         auto begin() { return m_reactions.begin(); }
@@ -575,25 +527,208 @@ namespace gridfire::reaction {
         auto end() { return m_reactions.end(); }
         [[nodiscard]] auto end() const { return m_reactions.cend(); }
         ///@}
+        ///
+        friend std::ostream& operator<<(std::ostream& os, const TemplatedReactionSet<ReactionT>& r) {
+            os << "(ReactionSet: [";
+            int counter = 0;
+            for (const auto& reaction : r.m_reactions) {
+                os << reaction;
+                if (counter < r.m_reactions.size() - 2) {
+                    os << ", ";
+                } else if (counter == r.m_reactions.size() - 2) {
+                    os << " and ";
+                }
+                ++counter;
+            }
+            os << "])";
+            return os;
+        }
 
-        /**
-         * @brief Gets the number of logical reactions in the set.
-         * @return The size of the set.
-         */
-        [[nodiscard]] size_t size() const { return m_reactions.size(); }
-
-        /**
-         * @brief Accesses a logical reaction by its index.
-         * @param index The index of the logical reaction.
-         * @return A const reference to the LogicalReaction.
-         */
-        [[nodiscard]] const LogicalReaction& operator[](size_t index) const { return m_reactions[index]; }
+        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> getReactionSetSpecies() const;
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<LogicalReaction> m_reactions;
+        std::vector<ReactionT> m_reactions;
         std::string m_id;
-        std::unordered_map<std::string, LogicalReaction> m_reactionNameMap; ///< Maps reaction IDs to LogicalReaction objects for quick lookup.
+        std::unordered_map<std::string, ReactionT> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
+
     };
 
+    using ReactionSet = TemplatedReactionSet<Reaction>; ///< A set of reactions, typically from a single source like REACLIB.
+    using LogicalReactionSet = TemplatedReactionSet<LogicalReaction>; ///< A set of logical reactions.
+
+    LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet& reactionSet);
+
+    template <typename ReactionT>
+    TemplatedReactionSet<ReactionT>::TemplatedReactionSet(
+        std::vector<ReactionT> reactions
+    ) :
+    m_reactions(std::move(reactions)) {
+        if (m_reactions.empty()) {
+            return; // Case where the reactions will be added later.
+        }
+        m_reactionNameMap.reserve(reactions.size());
+        for (const auto& reaction : m_reactions) {
+            m_id += reaction.id();
+            m_reactionNameMap.emplace(reaction.id(), reaction);
+        }
+    }
+
+    template <typename ReactionT>
+    TemplatedReactionSet<ReactionT>::TemplatedReactionSet(const TemplatedReactionSet<ReactionT> &other) {
+        m_reactions.reserve(other.m_reactions.size());
+        for (const auto& reaction_ptr: other.m_reactions) {
+            m_reactions.push_back(reaction_ptr);
+        }
+
+        m_reactionNameMap.reserve(other.m_reactionNameMap.size());
+        for (const auto& reaction_ptr : m_reactions) {
+            m_reactionNameMap.emplace(reaction_ptr.id(), reaction_ptr);
+        }
+    }
+
+    template <typename ReactionT>
+    TemplatedReactionSet<ReactionT>& TemplatedReactionSet<ReactionT>::operator=(const TemplatedReactionSet<ReactionT> &other) {
+        if (this != &other) {
+            TemplatedReactionSet temp(other);
+            std::swap(m_reactions, temp.m_reactions);
+            std::swap(m_reactionNameMap, temp.m_reactionNameMap);
+        }
+        return *this;
+    }
+
+    template <typename ReactionT>
+    void TemplatedReactionSet<ReactionT>::add_reaction(ReactionT reaction) {
+        m_reactions.emplace_back(reaction);
+        m_id += m_reactions.back().id();
+        m_reactionNameMap.emplace(m_reactions.back().id(), m_reactions.back());
+    }
+
+    template <typename ReactionT>
+    void TemplatedReactionSet<ReactionT>::remove_reaction(const ReactionT& reaction) {
+        if (!m_reactionNameMap.contains(std::string(reaction.id()))) {
+            return;
+        }
+
+        m_reactionNameMap.erase(std::string(reaction.id()));
+
+        std::erase_if(m_reactions, [&reaction](const Reaction& r) {
+            return r == reaction;
+        });
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::contains(const std::string_view& id) const {
+        for (const auto& reaction : m_reactions) {
+            if (reaction.id() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::contains(const Reaction& reaction) const {
+        for (const auto& r : m_reactions) {
+            if (r == reaction) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template <typename ReactionT>
+    void TemplatedReactionSet<ReactionT>::clear() {
+        m_reactions.clear();
+        m_reactionNameMap.clear();
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::contains_species(const fourdst::atomic::Species& species) const {
+        for (const auto& reaction : m_reactions) {
+            if (reaction.contains(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::contains_reactant(const fourdst::atomic::Species& species) const {
+        for (const auto& r : m_reactions) {
+            if (r.contains_reactant(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::contains_product(const fourdst::atomic::Species& species) const {
+        for (const auto& r : m_reactions) {
+            if (r.contains_product(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template <typename ReactionT>
+    const ReactionT& TemplatedReactionSet<ReactionT>::operator[](const size_t index) const {
+        if (index >= m_reactions.size()) {
+            m_logger -> flush_log();
+            throw std::out_of_range("Index" + std::to_string(index) + " out of range for ReactionSet of size " + std::to_string(m_reactions.size()) + ".");
+        }
+        return m_reactions[index];
+    }
+
+    template <typename ReactionT>
+    const ReactionT& TemplatedReactionSet<ReactionT>::operator[](const std::string_view& id) const {
+        if (auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
+            return it->second;
+        }
+        m_logger -> flush_log();
+        throw std::out_of_range("Species " + std::string(id) + " does not exist in ReactionSet.");
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::operator==(const TemplatedReactionSet<ReactionT>& other) const {
+        if (size() != other.size()) {
+            return false;
+        }
+        return hash() == other.hash();
+    }
+
+    template <typename ReactionT>
+    bool TemplatedReactionSet<ReactionT>::operator!=(const TemplatedReactionSet<ReactionT>& other) const {
+        return !(*this == other);
+    }
+
+    template <typename ReactionT>
+    uint64_t TemplatedReactionSet<ReactionT>::hash(uint64_t seed) const {
+        if (m_reactions.empty()) {
+            return XXHash64::hash(nullptr, 0, seed);
+        }
+        std::vector<uint64_t> individualReactionHashes;
+        individualReactionHashes.reserve(m_reactions.size());
+        for (const auto& reaction : m_reactions) {
+            individualReactionHashes.push_back(reaction.hash(seed));
+        }
+
+        std::ranges::sort(individualReactionHashes);
+
+        const auto data = static_cast<const void*>(individualReactionHashes.data());
+        const size_t sizeInBytes = individualReactionHashes.size() * sizeof(uint64_t);
+        return XXHash64::hash(data, sizeInBytes, seed);
+    }
+
+    template<typename ReactionT>
+    std::unordered_set<fourdst::atomic::Species> TemplatedReactionSet<ReactionT>::getReactionSetSpecies() const {
+        std::unordered_set<fourdst::atomic::Species> species;
+        for (const auto& reaction : m_reactions) {
+            const auto reactionSpecies = reaction.all_species();
+            species.insert(reactionSpecies.begin(), reactionSpecies.end());
+        }
+        return species;
+    }
 }
 

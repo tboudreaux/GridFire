@@ -137,152 +137,6 @@ namespace gridfire::reaction {
         return XXHash64::hash(m_id.data(), m_id.size(), seed);
     }
 
-    ReactionSet::ReactionSet(
-        std::vector<Reaction> reactions
-    ) :
-    m_reactions(std::move(reactions)) {
-        if (m_reactions.empty()) {
-            return; // Case where the reactions will be added later.
-        }
-        m_reactionNameMap.reserve(reactions.size());
-        for (const auto& reaction : m_reactions) {
-            m_id += reaction.id();
-            m_reactionNameMap.emplace(reaction.id(), reaction);
-        }
-    }
-
-    ReactionSet::ReactionSet(const ReactionSet &other) {
-        m_reactions.reserve(other.m_reactions.size());
-        for (const auto& reaction_ptr: other.m_reactions) {
-            m_reactions.push_back(reaction_ptr);
-        }
-
-        m_reactionNameMap.reserve(other.m_reactionNameMap.size());
-        for (const auto& reaction_ptr : m_reactions) {
-            m_reactionNameMap.emplace(reaction_ptr.id(), reaction_ptr);
-        }
-    }
-
-    ReactionSet & ReactionSet::operator=(const ReactionSet &other) {
-        if (this != &other) {
-            ReactionSet temp(other);
-            std::swap(m_reactions, temp.m_reactions);
-            std::swap(m_reactionNameMap, temp.m_reactionNameMap);
-        }
-        return *this;
-    }
-
-    void ReactionSet::add_reaction(Reaction reaction) {
-        m_reactions.emplace_back(reaction);
-        m_id += m_reactions.back().id();
-        m_reactionNameMap.emplace(m_reactions.back().id(), m_reactions.back());
-    }
-
-    void ReactionSet::remove_reaction(const Reaction& reaction) {
-        if (!m_reactionNameMap.contains(std::string(reaction.id()))) {
-            return;
-        }
-
-        m_reactionNameMap.erase(std::string(reaction.id()));
-
-        std::erase_if(m_reactions, [&reaction](const Reaction& r) {
-            return r == reaction;
-        });
-    }
-
-    bool ReactionSet::contains(const std::string_view& id) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.id() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool ReactionSet::contains(const Reaction& reaction) const {
-        for (const auto& r : m_reactions) {
-            if (r == reaction) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void ReactionSet::clear() {
-        m_reactions.clear();
-        m_reactionNameMap.clear();
-    }
-
-    bool ReactionSet::contains_species(const Species& species) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.contains(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool ReactionSet::contains_reactant(const Species& species) const {
-        for (const auto& r : m_reactions) {
-            if (r.contains_reactant(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool ReactionSet::contains_product(const Species& species) const {
-        for (const auto& r : m_reactions) {
-            if (r.contains_product(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    const Reaction& ReactionSet::operator[](const size_t index) const {
-        if (index >= m_reactions.size()) {
-            m_logger -> flush_log();
-            throw std::out_of_range("Index" + std::to_string(index) + " out of range for ReactionSet of size " + std::to_string(m_reactions.size()) + ".");
-        }
-        return m_reactions[index];
-    }
-
-    const Reaction& ReactionSet::operator[](const std::string_view& id) const {
-        if (auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
-            return it->second;
-        }
-        m_logger -> flush_log();
-        throw std::out_of_range("Species " + std::string(id) + " does not exist in ReactionSet.");
-    }
-
-    bool ReactionSet::operator==(const ReactionSet& other) const {
-        if (size() != other.size()) {
-            return false;
-        }
-        return hash() == other.hash();
-    }
-
-    bool ReactionSet::operator!=(const ReactionSet& other) const {
-        return !(*this == other);
-    }
-
-    uint64_t ReactionSet::hash(uint64_t seed) const {
-        if (m_reactions.empty()) {
-            return XXHash64::hash(nullptr, 0, seed);
-        }
-        std::vector<uint64_t> individualReactionHashes;
-        individualReactionHashes.reserve(m_reactions.size());
-        for (const auto& reaction : m_reactions) {
-            individualReactionHashes.push_back(reaction.hash(seed));
-        }
-
-        std::ranges::sort(individualReactionHashes);
-
-        const void* data = static_cast<const void*>(individualReactionHashes.data());
-        size_t sizeInBytes = individualReactionHashes.size() * sizeof(uint64_t);
-        return XXHash64::hash(data, sizeInBytes, seed);
-    }
 
 
     LogicalReaction::LogicalReaction(const std::vector<Reaction>& reactants) :
@@ -344,21 +198,21 @@ namespace gridfire::reaction {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
-    LogicalReactionSet::LogicalReactionSet(const ReactionSet &reactionSet) :
-        ReactionSet(std::vector<Reaction>()) {
+    LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet& reactionSet) {
+        std::unordered_map<std::string_view, std::vector<Reaction>> groupedReactions;
 
-        std::unordered_map<std::string_view, std::vector<Reaction>> grouped_reactions;
+        for (const auto& reaction: reactionSet) {
+            groupedReactions[reaction.peName()].push_back(reaction);
+        }
 
-        for (const auto& reaction : reactionSet) {
-            grouped_reactions[reaction.peName()].push_back(reaction);
+        std::vector<LogicalReaction> reactions;
+        reactions.reserve(groupedReactions.size());
+
+        for (const auto &reactionsGroup: groupedReactions | std::views::values) {
+            LogicalReaction logicalReaction(reactionsGroup);
+            reactions.push_back(logicalReaction);
         }
-        m_reactions.reserve(grouped_reactions.size());
-        m_reactionNameMap.reserve(grouped_reactions.size());
-        for (const auto &reactions_for_peName: grouped_reactions | std::views::values) {
-            LogicalReaction logical_reaction(reactions_for_peName);
-            m_reactionNameMap.emplace(logical_reaction.id(), logical_reaction);
-            m_reactions.push_back(std::move(logical_reaction));
-        }
+        return LogicalReactionSet(std::move(reactions));
     }
 }
 
@@ -373,6 +227,13 @@ namespace std {
     template<>
     struct hash<gridfire::reaction::ReactionSet> {
         size_t operator()(const gridfire::reaction::ReactionSet& s) const noexcept {
+            return s.hash(0);
+        }
+    };
+
+    template<>
+    struct hash<gridfire::reaction::LogicalReactionSet> {
+        size_t operator()(const gridfire::reaction::LogicalReactionSet& s) const noexcept {
             return s.hash(0);
         }
     };
