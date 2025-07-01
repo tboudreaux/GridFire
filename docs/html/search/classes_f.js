@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['screeningmodel_0',['ScreeningModel',['../classgridfire_1_1screening_1_1_screening_model.html',1,'gridfire::screening']]],
-  ['simplereactionlistfileparser_1',['SimpleReactionListFileParser',['../classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html',1,'gridfire::io']]],
-  ['stepderivatives_2',['StepDerivatives',['../structgridfire_1_1_step_derivatives.html',1,'gridfire']]]
+  ['ratecoefficientset_0',['RateCoefficientSet',['../structgridfire_1_1reaction_1_1_rate_coefficient_set.html',1,'gridfire::reaction']]],
+  ['reaction_1',['Reaction',['../classgridfire_1_1reaction_1_1_reaction.html',1,'gridfire::reaction']]],
+  ['reactionflow_2',['ReactionFlow',['../structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html',1,'gridfire::AdaptiveEngineView']]],
+  ['reactionrecord_3',['ReactionRecord',['../structgridfire_1_1reaclib_1_1_reaction_record.html',1,'gridfire::reaclib']]],
+  ['rhsfunctor_4',['RHSFunctor',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_r_h_s_functor.html',1,'gridfire::solver::DirectNetworkSolver::RHSFunctor'],['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_r_h_s_functor.html',1,'gridfire::solver::QSENetworkSolver::RHSFunctor']]]
 ];

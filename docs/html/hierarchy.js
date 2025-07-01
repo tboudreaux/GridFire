@@ -1,6 +1,7 @@
 var hierarchy =
 [
     [ "gridfire::approx8::Approx8Net", "structgridfire_1_1approx8_1_1_approx8_net.html", null ],
+    [ "gridfire::GraphEngine::constants", "structgridfire_1_1_graph_engine_1_1constants.html", null ],
     [ "gridfire::solver::dynamicQSESpeciesIndices", "structgridfire_1_1solver_1_1dynamic_q_s_e_species_indices.html", null ],
     [ "gridfire::solver::QSENetworkSolver::EigenFunctor< T >", "structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html", null ],
     [ "gridfire::Engine", "classgridfire_1_1_engine.html", [
@@ -37,6 +38,7 @@ var hierarchy =
     ] ],
     [ "gridfire::approx8::ODE", "structgridfire_1_1approx8_1_1_o_d_e.html", null ],
     [ "gridfire::io::ParsedNetworkData", "structgridfire_1_1io_1_1_parsed_network_data.html", null ],
+    [ "gridfire::GraphEngine::PrecomputedReaction", "structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html", null ],
     [ "gridfire::reaction::RateCoefficientSet", "structgridfire_1_1reaction_1_1_rate_coefficient_set.html", null ],
     [ "gridfire::reaction::Reaction", "classgridfire_1_1reaction_1_1_reaction.html", [
       [ "gridfire::reaction::LogicalReaction", "classgridfire_1_1reaction_1_1_logical_reaction.html", null ]

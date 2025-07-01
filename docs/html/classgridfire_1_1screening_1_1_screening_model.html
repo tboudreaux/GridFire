@@ -107,6 +107,9 @@ $(function(){initNavTree('classgridfire_1_1screening_1_1_screening_model.html','
 </div><!--header-->
 <div class="contents">
 
+<p>An abstract base class for plasma screening models.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="screening__abstract_8h_source.html">screening_abstract.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::screening::ScreeningModel:</div>
@@ -114,28 +117,35 @@ Inheritance diagram for gridfire::screening::ScreeningModel:</div>
  <div class="center">
   <img src="classgridfire_1_1screening_1_1_screening_model.png" usemap="#gridfire::screening::ScreeningModel_map" alt=""/>
   <map id="gridfire::screening::ScreeningModel_map" name="gridfire::screening::ScreeningModel_map">
-<area href="classgridfire_1_1screening_1_1_bare_screening_model.html" alt="gridfire::screening::BareScreeningModel" shape="rect" coords="0,56,245,80"/>
-<area href="classgridfire_1_1screening_1_1_weak_screening_model.html" alt="gridfire::screening::WeakScreeningModel" shape="rect" coords="255,56,500,80"/>
+<area href="classgridfire_1_1screening_1_1_bare_screening_model.html" title="A screening model that applies no screening effect." alt="gridfire::screening::BareScreeningModel" shape="rect" coords="0,56,245,80"/>
+<area href="classgridfire_1_1screening_1_1_weak_screening_model.html" title="Implements the weak screening model based on the Debye-Hückel approximation." alt="gridfire::screening::WeakScreeningModel" shape="rect" coords="255,56,500,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a107ff2897f040d6f27f69d56a0bdd28d" id="r_a107ff2897f040d6f27f69d56a0bdd28d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> = CppAD::AD&lt;double&gt;</td></tr>
+<tr class="memdesc:a107ff2897f040d6f27f69d56a0bdd28d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for CppAD Automatic Differentiation type for double precision.  <br /></td></tr>
 <tr class="separator:a107ff2897f040d6f27f69d56a0bdd28d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adef175acdbd911527f56a1f1592579a7" id="r_adef175acdbd911527f56a1f1592579a7"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adef175acdbd911527f56a1f1592579a7">~ScreeningModel</a> ()=default</td></tr>
+<tr class="memdesc:adef175acdbd911527f56a1f1592579a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
 <tr class="separator:adef175acdbd911527f56a1f1592579a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaec9184d80c86a2d8674e395dad81bde" id="r_aaec9184d80c86a2d8674e395dad81bde"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaec9184d80c86a2d8674e395dad81bde">calculateScreeningFactors</a> (const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const =0</td></tr>
+<tr class="memdesc:aaec9184d80c86a2d8674e395dad81bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates screening factors for a set of reactions.  <br /></td></tr>
 <tr class="separator:aaec9184d80c86a2d8674e395dad81bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c381a823cb9c1680d3e9c846da4ae22" id="r_a6c381a823cb9c1680d3e9c846da4ae22"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c381a823cb9c1680d3e9c846da4ae22">calculateScreeningFactors</a> (const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> &gt; &amp;Y, const <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> T9, const <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> rho) const =0</td></tr>
+<tr class="memdesc:a6c381a823cb9c1680d3e9c846da4ae22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates screening factors using CppAD types for automatic differentiation.  <br /></td></tr>
 <tr class="separator:a6c381a823cb9c1680d3e9c846da4ae22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="screening__abstract_8h_source.html#l00012">12</a> of file <a class="el" href="screening__abstract_8h_source.html">screening_abstract.h</a>.</p>
+<div class="textblock"><p>An abstract base class for plasma screening models. </p>
+<p>This class defines the interface for models that calculate the enhancement factor for nuclear reaction rates due to the electrostatic screening of interacting nuclei by the surrounding plasma. Concrete implementations of this class will provide specific screening prescriptions (e.g., WEAK, BARE, STRONG, etc.).</p>
+<p>The interface provides methods for calculating screening factors for both standard double-precision inputs and for CppAD's automatic differentiation types, allowing the screening contributions to be included in Jacobian calculations. </p>
+
+<p class="definition">Definition at line <a class="el" href="screening__abstract_8h_source.html#l00027">27</a> of file <a class="el" href="screening__abstract_8h_source.html">screening_abstract.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a107ff2897f040d6f27f69d56a0bdd28d" name="a107ff2897f040d6f27f69d56a0bdd28d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a107ff2897f040d6f27f69d56a0bdd28d">&#9670;&#160;</a></span>ADDouble</h2>
@@ -149,7 +159,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="screening__abstract_8h_source.html#l00014">14</a> of file <a class="el" href="screening__abstract_8h_source.html">screening_abstract.h</a>.</p>
+<p>Alias for CppAD Automatic Differentiation type for double precision. </p>
+
+<p class="definition">Definition at line <a class="el" href="screening__abstract_8h_source.html#l00030">30</a> of file <a class="el" href="screening__abstract_8h_source.html">screening_abstract.h</a>.</p>
 
 </div>
 </div>
@@ -176,6 +188,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Virtual destructor. </p>
+<p>Ensures that derived class destructors are called correctly. </p>
 
 </div>
 </div>
@@ -221,6 +236,21 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Calculates screening factors using CppAD types for automatic differentiation. </p>
+<p>This is a pure virtual function that provides an overload of <code>calculateScreeningFactors</code> for use with CppAD. It allows the derivatives of the screening factors with respect to abundances, temperature, and density to be computed automatically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reactions</td><td>The set of logical reactions in the network. </td></tr>
+    <tr><td class="paramname">species</td><td>A vector of all atomic species involved in the network. </td></tr>
+    <tr><td class="paramname">Y</td><td>A vector of the molar abundances (mol/g) for each species, as AD types. </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K, as an AD type. </td></tr>
+    <tr><td class="paramname">rho</td><td>The plasma density in g/cm^3, as an AD type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of screening factors (dimensionless), as AD types.</dd></dl>
+<p><b>Note</b> This method is essential for including the effects of screening in the Jacobian matrix of the reaction network. </p>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#ac5647d633cd5bbd7cb5136b7fa4cad99">gridfire::screening::BareScreeningModel</a>, and <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#ac6bc78769670a460af1ff88284cb8ad4">gridfire::screening::WeakScreeningModel</a>.</p>
 
@@ -268,6 +298,36 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates screening factors for a set of reactions. </p>
+<p>This is a pure virtual function that must be implemented by derived classes. It computes the screening enhancement factor for each reaction in the provided set based on the given plasma conditions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reactions</td><td>The set of logical reactions in the network. </td></tr>
+    <tr><td class="paramname">species</td><td>A vector of all atomic species involved in the network. </td></tr>
+    <tr><td class="paramname">Y</td><td>A vector of the molar abundances (mol/g) for each species. </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>The plasma density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of screening factors (dimensionless), one for each reaction in the <code>reactions</code> set, in the same order.</dd></dl>
+<p><b>Pre-conditions</b> </p><ul>
+<li>The size of the <code>Y</code> vector must match the size of the <code>species</code> vector.</li>
+<li><code>T9</code> and <code>rho</code> must be positive.</li>
+</ul>
+<p><b>Post-conditions</b> </p><ul>
+<li>The returned vector will have the same size as the <code>reactions</code> set.</li>
+<li>Each element in the returned vector will be &gt;= 1.0.</li>
+</ul>
+<p><b>Usage</b> </p><div class="fragment"><div class="line"><span class="comment">// Assume &#39;model&#39; is a std::unique_ptr&lt;ScreeningModel&gt; to a concrete implementation</span></div>
+<div class="line"><span class="comment">// and other parameters (reactions, species, Y, T9, rho) are initialized.</span></div>
+<div class="line">std::vector&lt;double&gt; screening_factors = model-&gt;calculateScreeningFactors(</div>
+<div class="line">    reactions, species, Y, T9, rho</div>
+<div class="line">);</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; reactions.size(); ++i) {</div>
+<div class="line">    <span class="comment">// ... use screening_factors[i] ...</span></div>
+<div class="line">}</div>
+</div><!-- fragment --> 
 <p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#ac35ad34c5da7e1b5087552aa5c83fe60">gridfire::screening::BareScreeningModel</a>, and <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#afbaeaefe6b3ab3ecf81889ddc1cff76c">gridfire::screening::WeakScreeningModel</a>.</p>
 
 </div>

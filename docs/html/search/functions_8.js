@@ -6,5 +6,6 @@ var searchData=
   ['inputs_3',['inputs',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#a5ce08aab2f1976c9258dad2b67e1c5b6',1,'gridfire::solver::QSENetworkSolver::EigenFunctor']]],
   ['involvesspecies_4',['involvesSpecies',['../classgridfire_1_1_graph_engine.html#aa6202cee0c3c481eda77cc9a91bc126b',1,'gridfire::GraphEngine']]],
   ['is_5freverse_5',['is_reverse',['../classgridfire_1_1reaction_1_1_reaction.html#aa67d05dfabf007c1acad34052d9a1dba',1,'gridfire::reaction::Reaction']]],
-  ['isstiff_6',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]]
+  ['isprecomputationenabled_6',['isPrecomputationEnabled',['../classgridfire_1_1_graph_engine.html#a015f8975701f028c29835d3a9794e00f',1,'gridfire::GraphEngine']]],
+  ['isstiff_7',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]]
 ];

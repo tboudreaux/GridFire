@@ -108,6 +108,7 @@ $(function(){initNavTree('namespacegridfire_1_1utils.html',''); initResizable(tr
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:af56693a70d9e2b40c8ae2c3bcd4b26c8" id="r_af56693a70d9e2b40c8ae2c3bcd4b26c8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af56693a70d9e2b40c8ae2c3bcd4b26c8">formatNuclearTimescaleLogString</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho)</td></tr>
+<tr class="memdesc:af56693a70d9e2b40c8ae2c3bcd4b26c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats a map of nuclear species timescales into a human-readable string.  <br /></td></tr>
 <tr class="separator:af56693a70d9e2b40c8ae2c3bcd4b26c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -140,6 +141,46 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Formats a map of nuclear species timescales into a human-readable string. </p>
+<p>This function takes a reaction network engine and the current plasma conditions to calculate the characteristic timescales for each species. It then formats this information into a neatly aligned ASCII table, which is suitable for logging or printing to the console.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>A constant reference to a <code><a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a></code> object, used to calculate the species timescales. </td></tr>
+    <tr><td class="paramname">Y</td><td>A vector of the molar abundances (mol/g) for each species. </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>The plasma density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A std::string containing the formatted table of species and their timescales.</dd></dl>
+<p><b>Pre-conditions</b> </p><ul>
+<li>The <code>engine</code> must be in a valid state.</li>
+<li>The size of the <code>Y</code> vector must be consistent with the number of species expected by the <code>engine</code>.</li>
+</ul>
+<p><b>Algorithm</b> </p><ol type="1">
+<li>Calls the <code>getSpeciesTimescales</code> method on the provided <code>engine</code> to get the timescale for each species under the given conditions.</li>
+<li>Determines the maximum length of the species names to dynamically set the width of the "Species" column for proper alignment.</li>
+<li>Uses a <code>std::ostringstream</code> to build the output string.</li>
+<li>Constructs a header for the table with titles "Species" and "Timescale (s)".</li>
+<li>Iterates through the map of timescales, adding a row to the table for each species.</li>
+<li>Timescales are formatted in scientific notation with 3 digits of precision.</li>
+<li>Special handling is included to print "inf" for infinite timescales.</li>
+<li>The final string, including header and footer lines, is returned.</li>
+</ol>
+<p><b>Usage</b> </p><div class="fragment"><div class="line"><span class="comment">// Assume &#39;my_engine&#39; is a valid DynamicEngine object and Y, T9, rho are initialized.</span></div>
+<div class="line">std::string log_output = <a class="code hl_function" href="#af56693a70d9e2b40c8ae2c3bcd4b26c8">gridfire::utils::formatNuclearTimescaleLogString</a>(my_engine, Y, T9, rho);</div>
+<div class="line">std::cout &lt;&lt; log_output;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Example Output:</span></div>
+<div class="line"><span class="comment">// == Timescales (s) ==</span></div>
+<div class="line"><span class="comment">// Species      Timescale (s)</span></div>
+<div class="line"><span class="comment">// ==========================</span></div>
+<div class="line"><span class="comment">// h1           1.234e+05</span></div>
+<div class="line"><span class="comment">// he4          inf</span></div>
+<div class="line"><span class="comment">// c12          8.765e-02</span></div>
+<div class="line"><span class="comment">// ==========================</span></div>
+<div class="ttc" id="anamespacegridfire_1_1utils_html_af56693a70d9e2b40c8ae2c3bcd4b26c8"><div class="ttname"><a href="#af56693a70d9e2b40c8ae2c3bcd4b26c8">gridfire::utils::formatNuclearTimescaleLogString</a></div><div class="ttdeci">std::string formatNuclearTimescaleLogString(const DynamicEngine &amp;engine, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho)</div><div class="ttdoc">Formats a map of nuclear species timescales into a human-readable string.</div><div class="ttdef"><b>Definition</b> <a href="logging_8cpp_source.html#l00013">logging.cpp:13</a></div></div>
+</div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="logging_8cpp_source.html#l00013">13</a> of file <a class="el" href="logging_8cpp_source.html">logging.cpp</a>.</p>
 
 </div>

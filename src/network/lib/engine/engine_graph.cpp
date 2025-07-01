@@ -28,19 +28,34 @@ namespace gridfire {
     ):
      m_reactions(build_reaclib_nuclear_network(composition, false)) {
         syncInternalMaps();
+        precomputeNetwork();
     }
 
-    GraphEngine::GraphEngine(reaction::LogicalReactionSet reactions) :
-        m_reactions(std::move(reactions)) {
-            syncInternalMaps();
-        }
+    GraphEngine::GraphEngine(
+        const reaction::LogicalReactionSet &reactions
+    ) :
+    m_reactions(reactions) {
+        syncInternalMaps();
+        precomputeNetwork();
+    }
 
     StepDerivatives<double> GraphEngine::calculateRHSAndEnergy(
         const std::vector<double> &Y,
         const double T9,
         const double rho
     ) const {
-        return calculateAllDerivatives<double>(Y, T9, rho);
+        if (m_usePrecomputation) {
+            std::vector<double> bare_rates;
+            bare_rates.reserve(m_reactions.size());
+            for (const auto& reaction: m_reactions) {
+                bare_rates.push_back(reaction.calculate_rate(T9));
+            }
+
+            // --- The public facing interface can always use the precomputed version since taping is done internally ---
+            return calculateAllDerivativesUsingPrecomputation(Y, bare_rates, T9, rho);
+        } else {
+            return calculateAllDerivatives<double>(Y, T9, rho);
+        }
     }
 
 
@@ -200,9 +215,88 @@ namespace gridfire {
         // This allows for dynamic network modification while retaining caching for networks which are very similar.
         if (validationReactionSet != m_reactions) {
             LOG_DEBUG(m_logger, "Reaction set not cached. Rebuilding the reaction set for T9={} and culling={}.", T9, culling);
-            m_reactions = std::move(validationReactionSet);
+            m_reactions = validationReactionSet;
             syncInternalMaps(); // Re-sync internal maps after updating reactions. Note this will also retrace the AD tape.
         }
+    }
+
+    StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
+        const std::vector<double> &Y_in,
+        const std::vector<double> &bare_rates,
+        const double T9,
+        const double rho
+    ) const {
+        // --- Calculate screening factors ---
+        const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            m_reactions,
+            m_networkSpecies,
+            Y_in,
+            T9,
+            rho
+        );
+
+        // --- Optimized loop ---
+        std::vector<double> molarReactionFlows;
+        molarReactionFlows.reserve(m_precomputedReactions.size());
+
+        for (const auto& precomp : m_precomputedReactions) {
+            double abundanceProduct = 1.0;
+            bool below_threshold = false;
+            for (size_t i = 0; i < precomp.unique_reactant_indices.size(); ++i) {
+                const size_t reactantIndex = precomp.unique_reactant_indices[i];
+                const int power = precomp.reactant_powers[i];
+                const double abundance = Y_in[reactantIndex];
+                if (abundance < MIN_ABUNDANCE_THRESHOLD) {
+                    below_threshold = true;
+                    break;
+                }
+
+                abundanceProduct *= std::pow(Y_in[reactantIndex], power);
+            }
+            if (below_threshold) {
+                molarReactionFlows.push_back(0.0);
+                continue; // Skip this reaction if any reactant is below the abundance threshold
+            }
+
+            const double bare_rate = bare_rates[precomp.reaction_index];
+            const double screeningFactor = screeningFactors[precomp.reaction_index];
+            const size_t numReactants = m_reactions[precomp.reaction_index].reactants().size();
+
+            const double molarReactionFlow =
+                    screeningFactor *
+                    bare_rate *
+                    precomp.symmetry_factor *
+                    abundanceProduct *
+                    std::pow(rho, numReactants);
+
+            molarReactionFlows.push_back(molarReactionFlow);
+        }
+
+        // --- Assemble molar abundance derivatives ---
+        StepDerivatives<double> result;
+        result.dydt.assign(m_networkSpecies.size(), 0.0); // Initialize derivatives to zero
+        for (size_t j = 0; j < m_precomputedReactions.size(); ++j) {
+            const auto& precomp = m_precomputedReactions[j];
+            const double R_j = molarReactionFlows[j];
+
+            for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
+                const size_t speciesIndex = precomp.affected_species_indices[i];
+                const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
+
+                // Update the derivative for this species
+                result.dydt[speciesIndex] += static_cast<double>(stoichiometricCoefficient) * R_j / rho;
+            }
+        }
+
+        // --- Calculate the nuclear energy generation rate ---
+        double massProductionRate = 0.0; // [mol][s^-1]
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            const auto& species = m_networkSpecies[i];
+            massProductionRate += result.dydt[i] * species.mass() * m_constants.u;
+        }
+        result.nuclearEnergyGenerationRate = -massProductionRate * m_constants.Na * m_constants.c * m_constants.c; // [erg][s^-1][g^-1]
+        return result;
+
     }
 
     // --- Generate Stoichiometry Matrix ---
@@ -270,6 +364,14 @@ namespace gridfire {
 
     screening::ScreeningType GraphEngine::getScreeningModel() const {
         return m_screeningType;
+    }
+
+    void GraphEngine::setPrecomputation(const bool precompute) {
+        m_usePrecomputation = precompute;
+    }
+
+    bool GraphEngine::isPrecomputationEnabled() const {
+        return m_usePrecomputation;
     }
 
     double GraphEngine::calculateMolarReactionFlow(
@@ -450,7 +552,7 @@ namespace gridfire {
     }
 
     void GraphEngine::update(const NetIn &netIn) {
-        return; // No-op for GraphEngine, as it does not support manually triggering updates.
+        // No-op for GraphEngine, as it does not support manually triggering updates.
     }
 
     void GraphEngine::recordADTape() {
@@ -471,7 +573,7 @@ namespace gridfire {
         //    Their numeric values are irrelevant except for in so far as they avoid numerical instabilities.
 
         // Distribute total mass fraction uniformly between species in the dummy variable space
-        const auto uniformMassFraction = static_cast<CppAD::AD<double>>(1.0 / numSpecies);
+        const auto uniformMassFraction = static_cast<CppAD::AD<double>>(1.0 / static_cast<double>(numSpecies));
         std::vector<CppAD::AD<double>> adInput(numADInputs, uniformMassFraction);
         adInput[numSpecies]     = 1.0; // Dummy T9
         adInput[numSpecies + 1] = 1.0; // Dummy rho
@@ -496,5 +598,54 @@ namespace gridfire {
 
         LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS calculation. Number of independent variables: {}.",
                  adInput.size());
+    }
+
+    void GraphEngine::precomputeNetwork() {
+        LOG_TRACE_L1(m_logger, "Pre-computing constant components of GraphNetwork state...");
+
+        // --- Reverse map for fast species lookups ---
+        std::unordered_map<fourdst::atomic::Species, size_t> speciesIndexMap;
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            speciesIndexMap[m_networkSpecies[i]] = i;
+        }
+
+        m_precomputedReactions.clear();
+        m_precomputedReactions.reserve(m_reactions.size());
+
+        for (size_t i = 0; i < m_reactions.size(); ++i) {
+            const auto& reaction = m_reactions[i];
+            PrecomputedReaction precomp;
+            precomp.reaction_index = i;
+
+            // --- Precompute reactant information ---
+            // Count occurrences for each reactant to determine powers and symmetry
+            std::unordered_map<size_t, int> reactantCounts;
+            for (const auto& reactant: reaction.reactants()) {
+                size_t reactantIndex = speciesIndexMap.at(reactant);
+                reactantCounts[reactantIndex]++;
+            }
+
+            double symmetryDenominator = 1.0;
+            for (const auto& [index, count] : reactantCounts) {
+                precomp.unique_reactant_indices.push_back(index);
+                precomp.reactant_powers.push_back(count);
+
+                symmetryDenominator *= 1.0/std::tgamma(count + 1);
+            }
+
+            precomp.symmetry_factor = symmetryDenominator;
+
+            // --- Precompute stoichiometry information ---
+            const auto stoichiometryMap = reaction.stoichiometry();
+            precomp.affected_species_indices.reserve(stoichiometryMap.size());
+            precomp.stoichiometric_coefficients.reserve(stoichiometryMap.size());
+
+            for (const auto& [species, coeff] : stoichiometryMap) {
+                precomp.affected_species_indices.push_back(speciesIndexMap.at(species));
+                precomp.stoichiometric_coefficients.push_back(coeff);
+            }
+
+            m_precomputedReactions.push_back(std::move(precomp));
+        }
     }
 }

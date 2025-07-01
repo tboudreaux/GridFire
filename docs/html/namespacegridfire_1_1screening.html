@@ -111,10 +111,13 @@ $(function(){initNavTree('namespacegridfire_1_1screening.html',''); initResizabl
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html">BareScreeningModel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A screening model that applies no screening effect.  <a href="classgridfire_1_1screening_1_1_bare_screening_model.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstract base class for plasma screening models.  <a href="classgridfire_1_1screening_1_1_screening_model.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html">WeakScreeningModel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the weak screening model based on the Debye-Hückel approximation.  <a href="classgridfire_1_1screening_1_1_weak_screening_model.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -127,11 +130,13 @@ Enumerations</h2></td></tr>
 <tr class="memitem:aa82aafbc4f8c28d0a75b60798e3a7d25" id="r_aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> { <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71">BARE</a>
 , <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">WEAK</a>
  }</td></tr>
+<tr class="memdesc:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the available plasma screening models.  <a href="#aa82aafbc4f8c28d0a75b60798e3a7d25">More...</a><br /></td></tr>
 <tr class="separator:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a6ca8556d27ac373e176f5b23437c416e" id="r_a6ca8556d27ac373e176f5b23437c416e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ca8556d27ac373e176f5b23437c416e">selectScreeningModel</a> (<a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> type)</td></tr>
+<tr class="memdesc:a6ca8556d27ac373e176f5b23437c416e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factory function to select and create a screening model.  <br /></td></tr>
 <tr class="separator:a6ca8556d27ac373e176f5b23437c416e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
@@ -171,14 +176,24 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Enumerates the available plasma screening models. </p>
+<p>This enum provides a set of identifiers for the different screening prescriptions that can be used in the reaction rate calculations. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71" name="aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71"></a>BARE&#160;</td><td class="fielddoc"><p>No screening applied. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71" name="aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71"></a>BARE&#160;</td><td class="fielddoc"><p>No screening applied. The screening factor is always 1.0. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8" name="aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"></a>WEAK&#160;</td><td class="fielddoc"><p>Weak screening model. </p>
+<tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8" name="aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"></a>WEAK&#160;</td><td class="fielddoc"><p>Weak screening model (Salpeter, 1954). </p>
+<p>This model is suitable for non-degenerate, non-relativistic plasmas where the electrostatic potential energy between ions is small compared to their thermal kinetic energy. The screening enhancement factor is calculated as <code>exp(H_12)</code>.</p>
+<p><b>Algorithm</b> </p><ol type="1">
+<li>A composition-dependent term, <code>ζ = ∑(Z_i^2 + Z_i) * Y_i</code>, is calculated, where Z_i is the charge and Y_i is the molar abundance of each species.</li>
+<li>A prefactor is computed: <code>prefactor = 0.188 * sqrt(ρ / T₇³) * sqrt(ζ)</code>, where ρ is the density and T₇ is the temperature in 10^7 K.</li>
+<li>For a reaction between two nuclei with charges Z₁ and Z₂, the enhancement term is <code>H_12 = prefactor * Z₁ * Z₂</code>.</li>
+<li>The final screening factor is <code>exp(H_12)</code>. A special calculation is performed for the triple-alpha reaction. </li>
+</ol>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="screening__types_8h_source.html#l00008">8</a> of file <a class="el" href="screening__types_8h_source.html">screening_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="screening__types_8h_source.html#l00015">15</a> of file <a class="el" href="screening__types_8h_source.html">screening_types.h</a>.</p>
 
 </div>
 </div>
@@ -198,6 +213,30 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>A factory function to select and create a screening model. </p>
+<p>This function returns a <code>std::unique_ptr</code> to a concrete implementation of the <code><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a></code> abstract base class, based on the specified <code><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25" title="Enumerates the available plasma screening models.">ScreeningType</a></code>. This allows for easy switching between different screening prescriptions at runtime.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>The <code><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25" title="Enumerates the available plasma screening models.">ScreeningType</a></code> enum value specifying which model to create. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>std::unique_ptr&lt;<a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a>&gt;</code> holding an instance of the requested screening model.</dd></dl>
+<p><b>Algorithm</b> The function uses a <code>switch</code> statement to determine which concrete model to instantiate. If the provided <code>type</code> does not match a known case, it defaults to creating a <code><a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html" title="A screening model that applies no screening effect.">BareScreeningModel</a></code> to ensure safe behavior.</p>
+<p><b>Post-conditions</b> </p><ul>
+<li>A non-null <code>std::unique_ptr&lt;<a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a>&gt;</code> is always returned.</li>
+</ul>
+<p><b>Usage</b> </p><div class="fragment"><div class="line"><span class="comment">// Select the weak screening model</span></div>
+<div class="line"><span class="keyword">auto</span> screening_model = <a class="code hl_function" href="#a6ca8556d27ac373e176f5b23437c416e">gridfire::screening::selectScreeningModel</a>(<a class="code hl_enumvalue" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a>);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Use the model to calculate screening factors</span></div>
+<div class="line"><span class="comment">// (assuming other parameters are initialized)</span></div>
+<div class="line">std::vector&lt;double&gt; factors = screening_model-&gt;calculateScreeningFactors(</div>
+<div class="line">    reactions, species, Y, T9, rho</div>
+<div class="line">);</div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_a6ca8556d27ac373e176f5b23437c416e"><div class="ttname"><a href="#a6ca8556d27ac373e176f5b23437c416e">gridfire::screening::selectScreeningModel</a></div><div class="ttdeci">std::unique_ptr&lt; ScreeningModel &gt; selectScreeningModel(ScreeningType type)</div><div class="ttdoc">A factory function to select and create a screening model.</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8cpp_source.html#l00009">screening_types.cpp:9</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00035">screening_types.h:35</a></div></div>
+</div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="screening__types_8cpp_source.html#l00009">9</a> of file <a class="el" href="screening__types_8cpp_source.html">screening_types.cpp</a>.</p>
 
 </div>
