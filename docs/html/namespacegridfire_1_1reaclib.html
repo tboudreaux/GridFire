@@ -114,7 +114,7 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a91c7971c9d0a2971b9a6fa4d841c761d" id="r_a91c7971c9d0a2971b9a6fa4d841c761d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91c7971c9d0a2971b9a6fa4d841c761d">get_all_reactions</a> ()</td></tr>
+<tr class="memitem:a91c7971c9d0a2971b9a6fa4d841c761d" id="r_a91c7971c9d0a2971b9a6fa4d841c761d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91c7971c9d0a2971b9a6fa4d841c761d">get_all_reactions</a> ()</td></tr>
 <tr class="memdesc:a91c7971c9d0a2971b9a6fa4d841c761d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides global access to the fully initialized REACLIB reaction set.  <br /></td></tr>
 <tr class="separator:a91c7971c9d0a2971b9a6fa4d841c761d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb94d5adc7bb9db5a67f770f7453e63" id="r_a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb94d5adc7bb9db5a67f770f7453e63">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a> &amp;r)</td></tr>
@@ -128,7 +128,7 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:af6ff0dfe7ffe34c73ba9acbab5ef8a66" id="r_af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ff0dfe7ffe34c73ba9acbab5ef8a66">s_initialized</a> = false</td></tr>
 <tr class="separator:af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dba5efc372d2a9e9e846dfd6563f3c0" id="r_a5dba5efc372d2a9e9e846dfd6563f3c0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html">reaction::LogicalReactionSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dba5efc372d2a9e9e846dfd6563f3c0">s_all_reaclib_reactions_ptr</a> = nullptr</td></tr>
+<tr class="memitem:a5dba5efc372d2a9e9e846dfd6563f3c0" id="r_a5dba5efc372d2a9e9e846dfd6563f3c0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dba5efc372d2a9e9e846dfd6563f3c0">s_all_reaclib_reactions_ptr</a> = nullptr</td></tr>
 <tr class="separator:a5dba5efc372d2a9e9e846dfd6563f3c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -139,7 +139,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html">reaction::LogicalReactionSet</a> &amp; gridfire::reaclib::get_all_reactions </td>
+          <td class="memname">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp; gridfire::reaclib::get_all_reactions </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -151,7 +151,7 @@ Variables</h2></td></tr>
 <p>This function uses a singleton pattern to ensure the reaction data is loaded from the embedded binary only once, the very first time it is requested.</p>
 <dl class="section return"><dt>Returns</dt><dd>A constant reference to the application-wide reaction set. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaclib_8cpp_source.html#l00136">136</a> of file <a class="el" href="reaclib_8cpp_source.html">reaclib.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaclib_8cpp_source.html#l00138">138</a> of file <a class="el" href="reaclib_8cpp_source.html">reaclib.cpp</a>.</p>
 
 </div>
 </div>
@@ -243,7 +243,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html">reaction::LogicalReactionSet</a>* gridfire::reaclib::s_all_reaclib_reactions_ptr = nullptr</td>
+          <td class="memname"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a>* gridfire::reaclib::s_all_reaclib_reactions_ptr = nullptr</td>
         </tr>
       </table>
   </td>

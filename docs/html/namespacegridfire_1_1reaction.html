@@ -100,7 +100,9 @@ $(function(){initNavTree('namespacegridfire_1_1reaction.html',''); initResizable
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">gridfire::reaction Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -110,19 +112,86 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">LogicalReaction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a "logical" reaction that aggregates rates from multiple sources.  <a href="classgridfire_1_1reaction_1_1_logical_reaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html">LogicalReactionSet</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A collection of <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">LogicalReaction</a> objects.  <a href="classgridfire_1_1reaction_1_1_logical_reaction_set.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds the seven coefficients for the REACLIB rate equation.  <a href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single nuclear reaction from a specific data source.  <a href="classgridfire_1_1reaction_1_1_reaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A collection of <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects.  <a href="classgridfire_1_1reaction_1_1_reaction_set.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_templated_reaction_set.html">TemplatedReactionSet</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ad838ce3fb6cc02c3fd90b924a0dd91b1" id="r_ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad838ce3fb6cc02c3fd90b924a0dd91b1">ReactionSet</a> = <a class="el" href="classgridfire_1_1reaction_1_1_templated_reaction_set.html">TemplatedReactionSet</a>&lt;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&gt;</td></tr>
+<tr class="memdesc:ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of reactions, typically from a single source like REACLIB.  <br /></td></tr>
+<tr class="separator:ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa86f08712565f278adacc7cd2361eb31" id="r_aa86f08712565f278adacc7cd2361eb31"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa86f08712565f278adacc7cd2361eb31">LogicalReactionSet</a> = <a class="el" href="classgridfire_1_1reaction_1_1_templated_reaction_set.html">TemplatedReactionSet</a>&lt;<a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">LogicalReaction</a>&gt;</td></tr>
+<tr class="memdesc:aa86f08712565f278adacc7cd2361eb31"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of logical reactions.  <br /></td></tr>
+<tr class="separator:aa86f08712565f278adacc7cd2361eb31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:abfcfafc0cda0c3ed56930a12e7ead67f" id="r_abfcfafc0cda0c3ed56930a12e7ead67f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aa86f08712565f278adacc7cd2361eb31">LogicalReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfcfafc0cda0c3ed56930a12e7ead67f">packReactionSetToLogicalReactionSet</a> (const <a class="el" href="#ad838ce3fb6cc02c3fd90b924a0dd91b1">ReactionSet</a> &amp;reactionSet)</td></tr>
+<tr class="separator:abfcfafc0cda0c3ed56930a12e7ead67f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="aa86f08712565f278adacc7cd2361eb31" name="aa86f08712565f278adacc7cd2361eb31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa86f08712565f278adacc7cd2361eb31">&#9670;&#160;</a></span>LogicalReactionSet</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a> = <a class="el" href="classgridfire_1_1reaction_1_1_templated_reaction_set.html">TemplatedReactionSet</a>&lt;<a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">LogicalReaction</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of logical reactions. </p>
+
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00557">557</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+
+</div>
+</div>
+<a id="ad838ce3fb6cc02c3fd90b924a0dd91b1" name="ad838ce3fb6cc02c3fd90b924a0dd91b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad838ce3fb6cc02c3fd90b924a0dd91b1">&#9670;&#160;</a></span>ReactionSet</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#ad838ce3fb6cc02c3fd90b924a0dd91b1">gridfire::reaction::ReactionSet</a> = <a class="el" href="classgridfire_1_1reaction_1_1_templated_reaction_set.html">TemplatedReactionSet</a>&lt;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of reactions, typically from a single source like REACLIB. </p>
+
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00556">556</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="abfcfafc0cda0c3ed56930a12e7ead67f" name="abfcfafc0cda0c3ed56930a12e7ead67f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfcfafc0cda0c3ed56930a12e7ead67f">&#9670;&#160;</a></span>packReactionSetToLogicalReactionSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aa86f08712565f278adacc7cd2361eb31">LogicalReactionSet</a> gridfire::reaction::packReactionSetToLogicalReactionSet </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ad838ce3fb6cc02c3fd90b924a0dd91b1">ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionSet</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00201">201</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

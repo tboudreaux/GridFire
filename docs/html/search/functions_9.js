@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['logicalreaction_0',['LogicalReaction',['../classgridfire_1_1reaction_1_1_logical_reaction.html#a6965906ea33ebd0d615811219d9e9537',1,'gridfire::reaction::LogicalReaction']]],
-  ['logicalreactionset_1',['LogicalReactionSet',['../classgridfire_1_1reaction_1_1_logical_reaction_set.html#ac650a2a2c83cfb618f11a924552e251d',1,'gridfire::reaction::LogicalReactionSet::LogicalReactionSet()=delete'],['../classgridfire_1_1reaction_1_1_logical_reaction_set.html#a129d55e5f57ec3c2e256070fd219e2df',1,'gridfire::reaction::LogicalReactionSet::LogicalReactionSet(const ReactionSet &amp;reactionSet)']]]
+  ['jacobianfunctor_0',['JacobianFunctor',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_jacobian_functor.html#ab8222646cd32670a046b6c74909bd83a',1,'gridfire::solver::QSENetworkSolver::JacobianFunctor::JacobianFunctor()'],['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_jacobian_functor.html#afd2a548ffb907b0fb1fa28993ea99f25',1,'gridfire::solver::DirectNetworkSolver::JacobianFunctor::JacobianFunctor()']]]
 ];

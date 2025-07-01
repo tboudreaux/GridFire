@@ -133,12 +133,15 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ac4a1af03d2a4fbc5cc2407b8a6833147" id="r_ac4a1af03d2a4fbc5cc2407b8a6833147"><td class="memItemLeft" align="right" valign="top">const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4a1af03d2a4fbc5cc2407b8a6833147">m_numSpecies</a></td></tr>
 <tr class="memdesc:ac4a1af03d2a4fbc5cc2407b8a6833147"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of species in the network.  <br /></td></tr>
 <tr class="separator:ac4a1af03d2a4fbc5cc2407b8a6833147"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cf3e5b5206b5cd8650cbf620ca5007b" id="r_a9cf3e5b5206b5cd8650cbf620ca5007b"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cf3e5b5206b5cd8650cbf620ca5007b">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
+<tr class="memdesc:a9cf3e5b5206b5cd8650cbf620ca5007b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logger instance.  <br /></td></tr>
+<tr class="separator:a9cf3e5b5206b5cd8650cbf620ca5007b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functor for calculating the right-hand side of the ODEs. </p>
 <p>This functor is used by the ODE solver to calculate the time derivatives of the species abundances. It takes the current abundances as input and returns the time derivatives. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00402">402</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00409">409</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aed201b52ea757069c17a49e9638b3d3c" name="aed201b52ea757069c17a49e9638b3d3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed201b52ea757069c17a49e9638b3d3c">&#9670;&#160;</a></span>RHSFunctor()</h2>
@@ -182,7 +185,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00414">414</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00422">422</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -221,7 +224,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8cpp_source.html#l00374">374</a> of file <a class="el" href="solver_8cpp_source.html">solver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8cpp_source.html#l00442">442</a> of file <a class="el" href="solver_8cpp_source.html">solver.cpp</a>.</p>
 
 </div>
 </div>
@@ -240,7 +243,25 @@ Public Attributes</h2></td></tr>
 
 <p>The engine used to evaluate the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00403">403</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00410">410</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+
+</div>
+</div>
+<a id="a9cf3e5b5206b5cd8650cbf620ca5007b" name="a9cf3e5b5206b5cd8650cbf620ca5007b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cf3e5b5206b5cd8650cbf620ca5007b">&#9670;&#160;</a></span>m_logger</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">quill::Logger* gridfire::solver::DirectNetworkSolver::RHSFunctor::m_logger = LogManager::getInstance().getLogger(&quot;log&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Logger instance. </p>
+
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00414">414</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -258,7 +279,7 @@ Public Attributes</h2></td></tr>
 
 <p>The number of species in the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00406">406</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00413">413</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -276,7 +297,7 @@ Public Attributes</h2></td></tr>
 
 <p>Density in g/cm^3. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00405">405</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00412">412</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +315,7 @@ Public Attributes</h2></td></tr>
 
 <p>Temperature in units of 10^9 K. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00404">404</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00411">411</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>

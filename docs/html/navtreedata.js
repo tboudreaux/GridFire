@@ -57,9 +57,10 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
+        [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
         [ "Typedefs", "functions_type.html", null ],
+        [ "Enumerator", "functions_eval.html", null ],
         [ "Related Symbols", "functions_rela.html", null ]
       ] ]
     ] ],
@@ -78,9 +79,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2network_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
-"classgridfire_1_1reaction_1_1_logical_reaction_set.html#a00001bbc0f888b167da50ae9fc2a75af",
-"functions_u.html",
-"structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#a93b46ca95ddf9e4d21d02700621e6285"
+"classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be",
+"classgridfire_1_1reaction_1_1_templated_reaction_set.html#aac76ec883b4ecebb2a94b2485dae7105",
+"namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31",
+"structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_jacobian_functor.html#a2071ce797f94ae1a3ea6d934748672ce"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

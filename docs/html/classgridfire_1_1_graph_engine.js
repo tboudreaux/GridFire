@@ -17,6 +17,7 @@ var classgridfire_1_1_graph_engine =
     [ "getNetReactionStoichiometry", "classgridfire_1_1_graph_engine.html#a8c29d8bbde407e913be5eb77efb2c0c9", null ],
     [ "getNetworkReactions", "classgridfire_1_1_graph_engine.html#ad45650d10fc5dff1673ae3f806d067da", null ],
     [ "getNetworkSpecies", "classgridfire_1_1_graph_engine.html#a0ed390f3e598ebba4e245ac90bb78767", null ],
+    [ "getScreeningModel", "classgridfire_1_1_graph_engine.html#a697f2004e0d02c59e83c7890742d7c9a", null ],
     [ "getSpeciesTimescales", "classgridfire_1_1_graph_engine.html#a26215593544c3a52597194602e4e25dd", null ],
     [ "getStoichiometryMatrixEntry", "classgridfire_1_1_graph_engine.html#a6b5feaf788bade212b7c8df7ac8c8152", null ],
     [ "involvesSpecies", "classgridfire_1_1_graph_engine.html#aa6202cee0c3c481eda77cc9a91bc126b", null ],
@@ -24,7 +25,9 @@ var classgridfire_1_1_graph_engine =
     [ "populateSpeciesToIndexMap", "classgridfire_1_1_graph_engine.html#a47202c43342b96480070874bffce1391", null ],
     [ "recordADTape", "classgridfire_1_1_graph_engine.html#a95563f6bc86007d9ee053a0f1e15b889", null ],
     [ "reserveJacobianMatrix", "classgridfire_1_1_graph_engine.html#a5a5458ed01923124f2d7e1f04f32f138", null ],
+    [ "setScreeningModel", "classgridfire_1_1_graph_engine.html#a8110e687844f921438bb517e1d8ce62f", null ],
     [ "syncInternalMaps", "classgridfire_1_1_graph_engine.html#acdce8d87e23a2cd1504bc9472e538c0f", null ],
+    [ "update", "classgridfire_1_1_graph_engine.html#a51b4cedf9b00de79fb6eef243631b04d", null ],
     [ "validateComposition", "classgridfire_1_1_graph_engine.html#aeeafeab40a5f4dbfae78bdc87e25e93f", null ],
     [ "validateConservation", "classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be", null ],
     [ "m_config", "classgridfire_1_1_graph_engine.html#a3b17102b143435ddfdc015d7a50c4b18", null ],
@@ -36,6 +39,8 @@ var classgridfire_1_1_graph_engine =
     [ "m_reactionIDMap", "classgridfire_1_1_graph_engine.html#a5d6cc63b99b467c2a976d1fbaaa1dfa3", null ],
     [ "m_reactions", "classgridfire_1_1_graph_engine.html#acb7c4f5108b0efeae48ad15598e808c3", null ],
     [ "m_rhsADFun", "classgridfire_1_1_graph_engine.html#a2e22b111f6d00ecc9e3804a71f1ce876", null ],
+    [ "m_screeningModel", "classgridfire_1_1_graph_engine.html#af17cf3762abac3efcab9a8e87c961210", null ],
+    [ "m_screeningType", "classgridfire_1_1_graph_engine.html#a52edc3e88f1e8fc497e1e63972d63c80", null ],
     [ "m_speciesToIndexMap", "classgridfire_1_1_graph_engine.html#ad8237c252145a75092202d00f5e1ddf7", null ],
     [ "m_stoichiometryMatrix", "classgridfire_1_1_graph_engine.html#ad1cb5fd32efc37668e2d9ecf0c72ad24", null ]
 ];

@@ -11,6 +11,7 @@ var classgridfire_1_1reaction_1_1_logical_reaction =
     [ "end", "classgridfire_1_1reaction_1_1_logical_reaction.html#a054994f733b44293b4d79f3a9b207560", null ],
     [ "size", "classgridfire_1_1reaction_1_1_logical_reaction.html#afa41050855b842c63db16c94d2e9b897", null ],
     [ "sources", "classgridfire_1_1reaction_1_1_logical_reaction.html#add094eda0e71126f8443698d7f3317f4", null ],
+    [ "operator<<", "classgridfire_1_1reaction_1_1_logical_reaction.html#a10cbea11653524dae2f7eafb5c22c90f", null ],
     [ "m_rates", "classgridfire_1_1reaction_1_1_logical_reaction.html#a81f75f0085f8a5a45169f0b7240c809d", null ],
     [ "m_sources", "classgridfire_1_1reaction_1_1_logical_reaction.html#a7fe91d24e20ebc76d612f6ad742f476f", null ]
 ];

@@ -149,9 +149,9 @@ Reactions</h3>
 <p>The <code>reaction</code> component is responsible for defining and managing nuclear reactions. The key classes are:</p>
 <ul>
 <li><code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">gridfire::reaction::Reaction</a></code>: Represents a single nuclear reaction, including its reactants, products, and rate coefficients.</li>
-<li><code><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">gridfire::reaction::ReactionSet</a></code>: A collection of <code>Reaction</code> objects, representing a full reaction network.</li>
+<li><code><a class="el" href="namespacegridfire_1_1reaction.html#ad838ce3fb6cc02c3fd90b924a0dd91b1" title="A set of reactions, typically from a single source like REACLIB.">gridfire::reaction::ReactionSet</a></code>: A collection of <code>Reaction</code> objects, representing a full reaction network.</li>
 <li><code><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">gridfire::reaction::LogicalReaction</a></code>: An abstraction that can represent a single reaction or a combination of multiple reactions (e.g., a forward and reverse reaction).</li>
-<li><code><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html" title="A collection of LogicalReaction objects.">gridfire::reaction::LogicalReactionSet</a></code>: A collection of <code>LogicalReaction</code> objects.</li>
+<li><code><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">gridfire::reaction::LogicalReactionSet</a></code>: A collection of <code>LogicalReaction</code> objects.</li>
 </ul>
 <p>GridFire can load reaction data from the REACLIB database via the <code>build_reaclib_nuclear_network</code> function, which is implemented in <code><a class="el" href="reaclib_8cpp.html">src/network/lib/reaction/reaclib.cpp</a></code>.</p>
 <h3><a class="anchor" id="autotoc_md6"></a>
@@ -214,7 +214,7 @@ How to Use</h2>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00086">engine_graph.h:86</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00089">engine_graph.h:89</a></div></div>
 <div class="ttc" id="aclassgridfire_1_1solver_1_1_q_s_e_network_solver_html"><div class="ttname"><a href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html">gridfire::solver::QSENetworkSolver</a></div><div class="ttdoc">A network solver that uses a Quasi-Steady-State Equilibrium (QSE) approach.</div><div class="ttdef"><b>Definition</b> <a href="solver_8h_source.html#l00098">solver.h:98</a></div></div>
 <div class="ttc" id="anetwork_8h_html"><div class="ttname"><a href="network_8h.html">network.h</a></div></div>
 <div class="ttc" id="asolver_8h_html"><div class="ttname"><a href="solver_8h.html">solver.h</a></div></div>
@@ -249,7 +249,7 @@ How to Use</h2>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8h_source.html#l00045">engine_adaptive.h:45</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8h_source.html#l00047">engine_adaptive.h:47</a></div></div>
 </div><!-- fragment --><p>Note how the adaptive engine is a view of the base engine. This allows the adaptive engine to dynamically adjust the network size at runtime based on the reactions that are active. </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>

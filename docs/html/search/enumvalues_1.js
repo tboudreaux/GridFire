@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reaclib_0',['REACLIB',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37a9b8db7b445ae4f1bd114caa42a583182',1,'gridfire']]]
+  ['bare_0',['BARE',['../namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71',1,'gridfire::screening']]]
 ];

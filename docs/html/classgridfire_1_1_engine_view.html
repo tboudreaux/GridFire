@@ -139,7 +139,7 @@ class gridfire::EngineView&lt; EngineT &gt;</div><p>Abstract base class for a "v
 <div class="line"><span class="keyword">private</span>:</div>
 <div class="line">    DynamicEngine&amp; engine_;</div>
 <div class="line">};</div>
-<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> <a href="engine__abstract_8h_source.html#l00118">engine_abstract.h:118</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> <a href="engine__abstract_8h_source.html#l00121">engine_abstract.h:121</a></div></div>
 <div class="ttc" id="aclassgridfire_1_1_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_engine_view.html">gridfire::EngineView</a></div><div class="ttdoc">Abstract base class for a &quot;view&quot; of a reaction network engine.</div><div class="ttdef"><b>Definition</b> <a href="engine__view__abstract_8h_source.html#l00074">engine_view_abstract.h:74</a></div></div>
 <div class="ttc" id="aclassgridfire_1_1_engine_view_html_ad294227f8b5cf6d970c349eabf5447a6"><div class="ttname"><a href="#ad294227f8b5cf6d970c349eabf5447a6">gridfire::EngineView::getBaseEngine</a></div><div class="ttdeci">virtual const EngineT &amp; getBaseEngine() const =0</div><div class="ttdoc">Access the underlying engine instance.</div></div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">gridfire::AdaptiveEngineView</a> for a concrete example of dynamic culling. </dd></dl>
@@ -206,12 +206,12 @@ template&lt;EngineType EngineT&gt; </div>
 <p>This method must be implemented by derived classes to provide access to the base engine. The returned reference should remain valid for the lifetime of the <a class="el" href="classgridfire_1_1_engine_view.html" title="Abstract base class for a &quot;view&quot; of a reaction network engine.">EngineView</a>.</p>
 <p>Example: </p><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&amp; engine = myView.getBaseEngine();</div>
 </div><!-- fragment --> 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aee095b30a9dce5fcb5ae2fa1d2aa192c">gridfire::AdaptiveEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aee095b30a9dce5fcb5ae2fa1d2aa192c">gridfire::AdaptiveEngineView</a>, and <a class="el" href="classgridfire_1_1_file_defined_engine_view.html#a4c8b273c5cb3d470567c5691b68493a3">gridfire::FileDefinedEngineView</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/network/include/gridfire/engine/<a class="el" href="engine__view__abstract_8h_source.html">engine_view_abstract.h</a></li>
+<li>src/network/include/gridfire/engine/views/<a class="el" href="engine__view__abstract_8h_source.html">engine_view_abstract.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

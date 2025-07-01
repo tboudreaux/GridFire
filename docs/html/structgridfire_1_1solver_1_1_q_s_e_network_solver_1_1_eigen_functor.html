@@ -113,6 +113,10 @@ $(function(){initNavTree('structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:a1bff36d14c3e1f7a276d9fe6b564abdf" id="r_a1bff36d14c3e1f7a276d9fe6b564abdf"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="#a1bff36d14c3e1f7a276d9fe6b564abdfab349cc75d98609f22769f5ce87050dac">InputsAtCompileTime</a> = Eigen::Dynamic
+, <a class="el" href="#a1bff36d14c3e1f7a276d9fe6b564abdfac9e03a0ebbba30da72c7591639a69a09">ValuesAtCompileTime</a> = Eigen::Dynamic
+ }</td></tr>
+<tr class="separator:a1bff36d14c3e1f7a276d9fe6b564abdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ec3c180a9778acdd604a9b80d25399" id="r_ac4ec3c180a9778acdd604a9b80d25399"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> = Eigen::Matrix&lt;T, Eigen::Dynamic, 1&gt;</td></tr>
 <tr class="separator:ac4ec3c180a9778acdd604a9b80d25399"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc86b32db81acf1b24feb3763dc4ddb0" id="r_abc86b32db81acf1b24feb3763dc4ddb0"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc86b32db81acf1b24feb3763dc4ddb0">OutputType</a> = Eigen::Matrix&lt;T, Eigen::Dynamic, 1&gt;</td></tr>
@@ -122,24 +126,28 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af8650f704c2ca512c9c5b4562b3b0958" id="r_af8650f704c2ca512c9c5b4562b3b0958"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8650f704c2ca512c9c5b4562b3b0958">EigenFunctor</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::vector&lt; double &gt; &amp;YDynamic, const std::vector&lt; size_t &gt; &amp;dynamicSpeciesIndices, const std::vector&lt; size_t &gt; &amp;QSESpeciesIndices, const double T9, const double rho)</td></tr>
-<tr class="memdesc:af8650f704c2ca512c9c5b4562b3b0958"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html" title="Functor for calculating the residual and Jacobian for the QSE species using Eigen.">EigenFunctor</a>.  <br /></td></tr>
-<tr class="separator:af8650f704c2ca512c9c5b4562b3b0958"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91c9c7c40c061dcfb6e57524e696676e" id="r_a91c9c7c40c061dcfb6e57524e696676e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91c9c7c40c061dcfb6e57524e696676e">operator()</a> (const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;v_QSE, <a class="el" href="#abc86b32db81acf1b24feb3763dc4ddb0">OutputType</a> &amp;f_QSE) const</td></tr>
-<tr class="memdesc:a91c9c7c40c061dcfb6e57524e696676e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the residual vector for the QSE species.  <br /></td></tr>
-<tr class="separator:a91c9c7c40c061dcfb6e57524e696676e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac46bd712296b03f31af1573f6a0f5644" id="r_ac46bd712296b03f31af1573f6a0f5644"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac46bd712296b03f31af1573f6a0f5644">df</a> (const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;v_QSE, <a class="el" href="#ad42fdb6d5ae06eaa6ddccf03eba0a50c">JacobianType</a> &amp;J_QSE) const</td></tr>
-<tr class="memdesc:ac46bd712296b03f31af1573f6a0f5644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Jacobian matrix for the QSE species.  <br /></td></tr>
-<tr class="separator:ac46bd712296b03f31af1573f6a0f5644"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94a1e5994062c32bd45c248860be6fa4" id="r_a94a1e5994062c32bd45c248860be6fa4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94a1e5994062c32bd45c248860be6fa4">EigenFunctor</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::vector&lt; double &gt; &amp;YFull, const std::vector&lt; size_t &gt; &amp;dynamicSpeciesIndices, const std::vector&lt; size_t &gt; &amp;QSESpeciesIndices, const double T9, const double rho)</td></tr>
+<tr class="memdesc:a94a1e5994062c32bd45c248860be6fa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html" title="Functor for calculating the residual and Jacobian for the QSE species using Eigen.">EigenFunctor</a>.  <br /></td></tr>
+<tr class="separator:a94a1e5994062c32bd45c248860be6fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9730f06a604c3c95ccc33ab6f0f8878" id="r_aa9730f06a604c3c95ccc33ab6f0f8878"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9730f06a604c3c95ccc33ab6f0f8878">values</a> () const</td></tr>
+<tr class="separator:aa9730f06a604c3c95ccc33ab6f0f8878"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ce08aab2f1976c9258dad2b67e1c5b6" id="r_a5ce08aab2f1976c9258dad2b67e1c5b6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ce08aab2f1976c9258dad2b67e1c5b6">inputs</a> () const</td></tr>
+<tr class="separator:a5ce08aab2f1976c9258dad2b67e1c5b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16dc10cb9c1392920f8d0ba95e0bc86e" id="r_a16dc10cb9c1392920f8d0ba95e0bc86e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16dc10cb9c1392920f8d0ba95e0bc86e">operator()</a> (const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;v_QSE_log, <a class="el" href="#abc86b32db81acf1b24feb3763dc4ddb0">OutputType</a> &amp;f_QSE) const</td></tr>
+<tr class="memdesc:a16dc10cb9c1392920f8d0ba95e0bc86e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the residual vector for the QSE species.  <br /></td></tr>
+<tr class="separator:a16dc10cb9c1392920f8d0ba95e0bc86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51687d7a9770164f79e485a763bd94b0" id="r_a51687d7a9770164f79e485a763bd94b0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51687d7a9770164f79e485a763bd94b0">df</a> (const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;v_QSE_log, <a class="el" href="#ad42fdb6d5ae06eaa6ddccf03eba0a50c">JacobianType</a> &amp;J_QSE) const</td></tr>
+<tr class="memdesc:a51687d7a9770164f79e485a763bd94b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Jacobian matrix for the QSE species.  <br /></td></tr>
+<tr class="separator:a51687d7a9770164f79e485a763bd94b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a93b46ca95ddf9e4d21d02700621e6285" id="r_a93b46ca95ddf9e4d21d02700621e6285"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93b46ca95ddf9e4d21d02700621e6285">m_engine</a></td></tr>
 <tr class="memdesc:a93b46ca95ddf9e4d21d02700621e6285"><td class="mdescLeft">&#160;</td><td class="mdescRight">The engine used to evaluate the network.  <br /></td></tr>
 <tr class="separator:a93b46ca95ddf9e4d21d02700621e6285"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4f10300bde1e8e07b896bfca6335401" id="r_af4f10300bde1e8e07b896bfca6335401"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4f10300bde1e8e07b896bfca6335401">m_YDynamic</a></td></tr>
-<tr class="memdesc:af4f10300bde1e8e07b896bfca6335401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abundances of the dynamic species.  <br /></td></tr>
-<tr class="separator:af4f10300bde1e8e07b896bfca6335401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dca32a9e0bea5aea2a565f94b99a8de" id="r_a2dca32a9e0bea5aea2a565f94b99a8de"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dca32a9e0bea5aea2a565f94b99a8de">m_YFull</a></td></tr>
+<tr class="memdesc:a2dca32a9e0bea5aea2a565f94b99a8de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The full, initial abundance vector.  <br /></td></tr>
+<tr class="separator:a2dca32a9e0bea5aea2a565f94b99a8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08ce53701b152f3ce108c1c18ce64de2" id="r_a08ce53701b152f3ce108c1c18ce64de2"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08ce53701b152f3ce108c1c18ce64de2">m_dynamicSpeciesIndices</a></td></tr>
 <tr class="memdesc:a08ce53701b152f3ce108c1c18ce64de2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices of the dynamic species.  <br /></td></tr>
 <tr class="separator:a08ce53701b152f3ce108c1c18ce64de2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,9 +227,32 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a1bff36d14c3e1f7a276d9fe6b564abdf" name="a1bff36d14c3e1f7a276d9fe6b564abdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bff36d14c3e1f7a276d9fe6b564abdf">&#9670;&#160;</a></span>anonymous enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">anonymous enum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1bff36d14c3e1f7a276d9fe6b564abdfab349cc75d98609f22769f5ce87050dac" name="a1bff36d14c3e1f7a276d9fe6b564abdfab349cc75d98609f22769f5ce87050dac"></a>InputsAtCompileTime&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1bff36d14c3e1f7a276d9fe6b564abdfac9e03a0ebbba30da72c7591639a69a09" name="a1bff36d14c3e1f7a276d9fe6b564abdfac9e03a0ebbba30da72c7591639a69a09"></a>ValuesAtCompileTime&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00313">313</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af8650f704c2ca512c9c5b4562b3b0958" name="af8650f704c2ca512c9c5b4562b3b0958"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8650f704c2ca512c9c5b4562b3b0958">&#9670;&#160;</a></span>EigenFunctor()</h2>
+<a id="a94a1e5994062c32bd45c248860be6fa4" name="a94a1e5994062c32bd45c248860be6fa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94a1e5994062c32bd45c248860be6fa4">&#9670;&#160;</a></span>EigenFunctor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,7 +270,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>YDynamic</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>YFull</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -273,7 +304,7 @@ template&lt;typename T&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>The engine used to evaluate the network. </td></tr>
-    <tr><td class="paramname">YDynamic</td><td>Abundances of the dynamic species. </td></tr>
+    <tr><td class="paramname">YFull</td><td>Abundances of the dynamic species. </td></tr>
     <tr><td class="paramname">dynamicSpeciesIndices</td><td>Indices of the dynamic species. </td></tr>
     <tr><td class="paramname">QSESpeciesIndices</td><td>Indices of the QSE species. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
@@ -282,13 +313,13 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00330">330</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00334">334</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac46bd712296b03f31af1573f6a0f5644" name="ac46bd712296b03f31af1573f6a0f5644"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac46bd712296b03f31af1573f6a0f5644">&#9670;&#160;</a></span>df()</h2>
+<a id="a51687d7a9770164f79e485a763bd94b0" name="a51687d7a9770164f79e485a763bd94b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51687d7a9770164f79e485a763bd94b0">&#9670;&#160;</a></span>df()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -298,7 +329,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="memname">int <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::df </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v_QSE</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v_QSE_log</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -311,19 +342,48 @@ template&lt;typename T&gt; </div>
 <p>Calculates the Jacobian matrix for the QSE species. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">v_QSE</td><td>Input vector of QSE species abundances (logarithmic). </td></tr>
+    <tr><td class="paramname">v_QSE_log</td><td>Input vector of QSE species abundances (logarithmic). </td></tr>
     <tr><td class="paramname">J_QSE</td><td>Output Jacobian matrix. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 for success. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00507">507</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00514">514</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
-<a id="a91c9c7c40c061dcfb6e57524e696676e" name="a91c9c7c40c061dcfb6e57524e696676e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91c9c7c40c061dcfb6e57524e696676e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a5ce08aab2f1976c9258dad2b67e1c5b6" name="a5ce08aab2f1976c9258dad2b67e1c5b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ce08aab2f1976c9258dad2b67e1c5b6">&#9670;&#160;</a></span>inputs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::inputs </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00350">350</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+
+</div>
+</div>
+<a id="a16dc10cb9c1392920f8d0ba95e0bc86e" name="a16dc10cb9c1392920f8d0ba95e0bc86e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16dc10cb9c1392920f8d0ba95e0bc86e">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -333,7 +393,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="memname">int <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::operator() </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v_QSE</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="#ac4ec3c180a9778acdd604a9b80d25399">InputType</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v_QSE_log</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -346,14 +406,43 @@ template&lt;typename T&gt; </div>
 <p>Calculates the residual vector for the QSE species. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">v_QSE</td><td>Input vector of QSE species abundances (logarithmic). </td></tr>
+    <tr><td class="paramname">v_QSE_log</td><td>Input vector of QSE species abundances (logarithmic). </td></tr>
     <tr><td class="paramname">f_QSE</td><td>Output vector of residuals. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 for success. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00488">488</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00496">496</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+
+</div>
+</div>
+<a id="aa9730f06a604c3c95ccc33ab6f0f8878" name="aa9730f06a604c3c95ccc33ab6f0f8878"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9730f06a604c3c95ccc33ab6f0f8878">&#9670;&#160;</a></span>values()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::values </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00349">349</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +463,7 @@ template&lt;typename T&gt; </div>
 
 <p>Indices of the dynamic species. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00316">316</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00320">320</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -394,7 +483,7 @@ template&lt;typename T&gt; </div>
 
 <p>The engine used to evaluate the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00314">314</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00318">318</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -414,7 +503,7 @@ template&lt;typename T&gt; </div>
 
 <p>Indices of the QSE species. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00317">317</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00321">321</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -434,7 +523,7 @@ template&lt;typename T&gt; </div>
 
 <p>Density in g/cm^3. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00319">319</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00323">323</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -454,12 +543,12 @@ template&lt;typename T&gt; </div>
 
 <p>Temperature in units of 10^9 K. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00318">318</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00322">322</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
-<a id="af4f10300bde1e8e07b896bfca6335401" name="af4f10300bde1e8e07b896bfca6335401"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4f10300bde1e8e07b896bfca6335401">&#9670;&#160;</a></span>m_YDynamic</h2>
+<a id="a2dca32a9e0bea5aea2a565f94b99a8de" name="a2dca32a9e0bea5aea2a565f94b99a8de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dca32a9e0bea5aea2a565f94b99a8de">&#9670;&#160;</a></span>m_YFull</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -467,14 +556,14 @@ template&lt;typename T&gt; </div>
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;double&gt;&amp; <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::m_YDynamic</td>
+          <td class="memname">const std::vector&lt;double&gt;&amp; <a class="el" href="structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html">gridfire::solver::QSENetworkSolver::EigenFunctor</a>&lt; T &gt;::m_YFull</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Abundances of the dynamic species. </p>
+<p>The full, initial abundance vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00315">315</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00319">319</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
