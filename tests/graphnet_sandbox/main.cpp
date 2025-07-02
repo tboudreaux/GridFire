@@ -22,6 +22,8 @@
 #include <chrono>
 #include <functional>
 
+#include "gridfire/partition/composite/partition_composite.h"
+
 // Keep a copy of the previous handler
 static std::terminate_handler g_previousHandler = nullptr;
 
@@ -55,7 +57,7 @@ void quill_terminate_handler()
 int main() {
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::Debug);
+    logger->set_log_level(quill::LogLevel::TraceL3);
     LOG_DEBUG(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -86,17 +88,25 @@ int main() {
     // }, "Approx8 Network Initialization");
     // std::cout << "Approx8 Network H-1: " << netOut.composition.getMassFraction("H-1") << " in " << netOut.num_steps << " steps." << std::endl;
 
+    using partition::BasePartitionType;
+    const auto partitionFunction = partition::CompositePartitionFunction({
+        BasePartitionType::RauscherThielemann,
+        BasePartitionType::GroundState
+    });
+    std::cout << "Partition Function for Mg-24: " << partitionFunction.evaluate(12, 24, 1.5) << std::endl;
+    std::cout << "Partition Function for F-23: " << partitionFunction.evaluate(9, 23, 1.5) << std::endl;
+    std::cout << "Partition Function for O-13: " << partitionFunction.evaluate(8, 13, 1.5) << std::endl;
 
     netIn.dt0 = 1e-15;
 
-    GraphEngine ReaclibEngine(composition);
-    ReaclibEngine.setPrecomputation(true);
-    // AdaptiveEngineView adaptiveEngine(ReaclibEngine);
-    io::SimpleReactionListFileParser parser{};
-    FileDefinedEngineView approx8EngineView(ReaclibEngine, "approx8.net", parser);
-    approx8EngineView.setScreeningModel(screening::ScreeningType::WEAK);
-    solver::QSENetworkSolver solver(approx8EngineView);
-    netOut = solver.evaluate(netIn);
+    // GraphEngine ReaclibEngine(composition);
+    // ReaclibEngine.setPrecomputation(true);
+    // // AdaptiveEngineView adaptiveEngine(ReaclibEngine);
+    // io::SimpleReactionListFileParser parser{};
+    // FileDefinedEngineView approx8EngineView(ReaclibEngine, "approx8.net", parser);
+    // approx8EngineView.setScreeningModel(screening::ScreeningType::WEAK);
+    // solver::QSENetworkSolver solver(approx8EngineView);
+    // netOut = solver.evaluate(netIn);
 
     // measure_execution_time([&]() {
     //     netOut = solver.evaluate(netIn);

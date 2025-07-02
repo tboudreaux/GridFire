@@ -12,6 +12,9 @@ network_sources = files(
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',
     'lib/screening/screening_bare.cpp',
+    'lib/partition/partition_rauscher_thielemann.cpp',
+    'lib/partition/partition_ground.cpp',
+    'lib/partition/composite/partition_composite.cpp',
     'lib/utils/logging.cpp',
 )
 
@@ -58,6 +61,10 @@ network_headers = files(
     'include/gridfire/screening/screening_bare.h',
     'include/gridfire/screening/screening_weak.h',
     'include/gridfire/screening/screening_types.h',
+    'include/gridfire/partition/partition_abstract.h',
+    'include/gridfire/partition/partition_rauscher_thielemann.h',
+    'include/gridfire/partition/partition_ground.h',
+    'include/gridfire/partition/composite/partition_composite.h',
     'include/gridfire/utils/logging.h',
 )
 install_headers(network_headers, subdir : 'gridfire')
