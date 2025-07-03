@@ -17,6 +17,13 @@ namespace gridfire::partition {
         }
     }
 
+    CompositePartitionFunction::CompositePartitionFunction(const CompositePartitionFunction &other) {
+        m_partitionFunctions.reserve(other.m_partitionFunctions.size());
+        for (const auto& pf : other.m_partitionFunctions) {
+            m_partitionFunctions.push_back(pf->clone());
+        }
+    }
+
     double CompositePartitionFunction::evaluate(int z, int a, double T9) const {
         LOG_TRACE_L1(m_logger, "Evaluating partition function for Z={} A={} T9={}", z, a, T9);
         for (const auto& partitionFunction : m_partitionFunctions) {

@@ -44,6 +44,27 @@ namespace gridfire::reaction {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
+    double Reaction::calculate_forward_rate_log_derivative(const double T9) const {
+        constexpr double r_p13 = 1.0 / 3.0;
+        constexpr double r_p53 = 5.0 / 3.0;
+        constexpr double r_p23 = 2.0 / 3.0;
+        constexpr double r_p43 = 4.0 / 3.0;
+
+        const double T9_m1 = 1.0 / T9;
+        const double T9_m23 = std::pow(T9, -r_p23);
+        const double T9_m43 = std::pow(T9, -r_p43);
+
+        const double d_log_k_fwd_dT9 =
+            -m_rateCoefficients.a1 * T9_m1 * T9_m1
+            - r_p13 * m_rateCoefficients.a2 * T9_m43
+            + r_p13 * m_rateCoefficients.a3 * T9_m23
+            + m_rateCoefficients.a4
+            + r_p53 * m_rateCoefficients.a5 * std::pow(T9, r_p23)
+            + m_rateCoefficients.a6 * T9_m1;
+
+        return d_log_k_fwd_dT9; // Return the derivative of the log rate with respect to T9
+    }
+
     bool Reaction::contains(const Species &species) const {
         return contains_reactant(species) || contains_product(species);
     }
@@ -192,6 +213,57 @@ namespace gridfire::reaction {
 
     double LogicalReaction::calculate_rate(const double T9) const {
         return calculate_rate<double>(T9);
+    }
+
+    double LogicalReaction::calculate_forward_rate_log_derivative(const double T9) const {
+        constexpr double r_p13 = 1.0 / 3.0;
+        constexpr double r_p53 = 5.0 / 3.0;
+        constexpr double r_p23 = 2.0 / 3.0;
+        constexpr double r_p43 = 4.0 / 3.0;
+
+        double totalRate = 0.0;
+        double totalRateDerivative = 0.0;
+
+
+        const double T9_m1 = 1.0 / T9;
+        const double T913 = std::pow(T9, r_p13);
+        const double T953 = std::pow(T9, r_p53);
+        const double logT9 = std::log(T9);
+
+        const double T9_m1_sq = T9_m1 * T9_m1;
+        const double T9_m23 = std::pow(T9, -r_p23);
+        const double T9_m43 = std::pow(T9, -r_p43);
+        const double T9_p23 = std::pow(T9, r_p23);
+
+
+        for (const auto& coeffs : m_rates) {
+            const double exponent = coeffs.a0 +
+                                    coeffs.a1 * T9_m1 +
+                                    coeffs.a2 / T913 +
+                                    coeffs.a3 * T913 +
+                                    coeffs.a4 * T9 +
+                                    coeffs.a5 * T953 +
+                                    coeffs.a6 * logT9;
+            const double individualRate = std::exp(exponent);
+
+            const double d_exponent_T9 =
+                -coeffs.a1 * T9_m1_sq
+                - r_p13 * coeffs.a2 * T9_m43
+                + r_p13 * coeffs.a3 * T9_m23
+                + coeffs.a4
+                + r_p53 * coeffs.a5 * T9_p23
+                + coeffs.a6 * T9_m1;
+
+            const double individualRateDerivative = individualRate * d_exponent_T9;
+            totalRate += individualRate;
+            totalRateDerivative += individualRateDerivative;
+        }
+
+        if (totalRate == 0.0) {
+            return 0.0; // Avoid division by zero
+        }
+
+        return totalRateDerivative / totalRate;
     }
 
     CppAD::AD<double> LogicalReaction::calculate_rate(const CppAD::AD<double> T9) const {

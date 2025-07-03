@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 #include <fstream>
+#include <ranges>
 
 #include <boost/numeric/odeint.hpp>
 
@@ -26,7 +27,18 @@ namespace gridfire {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition
     ):
-     m_reactions(build_reaclib_nuclear_network(composition, false)) {
+     m_reactions(build_reaclib_nuclear_network(composition, false)),
+     m_partitionFunction(std::make_unique<partition::GroundStatePartitionFunction>()){
+        syncInternalMaps();
+        precomputeNetwork();
+    }
+
+    GraphEngine::GraphEngine(
+        const fourdst::composition::Composition &composition,
+        const partition::PartitionFunction& partitionFunction) :
+    m_reactions(build_reaclib_nuclear_network(composition, false)),
+    m_partitionFunction(partitionFunction.clone())  // Clone the partition function to ensure ownership
+    {
         syncInternalMaps();
         precomputeNetwork();
     }
@@ -220,6 +232,129 @@ namespace gridfire {
         }
     }
 
+    double GraphEngine::calculateReverseRate(
+        const reaction::Reaction &reaction,
+        const double T9,
+        const double expFactor
+    ) const {
+        double reverseRate = 0.0;
+        const double forwardRate = reaction.calculate_rate(T9);
+
+        if (reaction.reactants().size() == 2 && reaction.products().size() == 2) {
+            reverseRate = calculateReverseRateTwoBody(reaction, T9, forwardRate, expFactor);
+        } else {
+            LOG_WARNING(m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented.");
+        }
+        return reverseRate;
+    }
+
+    double GraphEngine::calculateReverseRateTwoBody(
+        const reaction::Reaction &reaction,
+        const double T9,
+        const double forwardRate,
+        const double expFactor
+    ) const {
+        std::vector<double> reactantPartitionFunctions;
+        std::vector<double> productPartitionFunctions;
+
+        reactantPartitionFunctions.reserve(reaction.reactants().size());
+        productPartitionFunctions.reserve(reaction.products().size());
+
+        std::unordered_map<fourdst::atomic::Species, int> reactantMultiplicity;
+        std::unordered_map<fourdst::atomic::Species, int> productMultiplicity;
+
+        reactantMultiplicity.reserve(reaction.reactants().size());
+        productMultiplicity.reserve(reaction.products().size());
+
+        for (const auto& reactant : reaction.reactants()) {
+            reactantMultiplicity[reactant] += 1;
+        }
+        for (const auto& product : reaction.products()) {
+            productMultiplicity[product] += 1;
+        }
+        double reactantSymmetryFactor = 1.0;
+        double productSymmetryFactor = 1.0;
+        for (const auto& count : reactantMultiplicity | std::views::values) {
+            reactantSymmetryFactor *= std::tgamma(count + 1);
+        }
+        for (const auto& count : productMultiplicity | std::views::values) {
+            productSymmetryFactor *= std::tgamma(count + 1);
+        }
+        const double symmetryFactor = reactantSymmetryFactor / productSymmetryFactor;
+
+        // Accumulate mass terms
+        auto mass_op = [](double acc, const auto& species) { return acc * species.a(); };
+        const double massNumerator = std::accumulate(
+            reaction.reactants().begin(),
+            reaction.reactants().end(),
+            1.0,
+            mass_op
+        );
+        const double massDenominator = std::accumulate(
+            reaction.products().begin(),
+            reaction.products().end(),
+            1.0,
+            mass_op
+        );
+
+        // Accumulate partition functions
+        auto pf_op = [&](double acc, const auto& species) { return acc * m_partitionFunction->evaluate(species.z(), species.a(), T9); };
+        const double partitionFunctionNumerator = std::accumulate(
+            reaction.reactants().begin(),
+            reaction.reactants().end(),
+            1.0,
+            pf_op
+        );
+        const double partitionFunctionDenominator = std::accumulate(
+            reaction.products().begin(),
+            reaction.products().end(),
+            1.0,
+            pf_op
+        );
+
+        const double CT = std::pow(massNumerator/massDenominator, 1.5) * (partitionFunctionNumerator/partitionFunctionDenominator);
+
+        return forwardRate * symmetryFactor * CT * expFactor;
+
+    }
+
+    double GraphEngine::calculateReverseRateTwoBodyDerivative(
+        const reaction::Reaction &reaction,
+        const double T9,
+        const double reverseRate
+    ) const {
+        const double d_log_kFwd = reaction.calculate_forward_rate_log_derivative(T9);
+
+        auto log_deriv_pf_op = [&](double acc, const auto& species) {
+            const double g = m_partitionFunction->evaluate(species.z(), species.a(), T9);
+            const double dg_dT = m_partitionFunction->evaluateDerivative(species.z(), species.a(), T9);
+            return (g == 0.0) ? acc : acc + (dg_dT / g);
+        };
+
+        const double reactant_log_derivative_sum = std::accumulate(
+            reaction.reactants().begin(),
+            reaction.reactants().end(),
+            0.0,
+            log_deriv_pf_op
+        );
+
+        const double product_log_derivative_sum = std::accumulate(
+            reaction.products().begin(),
+            reaction.products().end(),
+            0.0,
+            log_deriv_pf_op
+        );
+
+        const double d_log_C = reactant_log_derivative_sum - product_log_derivative_sum;
+
+        const double d_log_exp = reaction.qValue() / (m_constants.kB * T9 * T9);
+
+        const double log_total_derivative = d_log_kFwd + d_log_C + d_log_exp;
+
+        return reverseRate * log_total_derivative; // Return the derivative of the reverse rate with respect to T9
+
+    }
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
         const std::vector<double> &Y_in,
         const std::vector<double> &bare_rates,
@@ -372,6 +507,10 @@ namespace gridfire {
 
     bool GraphEngine::isPrecomputationEnabled() const {
         return m_usePrecomputation;
+    }
+
+    const partition::PartitionFunction & GraphEngine::getPartitionFunction() const {
+        return *m_partitionFunction;
     }
 
     double GraphEngine::calculateMolarReactionFlow(
@@ -648,4 +787,21 @@ namespace gridfire {
             m_precomputedReactions.push_back(std::move(precomp));
         }
     }
+
+    bool AtomicReverseRate::forward(
+        const size_t p,
+        const size_t q,
+        const CppAD::vector<bool> &vx,
+        CppAD::vector<bool> &vy,
+        const CppAD::vector<double> &tx,
+        CppAD::vector<double> &ty
+    ) {
+        const double T9 = tx[0];
+        const double expFactor = std::exp(-m_reaction.qValue() / (m_kB * T9 * 1e9)); // Convert MeV to erg
+        if (p == 0) {
+            // --- Zeroth order forward sweep ---
+            const auto k_rev = m_engine.calculateReverseRate(m_reaction, T9, expFactor);
+        }
+    }
+
 }

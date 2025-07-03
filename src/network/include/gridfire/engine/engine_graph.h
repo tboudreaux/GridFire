@@ -10,6 +10,8 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
+#include "gridfire/partition/partition_abstract.h"
+#include "gridfire/partition/partition_ground.h"
 
 #include <string>
 #include <unordered_map>
@@ -100,6 +102,10 @@ namespace gridfire {
          * @see build_reaclib_nuclear_network
          */
         explicit GraphEngine(const fourdst::composition::Composition &composition);
+
+        explicit GraphEngine(const fourdst::composition::Composition &composition,
+                             const partition::PartitionFunction& partitionFunction
+                             );
 
         /**
          * @brief Constructs a GraphEngine from a set of reactions.
@@ -307,6 +313,14 @@ namespace gridfire {
 
         [[nodiscard]] bool isPrecomputationEnabled() const;
 
+        [[nodiscard]] const partition::PartitionFunction& getPartitionFunction() const;
+
+        [[nodiscard]] double calculateReverseRate(
+            const reaction::Reaction &reaction,
+            double T9,
+            double expFactor
+        ) const;
+
     private:
         struct PrecomputedReaction {
             size_t reaction_index;
@@ -321,6 +335,7 @@ namespace gridfire {
             const double u = Constants::getInstance().get("u").value; ///< Atomic mass unit in g.
             const double Na = Constants::getInstance().get("N_a").value; ///< Avogadro's number.
             const double c = Constants::getInstance().get("c").value; ///< Speed of light in cm/s.
+            const double kB = Constants::getInstance().get("kB").value; ///< Boltzmann constant in erg/K.
         };
 
     private:
@@ -347,6 +362,7 @@ namespace gridfire {
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
 
         std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
+        std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
 
     private:
         /**
@@ -431,6 +447,20 @@ namespace gridfire {
             double culling,
             double T9
         );
+
+
+        double calculateReverseRateTwoBody(
+            const reaction::Reaction &reaction,
+            const double T9,
+            const double forwardRate,
+            const double expFactor
+        ) const;
+
+        double GraphEngine::calculateReverseRateTwoBodyDerivative(
+            const reaction::Reaction &reaction,
+            const double T9,
+            const double reverseRate
+        ) const;
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
             const std::vector<double> &Y_in,
@@ -647,4 +677,36 @@ namespace gridfire {
         //       the entire network.
         return molar_concentration_product * k_reaction * threshold_flag;
     }
+
+    class AtomicReverseRate final : public CppAD::atomic_base<double> {
+    public:
+        AtomicReverseRate(
+            const reaction::Reaction& reaction,
+            const GraphEngine& engine
+        ):
+        atomic_base<double>("AtomicReverseRate"),
+        m_reaction(reaction),
+        m_engine(engine) {}
+
+        bool forward(
+            size_t p,
+            size_t q,
+            const CppAD::vector<bool>& vx,
+            CppAD::vector<bool>& vy,
+            const CppAD::vector<double>& tx,
+            CppAD::vector<double>& ty
+        ) override;
+        bool reverse(
+            size_t id,
+            size_t an,
+            const CppAD::vector<double>& tx,
+            const CppAD::vector<double>& ty,
+            CppAD::vector<double>& px,
+            const CppAD::vector<double>& py
+        );
+    private:
+        const double m_kB = Constants::getInstance().get("k_b").value; ///< Boltzmann constant in erg/K.
+        const reaction::Reaction& m_reaction;
+        const GraphEngine& m_engine;
+    };
 };

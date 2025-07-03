@@ -31,6 +31,7 @@ def generate_binary_file(input_filepath, output_filepath):
             spin = float(match.group('spin'))
             coeffs_str = match.group('coeffs')
             g_values = [float(val) for val in coeffs_str.split()]
+            print(f"Processing Z={z}, A={a}, Spin={spin}")
 
             if len(g_values) != 24:
                 print(f"Warning: Found {len(g_values)} coefficients for Z={z}, A={a}. Expected 24. Skipping.")

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <array>
 #include <utility>
+#include <memory>
 
 namespace gridfire::partition {
     class RauscherThielemannPartitionFunction final : public PartitionFunction {
@@ -41,6 +42,9 @@ namespace gridfire::partition {
             size_t upperIndex;
             size_t lowerIndex;
         };
+        std::unique_ptr<PartitionFunction> clone() const override {
+            return std::make_unique<RauscherThielemannPartitionFunction>(*this);
+        }
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         std::unordered_map<int, IsotopeData> m_partitionData;

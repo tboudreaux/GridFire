@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <iostream>
 
 namespace gridfire::partition {
     static constexpr std::array<double, 24> RT_TEMPERATURE_GRID_T9 = {
@@ -25,8 +26,17 @@ namespace gridfire::partition {
             IsotopeData data;
             data.ground_state_spin = record.ground_state_spin;
             std::ranges::copy(record.normalized_g_values, data.normalized_g_values.begin());
+            const int key = make_key(record.z, record.a);
+            LOG_TRACE_L3_LIMIT_EVERY_N(
+                100,
+                m_logger,
+                "(EVERY 100) Adding Rauscher-Thielemann partition data for Z={} A={} (key={})",
+                record.z,
+                record.a,
+                key
+            );
 
-            m_partitionData[make_key(record.z, record.a)] = std::move(data);
+            m_partitionData[key] = std::move(data);
         }
     }
 

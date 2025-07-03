@@ -113,6 +113,8 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] virtual CppAD::AD<double> calculate_rate(const CppAD::AD<double> T9) const;
 
+        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(const double T9) const;
+
         /**
          * @brief Gets the reaction name in (projectile, ejectile) notation.
          * @return The reaction name (e.g., "p(p,g)d").
@@ -340,6 +342,8 @@ namespace gridfire::reaction {
          * @return The total calculated reaction rate.
          */
         [[nodiscard]] double calculate_rate(const double T9) const override;
+
+        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(const double T9) const override;
 
         /**
          * @brief Calculates the total reaction rate using CppAD types.

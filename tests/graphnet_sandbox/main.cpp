@@ -4,6 +4,7 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/engine/engine_approx8.h"
 #include "gridfire/engine/views/engine_adaptive.h"
+#include "gridfire/partition/partition_types.h"
 #include "gridfire/engine/views/engine_defined.h"
 #include "gridfire/io/network_file.h"
 
@@ -57,7 +58,7 @@ void quill_terminate_handler()
 int main() {
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL3);
+    logger->set_log_level(quill::LogLevel::TraceL2);
     LOG_DEBUG(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -93,13 +94,14 @@ int main() {
         BasePartitionType::RauscherThielemann,
         BasePartitionType::GroundState
     });
-    std::cout << "Partition Function for Mg-24: " << partitionFunction.evaluate(12, 24, 1.5) << std::endl;
-    std::cout << "Partition Function for F-23: " << partitionFunction.evaluate(9, 23, 1.5) << std::endl;
-    std::cout << "Partition Function for O-13: " << partitionFunction.evaluate(8, 13, 1.5) << std::endl;
+    std::cout << "Partition Function for Mg-24: " << partitionFunction.evaluate(12, 24, 8) << std::endl;
+    std::cout << "Partition Function for F-23: " << partitionFunction.evaluate(9, 23, 8) << std::endl;
+    std::cout << "Partition Function for O-13: " << partitionFunction.evaluate(8, 13, 8) << std::endl;
 
     netIn.dt0 = 1e-15;
 
-    // GraphEngine ReaclibEngine(composition);
+    GraphEngine ReaclibEngine(composition, partitionFunction);
+    std::cout << ReaclibEngine.getPartitionFunction().type() << std::endl;
     // ReaclibEngine.setPrecomputation(true);
     // // AdaptiveEngineView adaptiveEngine(ReaclibEngine);
     // io::SimpleReactionListFileParser parser{};

@@ -5,6 +5,7 @@
 #include "fourdst/logging/logging.h"
 
 #include <unordered_map>
+#include <memory>
 
 #include "quill/Logger.h"
 
@@ -27,6 +28,9 @@ namespace gridfire::partition {
             const int a
         ) const override;
         std::string type() const override { return "GroundState"; }
+        std::unique_ptr<PartitionFunction> clone() const override {
+            return std::make_unique<GroundStatePartitionFunction>(*this);
+        }
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         std::unordered_map<int, double> m_ground_state_spin;
