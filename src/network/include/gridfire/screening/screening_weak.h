@@ -145,7 +145,7 @@ namespace gridfire::screening {
         const T T9,
         const T rho
     ) const {
-        LOG_TRACE_L1(
+        LOG_TRACE_L3(
             m_logger,
             "Calculating weak screening factors for {} reactions...",
             reactions.size()

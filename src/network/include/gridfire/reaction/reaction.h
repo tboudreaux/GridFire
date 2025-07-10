@@ -411,6 +411,8 @@ namespace gridfire::reaction {
          */
         explicit TemplatedReactionSet(std::vector<ReactionT> reactions);
 
+        TemplatedReactionSet();
+
         /**
          * @brief Copy constructor.
          * @param other The ReactionSet to copy.
@@ -576,6 +578,9 @@ namespace gridfire::reaction {
             m_reactionNameMap.emplace(reaction.id(), reaction);
         }
     }
+
+    template<typename ReactionT>
+    TemplatedReactionSet<ReactionT>::TemplatedReactionSet() {}
 
     template <typename ReactionT>
     TemplatedReactionSet<ReactionT>::TemplatedReactionSet(const TemplatedReactionSet<ReactionT> &other) {

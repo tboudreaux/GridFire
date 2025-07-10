@@ -205,6 +205,7 @@ namespace gridfire::solver {
             const Eigen::VectorXd& m_Y_QSE; ///< Steady-state abundances of the QSE species.
             const double m_T9; ///< Temperature in units of 10^9 K.
             const double m_rho; ///< Density in g/cm^3.
+            quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
 
             bool m_isViewInitialized = false;
 
@@ -316,11 +317,13 @@ namespace gridfire::solver {
             };
 
             DynamicEngine& m_engine; ///< The engine used to evaluate the network.
+            quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
             const std::vector<double>& m_YFull; ///< The full, initial abundance vector
             const std::vector<size_t>& m_dynamicSpeciesIndices; ///< Indices of the dynamic species.
             const std::vector<size_t>& m_QSESpeciesIndices; ///< Indices of the QSE species.
             const double m_T9; ///< Temperature in units of 10^9 K.
             const double m_rho; ///< Density in g/cm^3.
+            const Eigen::VectorXd& m_YScale; ///< Scaling vector for the QSE species for asinh scaling.
 
             /**
              * @brief Constructor for the EigenFunctor.
@@ -337,14 +340,16 @@ namespace gridfire::solver {
                 const std::vector<size_t>& dynamicSpeciesIndices,
                 const std::vector<size_t>& QSESpeciesIndices,
                 const double T9,
-                const double rho
+                const double rho,
+                const Eigen::VectorXd& YScale
             ) :
             m_engine(engine),
             m_YFull(YFull),
             m_dynamicSpeciesIndices(dynamicSpeciesIndices),
             m_QSESpeciesIndices(QSESpeciesIndices),
             m_T9(T9),
-            m_rho(rho) {}
+            m_rho(rho),
+            m_YScale(YScale) {}
 
             int values() const { return m_QSESpeciesIndices.size(); }
             int inputs() const { return m_QSESpeciesIndices.size(); }
@@ -493,9 +498,20 @@ namespace gridfire::solver {
     };
 
     template<typename T>
-    int QSENetworkSolver::EigenFunctor<T>::operator()(const InputType &v_QSE_log, OutputType &f_QSE) const {
+    int QSENetworkSolver::EigenFunctor<T>::operator()(const InputType &v_QSE, OutputType &f_QSE) const {
         std::vector<double> y = m_YFull; // Full vector of species abundances
-        Eigen::VectorXd Y_QSE = v_QSE_log.array().exp();
+        Eigen::VectorXd Y_QSE = m_YScale.array() * v_QSE.array().sinh(); // Convert to physical abundances using asinh scaling
+        LOG_DEBUG(
+            m_logger,
+            "Calling QSENetworkSolver::EigenFunctor::operator() with QSE abundances {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
+                    ss << std::string(m_engine.getNetworkSpecies()[m_QSESpeciesIndices[i]].name()) << ": " << Y_QSE(i) << ", ";
+                }
+                return ss.str();
+            }());
 
         for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
             y[m_QSESpeciesIndices[i]] = Y_QSE(i);
@@ -503,6 +519,17 @@ namespace gridfire::solver {
 
 
         const auto [dydt, specificEnergyRate] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
+        LOG_DEBUG(
+            m_logger,
+            "Calling QSENetworkSolver::EigenFunctor::operator() found QSE dydt {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
+                    ss << std::string(m_engine.getNetworkSpecies()[m_QSESpeciesIndices[i]].name()) << ": " << dydt[m_QSESpeciesIndices[i]] << ", ";
+                }
+                return ss.str();
+            }());
         f_QSE.resize(m_QSESpeciesIndices.size());
         for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
             f_QSE(i) = dydt[m_QSESpeciesIndices[i]];
@@ -511,9 +538,9 @@ namespace gridfire::solver {
     }
 
     template <typename T>
-    int QSENetworkSolver::EigenFunctor<T>::df(const InputType& v_QSE_log, JacobianType& J_QSE) const {
+    int QSENetworkSolver::EigenFunctor<T>::df(const InputType& v_QSE, JacobianType& J_QSE) const {
         std::vector<double> y = m_YFull;
-        Eigen::VectorXd Y_QSE = v_QSE_log.array().exp();
+        Eigen::VectorXd Y_QSE = m_YScale.array() * v_QSE.array().sinh();
 
         for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
             y[m_QSESpeciesIndices[i]] = Y_QSE(i);
@@ -528,8 +555,32 @@ namespace gridfire::solver {
             }
         }
 
+        std::string format_jacobian = [&]() -> std::string {
+            std::stringstream ss;
+            ss << std::scientific << std::setprecision(5);
+            for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
+                for (size_t j = 0; j < m_QSESpeciesIndices.size(); ++j) {
+                    ss << J_QSE(i, j) << " ";
+                }
+                ss << "\n";
+            }
+            return ss.str();
+        }();
+
+
         for (long j = 0; j < J_QSE.cols(); ++j) {
-            J_QSE(j, j) *= Y_QSE(j); // chain rule for log space transformation
+            LOG_DEBUG(
+                m_logger,
+                "Jacobian ({},{}) before chain rule: {}",
+                j, j, J_QSE(j, j)
+            );
+            const double dY_dv = m_YScale(j) * CppAD::cosh(v_QSE(j));
+            J_QSE.col(j) *= dY_dv; // chain rule for log space transformation
+            LOG_DEBUG(
+                m_logger,
+                "Jacobian ({},{}) after chain rule: {} (dY/dv = {})",
+                j, j, J_QSE(j, j), dY_dv
+            );
         }
         return 0;
     }

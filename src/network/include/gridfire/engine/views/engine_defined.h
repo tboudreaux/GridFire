@@ -13,56 +13,9 @@
 #include <string>
 
 namespace gridfire{
-    /**
-     * @class FileDefinedEngineView
-     * @brief An engine view that uses a user-defined reaction network from a file.
-     *
-     * This class implements an EngineView that restricts the reaction network to a specific set of
-     * reactions defined in an external file. It acts as a filter or a view on a larger, more
-     * comprehensive base engine. The file provides a list of reaction identifiers, and this view
-     * will only consider those reactions and the species involved in them.
-     *
-     * This is useful for focusing on a specific sub-network for analysis, debugging, or performance
-     * reasons, without modifying the underlying full network.
-     *
-     * The view maintains mappings between the indices of its active (defined) species and reactions
-     * and the corresponding indices in the full network of the base engine. All calculations are
-     * delegated to the base engine after mapping the inputs from the view's context to the full
-     * network context, and the results are mapped back.
-     *
-     * @implements DynamicEngine
-     * @implements EngineView<DynamicEngine>
-     */
-    class FileDefinedEngineView final: public DynamicEngine, public EngineView<DynamicEngine> {
+    class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {
     public:
-        /**
-         * @brief Constructs a FileDefinedEngineView.
-         *
-         * @param baseEngine The underlying DynamicEngine to which this view delegates calculations.
-         * @param fileName The path to the file that defines the reaction network for this view.
-         * @param parser A reference to a parser object capable of parsing the network file.
-         *
-         * @par Usage Example:
-         * @code
-         * MyParser parser;
-         * DynamicEngine baseEngine(...);
-         * FileDefinedEngineView view(baseEngine, "my_network.net", parser);
-         * @endcode
-         *
-         * @post The view is initialized with the reactions and species from the specified file.
-         * @throws std::runtime_error If a reaction from the file is not found in the base engine.
-         */
-        explicit FileDefinedEngineView(
-            DynamicEngine& baseEngine,
-            const std::string& fileName,
-            const io::NetworkFileParser& parser
-        );
-
-        // --- EngineView Interface ---
-        /**
-         * @brief Gets the base engine.
-         * @return A const reference to the base engine.
-         */
+        DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine);
         const DynamicEngine& getBaseEngine() const override;
 
         // --- Engine Interface ---
@@ -92,14 +45,14 @@ namespace gridfire{
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param Y_defined A vector of abundances for the active species.
+         * @param Y_dynamic A vector of abundances for the active species.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          *
          * @throws std::runtime_error If the view is stale.
          */
         void generateJacobianMatrix(
-            const std::vector<double>& Y_defined,
+            const std::vector<double>& Y_dynamic,
             const double T9,
             const double rho
         ) override;
@@ -192,21 +145,6 @@ namespace gridfire{
         void update(const NetIn &netIn) override;
 
         /**
-         * @brief Sets a new network file to define the active reactions.
-         *
-         * @param fileName The path to the new network definition file.
-         *
-         * @par Usage Example:
-         * @code
-         * view.setNetworkFile("another_network.net");
-         * view.update(netIn); // Must be called before using the view again
-         * @endcode
-         *
-         * @post The view is marked as stale. `update()` must be called before further use.
-         */
-        void setNetworkFile(const std::string& fileName);
-
-        /**
          * @brief Sets the screening model for the base engine.
          *
          * @param model The screening model to set.
@@ -219,21 +157,15 @@ namespace gridfire{
          * @return The current screening model type.
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
-    private:
-        using Config = fourdst::config::Config;
-        using LogManager = fourdst::logging::LogManager;
-        /** @brief A reference to the singleton Config instance. */
-        Config& m_config = Config::getInstance();
-        /** @brief A pointer to the logger instance. */
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
-        /** @brief The underlying engine to which this view delegates calculations. */
+        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+
+        [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+    protected:
+        bool m_isStale = true;
         DynamicEngine& m_baseEngine;
-        ///< Name of the file defining the reaction set considered by the engine view.
-        std::string m_fileName;
-        ///< Parser for the network file.
-        const io::NetworkFileParser& m_parser;
-
+    private:
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
         ///< Active species in the defined engine.
         std::vector<fourdst::atomic::Species> m_activeSpecies;
         ///< Active reactions in the defined engine.
@@ -243,30 +175,7 @@ namespace gridfire{
         std::vector<size_t> m_speciesIndexMap;
         ///< Maps indices of active reactions to indices in the full network.
         std::vector<size_t> m_reactionIndexMap;
-
-        /** @brief A flag indicating whether the view is stale and needs to be updated. */
-        bool m_isStale = true;
-
     private:
-        /**
-         * @brief Builds the active species and reaction sets from a file.
-         *
-         * This method uses the provided parser to read reaction names from the given file.
-         * It then finds these reactions in the base engine's full network and populates
-         * the `m_activeReactions` and `m_activeSpecies` members. Finally, it constructs
-         * the index maps for the active sets.
-         *
-         * @param fileName The path to the network definition file.
-         *
-         * @post
-         * - `m_activeReactions` and `m_activeSpecies` are populated.
-         * - `m_speciesIndexMap` and `m_reactionIndexMap` are constructed.
-         * - `m_isStale` is set to false.
-         *
-         * @throws std::runtime_error If a reaction from the file is not found in the base engine.
-         */
-        void buildFromFile(const std::string& fileName);
-
         /**
          * @brief Constructs the species index map.
          *
@@ -329,11 +238,25 @@ namespace gridfire{
          */
         size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
 
-        /**
-         * @brief Validates that the FileDefinedEngineView is not stale.
-         *
-         * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after the view was made stale).
-         */
         void validateNetworkState() const;
+    };
+
+    class FileDefinedEngineView final: public DefinedEngineView {
+    public:
+        explicit FileDefinedEngineView(
+            DynamicEngine& baseEngine,
+            const std::string& fileName,
+            const io::NetworkFileParser& parser
+        );
+        std::string getNetworkFile() const { return m_fileName; }
+        const io::NetworkFileParser& getParser() const { return m_parser; }
+    private:
+        using Config = fourdst::config::Config;
+        using LogManager = fourdst::logging::LogManager;
+        Config& m_config = Config::getInstance();
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        std::string m_fileName;
+        ///< Parser for the network file.
+        const io::NetworkFileParser& m_parser;
     };
 }

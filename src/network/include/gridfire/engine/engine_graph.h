@@ -17,10 +17,12 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <ranges>
 
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "cppad/cppad.hpp"
+#include "quill/LogMacros.h"
 
 // PERF: The function getNetReactionStoichiometry returns a map of species to their stoichiometric coefficients for a given reaction.
 //       this makes extra copies of the species, which is not ideal and could be optimized further.
@@ -139,7 +141,7 @@ namespace gridfire {
         /**
          * @brief Generates the Jacobian matrix for the current state.
          *
-         * @param Y Vector of current abundances.
+         * @param Y_dynamic Vector of current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
@@ -150,7 +152,7 @@ namespace gridfire {
          * @see getJacobianMatrixEntry()
          */
         void generateJacobianMatrix(
-            const std::vector<double>& Y,
+            const std::vector<double>& Y_dynamic,
             const double T9,
             const double rho
         ) override;
@@ -317,18 +319,48 @@ namespace gridfire {
 
         [[nodiscard]] double calculateReverseRate(
             const reaction::Reaction &reaction,
-            double T9,
-            double expFactor
+            double T9
         ) const;
+
+        double calculateReverseRateTwoBody(
+            const reaction::Reaction &reaction,
+            const double T9,
+            const double forwardRate,
+            const double expFactor
+        ) const;
+
+        double calculateReverseRateTwoBodyDerivative(
+            const reaction::Reaction &reaction,
+            const double T9,
+            const double reverseRate
+        ) const;
+
+        bool isUsingReverseReactions() const;
+
+        void setUseReverseReactions(bool useReverse);
+
+        int getSpeciesIndex(
+            const fourdst::atomic::Species& species
+        ) const override;
+
+        std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+
+
 
     private:
         struct PrecomputedReaction {
+            // Forward cacheing
             size_t reaction_index;
             std::vector<size_t> unique_reactant_indices;
             std::vector<int> reactant_powers;
             double symmetry_factor;
             std::vector<size_t> affected_species_indices;
             std::vector<int> stoichiometric_coefficients;
+
+            // Reverse cacheing
+            std::vector<size_t> unique_product_indices; ///< Unique product indices for reverse reactions.
+            std::vector<int> product_powers; ///< Powers of each unique product in the reverse reaction.
+            double reverse_symmetry_factor; ///< Symmetry factor for reverse reactions.
         };
 
         struct constants {
@@ -337,7 +369,47 @@ namespace gridfire {
             const double c = Constants::getInstance().get("c").value; ///< Speed of light in cm/s.
             const double kB = Constants::getInstance().get("kB").value; ///< Boltzmann constant in erg/K.
         };
+    private:
+        class AtomicReverseRate final : public CppAD::atomic_base<double> {
+        public:
+            AtomicReverseRate(
+                const reaction::Reaction& reaction,
+                const GraphEngine& engine
+            ):
+            atomic_base<double>("AtomicReverseRate"),
+            m_reaction(reaction),
+            m_engine(engine) {}
 
+            bool forward(
+                size_t p,
+                size_t q,
+                const CppAD::vector<bool>& vx,
+                CppAD::vector<bool>& vy,
+                const CppAD::vector<double>& tx,
+                CppAD::vector<double>& ty
+            ) override;
+            bool reverse(
+                size_t q,
+                const CppAD::vector<double>& tx,
+                const CppAD::vector<double>& ty,
+                CppAD::vector<double>& px,
+                const CppAD::vector<double>& py
+            ) override;
+            bool for_sparse_jac(
+                size_t q,
+                const CppAD::vector<std::set<size_t>>&r,
+                CppAD::vector<std::set<size_t>>& s
+            ) override;
+            bool rev_sparse_jac(
+                size_t q,
+                const CppAD::vector<std::set<size_t>>&rt,
+                CppAD::vector<std::set<size_t>>& st
+            ) override;
+
+        private:
+            const reaction::Reaction& m_reaction;
+            const GraphEngine& m_engine;
+        };
     private:
         Config& m_config = Config::getInstance();
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
@@ -355,11 +427,14 @@ namespace gridfire {
         boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
 
         CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
+        std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
         screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
+
+        bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
 
         std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
         std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
@@ -418,7 +493,10 @@ namespace gridfire {
          */
         void recordADTape();
 
+        void collectAtomicReverseRateAtomicBases();
+
         void precomputeNetwork();
+
 
         /**
          * @brief Validates mass and charge conservation across all reactions.
@@ -449,24 +527,12 @@ namespace gridfire {
         );
 
 
-        double calculateReverseRateTwoBody(
-            const reaction::Reaction &reaction,
-            const double T9,
-            const double forwardRate,
-            const double expFactor
-        ) const;
-
-        double GraphEngine::calculateReverseRateTwoBodyDerivative(
-            const reaction::Reaction &reaction,
-            const double T9,
-            const double reverseRate
-        ) const;
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
             const std::vector<double> &Y_in,
             const std::vector<double>& bare_rates,
-            double T9,
-            double rho
+            const std::vector<double> &bare_reverse_rates,
+            double T9, double rho
         ) const;
 
         /**
@@ -488,6 +554,16 @@ namespace gridfire {
             const std::vector<T> &Y,
             const T T9,
             const T rho
+        ) const;
+
+        template<IsArithmeticOrAD T>
+        T calculateReverseMolarReactionFlow(
+            T T9,
+            T rho,
+            std::vector<T> screeningFactors,
+            std::vector<T> Y,
+            size_t reactionIndex,
+            const reaction::LogicalReaction &reaction
         ) const;
 
         /**
@@ -547,6 +623,74 @@ namespace gridfire {
     };
 
 
+
+    template <IsArithmeticOrAD T>
+    T GraphEngine::calculateReverseMolarReactionFlow(
+        T T9,
+        T rho,
+        std::vector<T> screeningFactors,
+        std::vector<T> Y,
+        size_t reactionIndex,
+        const reaction::LogicalReaction &reaction
+    ) const {
+        if (!m_useReverseReactions) {
+            return static_cast<T>(0.0); // If reverse reactions are not used, return zero
+        }
+        T reverseMolarFlow = static_cast<T>(0.0);
+
+        if (reaction.qValue() != 0.0) {
+            T reverseRateConstant = static_cast<T>(0.0);
+            if constexpr (std::is_same_v<T, ADDouble>) { // Check if T is an AD type at compile time
+                const auto& atomic_func_ptr = m_atomicReverseRates[reactionIndex];
+                if (atomic_func_ptr != nullptr) {
+                    // A. Instantiate the atomic operator for the specific reaction
+                    // B. Marshal the input vector
+                    std::vector<T> ax = { T9 };
+
+                    std::vector<T> ay(1);
+                    (*atomic_func_ptr)(ax, ay);
+                    reverseRateConstant = static_cast<T>(ay[0]);
+                } else {
+                    return reverseMolarFlow; // If no atomic function is available, return zero
+                }
+            } else {
+                // A,B If not calling with an AD type, calculate the reverse rate directly
+                reverseRateConstant = calculateReverseRate(reaction, T9);
+            }
+
+            // C. Get product multiplicities
+            std::unordered_map<fourdst::atomic::Species, int> productCounts;
+            for (const auto& product : reaction.products()) {
+                productCounts[product]++;
+            }
+
+            // D. Calculate the symmetry factor
+            T reverseSymmetryFactor = static_cast<T>(1.0);
+            for (const auto &count: productCounts | std::views::values) {
+                reverseSymmetryFactor /= static_cast<T>(std::tgamma(static_cast<double>(count + 1))); // Gamma function for factorial
+            }
+
+            // E. Calculate the abundance term
+            T productAbundanceTerm = static_cast<T>(1.0);
+            for (const auto& [species, count] : productCounts) {
+                const int speciesIndex = m_speciesToIndexMap.at(species);
+                productAbundanceTerm *= CppAD::pow(Y[speciesIndex], count);
+            }
+
+            // F. Determine the power for the density term
+            const size_t num_products = reaction.products().size();
+            const T rho_power = CppAD::pow(rho, static_cast<T>(num_products > 1 ? num_products - 1 : 0)); // Density raised to the power of (N-1) for N products
+
+            // G. Assemble the reverse molar flow rate
+            reverseMolarFlow = screeningFactors[reactionIndex] *
+                               reverseRateConstant *
+                               productAbundanceTerm *
+                               reverseSymmetryFactor *
+                               rho_power;
+        }
+        return reverseMolarFlow;
+    }
+
     template<IsArithmeticOrAD T>
     StepDerivatives<T> GraphEngine::calculateAllDerivatives(
         const std::vector<T> &Y_in, T T9, T rho) const {
@@ -594,13 +738,39 @@ namespace gridfire {
         for (size_t reactionIndex = 0; reactionIndex < m_reactions.size(); ++reactionIndex) {
             const auto& reaction = m_reactions[reactionIndex];
 
-            // 1. Calculate reaction rate
-            const T molarReactionFlow = screeningFactors[reactionIndex] * calculateMolarReactionFlow<T>(reaction, Y, T9, rho);
+            // 1. Calculate forward reaction rate
+            const T forwardMolarReactionFlow = screeningFactors[reactionIndex] *
+                calculateMolarReactionFlow<T>(reaction, Y, T9, rho);
 
-            // 2. Use the rate to update all relevant species derivatives (dY/dt)
+            // 2. Calculate reverse reaction rate
+            T reverseMolarFlow = calculateReverseMolarReactionFlow<T>(
+                T9,
+                rho,
+                screeningFactors,
+                Y,
+                reactionIndex,
+                reaction
+            );
+
+            const T molarReactionFlow = forwardMolarReactionFlow - reverseMolarFlow; // Net molar reaction flow
+            std::stringstream ss;
+            ss << "Forward: " << forwardMolarReactionFlow
+               << ", Reverse: " << reverseMolarFlow
+               << ", Net: " << molarReactionFlow;
+            LOG_DEBUG(
+                m_logger,
+                "Reaction: {}, {}",
+                reaction.peName(),
+                ss.str()
+            );
+            // std::cout << "Forward molar flow for reaction " << reaction.peName() << ": " << forwardMolarReactionFlow << std::endl;
+            // std::cout << "Reverse molar flow for reaction " << reaction.peName() << ": " << reverseMolarFlow << std::endl;
+            // std::cout << "Net molar flow for reaction " << reaction.peName() << ": " << molarReactionFlow << std::endl;
+
+            // 3. Use the rate to update all relevant species derivatives (dY/dt)
             for (size_t speciesIndex = 0; speciesIndex < m_networkSpecies.size(); ++speciesIndex) {
                 const T nu_ij = static_cast<T>(m_stoichiometryMatrix(speciesIndex, reactionIndex));
-                result.dydt[speciesIndex] += threshold_flag * nu_ij * molarReactionFlow / rho;
+                result.dydt[speciesIndex] += threshold_flag * nu_ij * molarReactionFlow;
             }
         }
 
@@ -644,6 +814,7 @@ namespace gridfire {
         for (const auto& reactant : reaction.reactants()) {
             reactant_counts[std::string(reactant.name())]++;
         }
+        const int totalReactants = static_cast<int>(reaction.reactants().size());
 
         // --- Accumulator for the molar concentration ---
         auto molar_concentration_product = static_cast<T>(1.0);
@@ -657,56 +828,23 @@ namespace gridfire {
             const T Yi = Y[species_index];
 
             // --- Check if the species abundance is below the threshold where we ignore reactions ---
-            threshold_flag *= CppAD::CondExpLt(Yi, Y_threshold, zero, one);
-
-            // --- Convert from molar abundance to molar concentration ---
-            T molar_concentration = Yi * rho;
+            // threshold_flag *= CppAD::CondExpLt(Yi, Y_threshold, zero, one);
 
             // --- If count is > 1 , we need to raise the molar concentration to the power of count since there are really count bodies in that reaction ---
-            molar_concentration_product *= CppAD::pow(molar_concentration, static_cast<T>(count)); // ni^count
+            molar_concentration_product *= CppAD::pow(Yi, static_cast<T>(count)); // ni^count
 
             // --- Apply factorial correction for identical reactions ---
             if (count > 1) {
                 molar_concentration_product /= static_cast<T>(std::tgamma(static_cast<double>(count + 1))); // Gamma function for factorial
             }
         }
-        // --- Final reaction flow calculation [mol][s^-1][cm^-3] ---
+        // --- Final reaction flow calculation [mol][s^-1][g^-1] ---
         // Note: If the threshold flag ever gets set to zero this will return zero.
         //       This will result basically in multiple branches being written to the AD tape, which will make
         //       the tape more expensive to record, but it will also mean that we only need to record it once for
         //       the entire network.
-        return molar_concentration_product * k_reaction * threshold_flag;
+        const T densityTerm = CppAD::pow(rho, totalReactants > 1 ? static_cast<T>(totalReactants - 1) : zero); // Density raised to the power of (N-1) for N reactants
+        return molar_concentration_product * k_reaction * threshold_flag * densityTerm;
     }
 
-    class AtomicReverseRate final : public CppAD::atomic_base<double> {
-    public:
-        AtomicReverseRate(
-            const reaction::Reaction& reaction,
-            const GraphEngine& engine
-        ):
-        atomic_base<double>("AtomicReverseRate"),
-        m_reaction(reaction),
-        m_engine(engine) {}
-
-        bool forward(
-            size_t p,
-            size_t q,
-            const CppAD::vector<bool>& vx,
-            CppAD::vector<bool>& vy,
-            const CppAD::vector<double>& tx,
-            CppAD::vector<double>& ty
-        ) override;
-        bool reverse(
-            size_t id,
-            size_t an,
-            const CppAD::vector<double>& tx,
-            const CppAD::vector<double>& ty,
-            CppAD::vector<double>& px,
-            const CppAD::vector<double>& py
-        );
-    private:
-        const double m_kB = Constants::getInstance().get("k_b").value; ///< Boltzmann constant in erg/K.
-        const reaction::Reaction& m_reaction;
-        const GraphEngine& m_engine;
-    };
 };

@@ -26,12 +26,7 @@
 namespace gridfire {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition
-    ):
-     m_reactions(build_reaclib_nuclear_network(composition, false)),
-     m_partitionFunction(std::make_unique<partition::GroundStatePartitionFunction>()){
-        syncInternalMaps();
-        precomputeNetwork();
-    }
+    ): GraphEngine(composition, partition::GroundStatePartitionFunction()) {}
 
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
@@ -40,7 +35,6 @@ namespace gridfire {
     m_partitionFunction(partitionFunction.clone())  // Clone the partition function to ensure ownership
     {
         syncInternalMaps();
-        precomputeNetwork();
     }
 
     GraphEngine::GraphEngine(
@@ -48,7 +42,6 @@ namespace gridfire {
     ) :
     m_reactions(reactions) {
         syncInternalMaps();
-        precomputeNetwork();
     }
 
     StepDerivatives<double> GraphEngine::calculateRHSAndEnergy(
@@ -58,13 +51,17 @@ namespace gridfire {
     ) const {
         if (m_usePrecomputation) {
             std::vector<double> bare_rates;
+            std::vector<double> bare_reverse_rates;
             bare_rates.reserve(m_reactions.size());
+            bare_reverse_rates.reserve(m_reactions.size());
+
             for (const auto& reaction: m_reactions) {
                 bare_rates.push_back(reaction.calculate_rate(T9));
+                bare_reverse_rates.push_back(calculateReverseRate(reaction, T9));
             }
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
-            return calculateAllDerivativesUsingPrecomputation(Y, bare_rates, T9, rho);
+            return calculateAllDerivativesUsingPrecomputation(Y, bare_rates, bare_reverse_rates, T9, rho);
         } else {
             return calculateAllDerivatives<double>(Y, T9, rho);
         }
@@ -72,12 +69,17 @@ namespace gridfire {
 
 
     void GraphEngine::syncInternalMaps() {
+        LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
         collectNetworkSpecies();
         populateReactionIDMap();
         populateSpeciesToIndexMap();
+        collectAtomicReverseRateAtomicBases();
         generateStoichiometryMatrix();
         reserveJacobianMatrix();
         recordADTape();
+        precomputeNetwork();
+        LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
+                 m_networkSpecies.size(), m_reactions.size());
     }
 
     // --- Network Graph Construction Methods ---
@@ -234,17 +236,22 @@ namespace gridfire {
 
     double GraphEngine::calculateReverseRate(
         const reaction::Reaction &reaction,
-        const double T9,
-        const double expFactor
+        const double T9
     ) const {
+        if (!m_useReverseReactions) {
+            LOG_TRACE_L2(m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
+            return 0.0; // If reverse reactions are not used, return 0.0
+        }
+        const double expFactor = std::exp(-reaction.qValue() / (m_constants.kB * T9));
         double reverseRate = 0.0;
         const double forwardRate = reaction.calculate_rate(T9);
 
         if (reaction.reactants().size() == 2 && reaction.products().size() == 2) {
             reverseRate = calculateReverseRateTwoBody(reaction, T9, forwardRate, expFactor);
         } else {
-            LOG_WARNING(m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented.");
+            LOG_WARNING_LIMIT_EVERY_N(1000000, m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented (reaction id {}).", reaction.peName());
         }
+        LOG_TRACE_L2(m_logger, "Calculated reverse rate for reaction '{}': {:.3E} at T9={:.3E}.", reaction.id(), reverseRate, T9);
         return reverseRate;
     }
 
@@ -298,7 +305,9 @@ namespace gridfire {
         );
 
         // Accumulate partition functions
-        auto pf_op = [&](double acc, const auto& species) { return acc * m_partitionFunction->evaluate(species.z(), species.a(), T9); };
+        auto pf_op = [&](double acc, const auto& species) {
+            return acc * m_partitionFunction->evaluate(species.z(), species.a(), T9);
+        };
         const double partitionFunctionNumerator = std::accumulate(
             reaction.reactants().begin(),
             reaction.reactants().end(),
@@ -312,9 +321,14 @@ namespace gridfire {
             pf_op
         );
 
-        const double CT = std::pow(massNumerator/massDenominator, 1.5) * (partitionFunctionNumerator/partitionFunctionDenominator);
+        const double CT = std::pow(massNumerator/massDenominator, 1.5) *
+            (partitionFunctionNumerator/partitionFunctionDenominator);
 
-        return forwardRate * symmetryFactor * CT * expFactor;
+        double reverseRate = forwardRate * symmetryFactor * CT * expFactor;
+        if (!std::isfinite(reverseRate)) {
+            return 0.0; // If the reverse rate is not finite, return 0.0
+        }
+        return reverseRate; // Return the calculated reverse rate
 
     }
 
@@ -323,6 +337,10 @@ namespace gridfire {
         const double T9,
         const double reverseRate
     ) const {
+        if (!m_useReverseReactions) {
+            LOG_TRACE_L2(m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate derivative of reaction '{}'.", reaction.id());
+            return 0.0; // If reverse reactions are not used, return 0.0
+        }
         const double d_log_kFwd = reaction.calculate_forward_rate_log_derivative(T9);
 
         auto log_deriv_pf_op = [&](double acc, const auto& species) {
@@ -355,9 +373,30 @@ namespace gridfire {
 
     }
 
+    bool GraphEngine::isUsingReverseReactions() const {
+        return m_useReverseReactions;
+    }
+
+    void GraphEngine::setUseReverseReactions(const bool useReverse) {
+        m_useReverseReactions = useReverse;
+    }
+
+    int GraphEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+        return m_speciesToIndexMap.at(species); // Returns the index of the species in the stoichiometry matrix
+    }
+
+    std::vector<double> GraphEngine::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
+        std::vector<double> Y(m_networkSpecies.size(), 0.0); // Initialize with zeros
+        for (const auto& [symbol, entry] : netIn.composition) {
+            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        }
+        return Y; // Return the vector of molar abundances
+    }
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
         const std::vector<double> &Y_in,
         const std::vector<double> &bare_rates,
+        const std::vector<double> &bare_reverse_rates,
         const double T9,
         const double rho
     ) const {
@@ -396,15 +435,31 @@ namespace gridfire {
             const double bare_rate = bare_rates[precomp.reaction_index];
             const double screeningFactor = screeningFactors[precomp.reaction_index];
             const size_t numReactants = m_reactions[precomp.reaction_index].reactants().size();
+            const size_t numProducts = m_reactions[precomp.reaction_index].products().size();
 
-            const double molarReactionFlow =
+            const double forwardMolarReactionFlow =
                     screeningFactor *
                     bare_rate *
                     precomp.symmetry_factor *
                     abundanceProduct *
-                    std::pow(rho, numReactants);
+                    std::pow(rho, numReactants >  1 ? numReactants - 1 : 0);
 
-            molarReactionFlows.push_back(molarReactionFlow);
+            double reverseMolarReactionFlow = 0.0;
+            if (precomp.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
+                const double bare_reverse_rate = bare_reverse_rates[precomp.reaction_index];
+                double reverseAbundanceProduct = 1.0;
+                for (size_t i = 0; i < precomp.unique_product_indices.size(); ++i) {
+                    reverseAbundanceProduct *= std::pow(Y_in[precomp.unique_product_indices[i]], precomp.product_powers[i]);
+                }
+                reverseMolarReactionFlow = screeningFactor *
+                    bare_reverse_rate *
+                    precomp.reverse_symmetry_factor *
+                    reverseAbundanceProduct *
+                    std::pow(rho, numProducts > 1 ? numProducts - 1 : 0);
+            }
+
+            molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
+
         }
 
         // --- Assemble molar abundance derivatives ---
@@ -523,7 +578,7 @@ namespace gridfire {
     }
 
     void GraphEngine::generateJacobianMatrix(
-        const std::vector<double> &Y,
+        const std::vector<double> &Y_dynamic,
         const double T9,
         const double rho
     ) {
@@ -534,10 +589,24 @@ namespace gridfire {
         // 1. Pack the input variables into a vector for CppAD
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
         for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = Y[i];
+            adInput[i] = Y_dynamic[i];
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
+        LOG_DEBUG(
+            m_logger,
+            "AD Input to jacobian {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < adInput.size(); ++i) {
+                    ss << adInput[i];
+                    if (i < adInput.size() - 1) {
+                        ss << ", ";
+                    }
+                }
+                return ss.str();
+            }());
 
         // 2. Calculate the full jacobian
         const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
@@ -552,10 +621,28 @@ namespace gridfire {
                 }
             }
         }
+        LOG_DEBUG(
+            m_logger,
+            "Final Jacobian is:\n{}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+                    for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
+                        ss << m_jacobianMatrix(i, j);
+                        if (j < m_jacobianMatrix.size2() - 1) {
+                            ss << ", ";
+                        }
+                    }
+                    ss << "\n";
+                }
+                return ss.str();
+            }());
         LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 
     double GraphEngine::getJacobianMatrixEntry(const int i, const int j) const {
+        LOG_TRACE_L3(m_logger, "Getting jacobian matrix entry for {},{} = {}", i, j, m_jacobianMatrix(i, j));
         return m_jacobianMatrix(i, j);
     }
 
@@ -674,8 +761,11 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Successfully exported network graph to {}", filename);
     }
 
-    std::unordered_map<fourdst::atomic::Species, double> GraphEngine::getSpeciesTimescales(const std::vector<double> &Y, const double T9,
-        const double rho) const {
+    std::unordered_map<fourdst::atomic::Species, double> GraphEngine::getSpeciesTimescales(
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
         auto [dydt, _] = calculateAllDerivatives<double>(Y, T9, rho);
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescales;
         speciesTimescales.reserve(m_networkSpecies.size());
@@ -739,6 +829,19 @@ namespace gridfire {
                  adInput.size());
     }
 
+    void GraphEngine::collectAtomicReverseRateAtomicBases() {
+        m_atomicReverseRates.clear();
+        m_atomicReverseRates.reserve(m_reactions.size());
+
+        for (const auto& reaction: m_reactions) {
+            if (reaction.qValue() != 0.0) {
+                m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(reaction, *this));
+            } else {
+                m_atomicReverseRates.push_back(nullptr);
+            }
+        }
+    }
+
     void GraphEngine::precomputeNetwork() {
         LOG_TRACE_L1(m_logger, "Pre-computing constant components of GraphNetwork state...");
 
@@ -756,7 +859,7 @@ namespace gridfire {
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
 
-            // --- Precompute reactant information ---
+            // --- Precompute forward reaction information ---
             // Count occurrences for each reactant to determine powers and symmetry
             std::unordered_map<size_t, int> reactantCounts;
             for (const auto& reactant: reaction.reactants()) {
@@ -769,10 +872,30 @@ namespace gridfire {
                 precomp.unique_reactant_indices.push_back(index);
                 precomp.reactant_powers.push_back(count);
 
-                symmetryDenominator *= 1.0/std::tgamma(count + 1);
+                symmetryDenominator *= std::tgamma(count + 1);
             }
 
-            precomp.symmetry_factor = symmetryDenominator;
+            precomp.symmetry_factor = 1.0/symmetryDenominator;
+
+            // --- Precompute reverse reaction information ---
+            if (reaction.qValue() != 0.0) {
+                std::unordered_map<size_t, int> productCounts;
+                for (const auto& product : reaction.products()) {
+                    productCounts[speciesIndexMap.at(product)]++;
+                }
+                double reverseSymmetryDenominator = 1.0;
+                for (const auto& [index, count] : productCounts) {
+                    precomp.unique_product_indices.push_back(index);
+                    precomp.product_powers.push_back(count);
+                    reverseSymmetryDenominator *= std::tgamma(count + 1);
+                }
+
+                precomp.reverse_symmetry_factor = 1.0/reverseSymmetryDenominator;
+            } else {
+                precomp.unique_product_indices.clear();
+                precomp.product_powers.clear();
+                precomp.reverse_symmetry_factor = 0.0; // No reverse reaction for Q = 0 reactions
+            }
 
             // --- Precompute stoichiometry information ---
             const auto stoichiometryMap = reaction.stoichiometry();
@@ -788,7 +911,7 @@ namespace gridfire {
         }
     }
 
-    bool AtomicReverseRate::forward(
+    bool GraphEngine::AtomicReverseRate::forward(
         const size_t p,
         const size_t q,
         const CppAD::vector<bool> &vx,
@@ -796,12 +919,53 @@ namespace gridfire {
         const CppAD::vector<double> &tx,
         CppAD::vector<double> &ty
     ) {
+
+        if ( p != 0) { return false; }
         const double T9 = tx[0];
-        const double expFactor = std::exp(-m_reaction.qValue() / (m_kB * T9 * 1e9)); // Convert MeV to erg
-        if (p == 0) {
-            // --- Zeroth order forward sweep ---
-            const auto k_rev = m_engine.calculateReverseRate(m_reaction, T9, expFactor);
+
+        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9);
+        // std::cout << m_reaction.peName() << " reverseRate: " << reverseRate << " at T9: " << T9 << "\n";
+        ty[0] = reverseRate; // Store the reverse rate in the output vector
+
+        if (vx.size() > 0) {
+            vy[0] = vx[0];
         }
+        return true;
     }
 
+    bool GraphEngine::AtomicReverseRate::reverse(
+        size_t q,
+        const CppAD::vector<double> &tx,
+        const CppAD::vector<double> &ty,
+        CppAD::vector<double> &px,
+        const CppAD::vector<double> &py
+    ) {
+        const double T9 = tx[0];
+        const double reverseRate = ty[0];
+
+        const double derivative = m_engine.calculateReverseRateTwoBodyDerivative(m_reaction, T9, reverseRate);
+        // std::cout << m_reaction.peName() << " reverseRate Derivative: " << derivative << "\n";
+
+        px[0] = py[0] * derivative; // Return the derivative of the reverse rate with respect to T9
+
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::for_sparse_jac(
+        size_t q,
+        const CppAD::vector<std::set<size_t>> &r,
+        CppAD::vector<std::set<size_t>> &s
+    ) {
+        s[0] = r[0];
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
+        size_t q,
+        const CppAD::vector<std::set<size_t>> &rt,
+        CppAD::vector<std::set<size_t>> &st
+    ) {
+        st[0] = rt[0];
+        return true;
+    }
 }

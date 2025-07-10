@@ -9,23 +9,7 @@
 #include <vector>
 
 namespace gridfire::io {
-
-    /**
-     * @struct ParsedNetworkData
-     * @brief Holds the data parsed from a network file.
-     *
-     * This struct is used to return the results of parsing a reaction network
-     * file. It contains the list of reaction names that define the network.
-     */
-    struct ParsedNetworkData {
-        /**
-         * @brief A vector of reaction names in their PEN-style format.
-         *
-         * Projectile, Ejectile style names p(p,e+)d is a common format for representing
-         * nuclear reactions as strings.
-         */
-        std::vector<std::string> reactionPENames;
-    };
+    typedef std::vector<std::string> ParsedNetworkData;
 
     /**
      * @class NetworkFileParser

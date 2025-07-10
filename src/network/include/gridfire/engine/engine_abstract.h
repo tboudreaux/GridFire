@@ -123,7 +123,7 @@ namespace gridfire {
         /**
          * @brief Generate the Jacobian matrix for the current state.
          *
-         * @param Y Vector of current abundances.
+         * @param Y_dynamic Vector of current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
@@ -131,7 +131,7 @@ namespace gridfire {
          * for the current state. The matrix can then be accessed via getJacobianMatrixEntry().
          */
         virtual void generateJacobianMatrix(
-            const std::vector<double>& Y,
+            const std::vector<double>& Y_dynamic,
             double T9, double rho
         ) = 0;
 
@@ -265,5 +265,9 @@ namespace gridfire {
          * @endcode
          */
         [[nodiscard]] virtual screening::ScreeningType getScreeningModel() const = 0;
+
+        [[nodiscard]] virtual int getSpeciesIndex(const fourdst::atomic::Species &species) const = 0;
+
+        [[nodiscard]] virtual std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const = 0;
     };
 }

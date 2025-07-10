@@ -68,9 +68,9 @@ namespace gridfire::io {
             if (line.empty()) {
                 continue; // Skip empty lines
             }
-            parsed.reactionPENames.push_back(line);
+            parsed.push_back(line);
         }
-        LOG_TRACE_L1(m_logger, "Parsed {} reactions from file: {}", parsed.reactionPENames.size(), filename);
+        LOG_TRACE_L1(m_logger, "Parsed {} reactions from file: {}", parsed.size(), filename);
         return parsed;
     }
 

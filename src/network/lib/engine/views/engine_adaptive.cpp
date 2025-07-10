@@ -136,12 +136,12 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::generateJacobianMatrix(
-        const std::vector<double> &Y_culled,
+        const std::vector<double> &Y_dynamic,
         const double T9,
         const double rho
     ) {
         validateState();
-        const auto Y_full = mapCulledToFull(Y_culled);
+        const auto Y_full = mapCulledToFull(Y_dynamic);
 
         m_baseEngine.generateJacobianMatrix(Y_full, T9, rho);
     }
@@ -219,6 +219,25 @@ namespace gridfire {
 
     screening::ScreeningType AdaptiveEngineView::getScreeningModel() const {
         return m_baseEngine.getScreeningModel();
+    }
+
+    std::vector<double> AdaptiveEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
+        std::vector<double> Y(m_activeSpecies.size(), 0.0); // Initialize with zeros
+        for (const auto& [symbol, entry] : netIn.composition) {
+            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        }
+        return Y; // Return the vector of molar abundances
+    }
+
+    int AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+        auto it = std::find(m_activeSpecies.begin(), m_activeSpecies.end(), species);
+        if (it != m_activeSpecies.end()) {
+            return static_cast<int>(std::distance(m_activeSpecies.begin(), it));
+        } else {
+            LOG_ERROR(m_logger, "Species '{}' not found in active species list.", species.name());
+            m_logger->flush_log();
+            throw std::runtime_error("Species not found in active species list: " + std::string(species.name()));
+        }
     }
 
     std::vector<double> AdaptiveEngineView::mapCulledToFull(const std::vector<double>& culled) const {

@@ -106,7 +106,7 @@ namespace gridfire {
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param Y_culled A vector of abundances for the active species.
+         * @param Y_dynamic A vector of abundances for the active species.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          *
@@ -117,7 +117,7 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         void generateJacobianMatrix(
-            const std::vector<double> &Y_culled,
+            const std::vector<double> &Y_dynamic,
             const double T9,
             const double rho
         ) override;
@@ -256,6 +256,10 @@ namespace gridfire {
          * @endcode
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
+
+        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+
+        [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;

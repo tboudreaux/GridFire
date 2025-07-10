@@ -25,13 +25,13 @@ namespace gridfire::partition {
     }
 
     double CompositePartitionFunction::evaluate(int z, int a, double T9) const {
-        LOG_TRACE_L1(m_logger, "Evaluating partition function for Z={} A={} T9={}", z, a, T9);
+        LOG_TRACE_L3(m_logger, "Evaluating partition function for Z={} A={} T9={}", z, a, T9);
         for (const auto& partitionFunction : m_partitionFunctions) {
             if (partitionFunction->supports(z, a)) {
-                LOG_TRACE_L2(m_logger, "Partition function of type {} supports Z={} A={}", partitionFunction->type(), z, a);
+                LOG_TRACE_L3(m_logger, "Partition function of type {} supports Z={} A={}", partitionFunction->type(), z, a);
                 return partitionFunction->evaluate(z, a, T9);
             } else {
-                LOG_TRACE_L2(m_logger, "Partition function of type {} does not support Z={} A={}", partitionFunction->type(), z, a);
+                LOG_TRACE_L3(m_logger, "Partition function of type {} does not support Z={} A={}", partitionFunction->type(), z, a);
             }
         }
         LOG_ERROR(
@@ -48,7 +48,7 @@ namespace gridfire::partition {
     double CompositePartitionFunction::evaluateDerivative(int z, int a, double T9) const {
         for (const auto& partitionFunction : m_partitionFunctions) {
             if (partitionFunction->supports(z, a)) {
-                LOG_TRACE_L2(m_logger, "Evaluating derivative of partition function for Z={} A={} T9={}", z, a, T9);
+                LOG_TRACE_L3(m_logger, "Evaluating derivative of partition function for Z={} A={} T9={}", z, a, T9);
                 return partitionFunction->evaluateDerivative(z, a, T9);
             }
         }

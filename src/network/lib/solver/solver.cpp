@@ -2,7 +2,9 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
 
+
 #include "gridfire/utils/logging.h"
+#include "gridfire/utils/qse_rules.h"
 
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/composition.h"
@@ -22,6 +24,7 @@
 #include "quill/LogMacros.h"
 
 namespace gridfire::solver {
+    double s_prevTimestep = 0.0;
 
     NetOut QSENetworkSolver::evaluate(const NetIn &netIn) {
         // --- Use the policy to decide whether to update the view ---
@@ -149,6 +152,15 @@ namespace gridfire::solver {
         std::vector<size_t>QSESpeciesIndices;  // Fast species that are in QSE
 
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescale = m_engine.getSpeciesTimescales(Y, T9, rho);
+        LOG_DEBUG(
+            m_logger,
+            "{}",
+            gridfire::utils::formatNuclearTimescaleLogString(
+                m_engine,
+                Y,
+                T9,
+                rho
+            ));
 
         for (size_t i = 0; i < m_engine.getNetworkSpecies().size(); ++i) {
             const auto& species = m_engine.getNetworkSpecies()[i];
@@ -164,9 +176,17 @@ namespace gridfire::solver {
 
             const double final_timescale = std::min(network_timescale, decay_timescale);
 
-            if (std::isinf(final_timescale) || abundance < abundanceCutoff || final_timescale <= timescaleCutoff) {
+            const bool isQSE = is_species_in_qse(
+                network_timescale,
+                decay_timescale,
+                abundance
+            );
+
+            if (isQSE) {
+                LOG_TRACE_L2(m_logger, "{} is in QSE based on rules in qse_rules.h", species.name());
                 QSESpeciesIndices.push_back(i);
             } else {
+                LOG_TRACE_L2(m_logger, "{} is dynamic based on rules in qse_rules.h", species.name());
                 dynamicSpeciesIndices.push_back(i);
             }
         }
@@ -209,11 +229,37 @@ namespace gridfire::solver {
     const dynamicQSESpeciesIndices &indices
     ) const {
         LOG_TRACE_L1(m_logger, "Calculating steady state abundances for QSE species...");
+        LOG_TRACE_L1(
+            m_logger,
+            "Initial QSE species abundances: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                int count = 0;
+                for (const auto& i : indices.QSESpeciesIndices) {
+                    ss << std::string(m_engine.getNetworkSpecies()[i].name()) << ": " << Y[i] << ", ";
+                    if (count < indices.QSESpeciesIndices.size() - 2) {
+                        ss << ", ";
+                    } else if (count == indices.QSESpeciesIndices.size() - 2) {
+                        ss << " and ";
+                    }
+                    count++;
+                }
+                return ss.str();
+            }());
 
         if (indices.QSESpeciesIndices.empty()) {
             LOG_DEBUG(m_logger, "No QSE species to solve for.");
             return Eigen::VectorXd(0);
         }
+
+        Eigen::VectorXd YScale(indices.QSESpeciesIndices.size());
+        const double abundanceFloor = 1e-15;
+        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); i++) {
+            const double initial_abundance = Y[indices.QSESpeciesIndices[i]];
+            YScale(i) = std::max(initial_abundance, abundanceFloor);
+        }
+
         // Use the EigenFunctor with Eigen's nonlinear solver
         EigenFunctor<double> functor(
             m_engine,
@@ -221,13 +267,31 @@ namespace gridfire::solver {
             indices.dynamicSpeciesIndices,
             indices.QSESpeciesIndices,
             T9,
-            rho
+            rho,
+            YScale
         );
 
-        Eigen::VectorXd v_qse_log_initial(indices.QSESpeciesIndices.size());
+        Eigen::VectorXd v_qse_initial(indices.QSESpeciesIndices.size());
         for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
-            v_qse_log_initial(i) = std::log(std::max(Y[indices.QSESpeciesIndices[i]], 1e-99));
+            const double initial_abundance = Y[indices.QSESpeciesIndices[i]];
+            v_qse_initial(i) = std::asinh(initial_abundance/ YScale(i)); // Use asinh for better numerical stability compared to log
         }
+        LOG_TRACE_L1(
+            m_logger,
+            "v_qse_log_initial: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < v_qse_initial.size(); ++i) {
+                    ss << "log(X_" << std::string(m_engine.getNetworkSpecies()[indices.QSESpeciesIndices[i]].name()) << ") = " << v_qse_initial(i);
+                    if (i < v_qse_initial.size() - 2) {
+                        ss << ", ";
+                    } else if (i == v_qse_initial.size() - 2) {
+                        ss << " and ";
+                    }
+                }
+                return ss.str();
+            }());
 
         const static std::unordered_map<Eigen::LevenbergMarquardtSpace::Status, const char*> statusMessages = {
             {Eigen::LevenbergMarquardtSpace::NotStarted, "Not started"},
@@ -245,7 +309,9 @@ namespace gridfire::solver {
         };
 
         Eigen::LevenbergMarquardt lm(functor);
-        const Eigen::LevenbergMarquardtSpace::Status info = lm.minimize(v_qse_log_initial);
+        lm.parameters.xtol = 1e-24;
+        lm.parameters.ftol = 1e-24;
+        const Eigen::LevenbergMarquardtSpace::Status info = lm.minimize(v_qse_initial);
 
         if (info <= 0 || info >= 4) {
             LOG_ERROR(m_logger, "QSE species minimization failed with status: {} ({})",
@@ -257,7 +323,7 @@ namespace gridfire::solver {
         }
         LOG_DEBUG(m_logger, "QSE species minimization completed successfully with status: {} ({})",
                   static_cast<int>(info), statusMessages.at(info));
-        return v_qse_log_initial.array().exp();
+        return YScale.array() * v_qse_initial.array().sinh(); // Convert back to molar abundances
 
     }
 
@@ -287,6 +353,24 @@ namespace gridfire::solver {
             ignitionTime,
             ignitionStepSize
         );
+        LOG_INFO(
+            m_logger,
+            "Pre-ignition composition: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(3);
+                int count = 0;
+                for (const auto& entry : netIn.composition | std::views::values) {
+                    ss << "X_" << std::string(entry.isotope().name()) << ": " << entry.mass_fraction() << " ";
+                    if (count < netIn.composition.getRegisteredSymbols().size() - 2) {
+                        ss << ", ";
+                    } else if (count == netIn.composition.getRegisteredSymbols().size() - 2) {
+                        ss << " and ";
+                    }
+                    count++;
+                }
+                return ss.str();
+            }());
 
         NetIn preIgnition = netIn;
         preIgnition.temperature = ignitionTemperature;
@@ -300,6 +384,42 @@ namespace gridfire::solver {
         DirectNetworkSolver ignitionSolver(m_engine);
         NetOut postIgnition = ignitionSolver.evaluate(preIgnition);
         LOG_INFO(m_logger, "Network ignition completed in {} steps.", postIgnition.num_steps);
+        LOG_INFO(
+            m_logger,
+            "Post-ignition composition: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(3);
+                int count = 0;
+                for (const auto& entry : postIgnition.composition | std::views::values) {
+                    ss << "X_" << std::string(entry.isotope().name()) << ": " << entry.mass_fraction() << " ";
+                    if (count < postIgnition.composition.getRegisteredSymbols().size() - 2) {
+                        ss << ", ";
+                    } else if (count == postIgnition.composition.getRegisteredSymbols().size() - 2) {
+                        ss << " and ";
+                    }
+                    count++;
+                }
+                return ss.str();
+            }());
+        LOG_DEBUG(
+            m_logger,
+            "Average change in composition during ignition: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(3);
+                for (const auto& entry : postIgnition.composition | std::views::values) {
+                    if (!postIgnition.composition.contains(entry.isotope()) || !netIn.composition.contains(entry.isotope())) {
+                        ss << std::string(entry.isotope().name()) << ": inf %, ";
+                        continue;
+                    }
+                    const double initialAbundance = netIn.composition.getMolarAbundance(std::string(entry.isotope().name()));
+                    const double finalAbundance = postIgnition.composition.getMolarAbundance(std::string(entry.isotope().name()));
+                    const double change = (finalAbundance - initialAbundance) / initialAbundance * 100.0; // Percentage change
+                    ss << std::string(entry.isotope().name()) << ": " << change << " %, ";
+                }
+                return ss.str();
+            }());
         m_engine.setScreeningModel(prevScreeningModel);
         LOG_DEBUG(m_logger, "Restoring previous screening model: {}", static_cast<int>(prevScreeningModel));
         return postIgnition;
@@ -352,6 +472,15 @@ namespace gridfire::solver {
         boost::numeric::ublas::vector<double> &dYdtDynamic,
         double t
     ) const {
+        LOG_TRACE_L1(
+            m_logger,
+            "Timestepping at t={:0.3E} (dt={:0.3E}) with T9={:0.3E}, ρ={:0.3E}",
+            t,
+            t - s_prevTimestep,
+            m_T9,
+            m_rho
+        );
+        s_prevTimestep = t;
         // --- Populate the slow / dynamic species vector ---
         std::vector<double> YFull(m_engine.getNetworkSpecies().size());
         for (size_t i = 0; i < m_dynamicSpeciesIndices.size(); ++i) {
@@ -445,15 +574,6 @@ namespace gridfire::solver {
         double t
     ) const {
         const std::vector<double> y(Y.begin(), m_numSpecies + Y.begin());
-
-        // std::string timescales = utils::formatNuclearTimescaleLogString(
-        //     m_engine,
-        //     y,
-        //     m_T9,
-        //     m_rho
-        // );
-        // LOG_TRACE_L2(m_logger, "{}", timescales);
-
         auto [dydt, eps] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
         dYdt.resize(m_numSpecies + 1);
         std::ranges::copy(dydt, dYdt.begin());
