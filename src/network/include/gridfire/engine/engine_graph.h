@@ -11,7 +11,7 @@
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
-#include "gridfire/partition/partition_ground.h"
+#include "gridfire/engine/procedures/construction.h"
 
 #include <string>
 #include <unordered_map>
@@ -22,6 +22,12 @@
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "cppad/cppad.hpp"
+#include "cppad/utility/sparse_rc.hpp"
+#include "cppad/speed/sparse_jac_fun.hpp"
+
+#include "procedures/priming.h"
+
+
 #include "quill/LogMacros.h"
 
 // PERF: The function getNetReactionStoichiometry returns a map of species to their stoichiometric coefficients for a given reaction.
@@ -30,6 +36,7 @@
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
 
 namespace gridfire {
+    static bool s_debug = false; // Global debug flag for the GraphEngine
     /**
      * @brief Alias for CppAD AD type for double precision.
      *
@@ -103,11 +110,16 @@ namespace gridfire {
          *
          * @see build_reaclib_nuclear_network
          */
-        explicit GraphEngine(const fourdst::composition::Composition &composition);
+        explicit GraphEngine(
+            const fourdst::composition::Composition &composition,
+            const BuildDepthType = NetworkBuildDepth::Full
+        );
 
-        explicit GraphEngine(const fourdst::composition::Composition &composition,
-                             const partition::PartitionFunction& partitionFunction
-                             );
+        explicit GraphEngine(
+            const fourdst::composition::Composition &composition,
+            const partition::PartitionFunction& partitionFunction,
+            const BuildDepthType buildDepth = NetworkBuildDepth::Full
+        );
 
         /**
          * @brief Constructs a GraphEngine from a set of reactions.
@@ -155,6 +167,13 @@ namespace gridfire {
             const std::vector<double>& Y_dynamic,
             const double T9,
             const double rho
+        ) override;
+
+        void generateJacobianMatrix(
+            const std::vector<double> &Y_dynamic,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
         ) override;
 
         /**
@@ -322,28 +341,34 @@ namespace gridfire {
             double T9
         ) const;
 
-        double calculateReverseRateTwoBody(
+        [[nodiscard]] double calculateReverseRateTwoBody(
             const reaction::Reaction &reaction,
             const double T9,
             const double forwardRate,
             const double expFactor
         ) const;
 
-        double calculateReverseRateTwoBodyDerivative(
+        [[nodiscard]] double calculateReverseRateTwoBodyDerivative(
             const reaction::Reaction &reaction,
             const double T9,
             const double reverseRate
         ) const;
 
-        bool isUsingReverseReactions() const;
+        [[nodiscard]] bool isUsingReverseReactions() const;
 
         void setUseReverseReactions(bool useReverse);
 
-        int getSpeciesIndex(
+        [[nodiscard]] int getSpeciesIndex(
             const fourdst::atomic::Species& species
         ) const override;
 
-        std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+        [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+
+        [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+
+        [[nodiscard]] BuildDepthType getDepth() const override;
+
+        void rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) override;
 
 
 
@@ -427,6 +452,8 @@ namespace gridfire {
         boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
 
         CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
+        CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
+        CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
         std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
         screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
@@ -435,6 +462,8 @@ namespace gridfire {
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
 
         bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
+
+        BuildDepthType m_depth;
 
         std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
         std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
@@ -636,6 +665,14 @@ namespace gridfire {
         if (!m_useReverseReactions) {
             return static_cast<T>(0.0); // If reverse reactions are not used, return zero
         }
+        s_debug = false;
+        if (reaction.peName() == "p(p,e+)d" || reaction.peName() =="d(d,n)he3" || reaction.peName() == "c12(p,g)n13") {
+            if constexpr (!std::is_same_v<T, ADDouble>) {
+                s_debug = true;
+                std::cout << "Calculating reverse molar flow for reaction: " << reaction.peName() << std::endl;
+                std::cout << "\tT9: " << T9 << ", rho: " << rho << std::endl;
+            }
+        }
         T reverseMolarFlow = static_cast<T>(0.0);
 
         if (reaction.qValue() != 0.0) {
@@ -655,6 +692,9 @@ namespace gridfire {
                 }
             } else {
                 // A,B If not calling with an AD type, calculate the reverse rate directly
+                if (s_debug) {
+                    std::cout << "\tUsing double overload\n";
+                }
                 reverseRateConstant = calculateReverseRate(reaction, T9);
             }
 
@@ -673,7 +713,7 @@ namespace gridfire {
             // E. Calculate the abundance term
             T productAbundanceTerm = static_cast<T>(1.0);
             for (const auto& [species, count] : productCounts) {
-                const int speciesIndex = m_speciesToIndexMap.at(species);
+                const unsigned long speciesIndex = m_speciesToIndexMap.at(species);
                 productAbundanceTerm *= CppAD::pow(Y[speciesIndex], count);
             }
 
@@ -757,7 +797,7 @@ namespace gridfire {
             ss << "Forward: " << forwardMolarReactionFlow
                << ", Reverse: " << reverseMolarFlow
                << ", Net: " << molarReactionFlow;
-            LOG_DEBUG(
+            LOG_TRACE_L2(
                 m_logger,
                 "Reaction: {}, {}",
                 reaction.peName(),

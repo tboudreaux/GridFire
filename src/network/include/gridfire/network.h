@@ -104,7 +104,5 @@ namespace gridfire {
     };
 
 
-    reaction::LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse);
-
 
 } // namespace nuclearNetwork

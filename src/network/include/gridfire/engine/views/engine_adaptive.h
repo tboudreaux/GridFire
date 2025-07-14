@@ -9,6 +9,9 @@
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
+#include "gridfire/engine/procedures/priming.h"
+#include "gridfire/engine/procedures/construction.h"
+
 #include "quill/Logger.h"
 
 namespace gridfire {
@@ -260,6 +263,8 @@ namespace gridfire {
         [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+
+        [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;

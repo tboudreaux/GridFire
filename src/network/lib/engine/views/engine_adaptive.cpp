@@ -229,6 +229,10 @@ namespace gridfire {
         return Y; // Return the vector of molar abundances
     }
 
+    PrimingReport AdaptiveEngineView::primeEngine(const NetIn &netIn) {
+        return m_baseEngine.primeEngine(netIn);
+    }
+
     int AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
         auto it = std::find(m_activeSpecies.begin(), m_activeSpecies.end(), species);
         if (it != m_activeSpecies.end()) {

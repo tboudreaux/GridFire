@@ -20,13 +20,10 @@ namespace gridfire {
     public:
         NetworkPrimingEngineView(const std::string& primingSymbol, DynamicEngine& baseEngine);
         NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, DynamicEngine& baseEngine);
-        const std::vector<std::string>& getPrimingReactionNames() const { return m_peNames; }
-        const fourdst::atomic::Species& getPrimingSpecies() const { return m_primingSpecies; }
 
 
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<std::string> m_peNames; ///< Names of the priming reactions.
         fourdst::atomic::Species m_primingSpecies; ///< The priming species, if specified.
     private:
         std::vector<std::string> constructPrimingReactionSet(

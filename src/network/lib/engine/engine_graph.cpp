@@ -2,6 +2,9 @@
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/network.h"
 #include "gridfire/screening/screening_types.h"
+#include "gridfire/engine/procedures/priming.h"
+#include "gridfire/partition/partition_ground.h"
+#include "gridfire/engine/procedures/construction.h"
 
 #include "fourdst/composition/species.h"
 #include "fourdst/composition/atomicSpecies.h"
@@ -22,17 +25,24 @@
 
 #include <boost/numeric/odeint.hpp>
 
+#include "cppad/cppad.hpp"
+#include "cppad/utility/sparse_rc.hpp"
+#include "cppad/utility/sparse_rcv.hpp"
+
 
 namespace gridfire {
     GraphEngine::GraphEngine(
-        const fourdst::composition::Composition &composition
-    ): GraphEngine(composition, partition::GroundStatePartitionFunction()) {}
+        const fourdst::composition::Composition &composition,
+        const BuildDepthType buildDepth
+    ): GraphEngine(composition, partition::GroundStatePartitionFunction(), buildDepth) {}
 
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
-        const partition::PartitionFunction& partitionFunction) :
-    m_reactions(build_reaclib_nuclear_network(composition, false)),
-    m_partitionFunction(partitionFunction.clone())  // Clone the partition function to ensure ownership
+        const partition::PartitionFunction& partitionFunction,
+        const BuildDepthType buildDepth) :
+    m_reactions(build_reaclib_nuclear_network(composition, buildDepth, false)),
+    m_partitionFunction(partitionFunction.clone()),
+    m_depth(buildDepth)
     {
         syncInternalMaps();
     }
@@ -77,6 +87,16 @@ namespace gridfire {
         generateStoichiometryMatrix();
         reserveJacobianMatrix();
         recordADTape();
+
+        const size_t n = m_rhsADFun.Domain();
+        const size_t m = m_rhsADFun.Range();
+
+        std::vector<bool> select_domain(n, true);
+        std::vector<bool> select_range(m, true);
+
+        m_rhsADFun.subgraph_sparsity(select_domain, select_range, false, m_full_jacobian_sparsity_pattern);
+        m_jac_work.clear();
+
         precomputeNetwork();
         LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
                  m_networkSpecies.size(), m_reactions.size());
@@ -243,6 +263,14 @@ namespace gridfire {
             return 0.0; // If reverse reactions are not used, return 0.0
         }
         const double expFactor = std::exp(-reaction.qValue() / (m_constants.kB * T9));
+        if (s_debug) {
+            std::cout << "\texpFactor = exp(-qValue/(kB * T9))\n";
+            std::cout << "\texpFactor: " << expFactor << " for reaction: " << reaction.peName() << std::endl;
+            std::cout << "\tQ-value: " << reaction.qValue() << " at T9: " << T9 << std::endl;
+            std::cout << "\tT9: " << T9 << std::endl;
+            std::cout << "\tkB * T9: " << m_constants.kB * T9 << std::endl;
+            std::cout << "\tqValue/(kB * T9): " << reaction.qValue() / (m_constants.kB * T9) << std::endl;
+        }
         double reverseRate = 0.0;
         const double forwardRate = reaction.calculate_rate(T9);
 
@@ -393,6 +421,47 @@ namespace gridfire {
         return Y; // Return the vector of molar abundances
     }
 
+    PrimingReport GraphEngine::primeEngine(const NetIn &netIn) {
+        NetIn fullNetIn;
+        fourdst::composition::Composition composition;
+
+        std::vector<std::string> symbols;
+        symbols.reserve(m_networkSpecies.size());
+        for (const auto &symbol: m_networkSpecies) {
+            symbols.emplace_back(symbol.name());
+        }
+        composition.registerSymbol(symbols);
+        for (const auto& [symbol, entry] : netIn.composition) {
+            if (m_networkSpeciesMap.contains(symbol)) {
+                composition.setMassFraction(symbol, entry.mass_fraction());
+            } else {
+                composition.setMassFraction(symbol, 0.0);
+            }
+        }
+        composition.finalize(true);
+        fullNetIn.composition = composition;
+        fullNetIn.temperature = netIn.temperature;
+        fullNetIn.density = netIn.density;
+
+        auto primingReport = primeNetwork(fullNetIn, *this);
+
+        return primingReport;
+    }
+
+    BuildDepthType GraphEngine::getDepth() const {
+        return m_depth;
+    }
+
+    void GraphEngine::rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) {
+        if (depth != m_depth) {
+            m_depth = depth;
+            m_reactions = build_reaclib_nuclear_network(comp, m_depth, false);
+            syncInternalMaps(); // Resync internal maps after changing the depth
+        } else {
+            LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
+        }
+    }
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
         const std::vector<double> &Y_in,
         const std::vector<double> &bare_rates,
@@ -414,23 +483,23 @@ namespace gridfire {
         molarReactionFlows.reserve(m_precomputedReactions.size());
 
         for (const auto& precomp : m_precomputedReactions) {
-            double abundanceProduct = 1.0;
-            bool below_threshold = false;
+            double forwardAbundanceProduct = 1.0;
+            // bool below_threshold = false;
             for (size_t i = 0; i < precomp.unique_reactant_indices.size(); ++i) {
                 const size_t reactantIndex = precomp.unique_reactant_indices[i];
                 const int power = precomp.reactant_powers[i];
-                const double abundance = Y_in[reactantIndex];
-                if (abundance < MIN_ABUNDANCE_THRESHOLD) {
-                    below_threshold = true;
-                    break;
-                }
+                // const double abundance = Y_in[reactantIndex];
+                // if (abundance < MIN_ABUNDANCE_THRESHOLD) {
+                //     below_threshold = true;
+                //     break;
+                // }
 
-                abundanceProduct *= std::pow(Y_in[reactantIndex], power);
+                forwardAbundanceProduct *= std::pow(Y_in[reactantIndex], power);
             }
-            if (below_threshold) {
-                molarReactionFlows.push_back(0.0);
-                continue; // Skip this reaction if any reactant is below the abundance threshold
-            }
+            // if (below_threshold) {
+            //     molarReactionFlows.push_back(0.0);
+            //     continue; // Skip this reaction if any reactant is below the abundance threshold
+            // }
 
             const double bare_rate = bare_rates[precomp.reaction_index];
             const double screeningFactor = screeningFactors[precomp.reaction_index];
@@ -441,8 +510,8 @@ namespace gridfire {
                     screeningFactor *
                     bare_rate *
                     precomp.symmetry_factor *
-                    abundanceProduct *
-                    std::pow(rho, numReactants >  1 ? numReactants - 1 : 0);
+                    forwardAbundanceProduct *
+                    std::pow(rho, numReactants >  1 ? numReactants - 1 : 0.0);
 
             double reverseMolarReactionFlow = 0.0;
             if (precomp.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
@@ -455,7 +524,7 @@ namespace gridfire {
                     bare_reverse_rate *
                     precomp.reverse_symmetry_factor *
                     reverseAbundanceProduct *
-                    std::pow(rho, numProducts > 1 ? numProducts - 1 : 0);
+                    std::pow(rho, numProducts > 1 ? numProducts - 1 : 0.0);
             }
 
             molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
@@ -474,7 +543,7 @@ namespace gridfire {
                 const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
 
                 // Update the derivative for this species
-                result.dydt[speciesIndex] += static_cast<double>(stoichiometricCoefficient) * R_j / rho;
+                result.dydt[speciesIndex] += static_cast<double>(stoichiometricCoefficient) * R_j;
             }
         }
 
@@ -639,6 +708,63 @@ namespace gridfire {
                 return ss.str();
             }());
         LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+    }
+
+    void GraphEngine::generateJacobianMatrix(
+        const std::vector<double> &Y_dynamic,
+        const double T9,
+        const double rho,
+        const SparsityPattern &sparsityPattern
+    ) {
+        // --- Pack the input variables into a vector for CppAD ---
+        const size_t numSpecies = m_networkSpecies.size();
+        std::vector<double> x(numSpecies + 2, 0.0);
+        for (size_t i = 0; i < numSpecies; ++i) {
+           x[i] = Y_dynamic[i];
+        }
+        x[numSpecies] = T9;
+        x[numSpecies + 1] = rho;
+
+        // --- Convert into CppAD Sparsity pattern ---
+        const size_t nnz = sparsityPattern.size(); // Number of non-zero entries in the sparsity pattern
+        std::vector<size_t> row_indices(nnz);
+        std::vector<size_t> col_indices(nnz);
+
+        for (size_t k = 0; k < nnz; ++k) {
+            row_indices[k] = sparsityPattern[k].first;
+            col_indices[k] = sparsityPattern[k].second;
+        }
+
+        std::vector<double> values(nnz);
+        const size_t num_rows_jac = numSpecies;
+        const size_t num_cols_jac = numSpecies + 2; // +2 for T9 and rho
+
+        CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
+        for (size_t k = 0; k < nnz; ++k) {
+            CppAD_sparsity_pattern.set(k, sparsityPattern[k].first, sparsityPattern[k].second);
+        }
+
+        CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
+
+        m_rhsADFun.sparse_jac_rev(
+            x,
+            jac_subset, // Sparse Jacobian output
+            m_full_jacobian_sparsity_pattern,
+            "cppad",
+            m_jac_work // Work vector for CppAD
+        );
+
+        // --- Convert the sparse Jacobian back to the Boost uBLAS format ---
+        m_jacobianMatrix.clear();
+        for (size_t k = 0; k < nnz; ++k) {
+            const size_t row = jac_subset.row()[k];
+            const size_t col = jac_subset.col()[k];
+            const double value = jac_subset.val()[k];
+
+            if (std::abs(value) > MIN_JACOBIAN_THRESHOLD) {
+                m_jacobianMatrix(row, col) = value; // Insert into the sparse matrix
+            }
+        }
     }
 
     double GraphEngine::getJacobianMatrixEntry(const int i, const int j) const {

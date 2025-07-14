@@ -61,32 +61,6 @@ namespace gridfire {
         return oldFormat;
     }
 
-    reaction::LogicalReactionSet build_reaclib_nuclear_network(const fourdst::composition::Composition &composition, bool reverse) {
-        using namespace reaction;
-        std::vector<Reaction> reaclibReactions;
-        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-
-        for (const auto &reaction: reaclib::get_all_reactions()) {
-            if (reaction.is_reverse() != reverse) {
-                continue; // Skip reactions that do not match the requested direction
-            }
-            bool gotReaction = true;
-            const auto& reactants = reaction.reactants();
-            for (const auto& reactant : reactants) {
-                if (!composition.contains(reactant)) {
-                    gotReaction = false;
-                    break; // If any reactant is not in the composition, skip this reaction
-                }
-            }
-            if (gotReaction) {
-                LOG_TRACE_L3(logger, "Adding reaction {} to REACLIB reaction set.", reaction.peName());
-                reaclibReactions.push_back(reaction);
-            }
-        }
-        const ReactionSet reactionSet(reaclibReactions);
-        return packReactionSetToLogicalReactionSet(reactionSet);
-    }
-
     // Trim whitespace from both ends of a string
     std::string trim_whitespace(const std::string& str) {
         auto startIt = str.begin();

@@ -5,8 +5,12 @@
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
 
+#include "gridfire/engine/types/reporting.h"
+#include "gridfire/engine/types/building.h"
+
 #include <vector>
 #include <unordered_map>
+#include <utility>
 
 /**
  * @file engine_abstract.h
@@ -54,6 +58,8 @@ namespace gridfire {
         std::vector<T> dydt; ///< Derivatives of abundances (dY/dt for each species).
         T nuclearEnergyGenerationRate = T(0.0); ///< Specific energy generation rate (e.g., erg/g/s).
     };
+
+    using SparsityPattern = std::vector<std::pair<size_t, size_t>>;
 
     /**
      * @brief Abstract base class for a reaction network engine.
@@ -132,8 +138,18 @@ namespace gridfire {
          */
         virtual void generateJacobianMatrix(
             const std::vector<double>& Y_dynamic,
-            double T9, double rho
+            double T9,
+            double rho
         ) = 0;
+
+        virtual void generateJacobianMatrix(
+            const std::vector<double>& Y_dynamic,
+            double T9,
+            double rho,
+            const SparsityPattern& sparsityPattern
+        ) {
+            throw std::logic_error("Sparsity pattern not supported by this engine.");
+        }
 
         /**
          * @brief Get an entry from the previously generated Jacobian matrix.
@@ -148,6 +164,7 @@ namespace gridfire {
             int i,
             int j
         ) const = 0;
+
 
         /**
          * @brief Generate the stoichiometry matrix for the network.
@@ -269,5 +286,15 @@ namespace gridfire {
         [[nodiscard]] virtual int getSpeciesIndex(const fourdst::atomic::Species &species) const = 0;
 
         [[nodiscard]] virtual std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const = 0;
+
+        [[nodiscard]] virtual PrimingReport primeEngine(const NetIn &netIn) = 0;
+
+        [[nodiscard]] virtual BuildDepthType getDepth() const {
+            throw std::logic_error("Network depth not supported by this engine.");
+        }
+
+        virtual void rebuild(const fourdst::composition::Composition& comp, BuildDepthType depth) {
+            throw std::logic_error("Setting network depth not supported by this engine.");
+        }
     };
 }

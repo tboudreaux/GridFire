@@ -76,8 +76,6 @@ namespace gridfire {
         return m_baseEngine;
     }
 
-
-
     const std::vector<Species> & DefinedEngineView::getNetworkSpecies() const {
         return m_activeSpecies;
     }
@@ -215,6 +213,10 @@ namespace gridfire {
             }
         }
         return Y; // Return the vector of molar abundances
+    }
+
+    PrimingReport DefinedEngineView::primeEngine(const NetIn &netIn) {
+        return m_baseEngine.primeEngine(netIn);
     }
 
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap() const {

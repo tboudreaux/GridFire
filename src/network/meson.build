@@ -8,6 +8,7 @@ network_sources = files(
     'lib/engine/views/engine_multiscale.cpp',
     'lib/engine/views/engine_priming.cpp',
     'lib/engine/procedures/priming.cpp',
+    'lib/engine/procedures/construction.cpp',
     'lib/reaction/reaction.cpp',
     'lib/reaction/reaclib.cpp',
     'lib/io/network_file.cpp',
@@ -59,6 +60,7 @@ network_headers = files(
     'include/gridfire/engine/views/engine_multiscale.h',
     'include/gridfire/engine/views/engine_priming.h',
     'include/gridfire/engine/procedures/priming.h',
+    'include/gridfire/engine/procedures/construction.h',
     'include/gridfire/reaction/reaction.h',
     'include/gridfire/reaction/reaclib.h',
     'include/gridfire/io/network_file.h',
@@ -72,6 +74,5 @@ network_headers = files(
     'include/gridfire/partition/partition_ground.h',
     'include/gridfire/partition/composite/partition_composite.h',
     'include/gridfire/utils/logging.h',
-    'include/gridfire/utils/qse_rules.h',
 )
 install_headers(network_headers, subdir : 'gridfire')

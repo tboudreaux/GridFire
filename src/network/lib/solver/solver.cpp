@@ -4,7 +4,6 @@
 
 
 #include "gridfire/utils/logging.h"
-#include "gridfire/utils/qse_rules.h"
 
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/composition.h"
@@ -176,11 +175,11 @@ namespace gridfire::solver {
 
             const double final_timescale = std::min(network_timescale, decay_timescale);
 
-            const bool isQSE = is_species_in_qse(
-                network_timescale,
-                decay_timescale,
-                abundance
-            );
+            const bool isQSE = false;
+            //     network_timescale,
+            //     decay_timescale,
+            //     abundance
+            // );
 
             if (isQSE) {
                 LOG_TRACE_L2(m_logger, "{} is in QSE based on rules in qse_rules.h", species.name());

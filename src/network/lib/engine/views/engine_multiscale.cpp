@@ -6,6 +6,7 @@
 #include <queue>
 
 namespace gridfire {
+    static int s_operator_parens_called = 0;
     using fourdst::atomic::Species;
 
     MultiscalePartitioningEngineView::MultiscalePartitioningEngineView(
@@ -58,8 +59,8 @@ namespace gridfire {
     double MultiscalePartitioningEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
         const std::vector<double> &Y,
-        double T9,
-        double rho
+        const double T9,
+        const double rho
     ) const {
         return m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho);
     }
@@ -230,18 +231,45 @@ namespace gridfire {
         return m_dynamic_species;
     }
 
-    void MultiscalePartitioningEngineView::equilibrateNetwork(
+    PrimingReport MultiscalePartitioningEngineView::primeEngine(const NetIn &netIn) {
+        return m_baseEngine.primeEngine(netIn);
+    }
+
+    fourdst::composition::Composition MultiscalePartitioningEngineView::equilibrateNetwork(
         const std::vector<double> &Y,
         const double T9,
         const double rho,
         const double dt_control
     ) {
         partitionNetwork(Y, T9, rho, dt_control);
-        std::vector<double> Y_equilibrated = solveQSEAbundances(Y, T9, rho);
+        const std::vector<double> Y_equilibrated = solveQSEAbundances(Y, T9, rho);
+        fourdst::composition::Composition composition;
+
+        std::vector<std::string> symbols;
+        symbols.reserve(m_baseEngine.getNetworkSpecies().size());
+        for (const auto& species : m_baseEngine.getNetworkSpecies()) {
+            symbols.emplace_back(species.name());
+        }
+        composition.registerSymbol(symbols);
+
+        std::vector<double> X;
+        X.reserve(Y_equilibrated.size());
+        for (size_t i = 0; i < Y_equilibrated.size(); ++i) {
+            const double molarMass = m_baseEngine.getNetworkSpecies()[i].mass();
+            X.push_back(Y_equilibrated[i] * molarMass); // Convert from molar abundance to mass fraction
+        }
+
+        for (size_t i = 0; i < Y_equilibrated.size(); ++i) {
+            const auto& species = m_baseEngine.getNetworkSpecies()[i];
+            composition.setMassFraction(std::string(species.name()), X[i]);
+        }
+
+        composition.finalize(true);
+        return composition;
     }
 
-    void MultiscalePartitioningEngineView::equilibrateNetwork(
-        const NetIn& netIn,
+    fourdst::composition::Composition MultiscalePartitioningEngineView::equilibrateNetwork(
+        const NetIn &netIn,
         const double dt_control
     ) {
         std::vector<double> Y(m_baseEngine.getNetworkSpecies().size(), 0.0);
@@ -257,10 +285,7 @@ namespace gridfire {
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
         const double rho = netIn.density; // Density in g/cm^3
 
-        partitionNetwork(Y, T9, rho, dt_control);
-        std::vector<double> Y_equilibrated = solveQSEAbundances(Y, T9, rho);
-
-
+        return equilibrateNetwork(Y, T9, rho, dt_control);
     }
 
     int MultiscalePartitioningEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
@@ -566,14 +591,13 @@ namespace gridfire {
             Eigen::VectorXd Y_final_qse = Y_scale.array() * v_initial.array().sinh(); // Convert back to physical abundances using asinh scaling
             for (size_t i = 0; i < qse_solve_indices.size(); ++i) {
                 Y_out[qse_solve_indices[i]] = Y_final_qse(i);
-                std::cout << "Updating species " << m_baseEngine.getNetworkSpecies()[qse_solve_indices[i]].name()
-                          << " to QSE abundance: " << Y_final_qse(i) << std::endl;
             }
         }
         return Y_out;
     }
 
     int MultiscalePartitioningEngineView::EigenFunctor::operator()(const InputType &v_qse, OutputType &f_qse) const {
+        s_operator_parens_called++;
         std::vector<double> y_trial = m_Y_full_initial;
         Eigen::VectorXd y_qse = m_Y_scale.array() * v_qse.array().sinh(); // Convert to physical abundances using asinh scaling
 
@@ -586,6 +610,7 @@ namespace gridfire {
         for (size_t i = 0; i < m_qse_solve_indices.size(); ++i) {
             f_qse(i) = dydt[m_qse_solve_indices[i]];
         }
+
         return 0; // Success
     }
 

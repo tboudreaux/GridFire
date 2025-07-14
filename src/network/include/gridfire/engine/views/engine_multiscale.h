@@ -83,18 +83,20 @@ namespace gridfire {
 
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
-        std::vector<fourdst::atomic::Species> getFastSpecies() const;
-        const std::vector<fourdst::atomic::Species>& getDynamicSpecies() const;
+        [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
-        void equilibrateNetwork(
-            const std::vector<double>& Y,
+        [[nodiscard]] std::vector<fourdst::atomic::Species> getFastSpecies() const;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getDynamicSpecies() const;
+
+        fourdst::composition::Composition equilibrateNetwork(
+            const std::vector<double> &Y,
             double T9,
             double rho,
             double dt_control
         );
 
-        void equilibrateNetwork(
-            const NetIn& netIn,
+        fourdst::composition::Composition equilibrateNetwork(
+            const NetIn &netIn,
             const double dt_control
         );
 
@@ -137,8 +139,8 @@ namespace gridfire {
             m_rho(rho),
             m_Y_scale(Y_scale) {}
 
-            int values() const { return m_qse_solve_indices.size(); }
-            int inputs() const { return m_qse_solve_indices.size(); }
+            [[nodiscard]] int values() const { return m_qse_solve_indices.size(); }
+            [[nodiscard]] int inputs() const { return m_qse_solve_indices.size(); }
 
             int operator()(const InputType& v_qse, OutputType& f_qse) const;
             int df(const InputType& v_qse, JacobianType& J_qse) const;

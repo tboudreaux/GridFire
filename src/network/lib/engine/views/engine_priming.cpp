@@ -44,7 +44,8 @@ namespace gridfire {
         ),
         baseEngine
     ),
-    m_primingSpecies(primingSpecies) {}
+    m_primingSpecies(primingSpecies) {
+    }
 
 
     std::vector<std::string> NetworkPrimingEngineView::constructPrimingReactionSet(

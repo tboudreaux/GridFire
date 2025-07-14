@@ -6,9 +6,15 @@
 #include "fourdst/composition/composition.h"
 #include "fourdst/composition/atomicSpecies.h"
 
+#include <map>
+#include <ranges>
+#include <sstream>
+
 
 namespace gridfire {
-    fourdst::composition::Composition primeNetwork(
+
+
+    PrimingReport primeNetwork(
         const NetIn&,
         DynamicEngine& engine
     );
