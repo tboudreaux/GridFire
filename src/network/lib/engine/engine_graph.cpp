@@ -690,23 +690,23 @@ namespace gridfire {
                 }
             }
         }
-        LOG_DEBUG(
-            m_logger,
-            "Final Jacobian is:\n{}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-                    for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
-                        ss << m_jacobianMatrix(i, j);
-                        if (j < m_jacobianMatrix.size2() - 1) {
-                            ss << ", ";
-                        }
-                    }
-                    ss << "\n";
-                }
-                return ss.str();
-            }());
+        // LOG_DEBUG(
+        //     m_logger,
+        //     "Final Jacobian is:\n{}",
+        //     [&]() -> std::string {
+        //         std::stringstream ss;
+        //         ss << std::scientific << std::setprecision(5);
+        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+        //             for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
+        //                 ss << m_jacobianMatrix(i, j);
+        //                 if (j < m_jacobianMatrix.size2() - 1) {
+        //                     ss << ", ";
+        //                 }
+        //             }
+        //             ss << "\n";
+        //         }
+        //         return ss.str();
+        //     }());
         LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 

@@ -4,11 +4,11 @@
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_graph.h"
 
-#include "Eigen/Dense"
 #include "unsupported/Eigen/NonLinearOptimization"
 
 namespace gridfire {
     class MultiscalePartitioningEngineView final: public DynamicEngine, public EngineView<DynamicEngine> {
+        typedef std::tuple<std::vector<fourdst::atomic::Species>, std::vector<size_t>, std::vector<fourdst::atomic::Species>, std::vector<size_t>> QSEPartition;
     public:
         explicit MultiscalePartitioningEngineView(GraphEngine& baseEngine);
 
@@ -68,16 +68,19 @@ namespace gridfire {
         void partitionNetwork(
             const std::vector<double>& Y,
             double T9,
-            double rho,
-            double dt_control
+            double rho
         );
 
         void partitionNetwork(
-            const NetIn& netIn,
-            double dt_control
+            const NetIn& netIn
         );
 
-        void exportToDot(const std::string& filename) const;
+        void exportToDot(
+            const std::string& filename,
+            const std::vector<double>& Y,
+            const double T9,
+            const double rho
+        ) const;
 
         [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
@@ -91,21 +94,53 @@ namespace gridfire {
         fourdst::composition::Composition equilibrateNetwork(
             const std::vector<double> &Y,
             double T9,
-            double rho,
-            double dt_control
+            double rho
         );
 
         fourdst::composition::Composition equilibrateNetwork(
-            const NetIn &netIn,
-            const double dt_control
+            const NetIn &netIn
         );
 
 
     private:
         struct QSEGroup {
-            std::vector<size_t> species_indices; ///< Indices of all species in this group.
-            size_t seed_nucleus_index;           ///< Index of the one species that will be evolved dynamically.
+            std::set<size_t> species_indices; ///< Indices of all species in this group.
             bool is_in_equilibrium = false;      ///< Flag set by flux analysis.
+            std::set<size_t> algebraic_indices; ///< Indices of algebraic species in this group.
+            std::set<size_t> seed_indices; ///< Indices of dynamic species in this group.
+
+            friend std::ostream& operator<<(std::ostream& os, const QSEGroup& group) {
+                os << "QSEGroup(species_indices: [";
+                int count = 0;
+                for (const auto& idx : group.species_indices) {
+                    os << idx;
+                    if (count < group.species_indices.size() - 1) {
+                        os << ", ";
+                    }
+                    count++;
+                }
+                count = 0;
+                os << "], is_in_equilibrium: " << group.is_in_equilibrium
+                   << ", algebraic_indices: [";
+                for (const auto& idx : group.algebraic_indices) {
+                    os << idx;
+                    if (count < group.algebraic_indices.size() - 1) {
+                        os << ", ";
+                    }
+                    count++;
+                }
+                count = 0;
+                os << "], seed_indices: [";
+                for (const auto& idx : group.seed_indices) {
+                    os << idx;
+                    if (count < group.seed_indices.size() - 1) {
+                        os << ", ";
+                    }
+                    count++;
+                }
+                os << "])";
+                return os;
+            }
         };
 
         struct EigenFunctor {
@@ -147,36 +182,29 @@ namespace gridfire {
         };
 
     private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         GraphEngine& m_baseEngine; ///< The base engine to which this view delegates calculations.
         std::vector<QSEGroup> m_qse_groups; ///< The list of identified equilibrium groups.
         std::vector<fourdst::atomic::Species> m_dynamic_species; ///< The simplified set of species presented to the solver.
         std::vector<size_t> m_dynamic_species_indices; ///< Indices mapping the dynamic species back to the master engine's list.
+        std::vector<fourdst::atomic::Species> m_algebraic_species; ///< Species that are algebraic in the QSE groups.
+        std::vector<size_t> m_algebraic_species_indices; ///< Indices of algebraic species in the full network.
         std::unordered_map<size_t, std::vector<size_t>> m_connectivity_graph;
 
     private:
-        std::unordered_set<size_t> identifyFastReactions(
-            const std::vector<double>& Y_full,
-            double T9,
-            double rho,
-            double dt_control
-        ) const;
-
-        void buildConnectivityGraph(
-            const std::unordered_set<size_t>& fast_reaction_indices
-        );
-
-        void findConnectedComponents();
-
-        void validateGroupsWithFluxAnalysis(
-            const std::vector<double>& Y,
+        std::vector<std::vector<size_t>> partitionByTimescale(
+            const std::vector<double> &Y_full,
             double T9,
             double rho
-        );
+        ) const;
 
-        std::pair<std::vector<fourdst::atomic::Species>, std::vector<size_t>> identifyDynamicSpecies(
+        std::unordered_map<size_t, std::vector<size_t>> buildConnectivityGraph(
+            const std::unordered_set<size_t> &fast_reaction_indices
+        ) const;
+
+        std::vector<QSEGroup> validateGroupsWithFluxAnalysis(
+            const std::vector<QSEGroup> &candidate_groups,
             const std::vector<double>& Y,
-            const std::vector<QSEGroup>& qse_groups,
             double T9,
             double rho
         ) const;
@@ -186,5 +214,19 @@ namespace gridfire {
             double T9,
             double rho
         );
+
+        size_t identifyMeanSlowestPool(
+            const std::vector<std::vector<size_t>>& pools,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const;
+
+        std::vector<QSEGroup> constructCandidateGroups(
+            const std::vector<std::vector<size_t>>& timescale_pools,
+            const std::vector<double>& Y,
+            double T9,
+            double rho
+        ) const;
     };
 }

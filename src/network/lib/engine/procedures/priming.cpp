@@ -110,6 +110,10 @@ namespace gridfire {
             if (destructionRateConstant > 1e-99) {
                 const double creationRate = calculateCreationRate(primer, primingSpecies, Y, T9, rho);
                 equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
+                if (std::isnan(equilibriumMassFraction)) {
+                    LOG_WARNING(logger, "Equilibrium mass fraction for {} is NaN. Setting to 0.0. This is likely not an issue. It probably originates from all reactions leading to creation and destruction being frozen out. In that case 0.0 should be a good approximation. Hint: This happens often when the network temperature is very the low. ", primingSpecies.name());
+                    equilibriumMassFraction = 0.0;
+                }
                 LOG_INFO(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
 
                 const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho);

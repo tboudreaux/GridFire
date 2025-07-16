@@ -71,22 +71,27 @@ int main() {
 
     NetIn netIn;
     netIn.composition = composition;
-    netIn.temperature = 1.5e6;
+    netIn.temperature = 1.5e7;
     netIn.density = 1.5e3;
     netIn.energy = 0;
     netIn.tMax = 3e17;
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
+    ReaclibEngine.exportToDot("GraphEngine.dot");
     auto primedReport = ReaclibEngine.primeEngine(netIn);
-    std::cout << primedReport << std::endl;
-    std::cout << "Initial Composition\n";
-    for (const auto& [symbol, entry] : netIn.composition) {
-        std::cout << "\t" << symbol << ": " << entry.mass_fraction() << "\n";
+    if (!primedReport.success) {
+        LOG_CRITICAL(logger, "Failed to prime the network!");
+        return 1;
     }
 
-    std::cout << "\nPrimed Composition\n";
-    for (const auto& [symbol, entry] : primedReport.primedComposition) {
-        std::cout << "\t" << symbol << ": " << entry.mass_fraction() << "\n";
-    }
+    NetIn primedNetIn = netIn;
+    primedNetIn.composition = primedReport.primedComposition;
+
+    std::cout << primedReport.primedComposition << std::endl;
+
+    MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
+    fourdst::composition::Composition qseComp = partitioningView.equilibrateNetwork(primedNetIn);
+    std::cout << qseComp.getMolarAbundance("H-2") / qseComp.getMolarAbundance("H-1") << std::endl;
+
 }
