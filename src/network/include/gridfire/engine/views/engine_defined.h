@@ -55,7 +55,7 @@ namespace gridfire{
             const std::vector<double>& Y_dynamic,
             const double T9,
             const double rho
-        ) override;
+        ) const override;
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
          *
@@ -142,7 +142,9 @@ namespace gridfire{
          *
          * @post If the view was stale, it is rebuilt and is no longer stale.
          */
-        void update(const NetIn &netIn) override;
+        fourdst::composition::Composition update(const NetIn &netIn) override;
+
+        bool isStale(const NetIn& netIn) override;
 
         /**
          * @brief Sets the screening model for the base engine.

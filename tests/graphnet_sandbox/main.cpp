@@ -51,7 +51,7 @@ void quill_terminate_handler()
 int main() {
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL1);
+    logger->set_log_level(quill::LogLevel::Info);
     LOG_DEBUG(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -74,24 +74,22 @@ int main() {
     netIn.temperature = 1.5e7;
     netIn.density = 1.5e3;
     netIn.energy = 0;
-    netIn.tMax = 3e17;
+    netIn.tMax = 3.546e17;
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-    ReaclibEngine.exportToDot("GraphEngine.dot");
-    auto primedReport = ReaclibEngine.primeEngine(netIn);
-    if (!primedReport.success) {
-        LOG_CRITICAL(logger, "Failed to prime the network!");
-        return 1;
-    }
-
-    NetIn primedNetIn = netIn;
-    primedNetIn.composition = primedReport.primedComposition;
-
-    std::cout << primedReport.primedComposition << std::endl;
-
+    ReaclibEngine.setPrecomputation(true);
+    ReaclibEngine.setUseReverseReactions(false);
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
-    fourdst::composition::Composition qseComp = partitioningView.equilibrateNetwork(primedNetIn);
-    std::cout << qseComp.getMolarAbundance("H-2") / qseComp.getMolarAbundance("H-1") << std::endl;
+    AdaptiveEngineView adaptiveView(partitioningView);
+
+    solver::DirectNetworkSolver solver(adaptiveView);
+    NetOut netOut;
+    measure_execution_time([&](){netOut = solver.evaluate(netIn);}, "DirectNetworkSolver Evaluation");
+    std::cout << "DirectNetworkSolver completed in " << netOut.num_steps << " steps.\n";
+    std::cout << "Final composition:\n";
+    for (const auto& [symbol, entry] : netOut.composition) {
+        std::cout << symbol << ": " << entry.mass_fraction() << "\n";
+    }
 
 }

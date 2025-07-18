@@ -100,7 +100,7 @@ namespace gridfire {
         const std::vector<double> &Y_dynamic,
         const double T9,
         const double rho
-    ) {
+    ) const {
         validateNetworkState();
 
         const auto Y_full = mapViewToFull(Y_dynamic);
@@ -178,8 +178,12 @@ namespace gridfire {
         return definedTimescales;
     }
 
-    void DefinedEngineView::update(const NetIn &netIn) {
-        return;
+    fourdst::composition::Composition DefinedEngineView::update(const NetIn &netIn) {
+        return m_baseEngine.update(netIn);
+    }
+
+    bool DefinedEngineView::isStale(const NetIn &netIn) {
+        return false;
     }
 
 

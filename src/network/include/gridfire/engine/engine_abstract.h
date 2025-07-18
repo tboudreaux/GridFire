@@ -8,9 +8,12 @@
 #include "gridfire/engine/types/reporting.h"
 #include "gridfire/engine/types/building.h"
 
+#include "gridfire/expectations/expected_engine.h"
+
 #include <vector>
 #include <unordered_map>
 #include <utility>
+#include <expected>
 
 /**
  * @file engine_abstract.h
@@ -140,14 +143,14 @@ namespace gridfire {
             const std::vector<double>& Y_dynamic,
             double T9,
             double rho
-        ) = 0;
+        ) const = 0;
 
         virtual void generateJacobianMatrix(
             const std::vector<double>& Y_dynamic,
             double T9,
             double rho,
             const SparsityPattern& sparsityPattern
-        ) {
+        ) const {
             throw std::logic_error("Sparsity pattern not supported by this engine.");
         }
 
@@ -251,7 +254,9 @@ namespace gridfire {
          *
          * @post The internal state of the engine is updated to reflect the new conditions.
          */
-        virtual void update(const NetIn& netIn) = 0;
+        virtual fourdst::composition::Composition update(const NetIn &netIn) = 0;
+
+        virtual bool isStale(const NetIn& netIn) = 0;
 
         /**
          * @brief Set the electron screening model.
@@ -296,5 +301,6 @@ namespace gridfire {
         virtual void rebuild(const fourdst::composition::Composition& comp, BuildDepthType depth) {
             throw std::logic_error("Setting network depth not supported by this engine.");
         }
+
     };
 }

@@ -76,7 +76,9 @@ namespace gridfire {
          * @see AdaptiveEngineView::constructSpeciesIndexMap()
          * @see AdaptiveEngineView::constructReactionIndexMap()
          */
-        void update(const NetIn& netIn) override;
+        fourdst::composition::Composition update(const NetIn &netIn) override;
+
+        bool isStale(const NetIn& netIn) override;
 
         /**
          * @brief Gets the list of active species in the network.
@@ -123,7 +125,7 @@ namespace gridfire {
             const std::vector<double> &Y_dynamic,
             const double T9,
             const double rho
-        ) override;
+        ) const override;
 
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
@@ -437,6 +439,16 @@ namespace gridfire {
             const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
             const std::vector<double>& Y_full,
             double maxFlow
+        ) const;
+
+        typedef std::pair<std::unordered_set<const reaction::LogicalReaction*>, std::unordered_set<fourdst::atomic::Species>> RescueSet;
+        [[nodiscard]] RescueSet rescueEdgeSpeciesDestructionChannel(
+            const std::vector<ReactionFlow>& allFlows,
+            const std::vector<double>& Y_full,
+            const double T9,
+            const double rho,
+            const std::vector<fourdst::atomic::Species>& activeSpecies,
+            const reaction::LogicalReactionSet& activeReactions
         ) const;
         /**
          * @brief Finalizes the set of active species and reactions.

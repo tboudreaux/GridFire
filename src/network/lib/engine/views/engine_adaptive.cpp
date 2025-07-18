@@ -1,7 +1,9 @@
-#include "../../../include/gridfire/engine/views/engine_adaptive.h"
+#include "gridfire/engine/views/engine_adaptive.h"
 
 #include <ranges>
 #include <queue>
+#include <algorithm>
+
 
 #include "gridfire/network.h"
 
@@ -82,7 +84,9 @@ namespace gridfire {
         return reactionIndexMap;
     }
 
-    void AdaptiveEngineView::update(const NetIn& netIn) {
+    fourdst::composition::Composition AdaptiveEngineView::update(const NetIn &netIn) {
+        fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
+
         LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 
         std::vector<double> Y_Full;
@@ -104,6 +108,17 @@ namespace gridfire {
 
         finalizeActiveSet(finalReactions);
 
+        // auto [rescuedReactions, rescuedSpecies] = rescueEdgeSpeciesDestructionChannel(allFlows, Y_Full, netIn.temperature/1e9, netIn.density, m_activeSpecies, m_activeReactions);
+        //
+        // for (const auto& reactionPtr : rescuedReactions) {
+        //     m_activeReactions.add_reaction(*reactionPtr);
+        // }
+        //
+        // for (const auto& species : rescuedSpecies) {
+        //     if (!std::ranges::contains(m_activeSpecies, species)) {
+        //         m_activeSpecies.push_back(species);
+        //     }
+        // }
 
         m_speciesIndexMap = constructSpeciesIndexMap();
         m_reactionIndexMap = constructReactionIndexMap();
@@ -111,6 +126,12 @@ namespace gridfire {
         m_isStale = false;
 
         LOG_INFO(m_logger, "AdaptiveEngineView updated successfully with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
+
+        return baseUpdatedComposition;
+    }
+
+    bool AdaptiveEngineView::isStale(const NetIn &netIn) {
+        return m_isStale;
     }
 
     const std::vector<Species> & AdaptiveEngineView::getNetworkSpecies() const {
@@ -139,7 +160,7 @@ namespace gridfire {
         const std::vector<double> &Y_dynamic,
         const double T9,
         const double rho
-    ) {
+    ) const {
         validateState();
         const auto Y_full = mapCulledToFull(Y_dynamic);
 
@@ -288,6 +309,7 @@ namespace gridfire {
         }
     }
 
+    // TODO: Change this to use a return value instead of an output parameter.
     std::vector<AdaptiveEngineView::ReactionFlow> AdaptiveEngineView::calculateAllReactionFlows(
         const NetIn &netIn,
         std::vector<double> &out_Y_Full
@@ -314,7 +336,7 @@ namespace gridfire {
         for (const auto& reaction : fullReactionSet) {
             const double flow = m_baseEngine.calculateMolarReactionFlow(reaction, out_Y_Full, T9, rho);
             reactionFlows.push_back({&reaction, flow});
-            LOG_TRACE_L2(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s]", reaction.id(), flow);
+            LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction.id(), flow);
         }
         return reactionFlows;
     }
@@ -380,12 +402,12 @@ namespace gridfire {
                 keepReaction = true;
             } else {
                 bool zero_flow_due_to_reachable_reactants = false;
-                if (flowRate < 1e-99) {
+                if (flowRate < 1e-99 && flowRate > 0.0) {
                     for (const auto& reactant: reactionPtr->reactants()) {
                         const auto it = std::ranges::find(m_baseEngine.getNetworkSpecies(), reactant);
                         const size_t index = std::distance(m_baseEngine.getNetworkSpecies().begin(), it);
                         if (Y_full[index] < 1e-99 && reachableSpecies.contains(reactant)) {
-                            LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with zero flow due to reachable reactant '{}'.", reactionPtr->id(), reactant.name());
+                            LOG_TRACE_L1(m_logger, "Maintaining reaction '{}' with low flow ({:0.3E} [mol/s/g]) due to reachable reactant '{}'.", reactionPtr->id(), flowRate, reactant.name());
                             zero_flow_due_to_reachable_reactants = true;
                             break;
                         }
@@ -405,6 +427,158 @@ namespace gridfire {
         return culledReactions;
     }
 
+    AdaptiveEngineView::RescueSet AdaptiveEngineView::rescueEdgeSpeciesDestructionChannel(
+        const std::vector<ReactionFlow> &allFlows,
+        const std::vector<double> &Y_full,
+        const double T9,
+        const double rho,
+        const std::vector<Species> &activeSpecies,
+        const reaction::LogicalReactionSet &activeReactions
+    ) const {
+        const auto timescales = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        std::set<Species> onlyProducedSpecies;
+        for (const auto& reaction : activeReactions) {
+            const std::vector<Species> products = reaction.products();
+            onlyProducedSpecies.insert(products.begin(), products.end());
+        }
+
+        // Remove species that are consumed by any one of the active reactions.
+        std::erase_if(
+            onlyProducedSpecies,
+            [&](const Species &species) {
+                for (const auto& reaction : activeReactions) {
+                    if (reaction.contains_reactant(species)) {
+                        return true; // If any active reaction consumes the species then erase it from the set.
+                    }
+                }
+                return false;
+            }
+        );
+
+        // Remove species that have a non-zero timescale (these are expected to be +inf as they should be the equilibrium species if using with a MultiscalePartitioningEngineView)
+        std::erase_if(
+            onlyProducedSpecies,
+            [&](const Species &species) {
+                return std::isinf(timescales.at(species));
+            }
+        );
+
+        LOG_TRACE_L1(
+            m_logger,
+            "Found {} species {}that are produced but not consumed in any reaction and do not have an inf timescale (those are expected to be equilibrium species and do not contribute to the stiffness of the network).",
+            onlyProducedSpecies.size(),
+            [&]() -> std::string {
+                std::ostringstream ss;
+                if (onlyProducedSpecies.empty()) {
+                    return "";
+                }
+                int count = 0;
+                ss << "(";
+                for (const auto& species : onlyProducedSpecies) {
+                    ss << species.name();
+                    if (count < onlyProducedSpecies.size() - 1) {
+                        ss << ", ";
+                    }
+                    count++;
+                }
+                ss << ") ";
+                return ss.str();
+            }()
+        );
+
+        std::unordered_map<Species, const reaction::LogicalReaction*> reactionsToRescue;
+        for (const auto& species : onlyProducedSpecies) {
+            double maxSpeciesConsumptionRate = 0.0;
+            for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
+                const bool speciesToCheckIsConsumed = reaction.contains_reactant(species);
+                if (!speciesToCheckIsConsumed) {
+                    continue; // If the species is not consumed by this reaction, skip it.
+                }
+                bool allOtherReactantsAreAvailable = true;
+                for (const auto& reactant : reaction.reactants()) {
+                    const bool reactantIsAvailable = std::ranges::contains(activeSpecies, reactant);
+                    if (!reactantIsAvailable && reactant != species) {
+                        allOtherReactantsAreAvailable = false;
+                    }
+                }
+                if (allOtherReactantsAreAvailable && speciesToCheckIsConsumed) {
+                    double rate = reaction.calculate_rate(T9);
+                    if (rate > maxSpeciesConsumptionRate) {
+                        maxSpeciesConsumptionRate = rate;
+                        reactionsToRescue[species] = &reaction;
+                    }
+                }
+            }
+        }
+        LOG_TRACE_L1(
+            m_logger,
+            "Rescuing {} {}reactions",
+            reactionsToRescue.size(),
+            [&]() -> std::string {
+                std::ostringstream ss;
+                if (reactionsToRescue.empty()) {
+                    return "";
+                }
+                int count = 0;
+                ss << "(";
+                for (const auto& [species, reaction] : reactionsToRescue) {
+                    ss << reaction->id();
+                    if (count < reactionsToRescue.size() - 1) {
+                        ss << ", ";
+                    }
+                    count++;
+                }
+                ss << ") ";
+                return ss.str();
+            }()
+        );
+
+        LOG_TRACE_L1(
+            m_logger,
+            "Timescale adjustments due to reaction rescue: {}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                if (reactionsToRescue.empty()) {
+                    return "No reactions rescued...";
+                }
+                int count = 0;
+                for (const auto& [species, reaction] : reactionsToRescue) {
+                    ss << "(Species: " << species.name() << " started with a timescale of " << timescales.at(species);
+                    ss << ", rescued by reaction: " << reaction->id();
+                    ss << " whose product timescales are --- [";
+                    int icount = 0;
+                    for (const auto& product : reaction->products()) {
+                        ss << product.name() << ": " << timescales.at(product);
+                        if (icount < reaction->products().size() - 1) {
+                            ss << ", ";
+                        }
+                        icount++;
+                    }
+                    ss << "])";
+
+                    if (count < reactionsToRescue.size() - 1) {
+                        ss << ", ";
+                    }
+                    count++;
+                }
+
+                return ss.str();
+            }()
+        );
+
+        RescueSet rescueSet;
+        std::unordered_set<const reaction::LogicalReaction*> newReactions;
+        std::unordered_set<Species> newSpecies;
+
+        for (const auto &reactionPtr: reactionsToRescue | std::views::values) {
+            newReactions.insert(reactionPtr);
+            for (const auto& product : reactionPtr->products()) {
+                newSpecies.insert(product);
+            }
+        }
+        return {std::move(newReactions), std::move(newSpecies)};
+    }
+
     void AdaptiveEngineView::finalizeActiveSet(
         const std::vector<const reaction::LogicalReaction *> &finalReactions
     ) {
@@ -413,13 +587,24 @@ namespace gridfire {
         for (const auto* reactionPtr: finalReactions) {
             m_activeReactions.add_reaction(*reactionPtr);
             for (const auto& reactant : reactionPtr->reactants()) {
+                if (!finalSpeciesSet.contains(reactant)) {
+                    LOG_TRACE_L1(m_logger, "Adding reactant '{}' to active species set through reaction {}.", reactant.name(), reactionPtr->id());
+                } else {
+                    LOG_TRACE_L1(m_logger, "Reactant '{}' already in active species set through another reaction.", reactant.name());
+                }
                 finalSpeciesSet.insert(reactant);
             }
             for (const auto& product : reactionPtr->products()) {
+                if (!finalSpeciesSet.contains(product)) {
+                    LOG_TRACE_L1(m_logger, "Adding product '{}' to active species set through reaction {}.", product.name(), reactionPtr->id());
+                } else {
+                    LOG_TRACE_L1(m_logger, "Product '{}' already in active species set through another reaction.", product.name());
+                }
                 finalSpeciesSet.insert(product);
             }
         }
-        m_activeSpecies.assign(finalSpeciesSet.begin(), finalSpeciesSet.end());
+        m_activeSpecies.clear();
+        m_activeSpecies = std::vector<Species>(finalSpeciesSet.begin(), finalSpeciesSet.end());
         std::ranges::sort(
             m_activeSpecies,
             [](const Species &a, const Species &b) { return a.mass() < b.mass(); }

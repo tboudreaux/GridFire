@@ -1,6 +1,7 @@
 #include "gridfire/solver/solver.h"
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
+#include "gridfire/exceptions/error_engine.h"
 
 
 #include "gridfire/utils/logging.h"
@@ -20,7 +21,21 @@
 #include <stdexcept>
 #include <iomanip>
 
+#include "gridfire/engine/views/engine_multiscale.h"
+
 #include "quill/LogMacros.h"
+
+struct adaptive_integrator_observer {
+    double m_last_t = 0.0;
+    int m_total_steps = 0;
+
+    void operator()(boost::numeric::ublas::vector<double> &state, double t) {
+        // std::cout << "(Step: " << m_total_steps << ") Current Time: " << t << " (dt: " << t - m_last_t << ")\n";
+        m_last_t = t;
+        m_total_steps++;
+
+    }
+};
 
 namespace gridfire::solver {
     double s_prevTimestep = 0.0;
@@ -507,37 +522,47 @@ namespace gridfire::solver {
 
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
-        const unsigned long numSpecies = m_engine.getNetworkSpecies().size();
 
         const auto absTol = m_config.get<double>("gridfire:solver:DirectNetworkSolver:absTol", 1.0e-8);
         const auto relTol = m_config.get<double>("gridfire:solver:DirectNetworkSolver:relTol", 1.0e-8);
 
         size_t stepCount = 0;
 
+        Composition equilibratedComposition = m_engine.update(netIn);
+        const unsigned long numSpecies = m_engine.getNetworkSpecies().size();
+        ublas::vector<double> Y(numSpecies + 1);
+
         RHSFunctor rhsFunctor(m_engine, T9, netIn.density);
         JacobianFunctor jacobianFunctor(m_engine, T9, netIn.density);
 
-        ublas::vector<double> Y(numSpecies + 1);
+
+        // This is a quick debug that can be turned on. For solar code input parameters (T~1.5e7K, ρ~1.5e3 g/cm^3) this should be near 8e-17
+        // std::cout << "D/H: " << equilibratedComposition.getMolarAbundance("H-2") / equilibratedComposition.getMolarAbundance("H-1") << std::endl;
 
         for (size_t i = 0; i < numSpecies; ++i) {
             const auto& species = m_engine.getNetworkSpecies()[i];
-            try {
-                Y(i) = netIn.composition.getMolarAbundance(std::string(species.name()));
-            } catch (const std::runtime_error) {
-                LOG_DEBUG(m_logger, "Species '{}' not found in composition. Setting abundance to 0.0.", species.name());
-                Y(i) = 0.0;
+            if (!equilibratedComposition.contains(species)) {
+                LOG_DEBUG(m_logger, "Species '{}' not found in composition. Setting abundance to 1e-99.", species.name());
+                Y(i) = 1e-99;
+                continue;
             }
+            double abun = equilibratedComposition.getMolarAbundance(species);
+            // if (abun == 0.0) {
+            //     abun = 1e-99; // Avoid zero abundances
+            // }
+            Y(i) = abun;
         }
         Y(numSpecies) = 0.0;
-
         const auto stepper = odeint::make_controlled<odeint::rosenbrock4<double>>(absTol, relTol);
+        adaptive_integrator_observer observer;
         stepCount = odeint::integrate_adaptive(
             stepper,
             std::make_pair(rhsFunctor, jacobianFunctor),
             Y,
             0.0,
             netIn.tMax,
-            netIn.dt0
+            netIn.dt0,
+            observer
         );
 
         std::vector<double> finalMassFractions(numSpecies);
@@ -570,13 +595,63 @@ namespace gridfire::solver {
     void DirectNetworkSolver::RHSFunctor::operator()(
         const boost::numeric::ublas::vector<double> &Y,
         boost::numeric::ublas::vector<double> &dYdt,
-        double t
+        const double t
     ) const {
         const std::vector<double> y(Y.begin(), m_numSpecies + Y.begin());
-        auto [dydt, eps] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
+        // const auto timescales = m_engine.getSpeciesTimescales(y, m_T9, m_rho);
+        StepDerivatives<double> deriv;
+
+        // TODO: Refactor this to use std::expected
+        try {
+            deriv = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
+        } catch (const exceptions::StaleEngineError& e) { // If the engine reports that it is stale, we need to update it
+            LOG_INFO(m_logger, "Engine reports stale state. Calling engine update method...");
+
+            NetIn netInTemp;
+            fourdst::composition::Composition compositionTemp;
+
+            for (const auto& species : m_engine.getNetworkSpecies()) {
+                compositionTemp.registerSpecies(species);
+            }
+
+            std::vector<double> X(y.size(), 0.0);
+            for (size_t i = 0; i < y.size(); ++i) {
+                double Xi = y[i] * m_engine.getNetworkSpecies()[i].mass(); // Convert from molar abundance to mass fraction
+                if (Xi < 0 && std::abs(Xi) < 1e-20) {
+                    Xi = 0.0; // Avoid negative mass fractions
+                }
+                X[i] = Xi;
+            }
+
+            compositionTemp.setMassFraction(m_engine.getNetworkSpecies(), X);
+            compositionTemp.finalize(true);
+
+            netInTemp.composition = std::move(compositionTemp);
+            netInTemp.temperature = m_T9 * 1e9; // Convert T9 back to Kelvin
+            netInTemp.density = m_rho; // Density in g/cm^3
+
+            m_engine.update(netInTemp);
+
+            LOG_INFO(m_logger, "Engine update complete. Recalculating RHS and energy...");
+            deriv = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
+            LOG_INFO(m_logger, "RHS and energy recalculated successfully!");
+        }
+
         dYdt.resize(m_numSpecies + 1);
-        std::ranges::copy(dydt, dYdt.begin());
-        dYdt(m_numSpecies) = eps;
+        // for (size_t i = 0; i < m_numSpecies; ++i) {
+        //     std::cout << "Species: " << m_engine.getNetworkSpecies()[i].name() << ", dYdt: " << deriv.dydt[i] << '\n';
+        // }
+
+        // std::vector<double> S;
+        // S.reserve(m_numSpecies);
+        // for (size_t i = 0; i < m_numSpecies; ++i) {
+        //     S.push_back(std::abs(deriv.dydt[i]) / (1e-8 + 1e-8 * y[i]));
+        // }
+        // for (size_t i = 0; i < m_numSpecies; ++i) {
+        //     std::cout << "Species: " << m_engine.getNetworkSpecies()[i].name() << ", S: " << S[i] << '\n';
+        // }
+        std::ranges::copy(deriv.dydt, dYdt.begin());
+        dYdt(m_numSpecies) = deriv.nuclearEnergyGenerationRate;
     }
 
     void DirectNetworkSolver::JacobianFunctor::operator()(
@@ -590,6 +665,7 @@ namespace gridfire::solver {
         for (int i = 0; i < m_numSpecies; ++i) {
             for (int j = 0; j < m_numSpecies; ++j) {
                 J(i, j) = m_engine.getJacobianMatrixEntry(i, j);
+                // std::cout << "J(" << m_engine.getNetworkSpecies()[i].name() << ", " << m_engine.getNetworkSpecies()[j].name() << ") = " << J(i, j) << '\n';
             }
         }
     }

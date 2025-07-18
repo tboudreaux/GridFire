@@ -65,6 +65,7 @@ namespace gridfire {
             bare_rates.reserve(m_reactions.size());
             bare_reverse_rates.reserve(m_reactions.size());
 
+            // TODO: Add cache to this
             for (const auto& reaction: m_reactions) {
                 bare_rates.push_back(reaction.calculate_rate(T9));
                 bare_reverse_rates.push_back(calculateReverseRate(reaction, T9));
@@ -76,7 +77,6 @@ namespace gridfire {
             return calculateAllDerivatives<double>(Y, T9, rho);
         }
     }
-
 
     void GraphEngine::syncInternalMaps() {
         LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
@@ -650,7 +650,7 @@ namespace gridfire {
         const std::vector<double> &Y_dynamic,
         const double T9,
         const double rho
-    ) {
+    ) const {
 
         LOG_TRACE_L1(m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
@@ -658,7 +658,7 @@ namespace gridfire {
         // 1. Pack the input variables into a vector for CppAD
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
         for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = Y_dynamic[i];
+            adInput[i] = std::max(Y_dynamic[i], 1e-99); // regularize the jacobian...
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
@@ -685,28 +685,36 @@ namespace gridfire {
         for (size_t i = 0; i < numSpecies; ++i) {
             for (size_t j = 0; j < numSpecies; ++j) {
                 const double value = dotY[i * (numSpecies + 2) + j];
-                if (std::abs(value) > MIN_JACOBIAN_THRESHOLD) {
+                if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
                     m_jacobianMatrix(i, j) = value;
                 }
             }
         }
-        // LOG_DEBUG(
-        //     m_logger,
-        //     "Final Jacobian is:\n{}",
-        //     [&]() -> std::string {
-        //         std::stringstream ss;
-        //         ss << std::scientific << std::setprecision(5);
-        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-        //             for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
-        //                 ss << m_jacobianMatrix(i, j);
-        //                 if (j < m_jacobianMatrix.size2() - 1) {
-        //                     ss << ", ";
-        //                 }
-        //             }
-        //             ss << "\n";
-        //         }
-        //         return ss.str();
-        //     }());
+        LOG_DEBUG(
+            m_logger,
+            "Final Jacobian is:\n{}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                ss << std::scientific << std::setprecision(5);
+                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+                    ss << getNetworkSpecies()[i].name();
+                    if (i < m_jacobianMatrix.size1() - 1) {
+                        ss << ", ";
+                    }
+                }
+                ss << "\n";
+                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+                    ss << getNetworkSpecies()[i].name() << ": ";
+                    for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
+                        ss << m_jacobianMatrix(i, j);
+                        if (j < m_jacobianMatrix.size2() - 1) {
+                            ss << ", ";
+                        }
+                    }
+                    ss << "\n";
+                }
+                return ss.str();
+            }());
         LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 
@@ -715,7 +723,7 @@ namespace gridfire {
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
-    ) {
+    ) const {
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
@@ -768,7 +776,7 @@ namespace gridfire {
     }
 
     double GraphEngine::getJacobianMatrixEntry(const int i, const int j) const {
-        LOG_TRACE_L3(m_logger, "Getting jacobian matrix entry for {},{} = {}", i, j, m_jacobianMatrix(i, j));
+        // LOG_TRACE_L3(m_logger, "Getting jacobian matrix entry for {},{} = {}", i, j, m_jacobianMatrix(i, j));
         return m_jacobianMatrix(i, j);
     }
 
@@ -906,8 +914,12 @@ namespace gridfire {
         return speciesTimescales;
     }
 
-    void GraphEngine::update(const NetIn &netIn) {
-        // No-op for GraphEngine, as it does not support manually triggering updates.
+    fourdst::composition::Composition GraphEngine::update(const NetIn &netIn) {
+        return netIn.composition;
+    }
+
+    bool GraphEngine::isStale(const NetIn &netIn) {
+        return false;
     }
 
     void GraphEngine::recordADTape() {

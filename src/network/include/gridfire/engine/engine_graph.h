@@ -34,7 +34,7 @@
 //       this makes extra copies of the species, which is not ideal and could be optimized further.
 //       Even more relevant is the member m_reactionIDMap which makes copies of a REACLIBReaction for each reaction ID.
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
-
+// static bool isF17 = false;
 namespace gridfire {
     static bool s_debug = false; // Global debug flag for the GraphEngine
     /**
@@ -167,14 +167,14 @@ namespace gridfire {
             const std::vector<double>& Y_dynamic,
             const double T9,
             const double rho
-        ) override;
+        ) const override;
 
         void generateJacobianMatrix(
             const std::vector<double> &Y_dynamic,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
-        ) override;
+        ) const override;
 
         /**
          * @brief Generates the stoichiometry matrix for the network.
@@ -274,7 +274,9 @@ namespace gridfire {
             double rho
         ) const override;
 
-        void update(const NetIn& netIn) override;
+        fourdst::composition::Composition update(const NetIn &netIn) override;
+
+        bool isStale(const NetIn &netIn) override;
 
         /**
          * @brief Checks if a given species is involved in the network.
@@ -371,7 +373,6 @@ namespace gridfire {
         void rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) override;
 
 
-
     private:
         struct PrecomputedReaction {
             // Forward cacheing
@@ -449,11 +450,12 @@ namespace gridfire {
         std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
 
         boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix (species x reactions).
-        boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
 
-        CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
-        CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
+        mutable boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
+        mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
+        mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
         CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
+
         std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
         screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
@@ -793,25 +795,43 @@ namespace gridfire {
             );
 
             const T molarReactionFlow = forwardMolarReactionFlow - reverseMolarFlow; // Net molar reaction flow
-            std::stringstream ss;
-            ss << "Forward: " << forwardMolarReactionFlow
-               << ", Reverse: " << reverseMolarFlow
-               << ", Net: " << molarReactionFlow;
-            LOG_TRACE_L2(
-                m_logger,
-                "Reaction: {}, {}",
-                reaction.peName(),
-                ss.str()
-            );
+            // std::stringstream ss;
+            // ss << "Forward: " << forwardMolarReactionFlow
+            //    << ", Reverse: " << reverseMolarFlow
+            //    << ", Net: " << molarReactionFlow;
+            // LOG_TRACE_L3(
+            //     m_logger,
+            //     "Reaction: {}, {}",
+            //     reaction.peName(),
+            //     ss.str()
+            // );
             // std::cout << "Forward molar flow for reaction " << reaction.peName() << ": " << forwardMolarReactionFlow << std::endl;
             // std::cout << "Reverse molar flow for reaction " << reaction.peName() << ": " << reverseMolarFlow << std::endl;
             // std::cout << "Net molar flow for reaction " << reaction.peName() << ": " << molarReactionFlow << std::endl;
 
             // 3. Use the rate to update all relevant species derivatives (dY/dt)
             for (size_t speciesIndex = 0; speciesIndex < m_networkSpecies.size(); ++speciesIndex) {
+                const auto& species = m_networkSpecies[speciesIndex];
                 const T nu_ij = static_cast<T>(m_stoichiometryMatrix(speciesIndex, reactionIndex));
+                // bool taping = false;
+                // if constexpr (std::is_same_v<T, CppAD::AD<double>>) {
+                //     taping = true;
+                // }
+                // if (species.name() == "F-17" && nu_ij != static_cast<T>(0.0)) {
+                //     T f17dydt = result.dydt[speciesIndex] + threshold_flag * nu_ij * molarReactionFlow;
+                //     std::string tstring = taping ? "During Taping" : "During Evaluation";
+                //     std::cout << "(" << tstring << ") F-17 Debugging. For Reaction " << reaction.id() << " (" << reaction.peName() << "): "
+                //               << "nu_ij: " << nu_ij << ", molarReactionFlow: " << molarReactionFlow
+                //               << ", threshold_flag: " << threshold_flag << ", dY/dt: " << f17dydt << ", Y: " << Y[speciesIndex]
+                //               << std::endl;
+                //     isF17 = true;
+                // }
                 result.dydt[speciesIndex] += threshold_flag * nu_ij * molarReactionFlow;
             }
+            // if (isF17) {
+            //     std::cout << "=========================================================" << std::endl;
+            //     isF17 = false;
+            // }
         }
 
         T massProductionRate = static_cast<T>(0.0); // [mol][s^-1]

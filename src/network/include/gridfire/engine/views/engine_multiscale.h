@@ -7,6 +7,58 @@
 #include "unsupported/Eigen/NonLinearOptimization"
 
 namespace gridfire {
+    struct QSECacheConfig {
+        double T9_tol; ///< Absolute tolerance to produce the same hash for T9.
+        double rho_tol; ///< Absolute tolerance to produce the same hash for rho.
+        double Yi_tol; ///< Absolute tolerance to produce the same hash for species abundances.
+    };
+
+    struct QSECacheKey {
+        double m_T9;
+        double m_rho;
+        std::vector<double> m_Y; ///< Note that the ordering of Y must match the dynamic species indices in the view.
+
+        std::size_t m_hash = 0; ///< Precomputed hash value for this key.
+
+        // TODO: We should probably sort out how to adjust these from absolute to relative tolerances.
+        QSECacheConfig m_cacheConfig = {
+            1e-3, // Default tolerance for T9
+            1e-1, // Default tolerance for rho
+            1e-3  // Default tolerance for species abundances
+        };
+
+        QSECacheKey(
+            const double T9,
+            const double rho,
+            const std::vector<double>& Y
+        );
+
+        size_t hash() const;
+
+        static long bin(double value, double tol);
+
+        bool operator==(const QSECacheKey& other) const;
+
+    };
+}
+
+// Needs to be in this order (splitting gridfire namespace up) to avoid some issues with forward declarations and the () operator.
+namespace std {
+    template <>
+    struct hash<gridfire::QSECacheKey> {
+        /**
+         * @brief Computes the hash of a QSECacheKey.
+         * @param key The QSECacheKey to hash.
+         * @return The pre-computed hash value of the key.
+         */
+        size_t operator()(const gridfire::QSECacheKey& key) const noexcept {
+            // The hash is pre-computed, so we just return it.
+            return key.m_hash;
+        }
+    };
+} // namespace std
+
+namespace gridfire {
     class MultiscalePartitioningEngineView final: public DynamicEngine, public EngineView<DynamicEngine> {
         typedef std::tuple<std::vector<fourdst::atomic::Species>, std::vector<size_t>, std::vector<fourdst::atomic::Species>, std::vector<size_t>> QSEPartition;
     public:
@@ -15,20 +67,20 @@ namespace gridfire {
         [[nodiscard]] const std::vector<fourdst::atomic::Species> & getNetworkSpecies() const override;
 
         [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
-            const std::vector<double> &Y,
+            const std::vector<double> &Y_full,
             double T9,
             double rho
         ) const override;
 
         void generateJacobianMatrix(
-            const std::vector<double> &Y_dynamic,
+            const std::vector<double> &Y_full,
             double T9,
             double rho
-        ) override;
+        ) const override;
 
         [[nodiscard]] double getJacobianMatrixEntry(
-            int i,
-            int j
+            int i_full,
+            int j_full
         ) const override;
 
         void generateStoichiometryMatrix() override;
@@ -40,7 +92,7 @@ namespace gridfire {
 
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
-            const std::vector<double> &Y,
+            const std::vector<double> &Y_full,
             double T9,
             double rho
         ) const override;
@@ -53,9 +105,11 @@ namespace gridfire {
             double rho
         ) const override;
 
-        void update(
+        fourdst::composition::Composition update(
             const NetIn &netIn
         ) override;
+
+        bool isStale(const NetIn& netIn) override;
 
         void setScreeningModel(
             screening::ScreeningType model
@@ -181,6 +235,72 @@ namespace gridfire {
             int df(const InputType& v_qse, JacobianType& J_qse) const;
         };
 
+
+        struct CacheStats {
+            enum class operators {
+                CalculateRHSAndEnergy,
+                GenerateJacobianMatrix,
+                CalculateMolarReactionFlow,
+                GetSpeciesTimescales,
+                Other,
+                All
+            };
+
+            std::map<operators, std::string> operatorsNameMap = {
+                {operators::CalculateRHSAndEnergy, "calculateRHSAndEnergy"},
+                {operators::GenerateJacobianMatrix, "generateJacobianMatrix"},
+                {operators::CalculateMolarReactionFlow, "calculateMolarReactionFlow"},
+                {operators::GetSpeciesTimescales, "getSpeciesTimescales"},
+                {operators::Other, "other"}
+            };
+
+            size_t m_hit = 0;
+            size_t m_miss = 0;
+
+            std::map<operators, size_t> m_operatorHits = {
+                {operators::CalculateRHSAndEnergy, 0},
+                {operators::GenerateJacobianMatrix, 0},
+                {operators::CalculateMolarReactionFlow, 0},
+                {operators::GetSpeciesTimescales, 0},
+                {operators::Other, 0}
+            };
+
+
+            friend std::ostream& operator<<(std::ostream& os, const CacheStats& stats) {
+                os << "CacheStats(hit: " << stats.m_hit << ", miss: " << stats.m_miss << ")";
+                return os;
+            }
+
+            void hit(const operators op=operators::Other) {
+                if (op==operators::All) {
+                    throw std::invalid_argument("Cannot use 'All' as an operator for hit/miss.");
+                }
+                m_hit++;
+                m_operatorHits[op]++;
+            }
+            void miss(const operators op=operators::Other) {
+                if (op==operators::All) {
+                    throw std::invalid_argument("Cannot use 'All' as an operator for hit/miss.");
+                }
+                m_miss++;
+                m_operatorHits[op]++;
+            }
+
+            [[nodiscard]] size_t hits(const operators op=operators::All) const {
+                if (op==operators::All) {
+                    return m_hit;
+                }
+                return m_operatorHits.at(op);
+            }
+            [[nodiscard]] size_t misses(const operators op=operators::All) const {
+                if (op==operators::All) {
+                    return m_miss;
+                }
+                return m_operatorHits.at(op);
+            }
+        };
+
+
     private:
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         GraphEngine& m_baseEngine; ///< The base engine to which this view delegates calculations.
@@ -189,7 +309,16 @@ namespace gridfire {
         std::vector<size_t> m_dynamic_species_indices; ///< Indices mapping the dynamic species back to the master engine's list.
         std::vector<fourdst::atomic::Species> m_algebraic_species; ///< Species that are algebraic in the QSE groups.
         std::vector<size_t> m_algebraic_species_indices; ///< Indices of algebraic species in the full network.
-        std::unordered_map<size_t, std::vector<size_t>> m_connectivity_graph;
+
+        std::vector<size_t> m_activeSpeciesIndices; ///< Indices of active species in the full network.
+        std::vector<size_t> m_activeReactionIndices; ///< Indices of active reactions in the full network.
+
+        // TODO: Enhance the hashing for the cache to consider not just T and rho but also the current abundance in some careful way that automatically ignores small changes (i.e. network should only be repartitioned sometimes)
+        std::unordered_map<QSECacheKey, std::vector<double>> m_qse_abundance_cache; ///< Cache for QSE abundances based on T9 and rho.
+        mutable CacheStats m_cacheStats; ///< Statistics for the QSE abundance cache.
+
+
+
 
     private:
         std::vector<std::vector<size_t>> partitionByTimescale(
@@ -230,3 +359,4 @@ namespace gridfire {
         ) const;
     };
 }
+

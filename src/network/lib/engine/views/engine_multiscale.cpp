@@ -1,4 +1,5 @@
 #include "gridfire/engine/views/engine_multiscale.h"
+#include "gridfire/exceptions/error_engine.h"
 
 #include <numeric>
 
@@ -8,8 +9,32 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <ranges>
+
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
+
+namespace {
+    std::vector<double> packCompositionToVector(const fourdst::composition::Composition& composition, const gridfire::GraphEngine& engine) {
+        std::vector<double> Y(engine.getNetworkSpecies().size(), 0.0);
+        const auto& allSpecies = engine.getNetworkSpecies();
+        for (size_t i = 0; i < allSpecies.size(); ++i) {
+            const auto& species = allSpecies[i];
+            if (!composition.contains(species)) {
+                Y[i] = 0.0; // Species not in the composition, set to zero
+            } else {
+                Y[i] = composition.getMolarAbundance(species);
+            }
+        }
+        return Y;
+    }
+
+    template <class T>
+    void hash_combine(std::size_t& seed, const T& v) {
+        std::hash<T> hashed;
+        seed ^= hashed(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+}
 
 namespace gridfire {
     static int s_operator_parens_called = 0;
@@ -20,35 +45,84 @@ namespace gridfire {
     ) : m_baseEngine(baseEngine) {}
 
     const std::vector<Species> & MultiscalePartitioningEngineView::getNetworkSpecies() const {
-        return m_dynamic_species;
+        return m_baseEngine.getNetworkSpecies();
     }
 
     StepDerivatives<double> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
-        const std::vector<double> &Y,
+        const std::vector<double> &Y_full,
         const double T9,
         const double rho
     ) const {
-        return m_baseEngine.calculateRHSAndEnergy(Y, T9, rho);
+        if (Y_full.size() != getNetworkSpecies().size()) {
+            LOG_ERROR(
+                m_logger,
+                "Y_full size ({}) does not match the number of species in the network ({})",
+                Y_full.size(),
+                getNetworkSpecies().size()
+            );
+            throw std::runtime_error("Y_full size does not match the number of species in the network. See logs for more details...");
+        }
+
+        // Check the cache to see if the network needs to be repartitioned. Note that the QSECacheKey manages binning of T9, rho, and Y_full to ensure that small changes (which would likely not result in a repartitioning) do not trigger a cache miss.
+        const QSECacheKey key(T9, rho, Y_full);
+        if (! m_qse_abundance_cache.contains(key)) {
+            m_cacheStats.miss(CacheStats::operators::CalculateRHSAndEnergy);
+            LOG_ERROR(
+                m_logger,
+                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). calculateRHSAndEnergy does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
+                T9,
+                rho,
+                m_cacheStats.misses(),
+                m_cacheStats.hits()
+            );
+            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
+        }
+        m_cacheStats.hit(CacheStats::operators::CalculateRHSAndEnergy);
+        StepDerivatives<double> deriv = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+
+        for (size_t i = 0; i < m_algebraic_species_indices.size(); ++i) {
+            const size_t species_index = m_algebraic_species_indices[i];
+            deriv.dydt[species_index] = 0.0; // Fix the algebraic species to the equilibrium abundances we calculate.
+        }
+        return deriv;
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
-        const std::vector<double> &Y_dynamic,
+        const std::vector<double> &Y_full,
         const double T9,
         const double rho
-    ) {
-        std::vector<double> Y_full(m_baseEngine.getNetworkSpecies().size(), 0.0);
-        for (size_t i = 0; i < m_dynamic_species_indices.size(); ++i) {
-            Y_full[m_dynamic_species_indices[i]] = Y_dynamic[i];
+    ) const {
+        const QSECacheKey key(T9, rho, Y_full);
+        if (!m_qse_abundance_cache.contains(key)) {
+            m_cacheStats.miss(CacheStats::operators::GenerateJacobianMatrix);
+            LOG_ERROR(
+                m_logger,
+                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). generateJacobianMatrix does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
+                T9,
+                rho,
+                m_cacheStats.misses(),
+                m_cacheStats.hits()
+            );
+            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
         }
-        // solveQSEAbundances(Y_full, T9, rho);
-        m_baseEngine.generateJacobianMatrix(Y_dynamic, T9, rho);
+        m_cacheStats.hit(CacheStats::operators::GenerateJacobianMatrix);
+
+        // TODO: Add sparsity pattern to this to prevent base engine from doing unnecessary work.
+        m_baseEngine.generateJacobianMatrix(Y_full, T9, rho);
     }
 
     double MultiscalePartitioningEngineView::getJacobianMatrixEntry(
-        const int i,
-        const int j
+        const int i_full,
+        const int j_full
     ) const {
-        return m_baseEngine.getJacobianMatrixEntry(i, j);
+        // // Check if the species we are differentiating with respect to is algebraic or dynamic. If it is algebraic we can reduce the work significantly...
+        // if (std::ranges::contains(m_algebraic_species_indices, j_full)) {
+        //     const auto& species = m_baseEngine.getNetworkSpecies()[j_full];
+        //     // If j is algebraic, we can return 0.0 since the Jacobian entry for algebraic species is always zero.
+        //     return 0.0;
+        // }
+        // Otherwise we need to query the full jacobian
+        return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
     }
 
     void MultiscalePartitioningEngineView::generateStoichiometryMatrix() {
@@ -64,11 +138,35 @@ namespace gridfire {
 
     double MultiscalePartitioningEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const std::vector<double> &Y,
+        const std::vector<double> &Y_full,
         const double T9,
         const double rho
     ) const {
-        return m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho);
+        const auto key = QSECacheKey(T9, rho, Y_full);
+        if (!m_qse_abundance_cache.contains(key)) {
+            m_cacheStats.miss(CacheStats::operators::CalculateMolarReactionFlow);
+            LOG_ERROR(
+                m_logger,
+                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). calculateMolarReactionFlow does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
+                T9,
+                rho,
+                m_cacheStats.misses(),
+                m_cacheStats.hits()
+            );
+            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
+        }
+        m_cacheStats.hit(CacheStats::operators::CalculateMolarReactionFlow);
+        std::vector<double> Y_algebraic = m_qse_abundance_cache.at(key);
+
+        assert(Y_algebraic.size() == m_algebraic_species_indices.size());
+
+        // Fix the algebraic species to the equilibrium abundances we calculate.
+        std::vector<double> Y_mutable = Y_full;
+        for (const auto& [index, Yi] : std::views::zip(m_algebraic_species_indices, Y_algebraic)) {
+            Y_mutable[index] = Yi;
+
+        }
+        return m_baseEngine.calculateMolarReactionFlow(reaction, Y_mutable, T9, rho);
     }
 
     const reaction::LogicalReactionSet & MultiscalePartitioningEngineView::getNetworkReactions() const {
@@ -80,11 +178,60 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        return m_baseEngine.getSpeciesTimescales(Y, T9, rho);
+        const auto key = QSECacheKey(T9, rho, Y);
+        if (!m_qse_abundance_cache.contains(key)) {
+            m_cacheStats.miss(CacheStats::operators::GetSpeciesTimescales);
+            LOG_ERROR(
+                m_logger,
+                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). getSpeciesTimescales does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
+                T9,
+                rho,
+                m_cacheStats.misses(),
+                m_cacheStats.hits()
+            );
+            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
+        }
+        m_cacheStats.hit(CacheStats::operators::GetSpeciesTimescales);
+        std::unordered_map<Species, double> speciesTimescales = m_baseEngine.getSpeciesTimescales(Y, T9, rho);
+        for (const auto& algebraicSpecies : m_algebraic_species) {
+            speciesTimescales[algebraicSpecies] = std::numeric_limits<double>::infinity(); // Algebraic species have infinite timescales.
+        }
+        return speciesTimescales;
     }
 
-    void MultiscalePartitioningEngineView::update(const NetIn &netIn) {
-        return; // call partition eventually
+    fourdst::composition::Composition MultiscalePartitioningEngineView::update(const NetIn &netIn) {
+        const fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
+
+        const auto key = QSECacheKey(
+            netIn.temperature / 1.0e9, // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
+            netIn.density,
+            packCompositionToVector(baseUpdatedComposition, m_baseEngine)
+        );
+        if (m_qse_abundance_cache.contains(key)) {
+            return baseUpdatedComposition;
+        }
+        NetIn baseUpdatedNetIn = netIn;
+        baseUpdatedNetIn.composition = baseUpdatedComposition;
+        const fourdst::composition::Composition equilibratedComposition = equilibrateNetwork(baseUpdatedNetIn);
+        std::vector<double> Y_algebraic(m_algebraic_species_indices.size(), 0.0);
+        for (size_t i = 0; i < m_algebraic_species_indices.size(); ++i) {
+            const size_t species_index = m_algebraic_species_indices[i];
+            Y_algebraic[i] = equilibratedComposition.getMolarAbundance(m_baseEngine.getNetworkSpecies()[species_index]);
+        }
+        m_qse_abundance_cache[key] = std::move(Y_algebraic);
+        return equilibratedComposition;
+    }
+
+    bool MultiscalePartitioningEngineView::isStale(const NetIn &netIn) {
+        const auto key = QSECacheKey(
+            netIn.temperature,
+            netIn.density,
+            packCompositionToVector(netIn.composition, m_baseEngine)
+        );
+        if (m_qse_abundance_cache.contains(key)) {
+            return false; // The cache hit indicates the engine is not stale for the given conditions.
+        }
+        return true;
     }
 
     void MultiscalePartitioningEngineView::setScreeningModel(
@@ -112,7 +259,6 @@ namespace gridfire {
         m_qse_groups.clear();
         m_dynamic_species.clear();
         m_dynamic_species_indices.clear();
-        m_connectivity_graph.clear();
         m_algebraic_species.clear();
         m_algebraic_species_indices.clear();
 
@@ -223,16 +369,7 @@ namespace gridfire {
     void MultiscalePartitioningEngineView::partitionNetwork(
         const NetIn &netIn
     ) {
-        std::vector<double> Y(m_baseEngine.getNetworkSpecies().size(), 0.0);
-        for (const auto& [symbol, entry]: netIn.composition ) {
-            if (!m_baseEngine.involvesSpecies(entry.isotope())) {
-                LOG_WARNING(m_logger, "Species {} is not part of the network. This is likely due to the base network not being deep enough. For rare species this may not be an issue. Skipping...", entry.isotope().name());
-                continue; // Skip species not in the network
-            }
-            const size_t species_index = m_baseEngine.getSpeciesIndex(entry.isotope());
-            Y[species_index] = netIn.composition.getMolarAbundance(symbol);
-        }
-
+        const std::vector<double> Y = packCompositionToVector(netIn.composition, m_baseEngine);
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
         const double rho = netIn.density; // Density in g/cm^3
 
@@ -300,9 +437,9 @@ namespace gridfire {
 
             // Determine color based on category. A species can be a seed and also in the core dynamic group.
             // The more specific category (algebraic, then seed) takes precedence.
-            if (algebraic_indices.count(i)) {
+            if (algebraic_indices.contains(i)) {
                 fillcolor = "#e0f2fe"; // Light Blue: Algebraic (in QSE)
-            } else if (seed_indices.count(i)) {
+            } else if (seed_indices.contains(i)) {
                 fillcolor = "#a7f3d0"; // Light Green: Seed (Dynamic, feeds a QSE group)
             } else if (std::ranges::contains(m_dynamic_species_indices, i)) {
                 fillcolor = "#dcfce7"; // Pale Green: Core Dynamic
@@ -318,7 +455,7 @@ namespace gridfire {
         // --- Layout and Ranking ---
         // Enforce a top-down layout based on mass number.
         dotFile << "    // --- Layout using Ranks ---\n";
-        for (const auto& [mass, species_list] : species_by_mass) {
+        for (const auto &species_list: species_by_mass | std::views::values) {
             dotFile << "    { rank=same; ";
             for (const auto& name : species_list) {
                 dotFile << "\"" << name << "\"; ";
@@ -332,7 +469,7 @@ namespace gridfire {
         for (const auto& [mass, species_list] : species_by_mass) {
             // Find the next largest mass in the species list
             int minLargestMass = std::numeric_limits<int>::max();
-            for (const auto& [next_mass, _] : species_by_mass) {
+            for (const auto &next_mass: species_by_mass | std::views::keys) {
                 if (next_mass > mass && next_mass < minLargestMass) {
                     minLargestMass = next_mass;
                 }
@@ -387,7 +524,7 @@ namespace gridfire {
                 dotFile << "            " << ss.str() << "    [label=\"" << all_species[species_idx].name() << "\"];\n";
                 algebraic_node_ids.push_back(ss.str());
             }
-            // Make invisible edges between algebraic indicies to keep them in top down order
+            // Make invisible edges between algebraic indices to keep them in top-down order
             for (size_t i = 0; i < algebraic_node_ids.size() - 1; ++i) {
                 dotFile << "            " << algebraic_node_ids[i] << " -> " << algebraic_node_ids[i + 1] << " [style=invis];\n";
             }
@@ -511,21 +648,15 @@ namespace gridfire {
         }
 
         composition.finalize(true);
+
         return composition;
     }
 
     fourdst::composition::Composition MultiscalePartitioningEngineView::equilibrateNetwork(
         const NetIn &netIn
     ) {
-        std::vector<double> Y(m_baseEngine.getNetworkSpecies().size(), 0.0);
-        for (const auto& [symbol, entry]: netIn.composition ) {
-            if (!m_baseEngine.involvesSpecies(entry.isotope())) {
-                LOG_WARNING(m_logger, "Species {} is not part of the network. This is likely due to the base network not being deep enough. For rare species this may not be an issue. Skipping...", entry.isotope().name());
-                continue; // Skip species not in the network
-            }
-            const size_t species_index = m_baseEngine.getSpeciesIndex(entry.isotope());
-            Y[species_index] = netIn.composition.getMolarAbundance(symbol);
-        }
+        const PrimingReport primingReport = m_baseEngine.primeEngine(netIn);
+        const std::vector<double> Y = packCompositionToVector(primingReport.primedComposition, m_baseEngine);
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
         const double rho = netIn.density; // Density in g/cm^3
@@ -1128,6 +1259,7 @@ namespace gridfire {
         return candidate_groups;
     }
 
+
     int MultiscalePartitioningEngineView::EigenFunctor::operator()(const InputType &v_qse, OutputType &f_qse) const {
         s_operator_parens_called++;
         std::vector<double> y_trial = m_Y_full_initial;
@@ -1137,7 +1269,7 @@ namespace gridfire {
             y_trial[m_qse_solve_indices[i]] = y_qse(i);
         }
 
-        const auto [dydt, energy] = m_view->calculateRHSAndEnergy(y_trial, m_T9, m_rho);
+        const auto [dydt, energy] = m_view->getBaseEngine().calculateRHSAndEnergy(y_trial, m_T9, m_rho);
         f_qse.resize(m_qse_solve_indices.size());
         for (size_t i = 0; i < m_qse_solve_indices.size(); ++i) {
             f_qse(i) = dydt[m_qse_solve_indices[i]];
@@ -1155,13 +1287,13 @@ namespace gridfire {
         }
 
         // TODO: Think about if the jacobian matrix should be mutable so that generateJacobianMatrix can be const
-        m_view->generateJacobianMatrix(y_trial, m_T9, m_rho);
+        m_view->getBaseEngine().generateJacobianMatrix(y_trial, m_T9, m_rho);
 
         // TODO: Think very carefully about the indices here.
         J_qse.resize(m_qse_solve_indices.size(), m_qse_solve_indices.size());
         for (size_t i = 0; i < m_qse_solve_indices.size(); ++i) {
             for (size_t j = 0; j < m_qse_solve_indices.size(); ++j) {
-                J_qse(i, j) = m_view->getJacobianMatrixEntry(
+                J_qse(i, j) = m_view->getBaseEngine().getJacobianMatrixEntry(
                     m_qse_solve_indices[i],
                     m_qse_solve_indices[j]
                 );
@@ -1174,5 +1306,46 @@ namespace gridfire {
             J_qse.col(j) *= dY_dv; // Scale the column by the derivative of the asinh scaling
         }
         return 0; // Success
+    }
+
+
+    QSECacheKey::QSECacheKey(
+        const double T9,
+        const double rho,
+        const std::vector<double> &Y
+    ) :
+    m_T9(T9),
+    m_rho(rho),
+    m_Y(Y) {
+        m_hash = hash();
+    }
+
+    size_t QSECacheKey::hash() const {
+        std::size_t seed = 0;
+
+        hash_combine(seed, m_Y.size());
+
+        hash_combine(seed, bin(m_T9, m_cacheConfig.T9_tol));
+        hash_combine(seed, bin(m_rho, m_cacheConfig.rho_tol));
+
+        for (double Yi : m_Y) {
+            if (Yi < 0.0 && std::abs(Yi) < 1e-20) {
+                Yi = 0.0; // Avoid negative abundances
+            } else if (Yi < 0.0 && std::abs(Yi) >= 1e-20) {
+                throw std::invalid_argument("Yi should be positive for valid hashing (expected Yi > 0, received " + std::to_string(Yi) + ")");
+            }
+            hash_combine(seed, bin(Yi, m_cacheConfig.Yi_tol));
+        }
+
+        return seed;
+
+    }
+
+    long QSECacheKey::bin(const double value, const double tol) {
+        return static_cast<long>(std::floor(value / tol));
+    }
+
+    bool QSECacheKey::operator==(const QSECacheKey &other) const {
+        return m_hash == other.m_hash;
     }
 }
