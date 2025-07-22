@@ -64,7 +64,7 @@ namespace gridfire {
     // Trim whitespace from both ends of a string
     std::string trim_whitespace(const std::string& str) {
         auto startIt = str.begin();
-        auto endIt   = str.end();
+        const auto endIt   = str.end();
 
         while (startIt != endIt && std::isspace(static_cast<unsigned char>(*startIt))) {
             ++startIt;
@@ -72,8 +72,8 @@ namespace gridfire {
         if (startIt == endIt) {
             return "";
         }
-        auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
-                                 [](unsigned char ch){ return !std::isspace(ch); });
+        const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
+                                 [](const unsigned char ch){ return !std::isspace(ch); });
         return std::string(startIt, ritr.base());
     }
 

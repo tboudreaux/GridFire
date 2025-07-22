@@ -144,7 +144,7 @@ namespace gridfire {
          *
          * @see StepDerivatives
          */
-        [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double>& Y,
             const double T9,
             const double rho
@@ -215,6 +215,8 @@ namespace gridfire {
          */
         [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
 
+        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+
         /**
          * @brief Gets an entry from the previously generated Jacobian matrix.
          *
@@ -268,7 +270,13 @@ namespace gridfire {
          * This method estimates the timescale for abundance change of each species,
          * which can be used for timestep control or diagnostics.
          */
-        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+            const std::vector<double>& Y,
+            double T9,
+            double rho
+        ) const override;
+
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
             const std::vector<double>& Y,
             double T9,
             double rho
@@ -511,7 +519,7 @@ namespace gridfire {
          * to store the partial derivatives of the right-hand side of the ODE
          * with respect to the species abundances.
          */
-        void reserveJacobianMatrix();
+        void reserveJacobianMatrix() const;
 
         /**
          * @brief Records the AD tape for the right-hand side of the ODE.
@@ -795,43 +803,12 @@ namespace gridfire {
             );
 
             const T molarReactionFlow = forwardMolarReactionFlow - reverseMolarFlow; // Net molar reaction flow
-            // std::stringstream ss;
-            // ss << "Forward: " << forwardMolarReactionFlow
-            //    << ", Reverse: " << reverseMolarFlow
-            //    << ", Net: " << molarReactionFlow;
-            // LOG_TRACE_L3(
-            //     m_logger,
-            //     "Reaction: {}, {}",
-            //     reaction.peName(),
-            //     ss.str()
-            // );
-            // std::cout << "Forward molar flow for reaction " << reaction.peName() << ": " << forwardMolarReactionFlow << std::endl;
-            // std::cout << "Reverse molar flow for reaction " << reaction.peName() << ": " << reverseMolarFlow << std::endl;
-            // std::cout << "Net molar flow for reaction " << reaction.peName() << ": " << molarReactionFlow << std::endl;
 
             // 3. Use the rate to update all relevant species derivatives (dY/dt)
             for (size_t speciesIndex = 0; speciesIndex < m_networkSpecies.size(); ++speciesIndex) {
-                const auto& species = m_networkSpecies[speciesIndex];
                 const T nu_ij = static_cast<T>(m_stoichiometryMatrix(speciesIndex, reactionIndex));
-                // bool taping = false;
-                // if constexpr (std::is_same_v<T, CppAD::AD<double>>) {
-                //     taping = true;
-                // }
-                // if (species.name() == "F-17" && nu_ij != static_cast<T>(0.0)) {
-                //     T f17dydt = result.dydt[speciesIndex] + threshold_flag * nu_ij * molarReactionFlow;
-                //     std::string tstring = taping ? "During Taping" : "During Evaluation";
-                //     std::cout << "(" << tstring << ") F-17 Debugging. For Reaction " << reaction.id() << " (" << reaction.peName() << "): "
-                //               << "nu_ij: " << nu_ij << ", molarReactionFlow: " << molarReactionFlow
-                //               << ", threshold_flag: " << threshold_flag << ", dY/dt: " << f17dydt << ", Y: " << Y[speciesIndex]
-                //               << std::endl;
-                //     isF17 = true;
-                // }
                 result.dydt[speciesIndex] += threshold_flag * nu_ij * molarReactionFlow;
             }
-            // if (isF17) {
-            //     std::cout << "=========================================================" << std::endl;
-            //     isF17 = false;
-            // }
         }
 
         T massProductionRate = static_cast<T>(0.0); // [mol][s^-1]

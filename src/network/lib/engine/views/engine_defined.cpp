@@ -16,60 +16,7 @@ namespace gridfire {
 
     DefinedEngineView::DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine) :
     m_baseEngine(baseEngine) {
-        m_activeReactions.clear();
-        m_activeSpecies.clear();
-
-        std::unordered_set<Species> seenSpecies;
-
-        const auto& fullNetworkReactionSet = m_baseEngine.getNetworkReactions();
-        for (const auto& peName : peNames) {
-            if (!fullNetworkReactionSet.contains(peName)) {
-                LOG_ERROR(m_logger, "Reaction with name '{}' not found in the base engine's network reactions. Aborting...", peName);
-                m_logger->flush_log();
-                throw std::runtime_error("Reaction with name '" + std::string(peName) + "' not found in the base engine's network reactions.");
-            }
-            auto reaction = fullNetworkReactionSet[peName];
-            for (const auto& reactant : reaction.reactants()) {
-                if (!seenSpecies.contains(reactant)) {
-                    seenSpecies.insert(reactant);
-                    m_activeSpecies.push_back(reactant);
-                }
-            }
-            for (const auto& product : reaction.products()) {
-                if (!seenSpecies.contains(product)) {
-                    seenSpecies.insert(product);
-                    m_activeSpecies.push_back(product);
-                }
-            }
-            m_activeReactions.add_reaction(reaction);
-        }
-        LOG_TRACE_L1(m_logger, "DefinedEngineView built with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
-        LOG_DEBUG(m_logger, "Active species: {}", [this]() -> std::string {
-            std::string result;
-            for (const auto& species : m_activeSpecies) {
-                result += std::string(species.name()) + ", ";
-            }
-            if (!result.empty()) {
-                result.pop_back(); // Remove last space
-                result.pop_back(); // Remove last comma
-            }
-            return result;
-        }());
-        LOG_DEBUG(m_logger, "Active reactions: {}", [this]() -> std::string {
-            std::string result;
-            for (const auto& reaction : m_activeReactions) {
-                result += std::string(reaction.id()) + ", ";
-            }
-            if (!result.empty()) {
-                result.pop_back(); // Remove last space
-                result.pop_back(); // Remove last comma
-            }
-            return result;
-        }());
-        m_speciesIndexMap = constructSpeciesIndexMap();
-        m_reactionIndexMap = constructReactionIndexMap();
-        m_isStale = false;
-
+        collect(peNames);
     }
 
     const DynamicEngine & DefinedEngineView::getBaseEngine() const {
@@ -80,7 +27,7 @@ namespace gridfire {
         return m_activeSpecies;
     }
 
-    StepDerivatives<double> DefinedEngineView::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, expectations::StaleEngineError> DefinedEngineView::calculateRHSAndEnergy(
         const std::vector<double> &Y_defined,
         const double T9,
         const double rho
@@ -88,8 +35,13 @@ namespace gridfire {
         validateNetworkState();
 
         const auto Y_full = mapViewToFull(Y_defined);
-        const auto [dydt, nuclearEnergyGenerationRate] = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
 
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+
+        const auto [dydt, nuclearEnergyGenerationRate] = result.value();
         StepDerivatives<double> definedResults;
         definedResults.nuclearEnergyGenerationRate = nuclearEnergyGenerationRate;
         definedResults.dydt = mapFullToView(dydt);
@@ -159,7 +111,15 @@ namespace gridfire {
         return m_activeReactions;
     }
 
-    std::unordered_map<Species, double> DefinedEngineView::getSpeciesTimescales(
+    void DefinedEngineView::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+        std::vector<std::string> peNames;
+        for (const auto& reaction : reactions) {
+            peNames.push_back(std::string(reaction.id()));
+        }
+        collect(peNames);
+    }
+
+    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesTimescales(
         const std::vector<double> &Y_defined,
         const double T9,
         const double rho
@@ -167,7 +127,11 @@ namespace gridfire {
         validateNetworkState();
 
         const auto Y_full = mapViewToFull(Y_defined);
-        const auto fullTimescales = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+        const auto& fullTimescales = result.value();
 
         std::unordered_map<Species, double> definedTimescales;
         for (const auto& active_species : m_activeSpecies) {
@@ -178,12 +142,38 @@ namespace gridfire {
         return definedTimescales;
     }
 
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
+    DefinedEngineView::getSpeciesDestructionTimescales(
+        const std::vector<double> &Y_defined,
+        const double T9,
+        const double rho
+    ) const {
+        validateNetworkState();
+
+        const auto Y_full = mapViewToFull(Y_defined);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
+
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+
+        const auto& destructionTimescales = result.value();
+
+        std::unordered_map<Species, double> definedTimescales;
+        for (const auto& active_species : m_activeSpecies) {
+            if (destructionTimescales.contains(active_species)) {
+                definedTimescales[active_species] = destructionTimescales.at(active_species);
+            }
+        }
+        return definedTimescales;
+    }
+
     fourdst::composition::Composition DefinedEngineView::update(const NetIn &netIn) {
         return m_baseEngine.update(netIn);
     }
 
     bool DefinedEngineView::isStale(const NetIn &netIn) {
-        return false;
+        return m_baseEngine.isStale(netIn);
     }
 
 
@@ -198,7 +188,7 @@ namespace gridfire {
     int DefinedEngineView::getSpeciesIndex(const Species &species) const {
         validateNetworkState();
 
-        auto it = std::find(m_activeSpecies.begin(), m_activeSpecies.end(), species);
+        const auto it = std::ranges::find(m_activeSpecies, species);
         if (it != m_activeSpecies.end()) {
             return static_cast<int>(std::distance(m_activeSpecies.begin(), it));
         } else {
@@ -224,7 +214,7 @@ namespace gridfire {
     }
 
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap() const {
-        LOG_TRACE_L1(m_logger, "Constructing species index map for DefinedEngineView...");
+        LOG_TRACE_L3(m_logger, "Constructing species index map for DefinedEngineView...");
         std::unordered_map<Species, size_t> fullSpeciesReverseMap;
         const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
 
@@ -247,13 +237,13 @@ namespace gridfire {
                 throw std::runtime_error("Species not found in full species map: " + std::string(active_species.name()));
             }
         }
-        LOG_TRACE_L1(m_logger, "Species index map constructed with {} entries.", speciesIndexMap.size());
+        LOG_TRACE_L3(m_logger, "Species index map constructed with {} entries.", speciesIndexMap.size());
         return speciesIndexMap;
 
     }
 
     std::vector<size_t> DefinedEngineView::constructReactionIndexMap() const {
-        LOG_TRACE_L1(m_logger, "Constructing reaction index map for DefinedEngineView...");
+        LOG_TRACE_L3(m_logger, "Constructing reaction index map for DefinedEngineView...");
 
         // --- Step 1: Create a reverse map using the reaction's unique ID as the key. ---
         std::unordered_map<std::string_view, size_t> fullReactionReverseMap;
@@ -280,7 +270,7 @@ namespace gridfire {
             }
         }
 
-        LOG_TRACE_L1(m_logger, "Reaction index map constructed with {} entries.", reactionIndexMap.size());
+        LOG_TRACE_L3(m_logger, "Reaction index map constructed with {} entries.", reactionIndexMap.size());
         return reactionIndexMap;
     }
 
@@ -326,6 +316,59 @@ namespace gridfire {
             m_logger->flush_log();
             throw std::runtime_error("DefinedEngineView is stale. Please call update() with a valid NetIn object.");
         }
+    }
+
+    void DefinedEngineView::collect(const std::vector<std::string> &peNames) {
+        std::unordered_set<Species> seenSpecies;
+
+        const auto& fullNetworkReactionSet = m_baseEngine.getNetworkReactions();
+        for (const auto& peName : peNames) {
+            if (!fullNetworkReactionSet.contains(peName)) {
+                LOG_ERROR(m_logger, "Reaction with name '{}' not found in the base engine's network reactions. Aborting...", peName);
+                m_logger->flush_log();
+                throw std::runtime_error("Reaction with name '" + std::string(peName) + "' not found in the base engine's network reactions.");
+            }
+            auto reaction = fullNetworkReactionSet[peName];
+            for (const auto& reactant : reaction.reactants()) {
+                if (!seenSpecies.contains(reactant)) {
+                    seenSpecies.insert(reactant);
+                    m_activeSpecies.push_back(reactant);
+                }
+            }
+            for (const auto& product : reaction.products()) {
+                if (!seenSpecies.contains(product)) {
+                    seenSpecies.insert(product);
+                    m_activeSpecies.push_back(product);
+                }
+            }
+            m_activeReactions.add_reaction(reaction);
+        }
+        LOG_TRACE_L3(m_logger, "DefinedEngineView built with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
+        LOG_TRACE_L3(m_logger, "Active species: {}", [this]() -> std::string {
+            std::string result;
+            for (const auto& species : m_activeSpecies) {
+                result += std::string(species.name()) + ", ";
+            }
+            if (!result.empty()) {
+                result.pop_back(); // Remove last space
+                result.pop_back(); // Remove last comma
+            }
+            return result;
+        }());
+        LOG_TRACE_L3(m_logger, "Active reactions: {}", [this]() -> std::string {
+            std::string result;
+            for (const auto& reaction : m_activeReactions) {
+                result += std::string(reaction.id()) + ", ";
+            }
+            if (!result.empty()) {
+                result.pop_back(); // Remove last space
+                result.pop_back(); // Remove last comma
+            }
+            return result;
+        }());
+        m_speciesIndexMap = constructSpeciesIndexMap();
+        m_reactionIndexMap = constructReactionIndexMap();
+        m_isStale = false;
     }
 
 

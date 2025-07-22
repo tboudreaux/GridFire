@@ -45,7 +45,7 @@ namespace gridfire {
                 speciesToPrime.push_back(entry.isotope());
             }
         }
-        LOG_INFO(logger, "Priming {} species in the network.", speciesToPrime.size());
+        LOG_DEBUG(logger, "Priming {} species in the network.", speciesToPrime.size());
 
         PrimingReport report;
         if (speciesToPrime.empty()) {
@@ -57,7 +57,7 @@ namespace gridfire {
 
         const double T9 = netIn.temperature / 1e9;
         const double rho = netIn.density;
-        const auto initialDepth = engine.getDepth();
+        const auto initialReactionSet = engine.getNetworkReactions();
 
         report.status = PrimingReportStatus::FULL_SUCCESS;
         report.success = true;
@@ -76,7 +76,7 @@ namespace gridfire {
         engine.rebuild(netIn.composition, NetworkBuildDepth::Full);
 
         for (const auto& primingSpecies : speciesToPrime) {
-            LOG_DEBUG(logger, "Priming species: {}", primingSpecies.name());
+            LOG_TRACE_L3(logger, "Priming species: {}", primingSpecies.name());
 
             // Create a temporary composition from the current internal state for the primer
             Composition tempComp;
@@ -114,12 +114,12 @@ namespace gridfire {
                     LOG_WARNING(logger, "Equilibrium mass fraction for {} is NaN. Setting to 0.0. This is likely not an issue. It probably originates from all reactions leading to creation and destruction being frozen out. In that case 0.0 should be a good approximation. Hint: This happens often when the network temperature is very the low. ", primingSpecies.name());
                     equilibriumMassFraction = 0.0;
                 }
-                LOG_INFO(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
+                LOG_TRACE_L3(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
 
                 const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho);
 
                 if (dominantChannel) {
-                    LOG_DEBUG(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->peName());
+                    LOG_TRACE_L3(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->peName());
 
                     double totalReactantMass = 0.0;
                     for (const auto& reactant : dominantChannel->reactants()) {
@@ -186,7 +186,7 @@ namespace gridfire {
             report.massFractionChanges.emplace_back(species, change);
         }
 
-        engine.rebuild(netIn.composition, initialDepth);
+        engine.setNetworkReactions(initialReactionSet);
         return report;
     }
 

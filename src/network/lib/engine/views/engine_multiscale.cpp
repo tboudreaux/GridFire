@@ -10,11 +10,13 @@
 #include <unordered_set>
 
 #include <ranges>
+#include <algorithm>
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
 namespace {
+    using namespace fourdst::atomic;
     std::vector<double> packCompositionToVector(const fourdst::composition::Composition& composition, const gridfire::GraphEngine& engine) {
         std::vector<double> Y(engine.getNetworkSpecies().size(), 0.0);
         const auto& allSpecies = engine.getNetworkSpecies();
@@ -34,6 +36,115 @@ namespace {
         std::hash<T> hashed;
         seed ^= hashed(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
+
+    std::vector<std::vector<size_t>> findConnectedComponentsBFS(
+        const std::unordered_map<size_t, std::vector<size_t>>& graph,
+        const std::vector<size_t>& nodes
+    ) {
+        std::vector<std::vector<size_t>> components;
+        std::unordered_set<size_t> visited;
+
+        for (const size_t& start_node : nodes) {
+            if (visited.find(start_node) == visited.end()) {
+                std::vector<size_t> current_component;
+                std::queue<size_t> q;
+
+                q.push(start_node);
+                visited.insert(start_node);
+
+                while (!q.empty()) {
+                    size_t u = q.front();
+                    q.pop();
+                    current_component.push_back(u);
+
+                    if (graph.count(u)) {
+                        for (const auto& v : graph.at(u)) {
+                            if (visited.find(v) == visited.end()) {
+                                visited.insert(v);
+                                q.push(v);
+                            }
+                        }
+                    }
+                }
+                components.push_back(current_component);
+            }
+        }
+        return components;
+    }
+
+    struct SpeciesSetIntersection {
+        const Species species;
+        std::size_t count;
+    };
+
+    std::expected<SpeciesSetIntersection, std::string> get_intersection_info (
+        const std::unordered_set<Species>& setA,
+        const std::unordered_set<Species>& setB
+    ) {
+        // Iterate over the smaller of the two
+        auto* outerSet = &setA;
+        auto* innerSet = &setB;
+        if (setA.size() > setB.size()) {
+            outerSet = &setB;
+            innerSet = &setA;
+        }
+
+        std::size_t matchCount = 0;
+        const Species* firstMatch = nullptr;
+
+        for (const Species& sp : *outerSet) {
+            if (innerSet->contains(sp)) {
+                if (matchCount == 0) {
+                    firstMatch = &sp;
+                }
+                ++matchCount;
+                if (matchCount > 1) {
+                    break;
+                }
+            }
+        }
+        if (!firstMatch) {
+            // No matches found
+            return std::unexpected{"Intersection is empty"};
+        }
+        if (matchCount == 0) {
+            // No matches found
+            return std::unexpected{"No intersection found"};
+        }
+
+        // Return the first match and the count of matches
+        return SpeciesSetIntersection{*firstMatch, matchCount};
+
+    }
+
+    bool has_distinct_reactant_and_product_species (
+        const std::unordered_set<Species>& poolSpecies,
+        const std::unordered_set<Species>& reactants,
+        const std::unordered_set<Species>& products
+    ) {
+        const auto reactant_result = get_intersection_info(poolSpecies, reactants);
+        if (!reactant_result) {
+            return false; // No reactants found
+        }
+        const auto [reactantSample, reactantCount] = reactant_result.value();
+
+        const auto product_result = get_intersection_info(poolSpecies, products);
+        if (!product_result) {
+            return false; // No products found
+        }
+
+        const auto [productSample, productCount] = product_result.value();
+
+        // If either side has ≥2 distinct matches, we can always pick
+        // one from each that differ.
+        if (reactantCount > 1 || productCount > 1) {
+            return true;
+        }
+
+        // Exactly one match on each side → they must differ
+        return reactantSample != productSample;
+    }
+
 }
 
 namespace gridfire {
@@ -48,7 +159,7 @@ namespace gridfire {
         return m_baseEngine.getNetworkSpecies();
     }
 
-    StepDerivatives<double> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
         const std::vector<double> &Y_full,
         const double T9,
         const double rho
@@ -75,10 +186,14 @@ namespace gridfire {
                 m_cacheStats.misses(),
                 m_cacheStats.hits()
             );
-            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
+            return std::unexpected{expectations::StaleEngineError(expectations::StaleEngineErrorTypes::SYSTEM_RESIZED)};
         }
         m_cacheStats.hit(CacheStats::operators::CalculateRHSAndEnergy);
-        StepDerivatives<double> deriv = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+        auto deriv = result.value();
 
         for (size_t i = 0; i < m_algebraic_species_indices.size(); ++i) {
             const size_t species_index = m_algebraic_species_indices[i];
@@ -173,7 +288,12 @@ namespace gridfire {
         return m_baseEngine.getNetworkReactions();
     }
 
-    std::unordered_map<Species, double> MultiscalePartitioningEngineView::getSpeciesTimescales(
+    void MultiscalePartitioningEngineView::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+        LOG_CRITICAL(m_logger, "setNetworkReactions is not supported in MultiscalePartitioningEngineView. Did you mean to call this on the base engine?");
+        throw exceptions::UnableToSetNetworkReactionsError("setNetworkReactions is not supported in MultiscalePartitioningEngineView. Did you mean to call this on the base engine?");
+    }
+
+    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::getSpeciesTimescales(
         const std::vector<double> &Y,
         const double T9,
         const double rho
@@ -192,22 +312,58 @@ namespace gridfire {
             throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
         }
         m_cacheStats.hit(CacheStats::operators::GetSpeciesTimescales);
-        std::unordered_map<Species, double> speciesTimescales = m_baseEngine.getSpeciesTimescales(Y, T9, rho);
+        const auto result  = m_baseEngine.getSpeciesTimescales(Y, T9, rho);
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+        std::unordered_map<Species, double> speciesTimescales = result.value();
         for (const auto& algebraicSpecies : m_algebraic_species) {
             speciesTimescales[algebraicSpecies] = std::numeric_limits<double>::infinity(); // Algebraic species have infinite timescales.
         }
         return speciesTimescales;
     }
 
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
+    MultiscalePartitioningEngineView::getSpeciesDestructionTimescales(
+        const std::vector<double> &Y,
+        double T9,
+        double rho
+    ) const {
+        const auto key = QSECacheKey(T9, rho, Y);
+        if (!m_qse_abundance_cache.contains(key)) {
+            m_cacheStats.miss(CacheStats::operators::GetSpeciesDestructionTimescales);
+            LOG_ERROR(
+                m_logger,
+                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). getSpeciesDestructionTimescales does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
+                T9,
+                rho,
+                m_cacheStats.misses(),
+                m_cacheStats.hits()
+            );
+            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
+        }
+        m_cacheStats.hit(CacheStats::operators::GetSpeciesDestructionTimescales);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y, T9, rho);
+        if (!result) {
+            return std::unexpected{result.error()};
+        }
+        std::unordered_map<Species, double> speciesDestructionTimescales = result.value();
+        for (const auto& algebraicSpecies : m_algebraic_species) {
+            speciesDestructionTimescales[algebraicSpecies] = std::numeric_limits<double>::infinity(); // Algebraic species have infinite destruction timescales.
+        }
+        return speciesDestructionTimescales;
+    }
+
     fourdst::composition::Composition MultiscalePartitioningEngineView::update(const NetIn &netIn) {
         const fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
+        double T9 = netIn.temperature / 1.0e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
 
-        const auto key = QSECacheKey(
-            netIn.temperature / 1.0e9, // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
+        const auto preKey = QSECacheKey(
+            T9,
             netIn.density,
             packCompositionToVector(baseUpdatedComposition, m_baseEngine)
         );
-        if (m_qse_abundance_cache.contains(key)) {
+        if (m_qse_abundance_cache.contains(preKey)) {
             return baseUpdatedComposition;
         }
         NetIn baseUpdatedNetIn = netIn;
@@ -218,7 +374,17 @@ namespace gridfire {
             const size_t species_index = m_algebraic_species_indices[i];
             Y_algebraic[i] = equilibratedComposition.getMolarAbundance(m_baseEngine.getNetworkSpecies()[species_index]);
         }
-        m_qse_abundance_cache[key] = std::move(Y_algebraic);
+
+        // We store the algebraic abundances in the cache for both pre- and post-conditions to avoid recalculating them.
+        m_qse_abundance_cache[preKey] = Y_algebraic;
+
+        const auto postKey = QSECacheKey(
+            T9,
+            netIn.density,
+            packCompositionToVector(equilibratedComposition, m_baseEngine)
+        );
+        m_qse_abundance_cache[postKey] = Y_algebraic;
+
         return equilibratedComposition;
     }
 
@@ -229,7 +395,7 @@ namespace gridfire {
             packCompositionToVector(netIn.composition, m_baseEngine)
         );
         if (m_qse_abundance_cache.contains(key)) {
-            return false; // The cache hit indicates the engine is not stale for the given conditions.
+            return m_baseEngine.isStale(netIn); // The cache hit indicates the engine is not stale for the given conditions.
         }
         return true;
     }
@@ -246,6 +412,28 @@ namespace gridfire {
 
     const DynamicEngine & MultiscalePartitioningEngineView::getBaseEngine() const {
         return m_baseEngine;
+    }
+
+    std::vector<std::vector<size_t>> MultiscalePartitioningEngineView::analyzeTimescalePoolConnectivity(
+        const std::vector<std::vector<size_t>> &timescale_pools,
+        const std::vector<double> &Y,
+        double T9,
+        double rho
+    ) const {
+        std::vector<std::vector<size_t>> final_connected_pools;
+
+        for (const auto& pool : timescale_pools) {
+            if (pool.empty()) {
+                continue; // Skip empty pools
+            }
+
+            // For each timescale pool, we need to analyze connectivity.
+            auto connectivity_graph = buildConnectivityGraph(pool);
+            auto components = findConnectedComponentsBFS(connectivity_graph, pool);
+            final_connected_pools.insert(final_connected_pools.end(), components.begin(), components.end());
+        }
+        return final_connected_pools;
+
     }
 
     void MultiscalePartitioningEngineView::partitionNetwork(
@@ -286,40 +474,22 @@ namespace gridfire {
             candidate_pools.push_back(timescale_pools[i]);
         }
 
+        LOG_TRACE_L1(m_logger, "Preforming connectivity analysis on timescale pools...");
+        const std::vector<std::vector<size_t>> connected_pools = analyzeTimescalePoolConnectivity(candidate_pools, Y, T9, rho);
+        LOG_TRACE_L1(m_logger, "Found {} connected pools (compared to {} timescale pools) for QSE analysis.", connected_pools.size(), timescale_pools.size());
+
+
         // --- Step 5. Identify potential seed species for each candidate pool ---
         LOG_TRACE_L1(m_logger, "Identifying potential seed species for candidate pools...");
-        const std::vector<QSEGroup> candidate_groups = constructCandidateGroups(candidate_pools, Y, T9, rho);
+        const std::vector<QSEGroup> candidate_groups = constructCandidateGroups(connected_pools, Y, T9, rho);
         LOG_TRACE_L1(
             m_logger,
-            "Found {} candidate QSE groups for further analysis. {}",
+            "Found {} candidate QSE groups for further analysis: {}",
             candidate_groups.size(),
             [&]() -> std::string {
                 std::stringstream ss;
-                int count = 0;
                 for (const auto& group : candidate_groups) {
-                    ss << "CandidateGroup(seeds: [";
-                    int icount = 0;
-                    for (const auto& seed_index : group.seed_indices) {
-                        ss << m_baseEngine.getNetworkSpecies()[seed_index].name();
-                        if (icount < group.seed_indices.size() - 1) {
-                            ss << ", ";
-                        }
-                        icount++;
-                    }
-                    ss << "], qse species: [";
-                    icount = 0;
-                    for (const auto& qse_index : group.algebraic_indices) {
-                        ss << m_baseEngine.getNetworkSpecies()[qse_index].name();
-                        if (icount < group.algebraic_indices.size() - 1) {
-                            ss << ", ";
-                        }
-                        icount++;
-                    }
-                    ss << "])";
-                    if (count < candidate_groups.size() - 1) {
-                        ss << ", ";
-                    }
-                    count++;
+                     ss << group << " ";
                 }
                 return ss.str();
             }()
@@ -363,6 +533,27 @@ namespace gridfire {
                 }
             }
         }
+
+        LOG_INFO(
+            m_logger,
+            "Partitioning complete. Found {} dynamic species, {} algebraic (QSE) species ({}) spread over {} QSE group{}.",
+            m_dynamic_species.size(),
+            m_algebraic_species.size(),
+            [&]() -> std::string {
+                std::stringstream ss;
+                int count = 0;
+                for (const auto& species : m_algebraic_species) {
+                    ss << species.name();
+                    if (m_algebraic_species.size() > 1 && count < m_algebraic_species.size() - 1) {
+                        ss << ", ";
+                    }
+                    count++;
+                }
+                return ss.str();
+            }(),
+            m_qse_groups.size(),
+            m_qse_groups.size() == 1 ? "" : "s"
+        );
 
     }
 
@@ -674,7 +865,13 @@ namespace gridfire {
         const double rho
     ) const {
         LOG_TRACE_L1(m_logger, "Partitioning by timescale...");
-        const auto all_timescales = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        const auto result= m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
+        if (!result) {
+            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            m_logger->flush_log();
+            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+        }
+        std::unordered_map<Species, double> all_timescales = result.value();
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
         std::vector<std::pair<double, size_t>> sorted_timescales;
@@ -699,7 +896,7 @@ namespace gridfire {
         }
 
         constexpr double ABSOLUTE_QSE_TIMESCALE_THRESHOLD = 3.156e7; // Absolute threshold for QSE timescale (1 yr)
-        constexpr double MIN_GAP_THRESHOLD = 3.0; // Require a 3 order of magnitude gap
+        constexpr double MIN_GAP_THRESHOLD = 2.0; // Require a 2 order of magnitude gap
 
         LOG_TRACE_L1(m_logger, "Found {} species with finite timescales.", sorted_timescales.size());
         LOG_TRACE_L1(m_logger, "Absolute QSE timescale threshold: {} seconds ({} years).",
@@ -712,11 +909,11 @@ namespace gridfire {
         // 1. First Pass: Absolute Timescale Cutoff
         for (const auto& ts_pair : sorted_timescales) {
             if (ts_pair.first > ABSOLUTE_QSE_TIMESCALE_THRESHOLD) {
-                LOG_TRACE_L1(m_logger, "Species {} with timescale {} is considered dynamic (slower than qse timescale threshold).",
+                LOG_TRACE_L3(m_logger, "Species {} with timescale {} is considered dynamic (slower than qse timescale threshold).",
                     all_species[ts_pair.second].name(), ts_pair.first);
                 dynamic_pool_indices.push_back(ts_pair.second);
             } else {
-                LOG_TRACE_L1(m_logger, "Species {} with timescale {} is a candidate fast species (faster than qse timescale threshold).",
+                LOG_TRACE_L3(m_logger, "Species {} with timescale {} is a candidate fast species (faster than qse timescale threshold).",
                     all_species[ts_pair.second].name(), ts_pair.first);
                 fast_candidates.push_back(ts_pair);
             }
@@ -738,7 +935,7 @@ namespace gridfire {
             const double t1 = fast_candidates[i].first;
             const double t2 = fast_candidates[i+1].first;
             if (std::log10(t1) - std::log10(t2) > MIN_GAP_THRESHOLD) {
-                LOG_TRACE_L1(m_logger, "Detected gap between species {} (timescale {:0.2E}) and {} (timescale {:0.2E}).",
+                LOG_TRACE_L3(m_logger, "Detected gap between species {} (timescale {:0.2E}) and {} (timescale {:0.2E}).",
                     all_species[fast_candidates[i].second].name(), t1,
                     all_species[fast_candidates[i+1].second].name(), t2);
                 split_points.push_back(i + 1);
@@ -787,139 +984,31 @@ namespace gridfire {
 
     }
 
-    std::unordered_map<size_t, std::vector<size_t>> MultiscalePartitioningEngineView::buildConnectivityGraph(
-        const std::unordered_set<size_t> &fast_reaction_indices
-    ) const {
-        const auto& all_reactions = m_baseEngine.getNetworkReactions();
-        std::unordered_map<size_t, std::vector<size_t>> connectivity;
-        for (const size_t reaction_idx : fast_reaction_indices) {
-            const auto& reaction = all_reactions[reaction_idx];
-            const auto& reactants = reaction.reactants();
-            const auto& products = reaction.products();
-
-            // For each fast reaction, create edges between all reactants and all products.
-            // This represents that nucleons can flow quickly between these species.
-            for (const auto& reactant : reactants) {
-                const size_t reactant_idx = m_baseEngine.getSpeciesIndex(reactant);
-                for (const auto& product : products) {
-                    const size_t product_idx = m_baseEngine.getSpeciesIndex(product);
-
-                    // Add a two-way edge to the adjacency list.
-                    connectivity[reactant_idx].push_back(product_idx);
-                    connectivity[product_idx].push_back(reactant_idx);
-                }
-            }
-        }
-        return connectivity;
-    }
-
-    // std::vector<MultiscalePartitioningEngineView::QSEGroup> MultiscalePartitioningEngineView::refineCandidateGroup(
-    //     const std::vector<size_t> &candidate_group,
-    //     const std::vector<double> &Y,
-    //     const double T9,
-    //     const double rho
+    // std::unordered_map<size_t, std::vector<size_t>> MultiscalePartitioningEngineView::buildConnectivityGraph(
+    //     const std::unordered_set<size_t> &fast_reaction_indices
     // ) const {
-    //     LOG_TRACE_L1(m_logger, "Refining candidate group with {} species.", candidate_group.size());
+    //     const auto& all_reactions = m_baseEngine.getNetworkReactions();
+    //     std::unordered_map<size_t, std::vector<size_t>> connectivity;
+    //     for (const size_t reaction_idx : fast_reaction_indices) {
+    //         const auto& reaction = all_reactions[reaction_idx];
+    //         const auto& reactants = reaction.reactants();
+    //         const auto& products = reaction.products();
     //
-    //     // --- Step 1. Graph Construction ---
-    //     std::unordered_map<size_t, std::vector<std::pair<size_t, double>>> weighted_graph;
-    //     std::vector<std::tuple<size_t, size_t, double>> edge_list;
-    //     std::unordered_map<size_t, double> node_strength;
+    //         // For each fast reaction, create edges between all reactants and all products.
+    //         // This represents that nucleons can flow quickly between these species.
+    //         for (const auto& reactant : reactants) {
+    //             const size_t reactant_idx = m_baseEngine.getSpeciesIndex(reactant);
+    //             for (const auto& product : products) {
+    //                 const size_t product_idx = m_baseEngine.getSpeciesIndex(product);
     //
-    //     for (const auto& node_idx : candidate_group) {
-    //         node_strength[node_idx] = 0.0;
-    //     }
-    //
-    //     std::unordered_set<size_t> candidate_set(candidate_group.begin(), candidate_group.end());
-    //
-    //     for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
-    //         bool is_internal = true;
-    //         std::vector<size_t> involved_indices;
-    //
-    //         // Check if all reactants and products are in the candidate group.
-    //         std::vector<Species> participating_species = reaction.reactants();
-    //         participating_species.insert(participating_species.end(), reaction.products().begin(), reaction.products().end());
-    //
-    //         for (const auto& sp : participating_species) {
-    //             size_t idx = m_baseEngine.getSpeciesIndex(sp);
-    //             if (! candidate_set.contains(idx)) {
-    //                 is_internal = false;
-    //                 break;
-    //             }
-    //         }
-    //         if (!is_internal) {
-    //             continue; // Skip reactions that are not fully internal to the candidate group.
-    //         }
-    //
-    //         const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho));
-    //         if (flow < 1e-99) continue;
-    //
-    //         for (const auto& reactant : reaction.reactants()) {
-    //             for (const auto& product : reaction.products()) {
-    //                 size_t u = m_baseEngine.getSpeciesIndex(reactant);
-    //                 size_t v = m_baseEngine.getSpeciesIndex(product);
-    //
-    //                 if (u == v) {
-    //                     continue; // Skip self-loops
-    //                 }
-    //
-    //                 weighted_graph[u].push_back(std::make_tuple(v, flow));
-    //                 weighted_graph[v].push_back(std::make_tuple(u, flow));
-    //
-    //                 node_strength[u] += flow;
-    //                 node_strength[v] += flow;
-    //
-    //                 if (u < v) {
-    //                     edge_list.emplace_back(u, v, flow);
-    //                 }
+    //                 // Add a two-way edge to the adjacency list.
+    //                 connectivity[reactant_idx].push_back(product_idx);
+    //                 connectivity[product_idx].push_back(reactant_idx);
     //             }
     //         }
     //     }
-    //
-    //     // --- Phase 2. Prune weak bridges ---
-    //     auto pruned_graph = weighted_graph;
-    //     constexpr double beta = 0.01; // Weak link threshold: flux < 1% of the node strength
-    //
-    //     for (const auto& edge : edge_list) {
-    //         size_t u = std::get<0>(edge);
-    //         size_t v = std::get<1>(edge);
-    //         double flow = std::get<2>(edge);
-    //
-    //         if (flow < (beta * node_strength[u]) && flow < (beta * node_strength[v])) {
-    //             LOG_TRACE_L1(m_logger, "Pruning weak link ({}, {}) with flow {} below threshold {}",
-    //                          u, v, flow, beta * std::min(node_strength[u], node_strength[v]));
-    //
-    //             auto& u_adj = pruned_graph.at(u);
-    //             std::erase_if(
-    //                 u_adj,
-    //                 [v](const auto& p) {
-    //                     return p.first == v;
-    //                 }
-    //             );
-    //             auto& v_adj = pruned_graph.at(v);
-    //             std::erase_if(
-    //                 v_adj,
-    //                 [u](const auto& p) {
-    //                     return p.first == u;
-    //                 }
-    //             );
-    //         }
-    //     }
-    //
-    //     // --- Phase 3. Find final connected components ---
-    //     auto final_components = findConnectedComponentsBFS(pruned_graph, candidate_group);
-    //
-    //     std::vector<QSEGroup> refined_groups;
-    //     for (const auto& component : final_components) {
-    //         if (!component.empty()) {
-    //             std::set<size_t> tempSet(component.begin(), component.end());
-    //             refined_groups.push_back({tempSet, false}); // Initialize with is_in_equilibrium = false
-    //         }
-    //     }
-    //
-    //     return refined_groups;
+    //     return connectivity;
     // }
-
 
     std::vector<MultiscalePartitioningEngineView::QSEGroup>
     MultiscalePartitioningEngineView::validateGroupsWithFluxAnalysis(
@@ -967,15 +1056,89 @@ namespace gridfire {
 
                 // Classify the reaction based on its participants
                 if ((has_internal_reactant && has_internal_product) && !(has_external_reactant || has_external_product)) {
+                    LOG_TRACE_L3(
+                        m_logger,
+                        "Reaction {} is internal to the group containing {} and contributes to internal flux by {}",
+                        reaction.id(),
+                        [&]() -> std::string {
+                            std::stringstream ss;
+                            int count = 0;
+                            for (const auto& idx : group.algebraic_indices) {
+                                ss << m_baseEngine.getNetworkSpecies()[idx].name();
+                                if (count < group.species_indices.size() - 1) {
+                                    ss << ", ";
+                                }
+                                count++;
+                            }
+                            return ss.str();
+                        }(),
+                        flow
+                    );
                     internal_flux += flow; // Internal flux within the group
                 } else if ((has_internal_reactant || has_internal_product) && (has_external_reactant || has_external_product)) {
+                    LOG_TRACE_L3(
+                        m_logger,
+                        "Reaction {} is external to the group containing {} and contributes to external flux by {}",
+                        reaction.id(),
+                        [&]() -> std::string {
+                            std::stringstream ss;
+                            int count = 0;
+                            for (const auto& idx : group.algebraic_indices) {
+                                ss << m_baseEngine.getNetworkSpecies()[idx].name();
+                                if (count < group.species_indices.size() - 1) {
+                                    ss << ", ";
+                                }
+                                count++;
+                            }
+                            return ss.str();
+                        }(),
+                        flow
+                    );
                     external_flux += flow; // External flux to/from the group
                 }
                 // otherwise the reaction is fully decoupled from the QSE group and can be ignored.
             }
             if (internal_flux > FLUX_RATIO_THRESHOLD * external_flux) {
+                LOG_TRACE_L1(
+                    m_logger,
+                    "Group containing {} is in equilibrium: internal flux = {}, external flux = {}, ratio = {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        int count = 0;
+                        for (const auto& idx : group.algebraic_indices) {
+                            ss << m_baseEngine.getNetworkSpecies()[idx].name();
+                            if (count < group.species_indices.size() - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }(),
+                    internal_flux,
+                    external_flux,
+                    internal_flux / external_flux
+                );
                 group.is_in_equilibrium = true; // This group is in equilibrium if internal flux is significantly larger than external flux.
             } else {
+                LOG_TRACE_L1(
+                    m_logger,
+                    "Group containing {} is NOT in equilibrium: internal flux = {}, external flux = {}, ratio = {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        int count = 0;
+                        for (const auto& idx : group.algebraic_indices) {
+                            ss << m_baseEngine.getNetworkSpecies()[idx].name();
+                            if (count < group.species_indices.size() - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }(),
+                    internal_flux,
+                    external_flux,
+                    internal_flux / external_flux
+                );
                 group.is_in_equilibrium = false;
             }
         }
@@ -989,16 +1152,45 @@ namespace gridfire {
     ) {
         LOG_TRACE_L1(m_logger, "Solving for QSE abundances...");
         auto Y_out = Y_full;
-        auto species_timescales = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
 
-        for (const auto& qse_group : m_qse_groups) {
-            if (!qse_group.is_in_equilibrium || qse_group.species_indices.empty()) {
+
+        // Sort by timescale to solve fastest QSE groups first (these can seed slower groups)
+        std::ranges::sort(m_qse_groups, [](const QSEGroup& a, const QSEGroup& b) {
+            return a.mean_timescale < b.mean_timescale;
+        });
+
+        for (const auto&[species_indices, is_in_equilibrium, algebraic_indices, seed_indices, mean_timescale] : m_qse_groups) {
+            if (!is_in_equilibrium || species_indices.empty()) {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Skipping QSE group with {} species ({} algebraic, {} seeds) as it is not in equilibrium.",
-                    qse_group.species_indices.size(),
-                    qse_group.algebraic_indices.size(),
-                    qse_group.seed_indices.size()
+                    "Skipping QSE group with {} species ({} algebraic ({}), {} seeds ({})) as it is not in equilibrium.",
+                    species_indices.size(),
+                    algebraic_indices.size(),
+                    [&]() -> std::string {
+                        std::ostringstream os;
+                        int count = 0;
+                        for (const auto& idx : algebraic_indices) {
+                            os << m_baseEngine.getNetworkSpecies()[idx].name();
+                            if (count < algebraic_indices.size() - 1) {
+                                os << ", ";
+                            }
+                            count++;
+                        }
+                        return os.str();
+                    }(),
+                    seed_indices.size(),
+                    [&]() -> std::string {
+                        std::ostringstream os;
+                        int count = 0;
+                        for (const auto& idx : seed_indices) {
+                            os << m_baseEngine.getNetworkSpecies()[idx].name();
+                            if (count < seed_indices.size() - 1) {
+                                os << ", ";
+                            }
+                            count++;
+                        }
+                        return os.str();
+                    }()
                 );
                 continue;
             }
@@ -1006,13 +1198,13 @@ namespace gridfire {
             LOG_TRACE_L1(
                 m_logger,
                 "Solving for QSE abundances for group with {} species ([{}] algebraic, [{}] seeds).",
-                qse_group.species_indices.size(),
+                species_indices.size(),
                 [&]() -> std::string {
                     std::stringstream ss;
                     int count = 0;
-                    for (const auto& idx : qse_group.algebraic_indices) {
+                    for (const auto& idx : algebraic_indices) {
                         ss << m_baseEngine.getNetworkSpecies()[idx].name();
-                        if (count < qse_group.algebraic_indices.size() - 1) {
+                        if (count < algebraic_indices.size() - 1) {
                             ss << ", ";
                         }
                         count++;
@@ -1022,9 +1214,9 @@ namespace gridfire {
                 [&]() -> std::string {
                     std::stringstream ss;
                     int count = 0;
-                    for (const auto& idx : qse_group.seed_indices) {
+                    for (const auto& idx : seed_indices) {
                         ss << m_baseEngine.getNetworkSpecies()[idx].name();
-                        if (count < qse_group.seed_indices.size() - 1) {
+                        if (count < seed_indices.size() - 1) {
                             ss << ", ";
                         }
                         count++;
@@ -1034,16 +1226,16 @@ namespace gridfire {
             );
 
             std::vector<size_t> qse_solve_indices;
-            std::vector<size_t> seed_indices;
+            std::vector<size_t> seed_indices_vec;
 
-            seed_indices.reserve(qse_group.species_indices.size());
-            qse_solve_indices.reserve(qse_group.species_indices.size());
+            seed_indices_vec.reserve(species_indices.size());
+            qse_solve_indices.reserve(species_indices.size());
 
-            for (size_t seed_idx : qse_group.seed_indices) {
-                seed_indices.emplace_back(seed_idx);
+            for (size_t seed_idx : seed_indices) {
+                seed_indices_vec.emplace_back(seed_idx);
             }
 
-            for (size_t algebraic_idx : qse_group.algebraic_indices) {
+            for (size_t algebraic_idx : algebraic_indices) {
                 qse_solve_indices.emplace_back(algebraic_idx);
             }
 
@@ -1070,7 +1262,7 @@ namespace gridfire {
                 std::stringstream msg;
                 msg << "QSE solver failed with status: " << status << " for group with seed ";
                 if (seed_indices.size() == 1) {
-                    msg << "nucleus " << m_baseEngine.getNetworkSpecies()[seed_indices[0]].name();
+                    msg << "nucleus " << m_baseEngine.getNetworkSpecies()[seed_indices_vec[0]].name();
                 } else {
                     msg << "nuclei ";
                     // TODO: Refactor nice list printing into utility function somewhere
@@ -1114,17 +1306,45 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const auto& all_timescales = m_baseEngine.getSpeciesTimescales(Y, T9, rho);
+        const auto& result = m_baseEngine.getSpeciesDestructionTimescales(Y, T9, rho);
+        if (!result) {
+            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            m_logger->flush_log();
+            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+        }
+        const std::unordered_map<Species, double> all_timescales = result.value();
+
+
         const auto& all_species = m_baseEngine.getNetworkSpecies();
+
         size_t slowest_pool_index = 0; // Default to the first pool if no valid pool is found
         double slowest_mean_timescale = std::numeric_limits<double>::min();
+        int count = 0;
         for (const auto& pool : pools) {
             double mean_timescale = 0.0;
             for (const auto& species_idx : pool) {
-                double timescale = all_timescales.at(all_species[species_idx]);
+                const double timescale = all_timescales.at(all_species[species_idx]);
                 mean_timescale += timescale;
             }
             mean_timescale = mean_timescale / pool.size();
+            if (std::isinf(mean_timescale)) {
+                LOG_CRITICAL(m_logger, "Encountered infinite mean timescale for pool {} with species: {}",
+                    count, [&]() -> std::string {
+                        std::stringstream ss;
+                        int iCount = 0;
+                        for (const auto& idx : pool) {
+                            ss << all_species[idx].name() << ": " << all_timescales.at(all_species[idx]);
+                            if (iCount < pool.size() - 1) {
+                                ss << ", ";
+                            }
+                            iCount++;
+                        }
+                        return ss.str();
+                    }()
+                );
+                m_logger->flush_log();
+                throw std::logic_error("Encountered infinite mean destruction timescale for a pool while identifying the mean slowest pool set, indicating a potential issue with species timescales. Check log file for more details on specific pool composition...");
+            }
             if (mean_timescale > slowest_mean_timescale) {
                 slowest_mean_timescale = mean_timescale;
                 slowest_pool_index = &pool - &pools[0]; // Get the index of the pool
@@ -1133,18 +1353,88 @@ namespace gridfire {
         return slowest_pool_index;
     }
 
+    std::unordered_map<size_t, std::vector<size_t>> MultiscalePartitioningEngineView::buildConnectivityGraph(
+        const std::vector<size_t> &species_pool
+    ) const {
+        std::unordered_map<size_t, std::vector<size_t>> connectivity_graph;
+        const std::set<size_t> pool_set(species_pool.begin(), species_pool.end());
+        const std::unordered_set<Species> pool_species = [&]() -> std::unordered_set<Species> {
+            std::unordered_set<Species> result;
+            for (const auto& species_idx : species_pool) {
+                Species species = m_baseEngine.getNetworkSpecies()[species_idx];
+                result.insert(species);
+            }
+            return result;
+        }();
+
+        std::map<size_t, std::vector<reaction::LogicalReaction*>> speciesReactionMap;
+        std::vector<const reaction::LogicalReaction*> candidate_reactions;
+
+        auto getSpeciesIdx = [&](const std::vector<Species> &species) -> std::vector<size_t> {
+            std::vector<size_t> result;
+            result.reserve(species.size());
+            for (const auto& s : species) {
+                size_t idx = m_baseEngine.getSpeciesIndex(s);
+                result.push_back(idx);
+            }
+            return result;
+        };
+
+        for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
+            const std::vector<Species> &reactants = reaction.reactants();
+            const std::vector<Species> &products = reaction.products();
+
+            std::unordered_set<Species> reactant_set(reactants.begin(), reactants.end());
+            std::unordered_set<Species> product_set(products.begin(), products.end());
+
+            // Only consider reactions where at least one distinct reactant and product are in the pool
+            if (has_distinct_reactant_and_product_species(pool_species, reactant_set, product_set)) {
+                std::vector<size_t> involvedIDs = getSpeciesIdx(reactants);
+                std::vector<size_t> involvedProducts = getSpeciesIdx(products);
+                involvedIDs.insert(involvedIDs.end(), involvedProducts.begin(), involvedProducts.end());
+                std::set<size_t> involvedSet(involvedIDs.begin(), involvedIDs.end());
+
+                std::vector<size_t> intersection;
+                intersection.reserve(involvedSet.size());
+
+                std::ranges::set_intersection(pool_set, involvedSet, std::back_inserter(intersection));
+
+                // Add clique
+                for (const size_t& u : intersection) {
+                    const auto& uSpecies = m_baseEngine.getNetworkSpecies()[u];
+                    for (const size_t& v : intersection) {
+                        const auto & vSpecies = m_baseEngine.getNetworkSpecies()[v];
+                        if (u != v) { // Avoid self-loops
+                            connectivity_graph[u].push_back(v);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return connectivity_graph;
+    }
+
     std::vector<MultiscalePartitioningEngineView::QSEGroup> MultiscalePartitioningEngineView::constructCandidateGroups(
-        const std::vector<std::vector<size_t>> &timescale_pools,
+        const std::vector<std::vector<size_t>> &candidate_pools,
         const std::vector<double> &Y,
-        const double T9,
-        const double rho
+        const double T9, const double rho
     ) const {
         const auto& all_species = m_baseEngine.getNetworkSpecies();
         const auto& all_reactions = m_baseEngine.getNetworkReactions();
+        const auto& result = m_baseEngine.getSpeciesDestructionTimescales(Y, T9, rho);
+        if (!result) {
+            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            m_logger->flush_log();
+            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+        }
+        const std::unordered_map<Species, double> destruction_timescales = result.value();
 
         std::vector<QSEGroup> candidate_groups;
-        for (const auto& pool : timescale_pools) {
+        for (const auto& pool : candidate_pools) {
             if (pool.empty()) continue; // Skip empty pools
+
             // For each pool first identify all topological bridge connections
             std::vector<std::pair<reaction::LogicalReaction, double>> bridge_reactions;
             for (const auto& species_idx : pool) {
@@ -1157,15 +1447,13 @@ namespace gridfire {
                         for (const auto& reactant : reaction.reactants()) {
                             if (std::ranges::find(pool, m_baseEngine.getSpeciesIndex(reactant)) == pool.end()) {
                                 has_external_reactant = true;
-                                LOG_TRACE_L2(m_logger, "Found external reactant {} in reaction {} for species {}.",
-                                             reactant.name(), reaction.id(), ash.name());
+                                LOG_TRACE_L3(m_logger, "Found external reactant {} in reaction {} for species {}.", reactant.name(), reaction.id(), ash.name());
                                 break; // Found an external reactant, no need to check further
                             }
                         }
                         if (has_external_reactant) {
                             double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho));
-                            LOG_TRACE_L2(m_logger, "Found bridge reaction {} with flow {} for species {}.",
-                                         reaction.id(), flow, ash.name());
+                            LOG_TRACE_L3(m_logger, "Found bridge reaction {} with flow {} for species {}.", reaction.id(), flow, ash.name());
                             bridge_reactions.push_back({reaction, flow});
                         }
                     }
@@ -1176,23 +1464,6 @@ namespace gridfire {
                 [](const auto& a, const auto& b) {
                    return a.second > b.second; // Sort by flow in descending order
                 });
-            LOG_TRACE_L1(
-                m_logger,
-                "Found a total of {} bridge reactions for the pool with qse species: {}.",
-                bridge_reactions.size(),
-                [&]() -> std::string {
-                    std::stringstream ss;
-                    int count = 0;
-                    for (const auto& idx : pool) {
-                        ss << all_species[idx].name();
-                        if (count < pool.size() - 1) {
-                            ss << ", ";
-                        }
-                        count++;
-                    }
-                    return ss.str();
-                }()
-            );
 
             constexpr double MIN_GAP_THRESHOLD = 1; // Minimum logarithmic molar flow gap threshold for bridge reactions
             std::vector<size_t> split_points;
@@ -1200,38 +1471,10 @@ namespace gridfire {
                 const double f1 = bridge_reactions[i].second;
                 const double f2 = bridge_reactions[i + 1].second;
                 if (std::log10(f1) - std::log10(f2) > MIN_GAP_THRESHOLD) {
-                    LOG_TRACE_L2(m_logger, "Detected gap between bridge reactions with flows {} and {}.",
-                                 f1, f2);
+                    LOG_TRACE_L3(m_logger, "Detected gap between bridge reactions with flows {} and {}.", f1, f2);
                     split_points.push_back(i + 1);
                 }
             }
-            LOG_TRACE_L1(m_logger, "Found {} candidate molar flow split points in bridge reactions.", split_points.size() == 0 ? 1 : split_points.size());
-            LOG_TRACE_L1(m_logger, "Split point summary: {}",
-                [&]() -> std::string {
-                    std::stringstream ss;
-                    int count = 0;
-                    // Print out which reactions are in each molar reaction flow pool
-                    int lastSplitPoint = 0;
-                    for (const auto& split_point : split_points) {
-                        ss << "Reactions in molar flow pool " << count + 1 << ": [";
-                        int icount = 0;
-                        for (size_t i = lastSplitPoint; i < split_point; ++i) {
-                            ss << bridge_reactions[i].first.id();
-                            if (icount < (split_point - lastSplitPoint) - 1) {
-                                ss << ", ";
-                            }
-                            icount++;
-                        }
-                        ss << "]";
-                        if (count < split_points.size() - 1) {
-                            ss << ", ";
-                        }
-                        count++;
-                        lastSplitPoint = split_point;
-                    }
-                    return ss.str();
-                }()
-            );
 
             if (split_points.empty()) { // If no split points were found, we consider the whole set of bridge reactions as one group.
                 split_points.push_back(bridge_reactions.size() - 1);
@@ -1253,7 +1496,18 @@ namespace gridfire {
             }
             const std::set<size_t> poolSet(pool.begin(), pool.end());
             const std::set<size_t> seedSet(seed_indices.begin(), seed_indices.end());
-            QSEGroup qse_group(all_indices, false, poolSet, seedSet);
+
+            double mean_timescale = 0.0;
+            for (const auto& pool_idx : poolSet) {
+                const auto& species = all_species[pool_idx];
+                if (destruction_timescales.contains(species)) {
+                    mean_timescale += std::min(destruction_timescales.at(species), species.halfLife()); // Use the minimum of destruction timescale and half-life
+                } else {
+                    mean_timescale += species.halfLife();
+                }
+            }
+            mean_timescale /= poolSet.size();
+            QSEGroup qse_group(all_indices, false, poolSet, seedSet, mean_timescale);
             candidate_groups.push_back(qse_group);
         }
         return candidate_groups;
@@ -1269,7 +1523,11 @@ namespace gridfire {
             y_trial[m_qse_solve_indices[i]] = y_qse(i);
         }
 
-        const auto [dydt, energy] = m_view->getBaseEngine().calculateRHSAndEnergy(y_trial, m_T9, m_rho);
+        const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(y_trial, m_T9, m_rho);
+        if (!result) {
+            throw exceptions::StaleEngineError("Failed to calculate RHS and energy due to stale engine state");
+        }
+        const auto&[dydt, nuclearEnergyGenerationRate] = result.value();
         f_qse.resize(m_qse_solve_indices.size());
         for (size_t i = 0; i < m_qse_solve_indices.size(); ++i) {
             f_qse(i) = dydt[m_qse_solve_indices[i]];
@@ -1348,4 +1606,21 @@ namespace gridfire {
     bool QSECacheKey::operator==(const QSECacheKey &other) const {
         return m_hash == other.m_hash;
     }
+
+    bool MultiscalePartitioningEngineView::QSEGroup::operator==(const QSEGroup &other) const {
+       return mean_timescale == other.mean_timescale;
+    }
+
+    bool MultiscalePartitioningEngineView::QSEGroup::operator<(const QSEGroup &other) const {
+        return mean_timescale < other.mean_timescale;
+    }
+
+    bool MultiscalePartitioningEngineView::QSEGroup::operator>(const QSEGroup &other) const {
+        return mean_timescale > other.mean_timescale;
+    }
+
+    bool MultiscalePartitioningEngineView::QSEGroup::operator!=(const QSEGroup &other) const {
+        return !(*this == other);
+    }
+
 }

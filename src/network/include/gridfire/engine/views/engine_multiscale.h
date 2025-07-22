@@ -66,7 +66,7 @@ namespace gridfire {
 
         [[nodiscard]] const std::vector<fourdst::atomic::Species> & getNetworkSpecies() const override;
 
-        [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double> &Y_full,
             double T9,
             double rho
@@ -99,7 +99,17 @@ namespace gridfire {
 
         [[nodiscard]] const reaction::LogicalReactionSet & getNetworkReactions() const override;
 
-        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        void setNetworkReactions(
+            const reaction::LogicalReactionSet &reactions
+        ) override;
+
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const override;
+
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
             const std::vector<double> &Y,
             double T9,
             double rho
@@ -118,6 +128,13 @@ namespace gridfire {
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
         const DynamicEngine & getBaseEngine() const override;
+
+        std::vector<std::vector<size_t>> analyzeTimescalePoolConnectivity(
+            const std::vector<std::vector<size_t>> &timescale_pools,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const;
 
         void partitionNetwork(
             const std::vector<double>& Y,
@@ -162,6 +179,12 @@ namespace gridfire {
             bool is_in_equilibrium = false;      ///< Flag set by flux analysis.
             std::set<size_t> algebraic_indices; ///< Indices of algebraic species in this group.
             std::set<size_t> seed_indices; ///< Indices of dynamic species in this group.
+            double mean_timescale; ///< Mean timescale of the group.
+
+            bool operator<(const QSEGroup& other) const;
+            bool operator>(const QSEGroup& other) const;
+            bool operator==(const QSEGroup& other) const;
+            bool operator!=(const QSEGroup& other) const;
 
             friend std::ostream& operator<<(std::ostream& os, const QSEGroup& group) {
                 os << "QSEGroup(species_indices: [";
@@ -175,7 +198,8 @@ namespace gridfire {
                 }
                 count = 0;
                 os << "], is_in_equilibrium: " << group.is_in_equilibrium
-                   << ", algebraic_indices: [";
+                   << ", mean_timescale: " << group.mean_timescale
+                   << " s, algebraic_indices: [";
                 for (const auto& idx : group.algebraic_indices) {
                     os << idx;
                     if (count < group.algebraic_indices.size() - 1) {
@@ -242,6 +266,7 @@ namespace gridfire {
                 GenerateJacobianMatrix,
                 CalculateMolarReactionFlow,
                 GetSpeciesTimescales,
+                GetSpeciesDestructionTimescales,
                 Other,
                 All
             };
@@ -251,6 +276,7 @@ namespace gridfire {
                 {operators::GenerateJacobianMatrix, "generateJacobianMatrix"},
                 {operators::CalculateMolarReactionFlow, "calculateMolarReactionFlow"},
                 {operators::GetSpeciesTimescales, "getSpeciesTimescales"},
+                {operators::GetSpeciesDestructionTimescales, "getSpeciesDestructionTimescales"},
                 {operators::Other, "other"}
             };
 
@@ -262,6 +288,7 @@ namespace gridfire {
                 {operators::GenerateJacobianMatrix, 0},
                 {operators::CalculateMolarReactionFlow, 0},
                 {operators::GetSpeciesTimescales, 0},
+                {operators::GetSpeciesDestructionTimescales, 0},
                 {operators::Other, 0}
             };
 
@@ -351,11 +378,14 @@ namespace gridfire {
             double rho
         ) const;
 
+        std::unordered_map<size_t, std::vector<size_t>> buildConnectivityGraph(
+            const std::vector<size_t>& species_pool
+        ) const;
+
         std::vector<QSEGroup> constructCandidateGroups(
-            const std::vector<std::vector<size_t>>& timescale_pools,
+            const std::vector<std::vector<size_t>>& candidate_pools,
             const std::vector<double>& Y,
-            double T9,
-            double rho
+            double T9, double rho
         ) const;
     };
 }

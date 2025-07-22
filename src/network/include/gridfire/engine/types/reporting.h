@@ -33,7 +33,7 @@ namespace gridfire {
 
         friend std::ostream& operator<<(std::ostream& os, const PrimingReport& report) {
             std::stringstream ss;
-            std::string successStr = report.success ? "true" : "false";
+            const std::string successStr = report.success ? "true" : "false";
             ss << "PrimingReport(success=" << successStr
                << ", status=" << PrimingReportStatusStrings[report.status] << ")";
             return os << ss.str();

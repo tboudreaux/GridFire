@@ -72,24 +72,30 @@ int main() {
     NetIn netIn;
     netIn.composition = composition;
     netIn.temperature = 1.5e7;
-    netIn.density = 1.5e3;
+    netIn.density = 1.6e2;
     netIn.energy = 0;
-    netIn.tMax = 3.546e17;
+    netIn.tMax = 3.1536e17; // ~ 10Gyr
     netIn.dt0 = 1e-12;
-
-    GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-    ReaclibEngine.setPrecomputation(true);
-    ReaclibEngine.setUseReverseReactions(false);
-    MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
-    AdaptiveEngineView adaptiveView(partitioningView);
-
-    solver::DirectNetworkSolver solver(adaptiveView);
-    NetOut netOut;
-    measure_execution_time([&](){netOut = solver.evaluate(netIn);}, "DirectNetworkSolver Evaluation");
-    std::cout << "DirectNetworkSolver completed in " << netOut.num_steps << " steps.\n";
-    std::cout << "Final composition:\n";
-    for (const auto& [symbol, entry] : netOut.composition) {
+    for (const auto& [symbol, entry] : netIn.composition) {
         std::cout << symbol << ": " << entry.mass_fraction() << "\n";
     }
+
+    // GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
+    //
+    // ReaclibEngine.setPrecomputation(true);
+    // ReaclibEngine.setUseReverseReactions(false);
+    // ReaclibEngine.setScreeningModel(screening::ScreeningType::WEAK);
+    //
+    // MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
+    // AdaptiveEngineView adaptiveView(partitioningView);
+    //
+    // solver::DirectNetworkSolver solver(adaptiveView);
+    // NetOut netOut;
+    // measure_execution_time([&](){netOut = solver.evaluate(netIn);}, "DirectNetworkSolver Evaluation");
+    // std::cout << "DirectNetworkSolver completed in " << netOut.num_steps << " steps.\n";
+    // std::cout << "Final composition:\n";
+    // for (const auto& [symbol, entry] : netOut.composition) {
+    //     std::cout << symbol << ": " << entry.mass_fraction() << "\n";
+    // }
 
 }

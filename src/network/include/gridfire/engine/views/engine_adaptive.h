@@ -102,7 +102,7 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          * @see AdaptiveEngineView::update()
          */
-        [[nodiscard]] StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double> &Y_culled,
             const double T9,
             const double rho
@@ -205,6 +205,8 @@ namespace gridfire {
          */
         [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
 
+        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+
         /**
          * @brief Computes timescales for all active species in the network.
          *
@@ -218,8 +220,14 @@ namespace gridfire {
          *
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
-        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
             const std::vector<double> &Y_culled,
+            double T9,
+            double rho
+        ) const override;
+
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+            const std::vector<double> &Y,
             double T9,
             double rho
         ) const override;
@@ -443,7 +451,6 @@ namespace gridfire {
 
         typedef std::pair<std::unordered_set<const reaction::LogicalReaction*>, std::unordered_set<fourdst::atomic::Species>> RescueSet;
         [[nodiscard]] RescueSet rescueEdgeSpeciesDestructionChannel(
-            const std::vector<ReactionFlow>& allFlows,
             const std::vector<double>& Y_full,
             const double T9,
             const double rho,

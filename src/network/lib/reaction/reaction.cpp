@@ -154,7 +154,7 @@ namespace gridfire::reaction {
         return (reactantMass - productMass) * AMU2MeV;
     }
 
-    uint64_t Reaction::hash(uint64_t seed) const {
+    uint64_t Reaction::hash(const uint64_t seed) const {
         return XXHash64::hash(m_id.data(), m_id.size(), seed);
     }
 

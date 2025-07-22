@@ -54,7 +54,7 @@ namespace gridfire {
         syncInternalMaps();
     }
 
-    StepDerivatives<double> GraphEngine::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
         const std::vector<double> &Y,
         const double T9,
         const double rho
@@ -91,8 +91,8 @@ namespace gridfire {
         const size_t n = m_rhsADFun.Domain();
         const size_t m = m_rhsADFun.Range();
 
-        std::vector<bool> select_domain(n, true);
-        std::vector<bool> select_range(m, true);
+        const std::vector<bool> select_domain(n, true);
+        const std::vector<bool> select_range(m, true);
 
         m_rhsADFun.subgraph_sparsity(select_domain, select_range, false, m_full_jacobian_sparsity_pattern);
         m_jac_work.clear();
@@ -148,10 +148,10 @@ namespace gridfire {
         }
     }
 
-    void GraphEngine::reserveJacobianMatrix() {
+    void GraphEngine::reserveJacobianMatrix() const {
         // The implementation of this function (and others) constrains this nuclear network to a constant temperature and density during
         // each evaluation.
-        size_t numSpecies = m_networkSpecies.size();
+        const size_t numSpecies = m_networkSpecies.size();
         m_jacobianMatrix.clear();
         m_jacobianMatrix.resize(numSpecies, numSpecies, false); // Sparse matrix, no initial values
         LOG_TRACE_L2(m_logger, "Jacobian matrix resized to {} rows and {} columns.",
@@ -169,6 +169,11 @@ namespace gridfire {
         // Returns a constant reference to the set of reactions in the network.
         LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
         return m_reactions;
+    }
+
+    void GraphEngine::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+        m_reactions = reactions;
+        syncInternalMaps();
     }
 
     bool GraphEngine::involvesSpecies(const fourdst::atomic::Species& species) const {
@@ -259,7 +264,7 @@ namespace gridfire {
         const double T9
     ) const {
         if (!m_useReverseReactions) {
-            LOG_TRACE_L2(m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
+            LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
             return 0.0; // If reverse reactions are not used, return 0.0
         }
         const double expFactor = std::exp(-reaction.qValue() / (m_constants.kB * T9));
@@ -279,7 +284,7 @@ namespace gridfire {
         } else {
             LOG_WARNING_LIMIT_EVERY_N(1000000, m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented (reaction id {}).", reaction.peName());
         }
-        LOG_TRACE_L2(m_logger, "Calculated reverse rate for reaction '{}': {:.3E} at T9={:.3E}.", reaction.id(), reverseRate, T9);
+        LOG_TRACE_L2_LIMIT_EVERY_N(1000, m_logger, "Calculated reverse rate for reaction '{}': {:.3E} at T9={:.3E}.", reaction.id(), reverseRate, T9);
         return reverseRate;
     }
 
@@ -352,7 +357,7 @@ namespace gridfire {
         const double CT = std::pow(massNumerator/massDenominator, 1.5) *
             (partitionFunctionNumerator/partitionFunctionDenominator);
 
-        double reverseRate = forwardRate * symmetryFactor * CT * expFactor;
+        const double reverseRate = forwardRate * symmetryFactor * CT * expFactor;
         if (!std::isfinite(reverseRate)) {
             return 0.0; // If the reverse rate is not finite, return 0.0
         }
@@ -366,7 +371,7 @@ namespace gridfire {
         const double reverseRate
     ) const {
         if (!m_useReverseReactions) {
-            LOG_TRACE_L2(m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate derivative of reaction '{}'.", reaction.id());
+            LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
             return 0.0; // If reverse reactions are not used, return 0.0
         }
         const double d_log_kFwd = reaction.calculate_forward_rate_log_derivative(T9);
@@ -652,7 +657,7 @@ namespace gridfire {
         const double rho
     ) const {
 
-        LOG_TRACE_L1(m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
+        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
         // 1. Pack the input variables into a vector for CppAD
@@ -662,20 +667,20 @@ namespace gridfire {
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
-        LOG_DEBUG(
-            m_logger,
-            "AD Input to jacobian {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < adInput.size(); ++i) {
-                    ss << adInput[i];
-                    if (i < adInput.size() - 1) {
-                        ss << ", ";
-                    }
-                }
-                return ss.str();
-            }());
+        // LOG_DEBUG(
+        //     m_logger,
+        //     "AD Input to jacobian {}",
+        //     [&]() -> std::string {
+        //         std::stringstream ss;
+        //         ss << std::scientific << std::setprecision(5);
+        //         for (size_t i = 0; i < adInput.size(); ++i) {
+        //             ss << adInput[i];
+        //             if (i < adInput.size() - 1) {
+        //                 ss << ", ";
+        //             }
+        //         }
+        //         return ss.str();
+        //     }());
 
         // 2. Calculate the full jacobian
         const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
@@ -690,32 +695,32 @@ namespace gridfire {
                 }
             }
         }
-        LOG_DEBUG(
-            m_logger,
-            "Final Jacobian is:\n{}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-                    ss << getNetworkSpecies()[i].name();
-                    if (i < m_jacobianMatrix.size1() - 1) {
-                        ss << ", ";
-                    }
-                }
-                ss << "\n";
-                for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-                    ss << getNetworkSpecies()[i].name() << ": ";
-                    for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
-                        ss << m_jacobianMatrix(i, j);
-                        if (j < m_jacobianMatrix.size2() - 1) {
-                            ss << ", ";
-                        }
-                    }
-                    ss << "\n";
-                }
-                return ss.str();
-            }());
-        LOG_TRACE_L1(m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+        // LOG_DEBUG(
+        //     m_logger,
+        //     "Final Jacobian is:\n{}",
+        //     [&]() -> std::string {
+        //         std::stringstream ss;
+        //         ss << std::scientific << std::setprecision(5);
+        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+        //             ss << getNetworkSpecies()[i].name();
+        //             if (i < m_jacobianMatrix.size1() - 1) {
+        //                 ss << ", ";
+        //             }
+        //         }
+        //         ss << "\n";
+        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
+        //             ss << getNetworkSpecies()[i].name() << ": ";
+        //             for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
+        //                 ss << m_jacobianMatrix(i, j);
+        //                 if (j < m_jacobianMatrix.size2() - 1) {
+        //                     ss << ", ";
+        //                 }
+        //             }
+        //             ss << "\n";
+        //         }
+        //         return ss.str();
+        //     }());
+        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 
     void GraphEngine::generateJacobianMatrix(
@@ -895,7 +900,7 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Successfully exported network graph to {}", filename);
     }
 
-    std::unordered_map<fourdst::atomic::Species, double> GraphEngine::getSpeciesTimescales(
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
         const std::vector<double> &Y,
         const double T9,
         const double rho
@@ -914,8 +919,41 @@ namespace gridfire {
         return speciesTimescales;
     }
 
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
+        auto [dydt, _] = calculateAllDerivatives<double>(Y, T9, rho);
+        std::unordered_map<fourdst::atomic::Species, double> speciesDestructionTimescales;
+        speciesDestructionTimescales.reserve(m_networkSpecies.size());
+        for (const auto& species : m_networkSpecies) {
+            double netDestructionFlow = 0.0;
+            for (const auto& reaction : m_reactions) {
+                if (reaction.stoichiometry(species) < 0) {
+                    const double flow = calculateMolarReactionFlow<double>(reaction, Y, T9, rho);
+                    netDestructionFlow += flow;
+                }
+            }
+            double timescale = std::numeric_limits<double>::infinity();
+            if (netDestructionFlow != 0.0) {
+                timescale = Y[getSpeciesIndex(species)] / netDestructionFlow;
+            }
+            speciesDestructionTimescales.emplace(species, timescale);
+        }
+        return speciesDestructionTimescales;
+    }
+
     fourdst::composition::Composition GraphEngine::update(const NetIn &netIn) {
-        return netIn.composition;
+        fourdst::composition::Composition baseUpdatedComposition = netIn.composition;
+        for (const auto& species : m_networkSpecies) {
+            if (!netIn.composition.contains(species)) {
+                baseUpdatedComposition.registerSpecies(species);
+                baseUpdatedComposition.setMassFraction(species, 0.0);
+            }
+        }
+        baseUpdatedComposition.finalize(false);
+        return baseUpdatedComposition;
     }
 
     bool GraphEngine::isStale(const NetIn &netIn) {

@@ -10,25 +10,9 @@
 
 #include "quill/Logger.h"
 
-#include "unsupported/Eigen/NonLinearOptimization" // Required for LevenbergMarquardt
-
 #include <vector>
 
 namespace gridfire::solver {
-
-    /**
-     * @struct dynamicQSESpeciesIndices
-     * @brief Structure to hold indices of dynamic and QSE species.
-     *
-     * This structure is used by the QSENetworkSolver to store the indices of species
-     * that are treated dynamically and those that are assumed to be in Quasi-Steady-State
-     * Equilibrium (QSE).
-     */
-    struct dynamicQSESpeciesIndices {
-        std::vector<size_t> dynamicSpeciesIndices; ///< Indices of slow species that are not in QSE.
-        std::vector<size_t> QSESpeciesIndices;  ///< Indices of fast species that are in QSE.
-    };
-
     /**
      * @class NetworkSolverStrategy
      * @brief Abstract base class for network solver strategies.
@@ -69,316 +53,6 @@ namespace gridfire::solver {
     using DynamicNetworkSolverStrategy = NetworkSolverStrategy<DynamicEngine>;
 
     /**
-     * @brief Type alias for a network solver strategy that uses an AdaptiveEngineView.
-     */
-    using AdaptiveNetworkSolverStrategy = NetworkSolverStrategy<AdaptiveEngineView>;
-
-    /**
-     * @brief Type alias for a network solver strategy that uses a static Engine.
-     */
-    using StaticNetworkSolverStrategy = NetworkSolverStrategy<Engine>;
-
-    /**
-     * @class QSENetworkSolver
-     * @brief A network solver that uses a Quasi-Steady-State Equilibrium (QSE) approach.
-     *
-     * This solver partitions the network into "fast" species in QSE and "slow" (dynamic) species.
-     * The abundances of the fast species are determined by solving a system of algebraic
-     * equations, while the abundances of the slow species are integrated using an ODE solver.
-     * This hybrid approach is highly effective for stiff networks with disparate timescales.
-     *
-     * The QSE solver uses an AdaptiveEngineView to dynamically cull unimportant species and
-     * reactions, which significantly improves performance for large networks.
-     *
-     * @implements AdaptiveNetworkSolverStrategy
-     *
-     * @see AdaptiveEngineView
-     * @see DynamicEngine::getSpeciesTimescales()
-     */
-    class QSENetworkSolver final : public DynamicNetworkSolverStrategy {
-    public:
-        /**
-         * @brief Constructor for the QSENetworkSolver.
-         * @param engine The adaptive engine view to use for evaluating the network.
-         */
-        using DynamicNetworkSolverStrategy::DynamicNetworkSolverStrategy;
-
-        /**
-         * @brief Evaluates the network for a given timestep using the QSE approach.
-         * @param netIn The input conditions for the network.
-         * @return The output conditions after the timestep.
-         *
-         * This method performs the following steps:
-         *   1. Updates the adaptive engine view (if necessary).
-         *   2. Partitions the species into dynamic and QSE species based on their timescales.
-         *   3. Calculates the steady-state abundances of the QSE species.
-         *   4. Integrates the ODEs for the dynamic species using a Runge-Kutta solver.
-         *   5. Marshals the output variables into a NetOut struct.
-         *
-         * @throws std::runtime_error If the steady-state abundances cannot be calculated.
-         *
-         * @see AdaptiveEngineView::update()
-         * @see packSpeciesTypeIndexVectors()
-         * @see calculateSteadyStateAbundances()
-         */
-        NetOut evaluate(const NetIn& netIn) override;
-    private: // methods
-        /**
-         * @brief Packs the species indices into vectors based on their type (dynamic or QSE).
-         * @param Y Vector of current abundances for all species.
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         * @return A dynamicQSESpeciesIndices struct containing the indices of the dynamic and QSE species.
-         *
-         * This method determines whether each species should be treated dynamically or as
-         * being in QSE based on its timescale and abundance.  Species with short timescales
-         * or low abundances are assumed to be in QSE.
-         *
-         * @see DynamicEngine::getSpeciesTimescales()
-         */
-        dynamicQSESpeciesIndices packSpeciesTypeIndexVectors(
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
-        ) const;
-
-        /**
-         * @brief Calculates the steady-state abundances of the QSE species.
-         * @param Y Vector of current abundances for all species.
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         * @param indices A dynamicQSESpeciesIndices struct containing the indices of the dynamic and QSE species.
-         * @return An Eigen::VectorXd containing the steady-state abundances of the QSE species.
-         *
-         * This method solves a system of algebraic equations to determine the steady-state
-         * abundances of the QSE species.
-         *
-         * @throws std::runtime_error If the steady-state abundances cannot be calculated.
-         */
-        Eigen::VectorXd calculateSteadyStateAbundances(
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho,
-            const dynamicQSESpeciesIndices& indices
-        ) const;
-
-        /**
-         * @brief Initializes the network with a short ignition phase.
-         * @param netIn The input conditions for the network.
-         * @return The output conditions after the ignition phase.
-         *
-         * This method performs a short integration of the network at a high temperature and
-         * density to ignite the network and bring it closer to equilibrium.  This can improve
-         * the convergence of the QSE solver.
-         *
-         * @see DirectNetworkSolver::evaluate()
-         */
-        NetOut initializeNetworkWithShortIgnition(
-            const NetIn& netIn
-        ) const;
-
-        /**
-         * @brief Determines whether the adaptive engine view should be updated.
-         * @param conditions The current input conditions.
-         * @return True if the view should be updated, false otherwise.
-         *
-         * This method implements a policy for determining when the adaptive engine view
-         * should be updated.  The view is updated if the temperature or density has changed
-         * significantly, or if a primary fuel source has been depleted.
-         *
-         * @see AdaptiveEngineView::update()
-         */
-        bool shouldUpdateView(const NetIn& conditions) const;
-    private: // Nested functors for ODE integration
-        /**
-         * @struct RHSFunctor
-         * @brief Functor for calculating the right-hand side of the ODEs for the dynamic species.
-         *
-         * This functor is used by the ODE solver to calculate the time derivatives of the
-         * dynamic species.  It takes the current abundances of the dynamic species as input
-         * and returns the time derivatives of those abundances.
-         */
-        struct RHSFunctor {
-            DynamicEngine& m_engine; ///< The engine used to evaluate the network.
-            const std::vector<size_t>& m_dynamicSpeciesIndices; ///< Indices of the dynamic species.
-            const std::vector<size_t>& m_QSESpeciesIndices; ///< Indices of the QSE species.
-            const Eigen::VectorXd& m_Y_QSE; ///< Steady-state abundances of the QSE species.
-            const double m_T9; ///< Temperature in units of 10^9 K.
-            const double m_rho; ///< Density in g/cm^3.
-            quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
-
-            bool m_isViewInitialized = false;
-
-            /**
-             * @brief Constructor for the RHSFunctor.
-             * @param engine The engine used to evaluate the network.
-             * @param dynamicSpeciesIndices Indices of the dynamic species.
-             * @param QSESpeciesIndices Indices of the QSE species.
-             * @param Y_QSE Steady-state abundances of the QSE species.
-             * @param T9 Temperature in units of 10^9 K.
-             * @param rho Density in g/cm^3.
-             */
-            RHSFunctor(
-                DynamicEngine& engine,
-                const std::vector<size_t>& dynamicSpeciesIndices,
-                const std::vector<size_t>& QSESpeciesIndices,
-                const Eigen::VectorXd& Y_QSE,
-                const double T9,
-                const double rho
-            ) :
-            m_engine(engine),
-            m_dynamicSpeciesIndices(dynamicSpeciesIndices),
-            m_QSESpeciesIndices(QSESpeciesIndices),
-            m_Y_QSE(Y_QSE),
-            m_T9(T9),
-            m_rho(rho) {}
-
-            /**
-             * @brief Calculates the time derivatives of the dynamic species.
-             * @param YDynamic Vector of current abundances for the dynamic species.
-             * @param dYdtDynamic Vector to store the time derivatives of the dynamic species.
-             * @param t Current time.
-             */
-            void operator()(
-                const boost::numeric::ublas::vector<double>& YDynamic,
-                boost::numeric::ublas::vector<double>& dYdtDynamic,
-                double t
-            ) const;
-
-        };
-
-        /**
-         * @struct JacobianFunctor
-         * @brief Functor for calculating the Jacobian matrix of the ODEs for the dynamic species.
-         *
-         * This functor is used by the ODE solver to calculate the Jacobian matrix of the
-         * ODEs for the dynamic species.  It takes the current abundances of the dynamic
-         * species as input and returns the Jacobian matrix.
-         *
-         * @todo Implement the Jacobian functor.
-         */
-        struct JacobianFunctor {
-            DynamicEngine& m_engine; ///< The engine used to evaluate the network.
-            const std::vector<size_t>& m_dynamicSpeciesIndices; ///< Indices of the dynamic species.
-            const std::vector<size_t>& m_QSESpeciesIndices; ///< Indices of the QSE species.
-            const double m_T9; ///< Temperature in units of 10^9 K.
-            const double m_rho; ///< Density in g/cm^3.
-
-            /**
-             * @brief Constructor for the JacobianFunctor.
-             * @param engine The engine used to evaluate the network.
-             * @param dynamicSpeciesIndices Indices of the dynamic species.
-             * @param QSESpeciesIndices Indices of the QSE species.
-             * @param T9 Temperature in units of 10^9 K.
-             * @param rho Density in g/cm^3.
-             */
-            JacobianFunctor(
-                DynamicEngine& engine,
-                const std::vector<size_t>& dynamicSpeciesIndices,
-                const std::vector<size_t>& QSESpeciesIndices,
-                const double T9,
-                const double rho
-            ) :
-            m_engine(engine),
-            m_dynamicSpeciesIndices(dynamicSpeciesIndices),
-            m_QSESpeciesIndices(QSESpeciesIndices),
-            m_T9(T9),
-            m_rho(rho) {}
-
-            /**
-             * @brief Calculates the Jacobian matrix of the ODEs for the dynamic species.
-             * @param YDynamic Vector of current abundances for the dynamic species.
-             * @param JDynamic Matrix to store the Jacobian matrix.
-             * @param t Current time.
-             * @param dfdt Vector to store the time derivatives of the dynamic species (not used).
-             */
-            void operator()(
-                const boost::numeric::ublas::vector<double>& YDynamic,
-                boost::numeric::ublas::matrix<double>& JDynamic,
-                double t,
-                boost::numeric::ublas::vector<double>& dfdt
-            ) const;
-        };
-
-        /**
-         * @struct EigenFunctor
-         * @brief Functor for calculating the residual and Jacobian for the QSE species using Eigen.
-         *
-         * @tparam T The numeric type to use for the calculation (double or ADDouble).
-         */
-        template<typename T>
-        struct EigenFunctor {
-            using InputType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-            using OutputType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-            using JacobianType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-            enum {
-                InputsAtCompileTime = Eigen::Dynamic,
-                ValuesAtCompileTime = Eigen::Dynamic
-            };
-
-            DynamicEngine& m_engine; ///< The engine used to evaluate the network.
-            quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
-            const std::vector<double>& m_YFull; ///< The full, initial abundance vector
-            const std::vector<size_t>& m_dynamicSpeciesIndices; ///< Indices of the dynamic species.
-            const std::vector<size_t>& m_QSESpeciesIndices; ///< Indices of the QSE species.
-            const double m_T9; ///< Temperature in units of 10^9 K.
-            const double m_rho; ///< Density in g/cm^3.
-            const Eigen::VectorXd& m_YScale; ///< Scaling vector for the QSE species for asinh scaling.
-
-            /**
-             * @brief Constructor for the EigenFunctor.
-             * @param engine The engine used to evaluate the network.
-             * @param YFull Abundances of the dynamic species.
-             * @param dynamicSpeciesIndices Indices of the dynamic species.
-             * @param QSESpeciesIndices Indices of the QSE species.
-             * @param T9 Temperature in units of 10^9 K.
-             * @param rho Density in g/cm^3.
-             */
-            EigenFunctor(
-                DynamicEngine& engine,
-                const std::vector<double>& YFull,
-                const std::vector<size_t>& dynamicSpeciesIndices,
-                const std::vector<size_t>& QSESpeciesIndices,
-                const double T9,
-                const double rho,
-                const Eigen::VectorXd& YScale
-            ) :
-            m_engine(engine),
-            m_YFull(YFull),
-            m_dynamicSpeciesIndices(dynamicSpeciesIndices),
-            m_QSESpeciesIndices(QSESpeciesIndices),
-            m_T9(T9),
-            m_rho(rho),
-            m_YScale(YScale) {}
-
-            int values() const { return m_QSESpeciesIndices.size(); }
-            int inputs() const { return m_QSESpeciesIndices.size(); }
-
-            /**
-             * @brief Calculates the residual vector for the QSE species.
-             * @param v_QSE_log Input vector of QSE species abundances (logarithmic).
-             * @param f_QSE Output vector of residuals.
-             * @return 0 for success.
-             */
-            int operator()(const InputType& v_QSE_log, OutputType& f_QSE) const;
-
-            /**
-             * @brief Calculates the Jacobian matrix for the QSE species.
-             * @param v_QSE_log Input vector of QSE species abundances (logarithmic).
-             * @param J_QSE Output Jacobian matrix.
-             * @return 0 for success.
-             */
-            int df(const InputType& v_QSE_log, JacobianType& J_QSE) const;
-        };
-    private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance.
-        fourdst::config::Config& m_config = fourdst::config::Config::getInstance(); ///< Configuration instance.
-
-        bool m_isViewInitialized = false; ///< Flag indicating whether the adaptive engine view has been initialized.
-        NetIn m_lastSeenConditions; ///< The last seen input conditions.
-    };
-
-    /**
      * @class DirectNetworkSolver
      * @brief A network solver that directly integrates the reaction network ODEs.
      *
@@ -411,12 +85,20 @@ namespace gridfire::solver {
          * species abundances.  It takes the current abundances as input and returns the
          * time derivatives.
          */
-        struct RHSFunctor {
+        struct RHSManager {
             DynamicEngine& m_engine; ///< The engine used to evaluate the network.
             const double m_T9; ///< Temperature in units of 10^9 K.
             const double m_rho; ///< Density in g/cm^3.
-            const size_t m_numSpecies; ///< The number of species in the network.
-            quill::Logger* m_logger = LogManager::getInstance().getLogger("log"); ///< Logger instance.
+
+            mutable double m_cached_time;
+            mutable std::optional<StepDerivatives<double>> m_cached_result;
+
+            mutable double m_last_observed_time = 0.0; ///< Last time the state was observed.
+
+
+            quill::Logger* m_logger = LogManager::getInstance().newFileLogger("integration.log", "GridFire"); ///< Logger instance.
+            mutable int m_num_steps = 0;
+            mutable double m_last_step_time = 1e-20;
 
             /**
              * @brief Constructor for the RHSFunctor.
@@ -424,7 +106,7 @@ namespace gridfire::solver {
              * @param T9 Temperature in units of 10^9 K.
              * @param rho Density in g/cm^3.
              */
-            RHSFunctor(
+            RHSManager(
                 DynamicEngine& engine,
                 const double T9,
                 const double rho
@@ -432,7 +114,7 @@ namespace gridfire::solver {
             m_engine(engine),
             m_T9(T9),
             m_rho(rho),
-            m_numSpecies(engine.getNetworkSpecies().size()) {}
+            m_cached_time(0) {}
 
             /**
              * @brief Calculates the time derivatives of the species abundances.
@@ -445,6 +127,10 @@ namespace gridfire::solver {
                 boost::numeric::ublas::vector<double>& dYdt,
                 double t
             ) const;
+
+            void observe(const boost::numeric::ublas::vector<double>& state, double t) const;
+            void compute_and_cache(const boost::numeric::ublas::vector<double>& state, double t) const;
+
         };
 
         /**
@@ -458,7 +144,6 @@ namespace gridfire::solver {
             DynamicEngine& m_engine; ///< The engine used to evaluate the network.
             const double m_T9; ///< Temperature in units of 10^9 K.
             const double m_rho; ///< Density in g/cm^3.
-            const size_t m_numSpecies; ///< The number of species in the network.
 
             /**
              * @brief Constructor for the JacobianFunctor.
@@ -473,8 +158,7 @@ namespace gridfire::solver {
             ) :
             m_engine(engine),
             m_T9(T9),
-            m_rho(rho),
-            m_numSpecies(engine.getNetworkSpecies().size()) {}
+            m_rho(rho) {}
 
             /**
              * @brief Calculates the Jacobian matrix.
@@ -493,97 +177,7 @@ namespace gridfire::solver {
         };
 
     private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance.
-        fourdst::config::Config& m_config = fourdst::config::Config::getInstance(); ///< Configuration instance.
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log"); ///< Logger instance.
+        Config& m_config = Config::getInstance(); ///< Configuration instance.
     };
-
-    template<typename T>
-    int QSENetworkSolver::EigenFunctor<T>::operator()(const InputType &v_QSE, OutputType &f_QSE) const {
-        std::vector<double> y = m_YFull; // Full vector of species abundances
-        Eigen::VectorXd Y_QSE = m_YScale.array() * v_QSE.array().sinh(); // Convert to physical abundances using asinh scaling
-        LOG_DEBUG(
-            m_logger,
-            "Calling QSENetworkSolver::EigenFunctor::operator() with QSE abundances {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-                    ss << std::string(m_engine.getNetworkSpecies()[m_QSESpeciesIndices[i]].name()) << ": " << Y_QSE(i) << ", ";
-                }
-                return ss.str();
-            }());
-
-        for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-            y[m_QSESpeciesIndices[i]] = Y_QSE(i);
-        }
-
-
-        const auto [dydt, specificEnergyRate] = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
-        LOG_DEBUG(
-            m_logger,
-            "Calling QSENetworkSolver::EigenFunctor::operator() found QSE dydt {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-                    ss << std::string(m_engine.getNetworkSpecies()[m_QSESpeciesIndices[i]].name()) << ": " << dydt[m_QSESpeciesIndices[i]] << ", ";
-                }
-                return ss.str();
-            }());
-        f_QSE.resize(m_QSESpeciesIndices.size());
-        for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-            f_QSE(i) = dydt[m_QSESpeciesIndices[i]];
-        }
-        return 0; // Success
-    }
-
-    template <typename T>
-    int QSENetworkSolver::EigenFunctor<T>::df(const InputType& v_QSE, JacobianType& J_QSE) const {
-        std::vector<double> y = m_YFull;
-        Eigen::VectorXd Y_QSE = m_YScale.array() * v_QSE.array().sinh();
-
-        for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-            y[m_QSESpeciesIndices[i]] = Y_QSE(i);
-        }
-
-        m_engine.generateJacobianMatrix(y, m_T9, m_rho);
-
-        J_QSE.resize(m_QSESpeciesIndices.size(), m_QSESpeciesIndices.size());
-        for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-            for (size_t j = 0; j < m_QSESpeciesIndices.size(); ++j) {
-                J_QSE(i, j) = m_engine.getJacobianMatrixEntry(m_QSESpeciesIndices[i], m_QSESpeciesIndices[j]);
-            }
-        }
-
-        std::string format_jacobian = [&]() -> std::string {
-            std::stringstream ss;
-            ss << std::scientific << std::setprecision(5);
-            for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-                for (size_t j = 0; j < m_QSESpeciesIndices.size(); ++j) {
-                    ss << J_QSE(i, j) << " ";
-                }
-                ss << "\n";
-            }
-            return ss.str();
-        }();
-
-
-        for (long j = 0; j < J_QSE.cols(); ++j) {
-            LOG_DEBUG(
-                m_logger,
-                "Jacobian ({},{}) before chain rule: {}",
-                j, j, J_QSE(j, j)
-            );
-            const double dY_dv = m_YScale(j) * CppAD::cosh(v_QSE(j));
-            J_QSE.col(j) *= dY_dv; // chain rule for log space transformation
-            LOG_DEBUG(
-                m_logger,
-                "Jacobian ({},{}) after chain rule: {} (dY/dv = {})",
-                j, j, J_QSE(j, j), dY_dv
-            );
-        }
-        return 0;
-    }
-
-
 }

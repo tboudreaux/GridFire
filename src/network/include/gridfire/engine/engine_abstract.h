@@ -106,7 +106,7 @@ namespace gridfire {
          * time derivatives of all species and the specific nuclear energy generation
          * rate for the current state.
          */
-        [[nodiscard]] virtual StepDerivatives<double> calculateRHSAndEnergy(
+        [[nodiscard]] virtual std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double>& Y,
             double T9,
             double rho
@@ -217,6 +217,8 @@ namespace gridfire {
          */
         [[nodiscard]] virtual const reaction::LogicalReactionSet& getNetworkReactions() const = 0;
 
+        virtual void setNetworkReactions(const reaction::LogicalReactionSet& reactions) = 0;
+
         /**
          * @brief Compute timescales for all species in the network.
          *
@@ -228,7 +230,13 @@ namespace gridfire {
          * This method estimates the timescale for abundance change of each species,
          * which can be used for timestep control, diagnostics, and reaction network culling.
          */
-        [[nodiscard]] virtual std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+            const std::vector<double>& Y,
+            double T9,
+            double rho
+        ) const = 0;
+
+        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
             const std::vector<double>& Y,
             double T9,
             double rho

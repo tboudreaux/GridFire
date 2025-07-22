@@ -3,518 +3,22 @@
 #include "gridfire/network.h"
 #include "gridfire/exceptions/error_engine.h"
 
-
-#include "gridfire/utils/logging.h"
-
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/composition.h"
 #include "fourdst/config/config.h"
 
-#include "Eigen/Dense"
 #include "unsupported/Eigen/NonLinearOptimization"
 
 #include <boost/numeric/odeint.hpp>
 
 #include <vector>
-#include <unordered_map>
 #include <string>
 #include <stdexcept>
 #include <iomanip>
 
-#include "gridfire/engine/views/engine_multiscale.h"
-
 #include "quill/LogMacros.h"
 
-struct adaptive_integrator_observer {
-    double m_last_t = 0.0;
-    int m_total_steps = 0;
-
-    void operator()(boost::numeric::ublas::vector<double> &state, double t) {
-        // std::cout << "(Step: " << m_total_steps << ") Current Time: " << t << " (dt: " << t - m_last_t << ")\n";
-        m_last_t = t;
-        m_total_steps++;
-
-    }
-};
-
 namespace gridfire::solver {
-    double s_prevTimestep = 0.0;
-
-    NetOut QSENetworkSolver::evaluate(const NetIn &netIn) {
-        // --- Use the policy to decide whether to update the view ---
-        if (shouldUpdateView(netIn)) {
-            LOG_DEBUG(m_logger, "Solver update policy triggered, network view updating...");
-            m_engine.update(netIn);
-            LOG_DEBUG(m_logger, "Network view updated!");
-
-            m_lastSeenConditions = netIn;
-            m_isViewInitialized = true;
-        }
-        m_engine.generateJacobianMatrix(netIn.MolarAbundance(), netIn.temperature / 1e9, netIn.density);
-        using state_type = boost::numeric::ublas::vector<double>;
-        using namespace boost::numeric::odeint;
-
-        NetOut postIgnition = initializeNetworkWithShortIgnition(netIn);
-
-        constexpr double abundance_floor = 1.0e-30;
-        std::vector<double>Y_sanitized_initial;
-        Y_sanitized_initial.reserve(m_engine.getNetworkSpecies().size());
-
-        LOG_DEBUG(m_logger, "Sanitizing initial abundances with a floor of {:0.3E}...", abundance_floor);
-        for (const auto& species : m_engine.getNetworkSpecies()) {
-            double molar_abundance = 0.0;
-            if (postIgnition.composition.contains(species)) {
-                molar_abundance = postIgnition.composition.getMolarAbundance(std::string(species.name()));
-            }
-
-            if (molar_abundance < abundance_floor) {
-                molar_abundance = abundance_floor;
-            }
-            Y_sanitized_initial.push_back(molar_abundance);
-        }
-        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
-        const double rho = netIn.density; // Density in g/cm^3
-
-        const auto indices = packSpeciesTypeIndexVectors(Y_sanitized_initial, T9, rho);
-        Eigen::VectorXd Y_QSE;
-        try {
-            Y_QSE = calculateSteadyStateAbundances(Y_sanitized_initial, T9, rho, indices);
-            LOG_DEBUG(m_logger, "QSE Abundances: {}", [*this](const dynamicQSESpeciesIndices& indices, const Eigen::VectorXd& Y_QSE) -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
-                    ss << std::string(m_engine.getNetworkSpecies()[indices.QSESpeciesIndices[i]].name()) + ": ";
-                    ss << Y_QSE(i);
-                    if (i < indices.QSESpeciesIndices.size() - 2) {
-                        ss << ", ";
-                    } else if (i == indices.QSESpeciesIndices.size() - 2) {
-                        ss << ", and ";
-                    }
-
-                }
-                return ss.str();
-            }(indices, Y_QSE));
-        } catch (const std::runtime_error& e) {
-            LOG_ERROR(m_logger, "Failed to calculate steady state abundances. Aborting QSE evaluation.");
-            m_logger->flush_log();
-            throw std::runtime_error("Failed to calculate steady state abundances: " + std::string(e.what()));
-        }
-
-        state_type YDynamic_ublas(indices.dynamicSpeciesIndices.size() + 1);
-        for (size_t i = 0; i < indices.dynamicSpeciesIndices.size(); ++i) {
-            YDynamic_ublas(i) = Y_sanitized_initial[indices.dynamicSpeciesIndices[i]];
-        }
-        YDynamic_ublas(indices.dynamicSpeciesIndices.size()) = 0.0; // Placeholder for specific energy rate
-
-        const RHSFunctor rhs_functor(m_engine, indices.dynamicSpeciesIndices, indices.QSESpeciesIndices, Y_QSE, T9, rho);
-        const auto stepper = make_controlled<runge_kutta_dopri5<state_type>>(1.0e-8, 1.0e-8);
-
-        size_t stepCount = integrate_adaptive(
-            stepper,
-            rhs_functor,
-            YDynamic_ublas,
-            0.0, // Start time
-            netIn.tMax,
-            netIn.dt0
-        );
-
-        std::vector<double> YFinal = Y_sanitized_initial;
-        for (size_t i = 0; i <indices.dynamicSpeciesIndices.size(); ++i) {
-            YFinal[indices.dynamicSpeciesIndices[i]] = YDynamic_ublas(i);
-        }
-        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
-            YFinal[indices.QSESpeciesIndices[i]] = Y_QSE(i);
-        }
-
-        const double finalSpecificEnergyRate = YDynamic_ublas(indices.dynamicSpeciesIndices.size());
-
-        // --- Marshal output variables ---
-        std::vector<std::string> speciesNames(m_engine.getNetworkSpecies().size());
-        std::vector<double> finalMassFractions(m_engine.getNetworkSpecies().size());
-        double massFractionSum = 0.0;
-
-        for (size_t i = 0; i < speciesNames.size(); ++i) {
-            const auto& species = m_engine.getNetworkSpecies()[i];
-            speciesNames[i] = species.name();
-            finalMassFractions[i] = YFinal[i] * species.mass(); // Convert from molar abundance to mass fraction
-            massFractionSum += finalMassFractions[i];
-        }
-        for (auto& mf : finalMassFractions) {
-            mf /= massFractionSum; // Normalize to get mass fractions
-        }
-
-        fourdst::composition::Composition outputComposition(speciesNames, finalMassFractions);
-        NetOut netOut;
-        netOut.composition = outputComposition;
-        netOut.energy = finalSpecificEnergyRate; // Specific energy rate
-        netOut.num_steps = stepCount;
-        return netOut;
-    }
-
-    dynamicQSESpeciesIndices QSENetworkSolver::packSpeciesTypeIndexVectors(
-        const std::vector<double>& Y,
-        const double T9,
-        const double rho
-    ) const {
-        constexpr double timescaleCutoff = 1.0e-5;
-        constexpr double abundanceCutoff = 1.0e-15;
-
-        LOG_INFO(m_logger, "Partitioning species using T9={:0.2f} and ρ={:0.2e}", T9, rho);
-        LOG_INFO(m_logger, "Timescale Cutoff: {:.1e} s, Abundance Cutoff: {:.1e}", timescaleCutoff, abundanceCutoff);
-
-        std::vector<size_t>dynamicSpeciesIndices; // Slow species that are not in QSE
-        std::vector<size_t>QSESpeciesIndices;  // Fast species that are in QSE
-
-        std::unordered_map<fourdst::atomic::Species, double> speciesTimescale = m_engine.getSpeciesTimescales(Y, T9, rho);
-        LOG_DEBUG(
-            m_logger,
-            "{}",
-            gridfire::utils::formatNuclearTimescaleLogString(
-                m_engine,
-                Y,
-                T9,
-                rho
-            ));
-
-        for (size_t i = 0; i < m_engine.getNetworkSpecies().size(); ++i) {
-            const auto& species = m_engine.getNetworkSpecies()[i];
-            const double network_timescale = speciesTimescale.at(species);
-            const double abundance = Y[i];
-
-            double decay_timescale = std::numeric_limits<double>::infinity();
-            const double half_life = species.halfLife();
-            if (half_life > 0 && !std::isinf(half_life)) {
-                constexpr double LN2 = 0.69314718056;
-                decay_timescale = half_life / LN2;
-            }
-
-            const double final_timescale = std::min(network_timescale, decay_timescale);
-
-            const bool isQSE = false;
-            //     network_timescale,
-            //     decay_timescale,
-            //     abundance
-            // );
-
-            if (isQSE) {
-                LOG_TRACE_L2(m_logger, "{} is in QSE based on rules in qse_rules.h", species.name());
-                QSESpeciesIndices.push_back(i);
-            } else {
-                LOG_TRACE_L2(m_logger, "{} is dynamic based on rules in qse_rules.h", species.name());
-                dynamicSpeciesIndices.push_back(i);
-            }
-        }
-        LOG_INFO(m_logger, "Partitioning complete. Dynamical species: {}, QSE species: {}.", dynamicSpeciesIndices.size(), QSESpeciesIndices.size());
-        LOG_INFO(m_logger, "Dynamic species: {}", [dynamicSpeciesIndices](const DynamicEngine& engine_wrapper) -> std::string {
-            std::string result;
-            int count = 0;
-            for (const auto& i : dynamicSpeciesIndices) {
-                result += std::string(engine_wrapper.getNetworkSpecies()[i].name());
-                if (count < dynamicSpeciesIndices.size() - 2) {
-                    result += ", ";
-                } else if (count == dynamicSpeciesIndices.size() - 2) {
-                    result += " and ";
-                }
-                count++;
-            }
-            return result;
-        }(m_engine));
-        LOG_INFO(m_logger, "QSE species: {}", [QSESpeciesIndices](const DynamicEngine& engine_wrapper) -> std::string {
-            std::string result;
-            int count = 0;
-            for (const auto& i : QSESpeciesIndices) {
-                result += std::string(engine_wrapper.getNetworkSpecies()[i].name());
-                if (count < QSESpeciesIndices.size() - 2) {
-                    result += ", ";
-                } else if (count == QSESpeciesIndices.size() - 2) {
-                    result += " and ";
-                }
-                count++;
-            }
-            return result;
-        }(m_engine));
-        return {dynamicSpeciesIndices, QSESpeciesIndices};
-    }
-
-    Eigen::VectorXd QSENetworkSolver::calculateSteadyStateAbundances(
-    const std::vector<double> &Y,
-    const double T9,
-    const double rho,
-    const dynamicQSESpeciesIndices &indices
-    ) const {
-        LOG_TRACE_L1(m_logger, "Calculating steady state abundances for QSE species...");
-        LOG_TRACE_L1(
-            m_logger,
-            "Initial QSE species abundances: {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                int count = 0;
-                for (const auto& i : indices.QSESpeciesIndices) {
-                    ss << std::string(m_engine.getNetworkSpecies()[i].name()) << ": " << Y[i] << ", ";
-                    if (count < indices.QSESpeciesIndices.size() - 2) {
-                        ss << ", ";
-                    } else if (count == indices.QSESpeciesIndices.size() - 2) {
-                        ss << " and ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }());
-
-        if (indices.QSESpeciesIndices.empty()) {
-            LOG_DEBUG(m_logger, "No QSE species to solve for.");
-            return Eigen::VectorXd(0);
-        }
-
-        Eigen::VectorXd YScale(indices.QSESpeciesIndices.size());
-        const double abundanceFloor = 1e-15;
-        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); i++) {
-            const double initial_abundance = Y[indices.QSESpeciesIndices[i]];
-            YScale(i) = std::max(initial_abundance, abundanceFloor);
-        }
-
-        // Use the EigenFunctor with Eigen's nonlinear solver
-        EigenFunctor<double> functor(
-            m_engine,
-            Y,
-            indices.dynamicSpeciesIndices,
-            indices.QSESpeciesIndices,
-            T9,
-            rho,
-            YScale
-        );
-
-        Eigen::VectorXd v_qse_initial(indices.QSESpeciesIndices.size());
-        for (size_t i = 0; i < indices.QSESpeciesIndices.size(); ++i) {
-            const double initial_abundance = Y[indices.QSESpeciesIndices[i]];
-            v_qse_initial(i) = std::asinh(initial_abundance/ YScale(i)); // Use asinh for better numerical stability compared to log
-        }
-        LOG_TRACE_L1(
-            m_logger,
-            "v_qse_log_initial: {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(5);
-                for (size_t i = 0; i < v_qse_initial.size(); ++i) {
-                    ss << "log(X_" << std::string(m_engine.getNetworkSpecies()[indices.QSESpeciesIndices[i]].name()) << ") = " << v_qse_initial(i);
-                    if (i < v_qse_initial.size() - 2) {
-                        ss << ", ";
-                    } else if (i == v_qse_initial.size() - 2) {
-                        ss << " and ";
-                    }
-                }
-                return ss.str();
-            }());
-
-        const static std::unordered_map<Eigen::LevenbergMarquardtSpace::Status, const char*> statusMessages = {
-            {Eigen::LevenbergMarquardtSpace::NotStarted, "Not started"},
-            {Eigen::LevenbergMarquardtSpace::Running, "Running"},
-            {Eigen::LevenbergMarquardtSpace::ImproperInputParameters, "Improper input parameters"},
-            {Eigen::LevenbergMarquardtSpace::RelativeReductionTooSmall, "Relative reduction too small"},
-            {Eigen::LevenbergMarquardtSpace::RelativeErrorTooSmall, "Relative error too small"},
-            {Eigen::LevenbergMarquardtSpace::RelativeErrorAndReductionTooSmall, "Relative error and reduction too small"},
-            {Eigen::LevenbergMarquardtSpace::CosinusTooSmall, "Cosine too small"},
-            {Eigen::LevenbergMarquardtSpace::TooManyFunctionEvaluation, "Too many function evaluations"},
-            {Eigen::LevenbergMarquardtSpace::FtolTooSmall, "Function tolerance too small"},
-            {Eigen::LevenbergMarquardtSpace::XtolTooSmall, "X tolerance too small"},
-            {Eigen::LevenbergMarquardtSpace::GtolTooSmall, "Gradient tolerance too small"},
-            {Eigen::LevenbergMarquardtSpace::UserAsked, "User asked to stop"}
-        };
-
-        Eigen::LevenbergMarquardt lm(functor);
-        lm.parameters.xtol = 1e-24;
-        lm.parameters.ftol = 1e-24;
-        const Eigen::LevenbergMarquardtSpace::Status info = lm.minimize(v_qse_initial);
-
-        if (info <= 0 || info >= 4) {
-            LOG_ERROR(m_logger, "QSE species minimization failed with status: {} ({})",
-                      static_cast<int>(info), statusMessages.at(info));
-            throw std::runtime_error(
-                "QSE species minimization failed with status: " + std::to_string(static_cast<int>(info)) +
-                " (" + std::string(statusMessages.at(info)) + ")"
-            );
-        }
-        LOG_DEBUG(m_logger, "QSE species minimization completed successfully with status: {} ({})",
-                  static_cast<int>(info), statusMessages.at(info));
-        return YScale.array() * v_qse_initial.array().sinh(); // Convert back to molar abundances
-
-    }
-
-    NetOut QSENetworkSolver::initializeNetworkWithShortIgnition(const NetIn &netIn) const {
-        const auto ignitionTemperature = m_config.get<double>(
-            "gridfire:solver:QSE:ignition:temperature",
-            2e8
-        ); // 0.2 GK
-        const auto ignitionDensity = m_config.get<double>(
-            "gridfire:solver:QSE:ignition:density",
-            1e6
-        ); // 1e6 g/cm^3
-        const auto ignitionTime = m_config.get<double>(
-            "gridfire:solver:QSE:ignition:tMax",
-            1e-7
-        ); // 0.1 μs
-        const auto ignitionStepSize = m_config.get<double>(
-            "gridfire:solver:QSE:ignition:dt0",
-            1e-15
-        ); // 1e-15 seconds
-
-        LOG_INFO(
-            m_logger,
-            "Igniting network with T={:<5.3E}, ρ={:<5.3E}, tMax={:<5.3E}, dt0={:<5.3E}...",
-            ignitionTemperature,
-            ignitionDensity,
-            ignitionTime,
-            ignitionStepSize
-        );
-        LOG_INFO(
-            m_logger,
-            "Pre-ignition composition: {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(3);
-                int count = 0;
-                for (const auto& entry : netIn.composition | std::views::values) {
-                    ss << "X_" << std::string(entry.isotope().name()) << ": " << entry.mass_fraction() << " ";
-                    if (count < netIn.composition.getRegisteredSymbols().size() - 2) {
-                        ss << ", ";
-                    } else if (count == netIn.composition.getRegisteredSymbols().size() - 2) {
-                        ss << " and ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }());
-
-        NetIn preIgnition = netIn;
-        preIgnition.temperature = ignitionTemperature;
-        preIgnition.density = ignitionDensity;
-        preIgnition.tMax = ignitionTime;
-        preIgnition.dt0 = ignitionStepSize;
-
-        const auto prevScreeningModel = m_engine.getScreeningModel();
-        LOG_DEBUG(m_logger, "Setting screening model to BARE for high temperature and density ignition.");
-        m_engine.setScreeningModel(screening::ScreeningType::BARE);
-        DirectNetworkSolver ignitionSolver(m_engine);
-        NetOut postIgnition = ignitionSolver.evaluate(preIgnition);
-        LOG_INFO(m_logger, "Network ignition completed in {} steps.", postIgnition.num_steps);
-        LOG_INFO(
-            m_logger,
-            "Post-ignition composition: {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(3);
-                int count = 0;
-                for (const auto& entry : postIgnition.composition | std::views::values) {
-                    ss << "X_" << std::string(entry.isotope().name()) << ": " << entry.mass_fraction() << " ";
-                    if (count < postIgnition.composition.getRegisteredSymbols().size() - 2) {
-                        ss << ", ";
-                    } else if (count == postIgnition.composition.getRegisteredSymbols().size() - 2) {
-                        ss << " and ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }());
-        LOG_DEBUG(
-            m_logger,
-            "Average change in composition during ignition: {}",
-            [&]() -> std::string {
-                std::stringstream ss;
-                ss << std::scientific << std::setprecision(3);
-                for (const auto& entry : postIgnition.composition | std::views::values) {
-                    if (!postIgnition.composition.contains(entry.isotope()) || !netIn.composition.contains(entry.isotope())) {
-                        ss << std::string(entry.isotope().name()) << ": inf %, ";
-                        continue;
-                    }
-                    const double initialAbundance = netIn.composition.getMolarAbundance(std::string(entry.isotope().name()));
-                    const double finalAbundance = postIgnition.composition.getMolarAbundance(std::string(entry.isotope().name()));
-                    const double change = (finalAbundance - initialAbundance) / initialAbundance * 100.0; // Percentage change
-                    ss << std::string(entry.isotope().name()) << ": " << change << " %, ";
-                }
-                return ss.str();
-            }());
-        m_engine.setScreeningModel(prevScreeningModel);
-        LOG_DEBUG(m_logger, "Restoring previous screening model: {}", static_cast<int>(prevScreeningModel));
-        return postIgnition;
-    }
-
-    bool QSENetworkSolver::shouldUpdateView(const NetIn &conditions) const {
-        // Policy 1: If the view has never been initialized, we must update.
-        if (!m_isViewInitialized) {
-            return true;
-        }
-
-        // Policy 2: Check for significant relative change in temperature.
-        // Reaction rates are exponentially sensitive to temperature, so we use a tight threshold.
-        const double temp_threshold = m_config.get<double>("gridfire:solver:policy:temp_threshold", 0.05); // 5%
-        const double temp_relative_change = std::abs(conditions.temperature - m_lastSeenConditions.temperature) / m_lastSeenConditions.temperature;
-        if (temp_relative_change > temp_threshold) {
-            LOG_DEBUG(m_logger, "Temperature changed by {:.1f}%, triggering view update.", temp_relative_change * 100);
-            return true;
-        }
-
-        // Policy 3: Check for significant relative change in density.
-        const double rho_threshold = m_config.get<double>("gridfire:solver:policy:rho_threshold", 0.10); // 10%
-        const double rho_relative_change = std::abs(conditions.density - m_lastSeenConditions.density) / m_lastSeenConditions.density;
-        if (rho_relative_change > rho_threshold) {
-            LOG_DEBUG(m_logger, "Density changed by {:.1f}%, triggering view update.", rho_relative_change * 100);
-            return true;
-        }
-
-        // Policy 4: Check for fuel depletion.
-        // If a primary fuel source changes significantly, the network structure may change.
-        const double fuel_threshold = m_config.get<double>("gridfire:solver:policy:fuel_threshold", 0.15); // 15%
-
-        // Example: Check hydrogen abundance
-        const double h1_old = m_lastSeenConditions.composition.getMassFraction("H-1");
-        const double h1_new = conditions.composition.getMassFraction("H-1");
-        if (h1_old > 1e-12) { // Avoid division by zero
-            const double h1_relative_change = std::abs(h1_new - h1_old) / h1_old;
-            if (h1_relative_change > fuel_threshold) {
-                LOG_DEBUG(m_logger, "H-1 mass fraction changed by {:.1f}%, triggering view update.", h1_relative_change * 100);
-                return true;
-            }
-        }
-
-        // If none of the above conditions are met, the current view is still good enough.
-        return false;
-    }
-
-    void QSENetworkSolver::RHSFunctor::operator()(
-        const boost::numeric::ublas::vector<double> &YDynamic,
-        boost::numeric::ublas::vector<double> &dYdtDynamic,
-        double t
-    ) const {
-        LOG_TRACE_L1(
-            m_logger,
-            "Timestepping at t={:0.3E} (dt={:0.3E}) with T9={:0.3E}, ρ={:0.3E}",
-            t,
-            t - s_prevTimestep,
-            m_T9,
-            m_rho
-        );
-        s_prevTimestep = t;
-        // --- Populate the slow / dynamic species vector ---
-        std::vector<double> YFull(m_engine.getNetworkSpecies().size());
-        for (size_t i = 0; i < m_dynamicSpeciesIndices.size(); ++i) {
-            YFull[m_dynamicSpeciesIndices[i]] = YDynamic(i);
-        }
-
-        // --- Populate the QSE species vector ---
-        for (size_t i = 0; i < m_QSESpeciesIndices.size(); ++i) {
-            YFull[m_QSESpeciesIndices[i]] = m_Y_QSE(i);
-        }
-
-        auto [full_dYdt, specificEnergyRate] = m_engine.calculateRHSAndEnergy(YFull, m_T9, m_rho);
-
-        dYdtDynamic.resize(m_dynamicSpeciesIndices.size() + 1);
-        for (size_t i = 0; i < m_dynamicSpeciesIndices.size(); ++i) {
-            dYdtDynamic(i) = full_dYdt[m_dynamicSpeciesIndices[i]];
-        }
-        dYdtDynamic[m_dynamicSpeciesIndices.size()] = specificEnergyRate;
-    }
-
     NetOut DirectNetworkSolver::evaluate(const NetIn &netIn) {
         namespace ublas = boost::numeric::ublas;
         namespace odeint = boost::numeric::odeint;
@@ -526,44 +30,97 @@ namespace gridfire::solver {
         const auto absTol = m_config.get<double>("gridfire:solver:DirectNetworkSolver:absTol", 1.0e-8);
         const auto relTol = m_config.get<double>("gridfire:solver:DirectNetworkSolver:relTol", 1.0e-8);
 
-        size_t stepCount = 0;
-
         Composition equilibratedComposition = m_engine.update(netIn);
-        const unsigned long numSpecies = m_engine.getNetworkSpecies().size();
+        size_t numSpecies = m_engine.getNetworkSpecies().size();
         ublas::vector<double> Y(numSpecies + 1);
 
-        RHSFunctor rhsFunctor(m_engine, T9, netIn.density);
+        RHSManager manager(m_engine, T9, netIn.density);
         JacobianFunctor jacobianFunctor(m_engine, T9, netIn.density);
 
+        auto populateY = [&](const Composition& comp) {
+            const size_t numSpeciesInternal = m_engine.getNetworkSpecies().size();
+            Y.resize(numSpeciesInternal + 1);
+            for (size_t i = 0; i < numSpeciesInternal; i++) {
+                const auto& species = m_engine.getNetworkSpecies()[i];
+                if (!comp.contains(species)) {
+                    double lim = std::numeric_limits<double>::min();
+                    LOG_DEBUG(m_logger, "Species '{}' not found in composition. Setting abundance to {:0.3E}.", species.name(), lim);
+                    Y(i) = lim; // Species not in the composition, set to zero
+                } else {
+                    Y(i) = comp.getMolarAbundance(species);
+                }
+            }
+
+            // TODO: a good starting point to make the temperature, density, and energy self consistent would be to turn this into an accumulator
+            Y(numSpeciesInternal) = 0.0; // Specific energy rate, initialized to zero
+        };
 
         // This is a quick debug that can be turned on. For solar code input parameters (T~1.5e7K, ρ~1.5e3 g/cm^3) this should be near 8e-17
         // std::cout << "D/H: " << equilibratedComposition.getMolarAbundance("H-2") / equilibratedComposition.getMolarAbundance("H-1") << std::endl;
 
-        for (size_t i = 0; i < numSpecies; ++i) {
-            const auto& species = m_engine.getNetworkSpecies()[i];
-            if (!equilibratedComposition.contains(species)) {
-                LOG_DEBUG(m_logger, "Species '{}' not found in composition. Setting abundance to 1e-99.", species.name());
-                Y(i) = 1e-99;
-                continue;
-            }
-            double abun = equilibratedComposition.getMolarAbundance(species);
-            // if (abun == 0.0) {
-            //     abun = 1e-99; // Avoid zero abundances
-            // }
-            Y(i) = abun;
-        }
-        Y(numSpecies) = 0.0;
+        populateY(equilibratedComposition);
         const auto stepper = odeint::make_controlled<odeint::rosenbrock4<double>>(absTol, relTol);
-        adaptive_integrator_observer observer;
-        stepCount = odeint::integrate_adaptive(
-            stepper,
-            std::make_pair(rhsFunctor, jacobianFunctor),
-            Y,
-            0.0,
-            netIn.tMax,
-            netIn.dt0,
-            observer
-        );
+
+        double current_time = 0.0;
+        double current_initial_timestep = netIn.dt0;
+        double accumulated_energy = 0.0;
+        // size_t total_update_stages_triggered = 0;
+
+        while (current_time < netIn.tMax) {
+            try {
+                odeint::integrate_adaptive(
+                    stepper,
+                    std::make_pair(manager, jacobianFunctor),
+                    Y,
+                    current_time,
+                    netIn.tMax,
+                    current_initial_timestep,
+                    [&](const auto& state, double t) {
+                        current_time = t;
+                        manager.observe(state, t);
+                    }
+                );
+                current_time = netIn.tMax;
+            } catch (const exceptions::StaleEngineTrigger &e) {
+                LOG_INFO(m_logger, "Catching StaleEngineTrigger at t = {:0.3E} with T9 = {:0.3E}, rho = {:0.3E}. Triggering update stage (last stage took {} steps).", current_time, T9, netIn.density, e.totalSteps());
+                exceptions::StaleEngineTrigger::state staleState = e.getState();
+                accumulated_energy += e.energy(); // Add the specific energy rate to the accumulated energy
+                // total_update_stages_triggered++;
+
+                Composition temp_comp;
+                std::vector<double> mass_fractions;
+                size_t num_species_at_stop = e.numSpecies();
+
+                if (num_species_at_stop != m_engine.getNetworkSpecies().size()) {
+                    throw std::runtime_error(
+                        "StaleEngineError state has a different number of species than the engine. This should not happen."
+                    );
+                }
+                mass_fractions.reserve(num_species_at_stop);
+
+                for (size_t i = 0; i < num_species_at_stop; ++i) {
+                    const auto& species = m_engine.getNetworkSpecies()[i];
+                    temp_comp.registerSpecies(species);
+                    mass_fractions.push_back(e.getMolarAbundance(i) * species.mass()); // Convert from molar abundance to mass fraction
+                }
+                temp_comp.setMassFraction(m_engine.getNetworkSpecies(), mass_fractions);
+                temp_comp.finalize(true);
+
+                NetIn netInTemp = netIn;
+                netInTemp.temperature = e.temperature();
+                netInTemp.density = e.density();
+                netInTemp.composition = std::move(temp_comp);
+
+                Composition currentComposition = m_engine.update(netInTemp);
+                populateY(currentComposition);
+                Y(Y.size() - 1) = e.energy(); // Set the specific energy rate from the stale state
+                numSpecies = m_engine.getNetworkSpecies().size();
+
+                // current_initial_timestep = 0.001 * manager.m_last_step_time; // set the new timestep to the last successful timestep before repartitioning
+            }
+        }
+
+        accumulated_energy += Y(Y.size() - 1); // Add the specific energy rate to the accumulated energy
 
         std::vector<double> finalMassFractions(numSpecies);
         for (size_t i = 0; i < numSpecies; ++i) {
@@ -586,72 +143,73 @@ namespace gridfire::solver {
 
         NetOut netOut;
         netOut.composition = std::move(outputComposition);
-        netOut.energy = Y(numSpecies); // Specific energy rate
-        netOut.num_steps = stepCount;
+        netOut.energy = accumulated_energy; // Specific energy rate
+        netOut.num_steps = manager.m_num_steps;
 
         return netOut;
     }
 
-    void DirectNetworkSolver::RHSFunctor::operator()(
+    void DirectNetworkSolver::RHSManager::operator()(
         const boost::numeric::ublas::vector<double> &Y,
         boost::numeric::ublas::vector<double> &dYdt,
         const double t
     ) const {
-        const std::vector<double> y(Y.begin(), m_numSpecies + Y.begin());
-        // const auto timescales = m_engine.getSpeciesTimescales(y, m_T9, m_rho);
-        StepDerivatives<double> deriv;
-
-        // TODO: Refactor this to use std::expected
-        try {
-            deriv = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
-        } catch (const exceptions::StaleEngineError& e) { // If the engine reports that it is stale, we need to update it
-            LOG_INFO(m_logger, "Engine reports stale state. Calling engine update method...");
-
-            NetIn netInTemp;
-            fourdst::composition::Composition compositionTemp;
-
-            for (const auto& species : m_engine.getNetworkSpecies()) {
-                compositionTemp.registerSpecies(species);
-            }
-
-            std::vector<double> X(y.size(), 0.0);
-            for (size_t i = 0; i < y.size(); ++i) {
-                double Xi = y[i] * m_engine.getNetworkSpecies()[i].mass(); // Convert from molar abundance to mass fraction
-                if (Xi < 0 && std::abs(Xi) < 1e-20) {
-                    Xi = 0.0; // Avoid negative mass fractions
-                }
-                X[i] = Xi;
-            }
-
-            compositionTemp.setMassFraction(m_engine.getNetworkSpecies(), X);
-            compositionTemp.finalize(true);
-
-            netInTemp.composition = std::move(compositionTemp);
-            netInTemp.temperature = m_T9 * 1e9; // Convert T9 back to Kelvin
-            netInTemp.density = m_rho; // Density in g/cm^3
-
-            m_engine.update(netInTemp);
-
-            LOG_INFO(m_logger, "Engine update complete. Recalculating RHS and energy...");
-            deriv = m_engine.calculateRHSAndEnergy(y, m_T9, m_rho);
-            LOG_INFO(m_logger, "RHS and energy recalculated successfully!");
+        const size_t numSpecies = m_engine.getNetworkSpecies().size();
+        if (t != m_cached_time || !m_cached_result.has_value() || m_cached_result.value().dydt.size() != numSpecies + 1) {
+            compute_and_cache(Y, t);
         }
+        const auto&[dydt, nuclearEnergyGenerationRate] = m_cached_result.value();
+        dYdt.resize(numSpecies + 1);
+        std::ranges::copy(dydt, dYdt.begin());
+        dYdt(numSpecies) = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
+    }
 
-        dYdt.resize(m_numSpecies + 1);
-        // for (size_t i = 0; i < m_numSpecies; ++i) {
-        //     std::cout << "Species: " << m_engine.getNetworkSpecies()[i].name() << ", dYdt: " << deriv.dydt[i] << '\n';
-        // }
+    void DirectNetworkSolver::RHSManager::observe(
+        const boost::numeric::ublas::vector<double> &state,
+        const double t
+    ) const {
+        double dt = t - m_last_observed_time;
+        compute_and_cache(state, t);
+        LOG_INFO(
+            m_logger,
+            "(Step {}) Observed state at t = {:0.3E} (dt = {:0.3E})",
+            m_num_steps,
+            t,
+            dt
+        );
+        std::ostringstream oss;
+        oss << std::scientific << std::setprecision(3);
+        oss << "(Step: " << std::setw(10) << m_num_steps << ") t = " << t << " (dt = " << dt << ", eps_nuc: " << state(state.size() - 1) << " [erg])\n";
+        std::cout << oss.str();
+        m_last_observed_time = t;
+        m_last_step_time = dt;
 
-        // std::vector<double> S;
-        // S.reserve(m_numSpecies);
-        // for (size_t i = 0; i < m_numSpecies; ++i) {
-        //     S.push_back(std::abs(deriv.dydt[i]) / (1e-8 + 1e-8 * y[i]));
-        // }
-        // for (size_t i = 0; i < m_numSpecies; ++i) {
-        //     std::cout << "Species: " << m_engine.getNetworkSpecies()[i].name() << ", S: " << S[i] << '\n';
-        // }
-        std::ranges::copy(deriv.dydt, dYdt.begin());
-        dYdt(m_numSpecies) = deriv.nuclearEnergyGenerationRate;
+    }
+
+    void DirectNetworkSolver::RHSManager::compute_and_cache(
+        const boost::numeric::ublas::vector<double> &state,
+        double t
+    ) const {
+        std::vector<double> y_vec(state.begin(), state.end() - 1);
+        std::ranges::replace_if(
+            y_vec,
+            [](const double yi){
+                return yi < 0.0;
+            },
+            0.0 // Avoid negative abundances
+        );
+
+        const auto result = m_engine.calculateRHSAndEnergy(y_vec, m_T9, m_rho);
+        if (!result) {
+            LOG_INFO(m_logger,
+                "Triggering update stage due to stale engine detected at t = {:0.3E} with T9 = {:0.3E}, rho = {:0.3E}, y_vec (size: {})",
+                t, m_T9, m_rho, y_vec.size());
+            throw exceptions::StaleEngineTrigger({m_T9, m_rho, y_vec, t, m_num_steps, state(state.size() - 1)});
+        }
+        m_cached_result = result.value();
+        m_cached_time = t;
+
+        m_num_steps++;
     }
 
     void DirectNetworkSolver::JacobianFunctor::operator()(
@@ -660,13 +218,14 @@ namespace gridfire::solver {
         double t,
         boost::numeric::ublas::vector<double> &dfdt
     ) const {
-        J.resize(m_numSpecies+1, m_numSpecies+1);
+        size_t numSpecies = m_engine.getNetworkSpecies().size();
+        J.resize(numSpecies+1, numSpecies+1);
         J.clear();
-        for (int i = 0; i < m_numSpecies; ++i) {
-            for (int j = 0; j < m_numSpecies; ++j) {
+        for (int i = 0; i < numSpecies; ++i) {
+            for (int j = 0; j < numSpecies; ++j) {
                 J(i, j) = m_engine.getJacobianMatrixEntry(i, j);
-                // std::cout << "J(" << m_engine.getNetworkSpecies()[i].name() << ", " << m_engine.getNetworkSpecies()[j].name() << ") = " << J(i, j) << '\n';
             }
         }
     }
+
 }

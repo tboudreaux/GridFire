@@ -22,17 +22,17 @@ namespace gridfire::partition {
         m_partitionData.reserve(numRecords);
         const auto* records = reinterpret_cast<const record::RauscherThielemannPartitionDataRecord*>(rauscher_thielemann_partition_data);
         for (size_t i = 0; i < numRecords; ++i) {
-            const auto& record = records[i];
+            const auto&[z, a, ground_state_spin, normalized_g_values] = records[i];
             IsotopeData data;
-            data.ground_state_spin = record.ground_state_spin;
-            std::ranges::copy(record.normalized_g_values, data.normalized_g_values.begin());
-            const int key = make_key(record.z, record.a);
+            data.ground_state_spin = ground_state_spin;
+            std::ranges::copy(normalized_g_values, data.normalized_g_values.begin());
+            const int key = make_key(z, a);
             LOG_TRACE_L3_LIMIT_EVERY_N(
                 100,
                 m_logger,
                 "(EVERY 100) Adding Rauscher-Thielemann partition data for Z={} A={} (key={})",
-                record.z,
-                record.a,
+                z,
+                a,
                 key
             );
 

@@ -12,7 +12,7 @@
 
 std::string trim_whitespace(const std::string& str) {
     auto startIt = str.begin();
-    auto endIt   = str.end();
+    const auto endIt   = str.end();
 
     while (startIt != endIt && std::isspace(static_cast<unsigned char>(*startIt))) {
         ++startIt;
@@ -20,8 +20,8 @@ std::string trim_whitespace(const std::string& str) {
     if (startIt == endIt) {
         return "";
     }
-    auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
-                             [](unsigned char ch){ return !std::isspace(ch); });
+    const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
+                             [](const unsigned char ch){ return !std::isspace(ch); });
     return std::string(startIt, ritr.base());
 }
 
@@ -83,41 +83,41 @@ namespace gridfire::reaclib {
 
         // Cast the raw byte data to our structured record format.
         const auto* records = reinterpret_cast<const ReactionRecord*>(raw_reactions_data);
-        const size_t num_reactions = raw_reactions_data_len / sizeof(ReactionRecord);
+        constexpr size_t num_reactions = raw_reactions_data_len / sizeof(ReactionRecord);
 
         std::vector<reaction::Reaction> reaction_list;
         reaction_list.reserve(num_reactions);
 
         for (size_t i = 0; i < num_reactions; ++i) {
-            const auto& record = records[i];
+            const auto&[chapter, qValue, coeffs, reverse, label, rpName, reactants_str, products_str] = records[i];
 
             // The char arrays from the binary are not guaranteed to be null-terminated
             // if the string fills the entire buffer. We create null-terminated string_views.
-            const std::string_view label_sv(record.label, strnlen(record.label, sizeof(record.label)));
-            const std::string_view rpName_sv(record.rpName, strnlen(record.rpName, sizeof(record.rpName)));
-            const std::string_view reactants_sv(record.reactants_str, strnlen(record.reactants_str, sizeof(record.reactants_str)));
-            const std::string_view products_sv(record.products_str, strnlen(record.products_str, sizeof(record.products_str)));
+            const std::string_view label_sv(label, strnlen(label, sizeof(label)));
+            const std::string_view rpName_sv(rpName, strnlen(rpName, sizeof(rpName)));
+            const std::string_view reactants_sv(reactants_str, strnlen(reactants_str, sizeof(reactants_str)));
+            const std::string_view products_sv(products_str, strnlen(products_str, sizeof(products_str)));
 
             auto reactants = parseSpeciesString(reactants_sv);
             auto products = parseSpeciesString(products_sv);
 
             const reaction::RateCoefficientSet rate_coeffs = {
-                record.coeffs[0], record.coeffs[1], record.coeffs[2],
-                record.coeffs[3], record.coeffs[4], record.coeffs[5],
-                record.coeffs[6]
+                coeffs[0], coeffs[1], coeffs[2],
+                coeffs[3], coeffs[4], coeffs[5],
+                coeffs[6]
             };
 
             // Construct the Reaction object. We use rpName for both the unique ID and the human-readable name.
             reaction_list.emplace_back(
                 rpName_sv,
                 rpName_sv,
-                record.chapter,
+                chapter,
                 reactants,
                 products,
-                record.qValue,
+                qValue,
                 label_sv,
                 rate_coeffs,
-                record.reverse
+                reverse
             );
         }
 

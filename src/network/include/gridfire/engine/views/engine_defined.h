@@ -37,7 +37,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
-        StepDerivatives<double> calculateRHSAndEnergy(
+        std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double>& Y_defined,
             const double T9,
             const double rho
@@ -115,6 +115,8 @@ namespace gridfire{
          * @throws std::runtime_error If the view is stale.
          */
         const reaction::LogicalReactionSet& getNetworkReactions() const override;
+
+        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
         /**
          * @brief Computes timescales for all active species in the network.
          *
@@ -125,7 +127,13 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        std::unordered_map<fourdst::atomic::Species, double> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+            const std::vector<double>& Y_defined,
+            const double T9,
+            const double rho
+        ) const override;
+
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
             const std::vector<double>& Y_defined,
             const double T9,
             const double rho
@@ -243,6 +251,9 @@ namespace gridfire{
         size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
 
         void validateNetworkState() const;
+
+        void collect(const std::vector<std::string>& peNames);
+
     };
 
     class FileDefinedEngineView final: public DefinedEngineView {

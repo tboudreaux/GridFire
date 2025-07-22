@@ -10,6 +10,10 @@ namespace gridfire::expectations {
         STALE
     };
 
+    enum class StaleEngineErrorTypes {
+        SYSTEM_RESIZED
+    };
+
     struct EngineError {
         std::string m_message;
         EngineErrorTypes type = EngineErrorTypes::FAILURE;
@@ -30,5 +34,17 @@ namespace gridfire::expectations {
 
     struct StaleEngineError : EngineError {
         EngineErrorTypes type = EngineErrorTypes::STALE;
+        StaleEngineErrorTypes staleType;
+
+        explicit StaleEngineError(StaleEngineErrorTypes staleType) : staleType(staleType) {}
+
+        explicit operator std::string() const {
+            switch (staleType) {
+                case (StaleEngineErrorTypes::SYSTEM_RESIZED):
+                    return "StaleEngineError: System resized, please update the engine.";
+                default:
+                    return "StaleEngineError: Unknown stale error type.";
+            }
+        }
     };
 }

@@ -16,7 +16,13 @@ std::string gridfire::utils::formatNuclearTimescaleLogString(
     const double T9,
     const double rho
 ) {
-    auto const& timescales = engine.getSpeciesTimescales(Y, T9, rho);
+    auto const& result = engine.getSpeciesTimescales(Y, T9, rho);
+    if (!result) {
+        std::ostringstream ss;
+        ss << "Failed to get species timescales: " << result.error();
+        return ss.str();
+    }
+    const std::unordered_map<fourdst::atomic::Species, double>& timescales = result.value();
 
     // Figure out how wide the "Species" column needs to be:
     std::size_t maxNameLen = std::string_view("Species").size();
