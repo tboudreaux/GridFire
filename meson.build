@@ -58,23 +58,30 @@ cpp = meson.get_compiler('cpp')
 subdir('build-config')
 
 subdir('src')
+
+subdir('build-python')
+
 subdir('tests')
 
-pkg = import('pkgconfig')
-pkg.generate(
-    name: 'gridfire',
-    description: 'GridFire nuclear reaction network solver',
-    version: meson.project_version(),
-    libraries: [
-        libnetwork,
-        libcomposition,
-        libconfig,
-        libconst,
-        liblogging
-    ],
-    subdirs: ['gridfire'],
-    filebase: 'gridfire',
-    install_dir: join_paths(get_option('libdir'), 'pkgconfig')
-)
+
+if get_option('pkg-config')
+    message('Generating pkg-config file for GridFire...')
+    pkg = import('pkgconfig')
+    pkg.generate(
+        name: 'gridfire',
+        description: 'GridFire nuclear reaction network solver',
+        version: meson.project_version(),
+        libraries: [
+            libgridfire,
+            libcomposition,
+            libconfig,
+            libconst,
+            liblogging
+        ],
+        subdirs: ['gridfire'],
+        filebase: 'gridfire',
+        install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+    )
+endif
 
 

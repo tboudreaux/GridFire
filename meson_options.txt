@@ -1,1 +1,2 @@
 option('log_level', type: 'combo', choices: ['traceL3', 'traceL2', 'traceL1', 'debug', 'info', 'warning', 'error', 'critial'], value: 'info', description: 'Set the log level for the GridFire library')
+option('pkg-config', type: 'boolean', value: true, description: 'generate pkg-config file for GridFire (gridfire.pc)')

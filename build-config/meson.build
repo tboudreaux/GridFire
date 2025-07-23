@@ -6,4 +6,6 @@ subdir('cppad')
 subdir('xxHash')
 subdir('eigen')
 
+subdir('pybind')
+
 
