@@ -3,6 +3,7 @@ var classgridfire_1_1reaction_1_1_reaction =
     [ "~Reaction", "classgridfire_1_1reaction_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a", null ],
     [ "Reaction", "classgridfire_1_1reaction_1_1_reaction.html#a7dff19d387e771d96c26e98d75ee9d5c", null ],
     [ "all_species", "classgridfire_1_1reaction_1_1_reaction.html#a7dc8fda87e0581fde6da0a81cf4d7224", null ],
+    [ "calculate_forward_rate_log_derivative", "classgridfire_1_1reaction_1_1_reaction.html#a3a8ba9212d76d5ce51f20df6892c6061", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_reaction.html#a735192a42f72cd68f289493753e1a616", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_reaction.html#ad81e9b2a1773470059ca6989c60556ec", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_reaction.html#a648b9ed6108bed2469dc028fb7e351af", null ],

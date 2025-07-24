@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['jacobian_0',['Jacobian',['../structgridfire_1_1approx8_1_1_jacobian.html',1,'gridfire::approx8']]],
-  ['jacobianfunctor_1',['JacobianFunctor',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_jacobian_functor.html',1,'gridfire::solver::DirectNetworkSolver::JacobianFunctor'],['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_jacobian_functor.html',1,'gridfire::solver::QSENetworkSolver::JacobianFunctor']]]
+  ['identifiedisotope_0',['IdentifiedIsotope',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html',1,'gridfire::partition::RauscherThielemannPartitionFunction']]],
+  ['interpolationpoints_1',['InterpolationPoints',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_interpolation_points.html',1,'gridfire::partition::RauscherThielemannPartitionFunction']]],
+  ['isotopedata_2',['IsotopeData',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_isotope_data.html',1,'gridfire::partition::RauscherThielemannPartitionFunction']]]
 ];

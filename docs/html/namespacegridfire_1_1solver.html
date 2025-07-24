@@ -111,14 +111,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html">DirectNetworkSolver</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A network solver that directly integrates the reaction network ODEs.  <a href="classgridfire_1_1solver_1_1_direct_network_solver.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1solver_1_1dynamic_q_s_e_species_indices.html">dynamicQSESpeciesIndices</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold indices of dynamic and QSE species.  <a href="structgridfire_1_1solver_1_1dynamic_q_s_e_species_indices.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class for network solver strategies.  <a href="classgridfire_1_1solver_1_1_network_solver_strategy.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html">QSENetworkSolver</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A network solver that uses a Quasi-Steady-State Equilibrium (QSE) approach.  <a href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -126,32 +120,8 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a8118d08bc25e439754b43a3f5ecc1db3" id="r_a8118d08bc25e439754b43a3f5ecc1db3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8118d08bc25e439754b43a3f5ecc1db3">DynamicNetworkSolverStrategy</a> = <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a>&lt;<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&gt;</td></tr>
 <tr class="memdesc:a8118d08bc25e439754b43a3f5ecc1db3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for a network solver strategy that uses a <a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a>.  <br /></td></tr>
 <tr class="separator:a8118d08bc25e439754b43a3f5ecc1db3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3b10822ab58b55365577755c1f4faf6" id="r_af3b10822ab58b55365577755c1f4faf6"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3b10822ab58b55365577755c1f4faf6">AdaptiveNetworkSolverStrategy</a> = <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a>&lt;<a class="el" href="classgridfire_1_1_adaptive_engine_view.html">AdaptiveEngineView</a>&gt;</td></tr>
-<tr class="memdesc:af3b10822ab58b55365577755c1f4faf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for a network solver strategy that uses an <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a>.  <br /></td></tr>
-<tr class="separator:af3b10822ab58b55365577755c1f4faf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5361d6cf364f0ba2f88285a60bb9cd92" id="r_a5361d6cf364f0ba2f88285a60bb9cd92"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5361d6cf364f0ba2f88285a60bb9cd92">StaticNetworkSolverStrategy</a> = <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a>&lt;<a class="el" href="classgridfire_1_1_engine.html">Engine</a>&gt;</td></tr>
-<tr class="memdesc:a5361d6cf364f0ba2f88285a60bb9cd92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for a network solver strategy that uses a static <a class="el" href="classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a>.  <br /></td></tr>
-<tr class="separator:a5361d6cf364f0ba2f88285a60bb9cd92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="af3b10822ab58b55365577755c1f4faf6" name="af3b10822ab58b55365577755c1f4faf6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3b10822ab58b55365577755c1f4faf6">&#9670;&#160;</a></span>AdaptiveNetworkSolverStrategy</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#af3b10822ab58b55365577755c1f4faf6">gridfire::solver::AdaptiveNetworkSolverStrategy</a> = <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a>&lt;<a class="el" href="classgridfire_1_1_adaptive_engine_view.html">AdaptiveEngineView</a>&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Type alias for a network solver strategy that uses an <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a>. </p>
-
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00074">74</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
-
-</div>
-</div>
 <a id="a8118d08bc25e439754b43a3f5ecc1db3" name="a8118d08bc25e439754b43a3f5ecc1db3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8118d08bc25e439754b43a3f5ecc1db3">&#9670;&#160;</a></span>DynamicNetworkSolverStrategy</h2>
 
@@ -166,25 +136,7 @@ Typedefs</h2></td></tr>
 
 <p>Type alias for a network solver strategy that uses a <a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00069">69</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
-
-</div>
-</div>
-<a id="a5361d6cf364f0ba2f88285a60bb9cd92" name="a5361d6cf364f0ba2f88285a60bb9cd92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5361d6cf364f0ba2f88285a60bb9cd92">&#9670;&#160;</a></span>StaticNetworkSolverStrategy</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#a5361d6cf364f0ba2f88285a60bb9cd92">gridfire::solver::StaticNetworkSolverStrategy</a> = <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">NetworkSolverStrategy</a>&lt;<a class="el" href="classgridfire_1_1_engine.html">Engine</a>&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Type alias for a network solver strategy that uses a static <a class="el" href="classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a>. </p>
-
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00079">79</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00053">53</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>

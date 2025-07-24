@@ -137,18 +137,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad599363cdd457e72e2e2937b0222c455" id="r_ad599363cdd457e72e2e2937b0222c455"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad599363cdd457e72e2e2937b0222c455">AdaptiveEngineView</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine)</td></tr>
 <tr class="memdesc:ad599363cdd457e72e2e2937b0222c455"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a>.  <br /></td></tr>
 <tr class="separator:ad599363cdd457e72e2e2937b0222c455"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d61e73f5158f1574cda3edc90c51f7e" id="r_a7d61e73f5158f1574cda3edc90c51f7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
-<tr class="memdesc:a7d61e73f5158f1574cda3edc90c51f7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the active species and reactions based on the current conditions.  <br /></td></tr>
-<tr class="separator:a7d61e73f5158f1574cda3edc90c51f7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a7ecf985a326b4bea43e00cf9ee43dd" id="r_a2a7ecf985a326b4bea43e00cf9ee43dd"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="memdesc:a2a7ecf985a326b4bea43e00cf9ee43dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the active species and reactions based on the current conditions.  <br /></td></tr>
+<tr class="separator:a2a7ecf985a326b4bea43e00cf9ee43dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad268c9942655e5c9605148fe07718e88" id="r_ad268c9942655e5c9605148fe07718e88"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad268c9942655e5c9605148fe07718e88">isStale</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="separator:ad268c9942655e5c9605148fe07718e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac83a8efe25c0e5b9bf7756ac3a500bb1" id="r_ac83a8efe25c0e5b9bf7756ac3a500bb1"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac83a8efe25c0e5b9bf7756ac3a500bb1">getNetworkSpecies</a> () const override</td></tr>
 <tr class="memdesc:ac83a8efe25c0e5b9bf7756ac3a500bb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of active species in the network.  <br /></td></tr>
 <tr class="separator:ac83a8efe25c0e5b9bf7756ac3a500bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b276b7210be588263395bdb0497fc6d" id="r_a7b276b7210be588263395bdb0497fc6d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b276b7210be588263395bdb0497fc6d">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y_culled, const double T9, const double rho) const override</td></tr>
-<tr class="memdesc:a7b276b7210be588263395bdb0497fc6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation for the active species.  <br /></td></tr>
-<tr class="separator:a7b276b7210be588263395bdb0497fc6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9aab6f60e80a9228b2b19b1b10449ef" id="r_ac9aab6f60e80a9228b2b19b1b10449ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9aab6f60e80a9228b2b19b1b10449ef">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_culled, const double T9, const double rho) override</td></tr>
-<tr class="memdesc:ac9aab6f60e80a9228b2b19b1b10449ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
-<tr class="separator:ac9aab6f60e80a9228b2b19b1b10449ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af703ad17ea65ffff4b75bf8ccc00e5d5" id="r_af703ad17ea65ffff4b75bf8ccc00e5d5"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af703ad17ea65ffff4b75bf8ccc00e5d5">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y_culled, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:af703ad17ea65ffff4b75bf8ccc00e5d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation for the active species.  <br /></td></tr>
+<tr class="separator:af703ad17ea65ffff4b75bf8ccc00e5d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03fc187d3d306b9058103b9522cbbaeb" id="r_a03fc187d3d306b9058103b9522cbbaeb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03fc187d3d306b9058103b9522cbbaeb">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_dynamic, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:a03fc187d3d306b9058103b9522cbbaeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
+<tr class="separator:a03fc187d3d306b9058103b9522cbbaeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4710d218c8a0fd161e994ecd60b48e58" id="r_a4710d218c8a0fd161e994ecd60b48e58"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4710d218c8a0fd161e994ecd60b48e58">getJacobianMatrixEntry</a> (const int i_culled, const int j_culled) const override</td></tr>
 <tr class="memdesc:a4710d218c8a0fd161e994ecd60b48e58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the Jacobian matrix for the active species.  <br /></td></tr>
 <tr class="separator:a4710d218c8a0fd161e994ecd60b48e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,9 +166,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a12cc2f352678fba9688363ba1876ab9c" id="r_a12cc2f352678fba9688363ba1876ab9c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12cc2f352678fba9688363ba1876ab9c">getNetworkReactions</a> () const override</td></tr>
 <tr class="memdesc:a12cc2f352678fba9688363ba1876ab9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of active logical reactions in the network.  <br /></td></tr>
 <tr class="separator:a12cc2f352678fba9688363ba1876ab9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93b38d0fdc4647f6f7340172dae17872" id="r_a93b38d0fdc4647f6f7340172dae17872"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; fourdst::atomic::Species, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93b38d0fdc4647f6f7340172dae17872">getSpeciesTimescales</a> (const std::vector&lt; double &gt; &amp;Y_culled, double T9, double rho) const override</td></tr>
-<tr class="memdesc:a93b38d0fdc4647f6f7340172dae17872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all active species in the network.  <br /></td></tr>
-<tr class="separator:a93b38d0fdc4647f6f7340172dae17872"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b3a6b3ab0a52f0f84d2b142e74ea672" id="r_a7b3a6b3ab0a52f0f84d2b142e74ea672"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b3a6b3ab0a52f0f84d2b142e74ea672">setNetworkReactions</a> (const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;reactions) override</td></tr>
+<tr class="separator:a7b3a6b3ab0a52f0f84d2b142e74ea672"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e856d6d4d2fc220952bbb7e6b2f85d9" id="r_a4e856d6d4d2fc220952bbb7e6b2f85d9"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e856d6d4d2fc220952bbb7e6b2f85d9">getSpeciesTimescales</a> (const std::vector&lt; double &gt; &amp;Y_culled, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a4e856d6d4d2fc220952bbb7e6b2f85d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all active species in the network.  <br /></td></tr>
+<tr class="separator:a4e856d6d4d2fc220952bbb7e6b2f85d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a522e78bce9ff062939572248d57f8cea" id="r_a522e78bce9ff062939572248d57f8cea"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a522e78bce9ff062939572248d57f8cea">getSpeciesDestructionTimescales</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const override</td></tr>
+<tr class="separator:a522e78bce9ff062939572248d57f8cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee095b30a9dce5fcb5ae2fa1d2aa192c" id="r_aee095b30a9dce5fcb5ae2fa1d2aa192c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee095b30a9dce5fcb5ae2fa1d2aa192c">getBaseEngine</a> () const override</td></tr>
 <tr class="memdesc:aee095b30a9dce5fcb5ae2fa1d2aa192c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the base engine.  <br /></td></tr>
 <tr class="separator:aee095b30a9dce5fcb5ae2fa1d2aa192c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,6 +182,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0ab1199f900a58f309c3c36532c9164f" id="r_a0ab1199f900a58f309c3c36532c9164f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ab1199f900a58f309c3c36532c9164f">getScreeningModel</a> () const override</td></tr>
 <tr class="memdesc:a0ab1199f900a58f309c3c36532c9164f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the screening model from the base engine.  <br /></td></tr>
 <tr class="separator:a0ab1199f900a58f309c3c36532c9164f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9055feb245524a5a9549ace935f059ff" id="r_a9055feb245524a5a9549ace935f059ff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9055feb245524a5a9549ace935f059ff">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="separator:a9055feb245524a5a9549ace935f059ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d0237956bf3ec7230bc51d88e7f8019" id="r_a7d0237956bf3ec7230bc51d88e7f8019"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d0237956bf3ec7230bc51d88e7f8019">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
+<tr class="separator:a7d0237956bf3ec7230bc51d88e7f8019"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70005361262bc180d4417b608661e3c3" id="r_a70005361262bc180d4417b608661e3c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70005361262bc180d4417b608661e3c3">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="separator:a70005361262bc180d4417b608661e3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgridfire_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></td></tr>
+<tr class="memitem:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a818d942efa843959393e4eed3263b7e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a818d942efa843959393e4eed3263b7e7">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_dynamic, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const</td></tr>
+<tr class="separator:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a04317b66ef14d519264bc30ee69f5bf9"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">getDepth</a> () const</td></tr>
+<tr class="separator:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e2c8b896661b7a89beffe0066cb21cf inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a4e2c8b896661b7a89beffe0066cb21cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a4e2c8b896661b7a89beffe0066cb21cf">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth)</td></tr>
+<tr class="separator:a4e2c8b896661b7a89beffe0066cb21cf inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
@@ -191,6 +210,8 @@ Private Types</h2></td></tr>
 <tr class="separator:afec39b2faa34ea65c5488dd8e11ba3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5eaf7c3a4e28cd3a4f34979b88a80103" id="r_a5eaf7c3a4e28cd3a4f34979b88a80103"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5eaf7c3a4e28cd3a4f34979b88a80103">LogManager</a> = fourdst::logging::LogManager</td></tr>
 <tr class="separator:a5eaf7c3a4e28cd3a4f34979b88a80103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ff60b5214ec0bdaf683feb6615573a5" id="r_a4ff60b5214ec0bdaf683feb6615573a5"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; std::unordered_set&lt; const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a> * &gt;, std::unordered_set&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ff60b5214ec0bdaf683feb6615573a5">RescueSet</a></td></tr>
+<tr class="separator:a4ff60b5214ec0bdaf683feb6615573a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -224,6 +245,8 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a42417e96fe9fd623458af109401daf08" id="r_a42417e96fe9fd623458af109401daf08"><td class="memItemLeft" align="right" valign="top">std::vector&lt; const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42417e96fe9fd623458af109401daf08">cullReactionsByFlow</a> (const std::vector&lt; <a class="el" href="structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html">ReactionFlow</a> &gt; &amp;allFlows, const std::unordered_set&lt; fourdst::atomic::Species &gt; &amp;reachableSpecies, const std::vector&lt; double &gt; &amp;Y_full, double maxFlow) const</td></tr>
 <tr class="memdesc:a42417e96fe9fd623458af109401daf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Culls reactions from the network based on their flow rates.  <br /></td></tr>
 <tr class="separator:a42417e96fe9fd623458af109401daf08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a823c665ba89452aa2b3d5422fa5d313f" id="r_a823c665ba89452aa2b3d5422fa5d313f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a4ff60b5214ec0bdaf683feb6615573a5">RescueSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a823c665ba89452aa2b3d5422fa5d313f">rescueEdgeSpeciesDestructionChannel</a> (const std::vector&lt; double &gt; &amp;Y_full, const double T9, const double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies, const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="separator:a823c665ba89452aa2b3d5422fa5d313f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa79fb382c98461b02a2c30668491e6c5" id="r_aa79fb382c98461b02a2c30668491e6c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa79fb382c98461b02a2c30668491e6c5">finalizeActiveSet</a> (const std::vector&lt; const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a> * &gt; &amp;finalReactions)</td></tr>
 <tr class="memdesc:aa79fb382c98461b02a2c30668491e6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalizes the set of active species and reactions.  <br /></td></tr>
 <tr class="separator:aa79fb382c98461b02a2c30668491e6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -259,9 +282,9 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><p>An engine view that dynamically adapts the reaction network based on runtime conditions. </p>
 <p>This class implements an <a class="el" href="classgridfire_1_1_engine_view.html" title="Abstract base class for a &quot;view&quot; of a reaction network engine.">EngineView</a> that dynamically culls species and reactions from the full reaction network based on their reaction flow rates and connectivity. This allows for efficient simulation of reaction networks by focusing computational effort on the most important species and reactions.</p>
 <p>The <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> maintains a subset of "active" species and reactions, and maps between the full network indices and the active subset indices. This allows the base engine to operate on the full network data, while the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> provides a reduced view for external clients.</p>
-<p>The adaptation process is driven by the <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> method, which performs the following steps:</p><ol type="1">
-<li><b>Reaction Flow Calculation:</b> Calculates the molar reaction flow rate for each reaction in the full network based on the current temperature, density, and composition.</li>
-<li><b>Reaction Culling:</b> Culls reactions with flow rates below a threshold, determined by a relative culling threshold multiplied by the maximum flow rate.</li>
+<p>The adaptation process is driven by the <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> method, which performs the following steps:</p><ol type="1">
+<li><b><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> Flow Calculation:</b> Calculates the molar reaction flow rate for each reaction in the full network based on the current temperature, density, and composition.</li>
+<li><b><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> Culling:</b> Culls reactions with flow rates below a threshold, determined by a relative culling threshold multiplied by the maximum flow rate.</li>
 <li><b>Connectivity Analysis:</b> Performs a connectivity analysis to identify species that are reachable from the initial fuel species through the culled reaction network.</li>
 <li><b>Species Culling:</b> Culls species that are not reachable from the initial fuel.</li>
 <li><b>Index Map Construction:</b> Constructs index maps to map between the full network indices and the active subset indices for species and reactions.</li>
@@ -271,9 +294,9 @@ Private Attributes</h2></td></tr>
 <dd>
 <a class="el" href="engine__view__abstract_8h.html" title="Abstract interfaces for engine &quot;views&quot; in GridFire.">engine_view_abstract.h</a> </dd>
 <dd>
-<a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00047">47</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00050">50</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="afec39b2faa34ea65c5488dd8e11ba3c3" name="afec39b2faa34ea65c5488dd8e11ba3c3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afec39b2faa34ea65c5488dd8e11ba3c3">&#9670;&#160;</a></span>Config</h2>
@@ -295,7 +318,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00260">260</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00279">279</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +342,31 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00261">261</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00280">280</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+
+</div>
+</div>
+<a id="a4ff60b5214ec0bdaf683feb6615573a5" name="a4ff60b5214ec0bdaf683feb6615573a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ff60b5214ec0bdaf683feb6615573a5">&#9670;&#160;</a></span>RescueSet</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::pair&lt;std::unordered_set&lt;const <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html">reaction::LogicalReaction</a>*&gt;, std::unordered_set&lt;fourdst::atomic::Species&gt; &gt; <a class="el" href="#a4ff60b5214ec0bdaf683feb6615573a5">gridfire::AdaptiveEngineView::RescueSet</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00452">452</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -356,7 +403,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <p>Initializes the active species and reactions to the full network, and constructs the initial index maps. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00013">13</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00016">16</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -409,7 +456,7 @@ Private Attributes</h2></td></tr>
 </ol>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00268">268</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00368">368</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -464,7 +511,7 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled abundances to the full network abundances and calls the base engine to calculate the molar reaction flow.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
     <tr><td class="paramname">std::runtime_error</td><td>If the reaction is not part of the active reactions in the adaptive engine view. </td></tr>
   </table>
   </dd>
@@ -472,12 +519,12 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6633b1757c41dd9e1c397333f4f9e785">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00175">175</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00212">212</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a7b276b7210be588263395bdb0497fc6d" name="a7b276b7210be588263395bdb0497fc6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b276b7210be588263395bdb0497fc6d">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<a id="af703ad17ea65ffff4b75bf8ccc00e5d5" name="af703ad17ea65ffff4b75bf8ccc00e5d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af703ad17ea65ffff4b75bf8ccc00e5d5">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -486,7 +533,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; gridfire::AdaptiveEngineView::calculateRHSAndEnergy </td>
+          <td class="memname">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::AdaptiveEngineView::calculateRHSAndEnergy </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_culled</em></span>, </td>
         </tr>
@@ -521,15 +568,15 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled abundances to the full network abundances, calls the base engine to calculate the RHS and energy generation, and then maps the full network derivatives back to the culled derivatives.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_engine.html#ac8b56124b6b49cd1802addb74a9a47c2">gridfire::Engine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_engine.html#a89f714d19b84a93a004a7afbb487a6cb">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00120">120</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00152">152</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -559,9 +606,9 @@ Private Attributes</h2></td></tr>
 <p>Constructs the reaction index map. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector mapping culled reaction indices to full reaction indices.</dd></dl>
 <p>This method creates a map from the indices of the active reactions to the indices of the corresponding reactions in the full network.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00053">53</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00056">56</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -591,9 +638,9 @@ Private Attributes</h2></td></tr>
 <p>Constructs the species index map. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector mapping culled species indices to full species indices.</dd></dl>
 <p>This method creates a map from the indices of the active species to the indices of the corresponding species in the full network.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00024">24</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00027">27</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -655,7 +702,7 @@ Private Attributes</h2></td></tr>
 </ol>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00342">342</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00442">442</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -697,7 +744,7 @@ Private Attributes</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00385">385</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00641">641</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -742,12 +789,12 @@ Private Attributes</h2></td></tr>
 </ol>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00299">299</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00399">399</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ac9aab6f60e80a9228b2b19b1b10449ef" name="ac9aab6f60e80a9228b2b19b1b10449ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9aab6f60e80a9228b2b19b1b10449ef">&#9670;&#160;</a></span>generateJacobianMatrix()</h2>
+<a id="a03fc187d3d306b9058103b9522cbbaeb" name="a03fc187d3d306b9058103b9522cbbaeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03fc187d3d306b9058103b9522cbbaeb">&#9670;&#160;</a></span>generateJacobianMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -758,7 +805,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void gridfire::AdaptiveEngineView::generateJacobianMatrix </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_culled</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_dynamic</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -768,7 +815,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -781,7 +828,7 @@ Private Attributes</h2></td></tr>
 <p>Generates the Jacobian matrix for the active species. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y_culled</td><td>A vector of abundances for the active species. </td></tr>
+    <tr><td class="paramname">Y_dynamic</td><td>A vector of abundances for the active species. </td></tr>
     <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>The density in g/cm^3.</td></tr>
   </table>
@@ -790,15 +837,15 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled abundances to the full network abundances and calls the base engine to generate the Jacobian matrix.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a0a2fb3435ee3271ab9c806f225c61a7f">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a29bdd4231c29c3a4e524ad6ca66a127d">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00138">138</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00175">175</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -829,7 +876,7 @@ Private Attributes</h2></td></tr>
 <p>This method calls the base engine to generate the stoichiometry matrix.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
   </table>
   </dd>
 </dl>
@@ -837,7 +884,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00160">160</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00197">197</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -869,7 +916,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine_view.html#ad294227f8b5cf6d970c349eabf5447a6">gridfire::EngineView&lt; DynamicEngine &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00226">226</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00239">239</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -912,16 +959,16 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled indices to the full network indices and calls the base engine to get the Jacobian matrix entry.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
     <tr><td class="paramname">std::out_of_range</td><td>If the culled index is out of bounds for the species index map. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a05d15ff35a6bc06a2fa7eda19838bd07">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00149">149</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00186">186</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -949,11 +996,11 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Gets the set of active logical reactions in the network. </p>
-<dl class="section return"><dt>Returns</dt><dd>Reference to the LogicalReactionSet containing all active reactions. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">LogicalReactionSet</a> containing all active reactions. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad2a82099edbb374bbb2c9509ccdb1037">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00192">192</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00229">229</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -985,7 +1032,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine.html#a020e1b493d6964cafdad08fde697ceb3">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00116">116</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00148">148</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1017,18 +1064,18 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The current screening model type.</dd></dl>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#ad599363cdd457e72e2e2937b0222c455">AdaptiveEngineView</a> engineView(...);</div>
 <div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model = engineView.getScreeningModel();</div>
-<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html_ad599363cdd457e72e2e2937b0222c455"><div class="ttname"><a href="#ad599363cdd457e72e2e2937b0222c455">gridfire::AdaptiveEngineView::AdaptiveEngineView</a></div><div class="ttdeci">AdaptiveEngineView(DynamicEngine &amp;baseEngine)</div><div class="ttdoc">Constructs an AdaptiveEngineView.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8cpp_source.html#l00013">engine_adaptive.cpp:13</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html_ad599363cdd457e72e2e2937b0222c455"><div class="ttname"><a href="#ad599363cdd457e72e2e2937b0222c455">gridfire::AdaptiveEngineView::AdaptiveEngineView</a></div><div class="ttdeci">AdaptiveEngineView(DynamicEngine &amp;baseEngine)</div><div class="ttdoc">Constructs an AdaptiveEngineView.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8cpp_source.html#l00016">engine_adaptive.cpp:16</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00015">screening_types.h:15</a></div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a7a203f8e0f3a6744ddc912dfbcfdbcc0">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00220">220</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00296">296</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a93b38d0fdc4647f6f7340172dae17872" name="a93b38d0fdc4647f6f7340172dae17872"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93b38d0fdc4647f6f7340172dae17872">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
+<a id="a522e78bce9ff062939572248d57f8cea" name="a522e78bce9ff062939572248d57f8cea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a522e78bce9ff062939572248d57f8cea">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1037,7 +1084,74 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt; Species, double &gt; gridfire::AdaptiveEngineView::getSpeciesTimescales </td>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::AdaptiveEngineView::getSpeciesDestructionTimescales </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6ca0f315f75252ca505507a61556dda6">gridfire::DynamicEngine</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00266">266</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9055feb245524a5a9549ace935f059ff" name="a9055feb245524a5a9549ace935f059ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9055feb245524a5a9549ace935f059ff">&#9670;&#160;</a></span>getSpeciesIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int gridfire::AdaptiveEngineView::getSpeciesIndex </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00312">312</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4e856d6d4d2fc220952bbb7e6b2f85d9" name="a4e856d6d4d2fc220952bbb7e6b2f85d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e856d6d4d2fc220952bbb7e6b2f85d9">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::AdaptiveEngineView::getSpeciesTimescales </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_culled</em></span>, </td>
         </tr>
@@ -1072,14 +1186,14 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled abundances to the full network abundances and calls the base engine to compute the species timescales.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a5d8ba98b230d2849035ee2507728fa15">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00196">196</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00238">238</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1122,16 +1236,45 @@ Private Attributes</h2></td></tr>
 <p>This method maps the culled indices to the full network indices and calls the base engine to get the stoichiometry matrix entry.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
     <tr><td class="paramname">std::out_of_range</td><td>If the culled index is out of bounds for the species or reaction index map. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">AdaptiveEngineView::update()</a> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00165">165</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00202">202</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad268c9942655e5c9605148fe07718e88" name="ad268c9942655e5c9605148fe07718e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad268c9942655e5c9605148fe07718e88">&#9670;&#160;</a></span>isStale()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::AdaptiveEngineView::isStale </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a942e65ced17ca602482cc42e469d6398">gridfire::DynamicEngine</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00144">144</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1167,7 +1310,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector of abundances for the full network, with the abundances of the active species copied from the culled vector. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00224">224</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00323">323</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1209,7 +1352,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00251">251</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00350">350</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1251,7 +1394,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00242">242</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00341">341</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1286,6 +1429,139 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector of abundances for the active species, with the abundances of the active species copied from the full vector. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00332">332</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7d0237956bf3ec7230bc51d88e7f8019" name="a7d0237956bf3ec7230bc51d88e7f8019"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d0237956bf3ec7230bc51d88e7f8019">&#9670;&#160;</a></span>mapNetInToMolarAbundanceVector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; double &gt; gridfire::AdaptiveEngineView::mapNetInToMolarAbundanceVector </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a55f1b7e5ebe2840e1d7c54665ca5411a">gridfire::DynamicEngine</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00300">300</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a70005361262bc180d4417b608661e3c3" name="a70005361262bc180d4417b608661e3c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70005361262bc180d4417b608661e3c3">&#9670;&#160;</a></span>primeEngine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a> gridfire::AdaptiveEngineView::primeEngine </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21c34f59c080a853fafa38a25175124e">gridfire::DynamicEngine</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00308">308</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a823c665ba89452aa2b3d5422fa5d313f" name="a823c665ba89452aa2b3d5422fa5d313f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a823c665ba89452aa2b3d5422fa5d313f">&#9670;&#160;</a></span>rescueEdgeSpeciesDestructionChannel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a4ff60b5214ec0bdaf683feb6615573a5">AdaptiveEngineView::RescueSet</a> gridfire::AdaptiveEngineView::rescueEdgeSpeciesDestructionChannel </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>activeSpecies</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00485">485</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7b3a6b3ab0a52f0f84d2b142e74ea672" name="a7b3a6b3ab0a52f0f84d2b142e74ea672"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b3a6b3ab0a52f0f84d2b142e74ea672">&#9670;&#160;</a></span>setNetworkReactions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::AdaptiveEngineView::setNetworkReactions </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f">gridfire::DynamicEngine</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00233">233</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
@@ -1330,12 +1606,12 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a3fb44b6f55563a2f590f31916528f2bd">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00216">216</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00292">292</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a7d61e73f5158f1574cda3edc90c51f7e" name="a7d61e73f5158f1574cda3edc90c51f7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d61e73f5158f1574cda3edc90c51f7e">&#9670;&#160;</a></span>update()</h2>
+<a id="a2a7ecf985a326b4bea43e00cf9ee43dd" name="a2a7ecf985a326b4bea43e00cf9ee43dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a7ecf985a326b4bea43e00cf9ee43dd">&#9670;&#160;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1344,7 +1620,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void gridfire::AdaptiveEngineView::update </td>
+          <td class="memname">fourdst::composition::Composition gridfire::AdaptiveEngineView::update </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
           <td></td>
@@ -1381,9 +1657,9 @@ Private Attributes</h2></td></tr>
 <dd>
 <a class="el" href="#a89614f4a48f60c4170a0197f45303e7c" title="Constructs the reaction index map.">AdaptiveEngineView::constructReactionIndexMap()</a> </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#acd500e1cd788df1dc105d28a20dc5f4f">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00085">85</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00088">88</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1413,12 +1689,12 @@ Private Attributes</h2></td></tr>
 <p>Validates that the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is not stale. </p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a7d61e73f5158f1574cda3edc90c51f7e" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
+    <tr><td class="paramname">std::runtime_error</td><td>If the <a class="el" href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a> is stale (i.e., <code><a class="el" href="#a2a7ecf985a326b4bea43e00cf9ee43dd" title="Updates the active species and reactions based on the current conditions.">update()</a></code> has not been called). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00260">260</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8cpp_source.html#l00359">359</a> of file <a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1721,7 @@ Private Attributes</h2></td></tr>
 
 <p>The set of reactions that are currently active in the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00273">273</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00292">292</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1471,7 +1747,7 @@ Private Attributes</h2></td></tr>
 
 <p>The set of species that are currently active in the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00271">271</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00290">290</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1497,7 +1773,7 @@ Private Attributes</h2></td></tr>
 
 <p>The underlying engine to which this view delegates calculations. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00268">268</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00287">287</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1523,7 +1799,7 @@ Private Attributes</h2></td></tr>
 
 <p>A reference to the singleton <a class="el" href="#afec39b2faa34ea65c5488dd8e11ba3c3">Config</a> instance, used for retrieving configuration parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00263">263</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00282">282</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1549,7 +1825,7 @@ Private Attributes</h2></td></tr>
 
 <p>A flag indicating whether the view is stale and needs to be updated. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00281">281</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00300">300</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1575,7 +1851,7 @@ Private Attributes</h2></td></tr>
 
 <p>A pointer to the logger instance, used for logging messages. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00265">265</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00284">284</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1601,7 +1877,7 @@ Private Attributes</h2></td></tr>
 
 <p>A map from the indices of the active reactions to the indices of the corresponding reactions in the full network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00278">278</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00297">297</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
@@ -1627,13 +1903,13 @@ Private Attributes</h2></td></tr>
 
 <p>A map from the indices of the active species to the indices of the corresponding species in the full network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00276">276</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__adaptive_8h_source.html#l00295">295</a> of file <a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/network/include/gridfire/engine/views/<a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a></li>
-<li>src/network/lib/engine/views/<a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a></li>
+<li>src/include/gridfire/engine/views/<a class="el" href="engine__adaptive_8h_source.html">engine_adaptive.h</a></li>
+<li>src/lib/engine/views/<a class="el" href="engine__adaptive_8cpp_source.html">engine_adaptive.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

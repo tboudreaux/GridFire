@@ -130,15 +130,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a932c41aa9f1aa38e56a03b27cd2ccda4" id="r_a932c41aa9f1aa38e56a03b27cd2ccda4"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a932c41aa9f1aa38e56a03b27cd2ccda4">m_rho</a></td></tr>
 <tr class="memdesc:a932c41aa9f1aa38e56a03b27cd2ccda4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Density in g/cm^3.  <br /></td></tr>
 <tr class="separator:a932c41aa9f1aa38e56a03b27cd2ccda4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f624142212b5e6ff65f5706953fe353" id="r_a3f624142212b5e6ff65f5706953fe353"><td class="memItemLeft" align="right" valign="top">const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f624142212b5e6ff65f5706953fe353">m_numSpecies</a></td></tr>
-<tr class="memdesc:a3f624142212b5e6ff65f5706953fe353"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of species in the network.  <br /></td></tr>
-<tr class="separator:a3f624142212b5e6ff65f5706953fe353"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functor for calculating the Jacobian matrix. </p>
 <p>This functor is used by the ODE solver to calculate the Jacobian matrix of the ODEs. It takes the current abundances as input and returns the Jacobian matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00452">452</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00143">143</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afd2a548ffb907b0fb1fa28993ea99f25" name="afd2a548ffb907b0fb1fa28993ea99f25"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd2a548ffb907b0fb1fa28993ea99f25">&#9670;&#160;</a></span>JacobianFunctor()</h2>
@@ -182,7 +179,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00464">464</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00154">154</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -227,7 +224,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solver_8cpp_source.html#l00463">463</a> of file <a class="el" href="solver_8cpp_source.html">solver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8cpp_source.html#l00215">215</a> of file <a class="el" href="solver_8cpp_source.html">solver.cpp</a>.</p>
 
 </div>
 </div>
@@ -246,25 +243,7 @@ Public Attributes</h2></td></tr>
 
 <p>The engine used to evaluate the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00453">453</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
-
-</div>
-</div>
-<a id="a3f624142212b5e6ff65f5706953fe353" name="a3f624142212b5e6ff65f5706953fe353"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f624142212b5e6ff65f5706953fe353">&#9670;&#160;</a></span>m_numSpecies</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const size_t gridfire::solver::DirectNetworkSolver::JacobianFunctor::m_numSpecies</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The number of species in the network. </p>
-
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00456">456</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00144">144</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -282,7 +261,7 @@ Public Attributes</h2></td></tr>
 
 <p>Density in g/cm^3. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00455">455</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00146">146</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
@@ -300,13 +279,13 @@ Public Attributes</h2></td></tr>
 
 <p>Temperature in units of 10^9 K. </p>
 
-<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00454">454</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solver_8h_source.html#l00145">145</a> of file <a class="el" href="solver_8h_source.html">solver.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
-<li>src/network/include/gridfire/solver/<a class="el" href="solver_8h_source.html">solver.h</a></li>
-<li>src/network/lib/solver/<a class="el" href="solver_8cpp_source.html">solver.cpp</a></li>
+<li>src/include/gridfire/solver/<a class="el" href="solver_8h_source.html">solver.h</a></li>
+<li>src/lib/solver/<a class="el" href="solver_8cpp_source.html">solver.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

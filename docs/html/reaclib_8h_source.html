@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GridFire: src/network/include/gridfire/reaction/reaclib.h Source File</title>
+<title>GridFire: src/include/gridfire/reaction/reaclib.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -109,7 +109,7 @@ $(function(){initNavTree('reaclib_8h_source.html',''); initResizable(true); });
 <div class="foldopen" id="foldopen00005" data-start="{" data-end="}">
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno"><a class="line" href="namespacegridfire_1_1reaclib.html">    5</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacegridfire_1_1reaclib.html">gridfire::reaclib</a> {</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">    7</a></span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">s_initialized</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">    7</a></span>    [[maybe_unused]] <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">s_initialized</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a>&amp; <a class="code hl_function" href="namespacegridfire_1_1reaclib.html#a91c7971c9d0a2971b9a6fa4d841c761d">get_all_reactions</a>();</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
@@ -118,14 +118,14 @@ $(function(){initNavTree('reaclib_8h_source.html',''); initResizable(true); });
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html">gridfire::reaclib</a></div><div class="ttdef"><b>Definition</b> <a href="#l00005">reaclib.h:5</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html_a91c7971c9d0a2971b9a6fa4d841c761d"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html#a91c7971c9d0a2971b9a6fa4d841c761d">gridfire::reaclib::get_all_reactions</a></div><div class="ttdeci">const reaction::LogicalReactionSet &amp; get_all_reactions()</div><div class="ttdoc">Provides global access to the fully initialized REACLIB reaction set.</div><div class="ttdef"><b>Definition</b> <a href="reaclib_8cpp_source.html#l00138">reaclib.cpp:138</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html_af6ff0dfe7ffe34c73ba9acbab5ef8a66"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">gridfire::reaclib::s_initialized</a></div><div class="ttdeci">static bool s_initialized</div><div class="ttdef"><b>Definition</b> <a href="#l00007">reaclib.h:7</a></div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00557">reaction.h:557</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00563">reaction.h:563</a></div></div>
 <div class="ttc" id="areaction_8h_html"><div class="ttname"><a href="reaction_8h.html">reaction.h</a></div><div class="ttdoc">Defines classes for representing and managing nuclear reactions.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_5cccfa813acdf3744b542715860d37b2.html">include</a></li><li class="navelem"><a class="el" href="dir_2a1262ef5950eb718393488a3eb5aa9f.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_3c60707488650cd3ec07ac1739eb797f.html">reaction</a></li><li class="navelem"><a class="el" href="reaclib_8h.html">reaclib.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b0856f6b0d80ccb263b2f415c91f9e17.html">include</a></li><li class="navelem"><a class="el" href="dir_3626e0c0e3c5d7812d6b277dfa4ec364.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_f2d7b0c77cb2532170ac94ead6e4ba70.html">reaction</a></li><li class="navelem"><a class="el" href="reaclib_8h.html">reaclib.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

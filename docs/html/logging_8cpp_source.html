@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GridFire: src/network/lib/utils/logging.cpp Source File</title>
+<title>GridFire: src/lib/utils/logging.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -121,51 +121,57 @@ $(function(){initNavTree('logging_8cpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> T9,</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">const</span> <span class="keywordtype">double</span> rho</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>) {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">auto</span> <span class="keyword">const</span>&amp; timescales = engine.<a class="code hl_function" href="classgridfire_1_1_dynamic_engine.html#a5d8ba98b230d2849035ee2507728fa15">getSpeciesTimescales</a>(Y, T9, rho);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="comment">// Figure out how wide the &quot;Species&quot; column needs to be:</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    std::size_t maxNameLen = std::string_view(<span class="stringliteral">&quot;Species&quot;</span>).size();</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;key: timescales | std::views::keys) {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        std::string_view name = key.name();</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        maxNameLen = std::max(maxNameLen, name.size());</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="comment">// Pick a fixed width for the timescale column:</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">constexpr</span> <span class="keywordtype">int</span> timescaleWidth = 12;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    std::ostringstream ss;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    ss &lt;&lt; <span class="stringliteral">&quot;== Timescales (s) ==\n&quot;</span>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">auto</span> <span class="keyword">const</span>&amp; result = engine.<a class="code hl_function" href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">getSpeciesTimescales</a>(Y, T9, rho);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordflow">if</span> (!result) {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        std::ostringstream ss;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        ss &lt;&lt; <span class="stringliteral">&quot;Failed to get species timescales: &quot;</span> &lt;&lt; result.error();</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">const</span> std::unordered_map&lt;fourdst::atomic::Species, double&gt;&amp; timescales = result.value();</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="comment">// Figure out how wide the &quot;Species&quot; column needs to be:</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    std::size_t maxNameLen = std::string_view(<span class="stringliteral">&quot;Species&quot;</span>).size();</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;key: timescales | std::views::keys) {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        std::string_view name = key.name();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        maxNameLen = std::max(maxNameLen, name.size());</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="comment">// Header row</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    ss &lt;&lt; std::left &lt;&lt; std::setw(static_cast&lt;int&gt;(maxNameLen) + 2) &lt;&lt; <span class="stringliteral">&quot;Species&quot;</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>       &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth)     &lt;&lt; <span class="stringliteral">&quot;Timescale (s)&quot;</span> &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="comment">// Underline</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    ss &lt;&lt; std::string(static_cast&lt;int&gt;(maxNameLen) + 2 + timescaleWidth, <span class="charliteral">&#39;=&#39;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    ss &lt;&lt; std::scientific;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="comment">// Data rows</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; [species, timescale] : timescales) {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="keyword">const</span> std::string_view name = species.name();</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        ss &lt;&lt; std::left &lt;&lt; std::setw(static_cast&lt;int&gt;(maxNameLen) + 2) &lt;&lt; name;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">if</span> (std::isinf(timescale)) {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            ss &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth) &lt;&lt; <span class="stringliteral">&quot;inf&quot;</span> &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            ss &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth)</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>               &lt;&lt; std::scientific &lt;&lt; std::setprecision(3) &lt;&lt; timescale &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// Footer underline</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    ss &lt;&lt; std::string(static_cast&lt;int&gt;(maxNameLen) + 2 + timescaleWidth, <span class="charliteral">&#39;=&#39;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="comment">// Pick a fixed width for the timescale column:</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">constexpr</span> <span class="keywordtype">int</span> timescaleWidth = 12;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::ostringstream ss;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    ss &lt;&lt; <span class="stringliteral">&quot;== Timescales (s) ==\n&quot;</span>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="comment">// Header row</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    ss &lt;&lt; std::left &lt;&lt; std::setw(static_cast&lt;int&gt;(maxNameLen) + 2) &lt;&lt; <span class="stringliteral">&quot;Species&quot;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>       &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth)     &lt;&lt; <span class="stringliteral">&quot;Timescale (s)&quot;</span> &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">// Underline</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    ss &lt;&lt; std::string(static_cast&lt;int&gt;(maxNameLen) + 2 + timescaleWidth, <span class="charliteral">&#39;=&#39;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    ss &lt;&lt; std::scientific;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// Data rows</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span>&amp; [species, timescale] : timescales) {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keyword">const</span> std::string_view name = species.name();</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        ss &lt;&lt; std::left &lt;&lt; std::setw(static_cast&lt;int&gt;(maxNameLen) + 2) &lt;&lt; name;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">if</span> (std::isinf(timescale)) {</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            ss &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth) &lt;&lt; <span class="stringliteral">&quot;inf&quot;</span> &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            ss &lt;&lt; std::right &lt;&lt; std::setw(timescaleWidth)</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>               &lt;&lt; std::scientific &lt;&lt; std::setprecision(3) &lt;&lt; timescale &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="comment">// Footer underline</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    ss &lt;&lt; std::string(static_cast&lt;int&gt;(maxNameLen) + 2 + timescaleWidth, <span class="charliteral">&#39;=&#39;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
 </div>
-<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> <a href="engine__abstract_8h_source.html#l00121">engine_abstract.h:121</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html_a5d8ba98b230d2849035ee2507728fa15"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html#a5d8ba98b230d2849035ee2507728fa15">gridfire::DynamicEngine::getSpeciesTimescales</a></div><div class="ttdeci">virtual std::unordered_map&lt; fourdst::atomic::Species, double &gt; getSpeciesTimescales(const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const =0</div><div class="ttdoc">Compute timescales for all species in the network.</div></div>
+<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> <a href="engine__abstract_8h_source.html#l00130">engine_abstract.h:130</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html_a6772ac384b4c3d3e91712041e4aaa813"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">gridfire::DynamicEngine::getSpeciesTimescales</a></div><div class="ttdeci">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, expectations::StaleEngineError &gt; getSpeciesTimescales(const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const =0</div><div class="ttdoc">Compute timescales for all species in the network.</div></div>
 <div class="ttc" id="aengine__abstract_8h_html"><div class="ttname"><a href="engine__abstract_8h.html">engine_abstract.h</a></div><div class="ttdoc">Abstract interfaces for reaction network engines in GridFire.</div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1utils_html_af56693a70d9e2b40c8ae2c3bcd4b26c8"><div class="ttname"><a href="namespacegridfire_1_1utils.html#af56693a70d9e2b40c8ae2c3bcd4b26c8">gridfire::utils::formatNuclearTimescaleLogString</a></div><div class="ttdeci">std::string formatNuclearTimescaleLogString(const DynamicEngine &amp;engine, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho)</div><div class="ttdoc">Formats a map of nuclear species timescales into a human-readable string.</div><div class="ttdef"><b>Definition</b> <a href="#l00013">logging.cpp:13</a></div></div>
@@ -174,7 +180,7 @@ $(function(){initNavTree('logging_8cpp_source.html',''); initResizable(true); })
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_a7655658c851688eff9381235a9676f0.html">lib</a></li><li class="navelem"><a class="el" href="dir_d95b5b8e5cbbc1b508cb3c0cf16f7ce7.html">utils</a></li><li class="navelem"><a class="el" href="logging_8cpp.html">logging.cpp</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c85d3e3c5052e9ad9ce18c6863244a25.html">lib</a></li><li class="navelem"><a class="el" href="dir_87d18a4dc5174905bfd7d2dc734defe6.html">utils</a></li><li class="navelem"><a class="el" href="logging_8cpp.html">logging.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -667,20 +667,6 @@ namespace gridfire {
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
-        // LOG_DEBUG(
-        //     m_logger,
-        //     "AD Input to jacobian {}",
-        //     [&]() -> std::string {
-        //         std::stringstream ss;
-        //         ss << std::scientific << std::setprecision(5);
-        //         for (size_t i = 0; i < adInput.size(); ++i) {
-        //             ss << adInput[i];
-        //             if (i < adInput.size() - 1) {
-        //                 ss << ", ";
-        //             }
-        //         }
-        //         return ss.str();
-        //     }());
 
         // 2. Calculate the full jacobian
         const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
@@ -695,31 +681,6 @@ namespace gridfire {
                 }
             }
         }
-        // LOG_DEBUG(
-        //     m_logger,
-        //     "Final Jacobian is:\n{}",
-        //     [&]() -> std::string {
-        //         std::stringstream ss;
-        //         ss << std::scientific << std::setprecision(5);
-        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-        //             ss << getNetworkSpecies()[i].name();
-        //             if (i < m_jacobianMatrix.size1() - 1) {
-        //                 ss << ", ";
-        //             }
-        //         }
-        //         ss << "\n";
-        //         for (size_t i = 0; i < m_jacobianMatrix.size1(); ++i) {
-        //             ss << getNetworkSpecies()[i].name() << ": ";
-        //             for (size_t j = 0; j < m_jacobianMatrix.size2(); ++j) {
-        //                 ss << m_jacobianMatrix(i, j);
-        //                 if (j < m_jacobianMatrix.size2() - 1) {
-        //                     ss << ", ";
-        //                 }
-        //             }
-        //             ss << "\n";
-        //         }
-        //         return ss.str();
-        //     }());
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
     }
 

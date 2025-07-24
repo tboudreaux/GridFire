@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['validatecomposition_0',['validateComposition',['../classgridfire_1_1_graph_engine.html#aeeafeab40a5f4dbfae78bdc87e25e93f',1,'gridfire::GraphEngine']]],
-  ['validateconservation_1',['validateConservation',['../classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be',1,'gridfire::GraphEngine']]],
-  ['validatenetworkstate_2',['validateNetworkState',['../classgridfire_1_1_file_defined_engine_view.html#ae3f99002ab2c56a5bcdec00839f8628f',1,'gridfire::FileDefinedEngineView']]],
-  ['validatestate_3',['validateState',['../classgridfire_1_1_adaptive_engine_view.html#aedc0dedb51c81e03f253cc409a5d5c40',1,'gridfire::AdaptiveEngineView']]],
-  ['values_4',['values',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#aa9730f06a604c3c95ccc33ab6f0f8878',1,'gridfire::solver::QSENetworkSolver::EigenFunctor']]],
-  ['valuesatcompiletime_5',['ValuesAtCompileTime',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#a1bff36d14c3e1f7a276d9fe6b564abdfac9e03a0ebbba30da72c7591639a69a09',1,'gridfire::solver::QSENetworkSolver::EigenFunctor']]],
-  ['vec7_6',['vec7',['../namespacegridfire_1_1approx8.html#aaa49cb0c9ad4b0b9dd0f9b5e192ca12a',1,'gridfire::approx8']]],
-  ['vector_5ftype_7',['vector_type',['../namespacegridfire_1_1approx8.html#aa04f907d4ef6a1b6b2a9a28d4bb53882',1,'gridfire::approx8']]]
+  ['u_0',['u',['../structgridfire_1_1_graph_engine_1_1constants.html#a3597bc632a5dd50aaa0044d8c18ca423',1,'gridfire::GraphEngine::constants']]],
+  ['unabletosetnetworkreactionserror_1',['UnableToSetNetworkReactionsError',['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html',1,'gridfire::exceptions::UnableToSetNetworkReactionsError'],['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html#acb3183c3dea755a8a26b00d638183c30',1,'gridfire::exceptions::UnableToSetNetworkReactionsError::UnableToSetNetworkReactionsError()']]],
+  ['unique_5fproduct_5findices_2',['unique_product_indices',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a9974f944a2cf5179baabebe09d60cf18',1,'gridfire::GraphEngine::PrecomputedReaction']]],
+  ['unique_5freactant_5findices_3',['unique_reactant_indices',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a510e380116e2e6d9158cf00fedac2666',1,'gridfire::GraphEngine::PrecomputedReaction']]],
+  ['unknown_4',['UNKNOWN',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37aac700abde5f6ff8b7328193eb19697b2',1,'gridfire']]],
+  ['update_5',['update',['../classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a',1,'gridfire::DynamicEngine::update()'],['../classgridfire_1_1_graph_engine.html#a5ac7cff23e70bd07ba7e510b753e2ab6',1,'gridfire::GraphEngine::update()'],['../classgridfire_1_1_adaptive_engine_view.html#a2a7ecf985a326b4bea43e00cf9ee43dd',1,'gridfire::AdaptiveEngineView::update()'],['../classgridfire_1_1_defined_engine_view.html#ae5762f395caea5381ec177507816b5ae',1,'gridfire::DefinedEngineView::update()'],['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a6bee75b5a6e508e6eebf83f0d48c50b8',1,'gridfire::MultiscalePartitioningEngineView::update()'],['../class_py_dynamic_engine.html#af8e6a8cd44f278535d7bcc9a896d6da8',1,'PyDynamicEngine::update()']]],
+  ['upperindex_6',['upperIndex',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html#aa99e1fa2fd4937592c066b0df16f377f',1,'gridfire::partition::RauscherThielemannPartitionFunction::IdentifiedIsotope']]],
+  ['usage_20examples_7',['Usage Examples',['../engine_8h.html#UsageExamples',1,'Usage Examples'],['../index.html#autotoc_md17',1,'Usage Examples']]]
 ];

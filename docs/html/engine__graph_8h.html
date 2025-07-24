@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GridFire: src/network/include/gridfire/engine/engine_graph.h File Reference</title>
+<title>GridFire: src/include/gridfire/engine/engine_graph.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -116,12 +116,19 @@ $(function(){initNavTree('engine__graph_8h.html',''); initResizable(true); });
 <code>#include &quot;<a class="el" href="engine__abstract_8h_source.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="screening__abstract_8h_source.html">gridfire/screening/screening_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="screening__types_8h_source.html">gridfire/screening/screening_types.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="partition__abstract_8h_source.html">gridfire/partition/partition_abstract.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="construction_8h_source.html">gridfire/engine/procedures/construction.h</a>&quot;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;ranges&gt;</code><br />
 <code>#include &lt;boost/numeric/ublas/matrix_sparse.hpp&gt;</code><br />
 <code>#include &quot;cppad/cppad.hpp&quot;</code><br />
+<code>#include &quot;cppad/utility/sparse_rc.hpp&quot;</code><br />
+<code>#include &quot;cppad/speed/sparse_jac_fun.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="priming_8h_source.html">procedures/priming.h</a>&quot;</code><br />
+<code>#include &quot;quill/LogMacros.h&quot;</code><br />
 </div>
 <p><a href="engine__graph_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -133,6 +140,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html">gridfire::GraphEngine::PrecomputedReaction</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_graph_engine_1_1constants.html">gridfire::GraphEngine::constants</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_graph_engine_1_1_atomic_reverse_rate.html">gridfire::GraphEngine::AtomicReverseRate</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -148,6 +157,8 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:afd6f117eb2da3bab3873edc09d0926cf" id="r_afd6f117eb2da3bab3873edc09d0926cf"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#afd6f117eb2da3bab3873edc09d0926cf">gridfire::s_debug</a> = false</td></tr>
+<tr class="separator:afd6f117eb2da3bab3873edc09d0926cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada3c137c014ecd8d06200fea2d1a9f50" id="r_ada3c137c014ecd8d06200fea2d1a9f50"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#ada3c137c014ecd8d06200fea2d1a9f50">gridfire::MIN_DENSITY_THRESHOLD</a> = 1e-18</td></tr>
 <tr class="memdesc:ada3c137c014ecd8d06200fea2d1a9f50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum density threshold below which reactions are ignored.  <br /></td></tr>
 <tr class="separator:ada3c137c014ecd8d06200fea2d1a9f50"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -163,7 +174,7 @@ Variables</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_5cccfa813acdf3744b542715860d37b2.html">include</a></li><li class="navelem"><a class="el" href="dir_2a1262ef5950eb718393488a3eb5aa9f.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_6b2e1e22dfdea3280d50981209bf7529.html">engine</a></li><li class="navelem"><a class="el" href="engine__graph_8h.html">engine_graph.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b0856f6b0d80ccb263b2f415c91f9e17.html">include</a></li><li class="navelem"><a class="el" href="dir_3626e0c0e3c5d7812d6b277dfa4ec364.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_aff155d61c3b73b9ab7dcdc908c4d49e.html">engine</a></li><li class="navelem"><a class="el" href="engine__graph_8h.html">engine_graph.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -4,6 +4,7 @@ var classgridfire_1_1reaction_1_1_logical_reaction =
     [ "add_reaction", "classgridfire_1_1reaction_1_1_logical_reaction.html#a14a24cb8ea25a1514134acc51197f1de", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaction.html#a4ae3806e5e1a802b86a6de292d043476", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaction.html#a5d410de1053f8028faed1f0d0a6083f5", null ],
+    [ "calculate_forward_rate_log_derivative", "classgridfire_1_1reaction_1_1_logical_reaction.html#aa4b8d0d30459f360ff6e29d848e943d5", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_logical_reaction.html#adad6f4297c1d8ce487eab092b73cdd32", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_logical_reaction.html#a1d2fb3b6a6a1860ace98b32447d1dd1b", null ],
     [ "calculate_rate", "classgridfire_1_1reaction_1_1_logical_reaction.html#a019b721d83741acdb16036f00739f87c", null ],

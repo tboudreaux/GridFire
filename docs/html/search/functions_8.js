@@ -1,11 +1,13 @@
 var searchData=
 [
-  ['id_0',['id',['../classgridfire_1_1reaction_1_1_reaction.html#a084c38181408ed5e6fa2a2dd4d0ec905',1,'gridfire::reaction::Reaction']]],
-  ['initializeallreaclibreactions_1',['initializeAllReaclibReactions',['../namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276',1,'gridfire::reaclib']]],
-  ['initializenetworkwithshortignition_2',['initializeNetworkWithShortIgnition',['../classgridfire_1_1solver_1_1_q_s_e_network_solver.html#abaa567001df0007b714f474febae408b',1,'gridfire::solver::QSENetworkSolver']]],
-  ['inputs_3',['inputs',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#a5ce08aab2f1976c9258dad2b67e1c5b6',1,'gridfire::solver::QSENetworkSolver::EigenFunctor']]],
+  ['id_0',['id',['../classgridfire_1_1reaction_1_1_reaction.html#a084c38181408ed5e6fa2a2dd4d0ec905',1,'gridfire::reaction::Reaction::id()'],['../classgridfire_1_1_reaction.html#a084c38181408ed5e6fa2a2dd4d0ec905',1,'gridfire::Reaction::id()']]],
+  ['identifymeanslowestpool_1',['identifyMeanSlowestPool',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a54ca8004fbd8d6d3ea6f67efeb5dbc8d',1,'gridfire::MultiscalePartitioningEngineView']]],
+  ['initializeallreaclibreactions_2',['initializeAllReaclibReactions',['../namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276',1,'gridfire::reaclib']]],
+  ['inputs_3',['inputs',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a0adf1074b5e6ba448cedff7563c450d0',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]],
   ['involvesspecies_4',['involvesSpecies',['../classgridfire_1_1_graph_engine.html#aa6202cee0c3c481eda77cc9a91bc126b',1,'gridfire::GraphEngine']]],
-  ['is_5freverse_5',['is_reverse',['../classgridfire_1_1reaction_1_1_reaction.html#aa67d05dfabf007c1acad34052d9a1dba',1,'gridfire::reaction::Reaction']]],
+  ['is_5freverse_5',['is_reverse',['../classgridfire_1_1reaction_1_1_reaction.html#aa67d05dfabf007c1acad34052d9a1dba',1,'gridfire::reaction::Reaction::is_reverse()'],['../classgridfire_1_1_reaction.html#aa67d05dfabf007c1acad34052d9a1dba',1,'gridfire::Reaction::is_reverse()']]],
   ['isprecomputationenabled_6',['isPrecomputationEnabled',['../classgridfire_1_1_graph_engine.html#a015f8975701f028c29835d3a9794e00f',1,'gridfire::GraphEngine']]],
-  ['isstiff_7',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]]
+  ['isstale_7',['isStale',['../classgridfire_1_1_dynamic_engine.html#a942e65ced17ca602482cc42e469d6398',1,'gridfire::DynamicEngine::isStale()'],['../classgridfire_1_1_graph_engine.html#af04a9f8a629d6f6c58c477af0f1ab9e5',1,'gridfire::GraphEngine::isStale()'],['../classgridfire_1_1_adaptive_engine_view.html#ad268c9942655e5c9605148fe07718e88',1,'gridfire::AdaptiveEngineView::isStale()'],['../classgridfire_1_1_defined_engine_view.html#a7d9e738dd28efb4d6127de7379169c87',1,'gridfire::DefinedEngineView::isStale()'],['../classgridfire_1_1_multiscale_partitioning_engine_view.html#ae7847959fc5af2b83f5446dd73567b46',1,'gridfire::MultiscalePartitioningEngineView::isStale()'],['../class_py_dynamic_engine.html#a55bf19ed7534a312a36faf74753f7b14',1,'PyDynamicEngine::isStale()']]],
+  ['isstiff_8',['isStiff',['../classgridfire_1_1approx8_1_1_approx8_network.html#a5b17b2831389829533385900ce19a37a',1,'gridfire::approx8::Approx8Network::isStiff()'],['../classgridfire_1_1_network.html#ae93ad65deba79def4b77d420e7affa0b',1,'gridfire::Network::isStiff()']]],
+  ['isusingreversereactions_9',['isUsingReverseReactions',['../classgridfire_1_1_graph_engine.html#ae7a210d9ab13ad5fb0c612f027acabd0',1,'gridfire::GraphEngine']]]
 ];

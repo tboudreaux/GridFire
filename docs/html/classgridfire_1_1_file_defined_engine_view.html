@@ -102,15 +102,11 @@ $(function(){initNavTree('classgridfire_1_1_file_defined_engine_view.html',''); 
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-types">Private Types</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classgridfire_1_1_file_defined_engine_view-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">gridfire::FileDefinedEngineView Class Reference<span class="mlabels"><span class="mlabel final">final</span></span></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>An engine view that uses a user-defined reaction network from a file.  
- <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -119,6 +115,7 @@ Inheritance diagram for gridfire::FileDefinedEngineView:</div>
  <div class="center">
   <img src="classgridfire_1_1_file_defined_engine_view.png" usemap="#gridfire::FileDefinedEngineView_map" alt=""/>
   <map id="gridfire::FileDefinedEngineView_map" name="gridfire::FileDefinedEngineView_map">
+<area href="classgridfire_1_1_defined_engine_view.html" alt="gridfire::DefinedEngineView" shape="rect" coords="124,112,362,136"/>
 <area href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="gridfire::DynamicEngine" shape="rect" coords="0,56,238,80"/>
 <area href="classgridfire_1_1_engine_view.html" alt="gridfire::EngineView&lt; DynamicEngine &gt;" shape="rect" coords="248,56,486,80"/>
 <area href="classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="gridfire::Engine" shape="rect" coords="0,0,238,24"/>
@@ -128,50 +125,73 @@ Inheritance diagram for gridfire::FileDefinedEngineView:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8f2f64bab0f516ed2a6fd529912e0acd" id="r_a8f2f64bab0f516ed2a6fd529912e0acd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f2f64bab0f516ed2a6fd529912e0acd">FileDefinedEngineView</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine, const std::string &amp;fileName, const <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html">io::NetworkFileParser</a> &amp;parser)</td></tr>
-<tr class="memdesc:a8f2f64bab0f516ed2a6fd529912e0acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1_file_defined_engine_view.html" title="An engine view that uses a user-defined reaction network from a file.">FileDefinedEngineView</a>.  <br /></td></tr>
+<tr class="memdesc:a8f2f64bab0f516ed2a6fd529912e0acd"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classgridfire_1_1_file_defined_engine_view.html">FileDefinedEngineView</a> Implementation ///.  <br /></td></tr>
 <tr class="separator:a8f2f64bab0f516ed2a6fd529912e0acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c8b273c5cb3d470567c5691b68493a3" id="r_a4c8b273c5cb3d470567c5691b68493a3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c8b273c5cb3d470567c5691b68493a3">getBaseEngine</a> () const override</td></tr>
-<tr class="memdesc:a4c8b273c5cb3d470567c5691b68493a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the base engine.  <br /></td></tr>
-<tr class="separator:a4c8b273c5cb3d470567c5691b68493a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bb583e039b49608272997ed2d3387fa" id="r_a8bb583e039b49608272997ed2d3387fa"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bb583e039b49608272997ed2d3387fa">getNetworkSpecies</a> () const override</td></tr>
-<tr class="memdesc:a8bb583e039b49608272997ed2d3387fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of active species in the network defined by the file.  <br /></td></tr>
-<tr class="separator:a8bb583e039b49608272997ed2d3387fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c1d88b06568f9ea4c65e794d012ebfb" id="r_a2c1d88b06568f9ea4c65e794d012ebfb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c1d88b06568f9ea4c65e794d012ebfb">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
-<tr class="memdesc:a2c1d88b06568f9ea4c65e794d012ebfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation for the active species.  <br /></td></tr>
-<tr class="separator:a2c1d88b06568f9ea4c65e794d012ebfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48b2451f96b8f5511ffc4071519c0810" id="r_a48b2451f96b8f5511ffc4071519c0810"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48b2451f96b8f5511ffc4071519c0810">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) override</td></tr>
-<tr class="memdesc:a48b2451f96b8f5511ffc4071519c0810"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
-<tr class="separator:a48b2451f96b8f5511ffc4071519c0810"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ef8804780d13bbfce0856237bb00470" id="r_a0ef8804780d13bbfce0856237bb00470"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ef8804780d13bbfce0856237bb00470">getJacobianMatrixEntry</a> (const int i_defined, const int j_defined) const override</td></tr>
-<tr class="memdesc:a0ef8804780d13bbfce0856237bb00470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the Jacobian matrix for the active species.  <br /></td></tr>
-<tr class="separator:a0ef8804780d13bbfce0856237bb00470"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27a5163157cc15c4cb3b99a5d3564dbd" id="r_a27a5163157cc15c4cb3b99a5d3564dbd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27a5163157cc15c4cb3b99a5d3564dbd">generateStoichiometryMatrix</a> () override</td></tr>
-<tr class="memdesc:a27a5163157cc15c4cb3b99a5d3564dbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the stoichiometry matrix for the active reactions and species.  <br /></td></tr>
-<tr class="separator:a27a5163157cc15c4cb3b99a5d3564dbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9da9224f5c99a5068f3d8cbf066e4693" id="r_a9da9224f5c99a5068f3d8cbf066e4693"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9da9224f5c99a5068f3d8cbf066e4693">getStoichiometryMatrixEntry</a> (const int speciesIndex_defined, const int reactionIndex_defined) const override</td></tr>
-<tr class="memdesc:a9da9224f5c99a5068f3d8cbf066e4693"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the stoichiometry matrix for the active species and reactions.  <br /></td></tr>
-<tr class="separator:a9da9224f5c99a5068f3d8cbf066e4693"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac371fb66fd0a76a04df204c9dd9a05ef" id="r_ac371fb66fd0a76a04df204c9dd9a05ef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac371fb66fd0a76a04df204c9dd9a05ef">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
-<tr class="memdesc:ac371fb66fd0a76a04df204c9dd9a05ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction in the active network.  <br /></td></tr>
-<tr class="separator:ac371fb66fd0a76a04df204c9dd9a05ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bbea17b69cc8f81bc251a04f4435a0c" id="r_a5bbea17b69cc8f81bc251a04f4435a0c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bbea17b69cc8f81bc251a04f4435a0c">getNetworkReactions</a> () const override</td></tr>
-<tr class="memdesc:a5bbea17b69cc8f81bc251a04f4435a0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of active logical reactions in the network.  <br /></td></tr>
-<tr class="separator:a5bbea17b69cc8f81bc251a04f4435a0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace3c6ea4841318c08695973ab3dcddc6" id="r_ace3c6ea4841318c08695973ab3dcddc6"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; fourdst::atomic::Species, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace3c6ea4841318c08695973ab3dcddc6">getSpeciesTimescales</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
-<tr class="memdesc:ace3c6ea4841318c08695973ab3dcddc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all active species in the network.  <br /></td></tr>
-<tr class="separator:ace3c6ea4841318c08695973ab3dcddc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace3568eadaba69e7357b4386c5ca3eb0" id="r_ace3568eadaba69e7357b4386c5ca3eb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace3568eadaba69e7357b4386c5ca3eb0">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
-<tr class="memdesc:ace3568eadaba69e7357b4386c5ca3eb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the engine view if it is marked as stale.  <br /></td></tr>
-<tr class="separator:ace3568eadaba69e7357b4386c5ca3eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92f14da849e99d07c1ff1347addb9263" id="r_a92f14da849e99d07c1ff1347addb9263"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f14da849e99d07c1ff1347addb9263">setNetworkFile</a> (const std::string &amp;fileName)</td></tr>
-<tr class="memdesc:a92f14da849e99d07c1ff1347addb9263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a new network file to define the active reactions.  <br /></td></tr>
-<tr class="separator:a92f14da849e99d07c1ff1347addb9263"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad96bbee6d3d37b50d9236a975ef704c0" id="r_ad96bbee6d3d37b50d9236a975ef704c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad96bbee6d3d37b50d9236a975ef704c0">setScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model) override</td></tr>
-<tr class="memdesc:ad96bbee6d3d37b50d9236a975ef704c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the screening model for the base engine.  <br /></td></tr>
-<tr class="separator:ad96bbee6d3d37b50d9236a975ef704c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbc50f397445f92b810d80cf329b8626" id="r_adbc50f397445f92b810d80cf329b8626"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbc50f397445f92b810d80cf329b8626">getScreeningModel</a> () const override</td></tr>
-<tr class="memdesc:adbc50f397445f92b810d80cf329b8626"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the screening model from the base engine.  <br /></td></tr>
-<tr class="separator:adbc50f397445f92b810d80cf329b8626"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0c35d8963b6ed05aeb88089ce301718" id="r_ae0c35d8963b6ed05aeb88089ce301718"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0c35d8963b6ed05aeb88089ce301718">getNetworkFile</a> () const</td></tr>
+<tr class="separator:ae0c35d8963b6ed05aeb88089ce301718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea834dc382ff1d663040db4532ea928f" id="r_aea834dc382ff1d663040db4532ea928f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html">io::NetworkFileParser</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea834dc382ff1d663040db4532ea928f">getParser</a> () const</td></tr>
+<tr class="separator:aea834dc382ff1d663040db4532ea928f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgridfire_1_1_defined_engine_view"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_defined_engine_view')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_defined_engine_view.html">gridfire::DefinedEngineView</a></td></tr>
+<tr class="memitem:a9b319b4a1bd5a08381ebb183daf72c92 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a9b319b4a1bd5a08381ebb183daf72c92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a9b319b4a1bd5a08381ebb183daf72c92">DefinedEngineView</a> (const std::vector&lt; std::string &gt; &amp;peNames, <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine)</td></tr>
+<tr class="separator:a9b319b4a1bd5a08381ebb183daf72c92 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69b9a5812ad8bda13f956acd0da24484 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a69b9a5812ad8bda13f956acd0da24484"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a69b9a5812ad8bda13f956acd0da24484">getBaseEngine</a> () const override</td></tr>
+<tr class="memdesc:a69b9a5812ad8bda13f956acd0da24484 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlying engine instance.  <br /></td></tr>
+<tr class="separator:a69b9a5812ad8bda13f956acd0da24484 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a55f9748c45af6f13e16a6b6ceaa211 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a1a55f9748c45af6f13e16a6b6ceaa211"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a1a55f9748c45af6f13e16a6b6ceaa211">getNetworkSpecies</a> () const override</td></tr>
+<tr class="memdesc:a1a55f9748c45af6f13e16a6b6ceaa211 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of active species in the network defined by the file.  <br /></td></tr>
+<tr class="separator:a1a55f9748c45af6f13e16a6b6ceaa211 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b0d71367cb1d4c06bcd01251bbeb60d inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a4b0d71367cb1d4c06bcd01251bbeb60d"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a4b0d71367cb1d4c06bcd01251bbeb60d">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:a4b0d71367cb1d4c06bcd01251bbeb60d inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation for the active species.  <br /></td></tr>
+<tr class="separator:a4b0d71367cb1d4c06bcd01251bbeb60d inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad25c722eaee1f28f8ed7b4d33a1f69ae inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_ad25c722eaee1f28f8ed7b4d33a1f69ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#ad25c722eaee1f28f8ed7b4d33a1f69ae">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_dynamic, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:ad25c722eaee1f28f8ed7b4d33a1f69ae inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
+<tr class="separator:ad25c722eaee1f28f8ed7b4d33a1f69ae inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a273b175049f5ce7b9208e931ad139e1b inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a273b175049f5ce7b9208e931ad139e1b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a273b175049f5ce7b9208e931ad139e1b">getJacobianMatrixEntry</a> (const int i_defined, const int j_defined) const override</td></tr>
+<tr class="memdesc:a273b175049f5ce7b9208e931ad139e1b inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the Jacobian matrix for the active species.  <br /></td></tr>
+<tr class="separator:a273b175049f5ce7b9208e931ad139e1b inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad07221be49ae1b5133c5b987dafac3b6 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_ad07221be49ae1b5133c5b987dafac3b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#ad07221be49ae1b5133c5b987dafac3b6">generateStoichiometryMatrix</a> () override</td></tr>
+<tr class="memdesc:ad07221be49ae1b5133c5b987dafac3b6 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the stoichiometry matrix for the active reactions and species.  <br /></td></tr>
+<tr class="separator:ad07221be49ae1b5133c5b987dafac3b6 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2820971397114d788730cc33feefe2 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_afa2820971397114d788730cc33feefe2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#afa2820971397114d788730cc33feefe2">getStoichiometryMatrixEntry</a> (const int speciesIndex_defined, const int reactionIndex_defined) const override</td></tr>
+<tr class="memdesc:afa2820971397114d788730cc33feefe2 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the stoichiometry matrix for the active species and reactions.  <br /></td></tr>
+<tr class="separator:afa2820971397114d788730cc33feefe2 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a142725470f96cba3edb48a29f1264032 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a142725470f96cba3edb48a29f1264032"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a142725470f96cba3edb48a29f1264032">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:a142725470f96cba3edb48a29f1264032 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction in the active network.  <br /></td></tr>
+<tr class="separator:a142725470f96cba3edb48a29f1264032 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae03b4f9afac03d4011a4d7cf0423535d inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_ae03b4f9afac03d4011a4d7cf0423535d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#ae03b4f9afac03d4011a4d7cf0423535d">getNetworkReactions</a> () const override</td></tr>
+<tr class="memdesc:ae03b4f9afac03d4011a4d7cf0423535d inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of active logical reactions in the network.  <br /></td></tr>
+<tr class="separator:ae03b4f9afac03d4011a4d7cf0423535d inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9736edfb7c9148b60de30d50c0d3530d inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a9736edfb7c9148b60de30d50c0d3530d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a9736edfb7c9148b60de30d50c0d3530d">setNetworkReactions</a> (const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;reactions) override</td></tr>
+<tr class="separator:a9736edfb7c9148b60de30d50c0d3530d inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8daafabbc76f4b6811bede241a03d72 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_ac8daafabbc76f4b6811bede241a03d72"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#ac8daafabbc76f4b6811bede241a03d72">getSpeciesTimescales</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
+<tr class="memdesc:ac8daafabbc76f4b6811bede241a03d72 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all active species in the network.  <br /></td></tr>
+<tr class="separator:ac8daafabbc76f4b6811bede241a03d72 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d58e36ed8a6a0d82bb65e91090f7491 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a3d58e36ed8a6a0d82bb65e91090f7491"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a3d58e36ed8a6a0d82bb65e91090f7491">getSpeciesDestructionTimescales</a> (const std::vector&lt; double &gt; &amp;Y_defined, const double T9, const double rho) const override</td></tr>
+<tr class="separator:a3d58e36ed8a6a0d82bb65e91090f7491 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5762f395caea5381ec177507816b5ae inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_ae5762f395caea5381ec177507816b5ae"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#ae5762f395caea5381ec177507816b5ae">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="memdesc:ae5762f395caea5381ec177507816b5ae inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the engine view if it is marked as stale.  <br /></td></tr>
+<tr class="separator:ae5762f395caea5381ec177507816b5ae inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d9e738dd28efb4d6127de7379169c87 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a7d9e738dd28efb4d6127de7379169c87"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a7d9e738dd28efb4d6127de7379169c87">isStale</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="separator:a7d9e738dd28efb4d6127de7379169c87 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2da57c83c3c4c635cb301f53088258 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_abf2da57c83c3c4c635cb301f53088258"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#abf2da57c83c3c4c635cb301f53088258">setScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model) override</td></tr>
+<tr class="memdesc:abf2da57c83c3c4c635cb301f53088258 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the screening model for the base engine.  <br /></td></tr>
+<tr class="separator:abf2da57c83c3c4c635cb301f53088258 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c657b82a0117118a4bb0ce7f624ae0c inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a3c657b82a0117118a4bb0ce7f624ae0c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a3c657b82a0117118a4bb0ce7f624ae0c">getScreeningModel</a> () const override</td></tr>
+<tr class="memdesc:a3c657b82a0117118a4bb0ce7f624ae0c inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the screening model from the base engine.  <br /></td></tr>
+<tr class="separator:a3c657b82a0117118a4bb0ce7f624ae0c inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfee22688617ffe91c69be93049c89b3 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_abfee22688617ffe91c69be93049c89b3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#abfee22688617ffe91c69be93049c89b3">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="separator:abfee22688617ffe91c69be93049c89b3 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72789c1c3379594b65b560da50192de2 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a72789c1c3379594b65b560da50192de2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a72789c1c3379594b65b560da50192de2">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
+<tr class="separator:a72789c1c3379594b65b560da50192de2 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13033abd3b44904f98b58c93e22da460 inherit pub_methods_classgridfire_1_1_defined_engine_view" id="r_a13033abd3b44904f98b58c93e22da460"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a13033abd3b44904f98b58c93e22da460">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="separator:a13033abd3b44904f98b58c93e22da460 inherit pub_methods_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgridfire_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></td></tr>
+<tr class="memitem:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a818d942efa843959393e4eed3263b7e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a818d942efa843959393e4eed3263b7e7">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_dynamic, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const</td></tr>
+<tr class="separator:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a04317b66ef14d519264bc30ee69f5bf9"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">getDepth</a> () const</td></tr>
+<tr class="separator:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e2c8b896661b7a89beffe0066cb21cf inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a4e2c8b896661b7a89beffe0066cb21cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a4e2c8b896661b7a89beffe0066cb21cf">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth)</td></tr>
+<tr class="separator:a4e2c8b896661b7a89beffe0066cb21cf inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
@@ -188,73 +208,29 @@ Private Types</h2></td></tr>
 <tr class="memitem:acbb1a9bcb775e6d50de512a333afed08" id="r_acbb1a9bcb775e6d50de512a333afed08"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb1a9bcb775e6d50de512a333afed08">LogManager</a> = fourdst::logging::LogManager</td></tr>
 <tr class="separator:acbb1a9bcb775e6d50de512a333afed08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a3b5162b7be35405285ef9f825ec2663b" id="r_a3b5162b7be35405285ef9f825ec2663b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b5162b7be35405285ef9f825ec2663b">buildFromFile</a> (const std::string &amp;fileName)</td></tr>
-<tr class="memdesc:a3b5162b7be35405285ef9f825ec2663b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the active species and reaction sets from a file.  <br /></td></tr>
-<tr class="separator:a3b5162b7be35405285ef9f825ec2663b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ba09ff01fdcac1125d42f276c9a0a7" id="r_a51ba09ff01fdcac1125d42f276c9a0a7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ba09ff01fdcac1125d42f276c9a0a7">constructSpeciesIndexMap</a> () const</td></tr>
-<tr class="memdesc:a51ba09ff01fdcac1125d42f276c9a0a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the species index map.  <br /></td></tr>
-<tr class="separator:a51ba09ff01fdcac1125d42f276c9a0a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebb3f3548f8781506f31580706810a4e" id="r_aebb3f3548f8781506f31580706810a4e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebb3f3548f8781506f31580706810a4e">constructReactionIndexMap</a> () const</td></tr>
-<tr class="memdesc:aebb3f3548f8781506f31580706810a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the reaction index map.  <br /></td></tr>
-<tr class="separator:aebb3f3548f8781506f31580706810a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adba3c11b11a04b2907c1635210d73dee" id="r_adba3c11b11a04b2907c1635210d73dee"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adba3c11b11a04b2907c1635210d73dee">mapViewToFull</a> (const std::vector&lt; double &gt; &amp;defined) const</td></tr>
-<tr class="memdesc:adba3c11b11a04b2907c1635210d73dee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a vector of culled abundances to a vector of full abundances.  <br /></td></tr>
-<tr class="separator:adba3c11b11a04b2907c1635210d73dee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97e5ee4651dbe6754678fe96e4702fee" id="r_a97e5ee4651dbe6754678fe96e4702fee"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97e5ee4651dbe6754678fe96e4702fee">mapFullToView</a> (const std::vector&lt; double &gt; &amp;full) const</td></tr>
-<tr class="memdesc:a97e5ee4651dbe6754678fe96e4702fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a vector of full abundances to a vector of culled abundances.  <br /></td></tr>
-<tr class="separator:a97e5ee4651dbe6754678fe96e4702fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2373955ef5b0eabf7a57c7208e38bb1" id="r_aa2373955ef5b0eabf7a57c7208e38bb1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2373955ef5b0eabf7a57c7208e38bb1">mapViewToFullSpeciesIndex</a> (size_t definedSpeciesIndex) const</td></tr>
-<tr class="memdesc:aa2373955ef5b0eabf7a57c7208e38bb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a culled species index to a full species index.  <br /></td></tr>
-<tr class="separator:aa2373955ef5b0eabf7a57c7208e38bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74217a1f8fd8e6daff969cb17885315c" id="r_a74217a1f8fd8e6daff969cb17885315c"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74217a1f8fd8e6daff969cb17885315c">mapViewToFullReactionIndex</a> (size_t definedReactionIndex) const</td></tr>
-<tr class="memdesc:a74217a1f8fd8e6daff969cb17885315c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a culled reaction index to a full reaction index.  <br /></td></tr>
-<tr class="separator:a74217a1f8fd8e6daff969cb17885315c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3f99002ab2c56a5bcdec00839f8628f" id="r_ae3f99002ab2c56a5bcdec00839f8628f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3f99002ab2c56a5bcdec00839f8628f">validateNetworkState</a> () const</td></tr>
-<tr class="memdesc:ae3f99002ab2c56a5bcdec00839f8628f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that the <a class="el" href="classgridfire_1_1_file_defined_engine_view.html" title="An engine view that uses a user-defined reaction network from a file.">FileDefinedEngineView</a> is not stale.  <br /></td></tr>
-<tr class="separator:ae3f99002ab2c56a5bcdec00839f8628f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a7a80966c023ae722239491af58609362" id="r_a7a80966c023ae722239491af58609362"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a63f8f85e75ecaab6fa39d48d7a846187">Config</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a80966c023ae722239491af58609362">m_config</a> = Config::getInstance()</td></tr>
-<tr class="memdesc:a7a80966c023ae722239491af58609362"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reference to the singleton <a class="el" href="#a63f8f85e75ecaab6fa39d48d7a846187">Config</a> instance.  <br /></td></tr>
 <tr class="separator:a7a80966c023ae722239491af58609362"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d93633ed4ab68de94b7274f879a0432" id="r_a9d93633ed4ab68de94b7274f879a0432"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d93633ed4ab68de94b7274f879a0432">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
-<tr class="memdesc:a9d93633ed4ab68de94b7274f879a0432"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the logger instance.  <br /></td></tr>
 <tr class="separator:a9d93633ed4ab68de94b7274f879a0432"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8454c98fa9a4bb45dc81059bc51fc81" id="r_ad8454c98fa9a4bb45dc81059bc51fc81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8454c98fa9a4bb45dc81059bc51fc81">m_baseEngine</a></td></tr>
-<tr class="memdesc:ad8454c98fa9a4bb45dc81059bc51fc81"><td class="mdescLeft">&#160;</td><td class="mdescRight">The underlying engine to which this view delegates calculations.  <br /></td></tr>
-<tr class="separator:ad8454c98fa9a4bb45dc81059bc51fc81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b343998b93955025a589b2b4541e33b" id="r_a1b343998b93955025a589b2b4541e33b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b343998b93955025a589b2b4541e33b">m_fileName</a></td></tr>
 <tr class="memdesc:a1b343998b93955025a589b2b4541e33b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parser for the network file.  <br /></td></tr>
 <tr class="separator:a1b343998b93955025a589b2b4541e33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a9b07176cb93b54c677b6ce71fda500" id="r_a0a9b07176cb93b54c677b6ce71fda500"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html">io::NetworkFileParser</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a9b07176cb93b54c677b6ce71fda500">m_parser</a></td></tr>
-<tr class="memdesc:a0a9b07176cb93b54c677b6ce71fda500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active species in the defined engine.  <br /></td></tr>
 <tr class="separator:a0a9b07176cb93b54c677b6ce71fda500"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a299a0c61aa4f26029c770013c9feff5e" id="r_a299a0c61aa4f26029c770013c9feff5e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a299a0c61aa4f26029c770013c9feff5e">m_activeSpecies</a></td></tr>
-<tr class="memdesc:a299a0c61aa4f26029c770013c9feff5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active reactions in the defined engine.  <br /></td></tr>
-<tr class="separator:a299a0c61aa4f26029c770013c9feff5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae012da2b1f6169cb13e6075a73353ab2" id="r_ae012da2b1f6169cb13e6075a73353ab2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae012da2b1f6169cb13e6075a73353ab2">m_activeReactions</a></td></tr>
-<tr class="memdesc:ae012da2b1f6169cb13e6075a73353ab2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps indices of active species to indices in the full network.  <br /></td></tr>
-<tr class="separator:ae012da2b1f6169cb13e6075a73353ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebd4a1a584f2784f1df3d503645be03b" id="r_aebd4a1a584f2784f1df3d503645be03b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebd4a1a584f2784f1df3d503645be03b">m_speciesIndexMap</a></td></tr>
-<tr class="memdesc:aebd4a1a584f2784f1df3d503645be03b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps indices of active reactions to indices in the full network.  <br /></td></tr>
-<tr class="separator:aebd4a1a584f2784f1df3d503645be03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0a77a4749a15aae87bdecfccbd1736e" id="r_af0a77a4749a15aae87bdecfccbd1736e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0a77a4749a15aae87bdecfccbd1736e">m_reactionIndexMap</a></td></tr>
-<tr class="separator:af0a77a4749a15aae87bdecfccbd1736e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e421bc748933be31bed9ff53f12b595" id="r_a6e421bc748933be31bed9ff53f12b595"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e421bc748933be31bed9ff53f12b595">m_isStale</a> = true</td></tr>
-<tr class="memdesc:a6e421bc748933be31bed9ff53f12b595"><td class="mdescLeft">&#160;</td><td class="mdescRight">A flag indicating whether the view is stale and needs to be updated.  <br /></td></tr>
-<tr class="separator:a6e421bc748933be31bed9ff53f12b595"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classgridfire_1_1_defined_engine_view"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classgridfire_1_1_defined_engine_view')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classgridfire_1_1_defined_engine_view.html">gridfire::DefinedEngineView</a></td></tr>
+<tr class="memitem:a217d541f3fa777b1552f652fbb520382 inherit pro_attribs_classgridfire_1_1_defined_engine_view" id="r_a217d541f3fa777b1552f652fbb520382"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a217d541f3fa777b1552f652fbb520382">m_isStale</a> = true</td></tr>
+<tr class="separator:a217d541f3fa777b1552f652fbb520382 inherit pro_attribs_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e3243a8a8bcdce3282a8f82c5f98195 inherit pro_attribs_classgridfire_1_1_defined_engine_view" id="r_a6e3243a8a8bcdce3282a8f82c5f98195"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_defined_engine_view.html#a6e3243a8a8bcdce3282a8f82c5f98195">m_baseEngine</a></td></tr>
+<tr class="separator:a6e3243a8a8bcdce3282a8f82c5f98195 inherit pro_attribs_classgridfire_1_1_defined_engine_view"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>An engine view that uses a user-defined reaction network from a file. </p>
-<p>This class implements an <a class="el" href="classgridfire_1_1_engine_view.html" title="Abstract base class for a &quot;view&quot; of a reaction network engine.">EngineView</a> that restricts the reaction network to a specific set of reactions defined in an external file. It acts as a filter or a view on a larger, more comprehensive base engine. The file provides a list of reaction identifiers, and this view will only consider those reactions and the species involved in them.</p>
-<p>This is useful for focusing on a specific sub-network for analysis, debugging, or performance reasons, without modifying the underlying full network.</p>
-<p>The view maintains mappings between the indices of its active (defined) species and reactions and the corresponding indices in the full network of the base engine. All calculations are delegated to the base engine after mapping the inputs from the view's context to the full network context, and the results are mapped back.</p>
-<p>&lt;DynamicEngine&gt; </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00036">36</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<div class="textblock">
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00259">259</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a63f8f85e75ecaab6fa39d48d7a846187" name="a63f8f85e75ecaab6fa39d48d7a846187"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a63f8f85e75ecaab6fa39d48d7a846187">&#9670;&#160;</a></span>Config</h2>
@@ -276,7 +252,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00223">223</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00269">269</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
@@ -300,7 +276,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00224">224</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00270">270</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
@@ -337,36 +313,15 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs a <a class="el" href="classgridfire_1_1_file_defined_engine_view.html" title="An engine view that uses a user-defined reaction network from a file.">FileDefinedEngineView</a>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">baseEngine</td><td>The underlying <a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a> to which this view delegates calculations. </td></tr>
-    <tr><td class="paramname">fileName</td><td>The path to the file that defines the reaction network for this view. </td></tr>
-    <tr><td class="paramname">parser</td><td>A reference to a parser object capable of parsing the network file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line">MyParser parser;</div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> baseEngine(...);</div>
-<div class="line"><a class="code hl_function" href="#a8f2f64bab0f516ed2a6fd529912e0acd">FileDefinedEngineView</a> view(baseEngine, <span class="stringliteral">&quot;my_network.net&quot;</span>, parser);</div>
-<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> <a href="engine__abstract_8h_source.html#l00121">engine_abstract.h:121</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1_file_defined_engine_view_html_a8f2f64bab0f516ed2a6fd529912e0acd"><div class="ttname"><a href="#a8f2f64bab0f516ed2a6fd529912e0acd">gridfire::FileDefinedEngineView::FileDefinedEngineView</a></div><div class="ttdeci">FileDefinedEngineView(DynamicEngine &amp;baseEngine, const std::string &amp;fileName, const io::NetworkFileParser &amp;parser)</div><div class="ttdoc">Constructs a FileDefinedEngineView.</div><div class="ttdef"><b>Definition</b> <a href="engine__defined_8cpp_source.html#l00008">engine_defined.cpp:8</a></div></div>
-</div><!-- fragment --></dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The view is initialized with the reactions and species from the specified file. </dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If a reaction from the file is not found in the base engine. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p><a class="el" href="classgridfire_1_1_file_defined_engine_view.html">FileDefinedEngineView</a> Implementation ///. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00008">8</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00379">379</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3b5162b7be35405285ef9f825ec2663b" name="a3b5162b7be35405285ef9f825ec2663b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b5162b7be35405285ef9f825ec2663b">&#9670;&#160;</a></span>buildFromFile()</h2>
+<a id="ae0c35d8963b6ed05aeb88089ce301718" name="ae0c35d8963b6ed05aeb88089ce301718"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0c35d8963b6ed05aeb88089ce301718">&#9670;&#160;</a></span>getNetworkFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -375,171 +330,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::buildFromFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fileName</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Builds the active species and reaction sets from a file. </p>
-<p>This method uses the provided parser to read reaction names from the given file. It then finds these reactions in the base engine's full network and populates the <code>m_activeReactions</code> and <code>m_activeSpecies</code> members. Finally, it constructs the index maps for the active sets.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fileName</td><td>The path to the network definition file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section post"><dt>Postcondition</dt><dd><ul>
-<li><code>m_activeReactions</code> and <code>m_activeSpecies</code> are populated.</li>
-<li><code>m_speciesIndexMap</code> and <code>m_reactionIndexMap</code> are constructed.</li>
-<li><code>m_isStale</code> is set to false.</li>
-</ul>
-</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If a reaction from the file is not found in the base engine. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00208">208</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac371fb66fd0a76a04df204c9dd9a05ef" name="ac371fb66fd0a76a04df204c9dd9a05ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac371fb66fd0a76a04df204c9dd9a05ef">&#9670;&#160;</a></span>calculateMolarReactionFlow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::FileDefinedEngineView::calculateMolarReactionFlow </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the molar reaction flow for a given reaction in the active network. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">reaction</td><td>The reaction for which to calculate the flow. </td></tr>
-    <tr><td class="paramname">Y_defined</td><td>Vector of current abundances for the active species. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale or if the reaction is not in the active set. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6633b1757c41dd9e1c397333f4f9e785">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00085">85</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a2c1d88b06568f9ea4c65e794d012ebfb" name="a2c1d88b06568f9ea4c65e794d012ebfb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c1d88b06568f9ea4c65e794d012ebfb">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; gridfire::FileDefinedEngineView::calculateRHSAndEnergy </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the right-hand side (dY/dt) and energy generation for the active species. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y_defined</td><td>A vector of abundances for the active species. </td></tr>
-    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>The density in g/cm^3. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives</a> struct containing the derivatives of the active species and the nuclear energy generation rate.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale (i.e., <code><a class="el" href="#ace3568eadaba69e7357b4386c5ca3eb0" title="Updates the engine view if it is marked as stale.">update()</a></code> has not been called after <code><a class="el" href="#a92f14da849e99d07c1ff1347addb9263" title="Sets a new network file to define the active reactions.">setNetworkFile()</a></code>). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_engine.html#ac8b56124b6b49cd1802addb74a9a47c2">gridfire::Engine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00029">29</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aebb3f3548f8781506f31580706810a4e" name="aebb3f3548f8781506f31580706810a4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebb3f3548f8781506f31580706810a4e">&#9670;&#160;</a></span>constructReactionIndexMap()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; size_t &gt; gridfire::FileDefinedEngineView::constructReactionIndexMap </td>
+          <td class="memname">std::string gridfire::FileDefinedEngineView::getNetworkFile </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -547,27 +338,17 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs the reaction index map. </p>
-<dl class="section return"><dt>Returns</dt><dd>A vector mapping defined reaction indices to full reaction indices.</dd></dl>
-<p>This method creates a map from the indices of the active reactions to the indices of the corresponding reactions in the full network.</p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If an active reaction is not found in the base engine's reaction list. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00176">176</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00266">266</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
-<a id="a51ba09ff01fdcac1125d42f276c9a0a7" name="a51ba09ff01fdcac1125d42f276c9a0a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51ba09ff01fdcac1125d42f276c9a0a7">&#9670;&#160;</a></span>constructSpeciesIndexMap()</h2>
+<a id="aea834dc382ff1d663040db4532ea928f" name="aea834dc382ff1d663040db4532ea928f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea834dc382ff1d663040db4532ea928f">&#9670;&#160;</a></span>getParser()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -576,7 +357,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; size_t &gt; gridfire::FileDefinedEngineView::constructSpeciesIndexMap </td>
+          <td class="memname">const <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html">io::NetworkFileParser</a> &amp; gridfire::FileDefinedEngineView::getParser </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -584,783 +365,16 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs the species index map. </p>
-<dl class="section return"><dt>Returns</dt><dd>A vector mapping defined species indices to full species indices.</dd></dl>
-<p>This method creates a map from the indices of the active species to the indices of the corresponding species in the full network.</p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If an active species is not found in the base engine's species list. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00147">147</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a48b2451f96b8f5511ffc4071519c0810" name="a48b2451f96b8f5511ffc4071519c0810"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48b2451f96b8f5511ffc4071519c0810">&#9670;&#160;</a></span>generateJacobianMatrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::generateJacobianMatrix </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generates the Jacobian matrix for the active species. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y_defined</td><td>A vector of abundances for the active species. </td></tr>
-    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>The density in g/cm^3.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a0a2fb3435ee3271ab9c806f225c61a7f">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00045">45</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a27a5163157cc15c4cb3b99a5d3564dbd" name="a27a5163157cc15c4cb3b99a5d3564dbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27a5163157cc15c4cb3b99a5d3564dbd">&#9670;&#160;</a></span>generateStoichiometryMatrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::generateStoichiometryMatrix </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generates the stoichiometry matrix for the active reactions and species. </p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00068">68</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4c8b273c5cb3d470567c5691b68493a3" name="a4c8b273c5cb3d470567c5691b68493a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c8b273c5cb3d470567c5691b68493a3">&#9670;&#160;</a></span>getBaseEngine()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp; gridfire::FileDefinedEngineView::getBaseEngine </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the base engine. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the base engine. </dd></dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_engine_view.html#ad294227f8b5cf6d970c349eabf5447a6">gridfire::EngineView&lt; DynamicEngine &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00021">21</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a0ef8804780d13bbfce0856237bb00470" name="a0ef8804780d13bbfce0856237bb00470"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ef8804780d13bbfce0856237bb00470">&#9670;&#160;</a></span>getJacobianMatrixEntry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::FileDefinedEngineView::getJacobianMatrixEntry </td>
-          <td>(</td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>i_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>j_defined</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets an entry from the Jacobian matrix for the active species. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">i_defined</td><td>The row index (species index) in the defined matrix. </td></tr>
-    <tr><td class="paramname">j_defined</td><td>The column index (species index) in the defined matrix. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The value of the Jacobian matrix at (i_defined, j_defined).</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-    <tr><td class="paramname">std::out_of_range</td><td>If an index is out of bounds. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a05d15ff35a6bc06a2fa7eda19838bd07">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00056">56</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a5bbea17b69cc8f81bc251a04f4435a0c" name="a5bbea17b69cc8f81bc251a04f4435a0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bbea17b69cc8f81bc251a04f4435a0c">&#9670;&#160;</a></span>getNetworkReactions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp; gridfire::FileDefinedEngineView::getNetworkReactions </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the set of active logical reactions in the network. </p>
-<dl class="section return"><dt>Returns</dt><dd>Reference to the LogicalReactionSet containing all active reactions.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad2a82099edbb374bbb2c9509ccdb1037">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00102">102</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8bb583e039b49608272997ed2d3387fa" name="a8bb583e039b49608272997ed2d3387fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8bb583e039b49608272997ed2d3387fa">&#9670;&#160;</a></span>getNetworkSpecies()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; Species &gt; &amp; gridfire::FileDefinedEngineView::getNetworkSpecies </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the list of active species in the network defined by the file. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of active species. </dd></dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_engine.html#a020e1b493d6964cafdad08fde697ceb3">gridfire::Engine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00025">25</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="adbc50f397445f92b810d80cf329b8626" name="adbc50f397445f92b810d80cf329b8626"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbc50f397445f92b810d80cf329b8626">&#9670;&#160;</a></span>getScreeningModel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> gridfire::FileDefinedEngineView::getScreeningModel </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the screening model from the base engine. </p>
-<dl class="section return"><dt>Returns</dt><dd>The current screening model type. </dd></dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a7a203f8e0f3a6744ddc912dfbcfdbcc0">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00143">143</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ace3c6ea4841318c08695973ab3dcddc6" name="ace3c6ea4841318c08695973ab3dcddc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace3c6ea4841318c08695973ab3dcddc6">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; Species, double &gt; gridfire::FileDefinedEngineView::getSpeciesTimescales </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes timescales for all active species in the network. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y_defined</td><td>Vector of current abundances for the active species. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Map from Species to their characteristic timescales (s).</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a5d8ba98b230d2849035ee2507728fa15">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00108">108</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9da9224f5c99a5068f3d8cbf066e4693" name="a9da9224f5c99a5068f3d8cbf066e4693"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9da9224f5c99a5068f3d8cbf066e4693">&#9670;&#160;</a></span>getStoichiometryMatrixEntry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int gridfire::FileDefinedEngineView::getStoichiometryMatrixEntry </td>
-          <td>(</td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>speciesIndex_defined</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>reactionIndex_defined</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets an entry from the stoichiometry matrix for the active species and reactions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">speciesIndex_defined</td><td>The index of the species in the defined species list. </td></tr>
-    <tr><td class="paramname">reactionIndex_defined</td><td>The index of the reaction in the defined reaction list. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The stoichiometric coefficient for the given species and reaction.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
-    <tr><td class="paramname">std::out_of_range</td><td>If an index is out of bounds. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00074">74</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a97e5ee4651dbe6754678fe96e4702fee" name="a97e5ee4651dbe6754678fe96e4702fee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97e5ee4651dbe6754678fe96e4702fee">&#9670;&#160;</a></span>mapFullToView()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; double &gt; gridfire::FileDefinedEngineView::mapFullToView </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>full</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps a vector of full abundances to a vector of culled abundances. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">full</td><td>A vector of abundances for the full network. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of abundances for the active species, with the abundances of the active species copied from the full vector. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00276">276</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="adba3c11b11a04b2907c1635210d73dee" name="adba3c11b11a04b2907c1635210d73dee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adba3c11b11a04b2907c1635210d73dee">&#9670;&#160;</a></span>mapViewToFull()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; double &gt; gridfire::FileDefinedEngineView::mapViewToFull </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>defined</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps a vector of culled abundances to a vector of full abundances. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">defined</td><td>A vector of abundances for the active species. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of abundances for the full network, with the abundances of the active species copied from the defined vector. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00267">267</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a74217a1f8fd8e6daff969cb17885315c" name="a74217a1f8fd8e6daff969cb17885315c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74217a1f8fd8e6daff969cb17885315c">&#9670;&#160;</a></span>mapViewToFullReactionIndex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t gridfire::FileDefinedEngineView::mapViewToFullReactionIndex </td>
-          <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>definedReactionIndex</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps a culled reaction index to a full reaction index. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">definedReactionIndex</td><td>The index of the reaction in the defined reaction list. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The index of the corresponding reaction in the full network.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::out_of_range</td><td>If the defined index is out of bounds for the reaction index map. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00294">294</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aa2373955ef5b0eabf7a57c7208e38bb1" name="aa2373955ef5b0eabf7a57c7208e38bb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2373955ef5b0eabf7a57c7208e38bb1">&#9670;&#160;</a></span>mapViewToFullSpeciesIndex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t gridfire::FileDefinedEngineView::mapViewToFullSpeciesIndex </td>
-          <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>definedSpeciesIndex</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps a culled species index to a full species index. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">definedSpeciesIndex</td><td>The index of the species in the defined species list. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The index of the corresponding species in the full network.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::out_of_range</td><td>If the defined index is out of bounds for the species index map. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00285">285</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a92f14da849e99d07c1ff1347addb9263" name="a92f14da849e99d07c1ff1347addb9263"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92f14da849e99d07c1ff1347addb9263">&#9670;&#160;</a></span>setNetworkFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::setNetworkFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fileName</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Sets a new network file to define the active reactions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fileName</td><td>The path to the new network definition file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line">view.setNetworkFile(<span class="stringliteral">&quot;another_network.net&quot;</span>);</div>
-<div class="line">view.update(netIn); <span class="comment">// Must be called before using the view again</span></div>
-</div><!-- fragment --></dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The view is marked as stale. <code><a class="el" href="#ace3568eadaba69e7357b4386c5ca3eb0" title="Updates the engine view if it is marked as stale.">update()</a></code> must be called before further use. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00133">133</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad96bbee6d3d37b50d9236a975ef704c0" name="ad96bbee6d3d37b50d9236a975ef704c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad96bbee6d3d37b50d9236a975ef704c0">&#9670;&#160;</a></span>setScreeningModel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::setScreeningModel </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a></td>          <td class="paramname"><span class="paramname"><em>model</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Sets the screening model for the base engine. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">model</td><td>The screening model to set. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a3fb44b6f55563a2f590f31916528f2bd">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00139">139</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ace3568eadaba69e7357b4386c5ca3eb0" name="ace3568eadaba69e7357b4386c5ca3eb0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace3568eadaba69e7357b4386c5ca3eb0">&#9670;&#160;</a></span>update()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::update </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Updates the engine view if it is marked as stale. </p>
-<p>This method checks if the view is stale (e.g., after <code>setNetworkFile</code> was called). If it is, it rebuilds the active network from the currently set file. The <code>netIn</code> parameter is not used by this implementation but is required by the interface.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">netIn</td><td>The current network input (unused).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section post"><dt>Postcondition</dt><dd>If the view was stale, it is rebuilt and is no longer stale. </dd></dl>
-
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#acd500e1cd788df1dc105d28a20dc5f4f">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00127">127</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae3f99002ab2c56a5bcdec00839f8628f" name="ae3f99002ab2c56a5bcdec00839f8628f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3f99002ab2c56a5bcdec00839f8628f">&#9670;&#160;</a></span>validateNetworkState()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::FileDefinedEngineView::validateNetworkState </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Validates that the <a class="el" href="classgridfire_1_1_file_defined_engine_view.html" title="An engine view that uses a user-defined reaction network from a file.">FileDefinedEngineView</a> is not stale. </p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale (i.e., <code><a class="el" href="#ace3568eadaba69e7357b4386c5ca3eb0" title="Updates the engine view if it is marked as stale.">update()</a></code> has not been called after the view was made stale). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8cpp_source.html#l00303">303</a> of file <a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00267">267</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ae012da2b1f6169cb13e6075a73353ab2" name="ae012da2b1f6169cb13e6075a73353ab2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae012da2b1f6169cb13e6075a73353ab2">&#9670;&#160;</a></span>m_activeReactions</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> gridfire::FileDefinedEngineView::m_activeReactions</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps indices of active species to indices in the full network. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00240">240</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
-<a id="a299a0c61aa4f26029c770013c9feff5e" name="a299a0c61aa4f26029c770013c9feff5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a299a0c61aa4f26029c770013c9feff5e">&#9670;&#160;</a></span>m_activeSpecies</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::FileDefinedEngineView::m_activeSpecies</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Active reactions in the defined engine. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00238">238</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
-<a id="ad8454c98fa9a4bb45dc81059bc51fc81" name="ad8454c98fa9a4bb45dc81059bc51fc81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8454c98fa9a4bb45dc81059bc51fc81">&#9670;&#160;</a></span>m_baseEngine</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&amp; gridfire::FileDefinedEngineView::m_baseEngine</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The underlying engine to which this view delegates calculations. </p>
-<p>Name of the file defining the reaction set considered by the engine view. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00231">231</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
 <a id="a7a80966c023ae722239491af58609362" name="a7a80966c023ae722239491af58609362"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a80966c023ae722239491af58609362">&#9670;&#160;</a></span>m_config</h2>
 
@@ -1381,9 +395,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>A reference to the singleton <a class="el" href="#a63f8f85e75ecaab6fa39d48d7a846187">Config</a> instance. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00226">226</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00271">271</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
@@ -1409,33 +421,7 @@ Private Attributes</h2></td></tr>
 
 <p>Parser for the network file. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00233">233</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
-<a id="a6e421bc748933be31bed9ff53f12b595" name="a6e421bc748933be31bed9ff53f12b595"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e421bc748933be31bed9ff53f12b595">&#9670;&#160;</a></span>m_isStale</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::FileDefinedEngineView::m_isStale = true</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>A flag indicating whether the view is stale and needs to be updated. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00248">248</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00273">273</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
@@ -1459,9 +445,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>A pointer to the logger instance. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00228">228</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00272">272</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
@@ -1485,65 +469,13 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Active species in the defined engine. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00235">235</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
-<a id="af0a77a4749a15aae87bdecfccbd1736e" name="af0a77a4749a15aae87bdecfccbd1736e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0a77a4749a15aae87bdecfccbd1736e">&#9670;&#160;</a></span>m_reactionIndexMap</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;size_t&gt; gridfire::FileDefinedEngineView::m_reactionIndexMap</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00245">245</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
-
-</div>
-</div>
-<a id="aebd4a1a584f2784f1df3d503645be03b" name="aebd4a1a584f2784f1df3d503645be03b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebd4a1a584f2784f1df3d503645be03b">&#9670;&#160;</a></span>m_speciesIndexMap</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;size_t&gt; gridfire::FileDefinedEngineView::m_speciesIndexMap</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Maps indices of active reactions to indices in the full network. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00243">243</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="engine__defined_8h_source.html#l00275">275</a> of file <a class="el" href="engine__defined_8h_source.html">engine_defined.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/network/include/gridfire/engine/views/<a class="el" href="engine__defined_8h_source.html">engine_defined.h</a></li>
-<li>src/network/lib/engine/views/<a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a></li>
+<li>src/include/gridfire/engine/views/<a class="el" href="engine__defined_8h_source.html">engine_defined.h</a></li>
+<li>src/lib/engine/views/<a class="el" href="engine__defined_8cpp_source.html">engine_defined.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
