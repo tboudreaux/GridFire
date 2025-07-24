@@ -221,8 +221,8 @@ namespace gridfire::solver {
         size_t numSpecies = m_engine.getNetworkSpecies().size();
         J.resize(numSpecies+1, numSpecies+1);
         J.clear();
-        for (int i = 0; i < numSpecies; ++i) {
-            for (int j = 0; j < numSpecies; ++j) {
+        for (size_t i = 0; i < numSpecies; ++i) {
+            for (size_t j = 0; j < numSpecies; ++j) {
                 J(i, j) = m_engine.getJacobianMatrixEntry(i, j);
             }
         }

@@ -22,8 +22,20 @@ project('GridFire', 'cpp', version: '0.0.1a', default_options: ['cpp_std=c++23']
 
 # Add default visibility for all C++ targets
 add_project_arguments('-fvisibility=default', language: 'cpp')
-# We disable these because of CppAD
-add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+
+message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
+
+if meson.get_compiler('cpp').get_id() == 'clang'
+    # We disable these because of CppAD
+    message('disabling bitwise-instead-of-logical warnings for clang')
+    add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+endif
+
+if meson.get_compiler('cpp').get_id() == 'gcc'
+    # We disable these because of boost notes about abi changes from C++10 -> C++17 make the build too noisey
+    message('disabling psabi warnings for gcc')
+    add_project_arguments('-Wno-psabi', language: 'cpp')
+endif
 
 # For Eigen
 add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')

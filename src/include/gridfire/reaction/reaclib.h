@@ -4,7 +4,7 @@
 
 namespace gridfire::reaclib {
 
-    static bool s_initialized = false;
+    [[maybe_unused]] static bool s_initialized = false;
 
     /**
      * @brief Provides global access to the fully initialized REACLIB reaction set.

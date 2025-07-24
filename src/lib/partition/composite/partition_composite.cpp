@@ -76,7 +76,7 @@ namespace gridfire::partition {
     std::string CompositePartitionFunction::type() const {
         std::stringstream ss;
         ss << "CompositePartitionFunction(";
-        int count = 0;
+        size_t count = 0;
         for (const auto& partitionFunction : m_partitionFunctions) {
             ss << partitionFunction->type();
             if (count < m_partitionFunctions.size() - 1) {

@@ -293,7 +293,7 @@ namespace gridfire {
     }
 
     size_t DefinedEngineView::mapViewToFullSpeciesIndex(size_t culledSpeciesIndex) const {
-        if (culledSpeciesIndex < 0 || culledSpeciesIndex >= static_cast<int>(m_speciesIndexMap.size())) {
+        if (culledSpeciesIndex < 0 || culledSpeciesIndex >= m_speciesIndexMap.size()) {
             LOG_ERROR(m_logger, "Defined index {} is out of bounds for species index map of size {}.", culledSpeciesIndex, m_speciesIndexMap.size());
             m_logger->flush_log();
             throw std::out_of_range("Defined index " + std::to_string(culledSpeciesIndex) + " is out of bounds for species index map of size " + std::to_string(m_speciesIndexMap.size()) + ".");
@@ -302,7 +302,7 @@ namespace gridfire {
     }
 
     size_t DefinedEngineView::mapViewToFullReactionIndex(size_t culledReactionIndex) const {
-        if (culledReactionIndex < 0 || culledReactionIndex >= static_cast<int>(m_reactionIndexMap.size())) {
+        if (culledReactionIndex < 0 || culledReactionIndex >= m_reactionIndexMap.size()) {
             LOG_ERROR(m_logger, "Defined index {} is out of bounds for reaction index map of size {}.", culledReactionIndex, m_reactionIndexMap.size());
             m_logger->flush_log();
             throw std::out_of_range("Defined index " + std::to_string(culledReactionIndex) + " is out of bounds for reaction index map of size " + std::to_string(m_reactionIndexMap.size()) + ".");

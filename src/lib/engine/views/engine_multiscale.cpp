@@ -1,14 +1,12 @@
 #include "gridfire/engine/views/engine_multiscale.h"
 #include "gridfire/exceptions/error_engine.h"
 
-#include <numeric>
-
-#include "fourdst/logging/logging.h"
-
 #include <stdexcept>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+
+#include <queue>
 
 #include <ranges>
 #include <algorithm>
@@ -531,7 +529,7 @@ namespace gridfire {
             m_algebraic_species.size(),
             [&]() -> std::string {
                 std::stringstream ss;
-                int count = 0;
+                size_t count = 0;
                 for (const auto& species : m_algebraic_species) {
                     ss << species.name();
                     if (m_algebraic_species.size() > 1 && count < m_algebraic_species.size() - 1) {
@@ -1256,7 +1254,7 @@ namespace gridfire {
                 } else {
                     msg << "nuclei ";
                     // TODO: Refactor nice list printing into utility function somewhere
-                    int counter = 0;
+                    size_t counter = 0;
                     for (const auto& seed_idx : seed_indices) {
                         msg << m_baseEngine.getNetworkSpecies()[seed_idx].name();
                         if (counter < seed_indices.size() - 2) {
@@ -1309,7 +1307,7 @@ namespace gridfire {
 
         size_t slowest_pool_index = 0; // Default to the first pool if no valid pool is found
         double slowest_mean_timescale = std::numeric_limits<double>::min();
-        int count = 0;
+        size_t count = 0;
         for (const auto& pool : pools) {
             double mean_timescale = 0.0;
             for (const auto& species_idx : pool) {
@@ -1321,7 +1319,7 @@ namespace gridfire {
                 LOG_CRITICAL(m_logger, "Encountered infinite mean timescale for pool {} with species: {}",
                     count, [&]() -> std::string {
                         std::stringstream ss;
-                        int iCount = 0;
+                        size_t iCount = 0;
                         for (const auto& idx : pool) {
                             ss << all_species[idx].name() << ": " << all_timescales.at(all_species[idx]);
                             if (iCount < pool.size() - 1) {

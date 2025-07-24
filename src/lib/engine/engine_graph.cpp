@@ -860,7 +860,7 @@ namespace gridfire {
             // Dynamic cast to REACLIBReaction to access specific properties
             csvFile << reaction.id() << ";";
             // Reactants
-            int count = 0;
+            size_t count = 0;
             for (const auto& reactant : reaction.reactants()) {
                 csvFile << reactant.name();
                 if (++count < reaction.reactants().size()) {

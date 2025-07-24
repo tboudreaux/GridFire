@@ -536,7 +536,7 @@ namespace gridfire::reaction {
         ///
         friend std::ostream& operator<<(std::ostream& os, const TemplatedReactionSet<ReactionT>& r) {
             os << "(ReactionSet: [";
-            int counter = 0;
+            size_t counter = 0;
             for (const auto& reaction : r.m_reactions) {
                 os << reaction;
                 if (counter < r.m_reactions.size() - 2) {
