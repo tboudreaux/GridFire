@@ -5,6 +5,7 @@
 
 #include "fourdst/logging/logging.h"
 
+#include <stdexcept>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -482,18 +483,7 @@ namespace gridfire {
         // --- Step 5. Identify potential seed species for each candidate pool ---
         LOG_TRACE_L1(m_logger, "Identifying potential seed species for candidate pools...");
         const std::vector<QSEGroup> candidate_groups = constructCandidateGroups(connected_pools, Y, T9, rho);
-        LOG_TRACE_L1(
-            m_logger,
-            "Found {} candidate QSE groups for further analysis: {}",
-            candidate_groups.size(),
-            [&]() -> std::string {
-                std::stringstream ss;
-                for (const auto& group : candidate_groups) {
-                     ss << group << " ";
-                }
-                return ss.str();
-            }()
-        );
+        LOG_TRACE_L1(m_logger, "Found {} candidate QSE groups for further analysis", candidate_groups.size());
 
         LOG_TRACE_L1(m_logger, "Validating candidate groups with flux analysis...");
         const std::vector<QSEGroup> validated_groups = validateGroupsWithFluxAnalysis(candidate_groups, Y, T9, rho);
@@ -1401,9 +1391,7 @@ namespace gridfire {
 
                 // Add clique
                 for (const size_t& u : intersection) {
-                    const auto& uSpecies = m_baseEngine.getNetworkSpecies()[u];
                     for (const size_t& v : intersection) {
-                        const auto & vSpecies = m_baseEngine.getNetworkSpecies()[v];
                         if (u != v) { // Avoid self-loops
                             connectivity_graph[u].push_back(v);
                         }
@@ -1621,6 +1609,37 @@ namespace gridfire {
 
     bool MultiscalePartitioningEngineView::QSEGroup::operator!=(const QSEGroup &other) const {
         return !(*this == other);
+    }
+
+    void MultiscalePartitioningEngineView::CacheStats::hit(const operators op) {
+        if (op == operators::All) {
+            throw std::invalid_argument("Cannot use 'ALL' as an operator for a hit");
+        }
+
+        m_hit ++;
+        m_operatorHits[op]++;
+    }
+    void MultiscalePartitioningEngineView::CacheStats::miss(const operators op) {
+        if (op == operators::All) {
+            throw std::invalid_argument("Cannot use 'ALL' as an operator for a miss");
+        }
+
+        m_miss ++;
+        m_operatorMisses[op]++;
+    }
+
+    size_t MultiscalePartitioningEngineView::CacheStats::hits(const operators op) const {
+        if (op == operators::All) {
+            return m_hit;
+        }
+        return m_operatorHits.at(op);
+    }
+
+    size_t MultiscalePartitioningEngineView::CacheStats::misses(const operators op) const {
+        if (op == operators::All) {
+            return m_miss;
+        }
+        return m_operatorMisses.at(op);
     }
 
 }

@@ -41,8 +41,8 @@ namespace gridfire {
         const partition::PartitionFunction& partitionFunction,
         const BuildDepthType buildDepth) :
     m_reactions(build_reaclib_nuclear_network(composition, buildDepth, false)),
-    m_partitionFunction(partitionFunction.clone()),
-    m_depth(buildDepth)
+    m_depth(buildDepth),
+    m_partitionFunction(partitionFunction.clone())
     {
         syncInternalMaps();
     }

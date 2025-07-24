@@ -833,14 +833,6 @@ namespace gridfire {
         // --- Pre-setup (flags to control conditionals in an AD safe / branch aware manner) ---
         // ----- Constants for AD safe calculations ---
         const T zero = static_cast<T>(0.0);
-        const T one = static_cast<T>(1.0);
-
-        // ----- Initialize variables for molar concentration product and thresholds ---
-        // Note: the logic here is that we use CppAD::CondExprLt to test thresholds and if they are less we set the flag
-        //       to zero so that the final returned reaction flow is 0. This is as opposed to standard if statements
-        //       which create branches that break the AD tape.
-        const T Y_threshold = static_cast<T>(MIN_ABUNDANCE_THRESHOLD);
-        T threshold_flag = one;
 
         // --- Calculate the molar reaction rate (in units of [s^-1][cm^3(N-1)][mol^(1-N)] for N reactants) ---
         const T k_reaction = reaction.calculate_rate(T9);
@@ -864,9 +856,6 @@ namespace gridfire {
             const size_t species_index = species_it->second;
             const T Yi = Y[species_index];
 
-            // --- Check if the species abundance is below the threshold where we ignore reactions ---
-            // threshold_flag *= CppAD::CondExpLt(Yi, Y_threshold, zero, one);
-
             // --- If count is > 1 , we need to raise the molar concentration to the power of count since there are really count bodies in that reaction ---
             molar_concentration_product *= CppAD::pow(Yi, static_cast<T>(count)); // ni^count
 
@@ -881,7 +870,7 @@ namespace gridfire {
         //       the tape more expensive to record, but it will also mean that we only need to record it once for
         //       the entire network.
         const T densityTerm = CppAD::pow(rho, totalReactants > 1 ? static_cast<T>(totalReactants - 1) : zero); // Density raised to the power of (N-1) for N reactants
-        return molar_concentration_product * k_reaction * threshold_flag * densityTerm;
+        return molar_concentration_product * k_reaction * densityTerm;
     }
 
 };

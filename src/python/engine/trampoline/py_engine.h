@@ -13,9 +13,12 @@ class PyEngine final : public gridfire::Engine {
 public:
     const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
     std::expected<gridfire::StepDerivatives<double>,gridfire::expectations::StaleEngineError> calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const override;
+private:
+    mutable std::vector<fourdst::atomic::Species> m_species_cache;
 };
 
 class PyDynamicEngine final : public gridfire::DynamicEngine {
+public:
     const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
     std::expected<gridfire::StepDerivatives<double>,gridfire::expectations::StaleEngineError> calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const override;
     void generateJacobianMatrix(const std::vector<double> &Y_dynamic, double T9, double rho) const override;
@@ -41,6 +44,10 @@ class PyDynamicEngine final : public gridfire::DynamicEngine {
     void rebuild(const fourdst::composition::Composition& comp, gridfire::BuildDepthType depth) override {
         throw std::logic_error("Setting network depth not supported by this engine.");
     }
+private:
+    mutable std::vector<fourdst::atomic::Species> m_species_cache;
+
+
 };
 
 class PyEngineView final : public gridfire::EngineView<gridfire::Engine> {

@@ -14,11 +14,24 @@
 namespace py = pybind11;
 
 const std::vector<fourdst::atomic::Species>& PyEngine::getNetworkSpecies() const {
-    PYBIND11_OVERRIDE_PURE(
-        std::vector<fourdst::atomic::Species>,
-        gridfire::Engine,  /* Base class */
-        getNetworkSpecies
-    );
+    /*
+     * Acquire the GIL (Global Interpreter Lock) for thread safety
+     * with the Python interpreter.
+     */
+    py::gil_scoped_acquire gil;
+
+    /*
+     * get_override() looks for a Python method that overrides this C++ one.
+     */
+    py::function override = py::get_override(this, "getNetworkSpecies");
+
+    if (override) {
+        py::object result = override();
+        m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
+        return m_species_cache;
+    }
+
+    py::pybind11_fail("Tried to call pure virtual function \"DynamicEngine::getNetworkSpecies\"");
 }
 
 std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyEngine::calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const {
@@ -35,11 +48,24 @@ std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEn
 /////////////////////////////////////
 
 const std::vector<fourdst::atomic::Species>& PyDynamicEngine::getNetworkSpecies() const {
-    PYBIND11_OVERRIDE_PURE(
-        std::vector<fourdst::atomic::Species>,
-        gridfire::DynamicEngine,  /* Base class */
-        getNetworkSpecies
-    );
+    /*
+     * Acquire the GIL (Global Interpreter Lock) for thread safety
+     * with the Python interpreter.
+     */
+    py::gil_scoped_acquire gil;
+
+    /*
+     * get_override() looks for a Python method that overrides this C++ one.
+     */
+    py::function override = py::get_override(this, "getNetworkSpecies");
+
+    if (override) {
+        py::object result = override();
+        m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
+        return m_species_cache;
+    }
+
+    py::pybind11_fail("Tried to call pure virtual function \"DynamicEngine::getNetworkSpecies\"");
 }
 std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(

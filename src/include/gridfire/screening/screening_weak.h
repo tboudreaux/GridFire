@@ -78,7 +78,7 @@ namespace gridfire::screening {
         ) const override;
     private:
         /// @brief Logger instance for recording trace and debug information.
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        [[maybe_unused]] quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
     private:
         /**

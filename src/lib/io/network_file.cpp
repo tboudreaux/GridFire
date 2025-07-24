@@ -53,10 +53,8 @@ namespace gridfire::io {
 
         ParsedNetworkData parsed;
         std::string line;
-        int line_number = 0;
         while (std::getline(file, line)) {
-            line_number++;
-            LOG_TRACE_L3(m_logger, "Parsing reaction list file {}, line {}: {}", filename, line_number, line);
+            LOG_TRACE_L3(m_logger, "Parsing reaction list file {}, line: {}", filename, line);
 
             const size_t comment_pos = line.find('#');
             if (comment_pos != std::string::npos) {
