@@ -964,6 +964,7 @@ run_main_tui() {
     while true; do
         # Re-check boost status to update menu dynamically
         if [[ $BOOST_CHECKED = false ]]; then
+            log "${BLUE}[Info] Checking Boost library status (this may take a minute)...${NC}"
             # If BOOST_CHECKED is set, we assume Boost was checked previously
             check_boost >/dev/null 2>&1 || BOOST_OKAY=false
             BOOST_CHECKED=true
