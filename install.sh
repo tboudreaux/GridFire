@@ -527,7 +527,9 @@ run_dependency_installer_tui() {
   check_meson_python >/dev/null; DEP_STATUS[meson-python]=$?
   check_cmake >/dev/null; DEP_STATUS[cmake]=$?
   check_meson >/dev/null; DEP_STATUS[meson]=$?
-  check_boost >/dev/null; DEP_STATUS[boost]=$?
+  if [[ $BOOST_OKAY = false ]]; then
+    DEP_STATUS[boost]=1 # Force boost to be "not okay" if previous check failed
+  fi
 
   local choices
   choices=$(dialog --clear --backtitle "Project Dependency Installer" \
@@ -612,6 +614,37 @@ run_python_bindings_tui() {
     esac
 }
 
+run_compiler_help_tui() {
+    local compiler_name="$1"
+    local req_ver=""
+    local help_text=""
+
+    if [[ "$compiler_name" == "g++" ]]; then
+        req_ver=$MIN_GCC_VER
+        help_text="The installer could not automatically install GCC >= ${req_ver}.\n\n"
+        help_text+="This can happen on older Linux distributions.\n\n"
+        help_text+="Recommended Solutions:\n"
+        help_text+="1. (Ubuntu/Debian) Add a PPA with newer compilers:\n"
+        help_text+="   sudo add-apt-repository ppa:ubuntu-toolchain-r/test\n"
+        help_text+="   sudo apt-get update\n"
+        help_text+="   sudo apt-get install g++-13\n\n"
+        help_text+="2. Download pre-built binaries from a trusted source.\n\n"
+        help_text+="3. Build GCC from source (advanced)."
+
+    elif [[ "$compiler_name" == "clang++" ]]; then
+        req_ver=$MIN_CLANG_VER
+        help_text="The installer could not automatically install Clang >= ${req_ver}.\n\n"
+        help_text+="This is common on systems like Ubuntu 22.04.\n\n"
+        help_text+="Recommended Solution (Ubuntu/Debian):\n"
+        help_text+="Use the official LLVM APT repository. Run this command in your terminal:\n\n"
+        help_text+='   bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"'
+        help_text+="\n\nThis script will set up the repository and install the latest version of Clang. After running it, re-run this installer."
+    fi
+
+    dialog --title "Compiler Installation Failed" --msgbox "$help_text" 25 78
+}
+
+
 run_compiler_selection_tui() {
     local gpp_ver; gpp_ver=$(g++ -dumpversion 2>/dev/null | grep -oE '[0-9]+(\.[0-9]+)*' | head -n1)
     local clang_ver; clang_ver=$(clang++ --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
@@ -631,20 +664,34 @@ run_compiler_selection_tui() {
             for choice in $choices; do
                 local compiler_to_install; compiler_to_install=$(echo "$choice" | tr -d '"')
                 local install_cmd; install_cmd=$(get_compiler_install_cmd "$compiler_to_install")
-                if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
+                if [ -n "$install_cmd" ]; then
+                    eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+                    # Post-install check
+                    check_compiler
+                    if ! check_command "${VALID_COMPILERS[g++*]}" && [[ "$compiler_to_install" == "g++" ]]; then run_compiler_help_tui "g++"; fi
+                    if ! check_command "${VALID_COMPILERS[clang++*]}" && [[ "$compiler_to_install" == "clang++" ]]; then run_compiler_help_tui "clang++"; fi
+                fi
             done
         fi
     elif ! $gpp_ok && [[ -n "$gpp_ver" ]]; then
         # g++ found but too old
         if dialog --title "Compiler Update" --yesno "Found g++ version ${gpp_ver}, but require >= ${MIN_GCC_VER}.\n\nAttempt to install a compatible version?" 10 70; then
             local install_cmd; install_cmd=$(get_compiler_install_cmd "g++")
-            if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
+            if [ -n "$install_cmd" ]; then
+                eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+                check_compiler
+                if ! $gpp_ok; then run_compiler_help_tui "g++"; fi
+            fi
         fi
     elif ! $clang_ok && [[ -n "$clang_ver" ]]; then
         # clang++ found but too old
         if dialog --title "Compiler Update" --yesno "Found clang++ version ${clang_ver}, but require >= ${MIN_CLANG_VER}.\n\nAttempt to install a compatible version?" 10 70; then
             local install_cmd; install_cmd=$(get_compiler_install_cmd "clang++")
-            if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
+            if [ -n "$install_cmd" ]; then
+                eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+                check_compiler
+                if ! $clang_ok; then run_compiler_help_tui "clang++"; fi
+            fi
         fi
     fi
 
