@@ -37,10 +37,11 @@ only and do not necessarily reflect those of the European Union or the European 
 - C++ compiler supporting C++23 standard
 - Meson build system (>= 1.5.0)
 - Python 3.10 or newer
+- CMake 3.20 or newer
 - Python packages: `meson-python>=0.15.0`
 - Boost libraries (>= 1.75.0) installed system-wide
 
-> **Note:** Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost.
+> **Note:** Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, CMake, and Boost.
  
 > **Note:** Windows is not supported at this time and *there are no plans to support it in the future*. Windows users are encouraged to use WSL2 or a Linux VM.
 
