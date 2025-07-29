@@ -33,6 +33,21 @@ only and do not necessarily reflect those of the European Union or the European 
 
 ## Build and Installation Instructions
 
+The easiest way to build GridFire is using the `install.sh` or `install-tui.sh` scripts in the root directory. To use
+these scripts, simply run:
+
+```bash
+./install.sh
+# or
+./install-tui.sh
+```
+
+The regular installation script will select a standard "ideal" set of build options for you. If you want more control
+over the build options, you can use the `install-tui.sh` script, which will provide a text-based user interface to
+select the build options you want.
+
+Generally, both are intended to be easy to use and will prompt you automatically to install any missing dependencies.
+
 ### Prerequisites
 - C++ compiler supporting C++23 standard
 - Meson build system (>= 1.5.0)
