@@ -1001,11 +1001,7 @@ run_boost_help_tui() {
     help_text+="1. Download the latest Boost source from boost.org.\n"
     help_text+="2. Follow their instructions to build it. A typical sequence is:\n"
     help_text+="   ./bootstrap.sh\n"
-    help_text+="   ./b2 install\n"
-    help_text+="3. Take note of the installation prefix (e.g., /usr/local).\n"
-    help_text+="4. Set the BOOST_ROOT environment variable before running this script again:\n"
-    help_text+="   export BOOST_ROOT=/path/to/your/boost/install\n"
-    help_text+="   ./install.sh --tui\n\n"
+    help_text+="   sudo ./b2 install\n"
     help_text+="Meson should then automatically find and use your manually installed version."
 
     dialog --title "Boost Compatibility Issue" --msgbox "$help_text" 25 78
@@ -1035,6 +1031,7 @@ run_main_tui() {
             "1" "Install System Dependencies"
             "2" "Configure Build Options"
             "3" "Install Python Bindings"
+            "N" "View Notes"
         )
         if $BOOST_OKAY; then
           menu_items+=(
@@ -1043,7 +1040,6 @@ run_main_tui() {
             "6" "Run Meson Compile"
             "7" "Run Meson Install (requires sudo)"
             "8" "Run Tests"
-            "N" "View Notes"
             "S" "Save Configuration"
             "L" "Load Configuration"
             )
