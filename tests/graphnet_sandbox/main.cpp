@@ -71,26 +71,26 @@ int main() {
 
     NetIn netIn;
     netIn.composition = composition;
-    netIn.temperature = 1.5e7;
-    netIn.density = 1.6e2;
+    netIn.temperature = 5e9;
+    netIn.density = 1.6e6;
     netIn.energy = 0;
-    netIn.tMax = 3.1536e17; // ~ 10Gyr
+    // netIn.tMax = 3.1536e17; // ~ 10Gyr
+    netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
-    for (const auto& [symbol, entry] : netIn.composition) {
-        std::cout << symbol << ": " << entry.mass_fraction() << "\n";
-    }
 
-    // GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-    //
-    // ReaclibEngine.setPrecomputation(true);
-    // ReaclibEngine.setUseReverseReactions(false);
+    GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
+    ReaclibEngine.setUseReverseReactions(true);
     // ReaclibEngine.setScreeningModel(screening::ScreeningType::WEAK);
     //
-    // MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
-    // AdaptiveEngineView adaptiveView(partitioningView);
+    MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
+    AdaptiveEngineView adaptiveView(partitioningView);
     //
-    // solver::DirectNetworkSolver solver(adaptiveView);
-    // NetOut netOut;
+    solver::DirectNetworkSolver solver(adaptiveView);
+    NetOut netOut;
+    netOut = solver.evaluate(netIn);
+    std::cout << "Initial H-1: " << netIn.composition.getMassFraction("H-1") << std::endl;
+    std::cout << "NetOut H-1: " << netOut.composition.getMassFraction("H-1") << std::endl;
+    std::cout << "Consumed " << (netIn.composition.getMassFraction("H-1") - netOut.composition.getMassFraction("H-1")) * 100 << " % H-1 by mass" << std::endl;
     // measure_execution_time([&](){netOut = solver.evaluate(netIn);}, "DirectNetworkSolver Evaluation");
     // std::cout << "DirectNetworkSolver completed in " << netOut.num_steps << " steps.\n";
     // std::cout << "Final composition:\n";
