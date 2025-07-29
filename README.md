@@ -31,7 +31,8 @@ GridFire is a part of the 4D-STAR collaboration.
 Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s)
 only and do not necessarily reflect those of the European Union or the European Research Council.
 
-## Build and Installation Instructions
+## Automatic Build and Installation
+### Script Build and Installation Instructions
 
 The easiest way to build GridFire is using the `install.sh` or `install-tui.sh` scripts in the root directory. To use
 these scripts, simply run:
@@ -41,14 +42,28 @@ these scripts, simply run:
 # or
 ./install-tui.sh
 ```
-
 The regular installation script will select a standard "ideal" set of build options for you. If you want more control
 over the build options, you can use the `install-tui.sh` script, which will provide a text-based user interface to
 select the build options you want.
 
 Generally, both are intended to be easy to use and will prompt you automatically to install any missing dependencies.
 
+
+### Currently known good platforms
+The installation script has been tested and found to work on clean installations of the following platforms:
+- MacOS 15.3.2 (Apple Silicon + brew installed)
+- Fedora 42.0 (aarch64)
+- Ubuntu 25.04 (aarch64)
+- Ubuntu 22.04 (X86_64)
+
+> **Note:** On Ubuntu 22.04 the user needs to install boost libraries manually as the versions in the Ubuntu repositories
+are too old. The installer automatically detects this and will instruct the user in how to do this.
+
+## Manual Build Instructions
+
 ### Prerequisites
+These only need to be manually installed if the user is not making use of the `install.sh` or `install-tui.sh`
+
 - C++ compiler supporting C++23 standard
 - Meson build system (>= 1.5.0)
 - Python 3.10 or newer

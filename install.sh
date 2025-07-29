@@ -17,6 +17,7 @@ set -o pipefail
 LOGFILE="GridFire_Installer.log"
 NOTES_FILE="notes.txt"
 CONFIG_FILE="gridfire_build.conf"
+VENV_DIR=".venv"
 MIN_GCC_VER="13.0.0"
 MIN_CLANG_VER="16.0.0"
 MIN_MESON_VER="1.5.0"
@@ -146,6 +147,25 @@ check_command() {
   command -v "$1" &>/dev/null
 }
 
+is_externally_managed() {
+    # Check for the PEP 668 marker file
+    local py_prefix
+    py_prefix=$(python3 -c "import sys; print(sys.prefix)")
+    if [ -f "$py_prefix/EXTERNALLY-MANAGED" ]; then
+        return 0 # 0 means true in bash
+    else
+        return 1 # 1 means false
+    fi
+}
+
+get_pip_cmd() {
+    if [ -d "$VENV_DIR" ]; then
+        echo "$VENV_DIR/bin/pip"
+    else
+        echo "python3 -m pip"
+    fi
+}
+
 set_compilers() {
     if [[ "$CC_COMPILER" == *"clang++"* ]]; then
         C_COMPILER=$(echo "$CC_COMPILER" | sed 's/clang++/clang/')
@@ -227,6 +247,16 @@ check_compiler() {
     fi
 }
 
+check_pip() {
+    if python3 -m pip --version &>/dev/null; then
+        log "${GREEN}[OK] Found pip.${NC}"
+        return 0
+    else
+        log "${RED}[FAIL] pip not found.${NC}"
+        return 1
+    fi
+}
+
 check_python_dev() {
   if check_command python3 && python3-config --includes &>/dev/null; then
     log "${GREEN}[OK] Found Python 3 development headers.${NC}"
@@ -238,6 +268,12 @@ check_python_dev() {
 }
 
 check_meson_python() {
+    if [ -d "$VENV_DIR" ]; then
+        if "$VENV_DIR/bin/python3" -c "import mesonpy" &>/dev/null; then
+            log "${GREEN}[OK] Found meson-python package (in venv).${NC}"
+            return 0
+        fi
+    fi
     if python3 -c "import mesonpy" &>/dev/null; then
         log "${GREEN}[OK] Found meson-python package.${NC}"
         return 0
@@ -258,8 +294,13 @@ check_cmake() {
 }
 
 check_meson() {
-    if check_command meson; then
-        local ver; ver=$(meson --version)
+    local meson_cmd="meson"
+    if [ -d "$VENV_DIR" ]; then
+        meson_cmd="$VENV_DIR/bin/meson"
+    fi
+
+    if check_command "$meson_cmd"; then
+        local ver; ver=$($meson_cmd --version)
         vercomp "$ver" "$MIN_MESON_VER"
         if [[ $? -ne 2 ]]; then
             log "${GREEN}[OK] Found Meson ${ver}.${NC}"
@@ -383,6 +424,7 @@ get_install_cmd() {
       case "$dep_name" in
         "compiler") cmd="$brew_cmd install gcc llvm" ;; # Install both
         "python-dev") cmd="$brew_cmd install python3" ;;
+        "pip") cmd="python3 -m ensurepip --upgrade" ;;
         "meson-python") cmd="python3 -m pip install meson-python" ;;
         "meson") cmd="python3 -m pip install --upgrade meson" ;;
         "cmake") cmd="$brew_cmd install cmake" ;;
@@ -396,6 +438,7 @@ get_install_cmd() {
           case "$dep_name" in
             "compiler") cmd="sudo apt-get install -y g++-13 gfortran-13 clang-16" ;;
             "python-dev") cmd="sudo apt-get install -y python3-dev" ;;
+            "pip") cmd="sudo apt-get install -y python3-pip" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
             "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo apt-get install -y cmake" ;;
@@ -407,6 +450,7 @@ get_install_cmd() {
           case "$dep_name" in
             "compiler") cmd="sudo dnf install -y gcc-c++ gcc-gfortran clang" ;;
             "python-dev") cmd="sudo dnf install -y python3-devel" ;;
+            "pip") cmd="sudo dnf install -y python3-pip" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
             "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo dnf install -y cmake" ;;
@@ -418,6 +462,7 @@ get_install_cmd() {
           case "$dep_name" in
             "compiler") cmd="sudo pacman -S --noconfirm gcc gcc-fortran clang" ;;
             "python-dev") cmd="sudo pacman -S --noconfirm python" ;;
+            "pip") cmd="sudo pacman -S --noconfirm python-pip" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
             "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo pacman -S --noconfirm cmake" ;;
@@ -533,10 +578,27 @@ check_dialog_installed() {
   return 0
 }
 
+ensure_venv() {
+    if [ ! -d "$VENV_DIR" ]; then
+        if dialog --title "Virtual Environment" --yesno "A local Python virtual environment ('${VENV_DIR}') is required for this action. Create it now?" 8 70; then
+            log "${BLUE}[Info] Creating Python virtual environment in '${VENV_DIR}'...${NC}"
+            if ! python3 -m venv "$VENV_DIR"; then
+                dialog --msgbox "Failed to create virtual environment. Please ensure 'python3-venv' is installed." 8 60
+                return 1
+            fi
+            log "${GREEN}[Success] Virtual environment created.${NC}"
+        else
+            return 1
+        fi
+    fi
+    return 0
+}
+
 run_dependency_installer_tui() {
   # This function now just calls the check functions to populate status
   declare -A DEP_STATUS
   check_compiler >/dev/null; DEP_STATUS[compiler]=$?
+  check_pip >/dev/null; DEP_STATUS[pip]=$?
   check_python_dev >/dev/null; DEP_STATUS[python-dev]=$?
   check_meson_python >/dev/null; DEP_STATUS[meson-python]=$?
   check_cmake >/dev/null; DEP_STATUS[cmake]=$?
@@ -548,8 +610,9 @@ run_dependency_installer_tui() {
   local choices
   choices=$(dialog --clear --backtitle "Project Dependency Installer" \
     --title "Install System Dependencies" \
-    --checklist "Select dependencies to install. Already found dependencies are unchecked." 20 70 6 \
+    --checklist "Select dependencies to install. Already found dependencies are unchecked." 20 70 7 \
     "compiler" "C++ Compilers (g++, clang++)" "$([[ ${DEP_STATUS[compiler]} -ne 0 ]] && echo "on" || echo "off")" \
+    "pip" "Python Package Installer (pip)" "$([[ ${DEP_STATUS[pip]} -ne 0 ]] && echo "on" || echo "off")" \
     "python-dev" "Python 3 Dev Headers" "$([[ ${DEP_STATUS[python-dev]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
@@ -563,19 +626,30 @@ run_dependency_installer_tui() {
   for choice in $choices; do
     local dep; dep=$(echo "$choice" | tr -d '"')
     log "\n${BLUE}--- Installing ${dep} ---${NC}"
-    local install_cmd; install_cmd=$(get_install_cmd "$dep")
-    if [ -n "$install_cmd" ]; then
-      eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+
+    # Handle python packages specially
+    if [[ "$dep" == "meson-python" || "$dep" == "meson" ]]; then
+        if is_externally_managed; then
+            if ! ensure_venv; then
+                log "${YELLOW}[Skip] User cancelled venv creation. Skipping ${dep} installation.${NC}"
+                continue
+            fi
+        fi
+        local pip_cmd; pip_cmd=$(get_pip_cmd)
+        eval "$pip_cmd install --upgrade $dep" 2>&1 | tee -a "$LOGFILE"
     else
-      log "${RED}[Error] No automatic installation command for '${dep}'. Please install manually.${NC}"
-      dialog --msgbox "Could not find an automatic installation command for '${dep}' on your system. Please install it manually." 8 60
+        local install_cmd; install_cmd=$(get_install_cmd "$dep")
+        if [ -n "$install_cmd" ]; then
+          eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+        else
+          log "${RED}[Error] No automatic installation command for '${dep}'. Please install manually.${NC}"
+          dialog --msgbox "Could not find an automatic installation command for '${dep}' on your system. Please install it manually." 8 60
+        fi
     fi
   done
   # Re-run check to update status
   check_compiler
-  log "${BLUE}[Info] Checking Boost library status (this may take a minute)...${NC}"
-  # If BOOST_CHECKED is set, we assume Boost was checked previously
-  check_boost >/dev/null 2>&1 || BOOST_OKAY=false
+  BOOST_CHECKED=false # Force re-check of boost
 }
 
 run_python_bindings_tui() {
@@ -595,6 +669,33 @@ run_python_bindings_tui() {
         return
     fi
 
+    local pip_cmd="python3 -m pip"
+    local pip_opts=""
+
+    if is_externally_managed; then
+        local env_choice
+        env_choice=$(dialog --clear --backtitle "Python Environment" \
+            --title "Externally Managed Environment Detected" \
+            --menu "This OS protects its system Python. How would you like to install the bindings?" 15 78 3 \
+            "1" "Use a Virtual Environment (Recommended)" \
+            "2" "Install to System with --break-system-packages (Advanced)" \
+            "3" "Cancel" \
+            3>&1 1>&2 2>&3)
+
+        case "$env_choice" in
+            1)
+                if ! ensure_venv; then return; fi
+                pip_cmd="$VENV_DIR/bin/pip"
+                ;;
+            2)
+                pip_opts="--break-system-packages"
+                ;;
+            *)
+                return
+                ;;
+        esac
+    fi
+
     local choice
     choice=$(dialog --clear --backtitle "Python Bindings Installer" \
         --title "Install Python Bindings" \
@@ -607,7 +708,7 @@ run_python_bindings_tui() {
     case "$choice" in
         1)
             log "${BLUE}[Info] Installing Python bindings in Developer Mode...${NC}"
-            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" pip install -e . --no-build-isolation -vv; then
+            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" $pip_cmd install $pip_opts -e . --no-build-isolation -vv; then
                 log "${RED}[Error] Failed to install Python bindings in developer mode.${NC}"
                 dialog --msgbox "Developer mode installation failed. Check the log for details." 8 60
             else
@@ -617,7 +718,7 @@ run_python_bindings_tui() {
             ;;
         2)
             log "${BLUE}[Info] Installing Python bindings in User Mode...${NC}"
-            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" pip install .; then
+            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" $pip_cmd install $pip_opts .; then
                 log "${RED}[Error] Failed to install Python bindings in user mode.${NC}"
                 dialog --msgbox "User mode installation failed. Check the log for details." 8 60
             else
@@ -1062,7 +1163,10 @@ run_main_tui() {
 
         clear
         case "$choice" in
-            1) run_dependency_installer_tui ;;
+            1)
+                run_dependency_installer_tui
+                BOOST_CHECKED=false # Force re-check after installing
+                ;;
             2) run_build_config_tui ;;
             3) run_python_bindings_tui ;;
             4) run_meson_setup && run_meson_compile ;;
