@@ -98,6 +98,20 @@ vercomp() {
     return 0
 }
 
+# Prompt the user for a yes/no answer.
+prompt_yes_no() {
+  local prompt_msg="$1"
+  local answer
+  while true; do
+    read -p "$(echo -e "${YELLOW}${prompt_msg}${NC}") " answer
+    case "$answer" in
+      [Yy]* ) return 0;;
+      [Nn]* ) return 1;;
+      * ) echo "Please answer yes or no.";;
+    esac
+  done
+}
+
 
 # Show the help message and exit.
 show_help() {
