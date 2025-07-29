@@ -3,7 +3,7 @@
 # install.sh - Comprehensive interactive installation script for GridFire.
 #
 # This script performs the following actions:
-# 1. Checks for essential system dependencies.
+# 1. Checks for essential system dependencies against required minimum versions.
 # 2. If run with the --tui flag, it provides a comprehensive text-based user interface
 #    to select and install dependencies, configure the build, and run build steps.
 # 3. If run without flags, it prompts the user interactively for each missing dependency.
@@ -15,16 +15,22 @@ set -o pipefail
 
 # --- Configuration ---
 LOGFILE="GridFire_Installer.log"
+NOTES_FILE="notes.txt"
+MIN_GCC_VER="13.0.0"
+MIN_CLANG_VER="16.0.0"
+MIN_MESON_VER="1.5.0"
 
 # --- Build Configuration Globals ---
 BUILD_DIR="build"
 INSTALL_PREFIX="/usr/local"
-MESON_BUILD_TYPE="release"
+MESON_BUILD_TYPE="debug" # Default to debug to match Meson's default and avoid optimization warnings
 MESON_LOG_LEVEL="info"
 MESON_PKG_CONFIG="true"
 MESON_NUM_CORES=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
+C_COMPILER=""
 CC_COMPILER=""
-AVAILABLE_COMPILERS=()
+FC_COMPILER=""
+declare -A VALID_COMPILERS
 
 # --- ANSI Color Codes ---
 RED="\033[0;31m"
@@ -44,19 +50,39 @@ log() {
   echo -e "${message}" | sed 's/\x1B\[[0-9;]*[mK]//g' >> "$LOGFILE"
 }
 
-# Prompt the user for a yes/no answer.
-prompt_yes_no() {
-  local prompt_msg="$1"
-  local answer
-  while true; do
-    read -p "$(echo -e "${YELLOW}${prompt_msg}${NC}") " answer
-    case "$answer" in
-      [Yy]* ) return 0;;
-      [Nn]* ) return 1;;
-      * ) echo "Please answer yes or no.";;
-    esac
-  done
+# Version comparison function. Returns 0 if v1=v2, 1 if v1>v2, 2 if v1<v2
+vercomp() {
+    local v1=$1 v2=$2
+    if [[ "$v1" == "$v2" ]]; then return 0; fi
+    local IFS=.
+    read -ra v1_parts <<< "$v1"
+    read -ra v2_parts <<< "$v2"
+
+    local i
+    # Pad the shorter version array with zeros
+    local len1=${#v1_parts[@]}
+    local len2=${#v2_parts[@]}
+    if (( len1 > len2 )); then
+        for ((i=len2; i<len1; i++)); do v2_parts[i]=0; done
+    elif (( len2 > len1 )); then
+        for ((i=len1; i<len2; i++)); do v1_parts[i]=0; done
+    fi
+
+    for i in "${!v1_parts[@]}"; do
+        local p1=${v1_parts[i]}
+        local p2=${v2_parts[i]}
+
+        # Ensure parts are integers before comparison
+        if ! [[ "$p1" =~ ^[0-9]+$ ]]; then p1=0; fi
+        if ! [[ "$p2" =~ ^[0-9]+$ ]]; then p2=0; fi
+
+        if (( p1 > p2 )); then return 1; fi
+        if (( p1 < p2 )); then return 2; fi
+    done
+
+    return 0
 }
+
 
 # Show the help message and exit.
 show_help() {
@@ -90,27 +116,85 @@ check_command() {
   command -v "$1" &>/dev/null
 }
 
-check_compiler() {
-  AVAILABLE_COMPILERS=()
-  if check_command g++; then
-    AVAILABLE_COMPILERS+=("g++")
-  fi
-  if check_command clang++; then
-    AVAILABLE_COMPILERS+=("clang++")
-  fi
-
-  if [ ${#AVAILABLE_COMPILERS[@]} -gt 0 ]; then
-    # Set default compiler if not already set or if current selection is no longer valid
-    if ! [[ " ${AVAILABLE_COMPILERS[*]} " =~ " ${CC_COMPILER} " ]]; then
-        CC_COMPILER="${AVAILABLE_COMPILERS[0]}"
+set_compilers() {
+    if [[ "$CC_COMPILER" == *"clang++"* ]]; then
+        C_COMPILER=$(echo "$CC_COMPILER" | sed 's/clang++/clang/')
+        # Try to find a corresponding flang or fallback to gfortran
+        local fc_ver=$(echo "$C_COMPILER" | grep -oE '[0-9]+')
+        if check_command "flang-$fc_ver"; then
+            FC_COMPILER="flang-$fc_ver"
+        elif check_command "flang"; then
+            FC_COMPILER="flang"
+        elif check_command "gfortran"; then
+            FC_COMPILER="gfortran"
+        else
+            FC_COMPILER=""
+        fi
+    elif [[ "$CC_COMPILER" == *"g++"* ]]; then
+        C_COMPILER=$(echo "$CC_COMPILER" | sed 's/g++/gcc/')
+        FC_COMPILER=$(echo "$CC_COMPILER" | sed 's/g++/gfortran/')
+        if ! check_command "$FC_COMPILER"; then
+             # Fallback to generic gfortran if versioned one not found
+             if check_command "gfortran"; then
+                 FC_COMPILER="gfortran"
+             else
+                 FC_COMPILER=""
+             fi
+        fi
+    else
+        C_COMPILER=""
+        FC_COMPILER=""
     fi
-    log "${GREEN}[OK] Found C++ compiler(s): ${AVAILABLE_COMPILERS[*]}. Using '${CC_COMPILER}'.${NC}"
-    return 0
-  else
-    log "${RED}[FAIL] No C++ compiler (g++ or clang++) found.${NC}"
-    CC_COMPILER=""
-    return 1
-  fi
+}
+
+check_compiler() {
+    VALID_COMPILERS=()
+    local potential_gccs=("g++-14" "g++-13" "g++")
+    local potential_clangs=("clang++-17" "clang++-16" "clang++")
+
+    for cc in "${potential_gccs[@]}"; do
+        if check_command "$cc"; then
+            local ver; ver=$($cc -dumpversion | grep -oE '[0-9]+(\.[0-9]+)*' | head -n1)
+            if [[ -n "$ver" ]]; then
+                vercomp "$ver" "$MIN_GCC_VER"
+                if [[ $? -ne 2 ]]; then
+                    VALID_COMPILERS["g++ ($ver)"]="$cc"
+                    break # Found a valid one, stop searching for g++
+                fi
+            fi
+        fi
+    done
+
+    for cc in "${potential_clangs[@]}"; do
+        if check_command "$cc"; then
+            local ver; ver=$($cc --version | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+            if [[ -n "$ver" ]]; then
+                vercomp "$ver" "$MIN_CLANG_VER"
+                if [[ $? -ne 2 ]]; then
+                    VALID_COMPILERS["clang++ ($ver)"]="$cc"
+                    break # Found a valid one
+                fi
+            fi
+        fi
+    done
+
+    if [ ${#VALID_COMPILERS[@]} -gt 0 ]; then
+        if ! [[ " ${VALID_COMPILERS[*]} " =~ " ${CC_COMPILER} " ]]; then
+            # Correctly get the first value from the associative array
+            local keys=("${!VALID_COMPILERS[@]}")
+            local first_key="${keys[0]}"
+            CC_COMPILER="${VALID_COMPILERS[$first_key]}"
+        fi
+        set_compilers
+        log "${GREEN}[OK] Found valid C++ compiler(s). Using C: '${C_COMPILER}', C++: '${CC_COMPILER}', FC: '${FC_COMPILER}'.${NC}"
+        return 0
+    else
+        log "${RED}[FAIL] No valid C++ compiler found (GCC >= ${MIN_GCC_VER} or Clang >= ${MIN_CLANG_VER}).${NC}"
+        CC_COMPILER=""
+        C_COMPILER=""
+        FC_COMPILER=""
+        return 1
+    fi
 }
 
 check_python_dev() {
@@ -144,13 +228,20 @@ check_cmake() {
 }
 
 check_meson() {
-  if check_command meson; then
-    log "${GREEN}[OK] Found Meson: $(meson --version)${NC}"
-    return 0
-  else
-    log "${RED}[FAIL] Meson not found.${NC}"
-    return 1
-  fi
+    if check_command meson; then
+        local ver; ver=$(meson --version)
+        vercomp "$ver" "$MIN_MESON_VER"
+        if [[ $? -ne 2 ]]; then
+            log "${GREEN}[OK] Found Meson ${ver}.${NC}"
+            return 0
+        else
+            log "${RED}[FAIL] Meson version ${ver} is too old. Need >= ${MIN_MESON_VER}.${NC}"
+            return 1
+        fi
+    else
+        log "${RED}[FAIL] Meson not found.${NC}"
+        return 1
+    fi
 }
 
 check_boost() {
@@ -182,26 +273,28 @@ get_compiler_install_cmd() {
             local brew_cmd; brew_cmd=$(command -v brew)
             case "$compiler_to_install" in
                 "g++") cmd="$brew_cmd install gcc" ;;
-                "clang++") cmd="xcode-select --install" ;;
+                "clang++") cmd="$brew_cmd install llvm" ;; # llvm provides clang
             esac
             ;;
         "Linux")
             case "$DISTRO_ID" in
                 "ubuntu"|"debian"|"linuxmint")
                     case "$compiler_to_install" in
-                        "g++") cmd="sudo apt-get install -y g++" ;;
-                        "clang++") cmd="sudo apt-get install -y clang" ;;
+                        "g++") cmd="sudo apt-get install -y g++-13 gfortran-13" ;;
+                        "clang++") cmd="sudo apt-get install -y clang-16" ;;
                     esac
                     ;;
                 "fedora")
+                    # Fedora usually has recent versions in main repos
                     case "$compiler_to_install" in
-                        "g++") cmd="sudo dnf install -y gcc-c++" ;;
+                        "g++") cmd="sudo dnf install -y gcc-c++ gcc-gfortran" ;;
                         "clang++") cmd="sudo dnf install -y clang" ;;
                     esac
                     ;;
                 "arch"|"manjaro")
+                     # Arch is rolling release, should be fine
                     case "$compiler_to_install" in
-                        "g++") cmd="sudo pacman -S --noconfirm gcc" ;;
+                        "g++") cmd="sudo pacman -S --noconfirm gcc gcc-fortran" ;;
                         "clang++") cmd="sudo pacman -S --noconfirm clang" ;;
                     esac
                     ;;
@@ -221,11 +314,11 @@ get_install_cmd() {
       local brew_cmd
       brew_cmd=$(command -v brew)
       case "$dep_name" in
-        "compiler") cmd="xcode-select --install; $brew_cmd install gcc" ;; # Install both
+        "compiler") cmd="$brew_cmd install gcc llvm" ;; # Install both
         "python-dev") cmd="$brew_cmd install python3" ;;
         "meson-python") cmd="python3 -m pip install meson-python" ;;
+        "meson") cmd="python3 -m pip install --upgrade meson" ;;
         "cmake") cmd="$brew_cmd install cmake" ;;
-        "meson") cmd="$brew_cmd install meson" ;;
         "boost") cmd="$brew_cmd install boost" ;;
         "dialog") cmd="$brew_cmd install dialog" ;;
       esac
@@ -234,33 +327,33 @@ get_install_cmd() {
       case "$DISTRO_ID" in
         "ubuntu"|"debian"|"linuxmint")
           case "$dep_name" in
-            "compiler") cmd="sudo apt-get install -y build-essential clang" ;;
+            "compiler") cmd="sudo apt-get install -y g++-13 gfortran-13 clang-16" ;;
             "python-dev") cmd="sudo apt-get install -y python3-dev" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
+            "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo apt-get install -y cmake" ;;
-            "meson") cmd="sudo apt-get install -y meson" ;;
             "boost") cmd="sudo apt-get install -y libboost-all-dev" ;;
             "dialog") cmd="sudo apt-get install -y dialog" ;;
           esac
           ;;
         "fedora")
           case "$dep_name" in
-            "compiler") cmd="sudo dnf install -y gcc-c++ clang" ;;
+            "compiler") cmd="sudo dnf install -y gcc-c++ gcc-gfortran clang" ;;
             "python-dev") cmd="sudo dnf install -y python3-devel" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
+            "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo dnf install -y cmake" ;;
-            "meson") cmd="sudo dnf install -y meson" ;;
             "boost") cmd="sudo dnf install -y boost-devel" ;;
             "dialog") cmd="sudo dnf install -y dialog" ;;
           esac
           ;;
         "arch"|"manjaro")
           case "$dep_name" in
-            "compiler") cmd="sudo pacman -S --noconfirm base-devel clang" ;;
+            "compiler") cmd="sudo pacman -S --noconfirm gcc gcc-fortran clang" ;;
             "python-dev") cmd="sudo pacman -S --noconfirm python" ;;
             "meson-python") cmd="python3 -m pip install meson-python" ;;
+            "meson") cmd="python3 -m pip install --upgrade meson" ;;
             "cmake") cmd="sudo pacman -S --noconfirm cmake" ;;
-            "meson") cmd="sudo pacman -S --noconfirm meson" ;;
             "boost") cmd="sudo pacman -S --noconfirm boost" ;;
             "dialog") cmd="sudo pacman -S --noconfirm dialog" ;;
           esac
@@ -280,8 +373,8 @@ run_meson_setup() {
     if [ ! -f "meson.build" ]; then
         log "${RED}[FATAL] meson.build file not found. Cannot proceed.${NC}"; return 1;
     fi
-    if [ -z "$CC_COMPILER" ]; then
-        log "${RED}[FATAL] No C++ compiler selected. Configure one first.${NC}"; return 1;
+    if [ -z "$CC_COMPILER" ] || [ -z "$C_COMPILER" ]; then
+        log "${RED}[FATAL] No valid C/C++ compiler selected. Configure one first.${NC}"; return 1;
     fi
     local reconfigure_flag=""
     if [ -d "$BUILD_DIR" ]; then
@@ -295,10 +388,12 @@ run_meson_setup() {
     meson_opts+=("-Dpkg-config=${MESON_PKG_CONFIG}")
     meson_opts+=("--prefix=${INSTALL_PREFIX}")
 
-    log "${BLUE}[Info] Using C++ compiler: ${CC_COMPILER}${NC}"
+    log "${BLUE}[Info] Using C compiler:       ${C_COMPILER}${NC}"
+    log "${BLUE}[Info] Using C++ compiler:     ${CC_COMPILER}${NC}"
+    log "${BLUE}[Info] Using Fortran compiler: ${FC_COMPILER}${NC}"
     log "${BLUE}[Info] Running meson setup with options: ${meson_opts[*]}${NC}"
-    # Set CXX environment variable for the meson command
-    if ! CXX="${CC_COMPILER}" meson setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
+    # Set CC, CXX, and FC environment variables for the meson command
+    if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" meson setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
         log "${RED}[FATAL] Meson setup failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Meson setup complete.${NC}"
@@ -384,7 +479,7 @@ run_dependency_installer_tui() {
     "python-dev" "Python 3 Dev Headers" "$([[ ${DEP_STATUS[python-dev]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
-    "meson" "Meson Build System" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
+    "meson" "Meson Build System (>=${MIN_MESON_VER})" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
     "boost" "Boost Libraries" "$([[ ${DEP_STATUS[boost]} -ne 0 ]] && echo "on" || echo "off")" \
     3>&1 1>&2 2>&3)
 
@@ -435,7 +530,7 @@ run_python_bindings_tui() {
     case "$choice" in
         1)
             log "${BLUE}[Info] Installing Python bindings in Developer Mode...${NC}"
-            if ! CXX="${CC_COMPILER}" pip install -e . --no-build-isolation -vv; then
+            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" pip install -e . --no-build-isolation -vv; then
                 log "${RED}[Error] Failed to install Python bindings in developer mode.${NC}"
                 dialog --msgbox "Developer mode installation failed. Check the log for details." 8 60
             else
@@ -445,7 +540,7 @@ run_python_bindings_tui() {
             ;;
         2)
             log "${BLUE}[Info] Installing Python bindings in User Mode...${NC}"
-            if ! CXX="${CC_COMPILER}" pip install .; then
+            if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" pip install .; then
                 log "${RED}[Error] Failed to install Python bindings in user mode.${NC}"
                 dialog --msgbox "User mode installation failed. Check the log for details." 8 60
             else
@@ -460,53 +555,59 @@ run_python_bindings_tui() {
 }
 
 run_compiler_selection_tui() {
-    local gpp_found=false
-    local clang_found=false
-    check_command g++ && gpp_found=true
-    check_command clang++ && clang_found=true
+    local gpp_ver; gpp_ver=$(g++ -dumpversion 2>/dev/null | grep -oE '[0-9]+(\.[0-9]+)*' | head -n1)
+    local clang_ver; clang_ver=$(clang++ --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
 
-    # Scenario 1: No compilers found
-    if ! $gpp_found && ! $clang_found; then
+    local gpp_ok=false
+    local clang_ok=false
+    if [[ -n "$gpp_ver" ]]; then vercomp "$gpp_ver" "$MIN_GCC_VER"; [[ $? -ne 2 ]] && gpp_ok=true; fi
+    if [[ -n "$clang_ver" ]]; then vercomp "$clang_ver" "$MIN_CLANG_VER"; [[ $? -ne 2 ]] && clang_ok=true; fi
+
+    if ! $gpp_ok && ! $clang_ok; then
+        # No valid compilers found
         local choices
-        choices=$(dialog --title "Compiler Installation" --checklist "No C++ compiler found. Please select which to install:" 15 70 2 \
-            "g++" "GNU C++ Compiler" "on" \
-            "clang++" "Clang C++ Compiler (often faster)" "off" 3>&1 1>&2 2>&3)
+        choices=$(dialog --title "Compiler Installation" --checklist "No valid C++ compiler found. Please select which to install:" 15 70 2 \
+            "g++" "GNU C++ Compiler (>=${MIN_GCC_VER})" "on" \
+            "clang++" "Clang C++ Compiler (>=${MIN_CLANG_VER}, often faster)" "off" 3>&1 1>&2 2>&3)
         if [ -n "$choices" ]; then
             for choice in $choices; do
                 local compiler_to_install; compiler_to_install=$(echo "$choice" | tr -d '"')
                 local install_cmd; install_cmd=$(get_compiler_install_cmd "$compiler_to_install")
-                if [ -n "$install_cmd" ]; then
-                    eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
-                fi
+                if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
             done
         fi
-    # Scenario 2: g++ found, clang++ not found
-    elif $gpp_found && ! $clang_found; then
-        if dialog --title "Compiler Installation" --yesno "g++ is installed. Would you like to install clang++?\n\n(Note: clang++ often provides faster compilation times)" 10 70; then
-            local install_cmd; install_cmd=$(get_compiler_install_cmd "clang++")
+    elif ! $gpp_ok && [[ -n "$gpp_ver" ]]; then
+        # g++ found but too old
+        if dialog --title "Compiler Update" --yesno "Found g++ version ${gpp_ver}, but require >= ${MIN_GCC_VER}.\n\nAttempt to install a compatible version?" 10 70; then
+            local install_cmd; install_cmd=$(get_compiler_install_cmd "g++")
             if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
         fi
-    # Scenario 3: clang++ found, g++ not found
-    elif ! $gpp_found && $clang_found; then
-        if dialog --title "Compiler Installation" --yesno "clang++ is installed. Would you like to install g++?" 8 70; then
-            local install_cmd; install_cmd=$(get_compiler_install_cmd "g++")
+    elif ! $clang_ok && [[ -n "$clang_ver" ]]; then
+        # clang++ found but too old
+        if dialog --title "Compiler Update" --yesno "Found clang++ version ${clang_ver}, but require >= ${MIN_CLANG_VER}.\n\nAttempt to install a compatible version?" 10 70; then
+            local install_cmd; install_cmd=$(get_compiler_install_cmd "clang++")
             if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
         fi
     fi
 
     # Re-check compilers and let user choose if multiple are available
     check_compiler
-    if [ ${#AVAILABLE_COMPILERS[@]} -gt 1 ]; then
+    if [ ${#VALID_COMPILERS[@]} -gt 0 ]; then
         local menu_items=()
-        for compiler in "${AVAILABLE_COMPILERS[@]}"; do menu_items+=("$compiler" ""); done
-        local compiler_choice
-        compiler_choice=$(dialog --title "Select C++ Compiler" --menu "Select the C++ compiler to use:" 15 70 ${#AVAILABLE_COMPILERS[@]} "${menu_items[@]}" 3>&1 1>&2 2>&3)
-        if [ -n "$compiler_choice" ]; then
-            CC_COMPILER="$compiler_choice"
+        for name in "${!VALID_COMPILERS[@]}"; do
+             menu_items+=("$name" "")
+        done
+        local compiler_choice_key
+        compiler_choice_key=$(dialog --title "Select C++ Compiler" --menu "Select the C++ compiler to use:" 15 70 ${#VALID_COMPILERS[@]} "${menu_items[@]}" 3>&1 1>&2 2>&3)
+        if [ -n "$compiler_choice_key" ]; then
+            CC_COMPILER="${VALID_COMPILERS[$compiler_choice_key]}"
+            set_compilers
+            log "${BLUE}[Config] Set C compiler to: ${C_COMPILER}${NC}"
             log "${BLUE}[Config] Set C++ compiler to: ${CC_COMPILER}${NC}"
+            log "${BLUE}[Config] Set Fortran compiler to: ${FC_COMPILER}${NC}"
         fi
-    elif [ ${#AVAILABLE_COMPILERS[@]} -eq 0 ]; then
-        dialog --msgbox "No C++ compiler could be found or installed. Please install one manually." 8 70
+    else
+        dialog --msgbox "No valid C++ compiler could be found or installed. Please install one manually that meets the version requirements." 8 70
     fi
 }
 
@@ -517,7 +618,7 @@ run_build_config_tui() {
         --menu "Select an option to configure:" 20 70 7 \
         "1" "Build Directory (current: ${BUILD_DIR})" \
         "2" "Install Prefix (current: ${INSTALL_PREFIX})" \
-        "3" "Manage & Select C++ Compiler (current: ${CC_COMPILER})" \
+        "3" "Manage & Select C/C++/Fortran Compiler" \
         "4" "Build Type (current: ${MESON_BUILD_TYPE})" \
         "5" "Log Level (current: ${MESON_LOG_LEVEL})" \
         "6" "Generate pkg-config (current: ${MESON_PKG_CONFIG})" \
@@ -547,10 +648,11 @@ run_build_config_tui() {
             ;;
         4)
             local build_type_choice
-            build_type_choice=$(dialog --title "Select Build Type" --menu "" 15 70 3 \
+            build_type_choice=$(dialog --title "Select Build Type" --menu "" 15 70 4 \
+                "debug" "No optimizations, with debug symbols" \
                 "release" "Optimized for performance" \
-                "debug" "With debug symbols, no optimization" \
                 "debugoptimized" "With debug symbols and optimization" \
+                "plain" "Custom flags only" \
                 3>&1 1>&2 2>&3)
             if [ -n "$build_type_choice" ]; then
                 MESON_BUILD_TYPE="$build_type_choice"
@@ -589,6 +691,32 @@ run_build_config_tui() {
     esac
 }
 
+run_notes_tui() {
+    if [ ! -f "$NOTES_FILE" ]; then
+        dialog --msgbox "Notes file '${NOTES_FILE}' not found." 8 50
+        return
+    fi
+
+    local notes_content=""
+    local counter=1
+    # Read file, filter comments, and process non-empty lines
+    while IFS= read -r line; do
+        # Skip empty or comment lines
+        if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
+            continue
+        fi
+        echo "$line"
+        notes_content+="${counter}. ${line}\n\n"
+        ((counter++))
+    done < "$NOTES_FILE"
+
+    if [ -z "$notes_content" ]; then
+        dialog --msgbox "No notes found in '${NOTES_FILE}'." 8 50
+    else
+        dialog --title "Installer Notes" --msgbox "$notes_content" 20 70
+    fi
+}
+
 run_main_tui() {
     if ! check_dialog_installed; then return 1; fi
     # Initial check to populate compiler list and set a default
@@ -603,7 +731,7 @@ run_main_tui() {
         local choice
         choice=$(dialog --clear --backtitle "GridFire Installer - [${sudo_status}]" \
             --title "Main Menu" \
-            --menu "COMPILER: ${CC_COMPILER:-Not Found} | DIR: ${BUILD_DIR}\nTYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 20 70 10 \
+            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 22 78 11 \
             "1" "Install System Dependencies" \
             "2" "Configure Build Options" \
             "3" "Install Python Bindings" \
@@ -612,7 +740,8 @@ run_main_tui() {
             "6" "Run Meson Compile" \
             "7" "Run Meson Install (requires sudo)" \
             "8" "Run Tests" \
-            "9" "Exit" \
+            "9" "View Notes" \
+            "10" "Exit" \
             3>&1 1>&2 2>&3)
 
         clear
@@ -625,7 +754,8 @@ run_main_tui() {
             6) run_meson_compile ;;
             7) run_meson_install ;;
             8) run_meson_tests ;;
-            9) break ;;
+            9) run_notes_tui ;;
+            10) break ;;
             *) log "${YELLOW}[Info] TUI cancelled.${NC}"; break ;;
         esac
     done

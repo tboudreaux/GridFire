@@ -1,5 +1,6 @@
+cppad_inc = include_directories('include', is_system: true)
 cppad_dep = declare_dependency(
-  include_directories: include_directories('include'),
+  include_directories: cppad_inc,
 )
 
 message('Registering CppAD headers for installation...')
