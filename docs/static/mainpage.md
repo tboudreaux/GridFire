@@ -2,11 +2,23 @@
 ![GridFire Logo](../../assets/logo/GridFire.png)
 
 ---
-
-GridFire is a C++ library designed to perform general nuclear network evolution using the Reaclib library. It is part of the larger SERiF project within the 4D-STAR collaboration.
+GridFire is a C++ library designed to perform general nuclear network evolution using the Reaclib library. It is part of
+the larger SERiF project within the 4D-STAR collaboration. GridFire is primarily focused on modeling the most
+relevant burning stages for stellar evolution modeling. Currently, there is limited support for inverse reactions.
+Therefore, GridFire has a limited set of tools to evolves a fusing plasma in NSE; however,
+this is not the primary focus of the library and has therefor not had significant development. For those interested in
+modeling super nova, neutron star mergers, or other
+high-energy astrophysical phenomena, we **strongly** recomment
+using [SkyNet](https://bitbucket.org/jlippuner/skynet/src/master/).
 
 **Design Philosophy and Workflow:**
-GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine representation of the reaction network. To manage the inherent stiffness and multi-scale nature of these networks, GridFire employs a layered view strategy: partitioning algorithms isolate fast and slow processes, adaptive culling removes negligible reactions at runtime, and implicit solvers stably integrate the remaining stiff system. This modular pipeline allows researchers to tailor accuracy versus performance trade-offs, reuse common engine components, and extend screening or partitioning models without modifying core integration routines.
+GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating
+complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine
+representation of the reaction network. To manage the inherent stiffness and multiscale nature of these networks,
+GridFire employs a layered view strategy: partitioning algorithms isolate fast and slow processes, adaptive culling
+removes negligible reactions at runtime, and implicit solvers stably integrate the remaining stiff system. This modular
+pipeline allows researchers to tailor accuracy versus performance trade-offs, reuse common engine components, and extend
+screening or partitioning models without modifying core integration routines.
 
 ## Funding
 GridFire is a part of the 4D-STAR collaboration.
@@ -14,7 +26,7 @@ GridFire is a part of the 4D-STAR collaboration.
 4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No.
 101071505: 4D-STAR)
 Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s)
-only and do not necessarily reflect those of the European Union or the European Research.
+only and do not necessarily reflect those of the European Union or the European Research Council.
 
 ## Build and Installation Instructions
 
@@ -25,9 +37,9 @@ only and do not necessarily reflect those of the European Union or the European 
 - Python packages: `meson-python>=0.15.0`
 - Boost libraries (>= 1.75.0) installed system-wide
 
-> Note: Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost.
-> 
-> Windows is not supported at this time.
+> **Note:** Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost.
+
+> **Note:** Windows is not supported at this time and *there are no plans to support it in the future*. Windows users are encouraged to use WSL2 or a Linux VM.
 
 ### Dependency Installation on Common Platforms
 
@@ -80,32 +92,40 @@ pip install .
 
 ## Code Architecture and Logical Flow
 
-GridFire is organized into modular components that collaborate to simulate nuclear reaction networks with high fidelity:
+GridFire is organized into a series of composable modules, each responsible for a specific aspect of nuclear reaction network modeling. The core components include:
 
 - **Engine Module:** Core interfaces and implementations (e.g., `GraphEngine`) that evaluate reaction network rate equations and energy generation.
 - **Screening Module:** Implements nuclear reaction screening corrections (`WeakScreening`, `BareScreening`, etc.) affecting reaction rates.
-- **Rates Module:** Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.
-- **Python Interface:** Exposes C++ functionality to Python, enabling rapid prototyping and integration into workflows.
+- **Reaction Module:** Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.
+- **Partition Module:** Implements partition functions (e.g., `GroundStatePartitionFunction`, `RauscherThielemannPartitionFunction`) to weight reaction rates based on nuclear properties.
+- **Solver Module:** Defines numerical integration strategies (e.g., `DirectNetworkSolver`) for solving the stiff ODE systems arising from reaction networks.
+- **Python Interface:** Exposes *almost* all C++ functionality to Python, allowing users to define compositions, configure engines, and run simulations directly from Python scripts.
+
+Generally a user will start by selecting a base engine (currently we only offer `GraphEngine`), which constructs the
+full reaction network graph from a given composition. The user can then apply various engine views to adapt the network
+topology, such as partitioning fast and slow reactions, adaptively culling low-flow pathways, or priming the network
+with specific species. Finally, a numerical solver is selected to integrate the network over time, producing updated
+abundances and diagnostics.
 
 ### GraphEngine Configuration Options
 
 GraphEngine exposes runtime configuration methods to tailor network construction and rate evaluations:
 
 - **Constructor Parameters:**
-  - `BuildDepthType` (`Full`/`Reduced`/`Minimal`): controls network build depth, trading startup time for network completeness.
-  - `partition::PartitionFunction`: custom functor for network partitioning based on `Z`, `A`, and `T9`.
+    - `BuildDepthType` (`Full`/`Reduced`/`Minimal`): controls network build depth, trading startup time for network completeness.
+    - `partition::PartitionFunction`: custom functor for network partitioning based on `Z`, `A`, and `T9`.
 
 - **setPrecomputation(bool precompute):**
-  - Enable/disable caching of reaction rates and stoichiometric data at initialization.
-  - *Effect:* Reduces per-step overhead; increases memory and setup time.
+    - Enable/disable caching of reaction rates and stoichiometric data at initialization.
+    - *Effect:* Reduces per-step overhead; increases memory and setup time.
 
 - **setScreeningModel(ScreeningType type):**
-  - Choose plasma screening (models: `BARE`, `WEAK`).
-  - *Effect:* Alters rate enhancement under dense/low-T conditions, impacting stiffness.
+    - Choose plasma screening (models: `BARE`, `WEAK`).
+    - *Effect:* Alters rate enhancement under dense/low-T conditions, impacting stiffness.
 
 - **setUseReverseReactions(bool useReverse):**
-  - Toggle inclusion of reverse (detailed balance) reactions.
-  - *Effect:* Improves equilibrium fidelity; increases network size and stiffness.
+    - Toggle inclusion of reverse (detailed balance) reactions.
+    - *Effect:* Improves equilibrium fidelity; increases network size and stiffness.
 
 ### Available Partition Functions
 
@@ -160,8 +180,8 @@ GridFire defines a flexible solver architecture through the `networkfire::solver
 1. **Initialization:** Convert input temperature to T9 units, retrieve tolerances, and initialize state vector `Y` from equilibrated composition.
 2. **Integrator Setup:** Construct the controlled Rosenbrock4 stepper and bind `RHSManager` and `JacobianFunctor`.
 3. **Adaptive Integration Loop:**
-   - Perform `integrate_adaptive` advancing until `tMax`, catching any `StaleEngineTrigger` to repartition the network and update composition.
-   - On each substep, observe states and log via `RHSManager::observe`.
+    - Perform `integrate_adaptive` advancing until `tMax`, catching any `StaleEngineTrigger` to repartition the network and update composition.
+    - On each substep, observe states and log via `RHSManager::observe`.
 4. **Finalization:** Assemble final mass fractions, compute accumulated energy, and populate `NetOut` with updated composition and diagnostics.
 
 ### Future Solver Implementations
