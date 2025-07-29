@@ -23,6 +23,8 @@ MESON_BUILD_TYPE="release"
 MESON_LOG_LEVEL="info"
 MESON_PKG_CONFIG="true"
 MESON_NUM_CORES=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
+CC_COMPILER=""
+AVAILABLE_COMPILERS=()
 
 # --- ANSI Color Codes ---
 RED="\033[0;31m"
@@ -89,14 +91,24 @@ check_command() {
 }
 
 check_compiler() {
+  AVAILABLE_COMPILERS=()
   if check_command g++; then
-    log "${GREEN}[OK] Found C++ compiler: g++${NC}"
-    return 0
-  elif check_command clang++; then
-    log "${GREEN}[OK] Found C++ compiler: clang++${NC}"
+    AVAILABLE_COMPILERS+=("g++")
+  fi
+  if check_command clang++; then
+    AVAILABLE_COMPILERS+=("clang++")
+  fi
+
+  if [ ${#AVAILABLE_COMPILERS[@]} -gt 0 ]; then
+    # Set default compiler if not already set or if current selection is no longer valid
+    if ! [[ " ${AVAILABLE_COMPILERS[*]} " =~ " ${CC_COMPILER} " ]]; then
+        CC_COMPILER="${AVAILABLE_COMPILERS[0]}"
+    fi
+    log "${GREEN}[OK] Found C++ compiler(s): ${AVAILABLE_COMPILERS[*]}. Using '${CC_COMPILER}'.${NC}"
     return 0
   else
     log "${RED}[FAIL] No C++ compiler (g++ or clang++) found.${NC}"
+    CC_COMPILER=""
     return 1
   fi
 }
@@ -109,6 +121,16 @@ check_python_dev() {
     log "${RED}[FAIL] Python 3 development headers not found.${NC}"
     return 1
   fi
+}
+
+check_meson_python() {
+    if python3 -c "import mesonpy" &>/dev/null; then
+        log "${GREEN}[OK] Found meson-python package.${NC}"
+        return 0
+    else
+        log "${RED}[FAIL] meson-python package not found.${NC}"
+        return 1
+    fi
 }
 
 check_cmake() {
@@ -152,17 +174,43 @@ EOF
 
 # --- Dependency Installation Functions ---
 
-run_install_cmd() {
-  local cmd="$1"
-  log "${BLUE}[Exec] Running: ${cmd}${NC}"
-  if prompt_yes_no "Execute this command? (y/n):"; then
-    eval "${cmd}" 2>&1 | tee -a "$LOGFILE"
-    return $?
-  else
-    log "${YELLOW}[Skip] User skipped installation command.${NC}"
-    return 1
-  fi
+get_compiler_install_cmd() {
+    local compiler_to_install="$1" # e.g., g++ or clang++
+    local cmd=""
+    case "$OS_NAME" in
+        "macOS")
+            local brew_cmd; brew_cmd=$(command -v brew)
+            case "$compiler_to_install" in
+                "g++") cmd="$brew_cmd install gcc" ;;
+                "clang++") cmd="xcode-select --install" ;;
+            esac
+            ;;
+        "Linux")
+            case "$DISTRO_ID" in
+                "ubuntu"|"debian"|"linuxmint")
+                    case "$compiler_to_install" in
+                        "g++") cmd="sudo apt-get install -y g++" ;;
+                        "clang++") cmd="sudo apt-get install -y clang" ;;
+                    esac
+                    ;;
+                "fedora")
+                    case "$compiler_to_install" in
+                        "g++") cmd="sudo dnf install -y gcc-c++" ;;
+                        "clang++") cmd="sudo dnf install -y clang" ;;
+                    esac
+                    ;;
+                "arch"|"manjaro")
+                    case "$compiler_to_install" in
+                        "g++") cmd="sudo pacman -S --noconfirm gcc" ;;
+                        "clang++") cmd="sudo pacman -S --noconfirm clang" ;;
+                    esac
+                    ;;
+            esac
+            ;;
+    esac
+    echo "$cmd"
 }
+
 
 get_install_cmd() {
   local dep_name="$1"
@@ -173,8 +221,9 @@ get_install_cmd() {
       local brew_cmd
       brew_cmd=$(command -v brew)
       case "$dep_name" in
-        "compiler") cmd="xcode-select --install" ;;
+        "compiler") cmd="xcode-select --install; $brew_cmd install gcc" ;; # Install both
         "python-dev") cmd="$brew_cmd install python3" ;;
+        "meson-python") cmd="python3 -m pip install meson-python" ;;
         "cmake") cmd="$brew_cmd install cmake" ;;
         "meson") cmd="$brew_cmd install meson" ;;
         "boost") cmd="$brew_cmd install boost" ;;
@@ -185,8 +234,9 @@ get_install_cmd() {
       case "$DISTRO_ID" in
         "ubuntu"|"debian"|"linuxmint")
           case "$dep_name" in
-            "compiler") cmd="sudo apt-get install -y build-essential" ;;
+            "compiler") cmd="sudo apt-get install -y build-essential clang" ;;
             "python-dev") cmd="sudo apt-get install -y python3-dev" ;;
+            "meson-python") cmd="python3 -m pip install meson-python" ;;
             "cmake") cmd="sudo apt-get install -y cmake" ;;
             "meson") cmd="sudo apt-get install -y meson" ;;
             "boost") cmd="sudo apt-get install -y libboost-all-dev" ;;
@@ -195,8 +245,9 @@ get_install_cmd() {
           ;;
         "fedora")
           case "$dep_name" in
-            "compiler") cmd="sudo dnf install -y gcc-c++" ;;
+            "compiler") cmd="sudo dnf install -y gcc-c++ clang" ;;
             "python-dev") cmd="sudo dnf install -y python3-devel" ;;
+            "meson-python") cmd="python3 -m pip install meson-python" ;;
             "cmake") cmd="sudo dnf install -y cmake" ;;
             "meson") cmd="sudo dnf install -y meson" ;;
             "boost") cmd="sudo dnf install -y boost-devel" ;;
@@ -205,8 +256,9 @@ get_install_cmd() {
           ;;
         "arch"|"manjaro")
           case "$dep_name" in
-            "compiler") cmd="sudo pacman -S --noconfirm base-devel" ;;
+            "compiler") cmd="sudo pacman -S --noconfirm base-devel clang" ;;
             "python-dev") cmd="sudo pacman -S --noconfirm python" ;;
+            "meson-python") cmd="python3 -m pip install meson-python" ;;
             "cmake") cmd="sudo pacman -S --noconfirm cmake" ;;
             "meson") cmd="sudo pacman -S --noconfirm meson" ;;
             "boost") cmd="sudo pacman -S --noconfirm boost" ;;
@@ -228,6 +280,9 @@ run_meson_setup() {
     if [ ! -f "meson.build" ]; then
         log "${RED}[FATAL] meson.build file not found. Cannot proceed.${NC}"; return 1;
     fi
+    if [ -z "$CC_COMPILER" ]; then
+        log "${RED}[FATAL] No C++ compiler selected. Configure one first.${NC}"; return 1;
+    fi
     local reconfigure_flag=""
     if [ -d "$BUILD_DIR" ]; then
         reconfigure_flag="--reconfigure"
@@ -240,8 +295,10 @@ run_meson_setup() {
     meson_opts+=("-Dpkg-config=${MESON_PKG_CONFIG}")
     meson_opts+=("--prefix=${INSTALL_PREFIX}")
 
+    log "${BLUE}[Info] Using C++ compiler: ${CC_COMPILER}${NC}"
     log "${BLUE}[Info] Running meson setup with options: ${meson_opts[*]}${NC}"
-    if ! meson setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
+    # Set CXX environment variable for the meson command
+    if ! CXX="${CC_COMPILER}" meson setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
         log "${RED}[FATAL] Meson setup failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Meson setup complete.${NC}"
@@ -310,19 +367,22 @@ check_dialog_installed() {
 }
 
 run_dependency_installer_tui() {
+  # This function now just calls the check functions to populate status
   declare -A DEP_STATUS
-  check_compiler; DEP_STATUS[compiler]=$?
-  check_python_dev; DEP_STATUS[python-dev]=$?
-  check_cmake; DEP_STATUS[cmake]=$?
-  check_meson; DEP_STATUS[meson]=$?
-  check_boost; DEP_STATUS[boost]=$?
+  check_compiler >/dev/null; DEP_STATUS[compiler]=$?
+  check_python_dev >/dev/null; DEP_STATUS[python-dev]=$?
+  check_meson_python >/dev/null; DEP_STATUS[meson-python]=$?
+  check_cmake >/dev/null; DEP_STATUS[cmake]=$?
+  check_meson >/dev/null; DEP_STATUS[meson]=$?
+  check_boost >/dev/null; DEP_STATUS[boost]=$?
 
   local choices
   choices=$(dialog --clear --backtitle "Project Dependency Installer" \
     --title "Install System Dependencies" \
-    --checklist "Select dependencies to install. Already found dependencies are unchecked." 20 70 5 \
-    "compiler" "C++ Compiler (g++ or clang++)" "$([[ ${DEP_STATUS[compiler]} -ne 0 ]] && echo "on" || echo "off")" \
+    --checklist "Select dependencies to install. Already found dependencies are unchecked." 20 70 6 \
+    "compiler" "C++ Compilers (g++, clang++)" "$([[ ${DEP_STATUS[compiler]} -ne 0 ]] && echo "on" || echo "off")" \
     "python-dev" "Python 3 Dev Headers" "$([[ ${DEP_STATUS[python-dev]} -ne 0 ]] && echo "on" || echo "off")" \
+    "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson" "Meson Build System" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
     "boost" "Boost Libraries" "$([[ ${DEP_STATUS[boost]} -ne 0 ]] && echo "on" || echo "off")" \
@@ -342,9 +402,20 @@ run_dependency_installer_tui() {
       dialog --msgbox "Could not find an automatic installation command for '${dep}' on your system. Please install it manually." 8 60
     fi
   done
+  # Re-run check to update status
+  check_compiler
 }
 
 run_python_bindings_tui() {
+    if ! check_meson_python; then
+        dialog --msgbox "The 'meson-python' package is required to build Python bindings. Please install it from the 'Install System Dependencies' menu first." 10 70
+        return
+    fi
+    if [ -z "$CC_COMPILER" ]; then
+        dialog --msgbox "No C++ compiler is selected. Please configure one from the 'Configure Build Options' menu before building the Python bindings." 10 70
+        return
+    fi
+
     local python_exec
     python_exec=$(command -v python3)
     if [ -z "$python_exec" ]; then
@@ -355,7 +426,7 @@ run_python_bindings_tui() {
     local choice
     choice=$(dialog --clear --backtitle "Python Bindings Installer" \
         --title "Install Python Bindings" \
-        --menu "Using Python: ${python_exec}\n\nSelect installation mode:" 15 70 2 \
+        --menu "Using Python: ${python_exec}\nUsing C++ Compiler: ${CC_COMPILER}\n\nSelect installation mode:" 15 70 2 \
         "1" "Developer Mode (pip install -e .)" \
         "2" "User Mode (pip install .)" \
         3>&1 1>&2 2>&3)
@@ -364,7 +435,7 @@ run_python_bindings_tui() {
     case "$choice" in
         1)
             log "${BLUE}[Info] Installing Python bindings in Developer Mode...${NC}"
-            if ! pip install -e . --no-build-isolation -vv; then
+            if ! CXX="${CC_COMPILER}" pip install -e . --no-build-isolation -vv; then
                 log "${RED}[Error] Failed to install Python bindings in developer mode.${NC}"
                 dialog --msgbox "Developer mode installation failed. Check the log for details." 8 60
             else
@@ -374,7 +445,7 @@ run_python_bindings_tui() {
             ;;
         2)
             log "${BLUE}[Info] Installing Python bindings in User Mode...${NC}"
-            if ! pip install .; then
+            if ! CXX="${CC_COMPILER}" pip install .; then
                 log "${RED}[Error] Failed to install Python bindings in user mode.${NC}"
                 dialog --msgbox "User mode installation failed. Check the log for details." 8 60
             else
@@ -388,17 +459,69 @@ run_python_bindings_tui() {
     esac
 }
 
+run_compiler_selection_tui() {
+    local gpp_found=false
+    local clang_found=false
+    check_command g++ && gpp_found=true
+    check_command clang++ && clang_found=true
+
+    # Scenario 1: No compilers found
+    if ! $gpp_found && ! $clang_found; then
+        local choices
+        choices=$(dialog --title "Compiler Installation" --checklist "No C++ compiler found. Please select which to install:" 15 70 2 \
+            "g++" "GNU C++ Compiler" "on" \
+            "clang++" "Clang C++ Compiler (often faster)" "off" 3>&1 1>&2 2>&3)
+        if [ -n "$choices" ]; then
+            for choice in $choices; do
+                local compiler_to_install; compiler_to_install=$(echo "$choice" | tr -d '"')
+                local install_cmd; install_cmd=$(get_compiler_install_cmd "$compiler_to_install")
+                if [ -n "$install_cmd" ]; then
+                    eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+                fi
+            done
+        fi
+    # Scenario 2: g++ found, clang++ not found
+    elif $gpp_found && ! $clang_found; then
+        if dialog --title "Compiler Installation" --yesno "g++ is installed. Would you like to install clang++?\n\n(Note: clang++ often provides faster compilation times)" 10 70; then
+            local install_cmd; install_cmd=$(get_compiler_install_cmd "clang++")
+            if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
+        fi
+    # Scenario 3: clang++ found, g++ not found
+    elif ! $gpp_found && $clang_found; then
+        if dialog --title "Compiler Installation" --yesno "clang++ is installed. Would you like to install g++?" 8 70; then
+            local install_cmd; install_cmd=$(get_compiler_install_cmd "g++")
+            if [ -n "$install_cmd" ]; then eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"; fi
+        fi
+    fi
+
+    # Re-check compilers and let user choose if multiple are available
+    check_compiler
+    if [ ${#AVAILABLE_COMPILERS[@]} -gt 1 ]; then
+        local menu_items=()
+        for compiler in "${AVAILABLE_COMPILERS[@]}"; do menu_items+=("$compiler" ""); done
+        local compiler_choice
+        compiler_choice=$(dialog --title "Select C++ Compiler" --menu "Select the C++ compiler to use:" 15 70 ${#AVAILABLE_COMPILERS[@]} "${menu_items[@]}" 3>&1 1>&2 2>&3)
+        if [ -n "$compiler_choice" ]; then
+            CC_COMPILER="$compiler_choice"
+            log "${BLUE}[Config] Set C++ compiler to: ${CC_COMPILER}${NC}"
+        fi
+    elif [ ${#AVAILABLE_COMPILERS[@]} -eq 0 ]; then
+        dialog --msgbox "No C++ compiler could be found or installed. Please install one manually." 8 70
+    fi
+}
+
 run_build_config_tui() {
     local choice
     choice=$(dialog --clear --backtitle "Build Configuration" \
         --title "Configure Build Options" \
-        --menu "Select an option to configure:" 20 70 6 \
+        --menu "Select an option to configure:" 20 70 7 \
         "1" "Build Directory (current: ${BUILD_DIR})" \
         "2" "Install Prefix (current: ${INSTALL_PREFIX})" \
-        "3" "Build Type (current: ${MESON_BUILD_TYPE})" \
-        "4" "Log Level (current: ${MESON_LOG_LEVEL})" \
-        "5" "Generate pkg-config (current: ${MESON_PKG_CONFIG})" \
-        "6" "Number of Cores (current: ${MESON_NUM_CORES})" \
+        "3" "Manage & Select C++ Compiler (current: ${CC_COMPILER})" \
+        "4" "Build Type (current: ${MESON_BUILD_TYPE})" \
+        "5" "Log Level (current: ${MESON_LOG_LEVEL})" \
+        "6" "Generate pkg-config (current: ${MESON_PKG_CONFIG})" \
+        "7" "Number of Cores (current: ${MESON_NUM_CORES})" \
         3>&1 1>&2 2>&3)
 
     clear
@@ -420,6 +543,9 @@ run_build_config_tui() {
             fi
             ;;
         3)
+            run_compiler_selection_tui
+            ;;
+        4)
             local build_type_choice
             build_type_choice=$(dialog --title "Select Build Type" --menu "" 15 70 3 \
                 "release" "Optimized for performance" \
@@ -431,7 +557,7 @@ run_build_config_tui() {
                 log "${BLUE}[Config] Set build type to: ${MESON_BUILD_TYPE}${NC}"
             fi
             ;;
-        4)
+        5)
             local log_level_choice
             log_level_choice=$(dialog --title "Select Log Level" --menu "" 15 70 8 \
                 "traceL3" "" "traceL2" "" "traceL1" "" "debug" "" "info" "" "warning" "" "error" "" "critical" "" \
@@ -441,7 +567,7 @@ run_build_config_tui() {
                 log "${BLUE}[Config] Set log level to: ${MESON_LOG_LEVEL}${NC}"
             fi
             ;;
-        5)
+        6)
             if dialog --title "Generate pkg-config" --yesno "Generate gridfire.pc file?" 7 60; then
                 MESON_PKG_CONFIG="true"
             else
@@ -449,7 +575,7 @@ run_build_config_tui() {
             fi
             log "${BLUE}[Config] Set pkg-config generation to: ${MESON_PKG_CONFIG}${NC}"
             ;;
-        6)
+        7)
             local max_cores; max_cores=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
             local core_choice
             core_choice=$(dialog --title "Set Number of Cores" --inputbox "Enter number of cores for compilation.\nAvailable: ${max_cores}" 10 60 "${MESON_NUM_CORES}" 3>&1 1>&2 2>&3)
@@ -465,14 +591,19 @@ run_build_config_tui() {
 
 run_main_tui() {
     if ! check_dialog_installed; then return 1; fi
-    while true; do
-        local build_dir_status="Not Found"
-        [ -d "$BUILD_DIR" ] && build_dir_status="Found"
+    # Initial check to populate compiler list and set a default
+    check_compiler
 
+    local sudo_status="User Mode"
+    if [ "$EUID" -eq 0 ]; then
+        sudo_status="Root/Sudo Mode"
+    fi
+
+    while true; do
         local choice
-        choice=$(dialog --clear --backtitle "GridFire Installation and Build Manager" \
+        choice=$(dialog --clear --backtitle "GridFire Installer - [${sudo_status}]" \
             --title "Main Menu" \
-            --menu "DIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 20 70 10 \
+            --menu "COMPILER: ${CC_COMPILER:-Not Found} | DIR: ${BUILD_DIR}\nTYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 20 70 10 \
             "1" "Install System Dependencies" \
             "2" "Configure Build Options" \
             "3" "Install Python Bindings" \
@@ -519,18 +650,30 @@ main() {
 
   # --- Non-TUI path ---
   log "\n${BLUE}--- Checking System Dependencies (CLI Mode) ---${NC}"
+  # Run check_compiler first to set the default
+  check_compiler
   declare -A CHECKS=(
-      [compiler]="check_compiler" [python-dev]="check_python_dev"
-      [cmake]="check_cmake" [meson]="check_meson" [boost]="check_boost"
+      [python-dev]="check_python_dev" [meson-python]="check_meson_python" [cmake]="check_cmake"
+      [meson]="check_meson" [boost]="check_boost"
   )
-  local all_deps_met=true
+  if ! check_compiler; then
+      # Handle case where no compiler is found
+      local install_cmd; install_cmd=$(get_install_cmd "compiler")
+      if [ -n "$install_cmd" ]; then
+          if prompt_yes_no "Dependency 'compiler' is missing. Attempt to install? (y/n):"; then
+              eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
+          fi
+      else
+          log "${RED}[Error] No automatic installation for 'compiler'. Please install manually.${NC}"
+      fi
+  fi
+
   for dep in "${!CHECKS[@]}"; do
       if ! ${CHECKS[$dep]}; then
-          all_deps_met=false
           local install_cmd; install_cmd=$(get_install_cmd "$dep")
           if [ -n "$install_cmd" ]; then
               if prompt_yes_no "Dependency '${dep}' is missing. Attempt to install? (y/n):"; then
-                  run_install_cmd "$install_cmd"
+                  eval "$install_cmd" 2>&1 | tee -a "$LOGFILE"
               fi
           else
               log "${RED}[Error] No automatic installation for '${dep}'. Please install manually.${NC}"
@@ -540,6 +683,8 @@ main() {
 
   log "\n${BLUE}--- Re-checking all dependencies ---${NC}"
   local final_fail=false
+  # Re-add compiler check to the list for final verification
+  CHECKS[compiler]="check_compiler"
   for dep in "${!CHECKS[@]}"; do
       if ! ${CHECKS[$dep]}; then
           log "${RED}[FATAL] Dependency still missing: ${dep}${NC}"
