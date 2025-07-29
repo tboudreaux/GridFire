@@ -16,6 +16,7 @@ set -o pipefail
 # --- Configuration ---
 LOGFILE="GridFire_Installer.log"
 NOTES_FILE="notes.txt"
+CONFIG_FILE="gridfire_build.conf"
 MIN_GCC_VER="13.0.0"
 MIN_CLANG_VER="16.0.0"
 MIN_MESON_VER="1.5.0"
@@ -31,6 +32,18 @@ C_COMPILER=""
 CC_COMPILER=""
 FC_COMPILER=""
 declare -A VALID_COMPILERS
+declare -A MESON_ADVANCED_OPTS
+# --- Initialize default advanced options ---
+MESON_ADVANCED_OPTS["b_lto"]="false"
+MESON_ADVANCED_OPTS["strip"]="false"
+MESON_ADVANCED_OPTS["unity"]="off"
+MESON_ADVANCED_OPTS["warning_level"]="1"
+MESON_ADVANCED_OPTS["backend"]="ninja"
+MESON_ADVANCED_OPTS["werror"]="false"
+MESON_ADVANCED_OPTS["b_pch"]="true"
+MESON_ADVANCED_OPTS["b_coverage"]="false"
+MESON_ADVANCED_OPTS["default_library"]="shared"
+
 
 # --- ANSI Color Codes ---
 RED="\033[0;31m"
@@ -94,6 +107,7 @@ show_help() {
   echo "  --tui         Run in Text-based User Interface mode for interactive dependency installation and build control."
   echo "  --help, -h    Show this help message and exit."
   echo "  --clean       Remove the build directory and log file before starting."
+  echo "  --config FILE Load a configuration file on startup."
   echo
   echo "The script will automatically detect your OS and suggest the correct package manager commands."
   echo "All output is logged to ${LOGFILE}."
@@ -388,6 +402,11 @@ run_meson_setup() {
     meson_opts+=("-Dpkg-config=${MESON_PKG_CONFIG}")
     meson_opts+=("--prefix=${INSTALL_PREFIX}")
 
+    # Add advanced options
+    for key in "${!MESON_ADVANCED_OPTS[@]}"; do
+        meson_opts+=("-D${key}=${MESON_ADVANCED_OPTS[$key]}")
+    done
+
     log "${BLUE}[Info] Using C compiler:       ${C_COMPILER}${NC}"
     log "${BLUE}[Info] Using C++ compiler:     ${CC_COMPILER}${NC}"
     log "${BLUE}[Info] Using Fortran compiler: ${FC_COMPILER}${NC}"
@@ -611,11 +630,107 @@ run_compiler_selection_tui() {
     fi
 }
 
+run_advanced_options_tui() {
+    while true; do
+        local choice
+        choice=$(dialog --clear --backtitle "Advanced Build Options" \
+            --title "Advanced Meson Core & Base Options" \
+            --menu "Select an option to configure:" 20 78 10 \
+            "1" "Backend (current: ${MESON_ADVANCED_OPTS[backend]})" \
+            "2" "Default Library (current: ${MESON_ADVANCED_OPTS[default_library]})" \
+            "3" "LTO (Link-Time Opt) (current: ${MESON_ADVANCED_OPTS[b_lto]})" \
+            "4" "PCH (Precompiled H) (current: ${MESON_ADVANCED_OPTS[b_pch]})" \
+            "5" "Coverage (current: ${MESON_ADVANCED_OPTS[b_coverage]})" \
+            "6" "Strip on install (current: ${MESON_ADVANCED_OPTS[strip]})" \
+            "7" "Unity build (current: ${MESON_ADVANCED_OPTS[unity]})" \
+            "8" "Warning Level (current: ${MESON_ADVANCED_OPTS[warning_level]})" \
+            "9" "Warnings as Errors (current: ${MESON_ADVANCED_OPTS[werror]})" \
+            "10" "Back to main config" \
+            3>&1 1>&2 2>&3)
+
+        case "$choice" in
+            1)
+                local backend_choice
+                backend_choice=$(dialog --title "Select Backend" --menu "" 15 70 4 \
+                    "ninja" "Ninja build system" \
+                    "vs" "Visual Studio" \
+                    "xcode" "Xcode" \
+                    "none" "No backend" 3>&1 1>&2 2>&3)
+                if [ -n "$backend_choice" ]; then MESON_ADVANCED_OPTS["backend"]="$backend_choice"; fi
+                ;;
+            2)
+                local lib_choice
+                lib_choice=$(dialog --title "Default Library Type" --menu "" 15 70 3 \
+                    "shared" "Shared (.so, .dylib)" \
+                    "static" "Static (.a)" \
+                    "both" "Build both types" 3>&1 1>&2 2>&3)
+                if [ -n "$lib_choice" ]; then MESON_ADVANCED_OPTS["default_library"]="$lib_choice"; fi
+                ;;
+            3)
+                if dialog --title "LTO (Link-Time Optimization)" --yesno "Enable Link-Time Optimization?\n(Can improve performance but increases link time)" 8 70; then
+                    MESON_ADVANCED_OPTS["b_lto"]="true"
+                else
+                    MESON_ADVANCED_OPTS["b_lto"]="false"
+                fi
+                ;;
+            4)
+                if dialog --title "PCH (Precompiled Headers)" --yesno "Use precompiled headers?\n(Can speed up compilation)" 8 70; then
+                    MESON_ADVANCED_OPTS["b_pch"]="true"
+                else
+                    MESON_ADVANCED_OPTS["b_pch"]="false"
+                fi
+                ;;
+            5)
+                if dialog --title "Enable Coverage Tracking" --yesno "Enable code coverage tracking?\n(For generating coverage reports)" 8 70; then
+                    MESON_ADVANCED_OPTS["b_coverage"]="true"
+                else
+                    MESON_ADVANCED_OPTS["b_coverage"]="false"
+                fi
+                ;;
+            6)
+                if dialog --title "Strip on Install" --yesno "Strip binaries on install?\n(Reduces size, removes debug symbols)" 8 70; then
+                    MESON_ADVANCED_OPTS["strip"]="true"
+                else
+                    MESON_ADVANCED_OPTS["strip"]="false"
+                fi
+                ;;
+            7)
+                local unity_choice
+                unity_choice=$(dialog --title "Unity Build" --menu "" 15 70 3 \
+                    "on" "Enable for all targets" \
+                    "subprojects" "Enable for subprojects only" \
+                    "off" "Disable unity builds" 3>&1 1>&2 2>&3)
+                if [ -n "$unity_choice" ]; then MESON_ADVANCED_OPTS["unity"]="$unity_choice"; fi
+                ;;
+            8)
+                local warn_choice
+                warn_choice=$(dialog --title "Compiler Warning Level" --menu "" 15 70 5 \
+                    "0" "No warnings" \
+                    "1" "Normal warnings" \
+                    "2" "More warnings" \
+                    "3" "All warnings" \
+                    "everything" "Pedantic warnings" 3>&1 1>&2 2>&3)
+                if [ -n "$warn_choice" ]; then MESON_ADVANCED_OPTS["warning_level"]="$warn_choice"; fi
+                ;;
+            9)
+                if dialog --title "Treat Warnings as Errors" --yesno "Enable -Werror?\n(Build will fail on any compiler warning)" 8 70; then
+                    MESON_ADVANCED_OPTS["werror"]="true"
+                else
+                    MESON_ADVANCED_OPTS["werror"]="false"
+                fi
+                ;;
+            10) break ;;
+            *) break ;;
+        esac
+    done
+}
+
+
 run_build_config_tui() {
     local choice
     choice=$(dialog --clear --backtitle "Build Configuration" \
         --title "Configure Build Options" \
-        --menu "Select an option to configure:" 20 70 7 \
+        --menu "Select an option to configure:" 20 70 8 \
         "1" "Build Directory (current: ${BUILD_DIR})" \
         "2" "Install Prefix (current: ${INSTALL_PREFIX})" \
         "3" "Manage & Select C/C++/Fortran Compiler" \
@@ -623,6 +738,7 @@ run_build_config_tui() {
         "5" "Log Level (current: ${MESON_LOG_LEVEL})" \
         "6" "Generate pkg-config (current: ${MESON_PKG_CONFIG})" \
         "7" "Number of Cores (current: ${MESON_NUM_CORES})" \
+        "8" "Advanced Build Options" \
         3>&1 1>&2 2>&3)
 
     clear
@@ -688,6 +804,9 @@ run_build_config_tui() {
                  dialog --msgbox "Invalid input. Please enter a positive number." 6 40
             fi
             ;;
+        8)
+            run_advanced_options_tui
+            ;;
     esac
 }
 
@@ -705,7 +824,6 @@ run_notes_tui() {
         if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
             continue
         fi
-        echo "$line"
         notes_content+="${counter}. ${line}\n\n"
         ((counter++))
     done < "$NOTES_FILE"
@@ -716,6 +834,66 @@ run_notes_tui() {
         dialog --title "Installer Notes" --msgbox "$notes_content" 20 70
     fi
 }
+
+run_save_config_tui() {
+    local file_to_save
+    file_to_save=$(dialog --title "Save Configuration" --inputbox "Enter filename to save configuration:" 10 60 "$CONFIG_FILE" 3>&1 1>&2 2>&3)
+    if [ -z "$file_to_save" ]; then
+        dialog --msgbox "Save cancelled." 8 50
+        return
+    fi
+
+    # Write main settings
+    {
+        echo "# GridFire Build Configuration"
+        echo "BUILD_DIR=\"$BUILD_DIR\""
+        echo "INSTALL_PREFIX=\"$INSTALL_PREFIX\""
+        echo "MESON_BUILD_TYPE=\"$MESON_BUILD_TYPE\""
+        echo "MESON_LOG_LEVEL=\"$MESON_LOG_LEVEL\""
+        echo "MESON_PKG_CONFIG=\"$MESON_PKG_CONFIG\""
+        echo "MESON_NUM_CORES=\"$MESON_NUM_CORES\""
+        echo "C_COMPILER=\"$C_COMPILER\""
+        echo "CC_COMPILER=\"$CC_COMPILER\""
+        echo "FC_COMPILER=\"$FC_COMPILER\""
+        echo ""
+        echo "# Advanced Meson Options"
+        for key in "${!MESON_ADVANCED_OPTS[@]}"; do
+            echo "MESON_ADVANCED_OPTS[\"$key\"]=\"${MESON_ADVANCED_OPTS[$key]}\""
+        done
+    } > "$file_to_save"
+
+    dialog --title "Success" --msgbox "Configuration saved to:\n${file_to_save}" 8 60
+}
+
+run_load_config_tui() {
+    local file_to_load
+    file_to_load=$(dialog --title "Load Configuration" --inputbox "Enter filename to load configuration:" 10 60 "$CONFIG_FILE" 3>&1 1>&2 2>&3)
+    if [ -z "$file_to_load" ]; then
+        dialog --msgbox "Load cancelled." 8 50
+        return
+    fi
+
+    if [ ! -f "$file_to_load" ]; then
+        dialog --msgbox "Error: File not found:\n${file_to_load}" 8 60
+        return
+    fi
+
+    # Source the file to load the variables
+    # We need to re-declare the associative array for it to be populated by source
+    declare -A MESON_ADVANCED_OPTS
+    # shellcheck source=/dev/null
+    . "$file_to_load"
+
+    # Re-validate the compiler
+    check_compiler
+    if ! check_command "$CC_COMPILER"; then
+        dialog --title "Warning" --msgbox "Compiler '${CC_COMPILER}' from config file not found.\nRe-detecting a valid compiler." 10 60
+        check_compiler
+    fi
+
+    dialog --title "Success" --msgbox "Configuration loaded from:\n${file_to_load}" 8 60
+}
+
 
 run_main_tui() {
     if ! check_dialog_installed; then return 1; fi
@@ -731,7 +909,7 @@ run_main_tui() {
         local choice
         choice=$(dialog --clear --backtitle "GridFire Installer - [${sudo_status}]" \
             --title "Main Menu" \
-            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 22 78 11 \
+            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 24 78 13 \
             "1" "Install System Dependencies" \
             "2" "Configure Build Options" \
             "3" "Install Python Bindings" \
@@ -741,7 +919,9 @@ run_main_tui() {
             "7" "Run Meson Install (requires sudo)" \
             "8" "Run Tests" \
             "9" "View Notes" \
-            "10" "Exit" \
+            "10" "Save Configuration" \
+            "11" "Load Configuration" \
+            "12" "Exit" \
             3>&1 1>&2 2>&3)
 
         clear
@@ -755,7 +935,9 @@ run_main_tui() {
             7) run_meson_install ;;
             8) run_meson_tests ;;
             9) run_notes_tui ;;
-            10) break ;;
+            10) run_save_config_tui ;;
+            11) run_load_config_tui ;;
+            12) break ;;
             *) log "${YELLOW}[Info] TUI cancelled.${NC}"; break ;;
         esac
     done
@@ -764,7 +946,9 @@ run_main_tui() {
 
 # --- Script Entry Point ---
 main() {
+  # shellcheck disable=SC2199
   if [[ " $@ " =~ " --help " ]] || [[ " $@ " =~ " -h " ]]; then show_help; exit 0; fi
+  # shellcheck disable=SC2199
   if [[ " $@ " =~ " --clean " ]]; then log "${BLUE}[Info] Cleaning up...${NC}"; rm -rf "$BUILD_DIR" "$LOGFILE"; fi
 
   echo "" > "$LOGFILE" # Clear log file
@@ -773,10 +957,33 @@ main() {
   log "OS: ${OS_NAME}, Distro: ${DISTRO_ID}"
 
   if [[ " $@ " =~ " --tui " ]]; then
+    log "${BLUE}[Info] Running in TUI mode...${NC}"
     run_main_tui
-    log "${GREEN}Exited TUI mode.${NC}"
     exit 0
   fi
+
+
+  # Handle --config argument
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --config)
+        if [ -f "$2" ]; then
+            log "${BLUE}[Info] Loading configuration from $2...${NC}"
+            declare -A MESON_ADVANCED_OPTS
+            # shellcheck source=/dev/null
+            . "$2"
+        else
+            log "${RED}[Error] Configuration file not found: $2${NC}"
+            exit 1
+        fi
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
 
   # --- Non-TUI path ---
   log "\n${BLUE}--- Checking System Dependencies (CLI Mode) ---${NC}"
