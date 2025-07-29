@@ -21,6 +21,7 @@ MIN_GCC_VER="13.0.0"
 MIN_CLANG_VER="16.0.0"
 MIN_MESON_VER="1.5.0"
 BOOST_CHECKED=false
+BOOST_OKAY=true
 
 # --- Build Configuration Globals ---
 BUILD_DIR="build"
@@ -962,10 +963,9 @@ run_main_tui() {
 
     while true; do
         # Re-check boost status to update menu dynamically
-        local boost_ok=true
         if [[ $BOOST_CHECKED = false ]]; then
             # If BOOST_CHECKED is set, we assume Boost was checked previously
-            check_boost >/dev/null 2>&1 || boost_ok=false
+            check_boost >/dev/null 2>&1 || BOOST_OKAY=false
             BOOST_CHECKED=true
         fi
 
@@ -974,7 +974,7 @@ run_main_tui() {
             "2" "Configure Build Options"
             "3" "Install Python Bindings"
         )
-        if $boost_ok; then
+        if $BOOST_OKAY; then
           menu_items+=(
             "4" "Run Full Build (Setup + Compile)"
             "5" "Run Meson Setup/Reconfigure"
@@ -986,7 +986,7 @@ run_main_tui() {
             "L" "Load Configuration"
             )
         fi
-        if ! $boost_ok; then
+        if ! $BOOST_OKAY; then
             menu_items+=("B" "Boost Error Detected! Help with Boost Issues")
         fi
         menu_items+=("Q" "Exit")
