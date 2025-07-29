@@ -13,13 +13,14 @@
 
 set -o pipefail
 
-# --- Configuration ---
+# --- Default Configuration ---
 LOGFILE="GridFire_Installer.log"
 NOTES_FILE="notes.txt"
 CONFIG_FILE="gridfire_build.conf"
 MIN_GCC_VER="13.0.0"
 MIN_CLANG_VER="16.0.0"
 MIN_MESON_VER="1.5.0"
+BOOST_CHECKED=false
 
 # --- Build Configuration Globals ---
 BUILD_DIR="build"
@@ -259,23 +260,60 @@ check_meson() {
 }
 
 check_boost() {
-  log "${BLUE}[Info] Checking for Boost dependency using Meson...${NC}"
-  local test_dir="meson-boost-test"
-  rm -rf "$test_dir" && mkdir -p "$test_dir"
-  cat > "$test_dir/meson.build" <<EOF
-project('boost-check', 'cpp')
-boost_dep = dependency('boost', required: true)
-EOF
-  if meson setup "$test_dir/build" "$test_dir" &>/dev/null; then
-    log "${GREEN}[OK] Found Boost libraries.${NC}"
-    rm -rf "$test_dir"
-    return 0
-  else
-    log "${RED}[FAIL] Boost libraries not found by Meson.${NC}"
-    rm -rf "$test_dir"
-    return 1
-  fi
+    log "${BLUE}[Info] Performing comprehensive check for compatible Boost library...${NC}"
+    if [ -z "$CC_COMPILER" ]; then
+        log "${YELLOW}[Warn] C++ compiler not set, skipping comprehensive Boost check.${NC}"
+        return 1
+    fi
+
+    local test_dir="boost-compile-test"
+    rm -rf "$test_dir" && mkdir -p "$test_dir"
+
+    # Create the test C++ file that uses problematic headers
+    cat > "$test_dir/test_boost.cpp" <<EOF
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/odeint.hpp>
+
+using state_type = boost::numeric::ublas::vector<double>;
+
+void dummy_system(const state_type &x, state_type &dxdt, double t) {
+    if (x.size() > 0 && dxdt.size() > 0) {
+        dxdt[0] = 1.0;
+    }
 }
+
+int main() {
+    boost::numeric::ublas::vector<double> v(3);
+    v[0] = 1.23;
+    state_type x(1);
+    x[0] = 1.0;
+    boost::numeric::odeint::runge_kutta4<state_type> stepper;
+    stepper.do_step(dummy_system, x, 0.0, 0.1);
+    return 0;
+}
+EOF
+
+    # Create the test meson.build file
+    cat > "$test_dir/meson.build" <<EOF
+project('boost-compile-check', 'cpp', default_options: ['cpp_std=c++23'])
+boost_dep = dependency('boost', required: true)
+executable('test_boost', 'test_boost.cpp', dependencies: [boost_dep])
+EOF
+
+    log "${BLUE}[Info] Attempting to compile test project against Boost with C++23...${NC}"
+    # Use the globally selected compilers, pipe stdout and stderr to log for debugging
+    if CC="${C_COMPILER}" CXX="${CC_COMPILER}" meson setup "$test_dir/build" "$test_dir" >> "$LOGFILE" 2>&1 && meson compile -C "$test_dir/build" >> "$LOGFILE" 2>&1; then
+        log "${GREEN}[Success] Boost library is compatible with the current compiler and C++23 standard.${NC}"
+        rm -rf "$test_dir"
+        return 0
+    else
+        log "${RED}[FAIL] System Boost library is NOT compatible with C++23 or is missing required components.${NC}"
+        log "${YELLOW}[Info] This is common on systems like Ubuntu with older Boost versions. A manual install of a newer Boost is likely required.${NC}"
+        rm -rf "$test_dir"
+        return 1
+    fi
+}
+
 
 # --- Dependency Installation Functions ---
 
@@ -499,7 +537,7 @@ run_dependency_installer_tui() {
     "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson" "Meson Build System (>=${MIN_MESON_VER})" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
-    "boost" "Boost Libraries" "$([[ ${DEP_STATUS[boost]} -ne 0 ]] && echo "on" || echo "off")" \
+    "boost" "Boost Libraries (system package)" "$([[ ${DEP_STATUS[boost]} -ne 0 ]] && echo "on" || echo "off")" \
     3>&1 1>&2 2>&3)
 
   clear
@@ -894,6 +932,23 @@ run_load_config_tui() {
     dialog --title "Success" --msgbox "Configuration loaded from:\n${file_to_load}" 8 60
 }
 
+run_boost_help_tui() {
+    local help_text="The version of the Boost library found on your system is not compatible with the selected C++ compiler and the C++23 standard. This is a common issue on distributions like Ubuntu that may have older versions of Boost in their package repositories.\n\n"
+    help_text+="To resolve this, you need to manually download, build, and install a newer version of Boost (e.g., 1.83.0 or newer).\n\n"
+    help_text+="Recommended Steps:\n"
+    help_text+="1. Download the latest Boost source from boost.org.\n"
+    help_text+="2. Follow their instructions to build it. A typical sequence is:\n"
+    help_text+="   ./bootstrap.sh\n"
+    help_text+="   ./b2 install\n"
+    help_text+="3. Take note of the installation prefix (e.g., /usr/local).\n"
+    help_text+="4. Set the BOOST_ROOT environment variable before running this script again:\n"
+    help_text+="   export BOOST_ROOT=/path/to/your/boost/install\n"
+    help_text+="   ./install.sh --tui\n\n"
+    help_text+="Meson should then automatically find and use your manually installed version."
+
+    dialog --title "Boost Compatibility Issue" --msgbox "$help_text" 25 78
+}
+
 
 run_main_tui() {
     if ! check_dialog_installed; then return 1; fi
@@ -906,22 +961,42 @@ run_main_tui() {
     fi
 
     while true; do
+        # Re-check boost status to update menu dynamically
+        local boost_ok=true
+        if [[ $BOOST_CHECKED = false ]]; then
+            # If BOOST_CHECKED is set, we assume Boost was checked previously
+            check_boost >/dev/null 2>&1 || boost_ok=false
+            BOOST_CHECKED=true
+        fi
+
+        local menu_items=(
+            "1" "Install System Dependencies"
+            "2" "Configure Build Options"
+            "3" "Install Python Bindings"
+        )
+        if $boost_ok; then
+          menu_items+=(
+            "4" "Run Full Build (Setup + Compile)"
+            "5" "Run Meson Setup/Reconfigure"
+            "6" "Run Meson Compile"
+            "7" "Run Meson Install (requires sudo)"
+            "8" "Run Tests"
+            "N" "View Notes"
+            "S" "Save Configuration"
+            "L" "Load Configuration"
+            )
+        fi
+        if ! $boost_ok; then
+            menu_items+=("B" "Boost Error Detected! Help with Boost Issues")
+        fi
+        menu_items+=("Q" "Exit")
+
+
         local choice
         choice=$(dialog --clear --backtitle "GridFire Installer - [${sudo_status}]" \
             --title "Main Menu" \
-            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 24 78 13 \
-            "1" "Install System Dependencies" \
-            "2" "Configure Build Options" \
-            "3" "Install Python Bindings" \
-            "4" "Run Full Build (Setup + Compile)" \
-            "5" "Run Meson Setup/Reconfigure" \
-            "6" "Run Meson Compile" \
-            "7" "Run Meson Install (requires sudo)" \
-            "8" "Run Tests" \
-            "9" "View Notes" \
-            "10" "Save Configuration" \
-            "11" "Load Configuration" \
-            "12" "Exit" \
+            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 24 78 14 \
+            "${menu_items[@]}" \
             3>&1 1>&2 2>&3)
 
         clear
@@ -934,10 +1009,11 @@ run_main_tui() {
             6) run_meson_compile ;;
             7) run_meson_install ;;
             8) run_meson_tests ;;
-            9) run_notes_tui ;;
-            10) run_save_config_tui ;;
-            11) run_load_config_tui ;;
-            12) break ;;
+            N) run_notes_tui ;;
+            S) run_save_config_tui ;;
+            L) run_load_config_tui ;;
+            B) run_boost_help_tui ;;
+            Q) break ;;
             *) log "${YELLOW}[Info] TUI cancelled.${NC}"; break ;;
         esac
     done
@@ -946,22 +1022,14 @@ run_main_tui() {
 
 # --- Script Entry Point ---
 main() {
-  # shellcheck disable=SC2199
   if [[ " $@ " =~ " --help " ]] || [[ " $@ " =~ " -h " ]]; then show_help; exit 0; fi
-  # shellcheck disable=SC2199
   if [[ " $@ " =~ " --clean " ]]; then log "${BLUE}[Info] Cleaning up...${NC}"; rm -rf "$BUILD_DIR" "$LOGFILE"; fi
 
-  echo "" > "$LOGFILE" # Clear log file
-  log "--- GridFire Installation Log ---"
-  log "Date: $(date)"
-  log "OS: ${OS_NAME}, Distro: ${DISTRO_ID}"
-
+  local useTUI=0
   if [[ " $@ " =~ " --tui " ]]; then
-    log "${BLUE}[Info] Running in TUI mode...${NC}"
-    run_main_tui
-    exit 0
+    useTUI=1
+    log "${BLUE}[Info] Using TUI mode...${NC}"
   fi
-
 
   # Handle --config argument
   while [ $# -gt 0 ]; do
@@ -983,6 +1051,20 @@ main() {
         ;;
     esac
   done
+
+    if [[ $useTUI -eq 1 ]]; then
+      run_main_tui
+      log "${GREEN}Exited TUI mode.${NC}"
+      exit 0
+    fi
+
+
+  echo "" > "$LOGFILE" # Clear log file
+  log "--- GridFire Installation Log ---"
+  log "Date: $(date)"
+  log "OS: ${OS_NAME}, Distro: ${DISTRO_ID}"
+
+
 
 
   # --- Non-TUI path ---
