@@ -28,7 +28,7 @@ USING_VENV=false
 # --- Build Configuration Globals ---
 BUILD_DIR="build"
 INSTALL_PREFIX="/usr/local"
-MESON_BUILD_TYPE="debug" # Default to debug to match Meson's default and avoid optimization warnings
+MESON_BUILD_TYPE="release"
 MESON_LOG_LEVEL="info"
 MESON_PKG_CONFIG="true"
 MESON_NUM_CORES=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
@@ -47,6 +47,7 @@ MESON_ADVANCED_OPTS["werror"]="false"
 MESON_ADVANCED_OPTS["b_pch"]="true"
 MESON_ADVANCED_OPTS["b_coverage"]="false"
 MESON_ADVANCED_OPTS["default_library"]="shared"
+MESON_ADVANCED_OPTS["optimization"]=2
 
 
 # --- ANSI Color Codes ---
@@ -337,6 +338,14 @@ check_ninja() {
   fi
 }
 
+check_venv() {
+    if python3 -m venv --help >/dev/null 2>&1; then
+      return 0
+    else
+      return 1
+    fi
+}
+
 check_boost() {
     log "${BLUE}[Info] Performing comprehensive check for compatible Boost library...${NC}"
     if [ -z "$CC_COMPILER" ]; then
@@ -454,7 +463,8 @@ get_install_cmd() {
         "cmake") cmd="$brew_cmd install cmake" ;;
         "boost") cmd="$brew_cmd install boost" ;;
         "dialog") cmd="$brew_cmd install dialog" ;;
-	"ninja") cmd="$brew_cmd install ninja" ;;
+	      "ninja") cmd="$brew_cmd install ninja" ;;
+	      "python3-venv") cmd="$brew_cmd install python3" ;; # Homebrew installs venv with Python 3
       esac
       ;;
     "Linux")
@@ -469,7 +479,8 @@ get_install_cmd() {
             "cmake") cmd="sudo apt-get install -y cmake" ;;
             "boost") cmd="sudo apt-get install -y libboost-all-dev" ;;
             "dialog") cmd="sudo apt-get install -y dialog" ;;
-	    "ninja") cmd="sudo apt-get install -y ninja-build" ;;
+            "ninja") cmd="sudo apt-get install -y ninja-build" ;;
+            "python3-venv") cmd="sudo apt-get install -y python3-venv" ;; # Ensure venv is available
           esac
           ;;
         "fedora")
@@ -482,7 +493,8 @@ get_install_cmd() {
             "cmake") cmd="sudo dnf install -y cmake" ;;
             "boost") cmd="sudo dnf install -y boost-devel" ;;
             "dialog") cmd="sudo dnf install -y dialog" ;;
-	    "ninja") cmd="sudo dnf install -y ninja-build" ;;
+            "ninja") cmd="sudo dnf install -y ninja-build" ;;
+            "python3-venv") cmd="sudo dnf install -y python3-venv" ;; # Ensure venv is available
           esac
           ;;
         "arch"|"manjaro")
@@ -495,7 +507,8 @@ get_install_cmd() {
             "cmake") cmd="sudo pacman -S --noconfirm cmake" ;;
             "boost") cmd="sudo pacman -S --noconfirm boost" ;;
             "dialog") cmd="sudo pacman -S --noconfirm dialog" ;;
-	    "ninja") cmd="sudo pacman -S --noconfirm ninja" ;;
+            "ninja") cmd="sudo pacman -S --noconfirm ninja" ;;
+            "python3-venv") cmd="sudo pacman -S --noconfirm python-virtualenv" ;; # Ensure venv is available
           esac
           ;;
         *) log "${YELLOW}[Warn] Unsupported Linux distribution: ${DISTRO_ID}.${NC}" ;;
@@ -643,6 +656,7 @@ run_dependency_installer_tui() {
   check_compiler >/dev/null; DEP_STATUS[compiler]=$?
   check_pip >/dev/null; DEP_STATUS[pip]=$?
   check_python_dev >/dev/null; DEP_STATUS[python-dev]=$?
+  check_venv >/dev/null; DEP_STATUS[python3-venv]=$?
   check_meson_python >/dev/null; DEP_STATUS[meson-python]=$?
   check_cmake >/dev/null; DEP_STATUS[cmake]=$?
   check_meson >/dev/null; DEP_STATUS[meson]=$?
@@ -654,6 +668,7 @@ run_dependency_installer_tui() {
   log "${BLUE}[Info] compiler status code: ${DEP_STATUS[compiler]}${NC}"
   log "${BLUE}[Info] pip status code: ${DEP_STATUS[pip]}${NC}"
   log "${BLUE}[Info] python-dev status code: ${DEP_STATUS[python-dev]}${NC}"
+  log "${BLUE}[Info] python3-venv status code: ${DEP_STATUS[python3-venv]}${NC}"
   log "${BLUE}[Info] meson-python status code: ${DEP_STATUS[meson-python]}${NC}"
   log "${BLUE}[Info] cmake status code: ${DEP_STATUS[cmake]}${NC}"
   log "${BLUE}[Info] meson status code: ${DEP_STATUS[meson]}${NC}"
@@ -667,6 +682,7 @@ run_dependency_installer_tui() {
     "compiler" "C++ Compilers (g++, clang++)" "$([[ ${DEP_STATUS[compiler]} -ne 0 ]] && echo "on" || echo "off")" \
     "pip" "Python Package Installer (pip)" "$([[ ${DEP_STATUS[pip]} -ne 0 ]] && echo "on" || echo "off")" \
     "python-dev" "Python 3 Dev Headers" "$([[ ${DEP_STATUS[python-dev]} -ne 0 ]] && echo "on" || echo "off")" \
+    "python3-venv" "Python 3 Virtual Environment (venv)" "$([[ ${DEP_STATUS[python3-venv]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson" "Meson Build System (>=${MIN_MESON_VER})" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
@@ -903,7 +919,8 @@ run_advanced_options_tui() {
             "7" "Unity build (current: ${MESON_ADVANCED_OPTS[unity]})" \
             "8" "Warning Level (current: ${MESON_ADVANCED_OPTS[warning_level]})" \
             "9" "Warnings as Errors (current: ${MESON_ADVANCED_OPTS[werror]})" \
-            "10" "Back to main config" \
+            "O" "Optimization Level (current: ${MESON_ADVANCED_OPTS[optimization]})" \
+            "Q" "Back to main config" \
             3>&1 1>&2 2>&3)
 
         case "$choice" in
@@ -977,7 +994,23 @@ run_advanced_options_tui() {
                     MESON_ADVANCED_OPTS["werror"]="false"
                 fi
                 ;;
-            10) break ;;
+            O)
+              if dialog --title "Optimization Level" --yesno "Set optimization level?\n(affects performance and debug info)" 8 70; then
+                local opt_choice
+                opt_choice=$(dialog --title "Select Optimization Level" --menu "" 15 70 5 \
+                    "plain" "No optimization at all (no meson flags)" \
+                    "0" "No optimization (debug)" \
+                    "g" "optimization for debugging" \
+                    "1" "Basic optimization (default)" \
+                    "2" "More optimization" \
+                    "3" "Full optimization" \
+                    "s" "Size optimization (strip debug symbols)" 3>&1 1>&2 2>&3)
+                if [ -n "$opt_choice" ]; then MESON_ADVANCED_OPTS["optimization"]="$opt_choice"; fi
+              else
+                MESON_ADVANCED_OPTS["optimization"]="0"
+              fi
+              ;;
+            Q) break ;;
             *) break ;;
         esac
     done
@@ -1190,7 +1223,6 @@ run_main_tui() {
             "1" "Install System Dependencies"
             "2" "Configure Build Options"
             "3" "Install Python Bindings"
-            "N" "View Notes"
         )
         if $BOOST_OKAY; then
           menu_items+=(
@@ -1206,7 +1238,10 @@ run_main_tui() {
         if ! $BOOST_OKAY; then
             menu_items+=("B" "Boost Error Detected! Help with Boost Issues")
         fi
-        menu_items+=("Q" "Exit")
+        menu_items+=(
+            "N" "View Notes"
+            "Q" "Exit"
+        )
 
 
         local choice
