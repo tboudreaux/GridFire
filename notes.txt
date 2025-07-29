@@ -1,0 +1,8 @@
+The logical flow of using this installer is (for C++ usage): install system dependencies > "Run Full Build" > "Run Meson Install"
+The logical flow of using this installer is (for Python usage): install system dependencies > "Install Python Bindings" (note this will take a while).
+When building in release mode (default), static analysis of CppAD throws a few bounds warnings. Testing indicates that these are not problems. These warnings do not get identified in debug builds.
+GridFire requires gcc >= 13.0.0 or clang >= 16.0.0
+A directory named meson-boost-test will be created in the build directory. This is used to test the boost installation and may be deleted after the build is complete.
+GridFire requires a version of boost compatible with C++23. Certain versions of Ubuntu prior released prior to 24.04 do not have a compatible version of boost in their repositories. In this case, you will need to install boost from source.
+GridFire is authored by the 4D-STAR collaboration and Emily M. Boudreaux.
+4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR). Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council.

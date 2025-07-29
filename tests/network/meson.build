@@ -11,7 +11,7 @@ foreach test_file : test_sources
   test_exe = executable(
       exe_name,
       test_file,
-      dependencies: [gtest_dep, gtest_main, network_dep, composition_dep],
+      dependencies: [gtest_dep, gtest_main, gridfire_dep, composition_dep],
       install_rpath: '@loader_path/../../src'  # Ensure runtime library path resolves correctly
   )
 

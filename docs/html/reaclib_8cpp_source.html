@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GridFire: src/network/lib/reaction/reaclib.cpp Source File</title>
+<title>GridFire: src/lib/reaction/reaclib.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -117,7 +117,7 @@ $(function(){initNavTree('reaclib_8cpp_source.html',''); initResizable(true); })
 <div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="reaclib_8cpp.html#a2c6902cf3e699a1a65e871efa878a6ab">   13</a></span>std::string <a class="code hl_function" href="reaclib_8cpp.html#a2c6902cf3e699a1a65e871efa878a6ab">trim_whitespace</a>(<span class="keyword">const</span> std::string&amp; str) {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">auto</span> startIt = str.begin();</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">auto</span> endIt   = str.end();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">const</span> <span class="keyword">auto</span> endIt   = str.end();</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">while</span> (startIt != endIt &amp;&amp; std::isspace(<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*startIt))) {</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        ++startIt;</div>
@@ -125,8 +125,8 @@ $(function(){initNavTree('reaclib_8cpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordflow">if</span> (startIt == endIt) {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    }</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">auto</span> ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>                             [](<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> ch){ return !std::isspace(ch); });</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">const</span> <span class="keyword">auto</span> ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>                             [](<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> ch){ return !std::isspace(ch); });</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">return</span> std::string(startIt, ritr.base());</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
 </div>
@@ -196,41 +196,41 @@ $(function(){initNavTree('reaclib_8cpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="comment">// Cast the raw byte data to our structured record format.</span></div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keyword">const</span> <span class="keyword">auto</span>* records = <span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span><a class="code hl_struct" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a>*<span class="keyword">&gt;</span>(<a class="code hl_variable" href="reactions__data_8h.html#aeb44e2b3b67960dfd83ecd7136c7d38b">raw_reactions_data</a>);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> num_reactions = <a class="code hl_variable" href="reactions__data_8h.html#a32dea82d95667c3df395d58fb469ce2a">raw_reactions_data_len</a> / <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a>);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> num_reactions = <a class="code hl_variable" href="reactions__data_8h.html#a32dea82d95667c3df395d58fb469ce2a">raw_reactions_data_len</a> / <span class="keyword">sizeof</span>(<a class="code hl_struct" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a>);</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        std::vector&lt;reaction::Reaction&gt; reaction_list;</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        reaction_list.reserve(num_reactions);</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; num_reactions; ++i) {</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; record = records[i];</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp;[chapter, qValue, coeffs, reverse, label, rpName, reactants_str, products_str] = records[i];</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            <span class="comment">// The char arrays from the binary are not guaranteed to be null-terminated</span></div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="comment">// if the string fills the entire buffer. We create null-terminated string_views.</span></div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            <span class="keyword">const</span> std::string_view label_sv(record.label, strnlen(record.label, <span class="keyword">sizeof</span>(record.label)));</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            <span class="keyword">const</span> std::string_view rpName_sv(record.rpName, strnlen(record.rpName, <span class="keyword">sizeof</span>(record.rpName)));</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            <span class="keyword">const</span> std::string_view reactants_sv(record.reactants_str, strnlen(record.reactants_str, <span class="keyword">sizeof</span>(record.reactants_str)));</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            <span class="keyword">const</span> std::string_view products_sv(record.products_str, strnlen(record.products_str, <span class="keyword">sizeof</span>(record.products_str)));</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            <span class="keyword">const</span> std::string_view label_sv(label, strnlen(label, <span class="keyword">sizeof</span>(label)));</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            <span class="keyword">const</span> std::string_view rpName_sv(rpName, strnlen(rpName, <span class="keyword">sizeof</span>(rpName)));</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            <span class="keyword">const</span> std::string_view reactants_sv(reactants_str, strnlen(reactants_str, <span class="keyword">sizeof</span>(reactants_str)));</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            <span class="keyword">const</span> std::string_view products_sv(products_str, strnlen(products_str, <span class="keyword">sizeof</span>(products_str)));</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            <span class="keyword">auto</span> reactants = <a class="code hl_function" href="namespacegridfire_1_1reaclib.html#afc0deac6cbef076e8884e66fd3ab66e0">parseSpeciesString</a>(reactants_sv);</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            <span class="keyword">auto</span> products = <a class="code hl_function" href="namespacegridfire_1_1reaclib.html#afc0deac6cbef076e8884e66fd3ab66e0">parseSpeciesString</a>(products_sv);</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">reaction::RateCoefficientSet</a> rate_coeffs = {</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                record.coeffs[0], record.coeffs[1], record.coeffs[2],</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                record.coeffs[3], record.coeffs[4], record.coeffs[5],</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                record.coeffs[6]</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                coeffs[0], coeffs[1], coeffs[2],</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                coeffs[3], coeffs[4], coeffs[5],</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                coeffs[6]</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            };</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            <span class="comment">// Construct the Reaction object. We use rpName for both the unique ID and the human-readable name.</span></div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            reaction_list.emplace_back(</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                rpName_sv,</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                rpName_sv,</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                record.chapter,</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                chapter,</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                reactants,</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                products,</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                record.qValue,</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                qValue,</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                label_sv,</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                rate_coeffs,</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                record.reverse</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                reverse</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            );</div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        }</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
@@ -269,10 +269,10 @@ $(function(){initNavTree('reaclib_8cpp_source.html',''); initResizable(true); })
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html_a91c7971c9d0a2971b9a6fa4d841c761d"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html#a91c7971c9d0a2971b9a6fa4d841c761d">gridfire::reaclib::get_all_reactions</a></div><div class="ttdeci">const reaction::LogicalReactionSet &amp; get_all_reactions()</div><div class="ttdoc">Provides global access to the fully initialized REACLIB reaction set.</div><div class="ttdef"><b>Definition</b> <a href="#l00138">reaclib.cpp:138</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html_af6ff0dfe7ffe34c73ba9acbab5ef8a66"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66">gridfire::reaclib::s_initialized</a></div><div class="ttdeci">static bool s_initialized</div><div class="ttdef"><b>Definition</b> <a href="reaclib_8h_source.html#l00007">reaclib.h:7</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1reaclib_html_afc0deac6cbef076e8884e66fd3ab66e0"><div class="ttname"><a href="namespacegridfire_1_1reaclib.html#afc0deac6cbef076e8884e66fd3ab66e0">gridfire::reaclib::parseSpeciesString</a></div><div class="ttdeci">static std::vector&lt; fourdst::atomic::Species &gt; parseSpeciesString(const std::string_view str)</div><div class="ttdef"><b>Definition</b> <a href="#l00058">reaclib.cpp:58</a></div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00557">reaction.h:557</a></div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_abfcfafc0cda0c3ed56930a12e7ead67f"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#abfcfafc0cda0c3ed56930a12e7ead67f">gridfire::reaction::packReactionSetToLogicalReactionSet</a></div><div class="ttdeci">LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet &amp;reactionSet)</div><div class="ttdef"><b>Definition</b> <a href="reaction_8cpp_source.html#l00201">reaction.cpp:201</a></div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_ad838ce3fb6cc02c3fd90b924a0dd91b1"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#ad838ce3fb6cc02c3fd90b924a0dd91b1">gridfire::reaction::ReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; Reaction &gt; ReactionSet</div><div class="ttdoc">A set of reactions, typically from a single source like REACLIB.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00556">reaction.h:556</a></div></div>
-<div class="ttc" id="anamespacegridfire_html_a8b245f261cd8d1711ae8d593b054cf98"><div class="ttname"><a href="namespacegridfire.html#a8b245f261cd8d1711ae8d593b054cf98">gridfire::trim_whitespace</a></div><div class="ttdeci">std::string trim_whitespace(const std::string &amp;str)</div><div class="ttdef"><b>Definition</b> <a href="network_8cpp_source.html#l00091">network.cpp:91</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00563">reaction.h:563</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_abfcfafc0cda0c3ed56930a12e7ead67f"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#abfcfafc0cda0c3ed56930a12e7ead67f">gridfire::reaction::packReactionSetToLogicalReactionSet</a></div><div class="ttdeci">LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet &amp;reactionSet)</div><div class="ttdef"><b>Definition</b> <a href="reaction_8cpp_source.html#l00273">reaction.cpp:273</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_ad838ce3fb6cc02c3fd90b924a0dd91b1"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#ad838ce3fb6cc02c3fd90b924a0dd91b1">gridfire::reaction::ReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; Reaction &gt; ReactionSet</div><div class="ttdoc">A set of reactions, typically from a single source like REACLIB.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00562">reaction.h:562</a></div></div>
+<div class="ttc" id="anamespacegridfire_html_a8b245f261cd8d1711ae8d593b054cf98"><div class="ttname"><a href="namespacegridfire.html#a8b245f261cd8d1711ae8d593b054cf98">gridfire::trim_whitespace</a></div><div class="ttdeci">std::string trim_whitespace(const std::string &amp;str)</div><div class="ttdef"><b>Definition</b> <a href="network_8cpp_source.html#l00065">network.cpp:65</a></div></div>
 <div class="ttc" id="anetwork_8h_html"><div class="ttname"><a href="network_8h.html">network.h</a></div></div>
 <div class="ttc" id="areaclib_8cpp_html_a2c6902cf3e699a1a65e871efa878a6ab"><div class="ttname"><a href="reaclib_8cpp.html#a2c6902cf3e699a1a65e871efa878a6ab">trim_whitespace</a></div><div class="ttdeci">std::string trim_whitespace(const std::string &amp;str)</div><div class="ttdef"><b>Definition</b> <a href="#l00013">reaclib.cpp:13</a></div></div>
 <div class="ttc" id="areaclib_8h_html"><div class="ttname"><a href="reaclib_8h.html">reaclib.h</a></div></div>
@@ -294,7 +294,7 @@ $(function(){initNavTree('reaclib_8cpp_source.html',''); initResizable(true); })
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_a7655658c851688eff9381235a9676f0.html">lib</a></li><li class="navelem"><a class="el" href="dir_d5f908f1a3b7d6921d55b8696a8e83bc.html">reaction</a></li><li class="navelem"><a class="el" href="reaclib_8cpp.html">reaclib.cpp</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c85d3e3c5052e9ad9ce18c6863244a25.html">lib</a></li><li class="navelem"><a class="el" href="dir_902e06e9d82d80b06df7be6e417fa9ee.html">reaction</a></li><li class="navelem"><a class="el" href="reaclib_8cpp.html">reaclib.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

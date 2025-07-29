@@ -8,6 +8,5 @@ var network_8h =
       [ "gridfire::REACLIB", "namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37a9b8db7b445ae4f1bd114caa42a583182", null ],
       [ "gridfire::UNKNOWN", "namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37aac700abde5f6ff8b7328193eb19697b2", null ]
     ] ],
-    [ "gridfire::build_reaclib_nuclear_network", "namespacegridfire.html#aa77f83539d9ae90e3bf541309bd9c83a", null ],
     [ "gridfire::FormatStringLookup", "namespacegridfire.html#a4e9cabad30b57d636c2f0d73d8cc6bb4", null ]
 ];

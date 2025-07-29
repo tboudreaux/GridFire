@@ -1,6 +1,7 @@
 var classgridfire_1_1reaction_1_1_templated_reaction_set =
 [
     [ "TemplatedReactionSet", "classgridfire_1_1reaction_1_1_templated_reaction_set.html#a54c8cd7c34564277fe28eefc623f666e", null ],
+    [ "TemplatedReactionSet", "classgridfire_1_1reaction_1_1_templated_reaction_set.html#a9def4c9a3a7a03625b7c467fe7440428", null ],
     [ "TemplatedReactionSet", "classgridfire_1_1reaction_1_1_templated_reaction_set.html#ada1d1880be53b81a9ed7b966fd6ade5a", null ],
     [ "add_reaction", "classgridfire_1_1reaction_1_1_templated_reaction_set.html#a339dbbf883b6ae20e33d9782d8376bcf", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_templated_reaction_set.html#a87257704009fcd57b553f86cdaacb597", null ],

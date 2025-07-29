@@ -57,6 +57,8 @@ tags
 *.private
 *.private/
 
+*.bin
+
 subprojects/mfem/
 subprojects/tetgen/
 subprojects/yaml-cpp/
@@ -73,6 +75,7 @@ subprojects/libconfig/
 subprojects/libconstants/
 subprojects/liblogging/
 subprojects/eigen-*/
+subprojects/fourdst/
 
 *.csv
 *.dot
@@ -80,7 +83,10 @@ subprojects/eigen-*/
 qhull.wrap
 quill.wrap
 yaml-cpp.wrap
-pybind11.wrap
+libcomposition.wrap
+libconfig.wrap
+libconstants.wrap
+liblogging.wrap
 
 .vscode/
 
@@ -96,3 +102,5 @@ output/
 .idea/
 
 scratch/
+
+meson-boost-test/

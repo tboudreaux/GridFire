@@ -137,6 +137,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a735192a42f72cd68f289493753e1a616" id="r_a735192a42f72cd68f289493753e1a616"><td class="memItemLeft" align="right" valign="top">virtual CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a735192a42f72cd68f289493753e1a616">calculate_rate</a> (const CppAD::AD&lt; double &gt; T9) const</td></tr>
 <tr class="memdesc:a735192a42f72cd68f289493753e1a616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reaction rate for a given temperature using CppAD types.  <br /></td></tr>
 <tr class="separator:a735192a42f72cd68f289493753e1a616"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a8ba9212d76d5ce51f20df6892c6061" id="r_a3a8ba9212d76d5ce51f20df6892c6061"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a8ba9212d76d5ce51f20df6892c6061">calculate_forward_rate_log_derivative</a> (const double T9) const</td></tr>
+<tr class="separator:a3a8ba9212d76d5ce51f20df6892c6061"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78f42664cc957e266b6cf15fda09be97" id="r_a78f42664cc957e266b6cf15fda09be97"><td class="memItemLeft" align="right" valign="top">virtual std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78f42664cc957e266b6cf15fda09be97">peName</a> () const</td></tr>
 <tr class="memdesc:a78f42664cc957e266b6cf15fda09be97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the reaction name in (projectile, ejectile) notation.  <br /></td></tr>
 <tr class="separator:a78f42664cc957e266b6cf15fda09be97"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -388,7 +390,36 @@ Friends</h2></td></tr>
 <p>Gets a set of all unique species involved in the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of all reactant and product species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00070">70</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00091">91</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3a8ba9212d76d5ce51f20df6892c6061" name="a3a8ba9212d76d5ce51f20df6892c6061"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a8ba9212d76d5ce51f20df6892c6061">&#9670;&#160;</a></span>calculate_forward_rate_log_derivative()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double gridfire::reaction::Reaction::calculate_forward_rate_log_derivative </td>
+          <td>(</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html#aa4b8d0d30459f360ff6e29d848e943d5">gridfire::reaction::LogicalReaction</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00047">47</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -509,7 +540,7 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate.</dd></dl>
 <p>The rate is calculated using the standard REACLIB formula: <code>rate = exp(a0 + a1/T9 + a2/T9^(1/3) + a3*T9^(1/3) + a4*T9 + a5*T9^(5/3) + a6*ln(T9))</code> </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00281">281</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00283">283</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +570,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the REACLIB chapter number. </p>
 <dl class="section return"><dt>Returns</dt><dd>The chapter number. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00126">126</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00128">128</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -575,7 +606,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is involved, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00047">47</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00068">68</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -611,7 +642,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a product, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00061">61</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00082">82</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -647,7 +678,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a reactant, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00052">52</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00073">73</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -677,7 +708,7 @@ template&lt;typename T&gt; </div>
 <p>Calculates the excess energy from the mass difference of reactants and products. </p>
 <dl class="section return"><dt>Returns</dt><dd>The excess energy in MeV. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00123">123</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00144">144</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -714,7 +745,7 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A 64-bit hash value.</dd></dl>
 <p>Uses the XXHash64 algorithm on the reaction's ID string. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00136">136</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00157">157</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -744,7 +775,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the unique identifier of the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reaction ID. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00202">202</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00204">204</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -774,7 +805,7 @@ template&lt;typename T&gt; </div>
 <p>Checks if this is a reverse reaction rate. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if it is a reverse rate, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00226">226</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00228">228</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -804,7 +835,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the number of unique species involved in the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The count of unique species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00108">108</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00129">129</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -840,7 +871,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reactions are not equal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00246">246</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00248">248</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -876,7 +907,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reaction IDs are the same. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00239">239</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00241">241</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -906,7 +937,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the reaction name in (projectile, ejectile) notation. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reaction name (e.g., "p(p,g)d"). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00120">120</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00122">122</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -936,7 +967,7 @@ template&lt;typename T&gt; </div>
 <p>Gets a set of all unique product species. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of product species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00085">85</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00106">106</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -966,7 +997,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the vector of product species. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of products. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00220">220</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00222">222</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -996,7 +1027,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the Q-value of the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Q-value in whatever units the reaction was defined in (usually MeV). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00208">208</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00210">210</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1026,7 +1057,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the set of rate coefficients. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html" title="Holds the seven coefficients for the REACLIB rate equation.">RateCoefficientSet</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00138">138</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00140">140</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1056,7 +1087,7 @@ template&lt;typename T&gt; </div>
 <p>Gets a set of all unique reactant species. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of reactant species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00077">77</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00098">98</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -1086,7 +1117,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the vector of reactant species. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of reactants. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00214">214</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00216">216</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1116,7 +1147,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the source label for the rate data. </p>
 <dl class="section return"><dt>Returns</dt><dd>The source label (e.g., "wc12w", "st08"). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00132">132</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00134">134</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1146,7 +1177,7 @@ template&lt;typename T&gt; </div>
 <p>Gets a map of all species to their stoichiometric coefficients. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_map from species to their integer coefficients. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00112">112</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00133">133</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -1212,7 +1243,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00256">256</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00258">258</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1239,7 +1270,7 @@ template&lt;typename T&gt; </div>
 
 <p>Chapter number from the REACLIB database, defining the reaction structure. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00264">264</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00266">266</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1265,7 +1296,7 @@ template&lt;typename T&gt; </div>
 
 <p>Unique identifier for the reaction (e.g., "h1+h1=&gt;h2+e+nu"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00262">262</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00264">264</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1289,7 +1320,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00261">261</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00263">263</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1315,7 +1346,7 @@ template&lt;typename T&gt; </div>
 
 <p>Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00263">263</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00265">265</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1341,7 +1372,7 @@ template&lt;typename T&gt; </div>
 
 <p>Products of the reaction. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00267">267</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00269">269</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1398,7 @@ template&lt;typename T&gt; </div>
 
 <p>Q-value of the reaction in MeV. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00265">265</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00267">267</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1393,7 +1424,7 @@ template&lt;typename T&gt; </div>
 
 <p>The seven rate coefficients. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00269">269</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00271">271</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1419,7 +1450,7 @@ template&lt;typename T&gt; </div>
 
 <p>Reactants of the reaction. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00266">266</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00268">268</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1476,7 @@ template&lt;typename T&gt; </div>
 
 <p>Flag indicating if this is a reverse reaction rate. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00270">270</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00272">272</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1471,13 +1502,13 @@ template&lt;typename T&gt; </div>
 
 <p>Source label for the rate data (e.g., "wc12w", "st08"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00268">268</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00270">270</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/network/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
-<li>src/network/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
+<li>src/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
+<li>src/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

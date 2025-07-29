@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['inputtype_0',['InputType',['../structgridfire_1_1solver_1_1_q_s_e_network_solver_1_1_eigen_functor.html#ac4ec3c180a9778acdd604a9b80d25399',1,'gridfire::solver::QSENetworkSolver::EigenFunctor']]]
+  ['dynamicnetworksolverstrategy_0',['DynamicNetworkSolverStrategy',['../namespacegridfire_1_1solver.html#a8118d08bc25e439754b43a3f5ecc1db3',1,'gridfire::solver']]]
 ];

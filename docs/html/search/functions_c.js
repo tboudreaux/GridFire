@@ -7,6 +7,9 @@ var searchData=
   ['n15pg_5frate_4',['n15pg_rate',['../namespacegridfire_1_1approx8.html#acdbb3ee2ef22bfd9c836324285d0da98',1,'gridfire::approx8']]],
   ['ne20a_5frate_5',['ne20a_rate',['../namespacegridfire_1_1approx8.html#ad7a6f894fa4bdeebb4cae0eba3b2c210',1,'gridfire::approx8']]],
   ['network_6',['Network',['../classgridfire_1_1_network.html#a20b631f2404bfdec2333f680a62abf55',1,'gridfire::Network']]],
-  ['networksolverstrategy_7',['NetworkSolverStrategy',['../classgridfire_1_1solver_1_1_network_solver_strategy.html#a01cbbec0eb5c3a60f50da38cdaf66505',1,'gridfire::solver::NetworkSolverStrategy']]],
-  ['num_5fspecies_8',['num_species',['../classgridfire_1_1reaction_1_1_reaction.html#a1d3c8ab6d55155f9a21ad80ed8b9ef97',1,'gridfire::reaction::Reaction']]]
+  ['networkprimingengineview_7',['NetworkPrimingEngineView',['../classgridfire_1_1_network_priming_engine_view.html#ad13ec8d4974421c72cffd88558d71177',1,'gridfire::NetworkPrimingEngineView::NetworkPrimingEngineView(const std::string &amp;primingSymbol, DynamicEngine &amp;baseEngine)'],['../classgridfire_1_1_network_priming_engine_view.html#a96751b66dd11f1155d0c488f39f9f6a6',1,'gridfire::NetworkPrimingEngineView::NetworkPrimingEngineView(const fourdst::atomic::Species &amp;primingSpecies, DynamicEngine &amp;baseEngine)']]],
+  ['networkresizederror_8',['NetworkResizedError',['../classgridfire_1_1exceptions_1_1_network_resized_error.html#a80c0adb088e8083309591d24051b056b',1,'gridfire::exceptions::NetworkResizedError']]],
+  ['networksolverstrategy_9',['NetworkSolverStrategy',['../classgridfire_1_1solver_1_1_network_solver_strategy.html#a01cbbec0eb5c3a60f50da38cdaf66505',1,'gridfire::solver::NetworkSolverStrategy']]],
+  ['num_5fspecies_10',['num_species',['../classgridfire_1_1reaction_1_1_reaction.html#a1d3c8ab6d55155f9a21ad80ed8b9ef97',1,'gridfire::reaction::Reaction::num_species()'],['../classgridfire_1_1_reaction.html#a1d3c8ab6d55155f9a21ad80ed8b9ef97',1,'gridfire::Reaction::num_species()']]],
+  ['numspecies_11',['numSpecies',['../classgridfire_1_1exceptions_1_1_stale_engine_trigger.html#a44ac2f7510ecf86cd5b556a842eee30c',1,'gridfire::exceptions::StaleEngineTrigger']]]
 ];

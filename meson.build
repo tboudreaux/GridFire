@@ -22,8 +22,20 @@ project('GridFire', 'cpp', version: '0.0.1a', default_options: ['cpp_std=c++23']
 
 # Add default visibility for all C++ targets
 add_project_arguments('-fvisibility=default', language: 'cpp')
-# We disable these because of CppAD
-add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+
+message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
+
+if meson.get_compiler('cpp').get_id() == 'clang'
+    # We disable these because of CppAD
+    message('disabling bitwise-instead-of-logical warnings for clang')
+    add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
+endif
+
+if meson.get_compiler('cpp').get_id() == 'gcc'
+    # We disable these because of boost notes about abi changes from C++10 -> C++17 make the build too noisey
+    message('disabling psabi warnings for gcc')
+    add_project_arguments('-Wno-psabi', language: 'cpp')
+endif
 
 # For Eigen
 add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')
@@ -58,23 +70,30 @@ cpp = meson.get_compiler('cpp')
 subdir('build-config')
 
 subdir('src')
+
+subdir('build-python')
+
 subdir('tests')
 
-pkg = import('pkgconfig')
-pkg.generate(
-    name: 'gridfire',
-    description: 'GridFire nuclear reaction network solver',
-    version: meson.project_version(),
-    libraries: [
-        libnetwork,
-        libcomposition,
-        libconfig,
-        libconst,
-        liblogging
-    ],
-    subdirs: ['gridfire'],
-    filebase: 'gridfire',
-    install_dir: join_paths(get_option('libdir'), 'pkgconfig')
-)
+
+if get_option('pkg-config')
+    message('Generating pkg-config file for GridFire...')
+    pkg = import('pkgconfig')
+    pkg.generate(
+        name: 'gridfire',
+        description: 'GridFire nuclear reaction network solver',
+        version: meson.project_version(),
+        libraries: [
+            libgridfire,
+            libcomposition,
+            libconfig,
+            libconst,
+            liblogging
+        ],
+        subdirs: ['gridfire'],
+        filebase: 'gridfire',
+        install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+    )
+endif
 
 

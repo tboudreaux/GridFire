@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GridFire: src/network/include/gridfire/screening/screening_abstract.h Source File</title>
+<title>GridFire: src/include/gridfire/screening/screening_abstract.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -134,7 +134,7 @@ $(function(){initNavTree('screening__abstract_8h_source.html',''); initResizable
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>            <span class="keyword">const</span> std::vector&lt;ADDouble&gt;&amp; Y,</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keyword">const</span> <a class="code hl_typedef" href="classgridfire_1_1screening_1_1_screening_model.html#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> T9,</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            <span class="keyword">const</span> <a class="code hl_typedef" href="classgridfire_1_1screening_1_1_screening_model.html#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> rho</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            ) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        ) <span class="keyword">const</span> = 0;</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    };</div>
 </div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>}</div>
@@ -144,7 +144,7 @@ $(function(){initNavTree('screening__abstract_8h_source.html',''); initResizable
 <div class="ttc" id="aclassgridfire_1_1screening_1_1_screening_model_html_a6c381a823cb9c1680d3e9c846da4ae22"><div class="ttname"><a href="classgridfire_1_1screening_1_1_screening_model.html#a6c381a823cb9c1680d3e9c846da4ae22">gridfire::screening::ScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">virtual std::vector&lt; ADDouble &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; ADDouble &gt; &amp;Y, const ADDouble T9, const ADDouble rho) const =0</div><div class="ttdoc">Calculates screening factors using CppAD types for automatic differentiation.</div></div>
 <div class="ttc" id="aclassgridfire_1_1screening_1_1_screening_model_html_aaec9184d80c86a2d8674e395dad81bde"><div class="ttname"><a href="classgridfire_1_1screening_1_1_screening_model.html#aaec9184d80c86a2d8674e395dad81bde">gridfire::screening::ScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">virtual std::vector&lt; double &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const =0</div><div class="ttdoc">Calculates screening factors for a set of reactions.</div></div>
 <div class="ttc" id="aclassgridfire_1_1screening_1_1_screening_model_html_adef175acdbd911527f56a1f1592579a7"><div class="ttname"><a href="classgridfire_1_1screening_1_1_screening_model.html#adef175acdbd911527f56a1f1592579a7">gridfire::screening::ScreeningModel::~ScreeningModel</a></div><div class="ttdeci">virtual ~ScreeningModel()=default</div><div class="ttdoc">Virtual destructor.</div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00557">reaction.h:557</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_aa86f08712565f278adacc7cd2361eb31"><div class="ttname"><a href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">gridfire::reaction::LogicalReactionSet</a></div><div class="ttdeci">TemplatedReactionSet&lt; LogicalReaction &gt; LogicalReactionSet</div><div class="ttdoc">A set of logical reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00563">reaction.h:563</a></div></div>
 <div class="ttc" id="anamespacegridfire_1_1screening_html"><div class="ttname"><a href="namespacegridfire_1_1screening.html">gridfire::screening</a></div><div class="ttdef"><b>Definition</b> <a href="#l00011">screening_abstract.h:11</a></div></div>
 <div class="ttc" id="areaction_8h_html"><div class="ttname"><a href="reaction_8h.html">reaction.h</a></div><div class="ttdoc">Defines classes for representing and managing nuclear reactions.</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -152,7 +152,7 @@ $(function(){initNavTree('screening__abstract_8h_source.html',''); initResizable
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_5cccfa813acdf3744b542715860d37b2.html">include</a></li><li class="navelem"><a class="el" href="dir_2a1262ef5950eb718393488a3eb5aa9f.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_a1a1065684fbb5b386566d81dc65d72d.html">screening</a></li><li class="navelem"><a class="el" href="screening__abstract_8h.html">screening_abstract.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b0856f6b0d80ccb263b2f415c91f9e17.html">include</a></li><li class="navelem"><a class="el" href="dir_3626e0c0e3c5d7812d6b277dfa4ec364.html">gridfire</a></li><li class="navelem"><a class="el" href="dir_ad59de2d6f32552fa0ecb4acca2fbb0b.html">screening</a></li><li class="navelem"><a class="el" href="screening__abstract_8h.html">screening_abstract.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

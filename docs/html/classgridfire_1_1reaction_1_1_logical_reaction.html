@@ -140,6 +140,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1d2fb3b6a6a1860ace98b32447d1dd1b" id="r_a1d2fb3b6a6a1860ace98b32447d1dd1b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d2fb3b6a6a1860ace98b32447d1dd1b">calculate_rate</a> (const double T9) const override</td></tr>
 <tr class="memdesc:a1d2fb3b6a6a1860ace98b32447d1dd1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the total reaction rate by summing all source rates.  <br /></td></tr>
 <tr class="separator:a1d2fb3b6a6a1860ace98b32447d1dd1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4b8d0d30459f360ff6e29d848e943d5" id="r_aa4b8d0d30459f360ff6e29d848e943d5"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4b8d0d30459f360ff6e29d848e943d5">calculate_forward_rate_log_derivative</a> (const double T9) const override</td></tr>
+<tr class="separator:aa4b8d0d30459f360ff6e29d848e943d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adad6f4297c1d8ce487eab092b73cdd32" id="r_adad6f4297c1d8ce487eab092b73cdd32"><td class="memItemLeft" align="right" valign="top">CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adad6f4297c1d8ce487eab092b73cdd32">calculate_rate</a> (const CppAD::AD&lt; double &gt; T9) const override</td></tr>
 <tr class="memdesc:adad6f4297c1d8ce487eab092b73cdd32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the total reaction rate using CppAD types.  <br /></td></tr>
 <tr class="separator:adad6f4297c1d8ce487eab092b73cdd32"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,7 +288,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><p>Represents a "logical" reaction that aggregates rates from multiple sources. </p>
 <p>A <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">LogicalReaction</a> shares the same reactants and products but combines rates from different evaluations (e.g., "wc12" and "st08" for the same physical reaction). The total rate is the sum of the individual rates. It inherits from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a>, using the properties of the first provided reaction as its base properties (reactants, products, Q-value, etc.). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00308">308</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00310">310</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6965906ea33ebd0d615811219d9e9537" name="a6965906ea33ebd0d615811219d9e9537"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6965906ea33ebd0d615811219d9e9537">&#9670;&#160;</a></span>LogicalReaction()</h2>
@@ -325,7 +327,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00142">142</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00163">163</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -359,7 +361,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00171">171</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00192">192</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -386,7 +388,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00355">355</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00359">359</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -413,7 +415,36 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00356">356</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00360">360</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+
+</div>
+</div>
+<a id="aa4b8d0d30459f360ff6e29d848e943d5" name="aa4b8d0d30459f360ff6e29d848e943d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4b8d0d30459f360ff6e29d848e943d5">&#9670;&#160;</a></span>calculate_forward_rate_log_derivative()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double gridfire::reaction::LogicalReaction::calculate_forward_rate_log_derivative </td>
+          <td>(</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a3a8ba9212d76d5ce51f20df6892c6061">gridfire::reaction::Reaction</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00218">218</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -451,7 +482,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a735192a42f72cd68f289493753e1a616">gridfire::reaction::Reaction</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00197">197</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00269">269</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -489,7 +520,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#ad81e9b2a1773470059ca6989c60556ec">gridfire::reaction::Reaction</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00193">193</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00214">214</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -534,7 +565,7 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The total calculated reaction rate.</dd></dl>
 <p>This method iterates through all stored <code><a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html" title="Holds the seven coefficients for the REACLIB rate equation.">RateCoefficientSet</a></code>s, calculates the rate for each, and returns their sum. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00381">381</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00385">385</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -561,7 +592,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00357">357</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00361">361</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -588,7 +619,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00358">358</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00362">362</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -618,7 +649,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the number of source rates contributing to this logical reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of aggregated rates. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00329">329</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00331">331</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -648,7 +679,7 @@ template&lt;typename T&gt; </div>
 <p>Gets the list of source labels for the aggregated rates. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector of source label strings. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00335">335</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00337">337</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -680,7 +711,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00362">362</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00366">366</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -707,7 +738,7 @@ template&lt;typename T&gt; </div>
 
 <p>List of rate coefficient sets from each source. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00369">369</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00373">373</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -733,13 +764,13 @@ template&lt;typename T&gt; </div>
 
 <p>List of source labels. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00368">368</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00372">372</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/network/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
-<li>src/network/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
+<li>src/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
+<li>src/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

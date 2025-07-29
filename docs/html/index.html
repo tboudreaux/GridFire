@@ -104,153 +104,246 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_docs_2static_2mainpage"></a></p>
 <p><img src="../../assets/logo/GridFire.png" alt="GridFire Logo" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md0"></a>
-GridFire: A Nuclear Reaction Network Library</h1>
+<hr  />
+<p>GridFire is a C++ library designed to perform general nuclear network evolution using the Reaclib library. It is part of the larger SERiF project within the 4D-STAR collaboration.</p>
+<p><b>Design Philosophy and Workflow:</b> GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine representation of the reaction network. To manage the inherent stiffness and multi-scale nature of these networks, GridFire employs a layered view strategy: partitioning algorithms isolate fast and slow processes, adaptive culling removes negligible reactions at runtime, and implicit solvers stably integrate the remaining stiff system. This modular pipeline allows researchers to tailor accuracy versus performance trade-offs, reuse common engine components, and extend screening or partitioning models without modifying core integration routines.</p>
 <h2><a class="anchor" id="autotoc_md1"></a>
-Overview</h2>
-<p>GridFire is a C++ library for simulating nuclear reaction networks. It is designed to be flexible, performant, and easy to integrate into larger astrophysical simulations. GridFire provides a modular framework for defining, manipulating, and solving complex reaction networks, with a focus on providing different "engines" to suit various computational needs.</p>
-<p>This documentation provides a comprehensive overview of the GridFire library, its architecture, and its components.</p>
+Funding</h2>
+<p>GridFire is a part of the 4D-STAR collaboration.</p>
+<p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR) Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research.</p>
 <h2><a class="anchor" id="autotoc_md2"></a>
-Features</h2>
+Build and Installation Instructions</h2>
+<h3><a class="anchor" id="autotoc_md3"></a>
+Prerequisites</h3>
 <ul>
-<li><b>Modular Design:</b> The library is organized into distinct components for reactions, engines, and solvers, allowing for easy extension and customization.</li>
-<li><b>Multiple Engines:</b> GridFire offers several reaction network engines, including:<ul>
-<li>A <code>GraphEngine</code> for solving the full reaction network.</li>
-<li>An <code>AdaptiveEngine</code> that dynamically adjusts the network size at runtime for improved performance.</li>
-<li>A simplified <code>Approx8Engine</code> for testing and for scenarios where a full network is not required.</li>
+<li>C++ compiler supporting C++23 standard</li>
+<li>Meson build system (&gt;= 1.5.0)</li>
+<li>Python 3.10 or newer</li>
+<li>Python packages: <code>meson-python&gt;=0.15.0</code></li>
+<li>Boost libraries (&gt;= 1.75.0) installed system-wide</li>
 </ul>
-</li>
-<li><b>REACLIB Integration:</b> GridFire can parse and utilize data from the REACLIB database, allowing for the use of standard, up-to-date reaction rates.</li>
-<li><b>High Performance:</b> The library is designed for performance, using modern C++ features and high-performance libraries like Eigen, Boost, and CppAD.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md3"></a>
-Directory Structure</h2>
-<p>The GridFire project is organized into the following main directories:</p>
+<blockquote class="doxtable">
+<p>Note: Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost.</p>
+<p>Windows is not supported at this time. </p>
+</blockquote>
+<h3><a class="anchor" id="autotoc_md4"></a>
+Dependency Installation on Common Platforms</h3>
 <ul>
-<li><code>src/</code>: Contains the source code for the GridFire library.<ul>
-<li><code>include/gridfire/</code>: Public header files for the library.<ul>
-<li><code>reaction/</code>: Header files related to defining and managing nuclear reactions.</li>
-<li><code>engine/</code>: Header files for the various reaction network engines.</li>
-<li><code>solver/</code>: Header files for the numerical solvers.</li>
+<li><b>Ubuntu/Debian:</b> <div class="fragment"><div class="line">sudo apt-get update &amp;&amp; \</div>
+<div class="line">  sudo apt-get install -y build-essential meson python3 python3-pip libboost-all-dev</div>
+</div><!-- fragment --></li>
+<li><b>Fedora/CentOS/RHEL:</b> <div class="fragment"><div class="line">sudo dnf install -y gcc-c++ meson python3 python3-pip boost-devel</div>
+</div><!-- fragment --></li>
+<li><b>macOS (Homebrew):</b> <div class="fragment"><div class="line">brew update &amp;&amp; \</div>
+<div class="line">  brew install boost meson python</div>
+</div><!-- fragment --></li>
 </ul>
-</li>
-<li><code>lib/</code>: Source code for the implementation of the library components.</li>
-</ul>
-</li>
-<li><code>subprojects/</code>: Contains external libraries and dependencies.</li>
-<li><code>tests/</code>: Unit tests for the GridFire library.</li>
-<li><code>docs/</code>: Directory for documentation, including this Doxygen homepage.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md4"></a>
-Core Components</h2>
-<p>The GridFire library is built around three main components: <b>Reactions</b>, <b>Engines</b>, and <b>Solvers</b>.</p>
 <h3><a class="anchor" id="autotoc_md5"></a>
-Reactions</h3>
-<p>The <code>reaction</code> component is responsible for defining and managing nuclear reactions. The key classes are:</p>
-<ul>
-<li><code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">gridfire::reaction::Reaction</a></code>: Represents a single nuclear reaction, including its reactants, products, and rate coefficients.</li>
-<li><code><a class="el" href="namespacegridfire_1_1reaction.html#ad838ce3fb6cc02c3fd90b924a0dd91b1" title="A set of reactions, typically from a single source like REACLIB.">gridfire::reaction::ReactionSet</a></code>: A collection of <code>Reaction</code> objects, representing a full reaction network.</li>
-<li><code><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">gridfire::reaction::LogicalReaction</a></code>: An abstraction that can represent a single reaction or a combination of multiple reactions (e.g., a forward and reverse reaction).</li>
-<li><code><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">gridfire::reaction::LogicalReactionSet</a></code>: A collection of <code>LogicalReaction</code> objects.</li>
-</ul>
-<p>GridFire can load reaction data from the REACLIB database via the <code>build_reaclib_nuclear_network</code> function, which is implemented in <code><a class="el" href="reaclib_8cpp.html">src/network/lib/reaction/reaclib.cpp</a></code>.</p>
-<h3><a class="anchor" id="autotoc_md6"></a>
-Engines</h3>
-<p>Engines are responsible for the low-level details of solving the reaction network equations. GridFire provides several engines, each with its own trade-offs in terms of accuracy and performance:</p>
-<ul>
-<li><b><code><a class="el" href="classgridfire_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">gridfire::GraphEngine</a></code></b>: A full-network solver that represents the reaction network as a graph. It uses the CppAD library for automatic differentiation to compute the Jacobian matrix, which is essential for implicit solvers.</li>
-<li><b><code>gridfire::AdaptiveEngine</code></b>: A dynamic engine that adapts the size of the reaction network at runtime. It can add or remove reactions and species based on their importance, which can significantly improve performance in simulations with changing conditions.</li>
-<li><b><code>gridfire::Approx8Engine</code></b>: A simplified, 8-isotope network for hydrogen and helium burning. This engine is useful for testing and for simulations where a full network is not necessary. It includes the pp-chain and the CNO cycle.</li>
-</ul>
-<h3><a class="anchor" id="autotoc_md7"></a>
-Solvers</h3>
-<p>The <code>solver</code> component provides the numerical algorithms for solving the system of ordinary differential equations (ODEs) that describe the evolution of the species abundances. GridFire uses the <code>boost::numeric::odeint</code> library for its ODE solvers.</p>
-<p>The main solver class is <code><a class="el" href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html" title="A network solver that uses a Quasi-Steady-State Equilibrium (QSE) approach.">gridfire::solver::QSENetworkSolver</a></code>, which implements a Quasi-Steady-State (QSE) solver.</p>
-<h2><a class="anchor" id="autotoc_md8"></a>
-Dependencies</h2>
-<p>GridFire relies on the following external libraries:</p>
-<ul>
-<li><b><a href="https://eigen.tuxfamily.org/">Eigen</a></b>: A C++ template library for linear algebra.</li>
-<li><b><a href="https://www.boost.org/">Boost</a></b>: A collection of peer-reviewed, high-quality C++ libraries. GridFire uses Boost for sparse matrices and numerical integration.</li>
-<li><b><a href="https://cppad.readthedocs.io/en/latest/">CppAD</a></b>: A C++ template library for automatic differentiation.</li>
-<li><b><a href="https://github.com/odygrd/quill">Quill</a></b>: A high-performance, asynchronous logging library.</li>
-<li><b><a href="https://github.com/jbeder/yaml-cpp">yaml-cpp</a></b>: A YAML parser and emitter for C++.</li>
-<li><b><a href="https://github.com/google/googletest">GoogleTest</a></b>: A unit testing framework for C++.</li>
-<li><b><a href="https://github.com/Cyan4973/xxHash">xxHash</a></b>: An extremely fast non-cryptographic hash algorithm.</li>
-</ul>
-<p>Aside from boost, all dependencies are automatically downloaded and built by the Meson build system. Boost must be installed on your system beforehand.</p>
+Building the C++ Library</h3>
+<div class="fragment"><div class="line">meson setup build</div>
+<div class="line">meson compile -C build</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md6"></a>
+Installing the Library</h3>
+<div class="fragment"><div class="line">meson install -C build</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md7"></a>
+Python Bindings and Installation</h3>
+<p>The Python interface is provided via <code>meson-python</code> and <code>pybind11</code>. To install the Python package: </p><div class="fragment"><div class="line">pip install .</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
+Developer Workflow</h3>
+<ol type="1">
+<li>Clone the repository and install dependencies listed in <code>pyproject.toml</code>.</li>
+<li>Configure and build with Meson: <div class="fragment"><div class="line">meson setup build</div>
+<div class="line">meson compile -C build</div>
+</div><!-- fragment --></li>
+<li>Run the unit tests: <div class="fragment"><div class="line">meson test -C build</div>
+</div><!-- fragment --></li>
+<li>Iterate on code, rebuild, and rerun tests.</li>
+</ol>
 <h2><a class="anchor" id="autotoc_md9"></a>
-Building the Project</h2>
-<p>GridFire uses the <a href="https://mesonbuild.com/">Meson</a> build system. To build the project, you will need to have Meson and a C++ compiler (like g++ or clang++) installed.</p>
-<p>You can configure the build using the options listed in <code>meson_options.txt</code>.</p>
-<div class="fragment"><div class="line">meson setup builddir --prefix=/path/to/install --buildtype=release</div>
-<div class="line">meson compile -C builddir</div>
-<div class="line">meson install -C builddir</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
-How to Use</h2>
-<p>To use the GridFire library in your own project, you will need to link against the compiled library and include the necessary header files.</p>
-<p>Here is a simple example of how to use the library:</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="network_8h.html">gridfire/network.h</a>&quot;</span></div>
+Code Architecture and Logical Flow</h2>
+<p>GridFire is organized into modular components that collaborate to simulate nuclear reaction networks with high fidelity:</p>
+<ul>
+<li><b>Engine Module:</b> Core interfaces and implementations (e.g., <code>GraphEngine</code>) that evaluate reaction network rate equations and energy generation.</li>
+<li><b>Screening Module:</b> Implements nuclear reaction screening corrections (<code>WeakScreening</code>, <code>BareScreening</code>, etc.) affecting reaction rates.</li>
+<li><b>Rates Module:</b> Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.</li>
+<li><b>Python Interface:</b> Exposes C++ functionality to Python, enabling rapid prototyping and integration into workflows.</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md10"></a>
+GraphEngine Configuration Options</h3>
+<p>GraphEngine exposes runtime configuration methods to tailor network construction and rate evaluations:</p>
+<ul>
+<li><b>Constructor Parameters:</b><ul>
+<li><code>BuildDepthType</code> (<code>Full</code>/<code>Reduced</code>/<code>Minimal</code>): controls network build depth, trading startup time for network completeness.</li>
+<li><code>partition::PartitionFunction</code>: custom functor for network partitioning based on <code>Z</code>, <code>A</code>, and <code>T9</code>.</li>
+</ul>
+</li>
+<li><b>setPrecomputation(bool precompute):</b><ul>
+<li>Enable/disable caching of reaction rates and stoichiometric data at initialization.</li>
+<li><em>Effect:</em> Reduces per-step overhead; increases memory and setup time.</li>
+</ul>
+</li>
+<li><b>setScreeningModel(ScreeningType type):</b><ul>
+<li>Choose plasma screening (models: <code>BARE</code>, <code>WEAK</code>).</li>
+<li><em>Effect:</em> Alters rate enhancement under dense/low-T conditions, impacting stiffness.</li>
+</ul>
+</li>
+<li><b>setUseReverseReactions(bool useReverse):</b><ul>
+<li>Toggle inclusion of reverse (detailed balance) reactions.</li>
+<li><em>Effect:</em> Improves equilibrium fidelity; increases network size and stiffness.</li>
+</ul>
+</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md11"></a>
+Available Partition Functions</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Function Name   </th><th class="markdownTableHeadNone">Identifier   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>GroundStatePartitionFunction</code>   </td><td class="markdownTableBodyNone">"GroundState"   </td><td class="markdownTableBodyNone">Weights using nuclear ground-state spin factors.    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>RauscherThielemannPartitionFunction</code>   </td><td class="markdownTableBodyNone">"RauscherThielemann"   </td><td class="markdownTableBodyNone">Interpolates normalized g-factors per Rauscher &amp; Thielemann.   </td></tr>
+</table>
+<p>These functions implement: </p><div class="fragment"><div class="line"><span class="keywordtype">double</span> evaluate(<span class="keywordtype">int</span> Z, <span class="keywordtype">int</span> A, <span class="keywordtype">double</span> T9) <span class="keyword">const</span>;</div>
+<div class="line"><span class="keywordtype">double</span> evaluateDerivative(<span class="keywordtype">int</span> Z, <span class="keywordtype">int</span> A, <span class="keywordtype">double</span> T9) <span class="keyword">const</span>;</div>
+<div class="line"><span class="keywordtype">bool</span> supports(<span class="keywordtype">int</span> Z, <span class="keywordtype">int</span> A) <span class="keyword">const</span>;</div>
+<div class="line">std::string type() <span class="keyword">const</span>;</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md12"></a>
+Engine Views</h2>
+<p>The GridFire engine supports multiple engine view strategies to adapt or restrict network topology. Each view implements a specific algorithm:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">View Name   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Algorithm / Reference   </th><th class="markdownTableHeadNone">When to Use    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">AdaptiveEngineView   </td><td class="markdownTableBodyNone">Dynamically culls low-flow species and reactions during runtime   </td><td class="markdownTableBodyNone">Iterative flux thresholding to remove reactions below a flow threshold   </td><td class="markdownTableBodyNone">Large networks to reduce computational cost    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">DefinedEngineView   </td><td class="markdownTableBodyNone">Restricts the network to a user-specified subset of species and reactions   </td><td class="markdownTableBodyNone">Static network masking based on user-provided species/reaction lists   </td><td class="markdownTableBodyNone">Targeted pathway studies or code-to-code comparisons    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">MultiscalePartitioningEngineView   </td><td class="markdownTableBodyNone">Partitions the network into fast and slow subsets based on reaction timescales   </td><td class="markdownTableBodyNone">Network partitioning following Hix &amp; Thielemann Silicon Burning I &amp; II (DOI:10.1086/177016,10.1086/306692)   </td><td class="markdownTableBodyNone">Stiff, multi-scale networks requiring tailored integration    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">NetworkPrimingEngineView   </td><td class="markdownTableBodyNone">Primes the network with an initial species or set of species for ignition studies   </td><td class="markdownTableBodyNone">Single-species injection with transient flow analysis   </td><td class="markdownTableBodyNone">Investigations of ignition triggers or initial seed sensitivities   </td></tr>
+</table>
+<p>These engine views implement the common Engine interface and may be composed in any order to build complex network pipelines. New view types can be added by deriving from the <code>EngineView</code> base class, and linked into the composition chain without modifying core engine code.</p>
+<p><b>Python Extensibility:</b> Through the Python bindings, users can subclass engine view classes directly in Python, override methods like <code>evaluate</code> or <code>generateStoichiometryMatrix</code>, and pass instances back into C++ solvers. This enables rapid prototyping of custom view strategies without touching C++ sources.</p>
+<h2><a class="anchor" id="autotoc_md13"></a>
+Numerical Solver Strategies</h2>
+<p>GridFire defines a flexible solver architecture through the <code>networkfire::solver::NetworkSolverStrategy</code> interface, enabling multiple ODE integration algorithms to be used interchangeably with any engine that implements the <code>Engine</code> or <code>DynamicEngine</code> contract.</p>
+<ul>
+<li><b>NetworkSolverStrategy&lt;EngineT&gt;</b>: Abstract strategy templated on an engine type. Requires implementation of: <div class="fragment"><div class="line">NetOut evaluate(<span class="keyword">const</span> NetIn&amp; netIn);</div>
+</div><!-- fragment --> which integrates the network over one timestep and returns updated abundances, temperature, density, and diagnostics.</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md14"></a>
+DirectNetworkSolver (Implicit Rosenbrock Method)</h3>
+<ul>
+<li><b>Integrator:</b> Implicit Rosenbrock4 scheme (order 4) via Boost.Odeint’s <code>rosenbrock4&lt;double&gt;</code>, optimized for stiff reaction networks with adaptive step size control using configurable absolute and relative tolerances.</li>
+<li><b>Jacobian Assembly:</b> Employs the <code>JacobianFunctor</code> to assemble the Jacobian matrix (∂f/∂Y) at each step, enabling stable implicit integration.</li>
+<li><b>RHS Evaluation:</b> Continues to use the <code>RHSManager</code> to compute and cache derivative evaluations and specific energy rates, minimizing redundant computations.</li>
+<li><b>Linear Algebra:</b> Utilizes Boost.uBLAS for state vectors and dense Jacobian matrices, with sparse access patterns supported via coordinate lists of nonzero entries.</li>
+<li><b>Error Control and Logging:</b> Absolute and relative tolerance parameters (<code>absTol</code>, <code>relTol</code>) are read from configuration; Quill logger captures integration diagnostics and step statistics.</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md15"></a>
+Algorithmic Workflow in DirectNetworkSolver</h3>
+<ol type="1">
+<li><b>Initialization:</b> Convert input temperature to T9 units, retrieve tolerances, and initialize state vector <code>Y</code> from equilibrated composition.</li>
+<li><b>Integrator Setup:</b> Construct the controlled Rosenbrock4 stepper and bind <code>RHSManager</code> and <code>JacobianFunctor</code>.</li>
+<li><b>Adaptive Integration Loop:</b><ul>
+<li>Perform <code>integrate_adaptive</code> advancing until <code>tMax</code>, catching any <code>StaleEngineTrigger</code> to repartition the network and update composition.</li>
+<li>On each substep, observe states and log via <code>RHSManager::observe</code>.</li>
+</ul>
+</li>
+<li><b>Finalization:</b> Assemble final mass fractions, compute accumulated energy, and populate <code>NetOut</code> with updated composition and diagnostics.</li>
+</ol>
+<h3><a class="anchor" id="autotoc_md16"></a>
+Future Solver Implementations</h3>
+<ul>
+<li><b>Operator Splitting Solvers:</b> Strategies to decouple thermodynamics, screening, and reaction substeps for performance on stiff, multi-scale networks.</li>
+<li><b>GPU-Accelerated Solvers:</b> Planned use of CUDA/OpenCL backends for large-scale network integration.</li>
+</ul>
+<p>These strategies can be developed by inheriting from <code>NetworkSolverStrategy</code> and registering against the same engine types without modifying existing engine code.</p>
+<h2><a class="anchor" id="autotoc_md17"></a>
+Usage Examples</h2>
+<h3><a class="anchor" id="autotoc_md18"></a>
+C++ Example: GraphEngine Initialization</h3>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Define a composition and initialize the engine</span></div>
+<div class="line">fourdst::composition::Composition comp;</div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00101">engine_graph.h:101</a></div></div>
+<div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md19"></a>
+C++ Example: Adaptive Network View</h3>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__adaptive_8h.html">gridfire/engine/views/engine_adaptive.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line">fourdst::composition::Composition comp;</div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
+<div class="line"><span class="comment">// Dynamically adapt network topology based on reaction flows</span></div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptiveView(baseEngine);</div>
+<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8h_source.html#l00050">engine_adaptive.h:50</a></div></div>
+<div class="ttc" id="aengine__adaptive_8h_html"><div class="ttname"><a href="engine__adaptive_8h.html">engine_adaptive.h</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md20"></a>
+Python Example</h3>
+<div class="fragment"><div class="line"><span class="keyword">import</span> gridfire</div>
+<div class="line"><span class="comment"># Initialize GraphEngine with predefined composition</span></div>
+<div class="line">engine = <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire.GraphEngine</a>(composition=<span class="stringliteral">&quot;example_composition&quot;</span>)</div>
+<div class="line"><span class="comment"># Perform one integration step</span></div>
+<div class="line">engine.step(dt=1e-3)</div>
+<div class="line">print(engine.abundances)</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md21"></a>
+Common Workflow Example</h2>
+<p>A representative workflow often composes multiple engine views to balance accuracy, stability, and performance when integrating stiff nuclear networks:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__multiscale_8h.html">gridfire/engine/views/engine_multiscale.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__adaptive_8h.html">gridfire/engine/views/engine_adaptive.h</a>&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &quot;<a class="code" href="solver_8h.html">gridfire/solver/solver.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="comment">// 1. Create a Composition object with the initial abundances</span></div>
-<div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    <span class="comment">// ... set initial abundances ...</span></div>
+<div class="line"><span class="comment">// 1. Define initial composition</span></div>
+<div class="line">fourdst::composition::Composition comp;</div>
+<div class="line"><span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 2. Create a reaction network engine</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
+<div class="line"><span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 3. Create a solver</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html">gridfire::solver::QSENetworkSolver</a> solver(engine);</div>
+<div class="line"><span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 4. Set the thermodynamic conditions</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> netIn;</div>
-<div class="line">    netIn.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">temperature</a> = 1.0e8; <span class="comment">// K</span></div>
-<div class="line">    netIn.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">density</a> = 1.0e4; <span class="comment">// g/cm^3</span></div>
+<div class="line"><span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
+<div class="line">gridfire::DirectNetworkSolver solver(adaptView);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 5. Solve the network</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a> netOut = solver.evaluate(netIn);</div>
+<div class="line"><span class="comment">// 6. Prepare input conditions</span></div>
+<div class="line">NetIn input{</div>
+<div class="line">    comp,     <span class="comment">// composition</span></div>
+<div class="line">    1.5e7,      <span class="comment">// temperature [K]</span></div>
+<div class="line">    1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
+<div class="line">    1e-12,     <span class="comment">// initial timestep [s]</span></div>
+<div class="line">    3e17      <span class="comment">// integration end time [s]</span></div>
+<div class="line">};</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">return</span> 0;</div>
-<div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00090">engine_graph.h:90</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1solver_1_1_q_s_e_network_solver_html"><div class="ttname"><a href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html">gridfire::solver::QSENetworkSolver</a></div><div class="ttdoc">A network solver that uses a Quasi-Steady-State Equilibrium (QSE) approach.</div><div class="ttdef"><b>Definition</b> <a href="solver_8h_source.html#l00098">solver.h:98</a></div></div>
-<div class="ttc" id="anetwork_8h_html"><div class="ttname"><a href="network_8h.html">network.h</a></div></div>
+<div class="line"><span class="comment">// 7. Execute integration</span></div>
+<div class="line">NetOut output = solver.evaluate(input);</div>
+<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> <a href="engine__multiscale_8h_source.html#l00174">engine_multiscale.h:174</a></div></div>
+<div class="ttc" id="aengine__multiscale_8h_html"><div class="ttname"><a href="engine__multiscale_8h.html">engine_multiscale.h</a></div></div>
 <div class="ttc" id="asolver_8h_html"><div class="ttname"><a href="solver_8h.html">solver.h</a></div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00053">network.h:53</a></div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a06f0dff9f8927b7cf2da3004c8fa1577"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">gridfire::NetIn::density</a></div><div class="ttdeci">double density</div><div class="ttdoc">Density in g/cm^3.</div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00058">network.h:58</a></div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a5be0f5195a5cd1dd177b9fc5ab83a7be"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">gridfire::NetIn::temperature</a></div><div class="ttdeci">double temperature</div><div class="ttdoc">Temperature in Kelvin.</div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00057">network.h:57</a></div></div>
-<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00065">network.h:65</a></div></div>
-</div><!-- fragment --><p> Linking can be done using the pkg-config tool:</p>
-<div class="fragment"><div class="line">pkg-config --cflags --libs gridfire</div>
-</div><!-- fragment --><p>Note that you will also need to tell the compiler where to find boost headers.</p>
-<p>A more detailed example of how to use an AdaptiveEngine can be found below </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="network_8h.html">gridfire/network.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="solver_8h.html">gridfire/solver/solver.h</a>&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="comment">// 1. Create a Composition object with the initial abundances</span></div>
-<div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    <span class="comment">// ... set initial abundances ...</span></div>
-<div class="line"> </div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptiveEngine(comp);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 3. Create a solver</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1solver_1_1_q_s_e_network_solver.html">gridfire::solver::QSENetworkSolver</a> solver(adaptiveEngine);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 4. Set the thermodynamic conditions</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> netIn;</div>
-<div class="line">    netIn.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">temperature</a> = 1.0e8; <span class="comment">// K</span></div>
-<div class="line">    netIn.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">density</a> = 1.0e4; <span class="comment">// g/cm^3</span></div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 5. Solve the network</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a> netOut = solver.evaluate(netIn);</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">return</span> 0;</div>
-<div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8h_source.html#l00047">engine_adaptive.h:47</a></div></div>
-</div><!-- fragment --><p>Note how the adaptive engine is a view of the base engine. This allows the adaptive engine to dynamically adjust the network size at runtime based on the reactions that are active. </p>
+</div><!-- fragment --><p><b>Workflow Components and Effects:</b></p><ul>
+<li><b>GraphEngine</b> constructs the full reaction network, capturing all species and reactions.</li>
+<li><b>MultiscalePartitioningEngineView</b> segregates reactions by characteristic timescales (Hix &amp; Thielemann), reducing the effective stiffness by treating fast processes separately.</li>
+<li><b>AdaptiveEngineView</b> prunes low-flux species/reactions at runtime, decreasing dimensionality and improving computational efficiency.</li>
+<li><b>DirectNetworkSolver</b> employs an implicit Rosenbrock method to stably integrate the remaining stiff system with adaptive step control.</li>
+</ul>
+<p>This layered approach enhances stability for stiff networks while maintaining accuracy and performance.</p>
+<h2><a class="anchor" id="autotoc_md22"></a>
+Related Projects</h2>
+<p>GridFire integrates with and builds upon several key 4D-STAR libraries:</p>
+<ul>
+<li><a href="https://github.com/4D-STAR/fourdst">fourdst</a>: hub module managing versioning of <code>libcomposition</code>, <code>libconfig</code>, <code>liblogging</code>, and <code>libconstants</code></li>
+<li><a href="https://github.com/4D-STAR/libcomposition">libcomposition</a> (<a href="https://4d-star.github.io/libcomposition/">docs</a>): Composition management toolkit.</li>
+<li><a href="https://github.com/4D-STAR/libconfig">libconfig</a>: Configuration file parsing utilities.</li>
+<li><a href="https://github.com/4D-STAR/liblogging">liblogging</a>: Flexible logging framework.</li>
+<li><a href="https://github.com/4D-STAR/libconstants">libconstants</a>: Physical constants </li>
+</ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
