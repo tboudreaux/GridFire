@@ -23,6 +23,7 @@ MIN_CLANG_VER="16.0.0"
 MIN_MESON_VER="1.5.0"
 BOOST_CHECKED=false
 BOOST_OKAY=true
+USING_VENV=false
 
 # --- Build Configuration Globals ---
 BUILD_DIR="build"
@@ -150,10 +151,13 @@ check_command() {
 is_externally_managed() {
     # Check for the PEP 668 marker file
     local py_prefix
-    py_prefix=$(python3 -c "import sys; print(sys.prefix)")
+    py_prefix=$(python3 -c "import sysconfig; print(sysconfig.get_path(\"stdlib\"))")
     if [ -f "$py_prefix/EXTERNALLY-MANAGED" ]; then
+	log "${YELLOW}Python is externally managed${NC}"
+	USING_VENV=true
         return 0 # 0 means true in bash
     else
+	log "${YELLOW}Python is not externally managed${NC}"
         return 1 # 1 means false
     fi
 }
@@ -163,6 +167,14 @@ get_pip_cmd() {
         echo "$VENV_DIR/bin/pip"
     else
         echo "python3 -m pip"
+    fi
+}
+
+get_meson_cmd() {
+    if [ -d "$VENV_DIR" ]; then
+        echo "$VENV_DIR/bin/meson"
+    else
+        echo "meson"
     fi
 }
 
@@ -315,6 +327,16 @@ check_meson() {
     fi
 }
 
+check_ninja() {
+  if check_command ninja; then
+    log "${GREEN}[OK] Found Ninja: $(ninja --version | head -n1)${NC}"
+    return 0
+  else
+    log "${RED}[FAIL] Ninja not found.${NC}"
+    return 1
+  fi
+}
+
 check_boost() {
     log "${BLUE}[Info] Performing comprehensive check for compatible Boost library...${NC}"
     if [ -z "$CC_COMPILER" ]; then
@@ -358,7 +380,9 @@ EOF
 
     log "${BLUE}[Info] Attempting to compile test project against Boost with C++23...${NC}"
     # Use the globally selected compilers, pipe stdout and stderr to log for debugging
-    if CC="${C_COMPILER}" CXX="${CC_COMPILER}" meson setup "$test_dir/build" "$test_dir" >> "$LOGFILE" 2>&1 && meson compile -C "$test_dir/build" >> "$LOGFILE" 2>&1; then
+    log "${BLUE}[Info] Using meson at ${mesonCMD}${NC}"
+    local mesonCMD=$(get_meson_cmd)
+    if CC="${C_COMPILER}" CXX="${CC_COMPILER}" $mesonCMD setup "$test_dir/build" "$test_dir" >> "$LOGFILE" 2>&1 && $mesonCMD compile -C "$test_dir/build" >> "$LOGFILE" 2>&1; then
         log "${GREEN}[Success] Boost library is compatible with the current compiler and C++23 standard.${NC}"
         rm -rf "$test_dir"
         return 0
@@ -430,6 +454,7 @@ get_install_cmd() {
         "cmake") cmd="$brew_cmd install cmake" ;;
         "boost") cmd="$brew_cmd install boost" ;;
         "dialog") cmd="$brew_cmd install dialog" ;;
+	"ninja") cmd="$brew_cmd install ninja" ;;
       esac
       ;;
     "Linux")
@@ -444,6 +469,7 @@ get_install_cmd() {
             "cmake") cmd="sudo apt-get install -y cmake" ;;
             "boost") cmd="sudo apt-get install -y libboost-all-dev" ;;
             "dialog") cmd="sudo apt-get install -y dialog" ;;
+	    "ninja") cmd="sudo apt-get install -y ninja-build" ;;
           esac
           ;;
         "fedora")
@@ -456,6 +482,7 @@ get_install_cmd() {
             "cmake") cmd="sudo dnf install -y cmake" ;;
             "boost") cmd="sudo dnf install -y boost-devel" ;;
             "dialog") cmd="sudo dnf install -y dialog" ;;
+	    "ninja") cmd="sudo dnf install -y ninja-build" ;;
           esac
           ;;
         "arch"|"manjaro")
@@ -468,6 +495,7 @@ get_install_cmd() {
             "cmake") cmd="sudo pacman -S --noconfirm cmake" ;;
             "boost") cmd="sudo pacman -S --noconfirm boost" ;;
             "dialog") cmd="sudo pacman -S --noconfirm dialog" ;;
+	    "ninja") cmd="sudo pacman -S --noconfirm ninja" ;;
           esac
           ;;
         *) log "${YELLOW}[Warn] Unsupported Linux distribution: ${DISTRO_ID}.${NC}" ;;
@@ -509,8 +537,11 @@ run_meson_setup() {
     log "${BLUE}[Info] Using C++ compiler:     ${CC_COMPILER}${NC}"
     log "${BLUE}[Info] Using Fortran compiler: ${FC_COMPILER}${NC}"
     log "${BLUE}[Info] Running meson setup with options: ${meson_opts[*]}${NC}"
+
+    local mesonCMD=$(get_meson_cmd)
+    log "${BLUE}[Info] Using meson at ${mesonCMD}${NC}"
     # Set CC, CXX, and FC environment variables for the meson command
-    if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" meson setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
+    if ! CC="${C_COMPILER}" CXX="${CC_COMPILER}" FC="${FC_COMPILER}" $mesonCMD setup "${BUILD_DIR}" "${meson_opts[@]}" ${reconfigure_flag}; then
         log "${RED}[FATAL] Meson setup failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Meson setup complete.${NC}"
@@ -522,7 +553,11 @@ run_meson_compile() {
         log "${RED}[FATAL] Build directory not found. Run setup first.${NC}"; return 1;
     fi
     log "${BLUE}[Info] Running meson compile with ${MESON_NUM_CORES} cores...${NC}"
-    if ! meson compile -C "${BUILD_DIR}" -j "${MESON_NUM_CORES}"; then
+
+    local mesonCMD=$(get_meson_cmd)
+    log "${BLUE}[Info] Using meson at ${mesonCMD}${NC}"
+
+    if ! $mesonCMD compile -C "${BUILD_DIR}" -j "${MESON_NUM_CORES}"; then
         log "${RED}[FATAL] Meson compile failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Meson compile complete.${NC}"
@@ -534,7 +569,11 @@ run_meson_install() {
         log "${RED}[FATAL] Build directory not found. Run setup and compile first.${NC}"; return 1;
     fi
     log "${BLUE}[Info] Running meson install (prefix: ${INSTALL_PREFIX})...${NC}"
-    if ! sudo meson install -C "${BUILD_DIR}"; then
+
+    local mesonCMD=$(get_meson_cmd)
+    log "${BLUE}[Info] Using meson at ${mesonCMD}${NC}"
+
+    if ! sudo $mesonCMD install -C "${BUILD_DIR}"; then
         log "${RED}[FATAL] Meson install failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Meson install complete.${NC}"
@@ -546,7 +585,11 @@ run_meson_tests() {
         log "${RED}[FATAL] Build directory not found. Run setup and compile first.${NC}"; return 1;
     fi
     log "${BLUE}[Info] Running meson test...${NC}"
-    if ! meson test -C "${BUILD_DIR}"; then
+
+    local mesonCMD=$(get_meson_cmd)
+    log "${BLUE}[Info] Using meson at ${mesonCMD}${NC}"
+
+    if ! $mesonCMD test -C "${BUILD_DIR}"; then
         log "${RED}[FATAL] Meson tests failed. See log for details.${NC}"; return 1;
     fi
     log "${GREEN}[Success] Tests passed.${NC}"
@@ -583,7 +626,7 @@ ensure_venv() {
         if dialog --title "Virtual Environment" --yesno "A local Python virtual environment ('${VENV_DIR}') is required for this action. Create it now?" 8 70; then
             log "${BLUE}[Info] Creating Python virtual environment in '${VENV_DIR}'...${NC}"
             if ! python3 -m venv "$VENV_DIR"; then
-                dialog --msgbox "Failed to create virtual environment. Please ensure 'python3-venv' is installed." 8 60
+                dialog --msgbox "Failed to create virtual environment. Please ensure 'python4-venv' is installed." 8 60
                 return 1
             fi
             log "${GREEN}[Success] Virtual environment created.${NC}"
@@ -603,9 +646,19 @@ run_dependency_installer_tui() {
   check_meson_python >/dev/null; DEP_STATUS[meson-python]=$?
   check_cmake >/dev/null; DEP_STATUS[cmake]=$?
   check_meson >/dev/null; DEP_STATUS[meson]=$?
+  check_ninja >/dev/null; DEP_STATUS[ninja]=$?
   if [[ $BOOST_OKAY = false ]]; then
     DEP_STATUS[boost]=1 # Force boost to be "not okay" if previous check failed
   fi
+
+  log "${BLUE}[Info] compiler status code: ${DEP_STATUS[compiler]}${NC}"
+  log "${BLUE}[Info] pip status code: ${DEP_STATUS[pip]}${NC}"
+  log "${BLUE}[Info] python-dev status code: ${DEP_STATUS[python-dev]}${NC}"
+  log "${BLUE}[Info] meson-python status code: ${DEP_STATUS[meson-python]}${NC}"
+  log "${BLUE}[Info] cmake status code: ${DEP_STATUS[cmake]}${NC}"
+  log "${BLUE}[Info] meson status code: ${DEP_STATUS[meson]}${NC}"
+  log "${BLUE}[Info] ninja status code: ${DEP_STATUS[ninja]}${NC}"
+  log "${BLUE}[Info] boost status code: ${DEP_STATUS[boost]}${NC}"
 
   local choices
   choices=$(dialog --clear --backtitle "Project Dependency Installer" \
@@ -617,6 +670,7 @@ run_dependency_installer_tui() {
     "meson-python" "meson-python (for Python bindings)" "$([[ ${DEP_STATUS[meson-python]} -ne 0 ]] && echo "on" || echo "off")" \
     "cmake" "CMake" "$([[ ${DEP_STATUS[cmake]} -ne 0 ]] && echo "on" || echo "off")" \
     "meson" "Meson Build System (>=${MIN_MESON_VER})" "$([[ ${DEP_STATUS[meson]} -ne 0 ]] && echo "on" || echo "off")" \
+    "ninja" "Ninja Build System" "$([[ ${DEP_STATUS[ninja]} -ne 0 ]] && echo "on" || echo "off")" \
     "boost" "Boost Libraries (system package)" "$([[ ${DEP_STATUS[boost]} -ne 0 ]] && echo "on" || echo "off")" \
     3>&1 1>&2 2>&3)
 
@@ -1125,6 +1179,7 @@ run_main_tui() {
     while true; do
         # Re-check boost status to update menu dynamically
         if [[ $BOOST_CHECKED = false ]]; then
+	    BOOST_OKAY=true
             log "${BLUE}[Info] Checking Boost library status (this may take a minute)...${NC}"
             # If BOOST_CHECKED is set, we assume Boost was checked previously
             check_boost >/dev/null 2>&1 || BOOST_OKAY=false
