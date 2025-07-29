@@ -239,26 +239,6 @@ namespace gridfire {
         return true; // All reactions passed the conservation check
     }
 
-    void GraphEngine::validateComposition(const fourdst::composition::Composition &composition, double culling, double T9) {
-        // Check if the requested network has already been cached.
-        // PERF: Rebuilding this should be pretty fast but it may be a good point of optimization in the future.
-        const reaction::LogicalReactionSet validationReactionSet = build_reaclib_nuclear_network(composition, false);
-        // TODO: need some more robust method here to
-        //       A. Build the basic network from the composition's species with non zero mass fractions.
-        //       B. rebuild a new composition from the reaction set's reactants + products (with the mass fractions from the things that are only products set to 0)
-        //       C. Rebuild the reaction set from the new composition
-        //       D. Cull reactions where all reactants have mass fractions below the culling threshold.
-        //       E. Be careful about maintaining caching through all of this
-
-
-        // This allows for dynamic network modification while retaining caching for networks which are very similar.
-        if (validationReactionSet != m_reactions) {
-            LOG_DEBUG(m_logger, "Reaction set not cached. Rebuilding the reaction set for T9={} and culling={}.", T9, culling);
-            m_reactions = validationReactionSet;
-            syncInternalMaps(); // Re-sync internal maps after updating reactions. Note this will also retrace the AD tape.
-        }
-    }
-
     double GraphEngine::calculateReverseRate(
         const reaction::Reaction &reaction,
         const double T9
@@ -267,15 +247,13 @@ namespace gridfire {
             LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
             return 0.0; // If reverse reactions are not used, return 0.0
         }
-        const double expFactor = std::exp(-reaction.qValue() / (m_constants.kB * T9));
-        if (s_debug) {
-            std::cout << "\texpFactor = exp(-qValue/(kB * T9))\n";
-            std::cout << "\texpFactor: " << expFactor << " for reaction: " << reaction.peName() << std::endl;
-            std::cout << "\tQ-value: " << reaction.qValue() << " at T9: " << T9 << std::endl;
-            std::cout << "\tT9: " << T9 << std::endl;
-            std::cout << "\tkB * T9: " << m_constants.kB * T9 << std::endl;
-            std::cout << "\tqValue/(kB * T9): " << reaction.qValue() / (m_constants.kB * T9) << std::endl;
-        }
+        const double temp = T9 * 1e9; // Convert T9 to Kelvin
+
+        // In debug builds we check the units on kB to ensure it is in erg/K. This is removed in release builds to avoid overhead. (Note assert is a no-op in release builds)
+        assert(Constants::getInstance().get("kB").unit == "erg / K");
+
+        const double kBMeV = m_constants.kB * 624151; // Convert kB to MeV/K NOTE: This relies on the fact that m_constants.kB is in erg/K!
+        const double expFactor = std::exp(-reaction.qValue() / (kBMeV * temp));
         double reverseRate = 0.0;
         const double forwardRate = reaction.calculate_rate(T9);
 

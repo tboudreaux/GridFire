@@ -36,7 +36,6 @@
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
 // static bool isF17 = false;
 namespace gridfire {
-    static bool s_debug = false; // Global debug flag for the GraphEngine
     /**
      * @brief Alias for CppAD AD type for double precision.
      *
@@ -548,24 +547,6 @@ namespace gridfire {
          */
         [[nodiscard]] bool validateConservation() const;
 
-        /**
-         * @brief Validates the composition against the current reaction set.
-         *
-         * @param composition The composition to validate.
-         * @param culling The culling threshold to use.
-         * @param T9 The temperature to use.
-         *
-         * This method validates the composition against the current reaction set.
-         * If the composition is not compatible with the reaction set, the
-         * reaction set is rebuilt from the composition.
-         */
-        void validateComposition(
-            const fourdst::composition::Composition &composition,
-            double culling,
-            double T9
-        );
-
-
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
             const std::vector<double> &Y_in,
@@ -675,14 +656,6 @@ namespace gridfire {
         if (!m_useReverseReactions) {
             return static_cast<T>(0.0); // If reverse reactions are not used, return zero
         }
-        s_debug = false;
-        if (reaction.peName() == "p(p,e+)d" || reaction.peName() =="d(d,n)he3" || reaction.peName() == "c12(p,g)n13") {
-            if constexpr (!std::is_same_v<T, ADDouble>) {
-                s_debug = true;
-                std::cout << "Calculating reverse molar flow for reaction: " << reaction.peName() << std::endl;
-                std::cout << "\tT9: " << T9 << ", rho: " << rho << std::endl;
-            }
-        }
         T reverseMolarFlow = static_cast<T>(0.0);
 
         if (reaction.qValue() != 0.0) {
@@ -702,9 +675,6 @@ namespace gridfire {
                 }
             } else {
                 // A,B If not calling with an AD type, calculate the reverse rate directly
-                if (s_debug) {
-                    std::cout << "\tUsing double overload\n";
-                }
                 reverseRateConstant = calculateReverseRate(reaction, T9);
             }
 
