@@ -35,6 +35,9 @@ MESON_NUM_CORES=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/
 C_COMPILER=""
 CC_COMPILER=""
 FC_COMPILER=""
+MESON_C_ARGS=""
+MESON_CXX_ARGS=""
+MESON_FC_ARGS=""
 declare -A VALID_COMPILERS
 declare -A MESON_ADVANCED_OPTS
 # --- Initialize default advanced options ---
@@ -47,7 +50,7 @@ MESON_ADVANCED_OPTS["werror"]="false"
 MESON_ADVANCED_OPTS["b_pch"]="true"
 MESON_ADVANCED_OPTS["b_coverage"]="false"
 MESON_ADVANCED_OPTS["default_library"]="shared"
-MESON_ADVANCED_OPTS["optimization"]=2
+MESON_ADVANCED_OPTS["optimization"]="2"
 
 
 # --- ANSI Color Codes ---
@@ -123,10 +126,10 @@ show_help() {
   echo "This script checks for dependencies, installs them, and builds the project."
   echo
   echo "Options:"
-  echo "  --tui         Run in Text-based User Interface mode for interactive dependency installation and build control."
-  echo "  --help, -h    Show this help message and exit."
-  echo "  --clean       Remove the build directory and log file before starting."
-  echo "  --config FILE Load a configuration file on startup."
+  echo "  --tui          Run in Text-based User Interface mode for interactive dependency installation and build control."
+  echo "  --help, -h     Show this help message and exit."
+  echo "  --clean        Remove the build directory and log file before starting."
+  echo "  --config FILE  Load a configuration file on startup."
   echo
   echo "The script will automatically detect your OS and suggest the correct package manager commands."
   echo "All output is logged to ${LOGFILE}."
@@ -154,11 +157,11 @@ is_externally_managed() {
     local py_prefix
     py_prefix=$(python3 -c "import sysconfig; print(sysconfig.get_path(\"stdlib\"))")
     if [ -f "$py_prefix/EXTERNALLY-MANAGED" ]; then
-	log "${YELLOW}Python is externally managed${NC}"
-	USING_VENV=true
+    log "${YELLOW}Python is externally managed${NC}"
+    USING_VENV=true
         return 0 # 0 means true in bash
     else
-	log "${YELLOW}Python is not externally managed${NC}"
+    log "${YELLOW}Python is not externally managed${NC}"
         return 1 # 1 means false
     fi
 }
@@ -463,8 +466,8 @@ get_install_cmd() {
         "cmake") cmd="$brew_cmd install cmake" ;;
         "boost") cmd="$brew_cmd install boost" ;;
         "dialog") cmd="$brew_cmd install dialog" ;;
-	      "ninja") cmd="$brew_cmd install ninja" ;;
-	      "python3-venv") cmd="$brew_cmd install python3" ;; # Homebrew installs venv with Python 3
+          "ninja") cmd="$brew_cmd install ninja" ;;
+          "python3-venv") cmd="$brew_cmd install python3" ;; # Homebrew installs venv with Python 3
       esac
       ;;
     "Linux")
@@ -540,6 +543,11 @@ run_meson_setup() {
     meson_opts+=("-Dlog_level=${MESON_LOG_LEVEL}")
     meson_opts+=("-Dpkg-config=${MESON_PKG_CONFIG}")
     meson_opts+=("--prefix=${INSTALL_PREFIX}")
+
+    # Add custom compiler flags
+    if [ -n "$MESON_C_ARGS" ]; then meson_opts+=("-Dc_args=${MESON_C_ARGS}"); fi
+    if [ -n "$MESON_CXX_ARGS" ]; then meson_opts+=("-Dcpp_args=${MESON_CXX_ARGS}"); fi
+    if [ -n "$MESON_FC_ARGS" ]; then meson_opts+=("-Dfortran_args=${MESON_FC_ARGS}"); fi
 
     # Add advanced options
     for key in "${!MESON_ADVANCED_OPTS[@]}"; do
@@ -904,6 +912,50 @@ run_compiler_selection_tui() {
     fi
 }
 
+run_compiler_flags_tui() {
+    while true; do
+        local choice
+        choice=$(dialog --clear --backtitle "Custom Compiler Flags" \
+            --title "Custom Compiler Flags (Meson c_args, cpp_args, etc.)" \
+            --menu "Select which flags to edit. These are passed directly to the compiler." 15 78 4 \
+            "1" "C Flags (c_args)" \
+            "2" "C++ Flags (cpp_args)" \
+            "3" "Fortran Flags (fortran_args)" \
+            "Q" "Back to Build Config" \
+            3>&1 1>&2 2>&3)
+
+        case "$choice" in
+            1)
+                local new_flags
+                new_flags=$(dialog --title "Set Custom C Flags" --inputbox "Enter space-separated flags for the C compiler:" 10 70 "${MESON_C_ARGS}" 3>&1 1>&2 2>&3)
+                if [[ $? -eq 0 ]]; then # Check if user pressed OK
+                    MESON_C_ARGS="$new_flags"
+                    log "${BLUE}[Config] Set custom C flags to: ${MESON_C_ARGS}${NC}"
+                fi
+                ;;
+            2)
+                local new_flags
+                new_flags=$(dialog --title "Set Custom C++ Flags" --inputbox "Enter space-separated flags for the C++ compiler:" 10 70 "${MESON_CXX_ARGS}" 3>&1 1>&2 2>&3)
+                if [[ $? -eq 0 ]]; then
+                    MESON_CXX_ARGS="$new_flags"
+                    log "${BLUE}[Config] Set custom C++ flags to: ${MESON_CXX_ARGS}${NC}"
+                fi
+                ;;
+            3)
+                local new_flags
+                new_flags=$(dialog --title "Set Custom Fortran Flags" --inputbox "Enter space-separated flags for the Fortran compiler:" 10 70 "${MESON_FC_ARGS}" 3>&1 1>&2 2>&3)
+                if [[ $? -eq 0 ]]; then
+                    MESON_FC_ARGS="$new_flags"
+                    log "${BLUE}[Config] Set custom Fortran flags to: ${MESON_FC_ARGS}${NC}"
+                fi
+                ;;
+            Q) break ;;
+            *) break ;;
+        esac
+    done
+}
+
+
 run_advanced_options_tui() {
     while true; do
         local choice
@@ -1021,7 +1073,7 @@ run_build_config_tui() {
     local choice
     choice=$(dialog --clear --backtitle "Build Configuration" \
         --title "Configure Build Options" \
-        --menu "Select an option to configure:" 20 70 8 \
+        --menu "Select an option to configure:" 20 70 9 \
         "1" "Build Directory (current: ${BUILD_DIR})" \
         "2" "Install Prefix (current: ${INSTALL_PREFIX})" \
         "3" "Manage & Select C/C++/Fortran Compiler" \
@@ -1030,6 +1082,7 @@ run_build_config_tui() {
         "6" "Generate pkg-config (current: ${MESON_PKG_CONFIG})" \
         "7" "Number of Cores (current: ${MESON_NUM_CORES})" \
         "8" "Advanced Build Options" \
+        "9" "Custom Compiler Flags" \
         3>&1 1>&2 2>&3)
 
     clear
@@ -1092,11 +1145,14 @@ run_build_config_tui() {
                 MESON_NUM_CORES="$core_choice"
                 log "${BLUE}[Config] Set number of cores to: ${MESON_NUM_CORES}${NC}"
             elif [ -n "$core_choice" ]; then
-                 dialog --msgbox "Invalid input. Please enter a positive number." 6 40
+                dialog --msgbox "Invalid input. Please enter a positive number." 6 40
             fi
             ;;
         8)
             run_advanced_options_tui
+            ;;
+        9)
+            run_compiler_flags_tui
             ;;
     esac
 }
@@ -1146,6 +1202,9 @@ run_save_config_tui() {
         echo "C_COMPILER=\"$C_COMPILER\""
         echo "CC_COMPILER=\"$CC_COMPILER\""
         echo "FC_COMPILER=\"$FC_COMPILER\""
+        echo "MESON_C_ARGS=\"$MESON_C_ARGS\""
+        echo "MESON_CXX_ARGS=\"$MESON_CXX_ARGS\""
+        echo "MESON_FC_ARGS=\"$MESON_FC_ARGS\""
         echo ""
         echo "# Advanced Meson Options"
         for key in "${!MESON_ADVANCED_OPTS[@]}"; do
@@ -1212,7 +1271,7 @@ run_main_tui() {
     while true; do
         # Re-check boost status to update menu dynamically
         if [[ $BOOST_CHECKED = false ]]; then
-	    BOOST_OKAY=true
+        BOOST_OKAY=true
             log "${BLUE}[Info] Checking Boost library status (this may take a minute)...${NC}"
             # If BOOST_CHECKED is set, we assume Boost was checked previously
             check_boost >/dev/null 2>&1 || BOOST_OKAY=false
@@ -1243,11 +1302,18 @@ run_main_tui() {
             "Q" "Exit"
         )
 
+        local custom_flags_status=""
+        if [ -n "$MESON_C_ARGS" ]; then custom_flags_status+="C "; fi
+        if [ -n "$MESON_CXX_ARGS" ]; then custom_flags_status+="CXX "; fi
+        if [ -n "$MESON_FC_ARGS" ]; then custom_flags_status+="F "; fi
+        # Trim trailing space
+        custom_flags_status=$(echo "$custom_flags_status" | sed 's/ *$//')
+        if [ -z "$custom_flags_status" ]; then custom_flags_status="None"; fi
 
         local choice
         choice=$(dialog --clear --backtitle "GridFire Installer - [${sudo_status}]" \
             --title "Main Menu" \
-            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 24 78 14 \
+            --menu "C: ${C_COMPILER:-N/A} C++: ${CC_COMPILER:-N/A} FC: ${FC_COMPILER:-N/A}\nDIR: ${BUILD_DIR} | TYPE: ${MESON_BUILD_TYPE} | CORES: ${MESON_NUM_CORES}\nPREFIX: ${INSTALL_PREFIX} | CUSTOM FLAGS: ${custom_flags_status}\nLOG: ${MESON_LOG_LEVEL} | PKG-CONFIG: ${MESON_PKG_CONFIG}" 24 78 14 \
             "${menu_items[@]}" \
             3>&1 1>&2 2>&3)
 
@@ -1327,8 +1393,8 @@ main() {
   # Run check_compiler first to set the default
   check_compiler
   declare -A CHECKS=(
-      [python-dev]="check_python_dev" [meson-python]="check_meson_python" [cmake]="check_cmake"
-      [meson]="check_meson" [boost]="check_boost"
+       [python-dev]="check_python_dev" [meson-python]="check_meson_python" [cmake]="check_cmake"
+       [meson]="check_meson" [boost]="check_boost"
   )
   if ! check_compiler; then
       # Handle case where no compiler is found

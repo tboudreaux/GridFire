@@ -19,7 +19,7 @@ netIn = NetIn()
 netIn.composition = comp
 netIn.temperature = 1.5e7
 netIn.density = 1.6e2
-netIn.tMax = 1e-9
+netIn.tMax = 1e17
 netIn.dt0 = 1e-12
 
 baseEngine = GraphEngine(netIn.composition, 2)
