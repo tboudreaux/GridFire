@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['_7eengine_0',['~Engine',['../classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037',1,'gridfire::Engine']]],
-  ['_7eengineerror_1',['~EngineError',['../structgridfire_1_1expectations_1_1_engine_error.html#a018c845e244869df264b1b073de39897',1,'gridfire::expectations::EngineError']]],
-  ['_7eengineview_2',['~EngineView',['../classgridfire_1_1_engine_view.html#a994660f2d553f3a123512dc5eb421e74',1,'gridfire::EngineView']]],
-  ['_7enetwork_3',['~Network',['../classgridfire_1_1_network.html#ab8d83289b62dda9b4e02f25311f85b79',1,'gridfire::Network']]],
-  ['_7enetworkfileparser_4',['~NetworkFileParser',['../classgridfire_1_1io_1_1_network_file_parser.html#a9b4095d06fad5df3805c92ae97b3eab3',1,'gridfire::io::NetworkFileParser']]],
-  ['_7enetworksolverstrategy_5',['~NetworkSolverStrategy',['../classgridfire_1_1solver_1_1_network_solver_strategy.html#a1693dc93f63599c89587d729aca8e318',1,'gridfire::solver::NetworkSolverStrategy']]],
-  ['_7epartitionfunction_6',['~PartitionFunction',['../classgridfire_1_1partition_1_1_partition_function.html#a197a0663dcfb4ab4be3b0e14b98391db',1,'gridfire::partition::PartitionFunction']]],
-  ['_7ereaction_7',['~Reaction',['../classgridfire_1_1reaction_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::reaction::Reaction::~Reaction()'],['../classgridfire_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::Reaction::~Reaction()']]],
-  ['_7escreeningmodel_8',['~ScreeningModel',['../classgridfire_1_1screening_1_1_screening_model.html#adef175acdbd911527f56a1f1592579a7',1,'gridfire::screening::ScreeningModel']]]
+  ['u_0',['u',['../structgridfire_1_1_graph_engine_1_1constants.html#a3597bc632a5dd50aaa0044d8c18ca423',1,'gridfire::GraphEngine::constants']]],
+  ['unabletosetnetworkreactionserror_1',['UnableToSetNetworkReactionsError',['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html',1,'gridfire::exceptions::UnableToSetNetworkReactionsError'],['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html#acb3183c3dea755a8a26b00d638183c30',1,'gridfire::exceptions::UnableToSetNetworkReactionsError::UnableToSetNetworkReactionsError()']]],
+  ['unique_5fproduct_5findices_2',['unique_product_indices',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a9974f944a2cf5179baabebe09d60cf18',1,'gridfire::GraphEngine::PrecomputedReaction']]],
+  ['unique_5freactant_5findices_3',['unique_reactant_indices',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a510e380116e2e6d9158cf00fedac2666',1,'gridfire::GraphEngine::PrecomputedReaction']]],
+  ['unknown_4',['UNKNOWN',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37aac700abde5f6ff8b7328193eb19697b2',1,'gridfire']]],
+  ['update_5',['update',['../classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a',1,'gridfire::DynamicEngine::update()'],['../classgridfire_1_1_graph_engine.html#a5ac7cff23e70bd07ba7e510b753e2ab6',1,'gridfire::GraphEngine::update()'],['../classgridfire_1_1_adaptive_engine_view.html#a2a7ecf985a326b4bea43e00cf9ee43dd',1,'gridfire::AdaptiveEngineView::update()'],['../classgridfire_1_1_defined_engine_view.html#ae5762f395caea5381ec177507816b5ae',1,'gridfire::DefinedEngineView::update()'],['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a6bee75b5a6e508e6eebf83f0d48c50b8',1,'gridfire::MultiscalePartitioningEngineView::update()'],['../class_py_dynamic_engine.html#af8e6a8cd44f278535d7bcc9a896d6da8',1,'PyDynamicEngine::update()']]],
+  ['upperindex_6',['upperIndex',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html#aa99e1fa2fd4937592c066b0df16f377f',1,'gridfire::partition::RauscherThielemannPartitionFunction::IdentifiedIsotope']]],
+  ['usage_20examples_7',['Usage Examples',['../engine_8h.html#UsageExamples',1,'Usage Examples'],['../index.html#autotoc_md17',1,'Usage Examples']]],
+  ['usage_20guide_8',['GridFire Python Usage Guide',['../md_docs_2static_2usage.html',1,'']]],
+  ['usage_2emd_9',['usage.md',['../usage_8md.html',1,'']]]
 ];

@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "GridFire", "index.html", [
-    [ "Namespaces", "namespaces.html", [
+    [ "GridFire Python Usage Guide", "md_docs_2static_2usage.html", [
       [ "Funding", "index.html#autotoc_md1", null ],
       [ "Build and Installation Instructions", "index.html#autotoc_md2", [
         [ "Prerequisites", "index.html#autotoc_md3", null ],
@@ -52,6 +52,16 @@ var NAVTREE =
       ] ],
       [ "Common Workflow Example", "index.html#autotoc_md21", null ],
       [ "Related Projects", "index.html#autotoc_md22", null ],
+      [ "Installation", "md_docs_2static_2usage.html#autotoc_md25", [
+        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md26", null ],
+        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md27", null ]
+      ] ],
+      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md29", null ],
+      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md31", null ],
+      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md33", null ],
+      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md35", null ]
+    ] ],
+    [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
@@ -94,12 +104,12 @@ var NAVTREEINDEX =
 [
 "_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
 "classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f",
-"classgridfire_1_1_multiscale_partitioning_engine_view.html#a716d7357e944e8394d8b8e0b5e7625eb",
-"classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ab7f82597abf17f16c401bcdf528bd099",
-"classgridfire_1_1reaction_1_1_templated_reaction_set.html#a54c8cd7c34564277fe28eefc623f666e",
-"functions_k.html",
-"py__screening_8cpp.html#a4c5a7b887f31226ce0b82409f819833b",
-"structgridfire_1_1_q_s_e_cache_key.html#abb0d1c5b8c88ae2edbc1f8d3b8759f63"
+"classgridfire_1_1_multiscale_partitioning_engine_view.html#a79eb9c108d694a27ec913ed0143aa044",
+"classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ab9c683289d48e58edf06bf59215b4937",
+"classgridfire_1_1reaction_1_1_templated_reaction_set.html#a5962968fe478c79250e9d88d80a87600",
+"functions_m.html",
+"py__partition_8cpp.html",
+"structgridfire_1_1_q_s_e_cache_key.html#a711acccecadd93495fd08c81838be2d8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

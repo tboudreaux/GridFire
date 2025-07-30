@@ -53,7 +53,6 @@ var classgridfire_1_1_graph_engine =
     [ "setUseReverseReactions", "classgridfire_1_1_graph_engine.html#a409991d527ea4d4b05d1af907fe5d197", null ],
     [ "syncInternalMaps", "classgridfire_1_1_graph_engine.html#acdce8d87e23a2cd1504bc9472e538c0f", null ],
     [ "update", "classgridfire_1_1_graph_engine.html#a5ac7cff23e70bd07ba7e510b753e2ab6", null ],
-    [ "validateComposition", "classgridfire_1_1_graph_engine.html#aeeafeab40a5f4dbfae78bdc87e25e93f", null ],
     [ "validateConservation", "classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be", null ],
     [ "m_atomicReverseRates", "classgridfire_1_1_graph_engine.html#a816797b1d656d416844489692af44cf6", null ],
     [ "m_config", "classgridfire_1_1_graph_engine.html#a3b17102b143435ddfdc015d7a50c4b18", null ],

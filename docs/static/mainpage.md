@@ -216,12 +216,32 @@ gridfire::AdaptiveEngineView adaptiveView(baseEngine);
 ### Python Example
 ```python
 import gridfire
+
+
+from fourdst.composition import Composition
+
+symbols = ["H-1", ...]
+X = [0.708, ...]
+
+comp = Composition()
+comp.registerSymbols(symbols)
+comp.setMassFraction(X)
+comp.finalize(true)
 # Initialize GraphEngine with predefined composition
-engine = gridfire.GraphEngine(composition="example_composition")
+engine = gridfire.GraphEngine(comp)
+netIn = gridfire.types.NetIn
+netIn.composition = comp
+netIn.tMax = 1e-3
+netIn.temperature = 1.5e7
+netIn.density = 1.6e2
+netIn.dt0 = 1e-12
+
 # Perform one integration step
-engine.step(dt=1e-3)
-print(engine.abundances)
+netOut = engine.evaluate(netIn)
+print(netOut)
 ```
+
+More detailed python usage can be found [here](usage.md)
 
 ## Common Workflow Example
 

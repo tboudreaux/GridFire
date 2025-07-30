@@ -70,6 +70,5 @@ var namespacegridfire =
     [ "MIN_DENSITY_THRESHOLD", "namespacegridfire.html#ada3c137c014ecd8d06200fea2d1a9f50", null ],
     [ "MIN_JACOBIAN_THRESHOLD", "namespacegridfire.html#ae01b1738df1921db565bcbd68dd6cf64", null ],
     [ "PrimingReportStatusStrings", "namespacegridfire.html#a02be158966bf82a91b159b7a962c3fa5", null ],
-    [ "s_debug", "namespacegridfire.html#afd6f117eb2da3bab3873edc09d0926cf", null ],
     [ "s_operator_parens_called", "namespacegridfire.html#a8b632637f62614f509cde0e404a79054", null ]
 ];

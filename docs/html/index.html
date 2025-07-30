@@ -105,12 +105,12 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 <div class="textblock"><p><a class="anchor" id="md_docs_2static_2mainpage"></a></p>
 <p><img src="../../assets/logo/GridFire.png" alt="GridFire Logo" class="inline"/></p>
 <hr  />
-<p>GridFire is a C++ library designed to perform general nuclear network evolution using the Reaclib library. It is part of the larger SERiF project within the 4D-STAR collaboration.</p>
-<p><b>Design Philosophy and Workflow:</b> GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine representation of the reaction network. To manage the inherent stiffness and multi-scale nature of these networks, GridFire employs a layered view strategy: partitioning algorithms isolate fast and slow processes, adaptive culling removes negligible reactions at runtime, and implicit solvers stably integrate the remaining stiff system. This modular pipeline allows researchers to tailor accuracy versus performance trade-offs, reuse common engine components, and extend screening or partitioning models without modifying core integration routines.</p>
+<p> GridFire is a C++ library designed to perform general nuclear network evolution using the Reaclib library. It is part of the larger SERiF project within the 4D-STAR collaboration. GridFire is primarily focused on modeling the most relevant burning stages for stellar evolution modeling. Currently, there is limited support for inverse reactions. Therefore, GridFire has a limited set of tools to evolves a fusing plasma in NSE; however, this is not the primary focus of the library and has therefor not had significant development. For those interested in modeling super nova, neutron star mergers, or other high-energy astrophysical phenomena, we <b>strongly</b> recomment using <a href="https://bitbucket.org/jlippuner/skynet/src/master/">SkyNet</a>.</p>
+<p><b>Design Philosophy and Workflow:</b> GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine representation of the reaction network. To manage the inherent stiffness and multiscale nature of these networks, GridFire employs a layered view strategy: partitioning algorithms isolate fast and slow processes, adaptive culling removes negligible reactions at runtime, and implicit solvers stably integrate the remaining stiff system. This modular pipeline allows researchers to tailor accuracy versus performance trade-offs, reuse common engine components, and extend screening or partitioning models without modifying core integration routines.</p>
 <h2><a class="anchor" id="autotoc_md1"></a>
 Funding</h2>
 <p>GridFire is a part of the 4D-STAR collaboration.</p>
-<p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR) Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research.</p>
+<p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR) Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council.</p>
 <h2><a class="anchor" id="autotoc_md2"></a>
 Build and Installation Instructions</h2>
 <h3><a class="anchor" id="autotoc_md3"></a>
@@ -123,8 +123,10 @@ Prerequisites</h3>
 <li>Boost libraries (&gt;= 1.75.0) installed system-wide</li>
 </ul>
 <blockquote class="doxtable">
-<p>Note: Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost.</p>
-<p>Windows is not supported at this time. </p>
+<p><b>Note:</b> Boost is the only external library dependency; no additional libraries are required beyond a C++ compiler, Meson, Python, and Boost. </p>
+</blockquote>
+<blockquote class="doxtable">
+<p><b>Note:</b> Windows is not supported at this time and <em>there are no plans to support it in the future</em>. Windows users are encouraged to use WSL2 or a Linux VM. </p>
 </blockquote>
 <h3><a class="anchor" id="autotoc_md4"></a>
 Dependency Installation on Common Platforms</h3>
@@ -161,13 +163,16 @@ Developer Workflow</h3>
 </ol>
 <h2><a class="anchor" id="autotoc_md9"></a>
 Code Architecture and Logical Flow</h2>
-<p>GridFire is organized into modular components that collaborate to simulate nuclear reaction networks with high fidelity:</p>
+<p>GridFire is organized into a series of composable modules, each responsible for a specific aspect of nuclear reaction network modeling. The core components include:</p>
 <ul>
 <li><b>Engine Module:</b> Core interfaces and implementations (e.g., <code>GraphEngine</code>) that evaluate reaction network rate equations and energy generation.</li>
 <li><b>Screening Module:</b> Implements nuclear reaction screening corrections (<code>WeakScreening</code>, <code>BareScreening</code>, etc.) affecting reaction rates.</li>
-<li><b>Rates Module:</b> Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.</li>
-<li><b>Python Interface:</b> Exposes C++ functionality to Python, enabling rapid prototyping and integration into workflows.</li>
+<li><b>Reaction Module:</b> Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.</li>
+<li><b>Partition Module:</b> Implements partition functions (e.g., <code>GroundStatePartitionFunction</code>, <code>RauscherThielemannPartitionFunction</code>) to weight reaction rates based on nuclear properties.</li>
+<li><b>Solver Module:</b> Defines numerical integration strategies (e.g., <code>DirectNetworkSolver</code>) for solving the stiff ODE systems arising from reaction networks.</li>
+<li><b>Python Interface:</b> Exposes <em>almost</em> all C++ functionality to Python, allowing users to define compositions, configure engines, and run simulations directly from Python scripts.</li>
 </ul>
+<p>Generally a user will start by selecting a base engine (currently we only offer <code>GraphEngine</code>), which constructs the full reaction network graph from a given composition. The user can then apply various engine views to adapt the network topology, such as partitioning fast and slow reactions, adaptively culling low-flow pathways, or priming the network with specific species. Finally, a numerical solver is selected to integrate the network over time, producing updated abundances and diagnostics.</p>
 <h3><a class="anchor" id="autotoc_md10"></a>
 GraphEngine Configuration Options</h3>
 <p>GraphEngine exposes runtime configuration methods to tailor network construction and rate evaluations:</p>
@@ -269,7 +274,7 @@ C++ Example: GraphEngine Initialization</h3>
 <div class="line"><span class="comment">// Define a composition and initialize the engine</span></div>
 <div class="line">fourdst::composition::Composition comp;</div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00101">engine_graph.h:101</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00100">engine_graph.h:100</a></div></div>
 <div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md19"></a>
 C++ Example: Adaptive Network View</h3>
@@ -285,12 +290,31 @@ C++ Example: Adaptive Network View</h3>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md20"></a>
 Python Example</h3>
 <div class="fragment"><div class="line"><span class="keyword">import</span> gridfire</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
+<div class="line"> </div>
+<div class="line">symbols = [<span class="stringliteral">&quot;H-1&quot;</span>, ...]</div>
+<div class="line">X = [0.708, ...]</div>
+<div class="line"> </div>
+<div class="line">comp = Composition()</div>
+<div class="line">comp.registerSymbols(symbols)</div>
+<div class="line">comp.setMassFraction(X)</div>
+<div class="line">comp.finalize(true)</div>
 <div class="line"><span class="comment"># Initialize GraphEngine with predefined composition</span></div>
-<div class="line">engine = <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire.GraphEngine</a>(composition=<span class="stringliteral">&quot;example_composition&quot;</span>)</div>
+<div class="line">engine = <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire.GraphEngine</a>(comp)</div>
+<div class="line">netIn = gridfire.types.NetIn</div>
+<div class="line">netIn.composition = comp</div>
+<div class="line">netIn.tMax = 1e-3</div>
+<div class="line">netIn.temperature = 1.5e7</div>
+<div class="line">netIn.density = 1.6e2</div>
+<div class="line">netIn.dt0 = 1e-12</div>
+<div class="line"> </div>
 <div class="line"><span class="comment"># Perform one integration step</span></div>
-<div class="line">engine.step(dt=1e-3)</div>
-<div class="line">print(engine.abundances)</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md21"></a>
+<div class="line">netOut = engine.evaluate(netIn)</div>
+<div class="line">print(netOut)</div>
+</div><!-- fragment --><p>More detailed python usage can be found <a class="el" href="md_docs_2static_2usage.html">here</a></p>
+<h2><a class="anchor" id="autotoc_md21"></a>
 Common Workflow Example</h2>
 <p>A representative workflow often composes multiple engine views to balance accuracy, stability, and performance when integrating stiff nuclear networks:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
