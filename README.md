@@ -31,6 +31,21 @@ GridFire is a part of the 4D-STAR collaboration.
 Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s)
 only and do not necessarily reflect those of the European Union or the European Research Council.
 
+## Python installation
+By far the easiest way to install is with pip. This will install either
+pre-compiled wheels or, if your system has not had a wheel compiled for it, it
+will try to build locally (this may take **a long time**). The python bindings
+are just that and should maintain nearly the same speed as the C++ code. End
+users are strongly encorages to use the python module rather than the C++ code.
+
+### pypi
+Installing from pip is as simple as 
+```bash
+pip install gridfire
+```
+
+If you want the most recent version follow the instructions below to build the python bindings from source...
+
 ## Automatic Build and Installation
 ### Script Build and Installation Instructions
 
