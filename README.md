@@ -21,10 +21,10 @@ evolution. It is part of the larger SERiF project within the 4D-STAR
 collaboration. GridFire is primarily focused on modeling the most relevant
 burning stages for stellar evolution modeling. Currently, there is limited
 support for inverse reactions. Therefore, GridFire has a limited set of tools
-to evolves a fusing plasma in NSE; however, this is not the primary focus of
-the library and has therefor not had significant development. For those
+to evolve a fusing plasma in NSE; however, this is not the primary focus of
+the library and has therefore not had significant development. For those
 interested in modeling super nova, neutron star mergers, or other high-energy
-astrophysical phenomena, we **strongly** recomment using
+astrophysical phenomena, we **strongly** recommend using
 [SkyNet](https://bitbucket.org/jlippuner/skynet/src/master/).
 
 ## Design Philosophy and Workflow
@@ -59,7 +59,7 @@ By far the easiest way to install is with pip. This will install either
 pre-compiled wheels or, if your system has not had a wheel compiled for it, it
 will try to build locally (this may take **a long time**). The python bindings
 are just that and should maintain nearly the same speed as the C++ code. End
-users are strongly encourages to use the python module rather than the C++ code.
+users are strongly encouraged to use the python module rather than the C++ code.
 
 ### pypi
 Installing from pip is as simple as
@@ -75,7 +75,7 @@ These wheels have been compiled on many systems
 | 0.5.0   | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.5.0   | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 
-> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Do
+> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Due
 > to that platform being phased out it is likely that there will never be
 > precompiled wheels or releases for it.
 
@@ -322,7 +322,7 @@ abundances and diagnostics.
 ## Engines
 GridFire is, at its core, based on a series of `Engines`. These are constructs
 which know how to report information on series of ODEs which need to be solved
-to evolver abundances. The important thing to understand about `Engines` is
+to evolve abundances. The important thing to understand about `Engines` is
 that they contain all the detailed physics GridFire uses. For example a
 `Solver` takes an `Engine` but does not compute physics itself. Rather, it asks
 the `Engine` for stuff like the jacobian matrix, stoichiometry, nuclear energy
@@ -459,7 +459,7 @@ A `NetIn` struct contains
 - The composition to start the timestep at. (`NetIn::composition`)
 - The temperature in Kelvin (`NetIn::temperature`)
 - The density in g/cm^3 (`NetIn::density`)
-- The max time to evolve the network too  in seconds (`NetIn::tMax`)
+- The max time to evolve the network to in seconds (`NetIn::tMax`)
 - The initial timestep to use in seconds (`NetIn::dt0`)
 - The initial energy in the system in ergs (`NetIn::energy`)
 
