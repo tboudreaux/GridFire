@@ -84,7 +84,7 @@
                     </div>
                     <div class="hidden sm:flex items-center space-x-6">
                         <a href="#home" class="nav-link text-sm font-medium hover:text-[var(--link-hover-color)] transition-colors">Home</a>
-                        <a href="#intro" class="nav-link text-sm font-medium hover:text-[var(--link-hover-color)] transition-colors">Intro</a>
+                        <a href="#intro" class="nav-link text-sm font-medium hover:text-[var(--link-hover-color)] transition-colors">About</a>
                         <a href="https://github.com/4D-STAR/GridFire" target="_blank" class="text-sm font-medium hover:text-[var(--link-hover-color)] transition-colors">GitHub</a>
                         <button id="funding-btn" class="text-sm font-medium hover:text-[var(--link-hover-color)] transition-colors">Funding</button>
                     </div>
@@ -111,7 +111,7 @@
                 </svg>
             </button>
             <a href="#home" class="mobile-nav-link text-2xl font-bold">Home</a>
-            <a href="#intro" class="mobile-nav-link text-2xl font-bold">Docs</a>
+            <a href="#intro" class="mobile-nav-link text-2xl font-bold">About</a>
             <a href="https://github.com/4D-STAR/GridFire" target="_blank" class="mobile-nav-link text-2xl font-bold">GitHub</a>
             <button id="mobile-funding-btn" class="mobile-nav-link text-2xl font-bold">Funding</button>
         </div>
@@ -123,36 +123,75 @@
         <section id="home" class="pt-8 -mt-8">
             <div class="content-card rounded-xl p-8 max-w-3xl mx-auto shadow-lg">
                 <h1 class="text-3xl sm:text-4xl font-bold mb-4">GridFire</h1>
-                <h2 class="text-xl sm:text-lg font-bold mb-5">A General Purpose Nuclear Network</h2>
-                <p class="mb-6 text-lg">A graph-first nuclear network supporting dynamic network topologies. GridFire is intended to be easy to use and very adaptable to a variety of physical situations.</p>
+                <h2 class="text-xl sm:text-lg font-bold mb-5">C++ Nuclear Network Evolution Library</h2>
+                <p class="mb-6 text-lg">A C++ library designed to perform general nuclear network evolution as part of the 4D-STAR collaboration. GridFire focuses on modeling the most relevant burning stages for stellar evolution with a balanced approach to physical fidelity, computational efficiency, and extensibility.</p>
                 <div class="flex space-x-4">
                     <a href="html/index.html" class="nav-link-btn bg-[var(--link-color)] text-white px-5 py-2 rounded-lg font-semibold hover:bg-[var(--link-hover-color)] transition-colors">Read the Docs</a>
+                    <a href="https://github.com/4D-STAR/GridFire" target="_blank" class="nav-link-btn border border-[var(--link-color)] text-[var(--link-color)] px-5 py-2 rounded-lg font-semibold hover:bg-[var(--link-color)] hover:text-white transition-colors">View on GitHub</a>
                 </div>
             </div>
         </section>
 
         <section id="intro" class="pt-8 -mt-8">
             <div class="content-card rounded-xl p-8 max-w-4xl mx-auto shadow-lg">
-                <h1 class="text-3xl font-bold mb-6">Usage</h1>
-                <h2 class="text-2xl font-semibold mb-3">Introduction</h2>
-                <p class="mb-4">GridFire is written in C++ but we maintain a robust set of Python bindings. These call the underlying C++ code, meaning that they are nearly as performant as the raw C++. Here we provide a short demonstration of how to use GridFire in Python.</p>
-                <h2 class="text-2xl font-semibold mb-3">Core Concepts</h2>
-                <p class="mb-4">GridFire separates the network into four main parts.</p>
-                <ul class="mb-4 list-disc list-inside space-y-2">
-                    <li><b>Species:</b> These represent individual isotopes, tracking things such as their mass, beta decay energy, quantum numbers, and half-life. </li>
-                    <li><b>Reactions:</b> These represent reactions. All reactions from REACLIB, which include only reactant species up to and including iron, are included. Each reaction can evaluate the reaction rate based on the REACLIB formula.  </li>
-                    <li><b>Engines:</b> Engines encode the underlying physical network. These can be either simplified networks (like `approx8Engine`) or more robust but slower networks (like `GraphEngine`). Engines are not directly evaluated; rather, solvers use engines to find abundances and energies. </li>
-                    <li><b>Solvers:</b> Solvers take an engine and know how to integrate it through time. This can either be a simple evaluation of the network topology or it can include more complex approximations such as QSE. </li>
+                <h1 class="text-3xl font-bold mb-6">About GridFire</h1>
+                <h2 class="text-2xl font-semibold mb-3">Design Philosophy</h2>
+                <p class="mb-4">GridFire is architected to balance physical fidelity, computational efficiency, and extensibility when simulating complex nuclear reaction networks. Users begin by defining a composition, which is used to construct a full GraphEngine representation of the reaction network. A GraphNetwork uses <a href="https://reaclib.jinaweb.org/index.php" class="text-[var(--link-color)] hover:text-[var(--link-hover-color)]">JINA Reaclib</a> reaction rates along with a dynamically constructed network topology.</p>
+                
+                <h2 class="text-2xl font-semibold mb-3">Architecture Overview</h2>
+                <p class="mb-4">GridFire is organized into composable modules, each responsible for a specific aspect of nuclear reaction network modeling:</p>
+                <ul class="mb-6 list-disc list-inside space-y-2">
+                    <li><b>Engine Module:</b> Core interfaces and implementations (e.g., GraphEngine) that evaluate reaction network rate equations and energy generation.</li>
+                    <li><b>Engine Views Module:</b> Composable engine optimization and modification (e.g., MultiscalePartitioningEngineView) which can be used to make problems more tractable.</li>
+                    <li><b>Screening Module:</b> Implements nuclear reaction screening corrections affecting reaction rates.</li>
+                    <li><b>Reaction Module:</b> Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.</li>
+                    <li><b>Partition Module:</b> Implements partition functions to weight reaction rates based on nuclear properties.</li>
+                    <li><b>Solver Module:</b> Defines numerical integration strategies for solving stiff ODE systems arising from reaction networks.</li>
+                    <li><b>Python Interface:</b> Exposes almost all C++ functionality to Python for ease of use.</li>
                 </ul>
-                <h2 class="text-2xl font-semibold mb-3">Python Example</h2>
-                <pre class="bg-gray-800 dark:bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto"><code>from gridfire import GraphEngine, DirectSolver, NetIn
-from gridfire.composition import Composition
-baseComposition = Composition(["H-1", "He-4"], [0.7, 0.3])
-engine = GraphEngine(baseComposition)
-solver = DirectSolver(engine)
+                
+                <h2 class="text-2xl font-semibold mb-3">Installation</h2>
+                <p class="mb-4">The easiest way to install GridFire is through pip, which will install pre-compiled wheels or build locally if needed:</p>
+                <pre class="bg-gray-800 dark:bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto mb-4"><code>pip install gridfire</code></pre>
+                <p class="mb-4">GridFire can also be built from source using the provided installation scripts or manual build instructions. The library requires a C++ compiler supporting C++23, Meson build system, and Boost libraries (≥1.83.0).</p>
+                
+                <h2 class="text-2xl font-semibold mb-3">Key Features</h2>
+                <ul class="mb-6 list-disc list-inside space-y-2">
+                    <li><b>Graph-based Network Construction:</b> GraphEngine recursively constructs reaction networks from seed compositions following JINA Reaclib pathways.</li>
+                    <li><b>Layered View Strategy:</b> Partitioning algorithms isolate fast and slow processes, adaptive culling removes negligible reactions, and implicit solvers handle stiff systems.</li>
+                    <li><b>Multiple Engine Views:</b> Including adaptive culling, multiscale partitioning, and network priming for different simulation needs.</li>
+                    <li><b>Automatic Differentiation:</b> Uses CppAD to generate analytic Jacobian matrices efficiently for improved solver performance.</li>
+                    <li><b>Python Extensibility:</b> Users can subclass engine views directly in Python and pass instances back to C++ solvers.</li>
+                </ul>
+                
+                <h2 class="text-2xl font-semibold mb-3">Simple Python Example</h2>
+                <pre class="bg-gray-800 dark:bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto"><code>import gridfire
+from fourdst.composition import Composition
 
-inputParams = NetIn(composition, 0.1, 100, 0, 1e17, 1e-16) // (composition, T9, density, intialEnergy, tMax, dt0)
-results = solver.evaluate(inputParams)
+# Create initial composition
+comp = Composition()
+symbols = ["H-1", "He-4", "C-12"]
+massFractions = [0.7, 0.29, 0.01]
+comp.registerSymbols(symbols)
+comp.setMassFraction(symbols, massFractions)
+comp.finalize(True)
+
+# Initialize engine and solver
+baseEngine = gridfire.GraphEngine(comp, gridfire.NetworkBuildDepth.SecondOrder)
+adaptiveView = gridfire.AdaptiveEngineView(baseEngine)
+solver = gridfire.DirectNetworkSolver(adaptiveView)
+
+# Set up integration parameters
+netIn = gridfire.types.NetIn()
+netIn.composition = comp
+netIn.temperature = 1.5e7  # K
+netIn.density = 1.5e2     # g/cm^3
+netIn.dt0 = 1e-12         # s
+netIn.tMax = 3e17         # s
+
+# Perform integration
+netOut = solver.evaluate(netIn)
+print(f"Integration completed in {netOut.num_steps} steps")
 </code></pre>
             </div>
         </section>
@@ -169,9 +208,9 @@ results = solver.evaluate(inputParams)
     <div id="funding-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 hidden">
         <div class="modal-card w-full max-w-lg m-4 p-8 rounded-xl shadow-2xl relative">
             <button id="close-modal-btn" class="absolute top-4 right-4 text-2xl font-bold hover:text-gray-500">&times;</button>
-            <h2 class="text-2xl font-bold mb-4">Funding information</h2>
-            <p class="mb-6">4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR)</p>
-            <p class="mb-6">Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research</p>
+            <h2 class="text-2xl font-bold mb-4">Funding Information</h2>
+            <p class="mb-6">GridFire is a part of the 4D-STAR collaboration.</p>
+            <p class="mb-6">4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR). Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council.</p>
             <p class="mb-6">&copy; <span id="modal-copyright-year"></span> 4D-STAR Collaboration. </p>
         </div>
     </div>

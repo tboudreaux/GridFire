@@ -529,54 +529,44 @@ Workflow Components and Effects</h4>
 <h2><a class="anchor" id="autotoc_md52"></a>
 Python</h2>
 <p>The python bindings intentionally look <b>very</b> similar to the C++ code. Generally all examples can be adapted to python by replacing includes of paths with imports of modules such that</p>
-<p><code>#include "gridfire/engine/GraphEngine.h&lt;/tt&gt; becomes &lt;tt&gt;import gridfire.engine.GraphEngine&lt;/tt&gt;
-
-All GridFire C++ types have been bound and can be passed around as one would expect.
-
-@subsubsection autotoc_md53 Common Workflow Examople
-This example impliments the same logic as the above C++ example
-@icode{python} 
-import gridfire
-
-
-from fourdst.composition import Composition
-
-symbols = ["H-1", ...]
-X = [0.7, ...]
-
-comp = Composition()
-comp.registerSymbols(symbols)
-comp.setMassFraction(X)
-comp.finalize(true)
-# Initialize GraphEngine with predefined composition
-engine = gridfire.GraphEngine(comp)
-netIn = gridfire.types.NetIn
-netIn.composition = comp
-netIn.tMax = 1e-3
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.dt0 = 1e-12
-
-# Perform one integration step
-netOut = engine.evaluate(netIn)
-print(netOut)
-@endicode 
-
-
-
-@section autotoc_md54 Related Projects
-
-GridFire integrates with and builds upon several key 4D-STAR libraries:
-
-- &lt;a href="<a href="https://github.com/4D-STAR/fourdst">https://github.com/4D-STAR/fourdst</a>" &gt;fourdst&lt;/a&gt;: hub module managing versioning
-  of &lt;tt&gt;libcomposition&lt;/tt&gt;, &lt;tt&gt;libconfig&lt;/tt&gt;, &lt;tt&gt;liblogging&lt;/tt&gt;, and &lt;tt&gt;libconstants&lt;/tt&gt;
-- &lt;a href="<a href="https://github.com/4D-STAR/libcomposition">https://github.com/4D-STAR/libcomposition</a>" &gt;libcomposition&lt;/a&gt;
-  (&lt;a href="<a href="https://4d-star.github.io/libcomposition/">https://4d-star.github.io/libcomposition/</a>" &gt;docs&lt;/a&gt;): Composition management
-  toolkit.
-- &lt;a href="<a href="https://github.com/4D-STAR/libconfig">https://github.com/4D-STAR/libconfig</a>" &gt;libconfig&lt;/a&gt;: Configuration file parsing
-  utilities.
-- &lt;a href="<a href="https://github.com/4D-STAR/liblogging">https://github.com/4D-STAR/liblogging</a>" &gt;liblogging&lt;/a&gt;: Flexible logging framework.
-- &lt;a href="<a href="https://github.com/4D-STAR/libconstants">https://github.com/4D-STAR/libconstants</a>" &gt;libconstants: Physical constants </code></p>
+<p><code>#include "gridfire/engine/GraphEngine.h"</code> becomes <code>import gridfire.engine.GraphEngine</code></p>
+<p>All GridFire C++ types have been bound and can be passed around as one would expect.</p>
+<h3><a class="anchor" id="autotoc_md53"></a>
+Common Workflow Examople</h3>
+<p>This example impliments the same logic as the above C++ example </p><div class="fragment"><div class="line"><span class="keyword">import</span> gridfire</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
+<div class="line"> </div>
+<div class="line">symbols = [<span class="stringliteral">&quot;H-1&quot;</span>, ...]</div>
+<div class="line">X = [0.7, ...]</div>
+<div class="line"> </div>
+<div class="line">comp = Composition()</div>
+<div class="line">comp.registerSymbols(symbols)</div>
+<div class="line">comp.setMassFraction(X)</div>
+<div class="line">comp.finalize(true)</div>
+<div class="line"><span class="comment"># Initialize GraphEngine with predefined composition</span></div>
+<div class="line">engine = <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire.GraphEngine</a>(comp)</div>
+<div class="line">netIn = gridfire.types.NetIn</div>
+<div class="line">netIn.composition = comp</div>
+<div class="line">netIn.tMax = 1e-3</div>
+<div class="line">netIn.temperature = 1.5e7</div>
+<div class="line">netIn.density = 1.6e2</div>
+<div class="line">netIn.dt0 = 1e-12</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Perform one integration step</span></div>
+<div class="line">netOut = engine.evaluate(netIn)</div>
+<div class="line">print(netOut)</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md54"></a>
+Related Projects</h1>
+<p>GridFire integrates with and builds upon several key 4D-STAR libraries:</p>
+<ul>
+<li><a href="https://github.com/4D-STAR/fourdst">fourdst</a>: hub module managing versioning of <code>libcomposition</code>, <code>libconfig</code>, <code>liblogging</code>, and <code>libconstants</code></li>
+<li><a href="https://github.com/4D-STAR/libcomposition">libcomposition</a> (<a href="https://4d-star.github.io/libcomposition/">docs</a>): Composition management toolkit.</li>
+<li><a href="https://github.com/4D-STAR/libconfig">libconfig</a>: Configuration file parsing utilities.</li>
+<li><a href="https://github.com/4D-STAR/liblogging">liblogging</a>: Flexible logging framework.</li>
+<li><a href="https://github.com/4D-STAR/libconstants">libconstants</a>: Physical constants </li>
+</ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

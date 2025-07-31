@@ -633,7 +633,7 @@ The python bindings intentionally look **very** similar to the C++ code.
 Generally all examples can be adapted to python by replacing includes of paths
 with imports of modules such that
 
-`#include "gridfire/engine/GraphEngine.h` becomes `import gridfire.engine.GraphEngine`
+`#include "gridfire/engine/GraphEngine.h"` becomes `import gridfire.engine.GraphEngine`
 
 All GridFire C++ types have been bound and can be passed around as one would expect.
 
