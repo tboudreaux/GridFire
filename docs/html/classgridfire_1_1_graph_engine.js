@@ -49,7 +49,7 @@ var classgridfire_1_1_graph_engine =
     [ "reserveJacobianMatrix", "classgridfire_1_1_graph_engine.html#a8d0c0bd54a2908cff62dae7af0c149b5", null ],
     [ "setNetworkReactions", "classgridfire_1_1_graph_engine.html#a371ba0881d6903ddb2d586faa61805d0", null ],
     [ "setPrecomputation", "classgridfire_1_1_graph_engine.html#a6c5410878496abc349ba30b691cdf0f1", null ],
-    [ "setScreeningModel", "classgridfire_1_1_graph_engine.html#a8110e687844f921438bb517e1d8ce62f", null ],
+    [ "setScreeningModel", "classgridfire_1_1_graph_engine.html#a9bc768ca8ca59d442c0d05cb04e36d7c", null ],
     [ "setUseReverseReactions", "classgridfire_1_1_graph_engine.html#a409991d527ea4d4b05d1af907fe5d197", null ],
     [ "syncInternalMaps", "classgridfire_1_1_graph_engine.html#acdce8d87e23a2cd1504bc9472e538c0f", null ],
     [ "update", "classgridfire_1_1_graph_engine.html#a5ac7cff23e70bd07ba7e510b753e2ab6", null ],

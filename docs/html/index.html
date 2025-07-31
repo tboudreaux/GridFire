@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -103,7 +103,7 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_docs_2static_2mainpage"></a></p>
-<p><img src="../../assets/logo/GridFire.png" alt="GridFire Logo" class="inline"/></p>
+<p><img src="https://github.com/4D-STAR/GridFire/blob/main/assets/logo/GridFire.png?raw=true" alt="GridFire Logo" class="inline"/></p>
 <h1><a class="anchor" id="autotoc_md0"></a>
 Introduction</h1>
 <p>GridFire is a C++ library designed to perform general nuclear network evolution. It is part of the larger SERiF project within the 4D-STAR collaboration. GridFire is primarily focused on modeling the most relevant burning stages for stellar evolution modeling. Currently, there is limited support for inverse reactions. Therefore, GridFire has a limited set of tools to evolves a fusing plasma in NSE; however, this is not the primary focus of the library and has therefor not had significant development. For those interested in modeling super nova, neutron star mergers, or other high-energy astrophysical phenomena, we <b>strongly</b> recomment using <a href="https://bitbucket.org/jlippuner/skynet/src/master/">SkyNet</a>.</p>
@@ -439,9 +439,11 @@ GraphEngine Initialization</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// Define a composition and initialize the engine</span></div>
-<div class="line">fourdst::composition::Composition comp;</div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
+<div class="line"><span class="keywordtype">int</span> main(){</div>
+<div class="line">    <span class="comment">// Define a composition and initialize the engine</span></div>
+<div class="line">    fourdst::composition::Composition comp;</div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
+<div class="line">}</div>
 <div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:100</div></div>
 <div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md48"></a>
@@ -449,10 +451,12 @@ Adaptive Network View</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__adaptive_8h.html">gridfire/engine/views/engine_adaptive.h</a>&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
 <div class="line"> </div>
-<div class="line">fourdst::composition::Composition comp;</div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
-<div class="line"><span class="comment">// Dynamically adapt network topology based on reaction flows</span></div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptiveView(baseEngine);</div>
+<div class="line"><span class="keywordtype">int</span> main(){</div>
+<div class="line">    fourdst::composition::Composition comp;</div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
+<div class="line">    <span class="comment">// Dynamically adapt network topology based on reaction flows</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptiveView(baseEngine);</div>
+<div class="line">}</div>
 <div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> engine_adaptive.h:50</div></div>
 <div class="ttc" id="aengine__adaptive_8h_html"><div class="ttname"><a href="engine__adaptive_8h.html">engine_adaptive.h</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md49"></a>
@@ -463,60 +467,66 @@ Composition Initialization</h3>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"> </div>
-<div class="line">fourdst::composition::Composition comp;</div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    fourdst::composition::Composition comp;</div>
 <div class="line"> </div>
-<div class="line">std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
-<div class="line">std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
+<div class="line">    std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
+<div class="line">    std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
 <div class="line"> </div>
-<div class="line">comp.registerSymbols(symbols);</div>
-<div class="line">comp.setMassFraction(symbols, massFractions);</div>
+<div class="line">    comp.registerSymbols(symbols);</div>
+<div class="line">    comp.setMassFraction(symbols, massFractions);</div>
 <div class="line"> </div>
-<div class="line">comp.finalize(<span class="keyword">true</span>);</div>
+<div class="line">    comp.finalize(<span class="keyword">true</span>);</div>
 <div class="line"> </div>
-<div class="line">std::cout &lt;&lt; comp &lt;&lt; std::endl;</div>
+<div class="line">    std::cout &lt;&lt; comp &lt;&lt; std::endl;</div>
+<div class="line">}</div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md50"></a>
 Common Workflow Example</h3>
 <p>A representative workflow often composes multiple engine views to balance accuracy, stability, and performance when integrating stiff nuclear networks:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine_8h.html">gridfire/engine/engine.h</a>&quot;</span> <span class="comment">// Unified header for real usage</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="solver_8h.html">gridfire/solver/solver.h</a>&quot;</span> <span class="comment">// Unified header for solvers</span></div>
 <div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 1. Define initial composition</span></div>
-<div class="line">fourdst::composition::Composition comp;</div>
+<div class="line"><span class="keywordtype">int</span> main(){</div>
+<div class="line">    <span class="comment">// 1. Define initial composition</span></div>
+<div class="line">    fourdst::composition::Composition comp;</div>
 <div class="line"> </div>
-<div class="line">std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
-<div class="line">std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
+<div class="line">    std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
+<div class="line">    std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
 <div class="line"> </div>
-<div class="line">comp.registerSymbols(symbols);</div>
-<div class="line">comp.setMassFraction(symbols, massFractions);</div>
+<div class="line">    comp.registerSymbols(symbols);</div>
+<div class="line">    comp.setMassFraction(symbols, massFractions);</div>
 <div class="line"> </div>
-<div class="line">comp.finalize(<span class="keyword">true</span>);</div>
+<div class="line">    comp.finalize(<span class="keyword">true</span>);</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
+<div class="line">    <span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
+<div class="line">    <span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
+<div class="line">    <span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
-<div class="line">gridfire::DirectNetworkSolver solver(adaptView);</div>
+<div class="line">    <span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
+<div class="line">    gridfire::DirectNetworkSolver solver(adaptView);</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 6. Prepare input conditions</span></div>
-<div class="line">NetIn input{</div>
-<div class="line">    comp,     <span class="comment">// composition</span></div>
-<div class="line">    1.5e7,      <span class="comment">// temperature [K]</span></div>
-<div class="line">    1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
-<div class="line">    1e-12,     <span class="comment">// initial timestep [s]</span></div>
-<div class="line">    3e17      <span class="comment">// integration end time [s]</span></div>
-<div class="line">};</div>
+<div class="line">    <span class="comment">// 6. Prepare input conditions</span></div>
+<div class="line">    NetIn input{</div>
+<div class="line">        comp,     <span class="comment">// composition</span></div>
+<div class="line">        1.5e7,      <span class="comment">// temperature [K]</span></div>
+<div class="line">        1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
+<div class="line">        1e-12,     <span class="comment">// initial timestep [s]</span></div>
+<div class="line">        3e17      <span class="comment">// integration end time [s]</span></div>
+<div class="line">    };</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// 7. Execute integration</span></div>
-<div class="line">NetOut output = solver.evaluate(input);</div>
-<div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
-<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:174</div></div>
+<div class="line">    <span class="comment">// 7. Execute integration</span></div>
+<div class="line">    NetOut output = solver.evaluate(input);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:182</div></div>
 <div class="ttc" id="aengine_8h_html"><div class="ttname"><a href="engine_8h.html">engine.h</a></div><div class="ttdoc">Core header for the GridFire reaction network engine module.</div></div>
+<div class="ttc" id="asolver_8h_html"><div class="ttname"><a href="solver_8h.html">solver.h</a></div></div>
 </div><!-- fragment --><h4><a class="anchor" id="autotoc_md51"></a>
 Workflow Components and Effects</h4>
 <ul>
@@ -526,38 +536,165 @@ Workflow Components and Effects</h4>
 <li><b>DirectNetworkSolver</b> employs an implicit Rosenbrock method to stably integrate the remaining stiff system with adaptive step control.</li>
 </ul>
 <p>This layered approach enhances stability for stiff networks while maintaining accuracy and performance.</p>
-<h2><a class="anchor" id="autotoc_md52"></a>
+<h3><a class="anchor" id="autotoc_md52"></a>
+Callback Example</h3>
+<p>Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide different context to the callback function, you should use the struct <code><a class="el" href="namespacegridfire_1_1solver.html">gridfire::solver</a>::&lt;SolverName&gt;::TimestepContext</code> as the argument type for the callback function. This struct contains all of the information provided by that solver to the callback function.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine_8h.html">gridfire/engine/engine.h</a>&quot;</span> <span class="comment">// Unified header for real usage</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="solver_8h.html">gridfire/solver/solver.h</a>&quot;</span> <span class="comment">// Unified header for solvers</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/atomic/species.h&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> callback(<span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html">gridfire::solver::DirectNetworkSolver::TimestepContext</a>&amp; context) {</div>
+<div class="line">    <span class="keywordtype">int</span> H1Index = context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#a53985d354dcaeda96dc39828c6c9d9d1">engine</a>.<a class="code hl_function" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">getSpeciesIndex</a>(fourdst::atomic::H_1);</div>
+<div class="line">    <span class="keywordtype">int</span> He4Index = context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#a53985d354dcaeda96dc39828c6c9d9d1">engine</a>.<a class="code hl_function" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">getSpeciesIndex</a>(fourdst::atomic::He_4);</div>
+<div class="line"> </div>
+<div class="line">    std::cout &lt;&lt; context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#ad49305586fdc676f96161e91c6b863dd">t</a> &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#adab4b53a94b935f89f799bd5a67847a2">state</a>(H1Index) &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#adab4b53a94b935f89f799bd5a67847a2">state</a>(He4Index) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main(){</div>
+<div class="line">    <span class="comment">// 1. Define initial composition</span></div>
+<div class="line">    fourdst::composition::Composition comp;</div>
+<div class="line"> </div>
+<div class="line">    std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
+<div class="line">    std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
+<div class="line"> </div>
+<div class="line">    comp.registerSymbols(symbols);</div>
+<div class="line">    comp.setMassFraction(symbols, massFractions);</div>
+<div class="line"> </div>
+<div class="line">    comp.finalize(<span class="keyword">true</span>);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
+<div class="line">    gridfire::DirectNetworkSolver solver(adaptView);</div>
+<div class="line">    solver.set_callback(callback);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 6. Prepare input conditions</span></div>
+<div class="line">    NetIn input{</div>
+<div class="line">        comp,     <span class="comment">// composition</span></div>
+<div class="line">        1.5e7,      <span class="comment">// temperature [K]</span></div>
+<div class="line">        1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
+<div class="line">        1e-12,     <span class="comment">// initial timestep [s]</span></div>
+<div class="line">        3e17      <span class="comment">// integration end time [s]</span></div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 7. Execute integration</span></div>
+<div class="line">    NetOut output = solver.evaluate(input);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html_ad3d56a8b9161b9cc7f4da51f6bf7e8c9"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine::getSpeciesIndex</a></div><div class="ttdeci">virtual int getSpeciesIndex(const fourdst::atomic::Species &amp;species) const =0</div><div class="ttdoc">Get the index of a species in the network.</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context_html"><div class="ttname"><a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html">gridfire::solver::DirectNetworkSolver::TimestepContext</a></div><div class="ttdoc">Context for the timestep callback function for the DirectNetworkSolver.</div><div class="ttdef"><b>Definition</b> solver.h:155</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context_html_a53985d354dcaeda96dc39828c6c9d9d1"><div class="ttname"><a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#a53985d354dcaeda96dc39828c6c9d9d1">gridfire::solver::DirectNetworkSolver::TimestepContext::engine</a></div><div class="ttdeci">const DynamicEngine &amp; engine</div><div class="ttdoc">Reference to the dynamic engine.</div><div class="ttdef"><b>Definition</b> solver.h:166</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context_html_ad49305586fdc676f96161e91c6b863dd"><div class="ttname"><a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#ad49305586fdc676f96161e91c6b863dd">gridfire::solver::DirectNetworkSolver::TimestepContext::t</a></div><div class="ttdeci">const double t</div><div class="ttdoc">Current time.</div><div class="ttdef"><b>Definition</b> solver.h:156</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context_html_adab4b53a94b935f89f799bd5a67847a2"><div class="ttname"><a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#adab4b53a94b935f89f799bd5a67847a2">gridfire::solver::DirectNetworkSolver::TimestepContext::state</a></div><div class="ttdeci">const boost::numeric::ublas::vector&lt; double &gt; &amp; state</div><div class="ttdoc">Current state of the system.</div><div class="ttdef"><b>Definition</b> solver.h:157</div></div>
+</div><!-- fragment --><p>&gt;<b>Note:</b> A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.</p>
+<p>&gt;<b>Note:</b> The order of species in the boost state vector (<code>ctx.state</code>) is <b>not guaranteed</b> to be any particular order run over run. Therefore, in order to reliably extract </p><blockquote class="doxtable">
+<p>values from it, you <b>must</b> use the <code>getSpeciesIndex</code> method of the engine to get the index of the species you are interested in (these will always be in the same order). </p>
+</blockquote>
+<h2><a class="anchor" id="autotoc_md53"></a>
 Python</h2>
 <p>The python bindings intentionally look <b>very</b> similar to the C++ code. Generally all examples can be adapted to python by replacing includes of paths with imports of modules such that</p>
 <p><code>#include "gridfire/engine/GraphEngine.h"</code> becomes <code>import gridfire.engine.GraphEngine</code></p>
 <p>All GridFire C++ types have been bound and can be passed around as one would expect.</p>
-<h3><a class="anchor" id="autotoc_md53"></a>
+<h3><a class="anchor" id="autotoc_md54"></a>
 Common Workflow Examople</h3>
-<p>This example impliments the same logic as the above C++ example </p><div class="fragment"><div class="line"><span class="keyword">import</span> gridfire</div>
-<div class="line"> </div>
+<p>This example impliments the same logic as the above C++ example </p><div class="fragment"><div class="line"><span class="keyword">from</span> gridfire.engine <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
+<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> DirectNetworkSolver</div>
+<div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
 <div class="line"> </div>
-<div class="line">symbols = [<span class="stringliteral">&quot;H-1&quot;</span>, ...]</div>
-<div class="line">X = [0.7, ...]</div>
+<div class="line">symbols : list[str] = [<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-3&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span>]</div>
+<div class="line">X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]</div>
+<div class="line"> </div>
 <div class="line"> </div>
 <div class="line">comp = Composition()</div>
-<div class="line">comp.registerSymbols(symbols)</div>
-<div class="line">comp.setMassFraction(X)</div>
-<div class="line">comp.finalize(true)</div>
-<div class="line"><span class="comment"># Initialize GraphEngine with predefined composition</span></div>
-<div class="line">engine = <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire.GraphEngine</a>(comp)</div>
-<div class="line">netIn = gridfire.types.NetIn</div>
+<div class="line">comp.registerSymbol(symbols)</div>
+<div class="line">comp.setMassFraction(symbols, X)</div>
+<div class="line">comp.finalize(<span class="keyword">True</span>)</div>
+<div class="line"> </div>
+<div class="line">print(f<span class="stringliteral">&quot;Initial H-1 mass fraction {comp.getMassFraction(&quot;</span>H-1<span class="stringliteral">&quot;)}&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">netIn = NetIn()</div>
 <div class="line">netIn.composition = comp</div>
-<div class="line">netIn.tMax = 1e-3</div>
 <div class="line">netIn.temperature = 1.5e7</div>
 <div class="line">netIn.density = 1.6e2</div>
+<div class="line">netIn.tMax = 1e-9</div>
 <div class="line">netIn.dt0 = 1e-12</div>
 <div class="line"> </div>
-<div class="line"><span class="comment"># Perform one integration step</span></div>
-<div class="line">netOut = engine.evaluate(netIn)</div>
-<div class="line">print(netOut)</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md54"></a>
+<div class="line">baseEngine = GraphEngine(netIn.composition, 2)</div>
+<div class="line">baseEngine.setUseReverseReactions(<span class="keyword">False</span>)</div>
+<div class="line"> </div>
+<div class="line">qseEngine = MultiscalePartitioningEngineView(baseEngine)</div>
+<div class="line"> </div>
+<div class="line">adaptiveEngine = AdaptiveEngineView(qseEngine)</div>
+<div class="line"> </div>
+<div class="line">solver = DirectNetworkSolver(adaptiveEngine)</div>
+<div class="line"> </div>
+<div class="line">results = solver.evaluate(netIn)</div>
+<div class="line"> </div>
+<div class="line">print(f<span class="stringliteral">&quot;Final H-1 mass fraction {results.composition.getMassFraction(&quot;</span>H-1<span class="stringliteral">&quot;)}&quot;</span>)</div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> solver.h:18</div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md55"></a>
+Python callbacks</h3>
+<p>Just like in C++, python users can register callbacks to be called at the end of each successful timestep. Note that these may slow down code significantly as the interpreter needs to jump up into the slower python code therefore these should likely only be used for debugging purposes.</p>
+<p>The syntax for registration is very similar to C++ </p><div class="fragment"><div class="line"><span class="keyword">from</span> gridfire.engine <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
+<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> DirectNetworkSolver</div>
+<div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
+<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacefourdst_1_1atomic.html">fourdst.atomic</a> <span class="keyword">import</span> species</div>
+<div class="line"> </div>
+<div class="line">symbols : list[str] = [<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-3&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span>]</div>
+<div class="line">X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">comp = Composition()</div>
+<div class="line">comp.registerSymbol(symbols)</div>
+<div class="line">comp.setMassFraction(symbols, X)</div>
+<div class="line">comp.finalize(<span class="keyword">True</span>)</div>
+<div class="line"> </div>
+<div class="line">print(f<span class="stringliteral">&quot;Initial H-1 mass fraction {comp.getMassFraction(&quot;</span>H-1<span class="stringliteral">&quot;)}&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">netIn = NetIn()</div>
+<div class="line">netIn.composition = comp</div>
+<div class="line">netIn.temperature = 1.5e7</div>
+<div class="line">netIn.density = 1.6e2</div>
+<div class="line">netIn.tMax = 1e-9</div>
+<div class="line">netIn.dt0 = 1e-12</div>
+<div class="line"> </div>
+<div class="line">baseEngine = GraphEngine(netIn.composition, 2)</div>
+<div class="line">baseEngine.setUseReverseReactions(<span class="keyword">False</span>)</div>
+<div class="line"> </div>
+<div class="line">qseEngine = MultiscalePartitioningEngineView(baseEngine)</div>
+<div class="line"> </div>
+<div class="line">adaptiveEngine = AdaptiveEngineView(qseEngine)</div>
+<div class="line"> </div>
+<div class="line">solver = DirectNetworkSolver(adaptiveEngine)</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">def </span>callback(context):</div>
+<div class="line">    H1Index = context.engine.getSpeciesIndex(species[<span class="stringliteral">&quot;H-1&quot;</span>])</div>
+<div class="line">    He4Index = context.engine.getSpeciesIndex(species[<span class="stringliteral">&quot;He-4&quot;</span>])</div>
+<div class="line">    C12ndex = context.engine.getSpeciesIndex(species[<span class="stringliteral">&quot;C-12&quot;</span>])</div>
+<div class="line">    Mgh24ndex = context.engine.getSpeciesIndex(species[<span class="stringliteral">&quot;Mg-24&quot;</span>])</div>
+<div class="line">    print(f<span class="stringliteral">&quot;Time: {context.t}, H-1: {context.state[H1Index]}, He-4: {context.state[He4Index]}, C-12: {context.state[C12ndex]}, Mg-24: {context.state[Mgh24ndex]}&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">solver.set_callback(callback)</div>
+<div class="line">results = solver.evaluate(netIn)</div>
+<div class="line"> </div>
+<div class="line">print(f<span class="stringliteral">&quot;Final H-1 mass fraction {results.composition.getMassFraction(&quot;</span>H-1<span class="stringliteral">&quot;)}&quot;</span>)</div>
+<div class="ttc" id="anamespacefourdst_1_1atomic_html"><div class="ttname"><a href="namespacefourdst_1_1atomic.html">atomic</a></div></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md56"></a>
 Related Projects</h1>
 <p>GridFire integrates with and builds upon several key 4D-STAR libraries:</p>
 <ul>

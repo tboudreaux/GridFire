@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -124,6 +124,12 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a2095abb83ed6229ebb27b4883cec51c4" id="r_a2095abb83ed6229ebb27b4883cec51c4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2095abb83ed6229ebb27b4883cec51c4">evaluate</a> (const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn) override</td></tr>
 <tr class="memdesc:a2095abb83ed6229ebb27b4883cec51c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the network for a given timestep.  <br /></td></tr>
 <tr class="separator:a2095abb83ed6229ebb27b4883cec51c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a112a7babc03858a69d6994a7155370d3" id="r_a112a7babc03858a69d6994a7155370d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a112a7babc03858a69d6994a7155370d3">set_callback</a> (const std::any &amp;callback) override</td></tr>
+<tr class="memdesc:a112a7babc03858a69d6994a7155370d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the callback function to be called at the end of each timestep.  <br /></td></tr>
+<tr class="separator:a112a7babc03858a69d6994a7155370d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a147a0a543268427a5930143902217ac3" id="r_a147a0a543268427a5930143902217ac3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a147a0a543268427a5930143902217ac3">describe_callback_context</a> () const override</td></tr>
+<tr class="memdesc:a147a0a543268427a5930143902217ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe the context that will be passed to the callback function.  <br /></td></tr>
+<tr class="separator:a147a0a543268427a5930143902217ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -175,6 +181,37 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a147a0a543268427a5930143902217ac3" name="a147a0a543268427a5930143902217ac3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a147a0a543268427a5930143902217ac3">&#9670;&#160;</a></span>describe_callback_context()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt; PyDynamicNetworkSolverStrategy::describe_callback_context </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel private">private</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Describe the context that will be passed to the callback function. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of tuples, each containing a string for the parameter's name and a string for its type.</dd></dl>
+<p>This method should be overridden by derived classes to provide a description of the context that will be passed to the callback function. The intent of this method is that an end user can investigate the context that will be passed to the callback function, and use this information to craft their own callback function. </p>
+
+<p>Implements <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#ae09169769774f17df8701c42a64ed656">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a2095abb83ed6229ebb27b4883cec51c4" name="a2095abb83ed6229ebb27b4883cec51c4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2095abb83ed6229ebb27b4883cec51c4">&#9670;&#160;</a></span>evaluate()</h2>
 
@@ -208,6 +245,42 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The output conditions after the timestep. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#ace539b0482db171845ff1bd38d76b70f">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a112a7babc03858a69d6994a7155370d3" name="a112a7babc03858a69d6994a7155370d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a112a7babc03858a69d6994a7155370d3">&#9670;&#160;</a></span>set_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PyDynamicNetworkSolverStrategy::set_callback </td>
+          <td>(</td>
+          <td class="paramtype">const std::any &amp;</td>          <td class="paramname"><span class="paramname"><em>callback</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel private">private</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>set the callback function to be called at the end of each timestep. </p>
+<p>This function allows the user to set a callback function that will be called at the end of each timestep. The callback function will receive a <a class="el" href="namespacegridfire_1_1solver.html">gridfire::solver</a>::&lt;SOMESOLVER&gt;::TimestepContext object. Note that depending on the solver, this context may contain different information. Further, the exact signature of the callback function is left up to each solver. Every solver should provide a type or type alias TimestepCallback that defines the signature of the callback function so that the user can easily get that type information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>The callback function to be called at the end of each timestep. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#a4d97ee85933d5e5f90d4194bb021a1dc">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a>.</p>
 
 </div>
 </div>

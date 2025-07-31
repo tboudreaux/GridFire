@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo/GridFire.png" width="300" alt="OPAT Core Libraries Logo">
+  <img src="https://github.com/4D-STAR/GridFire/blob/main/assets/logo/GridFire.png?raw=true" width="300" alt="OPAT Core Libraries Logo">
 </p>
 
 
@@ -531,45 +531,51 @@ view strategies without touching C++ sources.
 ## C++
 
 ### GraphEngine Initialization
-```cpp
+```c++
 #include "gridfire/engine/engine_graph.h"
 #include "fourdst/composition/composition.h"
 
-// Define a composition and initialize the engine
-fourdst::composition::Composition comp;
-gridfire::GraphEngine engine(comp);
+int main(){
+    // Define a composition and initialize the engine
+    fourdst::composition::Composition comp;
+    gridfire::GraphEngine engine(comp);
+}
 ```
 
 ### Adaptive Network View
-```cpp
+```c++
 #include "gridfire/engine/views/engine_adaptive.h"
 #include "gridfire/engine/engine_graph.h"
 
-fourdst::composition::Composition comp;
-gridfire::GraphEngine baseEngine(comp);
-// Dynamically adapt network topology based on reaction flows
-gridfire::AdaptiveEngineView adaptiveView(baseEngine);
+int main(){
+    fourdst::composition::Composition comp;
+    gridfire::GraphEngine baseEngine(comp);
+    // Dynamically adapt network topology based on reaction flows
+    gridfire::AdaptiveEngineView adaptiveView(baseEngine);
+}
 ```
 
 ### Composition Initialization
-```cpp
+```c++
 #include "fourdst/composition/composition.h"
 #include <vector>
 #include <string>
 
 #include <iostream>
 
-fourdst::composition::Composition comp;
+int main() {
+    fourdst::composition::Composition comp;
 
-std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-std::vector<double> massFractions = {0.7, 0.29, 0.01};
+    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
+    std::vector<double> massFractions = {0.7, 0.29, 0.01};
 
-comp.registerSymbols(symbols);
-comp.setMassFraction(symbols, massFractions);
+    comp.registerSymbols(symbols);
+    comp.setMassFraction(symbols, massFractions);
 
-comp.finalize(true);
+    comp.finalize(true);
 
-std::cout << comp << std::endl;
+    std::cout << comp << std::endl;
+}
 ```
 
 ### Common Workflow Example
@@ -577,45 +583,48 @@ std::cout << comp << std::endl;
 A representative workflow often composes multiple engine views to balance
 accuracy, stability, and performance when integrating stiff nuclear networks:
 
-```cpp
+```c++
 #include "gridfire/engine/engine.h" // Unified header for real usage
+#include "gridfire/solver/solver.h" // Unified header for solvers
 #include "fourdst/composition/composition.h"
 
-// 1. Define initial composition
-fourdst::composition::Composition comp;
+int main(){
+    // 1. Define initial composition
+    fourdst::composition::Composition comp;
 
-std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-std::vector<double> massFractions = {0.7, 0.29, 0.01};
+    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
+    std::vector<double> massFractions = {0.7, 0.29, 0.01};
 
-comp.registerSymbols(symbols);
-comp.setMassFraction(symbols, massFractions);
+    comp.registerSymbols(symbols);
+    comp.setMassFraction(symbols, massFractions);
 
-comp.finalize(true);
+    comp.finalize(true);
 
-// 2. Create base network engine (full reaction graph)
-gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
+    // 2. Create base network engine (full reaction graph)
+    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
 
-// 3. Partition network into fast/slow subsets (reduces stiffness)
-gridfire::MultiscalePartitioningEngineView msView(baseEngine);
+    // 3. Partition network into fast/slow subsets (reduces stiffness)
+    gridfire::MultiscalePartitioningEngineView msView(baseEngine);
 
-// 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
-gridfire::AdaptiveEngineView adaptView(msView);
+    // 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
+    gridfire::AdaptiveEngineView adaptView(msView);
 
-// 5. Construct implicit solver (handles remaining stiffness)
-gridfire::DirectNetworkSolver solver(adaptView);
+    // 5. Construct implicit solver (handles remaining stiffness)
+    gridfire::DirectNetworkSolver solver(adaptView);
 
-// 6. Prepare input conditions
-NetIn input{
-    comp,     // composition
-    1.5e7,      // temperature [K]
-    1.5e2,      // density [g/cm^3]
-    1e-12,     // initial timestep [s]
-    3e17      // integration end time [s]
-};
+    // 6. Prepare input conditions
+    NetIn input{
+        comp,     // composition
+        1.5e7,      // temperature [K]
+        1.5e2,      // density [g/cm^3]
+        1e-12,     // initial timestep [s]
+        3e17      // integration end time [s]
+    };
 
-// 7. Execute integration
-NetOut output = solver.evaluate(input);
-std::cout << "Final results are: " << output << std::endl;
+    // 7. Execute integration
+    NetOut output = solver.evaluate(input);
+    std::cout << "Final results are: " << output << std::endl;
+}
 ```
 
 #### Workflow Components and Effects
@@ -632,6 +641,72 @@ integrate the remaining stiff system with adaptive step control.
 This layered approach enhances stability for stiff networks while maintaining
 accuracy and performance.
 
+### Callback Example
+Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide
+different context to the callback function, you should use the struct `gridfire::solver::<SolverName>::TimestepContext` 
+as the argument type for the callback function. This struct contains all of the information provided by that solver to
+the callback function.
+
+```c++
+#include "gridfire/engine/engine.h" // Unified header for real usage
+#include "gridfire/solver/solver.h" // Unified header for solvers
+#include "fourdst/composition/composition.h"
+#include "fourdst/atomic/species.h"
+
+#include <iostream>
+
+void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& context) {
+    int H1Index = context.engine.getSpeciesIndex(fourdst::atomic::H_1);
+    int He4Index = context.engine.getSpeciesIndex(fourdst::atomic::He_4);
+
+    std::cout << context.t << "," << context.state(H1Index) << "," << context.state(He4Index) << "\n";
+}
+
+int main(){
+    // 1. Define initial composition
+    fourdst::composition::Composition comp;
+
+    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
+    std::vector<double> massFractions = {0.7, 0.29, 0.01};
+
+    comp.registerSymbols(symbols);
+    comp.setMassFraction(symbols, massFractions);
+
+    comp.finalize(true);
+
+    // 2. Create base network engine (full reaction graph)
+    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
+
+    // 3. Partition network into fast/slow subsets (reduces stiffness)
+    gridfire::MultiscalePartitioningEngineView msView(baseEngine);
+
+    // 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
+    gridfire::AdaptiveEngineView adaptView(msView);
+
+    // 5. Construct implicit solver (handles remaining stiffness)
+    gridfire::DirectNetworkSolver solver(adaptView);
+    solver.set_callback(callback);
+
+    // 6. Prepare input conditions
+    NetIn input{
+        comp,     // composition
+        1.5e7,      // temperature [K]
+        1.5e2,      // density [g/cm^3]
+        1e-12,     // initial timestep [s]
+        3e17      // integration end time [s]
+    };
+
+    // 7. Execute integration
+    NetOut output = solver.evaluate(input);
+    std::cout << "Final results are: " << output << std::endl;
+}
+```
+
+>**Note:** A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.
+
+>**Note:** The order of species in the boost state vector (`ctx.state`) is **not guaranteed** to be any particular order run over run. Therefore, in order to reliably extract 
+> values from it, you **must** use the `getSpeciesIndex` method of the engine to get the index of the species you are interested in (these will always be in the same order).
+
 ## Python
 The python bindings intentionally look **very** similar to the C++ code.
 Generally all examples can be adapted to python by replacing includes of paths
@@ -644,32 +719,100 @@ All GridFire C++ types have been bound and can be passed around as one would exp
 ### Common Workflow Examople
 This example impliments the same logic as the above C++ example
 ```python
-import gridfire
-
+from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
+from gridfire.solver import DirectNetworkSolver
+from gridfire.type import NetIn
 
 from fourdst.composition import Composition
 
-symbols = ["H-1", ...]
-X = [0.7, ...]
+symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
+X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+
 
 comp = Composition()
-comp.registerSymbols(symbols)
-comp.setMassFraction(X)
-comp.finalize(true)
-# Initialize GraphEngine with predefined composition
-engine = gridfire.GraphEngine(comp)
-netIn = gridfire.types.NetIn
+comp.registerSymbol(symbols)
+comp.setMassFraction(symbols, X)
+comp.finalize(True)
+
+print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
+
+netIn = NetIn()
 netIn.composition = comp
-netIn.tMax = 1e-3
 netIn.temperature = 1.5e7
 netIn.density = 1.6e2
+netIn.tMax = 1e-9
 netIn.dt0 = 1e-12
 
-# Perform one integration step
-netOut = engine.evaluate(netIn)
-print(netOut)
+baseEngine = GraphEngine(netIn.composition, 2)
+baseEngine.setUseReverseReactions(False)
+
+qseEngine = MultiscalePartitioningEngineView(baseEngine)
+
+adaptiveEngine = AdaptiveEngineView(qseEngine)
+
+solver = DirectNetworkSolver(adaptiveEngine)
+
+results = solver.evaluate(netIn)
+
+print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
 ```
 
+### Python callbacks
+
+Just like in C++, python users can register callbacks to be called at the end of each successful timestep. Note that
+these may slow down code significantly as the interpreter needs to jump up into the slower python code therefore these
+should likely only be used for debugging purposes.
+
+The syntax for registration is very similar to C++
+```python
+from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
+from gridfire.solver import DirectNetworkSolver
+from gridfire.type import NetIn
+
+from fourdst.composition import Composition
+from fourdst.atomic import species
+
+symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
+X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+
+
+comp = Composition()
+comp.registerSymbol(symbols)
+comp.setMassFraction(symbols, X)
+comp.finalize(True)
+
+print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
+
+netIn = NetIn()
+netIn.composition = comp
+netIn.temperature = 1.5e7
+netIn.density = 1.6e2
+netIn.tMax = 1e-9
+netIn.dt0 = 1e-12
+
+baseEngine = GraphEngine(netIn.composition, 2)
+baseEngine.setUseReverseReactions(False)
+
+qseEngine = MultiscalePartitioningEngineView(baseEngine)
+
+adaptiveEngine = AdaptiveEngineView(qseEngine)
+
+solver = DirectNetworkSolver(adaptiveEngine)
+
+
+def callback(context):
+    H1Index = context.engine.getSpeciesIndex(species["H-1"])
+    He4Index = context.engine.getSpeciesIndex(species["He-4"])
+    C12ndex = context.engine.getSpeciesIndex(species["C-12"])
+    Mgh24ndex = context.engine.getSpeciesIndex(species["Mg-24"])
+    print(f"Time: {context.t}, H-1: {context.state[H1Index]}, He-4: {context.state[He4Index]}, C-12: {context.state[C12ndex]}, Mg-24: {context.state[Mgh24ndex]}")
+
+solver.set_callback(callback)
+results = solver.evaluate(netIn)
+
+print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
+
+```
 
 
 # Related Projects

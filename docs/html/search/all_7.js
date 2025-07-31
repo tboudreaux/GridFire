@@ -6,9 +6,9 @@ var searchData=
   ['base_5fnetwork_5ftoo_5fshallow_3',['BASE_NETWORK_TOO_SHALLOW',['../namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154ab837953f2841baabbae6bb5f2e43e71e',1,'gridfire']]],
   ['basepartitiontype_4',['BasePartitionType',['../namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728c',1,'gridfire::partition']]],
   ['basepartitiontypetostring_5',['basePartitionTypeToString',['../namespacegridfire_1_1partition.html#a97237521bc760f7521346f8db472dc8e',1,'gridfire::partition']]],
-  ['basics_6',['5. Beyond the Basics',['../md_docs_2static_2usage.html#autotoc_md67',1,'']]],
+  ['basics_6',['5. Beyond the Basics',['../md_docs_2static_2usage.html#autotoc_md69',1,'']]],
   ['begin_7',['begin',['../classgridfire_1_1reaction_1_1_logical_reaction.html#a4ae3806e5e1a802b86a6de292d043476',1,'gridfire::reaction::LogicalReaction::begin()'],['../classgridfire_1_1reaction_1_1_logical_reaction.html#a5d410de1053f8028faed1f0d0a6083f5',1,'gridfire::reaction::LogicalReaction::begin() const'],['../classgridfire_1_1reaction_1_1_templated_reaction_set.html#a87257704009fcd57b553f86cdaacb597',1,'gridfire::reaction::TemplatedReactionSet::begin()'],['../classgridfire_1_1reaction_1_1_templated_reaction_set.html#aee42bb25973dadc6629bdb5cb1db6369',1,'gridfire::reaction::TemplatedReactionSet::begin() const']]],
-  ['beyond_20the_20basics_8',['5. Beyond the Basics',['../md_docs_2static_2usage.html#autotoc_md67',1,'']]],
+  ['beyond_20the_20basics_8',['5. Beyond the Basics',['../md_docs_2static_2usage.html#autotoc_md69',1,'']]],
   ['bin_9',['bin',['../structgridfire_1_1_q_s_e_cache_key.html#ac7e043ac0254936602c37a7e6a1391b3',1,'gridfire::QSECacheKey']]],
   ['bindings_2ecpp_10',['bindings.cpp',['../bindings_8cpp.html',1,'(Global Namespace)'],['../engine_2bindings_8cpp.html',1,'(Global Namespace)'],['../exceptions_2bindings_8cpp.html',1,'(Global Namespace)'],['../expectations_2bindings_8cpp.html',1,'(Global Namespace)'],['../io_2bindings_8cpp.html',1,'(Global Namespace)'],['../partition_2bindings_8cpp.html',1,'(Global Namespace)'],['../reaction_2bindings_8cpp.html',1,'(Global Namespace)'],['../screening_2bindings_8cpp.html',1,'(Global Namespace)'],['../solver_2bindings_8cpp.html',1,'(Global Namespace)'],['../types_2bindings_8cpp.html',1,'(Global Namespace)'],['../utils_2bindings_8cpp.html',1,'(Global Namespace)']]],
   ['bindings_2eh_11',['bindings.h',['../engine_2bindings_8h.html',1,'(Global Namespace)'],['../exceptions_2bindings_8h.html',1,'(Global Namespace)'],['../expectations_2bindings_8h.html',1,'(Global Namespace)'],['../io_2bindings_8h.html',1,'(Global Namespace)'],['../partition_2bindings_8h.html',1,'(Global Namespace)'],['../reaction_2bindings_8h.html',1,'(Global Namespace)'],['../screening_2bindings_8h.html',1,'(Global Namespace)'],['../solver_2bindings_8h.html',1,'(Global Namespace)'],['../types_2bindings_8h.html',1,'(Global Namespace)'],['../utils_2bindings_8h.html',1,'(Global Namespace)']]],
@@ -23,5 +23,5 @@ var searchData=
   ['builddepthtype_20',['BuildDepthType',['../namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6',1,'gridfire']]],
   ['building_20the_20c_20library_21',['Building the C++ Library',['../index.html#autotoc_md23',1,'']]],
   ['building_2eh_22',['building.h',['../building_8h.html',1,'']]],
-  ['by_20step_20example_23',['3. Step-by-Step Example',['../md_docs_2static_2usage.html#autotoc_md63',1,'']]]
+  ['by_20step_20example_23',['3. Step-by-Step Example',['../md_docs_2static_2usage.html#autotoc_md65',1,'']]]
 ];

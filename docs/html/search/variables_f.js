@@ -10,7 +10,8 @@ var searchData=
   ['reactionptr_7',['reactionPtr',['../structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html#a3bb21f20df8115d37108cf3c3be3bc6f',1,'gridfire::AdaptiveEngineView::ReactionFlow']]],
   ['reverse_8',['reverse',['../structgridfire_1_1reaclib_1_1_reaction_record.html#aa1fd4f510d7c00d2e4197e9b9caf29fd',1,'gridfire::reaclib::ReactionRecord']]],
   ['reverse_5fsymmetry_5ffactor_9',['reverse_symmetry_factor',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a6bcfe2230dd54b088180d34389266b07',1,'gridfire::GraphEngine::PrecomputedReaction']]],
-  ['rho_5ftol_10',['rho_tol',['../structgridfire_1_1_q_s_e_cache_config.html#a57b7ca68463aa9b78007e5cf35ebf7ce',1,'gridfire::QSECacheConfig']]],
-  ['rpname_11',['rpName',['../structgridfire_1_1reaclib_1_1_reaction_record.html#a523b7cfb0a6d8ddccd785aef2f425ad1',1,'gridfire::reaclib::ReactionRecord']]],
-  ['rt_5ftemperature_5fgrid_5ft9_12',['RT_TEMPERATURE_GRID_T9',['../namespacegridfire_1_1partition.html#a1e08a3c20c55bc6fa4a4ecdf7ea57b8f',1,'gridfire::partition']]]
+  ['rho_10',['rho',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#ad565c013b373f312f0f5157f11d02cef',1,'gridfire::solver::DirectNetworkSolver::TimestepContext']]],
+  ['rho_5ftol_11',['rho_tol',['../structgridfire_1_1_q_s_e_cache_config.html#a57b7ca68463aa9b78007e5cf35ebf7ce',1,'gridfire::QSECacheConfig']]],
+  ['rpname_12',['rpName',['../structgridfire_1_1reaclib_1_1_reaction_record.html#a523b7cfb0a6d8ddccd785aef2f425ad1',1,'gridfire::reaclib::ReactionRecord']]],
+  ['rt_5ftemperature_5fgrid_5ft9_13',['RT_TEMPERATURE_GRID_T9',['../namespacegridfire_1_1partition.html#a1e08a3c20c55bc6fa4a4ecdf7ea57b8f',1,'gridfire::partition']]]
 ];

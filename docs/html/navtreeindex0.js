@@ -31,7 +31,9 @@ var NAVTREEINDEX0 =
 "class_py_dynamic_engine_view.html":[7,0,3],
 "class_py_dynamic_engine_view.html#a51680b135cfc3eea40daf9ef5aa903e0":[7,0,3,0],
 "class_py_dynamic_network_solver_strategy.html":[7,0,4],
-"class_py_dynamic_network_solver_strategy.html#a2095abb83ed6229ebb27b4883cec51c4":[7,0,4,1],
+"class_py_dynamic_network_solver_strategy.html#a112a7babc03858a69d6994a7155370d3":[7,0,4,3],
+"class_py_dynamic_network_solver_strategy.html#a147a0a543268427a5930143902217ac3":[7,0,4,1],
+"class_py_dynamic_network_solver_strategy.html#a2095abb83ed6229ebb27b4883cec51c4":[7,0,4,2],
 "class_py_dynamic_network_solver_strategy.html#a4a3fce2a9853e7192354834bf2b36159":[7,0,4,0],
 "class_py_engine.html":[7,0,5],
 "class_py_engine.html#a2d240423899e039c2ca688e96f8af1f2":[7,0,5,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX0 =
 "classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9":[7,0,0,11,9],
 "classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f":[5,0,0,12,3],
 "classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f":[7,0,0,11,3],
-"classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f":[5,0,0,12,11],
-"classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f":[7,0,0,11,11],
-"classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f":[5,0,0,12,16]
+"classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f":[5,0,0,12,11]
 };

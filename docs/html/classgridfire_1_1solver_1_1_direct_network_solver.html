@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -101,6 +101,7 @@ $(function(){initNavTree('classgridfire_1_1solver_1_1_direct_network_solver.html
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classgridfire_1_1solver_1_1_direct_network_solver-members.html">List of all members</a>  </div>
@@ -128,13 +129,29 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor for calculating the Jacobian matrix.  <a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_jacobian_functor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_r_h_s_manager.html">RHSManager</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor for calculating the right-hand side of the ODEs.  <a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_r_h_s_manager.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html">TimestepContext</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context for the timestep callback function for the <a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html" title="A network solver that directly integrates the reaction network ODEs.">DirectNetworkSolver</a>.  <a href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a171bd0c8c292da79ed41f6653fdd47df" id="r_a171bd0c8c292da79ed41f6653fdd47df"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a> = std::function&lt;void(const <a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html">TimestepContext</a>&amp; context)&gt;</td></tr>
+<tr class="memdesc:a171bd0c8c292da79ed41f6653fdd47df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for a timestep callback function.  <br /></td></tr>
+<tr class="separator:a171bd0c8c292da79ed41f6653fdd47df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0e8a4b8ef656e0b084d11bea982e412a" id="r_a0e8a4b8ef656e0b084d11bea982e412a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e8a4b8ef656e0b084d11bea982e412a">evaluate</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
 <tr class="memdesc:a0e8a4b8ef656e0b084d11bea982e412a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the network for a given timestep using direct integration.  <br /></td></tr>
 <tr class="separator:a0e8a4b8ef656e0b084d11bea982e412a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bb0738eef5669b3ad83a3c65a0d1e96" id="r_a6bb0738eef5669b3ad83a3c65a0d1e96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb0738eef5669b3ad83a3c65a0d1e96">set_callback</a> (const std::any &amp;callback) override</td></tr>
+<tr class="memdesc:a6bb0738eef5669b3ad83a3c65a0d1e96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the callback function to be called at the end of each timestep.  <br /></td></tr>
+<tr class="separator:a6bb0738eef5669b3ad83a3c65a0d1e96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a053c9c1343af8f30ced69707e1d899e3" id="r_a053c9c1343af8f30ced69707e1d899e3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a053c9c1343af8f30ced69707e1d899e3">describe_callback_context</a> () const override</td></tr>
+<tr class="memdesc:a053c9c1343af8f30ced69707e1d899e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe the context that will be passed to the callback function.  <br /></td></tr>
+<tr class="separator:a053c9c1343af8f30ced69707e1d899e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1solver_1_1_network_solver_strategy"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1solver_1_1_network_solver_strategy')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a></td></tr>
 <tr class="memitem:a01cbbec0eb5c3a60f50da38cdaf66505 inherit pub_methods_classgridfire_1_1solver_1_1_network_solver_strategy" id="r_a01cbbec0eb5c3a60f50da38cdaf66505"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#a01cbbec0eb5c3a60f50da38cdaf66505">NetworkSolverStrategy</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine)</td></tr>
 <tr class="memdesc:a01cbbec0eb5c3a60f50da38cdaf66505 inherit pub_methods_classgridfire_1_1solver_1_1_network_solver_strategy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html" title="Abstract base class for network solver strategies.">NetworkSolverStrategy</a>.  <br /></td></tr>
@@ -157,6 +174,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a2cc12e737a753a42b72a45be3fbfa8ab" id="r_a2cc12e737a753a42b72a45be3fbfa8ab"><td class="memItemLeft" align="right" valign="top">Config &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cc12e737a753a42b72a45be3fbfa8ab">m_config</a> = Config::getInstance()</td></tr>
 <tr class="memdesc:a2cc12e737a753a42b72a45be3fbfa8ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration instance.  <br /></td></tr>
 <tr class="separator:a2cc12e737a753a42b72a45be3fbfa8ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44fbc45faa9e4b6864ac6b81282941b5" id="r_a44fbc45faa9e4b6864ac6b81282941b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44fbc45faa9e4b6864ac6b81282941b5">m_callback</a></td></tr>
+<tr class="separator:a44fbc45faa9e4b6864ac6b81282941b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -171,7 +190,56 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A network solver that directly integrates the reaction network ODEs. </p>
 <p>This solver uses a Runge-Kutta method to directly integrate the reaction network ODEs. It is simpler than the QSENetworkSolver, but it can be less efficient for stiff networks with disparate timescales. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a171bd0c8c292da79ed41f6653fdd47df" name="a171bd0c8c292da79ed41f6653fdd47df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a171bd0c8c292da79ed41f6653fdd47df">&#9670;&#160;</a></span>TimestepCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a171bd0c8c292da79ed41f6653fdd47df">gridfire::solver::DirectNetworkSolver::TimestepCallback</a> = std::function&lt;void(const <a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html">TimestepContext</a>&amp; context)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Type alias for a timestep callback function. </p>
+<p>The type alias for the callback function that will be called at the end of each timestep. Type alias for a timestep callback function. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a053c9c1343af8f30ced69707e1d899e3" name="a053c9c1343af8f30ced69707e1d899e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a053c9c1343af8f30ced69707e1d899e3">&#9670;&#160;</a></span>describe_callback_context()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt; gridfire::solver::DirectNetworkSolver::describe_callback_context </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Describe the context that will be passed to the callback function. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of tuples, each containing a string for the parameter's name and a string for its type.</dd></dl>
+<p>This method provides a description of the context that will be passed to the callback function. The intent is that an end user can investigate the context and use this information to craft their own callback function. </p>
+
+<p>Implements <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#ae09169769774f17df8701c42a64ed656">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a0e8a4b8ef656e0b084d11bea982e412a" name="a0e8a4b8ef656e0b084d11bea982e412a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0e8a4b8ef656e0b084d11bea982e412a">&#9670;&#160;</a></span>evaluate()</h2>
 
@@ -208,7 +276,65 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a6bb0738eef5669b3ad83a3c65a0d1e96" name="a6bb0738eef5669b3ad83a3c65a0d1e96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bb0738eef5669b3ad83a3c65a0d1e96">&#9670;&#160;</a></span>set_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::solver::DirectNetworkSolver::set_callback </td>
+          <td>(</td>
+          <td class="paramtype">const std::any &amp;</td>          <td class="paramname"><span class="paramname"><em>callback</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the callback function to be called at the end of each timestep. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>The callback function to be called at the end of each timestep.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This function allows the user to set a callback function that will be called at the end of each timestep. The callback function will receive a <a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html" title="Context for the timestep callback function for the DirectNetworkSolver.">gridfire::solver::DirectNetworkSolver::TimestepContext</a> object. </p>
+
+<p>Implements <a class="el" href="classgridfire_1_1solver_1_1_network_solver_strategy.html#a4d97ee85933d5e5f90d4194bb021a1dc">gridfire::solver::NetworkSolverStrategy&lt; DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a44fbc45faa9e4b6864ac6b81282941b5" name="a44fbc45faa9e4b6864ac6b81282941b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44fbc45faa9e4b6864ac6b81282941b5">&#9670;&#160;</a></span>m_callback</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a> gridfire::solver::DirectNetworkSolver::m_callback</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2cc12e737a753a42b72a45be3fbfa8ab" name="a2cc12e737a753a42b72a45be3fbfa8ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2cc12e737a753a42b72a45be3fbfa8ab">&#9670;&#160;</a></span>m_config</h2>
 

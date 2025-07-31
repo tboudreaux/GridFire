@@ -90,22 +90,24 @@ var NAVTREE =
         [ "Composition Initialization", "index.html#autotoc_md49", null ],
         [ "Common Workflow Example", "index.html#autotoc_md50", [
           [ "Workflow Components and Effects", "index.html#autotoc_md51", null ]
-        ] ]
+        ] ],
+        [ "Callback Example", "index.html#autotoc_md52", null ]
       ] ],
-      [ "Python", "index.html#autotoc_md52", [
-        [ "Common Workflow Examople", "index.html#autotoc_md53", null ]
+      [ "Python", "index.html#autotoc_md53", [
+        [ "Common Workflow Examople", "index.html#autotoc_md54", null ],
+        [ "Python callbacks", "index.html#autotoc_md55", null ]
       ] ]
     ] ],
-    [ "Related Projects", "index.html#autotoc_md54", null ],
+    [ "Related Projects", "index.html#autotoc_md56", null ],
     [ "GridFire Python Usage Guide", "md_docs_2static_2usage.html", [
-      [ "Installation", "md_docs_2static_2usage.html#autotoc_md57", [
-        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md58", null ],
-        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md59", null ]
+      [ "Installation", "md_docs_2static_2usage.html#autotoc_md59", [
+        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md60", null ],
+        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md61", null ]
       ] ],
-      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md61", null ],
-      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md63", null ],
-      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md65", null ],
-      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md67", null ]
+      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md63", null ],
+      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md65", null ],
+      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md67", null ],
+      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md69", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -149,13 +151,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
-"classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f",
-"classgridfire_1_1_multiscale_partitioning_engine_view.html#a7bfb4e6fec2f337a1dea69e3d4f1fc82",
-"classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ac5963d0da6780de753df996b490f8d2c",
-"classgridfire_1_1reaction_1_1_templated_reaction_set.html#a5fda3af5ea9ae0ecfb60a61a9e07f5b4",
-"functions_vars_y.html",
-"screening_2bindings_8cpp.html#a4fcef69d9382bfbc315cb061038627f4",
-"structgridfire_1_1approx8_1_1_o_d_e.html"
+"classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f",
+"classgridfire_1_1_multiscale_partitioning_engine_view.html#a79eb9c108d694a27ec913ed0143aa044",
+"classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ab9c683289d48e58edf06bf59215b4937",
+"classgridfire_1_1reaction_1_1_templated_reaction_set.html#a5962968fe478c79250e9d88d80a87600",
+"functions_vars_f.html",
+"rauscher__thielemann__partition__data_8h.html#a7b9a54e9c58848fe3205479acd770ffd",
+"structgridfire_1_1approx8_1_1_approx8_net.html#a95b9a07e29285884e6de523f8132f653"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -165,7 +165,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functor for solving QSE abundances using Eigen's nonlinear optimization. </p>
-<p>@purpose This struct provides the objective function (<code>operator()</code>) and its Jacobian (<code>df</code>) to Eigen's Levenberg-Marquardt solver. The goal is to find the abundances of algebraic species that make their time derivatives (<code>dY/dt</code>) equal to zero.</p>
+<dl class="section user"><dt>Purpose</dt><dd>This struct provides the objective function (<code>operator()</code>) and its Jacobian (<code>df</code>) to Eigen's Levenberg-Marquardt solver. The goal is to find the abundances of algebraic species that make their time derivatives (<code>dY/dt</code>) equal to zero.</dd></dl>
 <p>@how</p><ul>
 <li><b><code>operator()</code></b>: Takes a vector <code>v_qse</code> (scaled abundances of algebraic species) as input. It constructs a full trial abundance vector <code>y_trial</code>, calls the base engine's <code>calculateRHSAndEnergy</code>, and returns the <code>dY/dt</code> values for the algebraic species. The solver attempts to drive this return vector to zero.</li>
 <li><b><code>df</code></b>: Computes the Jacobian of the objective function. It calls the base engine's <code>generateJacobianMatrix</code> and extracts the sub-matrix corresponding to the algebraic species. It applies the chain rule to account for the <code>asinh</code> scaling used on the abundances.</li>

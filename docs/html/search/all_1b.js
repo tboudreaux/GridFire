@@ -10,7 +10,7 @@ var searchData=
   ['vector_5ftype_7',['vector_type',['../namespacegridfire_1_1approx8.html#aa04f907d4ef6a1b6b2a9a28d4bb53882',1,'gridfire::approx8']]],
   ['versions_8',['Minimum compiler versions',['../index.html#autotoc_md26',1,'']]],
   ['view_9',['Adaptive Network View',['../index.html#autotoc_md48',1,'']]],
-  ['views_10',['Views',['../md_docs_2static_2usage.html#autotoc_md61',1,'2. Why These Engines and Views?'],['../engine_8h.html#AvailableViews',1,'Available Views'],['../index.html#autotoc_md34',1,'Engine Views']]],
-  ['visualizing_20reaction_20networks_11',['4. Visualizing Reaction Networks',['../md_docs_2static_2usage.html#autotoc_md65',1,'']]],
+  ['views_10',['Views',['../md_docs_2static_2usage.html#autotoc_md63',1,'2. Why These Engines and Views?'],['../engine_8h.html#AvailableViews',1,'Available Views'],['../index.html#autotoc_md34',1,'Engine Views']]],
+  ['visualizing_20reaction_20networks_11',['4. Visualizing Reaction Networks',['../md_docs_2static_2usage.html#autotoc_md67',1,'']]],
   ['vs_20gcc_12',['Clang vs. GCC',['../index.html#autotoc_md24',1,'']]]
 ];

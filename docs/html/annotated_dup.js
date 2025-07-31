@@ -50,7 +50,8 @@ var annotated_dup =
       ] ],
       [ "solver", "namespacegridfire_1_1solver.html", [
         [ "DirectNetworkSolver", "classgridfire_1_1solver_1_1_direct_network_solver.html", "classgridfire_1_1solver_1_1_direct_network_solver" ],
-        [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1_network_solver_strategy.html", "classgridfire_1_1solver_1_1_network_solver_strategy" ]
+        [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1_network_solver_strategy.html", "classgridfire_1_1solver_1_1_network_solver_strategy" ],
+        [ "SolverContextBase", "structgridfire_1_1solver_1_1_solver_context_base.html", "structgridfire_1_1solver_1_1_solver_context_base" ]
       ] ],
       [ "AdaptiveEngineView", "classgridfire_1_1_adaptive_engine_view.html", "classgridfire_1_1_adaptive_engine_view" ],
       [ "DefinedEngineView", "classgridfire_1_1_defined_engine_view.html", "classgridfire_1_1_defined_engine_view" ],
@@ -83,6 +84,5 @@ var annotated_dup =
     [ "PyEngineView", "class_py_engine_view.html", "class_py_engine_view" ],
     [ "PyNetworkFileParser", "class_py_network_file_parser.html", "class_py_network_file_parser" ],
     [ "PyPartitionFunction", "class_py_partition_function.html", "class_py_partition_function" ],
-    [ "PyScreening", "class_py_screening.html", "class_py_screening" ],
-    [ "RHSFunctor", "struct_r_h_s_functor.html", null ]
+    [ "PyScreening", "class_py_screening.html", "class_py_screening" ]
 ];

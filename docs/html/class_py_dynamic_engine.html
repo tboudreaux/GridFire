@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -166,14 +166,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ab4cfdca5e15957c5cef75ffa6dedeee5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current electron screening model.  <br /></td></tr>
 <tr class="separator:ab4cfdca5e15957c5cef75ffa6dedeee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ee1d745c1c21b9fcb652c96c42f1091" id="r_a2ee1d745c1c21b9fcb652c96c42f1091"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ee1d745c1c21b9fcb652c96c42f1091">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="memdesc:a2ee1d745c1c21b9fcb652c96c42f1091"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of a species in the network.  <br /></td></tr>
 <tr class="separator:a2ee1d745c1c21b9fcb652c96c42f1091"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61bb4b430fe740cfb2c24e5cc673e4ac" id="r_a61bb4b430fe740cfb2c24e5cc673e4ac"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61bb4b430fe740cfb2c24e5cc673e4ac">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn) const override</td></tr>
+<tr class="memdesc:a61bb4b430fe740cfb2c24e5cc673e4ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a NetIn object to a vector of molar abundances.  <br /></td></tr>
 <tr class="separator:a61bb4b430fe740cfb2c24e5cc673e4ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac22a10412be6649bf379e6d61113c878" id="r_ac22a10412be6649bf379e6d61113c878"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">gridfire::PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac22a10412be6649bf379e6d61113c878">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn) override</td></tr>
+<tr class="memdesc:ac22a10412be6649bf379e6d61113c878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prime the engine with initial conditions.  <br /></td></tr>
 <tr class="separator:ac22a10412be6649bf379e6d61113c878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adba68716d832b6100e08d32fbc36f13c" id="r_adba68716d832b6100e08d32fbc36f13c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">gridfire::BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adba68716d832b6100e08d32fbc36f13c">getDepth</a> () const override</td></tr>
+<tr class="memdesc:adba68716d832b6100e08d32fbc36f13c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the network.  <br /></td></tr>
 <tr class="separator:adba68716d832b6100e08d32fbc36f13c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d30a9116825ab2c5c209bc2712126bc" id="r_a3d30a9116825ab2c5c209bc2712126bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d30a9116825ab2c5c209bc2712126bc">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">gridfire::BuildDepthType</a> depth) override</td></tr>
+<tr class="memdesc:a3d30a9116825ab2c5c209bc2712126bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the network with a specified depth.  <br /></td></tr>
 <tr class="separator:a3d30a9116825ab2c5c209bc2712126bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
@@ -429,6 +434,10 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get the depth of the network. </p>
+<dl class="section return"><dt>Returns</dt><dd>The depth of the network, which may indicate the level of detail or complexity in the reaction network.</dd></dl>
+<p>This method is intended to provide information about the network's structure, such as how many layers of reactions or species are present. It can be useful for diagnostics and understanding the network's complexity. </p>
+
 <p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">gridfire::DynamicEngine</a>.</p>
 
 </div>
@@ -625,6 +634,15 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get the index of a species in the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">species</td><td>The species to look up.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method allows querying the index of a specific species in the engine's internal representation. It is useful for accessing species data efficiently. </p>
+
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine</a>.</p>
 
 </div>
@@ -769,6 +787,16 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Map a NetIn object to a vector of molar abundances. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of molar abundances corresponding to the species in the network.</dd></dl>
+<p>This method converts the input conditions into a vector of molar abundances, which can be used for further calculations or diagnostics. </p>
+
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a55f1b7e5ebe2840e1d7c54665ca5411a">gridfire::DynamicEngine</a>.</p>
 
 </div>
@@ -795,6 +823,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Prime the engine with initial conditions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>PrimingReport containing information about the priming process.</dd></dl>
+<p>This method is used to prepare the engine for calculations by setting up initial conditions, reactions, and species. It may involve compiling reaction rates, initializing internal data structures, and performing any necessary pre-computation. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21c34f59c080a853fafa38a25175124e">gridfire::DynamicEngine</a>.</p>
 
@@ -826,6 +864,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Rebuild the network with a specified depth. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>The composition to rebuild the network with. </td></tr>
+    <tr><td class="paramname">depth</td><td>The desired depth of the network.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method is intended to allow dynamic adjustment of the network's depth, which may involve adding or removing species and reactions based on the specified depth. However, not all engines support this operation. </p>
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a4e2c8b896661b7a89beffe0066cb21cf">gridfire::DynamicEngine</a>.</p>
 

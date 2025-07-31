@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -168,14 +168,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a7a203f8e0f3a6744ddc912dfbcfdbcc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current electron screening model.  <br /></td></tr>
 <tr class="separator:a7a203f8e0f3a6744ddc912dfbcfdbcc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3d56a8b9161b9cc7f4da51f6bf7e8c9" id="r_ad3d56a8b9161b9cc7f4da51f6bf7e8c9"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const =0</td></tr>
+<tr class="memdesc:ad3d56a8b9161b9cc7f4da51f6bf7e8c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of a species in the network.  <br /></td></tr>
 <tr class="separator:ad3d56a8b9161b9cc7f4da51f6bf7e8c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55f1b7e5ebe2840e1d7c54665ca5411a" id="r_a55f1b7e5ebe2840e1d7c54665ca5411a"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55f1b7e5ebe2840e1d7c54665ca5411a">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const =0</td></tr>
+<tr class="memdesc:a55f1b7e5ebe2840e1d7c54665ca5411a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> object to a vector of molar abundances.  <br /></td></tr>
 <tr class="separator:a55f1b7e5ebe2840e1d7c54665ca5411a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21c34f59c080a853fafa38a25175124e" id="r_a21c34f59c080a853fafa38a25175124e"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21c34f59c080a853fafa38a25175124e">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)=0</td></tr>
+<tr class="memdesc:a21c34f59c080a853fafa38a25175124e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prime the engine with initial conditions.  <br /></td></tr>
 <tr class="separator:a21c34f59c080a853fafa38a25175124e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04317b66ef14d519264bc30ee69f5bf9" id="r_a04317b66ef14d519264bc30ee69f5bf9"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04317b66ef14d519264bc30ee69f5bf9">getDepth</a> () const</td></tr>
+<tr class="memdesc:a04317b66ef14d519264bc30ee69f5bf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the network.  <br /></td></tr>
 <tr class="separator:a04317b66ef14d519264bc30ee69f5bf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e2c8b896661b7a89beffe0066cb21cf" id="r_a4e2c8b896661b7a89beffe0066cb21cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e2c8b896661b7a89beffe0066cb21cf">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth)</td></tr>
+<tr class="memdesc:a4e2c8b896661b7a89beffe0066cb21cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the network with a specified depth.  <br /></td></tr>
 <tr class="separator:a4e2c8b896661b7a89beffe0066cb21cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
@@ -394,6 +399,10 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get the depth of the network. </p>
+<dl class="section return"><dt>Returns</dt><dd>The depth of the network, which may indicate the level of detail or complexity in the reaction network.</dd></dl>
+<p>This method is intended to provide information about the network's structure, such as how many layers of reactions or species are present. It can be useful for diagnostics and understanding the network's complexity. </p>
+
 <p>Reimplemented in <a class="el" href="classgridfire_1_1_graph_engine.html#a166a5f4349580f9aa0b930afec73fcc4">gridfire::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#adba68716d832b6100e08d32fbc36f13c">PyDynamicEngine</a>.</p>
 
 </div>
@@ -562,6 +571,15 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Get the index of a species in the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">species</td><td>The species to look up.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method allows querying the index of a specific species in the engine's internal representation. It is useful for accessing species data efficiently. </p>
+
 <p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a9055feb245524a5a9549ace935f059ff">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#abfee22688617ffe91c69be93049c89b3">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a914f6abc61805cddaebcb8f3cf470dda">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a91d32b7197fcb27ee697d5bfde960f3f">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2ee1d745c1c21b9fcb652c96c42f1091">PyDynamicEngine</a>.</p>
 
 </div>
@@ -706,6 +724,16 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Map a <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> object to a vector of molar abundances. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of molar abundances corresponding to the species in the network.</dd></dl>
+<p>This method converts the input conditions into a vector of molar abundances, which can be used for further calculations or diagnostics. </p>
+
 <p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a7d0237956bf3ec7230bc51d88e7f8019">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a72789c1c3379594b65b560da50192de2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a27f3a928e1f6bbe7e847cffed6db729f">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#aada497e8df74a295fdf5df7d7cdf64e0">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a61bb4b430fe740cfb2c24e5cc673e4ac">PyDynamicEngine</a>.</p>
 
 </div>
@@ -732,6 +760,16 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Prime the engine with initial conditions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_priming_report.html" title="Captures the result of a network priming operation.">PrimingReport</a> containing information about the priming process.</dd></dl>
+<p>This method is used to prepare the engine for calculations by setting up initial conditions, reactions, and species. It may involve compiling reaction rates, initializing internal data structures, and performing any necessary pre-computation. </p>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a70005361262bc180d4417b608661e3c3">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a13033abd3b44904f98b58c93e22da460">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ae7a371be61ab09b3fa4a93f05bd44e5e">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a05730ced13ac5331060ca011f0da6235">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#ac22a10412be6649bf379e6d61113c878">PyDynamicEngine</a>.</p>
 
@@ -763,6 +801,16 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Rebuild the network with a specified depth. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>The composition to rebuild the network with. </td></tr>
+    <tr><td class="paramname">depth</td><td>The desired depth of the network.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method is intended to allow dynamic adjustment of the network's depth, which may involve adding or removing species and reactions based on the specified depth. However, not all engines support this operation. </p>
 
 <p>Reimplemented in <a class="el" href="classgridfire_1_1_graph_engine.html#ad9d6c70ace5cbbf7f3aa7b31fce39490">gridfire::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a3d30a9116825ab2c5c209bc2712126bc">PyDynamicEngine</a>.</p>
 
@@ -831,7 +879,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The engine will use the specified screening model for subsequent rate calculations. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aae4ddbef1c4e2202fd236221a4bf376b">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#abf2da57c83c3c4c635cb301f53088258">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a8110e687844f921438bb517e1d8ce62f">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a1a0c0a0ade632eb10f0eecab828a059f">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#afa3abfd612033336a656f092721c14ac">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aae4ddbef1c4e2202fd236221a4bf376b">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#abf2da57c83c3c4c635cb301f53088258">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a9bc768ca8ca59d442c0d05cb04e36d7c">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a1a0c0a0ade632eb10f0eecab828a059f">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#afa3abfd612033336a656f092721c14ac">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
