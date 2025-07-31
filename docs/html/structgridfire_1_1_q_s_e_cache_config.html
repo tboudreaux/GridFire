@@ -109,7 +109,7 @@ $(function(){initNavTree('structgridfire_1_1_q_s_e_cache_config.html',''); initR
 <p>Configuration struct for the QSE cache.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>&gt;</code></p>
+<p><code>#include &lt;engine_multiscale.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -128,8 +128,6 @@ Public Attributes</h2></td></tr>
 <p>@purpose This struct defines the tolerances used to determine if a QSE cache key is considered a hit. It allows for tuning the sensitivity of the cache.</p>
 <p>@how It works by providing binning widths for temperature, density, and abundances. When a <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> is created, it uses these tolerances to discretize the continuous physical values into bins. If two sets of conditions fall into the same bins, they will produce the same hash and be considered a cache hit.</p>
 <dl class="section user"><dt>Usage Example:</dt><dd>Although not typically set by the user directly, the <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> uses this internally. A smaller tolerance (e.g., <code>T9_tol = 1e-4</code>) makes the cache more sensitive, leading to more frequent re-partitions, while a larger tolerance (<code>T9_tol = 1e-2</code>) makes it less sensitive. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00027">27</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a57b7ca68463aa9b78007e5cf35ebf7ce" name="a57b7ca68463aa9b78007e5cf35ebf7ce"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a57b7ca68463aa9b78007e5cf35ebf7ce">&#9670;&#160;</a></span>rho_tol</h2>
@@ -144,8 +142,6 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Absolute tolerance to produce the same hash for rho. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00029">29</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -163,8 +159,6 @@ Public Attributes</h2></td></tr>
 
 <p>Absolute tolerance to produce the same hash for T9. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00028">28</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a31d3e8d1b83109524c94641ce06fa351" name="a31d3e8d1b83109524c94641ce06fa351"></a>
@@ -181,12 +175,10 @@ Public Attributes</h2></td></tr>
 
 <p>Absolute tolerance to produce the same hash for species abundances. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00030">30</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a></li>
+<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h.html">engine_multiscale.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

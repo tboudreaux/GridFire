@@ -111,7 +111,7 @@ $(function(){initNavTree('classgridfire_1_1io_1_1_simple_reaction_list_file_pars
 <p>A parser for simple text files containing a list of reactions.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="network__file_8h_source.html">network_file.h</a>&gt;</code></p>
+<p><code>#include &lt;network_file.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::io::SimpleReactionListFileParser:</div>
 <div class="dyncontent">
@@ -152,8 +152,6 @@ Private Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A parser for simple text files containing a list of reactions. </p>
 <p>This parser reads a file where each line contains a single reaction name. It supports comments (lines starting with '#') and ignores empty lines. </p>
-
-<p class="definition">Definition at line <a class="el" href="network__file_8h_source.html#l00068">68</a> of file <a class="el" href="network__file_8h_source.html">network_file.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ad913155a5a2a36b29e4ce4ca8d71c036" name="ad913155a5a2a36b29e4ce4ca8d71c036"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad913155a5a2a36b29e4ce4ca8d71c036">&#9670;&#160;</a></span>Config</h2>
@@ -174,8 +172,6 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="network__file_8h_source.html#l00104">104</a> of file <a class="el" href="network__file_8h_source.html">network_file.h</a>.</p>
 
 </div>
 </div>
@@ -198,8 +194,6 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="network__file_8h_source.html#l00105">105</a> of file <a class="el" href="network__file_8h_source.html">network_file.h</a>.</p>
 
 </div>
 </div>
@@ -229,8 +223,6 @@ Private Attributes</h2></td></tr>
 
 <p>Constructs a <a class="el" href="classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html" title="A parser for simple text files containing a list of reactions.">SimpleReactionListFileParser</a>. </p>
 <dl class="section post"><dt>Postcondition</dt><dd>The parser is initialized and ready to parse files. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="network__file_8cpp_source.html#l00042">42</a> of file <a class="el" href="network__file_8cpp_source.html">network_file.cpp</a>.</p>
 
 </div>
 </div>
@@ -283,13 +275,11 @@ Private Attributes</h2></td></tr>
 </ol>
 <p><b>Usage</b> </p><div class="fragment"><div class="line"><a class="code hl_function" href="#afc8ed91e8c98205c505e3d9f0cff1993">SimpleReactionListFileParser</a> parser;</div>
 <div class="line"><a class="code hl_typedef" href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">ParsedNetworkData</a> data = parser.<a class="code hl_function" href="#a4df01e3a93e1291d2cde0458545325f8">parse</a>(<span class="stringliteral">&quot;reactions.txt&quot;</span>);</div>
-<div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_a4df01e3a93e1291d2cde0458545325f8"><div class="ttname"><a href="#a4df01e3a93e1291d2cde0458545325f8">gridfire::io::SimpleReactionListFileParser::parse</a></div><div class="ttdeci">ParsedNetworkData parse(const std::string &amp;filename) const override</div><div class="ttdoc">Parses a simple reaction list file.</div><div class="ttdef"><b>Definition</b> <a href="network__file_8cpp_source.html#l00044">network_file.cpp:44</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_afc8ed91e8c98205c505e3d9f0cff1993"><div class="ttname"><a href="#afc8ed91e8c98205c505e3d9f0cff1993">gridfire::io::SimpleReactionListFileParser::SimpleReactionListFileParser</a></div><div class="ttdeci">SimpleReactionListFileParser()</div><div class="ttdoc">Constructs a SimpleReactionListFileParser.</div><div class="ttdef"><b>Definition</b> <a href="network__file_8cpp_source.html#l00042">network_file.cpp:42</a></div></div>
-<div class="ttc" id="anamespacegridfire_1_1io_html_abcbdcbd13cfa8c9fbe1b48e8ee2cc352"><div class="ttname"><a href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">gridfire::io::ParsedNetworkData</a></div><div class="ttdeci">std::vector&lt; std::string &gt; ParsedNetworkData</div><div class="ttdef"><b>Definition</b> <a href="network__file_8h_source.html#l00012">network_file.h:12</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_a4df01e3a93e1291d2cde0458545325f8"><div class="ttname"><a href="#a4df01e3a93e1291d2cde0458545325f8">gridfire::io::SimpleReactionListFileParser::parse</a></div><div class="ttdeci">ParsedNetworkData parse(const std::string &amp;filename) const override</div><div class="ttdoc">Parses a simple reaction list file.</div><div class="ttdef"><b>Definition</b> network_file.cpp:44</div></div>
+<div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_afc8ed91e8c98205c505e3d9f0cff1993"><div class="ttname"><a href="#afc8ed91e8c98205c505e3d9f0cff1993">gridfire::io::SimpleReactionListFileParser::SimpleReactionListFileParser</a></div><div class="ttdeci">SimpleReactionListFileParser()</div><div class="ttdoc">Constructs a SimpleReactionListFileParser.</div><div class="ttdef"><b>Definition</b> network_file.cpp:42</div></div>
+<div class="ttc" id="anamespacegridfire_1_1io_html_abcbdcbd13cfa8c9fbe1b48e8ee2cc352"><div class="ttname"><a href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">gridfire::io::ParsedNetworkData</a></div><div class="ttdeci">std::vector&lt; std::string &gt; ParsedNetworkData</div><div class="ttdef"><b>Definition</b> network_file.h:12</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html#a66e8e724c903d6ef4dd1c8103276bdbf">gridfire::io::NetworkFileParser</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="network__file_8cpp_source.html#l00044">44</a> of file <a class="el" href="network__file_8cpp_source.html">network_file.cpp</a>.</p>
 
 </div>
 </div>
@@ -314,8 +304,6 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="network__file_8h_source.html#l00106">106</a> of file <a class="el" href="network__file_8h_source.html">network_file.h</a>.</p>
-
 </div>
 </div>
 <a id="acef7eafe3cbea159259f69c88d309b66" name="acef7eafe3cbea159259f69c88d309b66"></a>
@@ -338,13 +326,11 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="network__file_8h_source.html#l00107">107</a> of file <a class="el" href="network__file_8h_source.html">network_file.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/io/<a class="el" href="network__file_8h_source.html">network_file.h</a></li>
-<li>src/lib/io/<a class="el" href="network__file_8cpp_source.html">network_file.cpp</a></li>
+<li>src/include/gridfire/io/<a class="el" href="network__file_8h.html">network_file.h</a></li>
+<li>src/lib/io/<a class="el" href="network__file_8cpp.html">network_file.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

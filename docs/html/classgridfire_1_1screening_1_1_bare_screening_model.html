@@ -111,7 +111,7 @@ $(function(){initNavTree('classgridfire_1_1screening_1_1_bare_screening_model.ht
 <p>A screening model that applies no screening effect.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="screening__bare_8h_source.html">screening_bare.h</a>&gt;</code></p>
+<p><code>#include &lt;screening_bare.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::screening::BareScreeningModel:</div>
 <div class="dyncontent">
@@ -158,8 +158,6 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A screening model that applies no screening effect. </p>
 <p>This class implements the <code><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a></code> interface but returns a screening factor of 1.0 for all reactions, regardless of the plasma conditions. It represents the case of bare, unscreened nuclei and serves as a baseline or can be used when screening effects are negligible or intentionally ignored. </p>
-
-<p class="definition">Definition at line <a class="el" href="screening__bare_8h_source.html#l00021">21</a> of file <a class="el" href="screening__bare_8h_source.html">screening_bare.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a51119d705267e0b415aae8b4881d8c96" name="a51119d705267e0b415aae8b4881d8c96"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a51119d705267e0b415aae8b4881d8c96">&#9670;&#160;</a></span>ADDouble</h2>
@@ -182,8 +180,6 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Alias for CppAD Automatic Differentiation type for double precision. </p>
-
-<p class="definition">Definition at line <a class="el" href="screening__bare_8h_source.html#l00023">23</a> of file <a class="el" href="screening__bare_8h_source.html">screening_bare.h</a>.</p>
 
 </div>
 </div>
@@ -271,8 +267,6 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A <code>std::vector&lt;T&gt;</code> of the same size as <code>reactions</code>, with all elements set to 1.0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="screening__bare_8h_source.html#l00126">126</a> of file <a class="el" href="screening__bare_8h_source.html">screening_bare.h</a>.</p>
-
 </div>
 </div>
 <a id="ac5647d633cd5bbd7cb5136b7fa4cad99" name="ac5647d633cd5bbd7cb5136b7fa4cad99"></a>
@@ -332,8 +326,6 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A vector of <a class="el" href="#a51119d705267e0b415aae8b4881d8c96" title="Alias for CppAD Automatic Differentiation type for double precision.">ADDouble</a>, with each element being 1.0, of the same size as the <code>reactions</code> set. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html#a6c381a823cb9c1680d3e9c846da4ae22">gridfire::screening::ScreeningModel</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="screening__bare_8cpp_source.html#l00012">12</a> of file <a class="el" href="screening__bare_8cpp_source.html">screening_bare.cpp</a>.</p>
 
 </div>
 </div>
@@ -399,18 +391,16 @@ template&lt;typename T&gt; </div>
 <div class="line">    reactions, species, Y, T9, rho</div>
 <div class="line">);</div>
 <div class="line"><span class="comment">// &#39;factors&#39; will contain [1.0, 1.0, ...]</span></div>
-<div class="ttc" id="aclassgridfire_1_1screening_1_1_bare_screening_model_html"><div class="ttname"><a href="classgridfire_1_1screening_1_1_bare_screening_model.html">gridfire::screening::BareScreeningModel</a></div><div class="ttdoc">A screening model that applies no screening effect.</div><div class="ttdef"><b>Definition</b> <a href="screening__bare_8h_source.html#l00021">screening_bare.h:21</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1screening_1_1_bare_screening_model_html_ac35ad34c5da7e1b5087552aa5c83fe60"><div class="ttname"><a href="#ac35ad34c5da7e1b5087552aa5c83fe60">gridfire::screening::BareScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">std::vector&lt; double &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const override</div><div class="ttdoc">Calculates screening factors, which are always 1.0.</div><div class="ttdef"><b>Definition</b> <a href="screening__bare_8cpp_source.html#l00022">screening_bare.cpp:22</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1screening_1_1_bare_screening_model_html"><div class="ttname"><a href="classgridfire_1_1screening_1_1_bare_screening_model.html">gridfire::screening::BareScreeningModel</a></div><div class="ttdoc">A screening model that applies no screening effect.</div><div class="ttdef"><b>Definition</b> screening_bare.h:21</div></div>
+<div class="ttc" id="aclassgridfire_1_1screening_1_1_bare_screening_model_html_ac35ad34c5da7e1b5087552aa5c83fe60"><div class="ttname"><a href="#ac35ad34c5da7e1b5087552aa5c83fe60">gridfire::screening::BareScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">std::vector&lt; double &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const override</div><div class="ttdoc">Calculates screening factors, which are always 1.0.</div><div class="ttdef"><b>Definition</b> screening_bare.cpp:22</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html#aaec9184d80c86a2d8674e395dad81bde">gridfire::screening::ScreeningModel</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="screening__bare_8cpp_source.html#l00022">22</a> of file <a class="el" href="screening__bare_8cpp_source.html">screening_bare.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/screening/<a class="el" href="screening__bare_8h_source.html">screening_bare.h</a></li>
-<li>src/lib/screening/<a class="el" href="screening__bare_8cpp_source.html">screening_bare.cpp</a></li>
+<li>src/include/gridfire/screening/<a class="el" href="screening__bare_8h.html">screening_bare.h</a></li>
+<li>src/lib/screening/<a class="el" href="screening__bare_8cpp.html">screening_bare.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

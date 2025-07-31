@@ -112,7 +112,7 @@ $(function(){initNavTree('classgridfire_1_1_reaction.html',''); initResizable(tr
 <p>Represents a single nuclear reaction from a specific data source.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="reaction_8h_source.html">reaction.h</a>&gt;</code></p>
+<p><code>#include &lt;reaction.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::Reaction:</div>
 <div class="dyncontent">
@@ -258,10 +258,8 @@ Friends</h2></td></tr>
 <div class="line">    <span class="stringliteral">&quot;H_1_H_1_to_H_2&quot;</span>, <span class="stringliteral">&quot;p(p,g)d&quot;</span>, 1, {H_1, H_1}, {H_2}, 5.493, <span class="stringliteral">&quot;st08&quot;</span>, rate_coeffs</div>
 <div class="line">);</div>
 <div class="line"><span class="keywordtype">double</span> rate = p_gamma_d.calculate_rate(0.1); <span class="comment">// T9 = 0.1</span></div>
-<div class="ttc" id="aclassgridfire_1_1_reaction_html_a7dff19d387e771d96c26e98d75ee9d5c"><div class="ttname"><a href="#a7dff19d387e771d96c26e98d75ee9d5c">gridfire::Reaction::Reaction</a></div><div class="ttdeci">Reaction(const std::string_view id, const std::string_view peName, const int chapter, const std::vector&lt; fourdst::atomic::Species &gt; &amp;reactants, const std::vector&lt; fourdst::atomic::Species &gt; &amp;products, const double qValue, const std::string_view label, const RateCoefficientSet &amp;sets, const bool reverse=false)</div><div class="ttdoc">Constructs a Reaction object.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8cpp_source.html#l00019">reaction.cpp:19</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00072">72</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<div class="ttc" id="aclassgridfire_1_1_reaction_html_a7dff19d387e771d96c26e98d75ee9d5c"><div class="ttname"><a href="#a7dff19d387e771d96c26e98d75ee9d5c">gridfire::Reaction::Reaction</a></div><div class="ttdeci">Reaction(const std::string_view id, const std::string_view peName, const int chapter, const std::vector&lt; fourdst::atomic::Species &gt; &amp;reactants, const std::vector&lt; fourdst::atomic::Species &gt; &amp;products, const double qValue, const std::string_view label, const RateCoefficientSet &amp;sets, const bool reverse=false)</div><div class="ttdoc">Constructs a Reaction object.</div><div class="ttdef"><b>Definition</b> reaction.cpp:19</div></div>
+</div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1860df84843be70f97469761e11ab6a" name="ab1860df84843be70f97469761e11ab6a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1860df84843be70f97469761e11ab6a">&#9670;&#160;</a></span>~Reaction()</h2>
 
@@ -359,8 +357,6 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00019">19</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -390,8 +386,6 @@ Friends</h2></td></tr>
 <p>Gets a set of all unique species involved in the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of all reactant and product species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00091">91</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a3a8ba9212d76d5ce51f20df6892c6061" name="a3a8ba9212d76d5ce51f20df6892c6061"></a>
@@ -416,8 +410,6 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00047">47</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -453,8 +445,6 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate, as a CppAD::AD&lt;double&gt;. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00043">43</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ad81e9b2a1773470059ca6989c60556ec" name="ad81e9b2a1773470059ca6989c60556ec"></a>
@@ -488,8 +478,6 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00039">39</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -534,8 +522,6 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate.</dd></dl>
 <p>The rate is calculated using the standard REACLIB formula: <code>rate = exp(a0 + a1/T9 + a2/T9^(1/3) + a3*T9^(1/3) + a4*T9 + a5*T9^(5/3) + a6*ln(T9))</code> </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00283">283</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a5cb438adfefb640e4bc58e09053bd629" name="a5cb438adfefb640e4bc58e09053bd629"></a>
@@ -563,8 +549,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the REACLIB chapter number. </p>
 <dl class="section return"><dt>Returns</dt><dd>The chapter number. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00128">128</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -600,8 +584,6 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is involved, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00068">68</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a074d3cd2421fd5d0133e47f0522403e2" name="a074d3cd2421fd5d0133e47f0522403e2"></a>
@@ -635,8 +617,6 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a product, false otherwise. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00082">82</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -672,8 +652,6 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a reactant, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00073">73</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="aa1d71e38fc55ae691dbb9ec459a612a5" name="aa1d71e38fc55ae691dbb9ec459a612a5"></a>
@@ -701,8 +679,6 @@ template&lt;typename T&gt; </div>
 
 <p>Calculates the excess energy from the mass difference of reactants and products. </p>
 <dl class="section return"><dt>Returns</dt><dd>The excess energy in MeV. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00144">144</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -739,8 +715,6 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A 64-bit hash value.</dd></dl>
 <p>Uses the XXHash64 algorithm on the reaction's ID string. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00157">157</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a084c38181408ed5e6fa2a2dd4d0ec905" name="a084c38181408ed5e6fa2a2dd4d0ec905"></a>
@@ -768,8 +742,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the unique identifier of the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reaction ID. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00204">204</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -799,8 +771,6 @@ template&lt;typename T&gt; </div>
 <p>Checks if this is a reverse reaction rate. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if it is a reverse rate, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00228">228</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a1d3c8ab6d55155f9a21ad80ed8b9ef97" name="a1d3c8ab6d55155f9a21ad80ed8b9ef97"></a>
@@ -828,8 +798,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the number of unique species involved in the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The count of unique species. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00129">129</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -865,8 +833,6 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reactions are not equal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00248">248</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="ac426457cf0a54a15b206549422083bac" name="ac426457cf0a54a15b206549422083bac"></a>
@@ -901,8 +867,6 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reaction IDs are the same. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00241">241</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a78f42664cc957e266b6cf15fda09be97" name="a78f42664cc957e266b6cf15fda09be97"></a>
@@ -930,8 +894,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the reaction name in (projectile, ejectile) notation. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reaction name (e.g., "p(p,g)d"). </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00122">122</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -961,8 +923,6 @@ template&lt;typename T&gt; </div>
 <p>Gets a set of all unique product species. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of product species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00106">106</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a6e2ff61b9e8409f2a561663628b8ce02" name="a6e2ff61b9e8409f2a561663628b8ce02"></a>
@@ -990,8 +950,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the vector of product species. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of products. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00222">222</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1021,8 +979,6 @@ template&lt;typename T&gt; </div>
 <p>Gets the Q-value of the reaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Q-value in whatever units the reaction was defined in (usually MeV). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00210">210</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a85968076e686e67763f4fdf4f72a892e" name="a85968076e686e67763f4fdf4f72a892e"></a>
@@ -1050,8 +1006,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the set of rate coefficients. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html" title="Holds the seven coefficients for the REACLIB rate equation.">RateCoefficientSet</a>. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00140">140</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1081,8 +1035,6 @@ template&lt;typename T&gt; </div>
 <p>Gets a set of all unique reactant species. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_set of reactant species. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00098">98</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a0b543e9b0bb4a21efe4b29780d9bdf5b" name="a0b543e9b0bb4a21efe4b29780d9bdf5b"></a>
@@ -1110,8 +1062,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets the vector of reactant species. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of reactants. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00216">216</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1141,8 +1091,6 @@ template&lt;typename T&gt; </div>
 <p>Gets the source label for the rate data. </p>
 <dl class="section return"><dt>Returns</dt><dd>The source label (e.g., "wc12w", "st08"). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00134">134</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="ad359c06d7196c1a7a955a7b66a51dbe3" name="ad359c06d7196c1a7a955a7b66a51dbe3"></a>
@@ -1170,8 +1118,6 @@ template&lt;typename T&gt; </div>
 
 <p>Gets a map of all species to their stoichiometric coefficients. </p>
 <dl class="section return"><dt>Returns</dt><dd>An unordered_map from species to their integer coefficients. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00133">133</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -1237,8 +1183,6 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00258">258</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -1264,8 +1208,6 @@ template&lt;typename T&gt; </div>
 
 <p>Chapter number from the REACLIB database, defining the reaction structure. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00266">266</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a5c685e5a736b51799e5b9f6746c4126b" name="a5c685e5a736b51799e5b9f6746c4126b"></a>
@@ -1290,8 +1232,6 @@ template&lt;typename T&gt; </div>
 
 <p>Unique identifier for the reaction (e.g., "h1+h1=&gt;h2+e+nu"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00264">264</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a7044d0a1d59d85502ce554e4ec2167e4" name="a7044d0a1d59d85502ce554e4ec2167e4"></a>
@@ -1313,8 +1253,6 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00263">263</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1340,8 +1278,6 @@ template&lt;typename T&gt; </div>
 
 <p>Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00265">265</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a4b5607ed413acdf29539b8a57461e49e" name="a4b5607ed413acdf29539b8a57461e49e"></a>
@@ -1365,8 +1301,6 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>Products of the reaction. </p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00269">269</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1392,8 +1326,6 @@ template&lt;typename T&gt; </div>
 
 <p>Q-value of the reaction in MeV. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00267">267</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="aa61a9a024d7c4ff66a351ccd0277ec72" name="aa61a9a024d7c4ff66a351ccd0277ec72"></a>
@@ -1417,8 +1349,6 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>The seven rate coefficients. </p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00271">271</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1444,8 +1374,6 @@ template&lt;typename T&gt; </div>
 
 <p>Reactants of the reaction. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00268">268</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="a0b0b9ac498080aae91ffd466d1ae85a9" name="a0b0b9ac498080aae91ffd466d1ae85a9"></a>
@@ -1469,8 +1397,6 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>Flag indicating if this is a reverse reaction rate. </p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00272">272</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -1496,13 +1422,11 @@ template&lt;typename T&gt; </div>
 
 <p>Source label for the rate data (e.g., "wc12w", "st08"). </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00270">270</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
-<li>src/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
+<li>src/include/gridfire/reaction/<a class="el" href="reaction_8h.html">reaction.h</a></li>
+<li>src/lib/reaction/<a class="el" href="reaction_8cpp.html">reaction.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

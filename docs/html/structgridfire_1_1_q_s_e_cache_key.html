@@ -111,7 +111,7 @@ $(function(){initNavTree('structgridfire_1_1_q_s_e_cache_key.html',''); initResi
 <p>Key struct for the QSE abundance cache.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>&gt;</code></p>
+<p><code>#include &lt;engine_multiscale.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -150,8 +150,6 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p>Key struct for the QSE abundance cache. </p>
 <p>@purpose This struct is used as the key for the QSE abundance cache (<code>m_qse_abundance_cache</code>) within the <code><a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a></code>. Its primary goal is to avoid expensive re-partitioning and QSE solves for thermodynamic conditions that are "close enough" to previously computed ones.</p>
 <p>@how It works by storing the temperature (<code>m_T9</code>), density (<code>m_rho</code>), and species abundances (<code>m_Y</code>). A pre-computed hash is generated in the constructor by calling the <code><a class="el" href="#a99772155522bf6cbe08313565444a39d" title="Computes the hash value for this key.">hash()</a></code> method. This method discretizes the continuous physical values into bins using the tolerances defined in <code><a class="el" href="structgridfire_1_1_q_s_e_cache_config.html" title="Configuration struct for the QSE cache.">QSECacheConfig</a></code>. The <code>operator==</code> simply compares the pre-computed hash values for fast lookups in the <code>std::unordered_map</code>. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00047">47</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3078528fc69b8e687448d3108a216c03" name="a3078528fc69b8e687448d3108a216c03"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3078528fc69b8e687448d3108a216c03">&#9670;&#160;</a></span>QSECacheKey()</h2>
@@ -187,8 +185,6 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The <code>m_hash</code> member is computed and stored. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01556">1556</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -231,8 +227,6 @@ Public Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The bin number as a long integer.</dd></dl>
 <p>@how The algorithm is <code>floor(value / tol)</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01588">1588</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a99772155522bf6cbe08313565444a39d" name="a99772155522bf6cbe08313565444a39d"></a>
@@ -253,8 +247,6 @@ Public Attributes</h2></td></tr>
 <p>Computes the hash value for this key. </p>
 <dl class="section return"><dt>Returns</dt><dd>The computed hash value.</dd></dl>
 <p>@how This method combines the hashes of the binned temperature, density, and each species abundance. The <code><a class="el" href="#ac7e043ac0254936602c37a7e6a1391b3" title="Converts a value to a discrete bin based on a tolerance.">bin()</a></code> static method is used for discretization. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01567">1567</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -282,8 +274,6 @@ Public Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the pre-computed hashes are equal, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01592">1592</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -304,8 +294,6 @@ Public Attributes</h2></td></tr>
 <div class="line">            1e-3  </div>
 <div class="line">        }</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00055">55</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="ab860b40d4ccb3c16a962d96bc767ff05" name="ab860b40d4ccb3c16a962d96bc767ff05"></a>
@@ -322,8 +310,6 @@ Public Attributes</h2></td></tr>
 
 <p>Precomputed hash value for this key. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00052">52</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="abb0d1c5b8c88ae2edbc1f8d3b8759f63" name="abb0d1c5b8c88ae2edbc1f8d3b8759f63"></a>
@@ -338,8 +324,6 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00049">49</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a2ab20b15ab7f9da15c36989e8d9a2bc7" name="a2ab20b15ab7f9da15c36989e8d9a2bc7"></a>
@@ -353,8 +337,6 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00048">48</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -372,13 +354,11 @@ Public Attributes</h2></td></tr>
 
 <p>Note that the ordering of Y must match the dynamic species indices in the view. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00050">50</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
-<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a></li>
-<li>src/lib/engine/views/<a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a></li>
+<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h.html">engine_multiscale.h</a></li>
+<li>src/lib/engine/views/<a class="el" href="engine__multiscale_8cpp.html">engine_multiscale.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

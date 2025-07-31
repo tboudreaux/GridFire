@@ -113,7 +113,7 @@ $(function(){initNavTree('classgridfire_1_1_graph_engine.html',''); initResizabl
 <p>A reaction network engine that uses a graph-based representation.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>&gt;</code></p>
+<p><code>#include &lt;engine_graph.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::GraphEngine:</div>
 <div class="dyncontent">
@@ -354,8 +354,6 @@ Private Attributes</h2></td></tr>
 <li>Exporting the network to DOT and CSV formats for visualization and analysis.</li>
 </ul>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="engine__abstract_8h.html" title="Abstract interfaces for reaction network engines in GridFire.">engine_abstract.h</a> </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00100">100</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afad967546b611d9c005268760feb75d5" name="afad967546b611d9c005268760feb75d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afad967546b611d9c005268760feb75d5">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[1/3]</span></h2>
@@ -394,8 +392,6 @@ Private Attributes</h2></td></tr>
 <p>This constructor builds the reaction network from the given composition using the <code>build_reaclib_nuclear_network</code> function.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacegridfire.html#aedddb89e400a6111f69bfe0c3fd4214e" title="Builds a nuclear reaction network from the Reaclib library based on an initial composition.">build_reaclib_nuclear_network</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00034">34</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a39d9838ed40bea71ee6c552bb5969026" name="a39d9838ed40bea71ee6c552bb5969026"></a>
@@ -430,8 +426,6 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00039">39</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a1e7e851dfa21d41c2dc533ba56fc4c7b" name="a1e7e851dfa21d41c2dc533ba56fc4c7b"></a>
@@ -465,8 +459,6 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <p>This constructor uses the given set of reactions to construct the reaction network. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00050">50</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -515,8 +507,6 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;ADDouble&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
 <p>This method calculates the time derivatives of all species and the specific nuclear energy generation rate for the current state using automatic differentiation. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00594">594</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="aaf4d54e4b774ab8ec8eabec006579d31" name="aaf4d54e4b774ab8ec8eabec006579d31"></a>
@@ -562,8 +552,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;double&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
 <p>This method calculates the time derivatives of all species and the specific nuclear energy generation rate for the current state using double precision arithmetic. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00586">586</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -619,8 +607,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;T&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
 <p>This method calculates the time derivatives of all species and the specific nuclear energy generation rate for the current state. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00715">715</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a97f98706b51fbe0d167ed81ffe58c438" name="a97f98706b51fbe0d167ed81ffe58c438"></a>
@@ -664,8 +650,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00448">448</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -720,8 +704,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6633b1757c41dd9e1c397333f4f9e785">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00623">623</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -783,8 +765,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
 <p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00796">796</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a17774cd9ffcf1ba94019df766a0984a0" name="a17774cd9ffcf1ba94019df766a0984a0"></a>
@@ -836,8 +816,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00648">648</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a0b7b85f824e1021ae6e56b644db53b28" name="a0b7b85f824e1021ae6e56b644db53b28"></a>
@@ -866,8 +844,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00242">242</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -908,8 +884,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00269">269</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="af28950c5af3a92eb03a1a64ed0f913e7" name="af28950c5af3a92eb03a1a64ed0f913e7"></a>
@@ -943,8 +917,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00346">346</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -995,8 +967,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine.html#a89f714d19b84a93a004a7afbb487a6cb">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00057">57</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a29b338630c959449c15881935ac30746" name="a29b338630c959449c15881935ac30746"></a>
@@ -1021,8 +991,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00947">947</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1051,8 +1019,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Collects the unique species in the network. </p>
 <p>This method collects the unique species in the network from the reactants and products of all reactions. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00106">106</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1087,8 +1053,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </dl>
 <p>Example usage: </p><div class="fragment"><div class="line">engine.exportToCSV(<span class="stringliteral">&quot;network.csv&quot;</span>);</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00788">788</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="adac8c7d62bae76e17fc060e86dadd929" name="adac8c7d62bae76e17fc060e86dadd929"></a>
@@ -1122,8 +1086,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </dl>
 <p>Example usage: </p><div class="fragment"><div class="line">engine.exportToDot(<span class="stringliteral">&quot;network.dot&quot;</span>);</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00740">740</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ad049a295e2bb0f3e97b76d5742875119" name="ad049a295e2bb0f3e97b76d5742875119"></a>
@@ -1172,8 +1134,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a29bdd4231c29c3a4e524ad6ca66a127d">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00632">632</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a9687eef88c97eeb7f8680acb230f8ac1" name="a9687eef88c97eeb7f8680acb230f8ac1"></a>
@@ -1215,8 +1175,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a818d942efa843959393e4eed3263b7e7">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00665">665</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="aed726d36ee2b3796beff6067a1e4db38" name="aed726d36ee2b3796beff6067a1e4db38"></a>
@@ -1247,8 +1205,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00545">545</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a166a5f4349580f9aa0b930afec73fcc4" name="a166a5f4349580f9aa0b930afec73fcc4"></a>
@@ -1275,8 +1231,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00434">434</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1321,8 +1275,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a05d15ff35a6bc06a2fa7eda19838bd07">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00722">722</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a8c29d8bbde407e913be5eb77efb2c0c9" name="a8c29d8bbde407e913be5eb77efb2c0c9"></a>
@@ -1357,8 +1309,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Map of species to their stoichiometric coefficients. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00727">727</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ad45650d10fc5dff1673ae3f806d067da" name="ad45650d10fc5dff1673ae3f806d067da"></a>
@@ -1388,8 +1338,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">LogicalReactionSet</a> containing all reactions. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad2a82099edbb374bbb2c9509ccdb1037">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00168">168</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1421,8 +1369,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine.html#a020e1b493d6964cafdad08fde697ceb3">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00162">162</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="add98ece49ec5c538bddf3cc77004fe44" name="add98ece49ec5c538bddf3cc77004fe44"></a>
@@ -1447,8 +1393,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00619">619</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1478,12 +1422,10 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>Get the current electron screening model. </p>
 <dl class="section return"><dt>Returns</dt><dd>The currently active screening model type.</dd></dl>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> currentModel = myEngine.getScreeningModel();</div>
-<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00015">screening_types.h:15</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> screening_types.h:15</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a7a203f8e0f3a6744ddc912dfbcfdbcc0">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00607">607</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1521,8 +1463,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6ca0f315f75252ca505507a61556dda6">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00861">861</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a914f6abc61805cddaebcb8f3cf470dda" name="a914f6abc61805cddaebcb8f3cf470dda"></a>
@@ -1549,8 +1489,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00395">395</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1600,8 +1538,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00842">842</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a6b5feaf788bade212b7c8df7ac8c8152" name="a6b5feaf788bade212b7c8df7ac8c8152"></a>
@@ -1645,8 +1581,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00733">733</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="aa6202cee0c3c481eda77cc9a91bc126b" name="aa6202cee0c3c481eda77cc9a91bc126b"></a>
@@ -1681,8 +1615,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is involved in the network, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00179">179</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a015f8975701f028c29835d3a9794e00f" name="a015f8975701f028c29835d3a9794e00f"></a>
@@ -1707,8 +1639,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00615">615</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1737,8 +1667,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a942e65ced17ca602482cc42e469d6398">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00898">898</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ae7a210d9ab13ad5fb0c612f027acabd0" name="ae7a210d9ab13ad5fb0c612f027acabd0"></a>
@@ -1763,8 +1691,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00387">387</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1792,8 +1718,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a55f1b7e5ebe2840e1d7c54665ca5411a">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00399">399</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1823,8 +1747,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>Populates the reaction ID map. </p>
 <p>This method populates the reaction ID map, which maps reaction IDs to REACLIBReaction objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00135">135</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a47202c43342b96480070874bffce1391" name="a47202c43342b96480070874bffce1391"></a>
@@ -1853,8 +1775,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>Populates the species-to-index map. </p>
 <p>This method populates the species-to-index map, which maps species to their index in the stoichiometry matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00144">144</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a92644bc333bff69c5685be4552ca12fd" name="a92644bc333bff69c5685be4552ca12fd"></a>
@@ -1879,8 +1799,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00960">960</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1908,8 +1826,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21c34f59c080a853fafa38a25175124e">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00407">407</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1941,8 +1857,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a4e2c8b896661b7a89beffe0066cb21cf">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00438">438</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -1978,8 +1892,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00902">902</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a8d0c0bd54a2908cff62dae7af0c149b5" name="a8d0c0bd54a2908cff62dae7af0c149b5"></a>
@@ -2008,8 +1920,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>Reserves space for the Jacobian matrix. </p>
 <p>This method reserves space for the Jacobian matrix, which is used to store the partial derivatives of the right-hand side of the ODE with respect to the species abundances. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00151">151</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a371ba0881d6903ddb2d586faa61805d0" name="a371ba0881d6903ddb2d586faa61805d0"></a>
@@ -2037,8 +1947,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00174">174</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a6c5410878496abc349ba30b691cdf0f1" name="a6c5410878496abc349ba30b691cdf0f1"></a>
@@ -2055,8 +1963,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00611">611</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -2092,13 +1998,11 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </dl>
 <p>This method allows changing the screening model at runtime. Screening corrections account for the electrostatic shielding of nuclei by electrons, which affects reaction rates in dense stellar plasmas.</p>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line">myEngine.setScreeningModel(<a class="code hl_enumvalue" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">screening::ScreeningType::WEAK</a>);</div>
-<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> <a href="screening__types_8h_source.html#l00035">screening_types.h:35</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> screening_types.h:35</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The engine will use the specified screening model for subsequent rate calculations. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a3fb44b6f55563a2f590f31916528f2bd">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00602">602</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -2116,8 +2020,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00391">391</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -2146,8 +2048,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Synchronizes the internal maps. </p>
 <p>This method synchronizes the internal maps used by the engine, including the species map, reaction ID map, and species-to-index map. It also generates the stoichiometry matrix and records the AD tape. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00081">81</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -2184,13 +2084,11 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>This method is intended to be implemented by derived classes to update their internal state based on the provided network conditions. For example, an adaptive engine might use this to re-evaluate which reactions and species are active. For other engines that do not support manually updating, this method might do nothing.</p>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input = { ... };</div>
 <div class="line">myEngine.update(input);</div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00053">network.h:53</a></div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> network.h:53</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The internal state of the engine is updated to reflect the new conditions. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00886">886</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
 
 </div>
 </div>
@@ -2221,8 +2119,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>True if all reactions conserve mass and charge, false otherwise.</dd></dl>
 <p>This method checks that all reactions in the network conserve mass and charge. If any reaction does not conserve mass or charge, an error message is logged and false is returned. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8cpp_source.html#l00187">187</a> of file <a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a>.</p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -2246,8 +2142,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00466">466</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a3b17102b143435ddfdc015d7a50c4b18" name="a3b17102b143435ddfdc015d7a50c4b18"></a>
@@ -2269,8 +2163,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00447">447</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2294,8 +2186,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00450">450</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a80c73690d5af247ff9f2ba8b00abce01" name="a80c73690d5af247ff9f2ba8b00abce01"></a>
@@ -2317,8 +2207,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00475">475</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2344,8 +2232,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Full sparsity pattern for the Jacobian matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00464">464</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a250cc6350dc052fbdfdf9a02066e7891" name="a250cc6350dc052fbdfdf9a02066e7891"></a>
@@ -2369,8 +2255,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Work object for sparse Jacobian calculations. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00463">463</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2396,8 +2280,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Jacobian matrix (species x species). </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00461">461</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a483979fc154adc88d029b3b672066d53" name="a483979fc154adc88d029b3b672066d53"></a>
@@ -2419,8 +2301,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00448">448</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2446,8 +2326,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Vector of unique species in the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00455">455</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a30e09ed0bce6aa5fc89beaa316a7b827" name="a30e09ed0bce6aa5fc89beaa316a7b827"></a>
@@ -2471,8 +2349,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Map from species name to Species object. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00456">456</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2498,8 +2374,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Partition function for the network. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00478">478</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a5d431d5385b1219ba29689eb29601ea3" name="a5d431d5385b1219ba29689eb29601ea3"></a>
@@ -2523,8 +2397,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Precomputed reactions for efficiency. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00477">477</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2550,8 +2422,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Map from reaction ID to REACLIBReaction. //PERF: This makes copies of REACLIBReaction and could be a performance bottleneck. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00453">453</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="acb7c4f5108b0efeae48ad15598e808c3" name="acb7c4f5108b0efeae48ad15598e808c3"></a>
@@ -2575,8 +2445,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Set of REACLIB reactions in the network. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00452">452</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2602,8 +2470,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>CppAD function for the right-hand side of the ODE. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00462">462</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="af17cf3762abac3efcab9a8e87c961210" name="af17cf3762abac3efcab9a8e87c961210"></a>
@@ -2625,8 +2491,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00469">469</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2652,8 +2516,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Screening type for the reaction network. Default to no screening. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00468">468</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="ad8237c252145a75092202d00f5e1ddf7" name="ad8237c252145a75092202d00f5e1ddf7"></a>
@@ -2677,8 +2539,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Map from species to their index in the stoichiometry matrix. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00457">457</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2704,8 +2564,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Stoichiometry matrix (species x reactions). </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00459">459</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <a id="a191cff35402d3c97c82c5c966a39d0de" name="a191cff35402d3c97c82c5c966a39d0de"></a>
@@ -2729,8 +2587,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00471">471</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
 
 </div>
 </div>
@@ -2756,13 +2612,11 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Flag to enable or disable reverse reactions. If false, only forward reactions are considered. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__graph_8h_source.html#l00473">473</a> of file <a class="el" href="engine__graph_8h_source.html">engine_graph.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/engine/<a class="el" href="engine__graph_8h_source.html">engine_graph.h</a></li>
-<li>src/lib/engine/<a class="el" href="engine__graph_8cpp_source.html">engine_graph.cpp</a></li>
+<li>src/include/gridfire/engine/<a class="el" href="engine__graph_8h.html">engine_graph.h</a></li>
+<li>src/lib/engine/<a class="el" href="engine__graph_8cpp.html">engine_graph.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

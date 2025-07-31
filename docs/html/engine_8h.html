@@ -105,14 +105,12 @@ $(function(){initNavTree('engine_8h.html',''); initResizable(true); });
 
 <p>Core header for the GridFire reaction network engine module.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h_source.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__graph_8h_source.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__views_8h_source.html">gridfire/engine/views/engine_views.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__procedures_8h_source.html">gridfire/engine/procedures/engine_procedures.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__types_8h_source.html">gridfire/engine/types/engine_types.h</a>&quot;</code><br />
-</div>
-<p><a href="engine_8h_source.html">Go to the source code of this file.</a></p>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__views_8h.html">gridfire/engine/views/engine_views.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__procedures_8h.html">gridfire/engine/procedures/engine_procedures.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__types_8h.html">gridfire/engine/types/engine_types.h</a>&quot;</code><br />
+</div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Core header for the GridFire reaction network engine module. </p>
 <p>This module defines the core interfaces and classes for reaction network engines in GridFire. It provides abstract base classes for engines, dynamic engines, and engine views, as well as concrete engine implementations and view implementations.</p>
 <p>The engine module is designed to support a wide range of reaction network simulations, from simple single-zone calculations to complex multi-zone simulations with adaptive network topologies.</p>
@@ -156,7 +154,7 @@ GraphEngine Example</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Create a GraphEngine</span></div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(composition);</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00100">engine_graph.h:100</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:100</div></div>
 <div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="AdaptiveEngineViewExample"></a>
 AdaptiveEngineView Example</h2>
@@ -173,7 +171,7 @@ AdaptiveEngineView Example</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Create an AdaptiveEngineView</span></div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> engine(baseEngine);</div>
-<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> <a href="engine__adaptive_8h_source.html#l00050">engine_adaptive.h:50</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> engine_adaptive.h:50</div></div>
 <div class="ttc" id="aengine__adaptive_8h_html"><div class="ttname"><a href="engine__adaptive_8h.html">engine_adaptive.h</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="DefinedEngineViewExample"></a>
 DefinedEngineView Example</h2>
@@ -191,7 +189,7 @@ DefinedEngineView Example</h2>
 <div class="line"><span class="comment">// Create a DefinedEngineView</span></div>
 <div class="line">std::vector&lt;std::string&gt; peNames = {<span class="stringliteral">&quot;p(p,e+)d&quot;</span>, <span class="stringliteral">&quot;he4(a,g)be8&quot;</span>};</div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_defined_engine_view.html">gridfire::DefinedEngineView</a> engine(peNames, baseEngine);</div>
-<div class="ttc" id="aclassgridfire_1_1_defined_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_defined_engine_view.html">gridfire::DefinedEngineView</a></div><div class="ttdef"><b>Definition</b> <a href="engine__defined_8h_source.html#l00016">engine_defined.h:16</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_defined_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_defined_engine_view.html">gridfire::DefinedEngineView</a></div><div class="ttdef"><b>Definition</b> engine_defined.h:16</div></div>
 <div class="ttc" id="aengine__defined_8h_html"><div class="ttname"><a href="engine__defined_8h.html">engine_defined.h</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="MultiscalePartitioningEngineViewExample"></a>
 MultiscalePartitioningEngineView Example</h2>
@@ -208,7 +206,7 @@ MultiscalePartitioningEngineView Example</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Create a MultiscalePartitioningEngineView</span></div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> engine(baseEngine);</div>
-<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> <a href="engine__multiscale_8h_source.html#l00174">engine_multiscale.h:174</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:174</div></div>
 <div class="ttc" id="aengine__multiscale_8h_html"><div class="ttname"><a href="engine__multiscale_8h.html">engine_multiscale.h</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="NetworkPrimingEngineViewExample"></a>
 NetworkPrimingEngineView Example</h2>
@@ -226,11 +224,9 @@ NetworkPrimingEngineView Example</h2>
 <div class="line"><span class="comment">// Create a NetworkPrimingEngineView</span></div>
 <div class="line">std::string primingSymbol = <span class="stringliteral">&quot;p&quot;</span>;</div>
 <div class="line"><a class="code hl_class" href="classgridfire_1_1_network_priming_engine_view.html">gridfire::NetworkPrimingEngineView</a> engine(primingSymbol, baseEngine);</div>
-<div class="ttc" id="aclassgridfire_1_1_network_priming_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_network_priming_engine_view.html">gridfire::NetworkPrimingEngineView</a></div><div class="ttdoc">Provides a view of a DynamicEngine filtered to reactions involving a specified priming species.</div><div class="ttdef"><b>Definition</b> <a href="engine__priming_8h_source.html#l00030">engine_priming.h:30</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_network_priming_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_network_priming_engine_view.html">gridfire::NetworkPrimingEngineView</a></div><div class="ttdoc">Provides a view of a DynamicEngine filtered to reactions involving a specified priming species.</div><div class="ttdef"><b>Definition</b> engine_priming.h:30</div></div>
 <div class="ttc" id="aengine__priming_8h_html"><div class="ttname"><a href="engine__priming_8h.html">engine_priming.h</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition in file <a class="el" href="engine_8h_source.html">engine.h</a>.</p>
-</div></div><!-- contents -->
+</div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

@@ -113,7 +113,7 @@ $(function(){initNavTree('classgridfire_1_1_multiscale_partitioning_engine_view.
 <p>An engine view that partitions the reaction network into multiple groups based on timescales.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>&gt;</code></p>
+<p><code>#include &lt;engine_multiscale.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::MultiscalePartitioningEngineView:</div>
 <div class="dyncontent">
@@ -332,13 +332,11 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="comment">//    The integrator will call calculateRHSAndEnergy, etc. on the multiscaleEngine.</span></div>
 <div class="line"><span class="keyword">auto</span> Y_initial = multiscaleEngine.mapNetInToMolarAbundanceVector({equilibratedComp, ...});</div>
 <div class="line"><span class="keyword">auto</span> derivatives = multiscaleEngine.calculateRHSAndEnergy(Y_initial, T9, rho);</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> <a href="engine__graph_8h_source.html#l00100">engine_graph.h:100</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> <a href="engine__multiscale_8h_source.html#l00174">engine_multiscale.h:174</a></div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> <a href="network_8h_source.html#l00053">network.h:53</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:100</div></div>
+<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:174</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> network.h:53</div></div>
 </div><!-- fragment --></dd></dl>
 <p>&lt;DynamicEngine&gt; </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00174">174</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a34b5fdb2078e748edfbe6846ecadd681" name="a34b5fdb2078e748edfbe6846ecadd681"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34b5fdb2078e748edfbe6846ecadd681">&#9670;&#160;</a></span>QSEPartition</h2>
@@ -362,8 +360,6 @@ Private Attributes</h2></td></tr>
 
 <p>Type alias for a QSE partition. </p>
 <p>A QSE partition is a tuple containing the fast species, their indices, the slow species, and their indices. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00181">181</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -398,8 +394,6 @@ Private Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00153">153</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -446,8 +440,6 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A vector of vectors of species indices, where each inner vector represents a single connected component.</dd></dl>
 <p>@purpose To merge timescale pools that are strongly connected by reactions, forming cohesive groups for QSE analysis.</p>
 <p>@how For each pool, it builds a reaction connectivity graph using <code>buildConnectivityGraph</code>. It then finds the connected components within that graph using a Breadth-First Search (BFS). The resulting components from all pools are collected and returned. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00416">416</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -521,8 +513,6 @@ Private Attributes</h2></td></tr>
 <p>@purpose To find reaction connections within a specific group of species.</p>
 <p>@how It iterates through all reactions in the base engine. If a reaction involves at least two distinct species from the input <code>species_pool</code> (one as a reactant and one as a product), it adds edges between all reactants and products from that reaction that are also in the pool. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01344">1344</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a79eb9c108d694a27ec913ed0143aa044" name="a79eb9c108d694a27ec913ed0143aa044"></a>
@@ -585,8 +575,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6633b1757c41dd9e1c397333f4f9e785">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00253">253</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a716d7357e944e8394d8b8e0b5e7625eb" name="a716d7357e944e8394d8b8e0b5e7625eb"></a>
@@ -644,8 +632,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine.html#a89f714d19b84a93a004a7afbb487a6cb">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00161">161</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ac206840057bac65b7f7738e6dfd1047a" name="ac206840057bac65b7f7738e6dfd1047a"></a>
@@ -700,8 +686,6 @@ Private Attributes</h2></td></tr>
 <dl class="section pre"><dt>Precondition</dt><dd>The <code>candidate_pools</code> should be connected components from <code>analyzeTimescalePoolConnectivity</code>. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>A list of candidate <code><a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html" title="Struct representing a QSE group.">QSEGroup</a></code> objects is returned. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01405">1405</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a1b17f94386882ea1524147782b7a1ddc" name="a1b17f94386882ea1524147782b7a1ddc"></a>
@@ -729,8 +713,6 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The equilibrated composition.</dd></dl>
 <p>@purpose A convenience overload for <code>equilibrateNetwork</code>.</p>
 <p>@how It unpacks the <code>netIn</code> struct into <code>Y</code>, <code>T9</code>, and <code>rho</code> and then calls the primary <code>equilibrateNetwork</code> method. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00834">834</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -772,8 +754,6 @@ Private Attributes</h2></td></tr>
 <p>@how It first calls <code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> with the given state to define the QSE groups. Then, it calls <code><a class="el" href="#a3c5fcb8e3396d74359fd601554c9ffa9" title="Solves for the QSE abundances of the algebraic species in a given state.">solveQSEAbundances()</a></code> to compute the new equilibrium abundances for the algebraic species. Finally, it packs the resulting full abundance vector into a new <code>fourdst::composition::Composition</code> object and returns it.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The engine's internal partition is updated. A new composition object is returned. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00797">797</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -818,8 +798,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <p>@purpose To visualize the partitioned network graph.</p>
 <p>@how This method delegates the DOT file export to the base engine. It does not currently add any partitioning information to the output graph. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00558">558</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -877,8 +855,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a29bdd4231c29c3a4e524ad6ca66a127d">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00204">204</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="abe76a46784b1ebc8ad67a9eec40d369a" name="abe76a46784b1ebc8ad67a9eec40d369a"></a>
@@ -910,8 +886,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00242">242</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a22bd1f0e821ed415611d75bac67063d1" name="a22bd1f0e821ed415611d75bac67063d1"></a>
@@ -941,8 +915,6 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the base engine. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine_view.html#ad294227f8b5cf6d970c349eabf5447a6">gridfire::EngineView&lt; DynamicEngine &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00412">412</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -975,8 +947,6 @@ Private Attributes</h2></td></tr>
 <p>@how It returns a const reference to the <code>m_dynamic_species</code> member vector.</p>
 <dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00789">789</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a3c82e4e082d1c82b1b090ac9847c7c5e" name="a3c82e4e082d1c82b1b090ac9847c7c5e"></a>
@@ -1007,8 +977,6 @@ Private Attributes</h2></td></tr>
 <p>@purpose To allow external queries of the partitioning results.</p>
 <p>@how It returns a copy of the <code>m_algebraic_species</code> member vector.</p>
 <dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00776">776</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1054,8 +1022,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a05d15ff35a6bc06a2fa7eda19838bd07">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00228">228</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ad751f2c1306895ee74a61f2071ca96eb" name="ad751f2c1306895ee74a61f2071ca96eb"></a>
@@ -1085,8 +1051,6 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the <code><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">LogicalReactionSet</a></code> from the base engine, containing all reactions in the full network. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad2a82099edbb374bbb2c9509ccdb1037">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00286">286</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1118,8 +1082,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_engine.html#a020e1b493d6964cafdad08fde697ceb3">gridfire::Engine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00157">157</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a7bfb4e6fec2f337a1dea69e3d4f1fc82" name="a7bfb4e6fec2f337a1dea69e3d4f1fc82"></a>
@@ -1150,8 +1112,6 @@ Private Attributes</h2></td></tr>
 <p>@how This method delegates directly to the base engine's <code><a class="el" href="#a7bfb4e6fec2f337a1dea69e3d4f1fc82" title="Gets the current electron screening model.">getScreeningModel()</a></code>. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a7a203f8e0f3a6744ddc912dfbcfdbcc0">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00408">408</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1209,8 +1169,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6ca0f315f75252ca505507a61556dda6">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00326">326</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a91d32b7197fcb27ee697d5bfde960f3f" name="a91d32b7197fcb27ee697d5bfde960f3f"></a>
@@ -1247,8 +1205,6 @@ Private Attributes</h2></td></tr>
 <p>@how This method delegates directly to the base engine's <code><a class="el" href="#a91d32b7197fcb27ee697d5bfde960f3f" title="Gets the index of a species in the full network.">getSpeciesIndex()</a></code>. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00846">846</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1306,8 +1262,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00295">295</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a510b920dea726aef859ac1f6d051807e" name="a510b920dea726aef859ac1f6d051807e"></a>
@@ -1351,8 +1305,6 @@ Private Attributes</h2></td></tr>
 <dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#abe76a46784b1ebc8ad67a9eec40d369a" title="Generates the stoichiometry matrix for the network.">generateStoichiometryMatrix()</a></code> must have been called. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00246">246</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1407,8 +1359,6 @@ Private Attributes</h2></td></tr>
 <p>@purpose To identify the core set of dynamic species that will not be part of any QSE group.</p>
 <p>@how It calculates the geometric mean of the destruction timescales for all species in each pool and returns the index of the pool with the maximum mean timescale. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01291">1291</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ae7847959fc5af2b83f5446dd73567b46" name="ae7847959fc5af2b83f5446dd73567b46"></a>
@@ -1447,8 +1397,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a942e65ced17ca602482cc42e469d6398">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00390">390</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="aada497e8df74a295fdf5df7d7cdf64e0" name="aada497e8df74a295fdf5df7d7cdf64e0"></a>
@@ -1485,8 +1433,6 @@ Private Attributes</h2></td></tr>
 <p>@how This method delegates directly to the base engine's <code><a class="el" href="#aada497e8df74a295fdf5df7d7cdf64e0" title="Maps a NetIn struct to a molar abundance vector for the full network.">mapNetInToMolarAbundanceVector()</a></code>. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a55f1b7e5ebe2840e1d7c54665ca5411a">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00768">768</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1535,8 +1481,6 @@ Private Attributes</h2></td></tr>
 <p>@purpose To group species into "pools" based on their destruction timescales.</p>
 <p>@how It retrieves all species destruction timescales from the base engine, sorts them, and then iterates through the sorted list, creating a new pool whenever it detects a gap between consecutive timescales that is larger than a predefined threshold (e.g., a factor of 100). </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00850">850</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a98b11ffe498846f5a3a72f08504346b7" name="a98b11ffe498846f5a3a72f08504346b7"></a>
@@ -1563,8 +1507,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <p>@purpose A convenience overload for <code>partitionNetwork</code>.</p>
 <p>@how It unpacks the <code>netIn</code> struct into <code>Y</code>, <code>T9</code>, and <code>rho</code> and then calls the primary <code>partitionNetwork</code> method. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00548">548</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1612,8 +1554,6 @@ Private Attributes</h2></td></tr>
 <dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The internal member variables <code>m_qse_groups</code>, <code>m_dynamic_species</code>, and <code>m_algebraic_species</code> (and their index maps) are populated with the results of the partitioning. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00438">438</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a05730ced13ac5331060ca011f0da6235" name="a05730ced13ac5331060ca011f0da6235"></a>
@@ -1651,8 +1591,6 @@ Private Attributes</h2></td></tr>
 <p>@how This method delegates directly to the base engine's <code><a class="el" href="#a05730ced13ac5331060ca011f0da6235" title="Primes the engine with a specific species.">primeEngine()</a></code>. The multiscale view does not currently interact with the priming process. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21c34f59c080a853fafa38a25175124e">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00793">793</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1697,8 +1635,6 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f">gridfire::DynamicEngine</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00290">290</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a1a0c0a0ade632eb10f0eecab828a059f" name="a1a0c0a0ade632eb10f0eecab828a059f"></a>
@@ -1734,8 +1670,6 @@ Private Attributes</h2></td></tr>
 <p>@how This method delegates directly to the base engine's <code><a class="el" href="#a1a0c0a0ade632eb10f0eecab828a059f" title="Sets the electron screening model.">setScreeningModel()</a></code>. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a3fb44b6f55563a2f590f31916528f2bd">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00402">402</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1786,8 +1720,6 @@ Private Attributes</h2></td></tr>
 <dl class="section pre"><dt>Precondition</dt><dd>The input state (Y_full, T9, rho) must be a valid physical state. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The algebraic species in the QSE cache are updated with the new equilibrium abundances. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01136">1136</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a6bee75b5a6e508e6eebf83f0d48c50b8" name="a6bee75b5a6e508e6eebf83f0d48c50b8"></a>
@@ -1834,8 +1766,6 @@ Private Attributes</h2></td></tr>
 <dl class="section post"><dt>Postcondition</dt><dd>The engine is partitioned (<code>m_dynamic_species</code>, <code>m_algebraic_species</code>, etc. are populated). The <code>m_qse_abundance_cache</code> is populated with the QSE solution for the given state. The returned composition reflects the new equilibrium. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a">gridfire::DynamicEngine</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l00356">356</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
 
 </div>
 </div>
@@ -1890,8 +1820,6 @@ Private Attributes</h2></td></tr>
 <p>@purpose To ensure that a candidate QSE group is truly in equilibrium by checking that the reaction fluxes <em>within</em> the group are much larger than the fluxes <em>leaving</em> the group.</p>
 <p>@how For each candidate group, it calculates the sum of all internal reaction fluxes and the sum of all external (bridge) reaction fluxes. If the ratio of internal to external flux exceeds a configurable threshold, the group is considered valid and is added to the returned vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8cpp_source.html#l01002">1002</a> of file <a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a>.</p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -1917,8 +1845,6 @@ Private Attributes</h2></td></tr>
 
 <p>Indices of all reactions involving only active species. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00943">943</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a57d97b11e80fa78ab5f509fce1f156b8" name="a57d97b11e80fa78ab5f509fce1f156b8"></a>
@@ -1942,8 +1868,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Indices of all species considered active in the current partition (dynamic + algebraic). </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00939">939</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -1969,8 +1893,6 @@ Private Attributes</h2></td></tr>
 
 <p>Species that are treated as algebraic (in QSE) in the QSE groups. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00930">930</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a53862719dd73f98bc69eecde090cf655" name="a53862719dd73f98bc69eecde090cf655"></a>
@@ -1994,8 +1916,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Indices of algebraic species in the full network. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00934">934</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -2021,8 +1941,6 @@ Private Attributes</h2></td></tr>
 
 <p>The base engine to which this view delegates calculations. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00914">914</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="aa81057b96cf46986151a5e8ef99a017a" name="aa81057b96cf46986151a5e8ef99a017a"></a>
@@ -2046,8 +1964,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Statistics for the QSE abundance cache. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00957">957</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -2073,8 +1989,6 @@ Private Attributes</h2></td></tr>
 
 <p>The simplified set of species presented to the solver (the "slow" species). </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00922">922</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a38b4f0373c3bd81503889650c0bb69bb" name="a38b4f0373c3bd81503889650c0bb69bb"></a>
@@ -2099,8 +2013,6 @@ Private Attributes</h2></td></tr>
 
 <p>Indices mapping the dynamic species back to the base engine's full species list. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00926">926</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a7d357c775dcbb253a4001d172805380a" name="a7d357c775dcbb253a4001d172805380a"></a>
@@ -2124,8 +2036,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Logger instance for logging messages. </p>
-
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00910">910</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
 
 </div>
 </div>
@@ -2152,8 +2062,6 @@ Private Attributes</h2></td></tr>
 <p>Cache for QSE abundances based on T9, rho, and Y. </p>
 <p>@purpose This is the core of the caching mechanism. It stores the results of QSE solves to avoid re-computation. The key is a <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> which hashes the thermodynamic state, and the value is the vector of solved molar abundances for the algebraic species. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00953">953</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <a id="a1b4aa04a1e641204e4fd82361b0e39c6" name="a1b4aa04a1e641204e4fd82361b0e39c6"></a>
@@ -2178,13 +2086,11 @@ Private Attributes</h2></td></tr>
 
 <p>The list of identified equilibrium groups. </p>
 
-<p class="definition">Definition at line <a class="el" href="engine__multiscale_8h_source.html#l00918">918</a> of file <a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h_source.html">engine_multiscale.h</a></li>
-<li>src/lib/engine/views/<a class="el" href="engine__multiscale_8cpp_source.html">engine_multiscale.cpp</a></li>
+<li>src/include/gridfire/engine/views/<a class="el" href="engine__multiscale_8h.html">engine_multiscale.h</a></li>
+<li>src/lib/engine/views/<a class="el" href="engine__multiscale_8cpp.html">engine_multiscale.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

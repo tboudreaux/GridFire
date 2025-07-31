@@ -111,7 +111,7 @@ $(function(){initNavTree('classgridfire_1_1screening_1_1_weak_screening_model.ht
 <p>Implements the weak screening model based on the Debye-Hückel approximation.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="screening__weak_8h_source.html">screening_weak.h</a>&gt;</code></p>
+<p><code>#include &lt;screening_weak.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::screening::WeakScreeningModel:</div>
 <div class="dyncontent">
@@ -158,8 +158,6 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the weak screening model based on the Debye-Hückel approximation. </p>
 <p>This class provides a concrete implementation of the <code><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a></code> interface for the weak screening regime, following the formulation of Salpeter (1954). This approach applies the Debye-Hückel theory to model the electrostatic shielding of nuclei in a plasma. It is applicable to non-degenerate, non-relativistic plasmas where thermal energy dominates the electrostatic potential energy. </p>
-
-<p class="definition">Definition at line <a class="el" href="screening__weak_8h_source.html#l00026">26</a> of file <a class="el" href="screening__weak_8h_source.html">screening_weak.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a2695206d46b9d2c2503f8e58c44df88f" name="a2695206d46b9d2c2503f8e58c44df88f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2695206d46b9d2c2503f8e58c44df88f">&#9670;&#160;</a></span>calculateFactors_impl()</h2>
@@ -257,8 +255,6 @@ template&lt;typename T&gt; </div>
 <li><b>Final Factor</b>: The screening factor for the reaction is <code>exp(H_12)</code>. </li>
 </ol>
 
-<p class="definition">Definition at line <a class="el" href="screening__weak_8h_source.html#l00141">141</a> of file <a class="el" href="screening__weak_8h_source.html">screening_weak.h</a>.</p>
-
 </div>
 </div>
 <a id="ac6bc78769670a460af1ff88284cb8ad4" name="ac6bc78769670a460af1ff88284cb8ad4"></a>
@@ -318,8 +314,6 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A vector of screening factors as AD types. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html#a6c381a823cb9c1680d3e9c846da4ae22">gridfire::screening::ScreeningModel</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="screening__weak_8cpp_source.html#l00012">12</a> of file <a class="el" href="screening__weak_8cpp_source.html">screening_weak.cpp</a>.</p>
 
 </div>
 </div>
@@ -383,12 +377,10 @@ template&lt;typename T&gt; </div>
 <div class="line">std::vector&lt;double&gt; factors = weak_model.<a class="code hl_function" href="#afbaeaefe6b3ab3ecf81889ddc1cff76c">calculateScreeningFactors</a>(</div>
 <div class="line">    reactions, species, Y, T9, rho</div>
 <div class="line">);</div>
-<div class="ttc" id="aclassgridfire_1_1screening_1_1_weak_screening_model_html"><div class="ttname"><a href="classgridfire_1_1screening_1_1_weak_screening_model.html">gridfire::screening::WeakScreeningModel</a></div><div class="ttdoc">Implements the weak screening model based on the Debye-Hückel approximation.</div><div class="ttdef"><b>Definition</b> <a href="screening__weak_8h_source.html#l00026">screening_weak.h:26</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1screening_1_1_weak_screening_model_html_afbaeaefe6b3ab3ecf81889ddc1cff76c"><div class="ttname"><a href="#afbaeaefe6b3ab3ecf81889ddc1cff76c">gridfire::screening::WeakScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">std::vector&lt; double &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const override</div><div class="ttdoc">Calculates weak screening factors for a set of reactions.</div><div class="ttdef"><b>Definition</b> <a href="screening__weak_8cpp_source.html#l00022">screening_weak.cpp:22</a></div></div>
+<div class="ttc" id="aclassgridfire_1_1screening_1_1_weak_screening_model_html"><div class="ttname"><a href="classgridfire_1_1screening_1_1_weak_screening_model.html">gridfire::screening::WeakScreeningModel</a></div><div class="ttdoc">Implements the weak screening model based on the Debye-Hückel approximation.</div><div class="ttdef"><b>Definition</b> screening_weak.h:26</div></div>
+<div class="ttc" id="aclassgridfire_1_1screening_1_1_weak_screening_model_html_afbaeaefe6b3ab3ecf81889ddc1cff76c"><div class="ttname"><a href="#afbaeaefe6b3ab3ecf81889ddc1cff76c">gridfire::screening::WeakScreeningModel::calculateScreeningFactors</a></div><div class="ttdeci">std::vector&lt; double &gt; calculateScreeningFactors(const reaction::LogicalReactionSet &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const override</div><div class="ttdoc">Calculates weak screening factors for a set of reactions.</div><div class="ttdef"><b>Definition</b> screening_weak.cpp:22</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html#aaec9184d80c86a2d8674e395dad81bde">gridfire::screening::ScreeningModel</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="screening__weak_8cpp_source.html#l00022">22</a> of file <a class="el" href="screening__weak_8cpp_source.html">screening_weak.cpp</a>.</p>
 
 </div>
 </div>
@@ -415,13 +407,11 @@ template&lt;typename T&gt; </div>
 
 <p>Logger instance for recording trace and debug information. </p>
 
-<p class="definition">Definition at line <a class="el" href="screening__weak_8h_source.html#l00081">81</a> of file <a class="el" href="screening__weak_8h_source.html">screening_weak.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/include/gridfire/screening/<a class="el" href="screening__weak_8h_source.html">screening_weak.h</a></li>
-<li>src/lib/screening/<a class="el" href="screening__weak_8cpp_source.html">screening_weak.cpp</a></li>
+<li>src/include/gridfire/screening/<a class="el" href="screening__weak_8h.html">screening_weak.h</a></li>
+<li>src/lib/screening/<a class="el" href="screening__weak_8cpp.html">screening_weak.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
