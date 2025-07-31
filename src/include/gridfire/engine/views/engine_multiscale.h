@@ -10,10 +10,12 @@ namespace gridfire {
     /**
      * @brief Configuration struct for the QSE cache.
      *
-     * @purpose This struct defines the tolerances used to determine if a QSE cache key
+     * @par Purpose
+     * This struct defines the tolerances used to determine if a QSE cache key
      * is considered a hit. It allows for tuning the sensitivity of the cache.
      *
-     * @how It works by providing binning widths for temperature, density, and abundances.
+     * @par How
+     * It works by providing binning widths for temperature, density, and abundances.
      * When a `QSECacheKey` is created, it uses these tolerances to discretize the
      * continuous physical values into bins. If two sets of conditions fall into the
      * same bins, they will produce the same hash and be considered a cache hit.
@@ -33,12 +35,14 @@ namespace gridfire {
     /**
      * @brief Key struct for the QSE abundance cache.
      *
-     * @purpose This struct is used as the key for the QSE abundance cache (`m_qse_abundance_cache`)
+     * @par Purpose
+     * This struct is used as the key for the QSE abundance cache (`m_qse_abundance_cache`)
      * within the `MultiscalePartitioningEngineView`. Its primary goal is to avoid
      * expensive re-partitioning and QSE solves for thermodynamic conditions that are
      * "close enough" to previously computed ones.
      *
-     * @how It works by storing the temperature (`m_T9`), density (`m_rho`), and species
+     * @par How
+     * It works by storing the temperature (`m_T9`), density (`m_rho`), and species
      * abundances (`m_Y`). A pre-computed hash is generated in the constructor by
      * calling the `hash()` method. This method discretizes the continuous physical
      * values into bins using the tolerances defined in `QSECacheConfig`. The `operator==`
@@ -78,7 +82,8 @@ namespace gridfire {
          *
          * @return The computed hash value.
          *
-         * @how This method combines the hashes of the binned temperature, density, and
+         * @par How
+         * This method combines the hashes of the binned temperature, density, and
          * each species abundance. The `bin()` static method is used for discretization.
          */
         size_t hash() const;
@@ -89,7 +94,8 @@ namespace gridfire {
          * @param tol The tolerance (bin width) to use for binning.
          * @return The bin number as a long integer.
          *
-         * @how The algorithm is `floor(value / tol)`.
+         * @par How
+         * The algorithm is `floor(value / tol)`.
          */
         static long bin(double value, double tol);
 
@@ -124,14 +130,16 @@ namespace gridfire {
      * @class MultiscalePartitioningEngineView
      * @brief An engine view that partitions the reaction network into multiple groups based on timescales.
      *
-     * @purpose This class is designed to accelerate the integration of stiff nuclear reaction networks.
+     * @par Purpose
+     * This class is designed to accelerate the integration of stiff nuclear reaction networks.
      * It identifies species that react on very short timescales ("fast" species) and treats them
      * as being in Quasi-Steady-State Equilibrium (QSE). Their abundances are solved for algebraically,
      * removing their stiff differential equations from the system. The remaining "slow" or "dynamic"
      * species are integrated normally. This significantly improves the stability and performance of
      * the solver.
      *
-     * @how The core logic resides in the `partitionNetwork()` and `equilibrateNetwork()` methods.
+     * @par How
+     * The core logic resides in the `partitionNetwork()` and `equilibrateNetwork()` methods.
      * The partitioning process involves:
      *   1.  **Timescale Analysis:** Using `getSpeciesDestructionTimescales` from the base engine,
      *       all species are sorted by their characteristic timescales.
@@ -207,10 +215,12 @@ namespace gridfire {
          *         `StaleEngineError` if the engine's QSE cache does not contain a solution
          *         for the given state.
          *
-         * @purpose To compute the time derivatives for the ODE solver. This implementation
+         * @par Purpose
+         * To compute the time derivatives for the ODE solver. This implementation
          * modifies the derivatives from the base engine to enforce the QSE condition.
          *
-         * @how It first performs a lookup in the QSE abundance cache (`m_qse_abundance_cache`).
+         * @par How
+         * It first performs a lookup in the QSE abundance cache (`m_qse_abundance_cache`).
          * If a cache hit occurs, it calls the base engine's `calculateRHSAndEnergy`. It then
          * manually sets the time derivatives (`dydt`) of all identified algebraic species to zero,
          * effectively removing their differential equations from the system being solved.
@@ -235,9 +245,11 @@ namespace gridfire {
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
-         * @purpose To compute the Jacobian matrix required by implicit ODE solvers.
+         * @par Purpose
+         * To compute the Jacobian matrix required by implicit ODE solvers.
          *
-         * @how It first performs a QSE cache lookup. On a hit, it delegates the full Jacobian
+         * @par How
+         * It first performs a QSE cache lookup. On a hit, it delegates the full Jacobian
          * calculation to the base engine. While this view could theoretically return a
          * modified, sparser Jacobian reflecting the QSE constraints, the current implementation
          * returns the full Jacobian from the base engine. The solver is expected to handle the
@@ -262,9 +274,11 @@ namespace gridfire {
          * @param j_full Column index (species index) in the full network.
          * @return Value of the Jacobian matrix at (i_full, j_full).
          *
-         * @purpose To provide Jacobian entries to an implicit solver.
+         * @par Purpose
+         * To provide Jacobian entries to an implicit solver.
          *
-         * @how This method directly delegates to the base engine's `getJacobianMatrixEntry`.
+         * @par How
+         * This method directly delegates to the base engine's `getJacobianMatrixEntry`.
          *      It does not currently modify the Jacobian to reflect the QSE algebraic constraints,
          *      as these are handled by setting `dY/dt = 0` in `calculateRHSAndEnergy`.
          *
@@ -278,9 +292,11 @@ namespace gridfire {
         /**
          * @brief Generates the stoichiometry matrix for the network.
          *
-         * @purpose To prepare the stoichiometry matrix for later queries.
+         * @par Purpose
+         * To prepare the stoichiometry matrix for later queries.
          *
-         * @how This method delegates directly to the base engine's `generateStoichiometryMatrix()`.
+         * @par How
+         * This method delegates directly to the base engine's `generateStoichiometryMatrix()`.
          *      The stoichiometry is based on the full, unpartitioned network.
          */
         void generateStoichiometryMatrix() override;
@@ -292,9 +308,11 @@ namespace gridfire {
          * @param reactionIndex Index of the reaction in the full network.
          * @return Stoichiometric coefficient for the species in the reaction.
          *
-         * @purpose To query the stoichiometric relationship between a species and a reaction.
+         * @par Purpose
+         * To query the stoichiometric relationship between a species and a reaction.
          *
-         * @how This method delegates directly to the base engine's `getStoichiometryMatrixEntry()`.
+         * @par How
+         * This method delegates directly to the base engine's `getStoichiometryMatrixEntry()`.
          *
          * @pre `generateStoichiometryMatrix()` must have been called.
          */
@@ -312,9 +330,11 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
          *
-         * @purpose To compute the net rate of a single reaction.
+         * @par Purpose
+         * To compute the net rate of a single reaction.
          *
-         * @how It first checks the QSE cache. On a hit, it retrieves the cached equilibrium
+         * @par How
+         * It first checks the QSE cache. On a hit, it retrieves the cached equilibrium
          *      abundances for the algebraic species. It creates a mutable copy of `Y_full`,
          *      overwrites the algebraic species abundances with the cached equilibrium values,
          *      and then calls the base engine's `calculateMolarReactionFlow` with this modified
@@ -343,9 +363,11 @@ namespace gridfire {
          *
          * @param reactions The set of logical reactions to use.
          *
-         * @purpose To modify the reaction network.
+         * @par Purpose
+         * To modify the reaction network.
          *
-         * @how This operation is not supported by the `MultiscalePartitioningEngineView` as it
+         * @par How
+         * This operation is not supported by the `MultiscalePartitioningEngineView` as it
          *      would invalidate the partitioning logic. It logs a critical error and throws an
          *      exception. Network modifications should be done on the base engine before it is
          *      wrapped by this view.
@@ -365,9 +387,11 @@ namespace gridfire {
          * @return A `std::expected` containing a map from `Species` to their characteristic
          *         timescales (s) on success, or a `StaleEngineError` on failure.
          *
-         * @purpose To get the characteristic timescale `Y / (dY/dt)` for each species.
+         * @par Purpose
+         * To get the characteristic timescale `Y / (dY/dt)` for each species.
          *
-         * @how It delegates the calculation to the base engine. For any species identified
+         * @par How
+         * It delegates the calculation to the base engine. For any species identified
          *      as algebraic (in QSE), it manually sets their timescale to 0.0 to signify
          *      that they equilibrate instantaneously on the timescale of the solver.
          *
@@ -389,10 +413,12 @@ namespace gridfire {
          * @return A `std::expected` containing a map from `Species` to their characteristic
          *         destruction timescales (s) on success, or a `StaleEngineError` on failure.
          *
-         * @purpose To get the timescale for species destruction, which is used as the primary
+         * @par Purpose
+         * To get the timescale for species destruction, which is used as the primary
          *          metric for network partitioning.
          *
-         * @how It delegates the calculation to the base engine. For any species identified
+         * @par How
+         * It delegates the calculation to the base engine. For any species identified
          *      as algebraic (in QSE), it manually sets their timescale to 0.0.
          *
          * @pre The engine must have a valid QSE cache entry for the given state.
@@ -410,7 +436,8 @@ namespace gridfire {
          * @param netIn A struct containing the current network input: temperature, density, and composition.
          * @return The new composition after QSE species have been brought to equilibrium.
          *
-         * @purpose This is the main entry point for preparing the multiscale engine for use. It
+         * @par Purpose
+         * This is the main entry point for preparing the multiscale engine for use. It
          * triggers the network partitioning and solves for the initial QSE abundances, caching the result.
          *
          * @how
@@ -440,9 +467,11 @@ namespace gridfire {
          * @param netIn A struct containing the current network input.
          * @return `true` if the engine is stale, `false` otherwise.
          *
-         * @purpose To determine if `update()` needs to be called.
+         * @par Purpose
+         * To determine if `update()` needs to be called.
          *
-         * @how It creates a `QSECacheKey` from the `netIn` data and checks for its
+         * @par How
+         * It creates a `QSECacheKey` from the `netIn` data and checks for its
          * existence in the `m_qse_abundance_cache`. A cache miss indicates the engine is
          * stale because it does not have a valid QSE partition for the current conditions.
          * It also queries the base engine's `isStale()` method.
@@ -454,7 +483,8 @@ namespace gridfire {
          *
          * @param model The type of screening model to use for reaction rate calculations.
          *
-         * @how This method delegates directly to the base engine's `setScreeningModel()`.
+         * @par How
+         * This method delegates directly to the base engine's `setScreeningModel()`.
          */
         void setScreeningModel(
             screening::ScreeningType model
@@ -465,7 +495,8 @@ namespace gridfire {
          *
          * @return The currently active screening model type.
          *
-         * @how This method delegates directly to the base engine's `getScreeningModel()`.
+         * @par How
+         * This method delegates directly to the base engine's `getScreeningModel()`.
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
@@ -487,10 +518,12 @@ namespace gridfire {
          * @return A vector of vectors of species indices, where each inner vector represents a
          *         single connected component.
          *
-         * @purpose To merge timescale pools that are strongly connected by reactions, forming
+         * @par Purpose
+         * To merge timescale pools that are strongly connected by reactions, forming
          *          cohesive groups for QSE analysis.
          *
-         * @how For each pool, it builds a reaction connectivity graph using `buildConnectivityGraph`.
+         * @par How
+         * For each pool, it builds a reaction connectivity graph using `buildConnectivityGraph`.
          *      It then finds the connected components within that graph using a Breadth-First Search (BFS).
          *      The resulting components from all pools are collected and returned.
          */
@@ -508,7 +541,8 @@ namespace gridfire {
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
-         * @purpose To perform the core partitioning logic that identifies which species are "fast"
+         * @par Purpose
+         * To perform the core partitioning logic that identifies which species are "fast"
          * (and can be treated algebraically) and which are "slow" (and must be integrated dynamically).
          *
          * @how
@@ -539,9 +573,11 @@ namespace gridfire {
          *
          * @param netIn A struct containing the current network input.
          *
-         * @purpose A convenience overload for `partitionNetwork`.
+         * @par Purpose
+         * A convenience overload for `partitionNetwork`.
          *
-         * @how It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
+         * @par How
+         * It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
          *      primary `partitionNetwork` method.
          */
         void partitionNetwork(
@@ -556,9 +592,11 @@ namespace gridfire {
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
-         * @purpose To visualize the partitioned network graph.
+         * @par Purpose
+         * To visualize the partitioned network graph.
          *
-         * @how This method delegates the DOT file export to the base engine. It does not
+         * @par How
+         * This method delegates the DOT file export to the base engine. It does not
          *      currently add any partitioning information to the output graph.
          */
         void exportToDot(
@@ -574,7 +612,8 @@ namespace gridfire {
          * @param species The species to get the index of.
          * @return The index of the species in the base engine's network.
          *
-         * @how This method delegates directly to the base engine's `getSpeciesIndex()`.
+         * @par How
+         * This method delegates directly to the base engine's `getSpeciesIndex()`.
          */
         [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
@@ -584,7 +623,8 @@ namespace gridfire {
          * @param netIn A struct containing the current network input.
          * @return A vector of molar abundances corresponding to the species order in the base engine.
          *
-         * @how This method delegates directly to the base engine's `mapNetInToMolarAbundanceVector()`.
+         * @par How
+         * This method delegates directly to the base engine's `mapNetInToMolarAbundanceVector()`.
          */
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
@@ -594,9 +634,11 @@ namespace gridfire {
          * @param netIn A struct containing the current network input.
          * @return A `PrimingReport` struct containing information about the priming process.
          *
-         * @purpose To prepare the network for ignition or specific pathway studies.
+         * @par Purpose
+         * To prepare the network for ignition or specific pathway studies.
          *
-         * @how This method delegates directly to the base engine's `primeEngine()`. The
+         * @par How
+         * This method delegates directly to the base engine's `primeEngine()`. The
          *      multiscale view does not currently interact with the priming process.
          */
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
@@ -606,9 +648,11 @@ namespace gridfire {
          *
          * @return A vector of species identified as "fast" or "algebraic" by the partitioning.
          *
-         * @purpose To allow external queries of the partitioning results.
+         * @par Purpose
+         * To allow external queries of the partitioning results.
          *
-         * @how It returns a copy of the `m_algebraic_species` member vector.
+         * @par How
+         * It returns a copy of the `m_algebraic_species` member vector.
          *
          * @pre `partitionNetwork()` must have been called.
          */
@@ -618,9 +662,11 @@ namespace gridfire {
          *
          * @return A const reference to the vector of species identified as "dynamic" or "slow".
          *
-         * @purpose To allow external queries of the partitioning results.
+         * @par Purpose
+         * To allow external queries of the partitioning results.
          *
-         * @how It returns a const reference to the `m_dynamic_species` member vector.
+         * @par How
+         * It returns a const reference to the `m_dynamic_species` member vector.
          *
          * @pre `partitionNetwork()` must have been called.
          */
@@ -634,10 +680,12 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return A new composition object with the equilibrated abundances.
          *
-         * @purpose A convenience method to run the full QSE analysis and get an equilibrated
+         * @par Purpose
+         * A convenience method to run the full QSE analysis and get an equilibrated
          * composition object as a result.
          *
-         * @how It first calls `partitionNetwork()` with the given state to define the QSE groups.
+         * @par How
+         * It first calls `partitionNetwork()` with the given state to define the QSE groups.
          * Then, it calls `solveQSEAbundances()` to compute the new equilibrium abundances for the
          * algebraic species. Finally, it packs the resulting full abundance vector into a new
          * `fourdst::composition::Composition` object and returns it.
@@ -657,9 +705,11 @@ namespace gridfire {
          * @param netIn A struct containing the current network input.
          * @return The equilibrated composition.
          *
-         * @purpose A convenience overload for `equilibrateNetwork`.
+         * @par Purpose
+         * A convenience overload for `equilibrateNetwork`.
          *
-         * @how It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
+         * @par How
+         * It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
          *      primary `equilibrateNetwork` method.
          */
         fourdst::composition::Composition equilibrateNetwork(
@@ -671,7 +721,8 @@ namespace gridfire {
         /**
          * @brief Struct representing a QSE group.
          *
-         * @purpose A container to hold all information about a set of species that are potentially
+         * @par Purpose
+         * A container to hold all information about a set of species that are potentially
          * in quasi-steady-state equilibrium with each other.
          */
         struct QSEGroup {
@@ -710,7 +761,8 @@ namespace gridfire {
         /**
          * @brief Functor for solving QSE abundances using Eigen's nonlinear optimization.
          *
-         * @purpose This struct provides the objective function (`operator()`) and its Jacobian
+         * @par Purpose
+         * This struct provides the objective function (`operator()`) and its Jacobian
          * (`df`) to Eigen's Levenberg-Marquardt solver. The goal is to find the abundances
          * of algebraic species that make their time derivatives (`dY/dt`) equal to zero.
          *
@@ -816,7 +868,8 @@ namespace gridfire {
         /**
          * @brief Struct for tracking cache statistics.
          *
-         * @purpose A simple utility to monitor the performance of the QSE cache by counting
+         * @par Purpose
+         * A simple utility to monitor the performance of the QSE cache by counting
          * hits and misses for various engine operations.
          */
         struct CacheStats {
@@ -946,7 +999,8 @@ namespace gridfire {
         /**
          * @brief Cache for QSE abundances based on T9, rho, and Y.
          *
-         * @purpose This is the core of the caching mechanism. It stores the results of QSE solves
+         * @par Purpose
+         * This is the core of the caching mechanism. It stores the results of QSE solves
          * to avoid re-computation. The key is a `QSECacheKey` which hashes the thermodynamic
          * state, and the value is the vector of solved molar abundances for the algebraic species.
          */
@@ -969,9 +1023,11 @@ namespace gridfire {
          * @return A vector of vectors of species indices, where each inner vector represents a
          *         timescale pool.
          *
-         * @purpose To group species into "pools" based on their destruction timescales.
+         * @par Purpose
+         * To group species into "pools" based on their destruction timescales.
          *
-         * @how It retrieves all species destruction timescales from the base engine, sorts them,
+         * @par How
+         * It retrieves all species destruction timescales from the base engine, sorts them,
          *      and then iterates through the sorted list, creating a new pool whenever it detects
          *      a gap between consecutive timescales that is larger than a predefined threshold
          *      (e.g., a factor of 100).
@@ -989,9 +1045,11 @@ namespace gridfire {
          * @return An unordered map representing the adjacency list of the connectivity graph,
          *         where keys are species indices and values are vectors of connected species indices.
          *
-         * @purpose To represent the reaction pathways among a subset of reactions.
+         * @par Purpose
+         * To represent the reaction pathways among a subset of reactions.
          *
-         * @how It iterates through the specified fast reactions. For each reaction, it creates
+         * @par How
+         * It iterates through the specified fast reactions. For each reaction, it creates
          *      a two-way edge in the graph between every reactant and every product, signifying
          *      that mass can flow between them.
          */
@@ -1008,11 +1066,13 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return A vector of validated QSE groups that meet the flux criteria.
          *
-         * @purpose To ensure that a candidate QSE group is truly in equilibrium by checking that
+         * @par Purpose
+         * To ensure that a candidate QSE group is truly in equilibrium by checking that
          *          the reaction fluxes *within* the group are much larger than the fluxes
          *          *leaving* the group.
          *
-         * @how For each candidate group, it calculates the sum of all internal reaction fluxes and
+         * @par How
+         * For each candidate group, it calculates the sum of all internal reaction fluxes and
          *      the sum of all external (bridge) reaction fluxes. If the ratio of internal to external
          *      flux exceeds a configurable threshold, the group is considered valid and is added
          *      to the returned vector.
@@ -1032,10 +1092,12 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return A vector of molar abundances for the algebraic species.
          *
-         * @purpose To find the equilibrium abundances of the algebraic species that satisfy
+         * @par Purpose
+         * To find the equilibrium abundances of the algebraic species that satisfy
          *          the QSE conditions.
          *
-         * @how It uses the Levenberg-Marquardt algorithm via Eigen's `LevenbergMarquardt` class.
+         * @par How
+         * It uses the Levenberg-Marquardt algorithm via Eigen's `LevenbergMarquardt` class.
          *      The problem is defined by the `EigenFunctor` which computes the residuals and
          *      Jacobian for the QSE equations.
          *
@@ -1058,9 +1120,11 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return The index of the pool with the largest (slowest) mean destruction timescale.
          *
-         * @purpose To identify the core set of dynamic species that will not be part of any QSE group.
+         * @par Purpose
+         * To identify the core set of dynamic species that will not be part of any QSE group.
          *
-         * @how It calculates the geometric mean of the destruction timescales for all species in each
+         * @par How
+         * It calculates the geometric mean of the destruction timescales for all species in each
          *      pool and returns the index of the pool with the maximum mean timescale.
          */
         size_t identifyMeanSlowestPool(
@@ -1076,9 +1140,11 @@ namespace gridfire {
          * @param species_pool A vector of species indices representing a species pool.
          * @return An unordered map representing the adjacency list of the connectivity graph.
          *
-         * @purpose To find reaction connections within a specific group of species.
+         * @par Purpose
+         * To find reaction connections within a specific group of species.
          *
-         * @how It iterates through all reactions in the base engine. If a reaction involves
+         * @par How
+         * It iterates through all reactions in the base engine. If a reaction involves
          *      at least two distinct species from the input `species_pool` (one as a reactant
          *      and one as a product), it adds edges between all reactants and products from
          *      that reaction that are also in the pool.
@@ -1097,7 +1163,8 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @return A vector of `QSEGroup` structs, ready for flux validation.
          *
-         * @how For each input pool, it identifies "bridge" reactions that connect the pool to
+         * @par How
+         * For each input pool, it identifies "bridge" reactions that connect the pool to
          * species outside the pool. The reactants of these bridge reactions that are *not* in the
          * pool are identified as "seed" species. The original pool members are the "algebraic"
          * species. It then bundles the seed and algebraic species into a `QSEGroup` struct.

@@ -91,12 +91,14 @@ var hierarchy =
     ] ],
     [ "gridfire::AdaptiveEngineView::ReactionFlow", "structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html", null ],
     [ "gridfire::reaclib::ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", null ],
-    [ "RHSFunctor", "struct_r_h_s_functor.html", null ],
     [ "gridfire::solver::DirectNetworkSolver::RHSManager", "structgridfire_1_1solver_1_1_direct_network_solver_1_1_r_h_s_manager.html", null ],
     [ "gridfire::screening::ScreeningModel", "classgridfire_1_1screening_1_1_screening_model.html", [
       [ "PyScreening", "class_py_screening.html", null ],
       [ "gridfire::screening::BareScreeningModel", "classgridfire_1_1screening_1_1_bare_screening_model.html", null ],
       [ "gridfire::screening::WeakScreeningModel", "classgridfire_1_1screening_1_1_weak_screening_model.html", null ]
+    ] ],
+    [ "gridfire::solver::SolverContextBase", "structgridfire_1_1solver_1_1_solver_context_base.html", [
+      [ "gridfire::solver::DirectNetworkSolver::TimestepContext", "structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html", null ]
     ] ],
     [ "gridfire::exceptions::StaleEngineTrigger::state", "structgridfire_1_1exceptions_1_1_stale_engine_trigger_1_1state.html", null ],
     [ "gridfire::StepDerivatives< T >", "structgridfire_1_1_step_derivatives.html", null ],

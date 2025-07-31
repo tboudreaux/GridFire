@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -125,8 +125,8 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Configuration struct for the QSE cache. </p>
-<p>@purpose This struct defines the tolerances used to determine if a QSE cache key is considered a hit. It allows for tuning the sensitivity of the cache.</p>
-<p>@how It works by providing binning widths for temperature, density, and abundances. When a <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> is created, it uses these tolerances to discretize the continuous physical values into bins. If two sets of conditions fall into the same bins, they will produce the same hash and be considered a cache hit.</p>
+<dl class="section user"><dt>Purpose</dt><dd>This struct defines the tolerances used to determine if a QSE cache key is considered a hit. It allows for tuning the sensitivity of the cache.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>It works by providing binning widths for temperature, density, and abundances. When a <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> is created, it uses these tolerances to discretize the continuous physical values into bins. If two sets of conditions fall into the same bins, they will produce the same hash and be considered a cache hit.</dd></dl>
 <dl class="section user"><dt>Usage Example:</dt><dd>Although not typically set by the user directly, the <code><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html" title="Key struct for the QSE abundance cache.">QSECacheKey</a></code> uses this internally. A smaller tolerance (e.g., <code>T9_tol = 1e-4</code>) makes the cache more sensitive, leading to more frequent re-partitions, while a larger tolerance (<code>T9_tol = 1e-2</code>) makes it less sensitive. </dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a57b7ca68463aa9b78007e5cf35ebf7ce" name="a57b7ca68463aa9b78007e5cf35ebf7ce"></a>

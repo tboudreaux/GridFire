@@ -335,21 +335,87 @@ namespace gridfire {
             const std::string& filename
         ) const;
 
-        void setScreeningModel(screening::ScreeningType) override;
+        /**
+         * @brief Sets the electron screening model for reaction rate calculations.
+         *
+         * @param model The type of screening model to use.
+         *
+         * This method allows changing the screening model at runtime. Screening corrections
+         * account for the electrostatic shielding of nuclei by electrons, which affects
+         * reaction rates in dense stellar plasmas.
+         */
+        void setScreeningModel(screening::ScreeningType model) override;
 
+        /**
+         * @brief Gets the current electron screening model.
+         *
+         * @return The currently active screening model type.
+         *
+         * Example usage:
+         * @code
+         * screening::ScreeningType currentModel = engine.getScreeningModel();
+         * @endcode
+         */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
+        /**
+         * @brief Sets whether to precompute reaction rates.
+         *
+         * @param precompute True to enable precomputation, false to disable.
+         *
+         * This method allows enabling or disabling precomputation of reaction rates
+         * for performance optimization. When enabled, reaction rates are computed
+         * once and stored for later use.
+         */
         void setPrecomputation(bool precompute);
 
+        /**
+         * @brief Checks if precomputation of reaction rates is enabled.
+         *
+         * @return True if precomputation is enabled, false otherwise.
+         *
+         * This method allows checking the current state of precomputation for
+         * reaction rates in the engine.
+         */
         [[nodiscard]] bool isPrecomputationEnabled() const;
 
+        /**
+         * @brief Gets the partition function used for reaction rate calculations.
+         *
+         * @return Reference to the PartitionFunction object.
+         *
+         * This method provides access to the partition function used in the engine,
+         * which is essential for calculating thermodynamic properties and reaction rates.
+         */
         [[nodiscard]] const partition::PartitionFunction& getPartitionFunction() const;
 
+        /**
+         * @brief Calculates the reverse rate for a given reaction.
+         *
+         * @param reaction The reaction for which to calculate the reverse rate.
+         * @param T9 Temperature in units of 10^9 K.
+         * @return Reverse rate for the reaction (e.g., mol/g/s).
+         *
+         * This method computes the reverse rate based on the forward rate and
+         * thermodynamic properties of the reaction.
+         */
         [[nodiscard]] double calculateReverseRate(
             const reaction::Reaction &reaction,
             double T9
         ) const;
 
+        /**
+         * @brief Calculates the reverse rate for a two-body reaction.
+         *
+         * @param reaction The reaction for which to calculate the reverse rate.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param forwardRate The forward rate of the reaction.
+         * @param expFactor Exponential factor for the reaction.
+         * @return Reverse rate for the two-body reaction (e.g., mol/g/s).
+         *
+         * This method computes the reverse rate using the forward rate and
+         * thermodynamic properties of the reaction.
+         */
         [[nodiscard]] double calculateReverseRateTwoBody(
             const reaction::Reaction &reaction,
             const double T9,
@@ -363,22 +429,81 @@ namespace gridfire {
             const double reverseRate
         ) const;
 
+        /**
+         * @brief Checks if reverse reactions are enabled.
+         *
+         * @return True if reverse reactions are enabled, false otherwise.
+         *
+         * This method allows checking whether the engine is configured to use
+         * reverse reactions in its calculations.
+         */
         [[nodiscard]] bool isUsingReverseReactions() const;
 
+        /**
+         * @brief Sets whether to use reverse reactions in the engine.
+         *
+         * @param useReverse True to enable reverse reactions, false to disable.
+         *
+         * This method allows enabling or disabling reverse reactions in the engine.
+         * If disabled, only forward reactions will be considered in calculations.
+         */
         void setUseReverseReactions(bool useReverse);
 
+        /**
+         * @brief Gets the index of a species in the network.
+         *
+         * @param species The species for which to get the index.
+         * @return Index of the species in the network, or -1 if not found.
+         *
+         * This method returns the index of the given species in the network's
+         * species vector. If the species is not found, it returns -1.
+         */
         [[nodiscard]] int getSpeciesIndex(
             const fourdst::atomic::Species& species
         ) const override;
 
+        /**
+         * @brief Maps the NetIn object to a vector of molar abundances.
+         *
+         * @param netIn The NetIn object containing the input conditions.
+         * @return Vector of molar abundances corresponding to the species in the network.
+         *
+         * This method converts the NetIn object into a vector of molar abundances
+         * for each species in the network, which can be used for further calculations.
+         */
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
+        /**
+         * @brief Prepares the engine for calculations with initial conditions.
+         *
+         * @param netIn The input conditions for the network.
+         * @return PrimingReport containing information about the priming process.
+         *
+         * This method initializes the engine with the provided input conditions,
+         * setting up reactions, species, and precomputing necessary data.
+         */
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
+        /**
+         * @brief Gets the depth of the network.
+         *
+         * @return The build depth of the network.
+         *
+         * This method returns the current build depth of the reaction network,
+         * which indicates how many levels of reactions are included in the network.
+         */
         [[nodiscard]] BuildDepthType getDepth() const override;
 
+        /**
+         * @brief Rebuilds the reaction network based on a new composition.
+         *
+         * @param comp The new composition to use for rebuilding the network.
+         * @param depth The build depth to use for the network.
+         *
+         * This method rebuilds the reaction network using the provided composition
+         * and build depth. It updates all internal data structures accordingly.
+         */
         void rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) override;
-
 
     private:
         struct PrecomputedReaction {

@@ -29,6 +29,21 @@
 
 static std::terminate_handler g_previousHandler = nullptr;
 
+static std::ofstream consumptionFile("consumption.txt");
+
+void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& ctx) {
+    const auto H1IndexPtr = std::ranges::find(ctx.engine.getNetworkSpecies(), fourdst::atomic::H_1);
+    const auto He4IndexPtr = std::ranges::find(ctx.engine.getNetworkSpecies(), fourdst::atomic::He_4);
+
+    const size_t H1Index = H1IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), H1IndexPtr) : -1;
+    const size_t He4Index = He4IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), He4IndexPtr) : -1;
+
+    if (H1Index != -1 && He4Index != -1) {
+        std::cout << "Found H-1 at index: " << H1Index << ", He-4 at index: " << He4Index << "\n";
+        consumptionFile << ctx.t << "," << ctx.state(H1Index) << "," << ctx.state(He4Index) << "\n";
+    }
+}
+
 void measure_execution_time(const std::function<void()>& callback, const std::string& name)
 {
     const auto startTime   = std::chrono::steady_clock::now();
@@ -71,31 +86,34 @@ int main() {
 
     NetIn netIn;
     netIn.composition = composition;
-    netIn.temperature = 5e9;
-    netIn.density = 1.6e6;
+    netIn.temperature = 1.5e7;
+    netIn.density = 1.6e2;
     netIn.energy = 0;
-    // netIn.tMax = 3.1536e17; // ~ 10Gyr
-    netIn.tMax = 1e-14;
+    netIn.tMax = 5e17;
+    // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-    ReaclibEngine.setUseReverseReactions(true);
+    ReaclibEngine.setUseReverseReactions(false);
     // ReaclibEngine.setScreeningModel(screening::ScreeningType::WEAK);
     //
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
     AdaptiveEngineView adaptiveView(partitioningView);
     //
     solver::DirectNetworkSolver solver(adaptiveView);
+    consumptionFile << "t,X,a,b,c\n";
+    solver.set_callback(callback);
     NetOut netOut;
+
+
     netOut = solver.evaluate(netIn);
+    consumptionFile.close();
     std::cout << "Initial H-1: " << netIn.composition.getMassFraction("H-1") << std::endl;
     std::cout << "NetOut H-1: " << netOut.composition.getMassFraction("H-1") << std::endl;
-    std::cout << "Consumed " << (netIn.composition.getMassFraction("H-1") - netOut.composition.getMassFraction("H-1")) * 100 << " % H-1 by mass" << std::endl;
-    // measure_execution_time([&](){netOut = solver.evaluate(netIn);}, "DirectNetworkSolver Evaluation");
-    // std::cout << "DirectNetworkSolver completed in " << netOut.num_steps << " steps.\n";
-    // std::cout << "Final composition:\n";
-    // for (const auto& [symbol, entry] : netOut.composition) {
-    //     std::cout << symbol << ": " << entry.mass_fraction() << "\n";
-    // }
+
+    double initialHydrogen = netIn.composition.getMassFraction("H-1");
+    double finalHydrogen = netOut.composition.getMassFraction("H-1");
+    double fractionalConsumedHydrogen = (initialHydrogen - finalHydrogen) / initialHydrogen * 100.0;
+    std::cout << "Fractional consumed hydrogen: " << fractionalConsumedHydrogen << "%" << std::endl;
 
 }

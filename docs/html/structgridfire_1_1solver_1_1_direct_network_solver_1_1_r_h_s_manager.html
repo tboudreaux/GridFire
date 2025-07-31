@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -106,12 +106,15 @@ $(function(){initNavTree('structgridfire_1_1solver_1_1_direct_network_solver_1_1
   <div class="headertitle"><div class="title">gridfire::solver::DirectNetworkSolver::RHSManager Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functor for calculating the right-hand side of the ODEs.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:affaaa55fc49d85e5de73f3a6ad5da7c0" id="r_affaaa55fc49d85e5de73f3a6ad5da7c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#affaaa55fc49d85e5de73f3a6ad5da7c0">RHSManager</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const double T9, const double rho)</td></tr>
-<tr class="memdesc:affaaa55fc49d85e5de73f3a6ad5da7c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="struct_r_h_s_functor.html" title="Functor for calculating the right-hand side of the ODEs.">RHSFunctor</a>.  <br /></td></tr>
-<tr class="separator:affaaa55fc49d85e5de73f3a6ad5da7c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ba187f1a0deca0a82ac3c9a14883855" id="r_a4ba187f1a0deca0a82ac3c9a14883855"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ba187f1a0deca0a82ac3c9a14883855">RHSManager</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const double T9, const double rho, <a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a> &amp;callback, const std::vector&lt; fourdst::atomic::Species &gt; &amp;networkSpecies)</td></tr>
+<tr class="memdesc:a4ba187f1a0deca0a82ac3c9a14883855"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the RHSFunctor.  <br /></td></tr>
+<tr class="separator:a4ba187f1a0deca0a82ac3c9a14883855"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec8c0a0b2fbb71cebb40c263f64385b3" id="r_aec8c0a0b2fbb71cebb40c263f64385b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec8c0a0b2fbb71cebb40c263f64385b3">operator()</a> (const boost::numeric::ublas::vector&lt; double &gt; &amp;Y, boost::numeric::ublas::vector&lt; double &gt; &amp;dYdt, double t) const</td></tr>
 <tr class="memdesc:aec8c0a0b2fbb71cebb40c263f64385b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivatives of the species abundances.  <br /></td></tr>
 <tr class="separator:aec8c0a0b2fbb71cebb40c263f64385b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,10 +148,17 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad9a07ff5cbe42a9455561903a0ae1708"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69d773a1cfe4804876dbf23de1f212c9" id="r_a69d773a1cfe4804876dbf23de1f212c9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69d773a1cfe4804876dbf23de1f212c9">m_last_step_time</a> = 1e-20</td></tr>
 <tr class="separator:a69d773a1cfe4804876dbf23de1f212c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70d801db98fe8e2e4e6010f37da29905" id="r_a70d801db98fe8e2e4e6010f37da29905"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70d801db98fe8e2e4e6010f37da29905">m_callback</a></td></tr>
+<tr class="separator:a70d801db98fe8e2e4e6010f37da29905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eed45bfe5296e4ca9f87b5b53841931" id="r_a0eed45bfe5296e4ca9f87b5b53841931"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0eed45bfe5296e4ca9f87b5b53841931">m_networkSpecies</a></td></tr>
+<tr class="separator:a0eed45bfe5296e4ca9f87b5b53841931"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="affaaa55fc49d85e5de73f3a6ad5da7c0" name="affaaa55fc49d85e5de73f3a6ad5da7c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affaaa55fc49d85e5de73f3a6ad5da7c0">&#9670;&#160;</a></span>RHSManager()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Functor for calculating the right-hand side of the ODEs. </p>
+<p>This functor is used by the ODE solver to calculate the time derivatives of the species abundances. It takes the current abundances as input and returns the time derivatives. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a4ba187f1a0deca0a82ac3c9a14883855" name="a4ba187f1a0deca0a82ac3c9a14883855"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ba187f1a0deca0a82ac3c9a14883855">&#9670;&#160;</a></span>RHSManager()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,7 +179,17 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>callback</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>networkSpecies</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -179,12 +199,14 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor for the <a class="el" href="struct_r_h_s_functor.html" title="Functor for calculating the right-hand side of the ODEs.">RHSFunctor</a>. </p>
+<p>Constructor for the RHSFunctor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>The engine used to evaluate the network. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">callback</td><td>callback function to be called at the end of each timestep. </td></tr>
+    <tr><td class="paramname">networkSpecies</td><td>vector of species in the network in the correct order. </td></tr>
   </table>
   </dd>
 </dl>
@@ -315,6 +337,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a70d801db98fe8e2e4e6010f37da29905" name="a70d801db98fe8e2e4e6010f37da29905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70d801db98fe8e2e4e6010f37da29905">&#9670;&#160;</a></span>m_callback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a171bd0c8c292da79ed41f6653fdd47df">TimestepCallback</a>&amp; gridfire::solver::DirectNetworkSolver::RHSManager::m_callback</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a035962dfdfc13d255def98befefcccd9" name="a035962dfdfc13d255def98befefcccd9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a035962dfdfc13d255def98befefcccd9">&#9670;&#160;</a></span>m_engine</h2>
 
@@ -390,6 +426,20 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Logger instance. </p>
+
+</div>
+</div>
+<a id="a0eed45bfe5296e4ca9f87b5b53841931" name="a0eed45bfe5296e4ca9f87b5b53841931"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0eed45bfe5296e4ca9f87b5b53841931">&#9670;&#160;</a></span>m_networkSpecies</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;fourdst::atomic::Species&gt;&amp; gridfire::solver::DirectNetworkSolver::RHSManager::m_networkSpecies</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

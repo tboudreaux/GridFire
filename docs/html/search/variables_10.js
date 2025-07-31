@@ -6,9 +6,10 @@ var searchData=
   ['seed_5findices_3',['seed_indices',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a997efc7ef138efb0e60e60790fcce681',1,'gridfire::MultiscalePartitioningEngineView::QSEGroup']]],
   ['species_5findices_4',['species_indices',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a3840e7faa591b7c3006b27ae3df9e21e',1,'gridfire::MultiscalePartitioningEngineView::QSEGroup']]],
   ['staletype_5',['staleType',['../structgridfire_1_1expectations_1_1_stale_engine_error.html#a10bce51a63024715959a66673b909590',1,'gridfire::expectations::StaleEngineError']]],
-  ['status_6',['status',['../structgridfire_1_1_priming_report.html#a5fec4b465afb4f2d9bc30cd1cab1b50d',1,'gridfire::PrimingReport']]],
-  ['stoichiometric_5fcoefficients_7',['stoichiometric_coefficients',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a7a7e9167b19e339e0d69544b9c00e79c',1,'gridfire::GraphEngine::PrecomputedReaction']]],
-  ['stringtobasepartitiontype_8',['stringToBasePartitionType',['../namespacegridfire_1_1partition.html#a84de6308486d35ce8bc1a9dea52dfa4a',1,'gridfire::partition']]],
-  ['success_9',['success',['../structgridfire_1_1_priming_report.html#afa4dd791ddd9df84039554524b681fb3',1,'gridfire::PrimingReport']]],
-  ['symmetry_5ffactor_10',['symmetry_factor',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#ac42504e868c0b9fd9ac9a405ea739f0e',1,'gridfire::GraphEngine::PrecomputedReaction']]]
+  ['state_6',['state',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#adab4b53a94b935f89f799bd5a67847a2',1,'gridfire::solver::DirectNetworkSolver::TimestepContext']]],
+  ['status_7',['status',['../structgridfire_1_1_priming_report.html#a5fec4b465afb4f2d9bc30cd1cab1b50d',1,'gridfire::PrimingReport']]],
+  ['stoichiometric_5fcoefficients_8',['stoichiometric_coefficients',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#a7a7e9167b19e339e0d69544b9c00e79c',1,'gridfire::GraphEngine::PrecomputedReaction']]],
+  ['stringtobasepartitiontype_9',['stringToBasePartitionType',['../namespacegridfire_1_1partition.html#a84de6308486d35ce8bc1a9dea52dfa4a',1,'gridfire::partition']]],
+  ['success_10',['success',['../structgridfire_1_1_priming_report.html#afa4dd791ddd9df84039554524b681fb3',1,'gridfire::PrimingReport']]],
+  ['symmetry_5ffactor_11',['symmetry_factor',['../structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html#ac42504e868c0b9fd9ac9a405ea739f0e',1,'gridfire::GraphEngine::PrecomputedReaction']]]
 ];

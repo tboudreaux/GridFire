@@ -32,7 +32,7 @@ var searchData=
   ['and_20meson_20setup_29',['TUI config loading and meson setup',['../index.html#autotoc_md20',1,'']]],
   ['and_20netout_30',['NetIn and NetOut',['../index.html#autotoc_md38',1,'']]],
   ['and_20saving_31',['TUI config and saving',['../index.html#autotoc_md19',1,'']]],
-  ['and_20views_32',['2. Why These Engines and Views?',['../md_docs_2static_2usage.html#autotoc_md61',1,'']]],
+  ['and_20views_32',['2. Why These Engines and Views?',['../md_docs_2static_2usage.html#autotoc_md64',1,'']]],
   ['and_20workflow_33',['Design Philosophy and Workflow',['../index.html#autotoc_md1',1,'']]],
   ['approx8_34',['APPROX8',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37a1fc7adf719c40457abfdb8334675faea',1,'gridfire']]],
   ['approx8net_35',['Approx8Net',['../structgridfire_1_1approx8_1_1_approx8_net.html',1,'gridfire::approx8']]],

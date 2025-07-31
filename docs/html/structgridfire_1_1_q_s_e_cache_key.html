@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -148,8 +148,8 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Key struct for the QSE abundance cache. </p>
-<p>@purpose This struct is used as the key for the QSE abundance cache (<code>m_qse_abundance_cache</code>) within the <code><a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a></code>. Its primary goal is to avoid expensive re-partitioning and QSE solves for thermodynamic conditions that are "close enough" to previously computed ones.</p>
-<p>@how It works by storing the temperature (<code>m_T9</code>), density (<code>m_rho</code>), and species abundances (<code>m_Y</code>). A pre-computed hash is generated in the constructor by calling the <code><a class="el" href="#a99772155522bf6cbe08313565444a39d" title="Computes the hash value for this key.">hash()</a></code> method. This method discretizes the continuous physical values into bins using the tolerances defined in <code><a class="el" href="structgridfire_1_1_q_s_e_cache_config.html" title="Configuration struct for the QSE cache.">QSECacheConfig</a></code>. The <code>operator==</code> simply compares the pre-computed hash values for fast lookups in the <code>std::unordered_map</code>. </p>
+<dl class="section user"><dt>Purpose</dt><dd>This struct is used as the key for the QSE abundance cache (<code>m_qse_abundance_cache</code>) within the <code><a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a></code>. Its primary goal is to avoid expensive re-partitioning and QSE solves for thermodynamic conditions that are "close enough" to previously computed ones.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>It works by storing the temperature (<code>m_T9</code>), density (<code>m_rho</code>), and species abundances (<code>m_Y</code>). A pre-computed hash is generated in the constructor by calling the <code><a class="el" href="#a99772155522bf6cbe08313565444a39d" title="Computes the hash value for this key.">hash()</a></code> method. This method discretizes the continuous physical values into bins using the tolerances defined in <code><a class="el" href="structgridfire_1_1_q_s_e_cache_config.html" title="Configuration struct for the QSE cache.">QSECacheConfig</a></code>. The <code>operator==</code> simply compares the pre-computed hash values for fast lookups in the <code>std::unordered_map</code>. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3078528fc69b8e687448d3108a216c03" name="a3078528fc69b8e687448d3108a216c03"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3078528fc69b8e687448d3108a216c03">&#9670;&#160;</a></span>QSECacheKey()</h2>
@@ -225,7 +225,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The bin number as a long integer.</dd></dl>
-<p>@how The algorithm is <code>floor(value / tol)</code>. </p>
+<dl class="section user"><dt>How</dt><dd>The algorithm is <code>floor(value / tol)</code>. </dd></dl>
 
 </div>
 </div>
@@ -246,7 +246,7 @@ Public Attributes</h2></td></tr>
 
 <p>Computes the hash value for this key. </p>
 <dl class="section return"><dt>Returns</dt><dd>The computed hash value.</dd></dl>
-<p>@how This method combines the hashes of the binned temperature, density, and each species abundance. The <code><a class="el" href="#ac7e043ac0254936602c37a7e6a1391b3" title="Converts a value to a discrete bin based on a tolerance.">bin()</a></code> static method is used for discretization. </p>
+<dl class="section user"><dt>How</dt><dd>This method combines the hashes of the binned temperature, density, and each species abundance. The <code><a class="el" href="#ac7e043ac0254936602c37a7e6a1391b3" title="Converts a value to a discrete bin based on a tolerance.">bin()</a></code> static method is used for discretization. </dd></dl>
 
 </div>
 </div>

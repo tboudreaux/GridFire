@@ -8,5 +8,6 @@ var searchData=
   ['_7enetworksolverstrategy_5',['~NetworkSolverStrategy',['../classgridfire_1_1solver_1_1_network_solver_strategy.html#a1693dc93f63599c89587d729aca8e318',1,'gridfire::solver::NetworkSolverStrategy']]],
   ['_7epartitionfunction_6',['~PartitionFunction',['../classgridfire_1_1partition_1_1_partition_function.html#a197a0663dcfb4ab4be3b0e14b98391db',1,'gridfire::partition::PartitionFunction']]],
   ['_7ereaction_7',['~Reaction',['../classgridfire_1_1reaction_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::reaction::Reaction::~Reaction()'],['../classgridfire_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::Reaction::~Reaction()']]],
-  ['_7escreeningmodel_8',['~ScreeningModel',['../classgridfire_1_1screening_1_1_screening_model.html#adef175acdbd911527f56a1f1592579a7',1,'gridfire::screening::ScreeningModel']]]
+  ['_7escreeningmodel_8',['~ScreeningModel',['../classgridfire_1_1screening_1_1_screening_model.html#adef175acdbd911527f56a1f1592579a7',1,'gridfire::screening::ScreeningModel']]],
+  ['_7esolvercontextbase_9',['~SolverContextBase',['../structgridfire_1_1solver_1_1_solver_context_base.html#ab1abf9e5ff7f53a6cebe5e00ea5fc0c8',1,'gridfire::solver::SolverContextBase']]]
 ];

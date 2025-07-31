@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['energy_0',['energy',['../structgridfire_1_1_net_in.html#ae1fbce804bafa6ad2be4ac3470dac93b',1,'gridfire::NetIn::energy'],['../structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6',1,'gridfire::NetOut::energy']]]
+  ['energy_0',['energy',['../structgridfire_1_1_net_in.html#ae1fbce804bafa6ad2be4ac3470dac93b',1,'gridfire::NetIn::energy'],['../structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6',1,'gridfire::NetOut::energy']]],
+  ['engine_1',['engine',['../structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#a53985d354dcaeda96dc39828c6c9d9d1',1,'gridfire::solver::DirectNetworkSolver::TimestepContext']]]
 ];

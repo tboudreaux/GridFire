@@ -296,16 +296,65 @@ namespace gridfire {
          */
         [[nodiscard]] virtual screening::ScreeningType getScreeningModel() const = 0;
 
+        /**
+         * @brief Get the index of a species in the network.
+         *
+         * @param species The species to look up.
+         *
+         * This method allows querying the index of a specific species in the
+         * engine's internal representation. It is useful for accessing species
+         * data efficiently.
+         */
         [[nodiscard]] virtual int getSpeciesIndex(const fourdst::atomic::Species &species) const = 0;
 
+        /**
+         * @brief Map a NetIn object to a vector of molar abundances.
+         *
+         * @param netIn The input conditions for the network.
+         * @return A vector of molar abundances corresponding to the species in the network.
+         *
+         * This method converts the input conditions into a vector of molar abundances,
+         * which can be used for further calculations or diagnostics.
+         */
         [[nodiscard]] virtual std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const = 0;
 
+        /**
+         * @brief Prime the engine with initial conditions.
+         *
+         * @param netIn The input conditions for the network.
+         * @return PrimingReport containing information about the priming process.
+         *
+         * This method is used to prepare the engine for calculations by setting up
+         * initial conditions, reactions, and species. It may involve compiling reaction
+         * rates, initializing internal data structures, and performing any necessary
+         * pre-computation.
+         */
         [[nodiscard]] virtual PrimingReport primeEngine(const NetIn &netIn) = 0;
 
+        /**
+         * @brief Get the depth of the network.
+         *
+         * @return The depth of the network, which may indicate the level of detail or
+         *         complexity in the reaction network.
+         *
+         * This method is intended to provide information about the network's structure,
+         * such as how many layers of reactions or species are present. It can be useful
+         * for diagnostics and understanding the network's complexity.
+         */
         [[nodiscard]] virtual BuildDepthType getDepth() const {
             throw std::logic_error("Network depth not supported by this engine.");
         }
 
+        /**
+         * @brief Rebuild the network with a specified depth.
+         *
+         * @param comp The composition to rebuild the network with.
+         * @param depth The desired depth of the network.
+         *
+         * This method is intended to allow dynamic adjustment of the network's depth,
+         * which may involve adding or removing species and reactions based on the
+         * specified depth. However, not all engines support this operation.
+         */
         virtual void rebuild(const fourdst::composition::Composition& comp, BuildDepthType depth) {
             throw std::logic_error("Setting network depth not supported by this engine.");
         }
