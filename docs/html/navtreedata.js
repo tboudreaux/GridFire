@@ -37,7 +37,7 @@ var NAVTREE =
       ] ],
       [ "Automatic Build and Installation", "index.html#autotoc_md8", [
         [ "Script Build and Installation Instructions", "index.html#autotoc_md9", null ],
-        [ "Currently known good platforms", "index.html#autotoc_md10", null ]
+        [ "Currently, known good platforms", "index.html#autotoc_md10", null ]
       ] ],
       [ "Manual Build Instructions", "index.html#autotoc_md11", [
         [ "Prerequisites", "index.html#autotoc_md12", [
@@ -91,23 +91,25 @@ var NAVTREE =
         [ "Common Workflow Example", "index.html#autotoc_md50", [
           [ "Workflow Components and Effects", "index.html#autotoc_md51", null ]
         ] ],
-        [ "Callback Example", "index.html#autotoc_md52", null ]
+        [ "Callback Example", "index.html#autotoc_md52", [
+          [ "Callback Context", "index.html#autotoc_md53", null ]
+        ] ]
       ] ],
-      [ "Python", "index.html#autotoc_md53", [
-        [ "Common Workflow Examople", "index.html#autotoc_md54", null ],
-        [ "Python callbacks", "index.html#autotoc_md55", null ]
+      [ "Python", "index.html#autotoc_md54", [
+        [ "Common Workflow Example", "index.html#autotoc_md55", null ],
+        [ "Python callbacks", "index.html#autotoc_md56", null ]
       ] ]
     ] ],
-    [ "Related Projects", "index.html#autotoc_md56", null ],
+    [ "Related Projects", "index.html#autotoc_md57", null ],
     [ "GridFire Python Usage Guide", "md_docs_2static_2usage.html", [
-      [ "Installation", "md_docs_2static_2usage.html#autotoc_md59", [
-        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md60", null ],
-        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md61", null ]
+      [ "Installation", "md_docs_2static_2usage.html#autotoc_md60", [
+        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md61", null ],
+        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md62", null ]
       ] ],
-      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md63", null ],
-      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md65", null ],
-      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md67", null ],
-      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md69", null ]
+      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md64", null ],
+      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md66", null ],
+      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md68", null ],
+      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md70", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -156,7 +158,7 @@ var NAVTREEINDEX =
 "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ab9c683289d48e58edf06bf59215b4937",
 "classgridfire_1_1reaction_1_1_templated_reaction_set.html#a5962968fe478c79250e9d88d80a87600",
 "functions_vars_f.html",
-"rauscher__thielemann__partition__data_8h.html#a7b9a54e9c58848fe3205479acd770ffd",
+"rauscher__thielemann__partition__data_8h.html#a5240736f3bdb43cf2cd63464c5835df1",
 "structgridfire_1_1approx8_1_1_approx8_net.html#a95b9a07e29285884e6de523f8132f653"
 ];
 

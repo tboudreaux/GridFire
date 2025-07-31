@@ -23,7 +23,7 @@ var searchData=
   ['inputsatcompiletime_20',['InputsAtCompileTime',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a5a2ecfa4d17720d1da14e53f4c261a81a753b594931f9ee122e2079986ad572c9',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]],
   ['inputtype_21',['InputType',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a3ebf684b36e98da38d8ee6f0be4f91e2',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]],
   ['install_20scripts_22',['Install Scripts',['../index.html#autotoc_md15',1,'']]],
-  ['installation_23',['Installation',['../md_docs_2static_2usage.html#autotoc_md59',1,'1. Installation'],['../index.html#autotoc_md8',1,'Automatic Build and Installation'],['../index.html#autotoc_md16',1,'Ease of Installation']]],
+  ['installation_23',['Installation',['../md_docs_2static_2usage.html#autotoc_md60',1,'1. Installation'],['../index.html#autotoc_md8',1,'Automatic Build and Installation'],['../index.html#autotoc_md16',1,'Ease of Installation']]],
   ['installation_24',['Python installation',['../index.html#autotoc_md4',1,'']]],
   ['installation_20instructions_25',['Script Build and Installation Instructions',['../index.html#autotoc_md9',1,'']]],
   ['installation_20on_20common_20platforms_26',['Dependency Installation on Common Platforms',['../index.html#autotoc_md22',1,'']]],

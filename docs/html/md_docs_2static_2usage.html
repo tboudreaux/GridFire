@@ -102,15 +102,15 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
   <div class="headertitle"><div class="title">GridFire Python Usage Guide</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md57"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md58"></a></p>
 <p>This tutorial walks you through installing GridFire’s Python bindings, choosing engines and views thoughtfully, running a simulation, and visualizing your results.</p>
 <hr  />
- <h1><a class="anchor" id="autotoc_md59"></a>
+ <h1><a class="anchor" id="autotoc_md60"></a>
 1. Installation</h1>
-<h2><a class="anchor" id="autotoc_md60"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 1.1 PyPI Release</h2>
 <p>The quickest way to get started is: </p><div class="fragment"><div class="line">pip install gridfire</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md61"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md62"></a>
 1.2 Development from Source</h2>
 <p>If you want the cutting-edge features or need to hack the C++ backend: </p><div class="fragment"><div class="line">git clone https://github.com/4DSTAR/GridFire.git</div>
 <div class="line">cd GridFire</div>
@@ -122,7 +122,7 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 </div><!-- fragment --><p>You can also build manually with Meson (generally end users will not need to do this): </p><div class="fragment"><div class="line">meson setup build-python</div>
 <div class="line">meson compile -C build_gridfire</div>
 </div><!-- fragment --><hr  />
- <h1><a class="anchor" id="autotoc_md63"></a>
+ <h1><a class="anchor" id="autotoc_md64"></a>
 2. Why These Engines and Views?</h1>
 <p>GridFire’s design balances physical fidelity and performance. Here’s why we pick each component:</p>
 <ol type="1">
@@ -162,7 +162,7 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 </ol>
 <p>By composing these views in sequence, you can tailor accuracy vs performance for your scientific question. Commonly one might use a flow like <b>GraphEngine → Partitioning → Adaptive</b> to capture both full-network physics and manageable stiffness.</p>
 <hr  />
- <h1><a class="anchor" id="autotoc_md65"></a>
+ <h1><a class="anchor" id="autotoc_md66"></a>
 3. Step-by-Step Example</h1>
 <p>Adapted from <a href="../../tests/python/test.py"><code>tests/python/test.py</code></a>. Comments explain each choice.</p>
 <div class="fragment"><div class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</div>
@@ -217,7 +217,7 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 <li><b>Implicit solver</b>: Rosenbrock4 handles stiff systems robustly, letting you push to longer <code>tMax</code>.</li>
 </ul>
 <hr  />
- <h1><a class="anchor" id="autotoc_md67"></a>
+ <h1><a class="anchor" id="autotoc_md68"></a>
 4. Visualizing Reaction Networks</h1>
 <p>GridFire engines and views provide built-in export methods for Graphviz DOT and CSV formats:</p>
 <div class="fragment"><div class="line"><span class="comment"># Export the base network to DOT for Graphviz</span></div>
@@ -244,7 +244,7 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 <div class="line">df.to_csv(<span class="stringliteral">&#39;H1_evolution.csv&#39;</span>, index=<span class="keyword">False</span>)</div>
 </div><!-- fragment --><p> Then plot in pandas or Excel for custom figures.</p>
 <hr  />
- <h1><a class="anchor" id="autotoc_md69"></a>
+ <h1><a class="anchor" id="autotoc_md70"></a>
 5. Beyond the Basics</h1>
 <ul>
 <li><b>Custom Partition Functions</b>: In Python, subclass <code><a class="el" href="classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions.">gridfire.partition.PartitionFunction</a></code>, override <code>evaluate</code>, <code>supports</code>, and <code>clone</code> to implement new weighting schemes. <br  />

@@ -45,7 +45,7 @@ By far the easiest way to install is with pip. This will install either
 pre-compiled wheels or, if your system has not had a wheel compiled for it, it
 will try to build locally (this may take **a long time**). The python bindings
 are just that and should maintain nearly the same speed as the C++ code. End
-users are strongly encorages to use the python module rather than the C++ code.
+users are strongly encourages to use the python module rather than the C++ code.
 
 ### pypi
 Installing from pip is as simple as
@@ -56,16 +56,16 @@ pip install gridfire
 These wheels have been compiled on many systems
 
 | Version | Platform | Architecture | CPython Versions                                           | PyPy Versions |
-| ------- | -------- | ------------ | ---------------------------------------------------------- | ------------- |
+|---------|----------|--------------|------------------------------------------------------------|---------------|
 | 0.5.0   | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.5.0   | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.5.0   | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 
-> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Due
+> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Do
 > to that platform being phased out it is likely that there will never be
 > precompiled wheels or releases for it.
 
-> **Note:** macOS wheels were targeted to MacOS 12 Monterey and should work on
+> **Note:** macOS wheels were targeted to macOS 12 Monterey and should work on
 > any version more recent than that (at least as of August 2025).
 
 > **Note:** Linux wheels were compiled using manylinux_2_28 and are expected to
@@ -90,7 +90,7 @@ pip install .
 > fail, the steps in further sections address these in more detail.
 
 ### source for developers
-If you are a developer and would like an editable and incrimental python
+If you are a developer and would like an editable and incremental python
 install `meson-python` makes this very easy
 
 ```bash
@@ -99,10 +99,10 @@ cd GridFire
 pip install -e . --no-build-isolation -vv
 ```
 
-This will generate incrimental builds whenever source code changes and you run
-a python script automartically (note that since `meson setup` must run for each
+This will generate incremental builds whenever source code changes, and you run
+a python script automatically (note that since `meson setup` must run for each
 of these it does still take a few seconds to recompile regardless of how small
-a source code change you have made). It is **strongly** reccomended that
+a source code change you have made). It is **strongly** recommended that
 developers use this approach and end users *do not*.
 
 
@@ -126,7 +126,7 @@ Generally, both are intended to be easy to use and will prompt you
 automatically to install any missing dependencies.
 
 
-### Currently known good platforms
+### Currently, known good platforms
 The installation script has been tested and found to work on clean
 installations of the following platforms:
 - MacOS 15.3.2 (Apple Silicon + brew installed)
@@ -172,10 +172,10 @@ These only need to be manually installed if the user is not making use of the
 
 ### Install Scripts
 GridFire ships with an installer (`install.sh`) which is intended to make the
-process of installation both easier and more repetable.
+process of installation both easier and more repeatable.
 
 #### Ease of Installation
-Both scripts are intended to automate installation more or less completly. This
+Both scripts are intended to automate installation more or less completely. This
 includes dependency checking. In the event that a dependency cannot be found
 they try to install (after explicitly asking for user permission). If that does
 not work they will provide a clear message as to what went wrong.
@@ -185,7 +185,7 @@ The TUI mode provides easy modification of meson build system and compiler
 settings which can then be saved to a config file. This config file can then be
 loaded by either tui mode or cli mode (with the `--config`) flag meaning that
 build configurations can be made and reused. Note that this is **not** a
-deterministicly reproducible build system as it does not interact with any
+deterministically reproducible build system as it does not interact with any
 system dependencies or settings, only meson and compiler settings.
 
 #### Examples
@@ -200,7 +200,7 @@ system dependencies or settings, only meson and compiler settings.
 [![asciicast](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC.svg)](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC)
 
 
-> **Note:** `install-tui.sh` is simply a script which calles `install.sh` with
+> **Note:** `install-tui.sh` is simply a script which calls `install.sh` with
 > the `--tui` flag. You can get the exact same results by running `install.sh
 > --tui`.
 
@@ -223,9 +223,9 @@ sudo apt-get install -y build-essential meson python3 python3-pip libboost-all-d
 > documentation for how to download and install a version `>=1.83.0`
 
 > **Note:** On recent versions of ubuntu python has switched to being
-> externally managed by the system. We **strongly** recomend that if you
-> install manaully all python pacakges are installed inside some kind of
-> virtual enviroment (e.g. `pyenv`, `conda`, `python-venv`, etc...). When using
+> externally managed by the system. We **strongly** recommend that if you
+> install manually all python packages are installed inside some kind of
+> virtual environment (e.g. `pyenv`, `conda`, `python-venv`, etc...). When using
 > the installer script this is handled automatically using `python-venv`.
 
 - **Fedora/CentOS/RHEL:**
@@ -248,7 +248,7 @@ meson compile -C build
 #### Clang vs. GCC
 As noted above `clang` tends to compile GridFire much faster than `gcc`. If
 your system has both `clang` and `gcc` installed you may force meson to use
-clang via enviromental variables
+clang via environmental variables
 
 ```bash
 CC=clang CXX=clang++ meson setup build_clang
@@ -262,7 +262,7 @@ meson install -C build
 
 ### Minimum compiler versions
 GridFire uses C++23 features and therefore only compilers and standard library
-implimentations which support C++23 are supported. Generally we have found that
+implementations which support C++23 are supported. Generally we have found that
 `gcc >= 13.0.0` or `clang >= 16.0.0` work well.
 
 
@@ -274,7 +274,7 @@ include:
 
 - **Engine Module:** Core interfaces and implementations (e.g., `GraphEngine`)
   that evaluate reaction network rate equations and energy generation. Also
-  implimented `Views` submodule.
+  implemented `Views` submodule.
 - **Engine::Views Module:** Composable engine optimization and modification
   (e.g. `MultiscalePartitioningEngineView`) which can be used to make a problem
   more tractable or applicable.
@@ -308,16 +308,16 @@ abundances and diagnostics.
 ## Engines
 GridFire is, at its core, based on a series of `Engines`. These are constructs
 which know how to report information on series of ODEs which need to be solved
-to evolver abundnances. The important thing to understand about `Engines` is
-that they contain all of the detailed physics GridFire uses. For example a
+to evolver abundances. The important thing to understand about `Engines` is
+that they contain all the detailed physics GridFire uses. For example a
 `Solver` takes an `Engine` but does not compute physics itself. Rather, it asks
 the `Engine` for stuff like the jacobian matrix, stoichiometry, nuclear energy
 generation rate, and change in abundance with time.
 
 Refer to the API documentation for the exact interface which an `Engine` must
-impliment to be compatible with GridFire solvers.
+implement to be compatible with GridFire solvers.
 
-Currently we only impliment `GraphEngine` which is intended to be a very general and
+Currently, we only implement `GraphEngine` which is intended to be a very general and
 adaptable `Engine`.
 
 ### GraphEngine
@@ -327,7 +327,7 @@ connecting some set of atomic species through reactions listed in the [JINA
 Reaclib database](https://reaclib.jinaweb.org/index.php).
 
 `GraphEngine`s are constructed from a seed composition of species from which
-they recursivley expand their topology outward, following known reaction
+they recursively expand their topology outward, following known reaction
 pathways and adding new species to the tracked list as they expand.
 
 
@@ -339,9 +339,9 @@ construction and rate evaluations:
 - **Constructor Parameters:**
   - `composition`: The initial seed composition to start network construction from.
   - `BuildDepthType` (`Full`, `Shallow`, `SecondOrder`, etc...): controls
-    number of recursions used to construct the network topology. Can either be an
-    member of the `NetworkBuildDepth` enum or an integerl.
-  - `partition::PartitionFunction`: Partition function used when evlauating
+    number of recursions used to construct the network topology. Can either be a
+    member of the `NetworkBuildDepth` enum or an integer.
+  - `partition::PartitionFunction`: Partition function used when evaluating
     detailed balance for inverse rates.
 
 - **setPrecomputation(bool precompute):**
@@ -358,16 +358,16 @@ construction and rate evaluations:
 
 ### Available Partition Functions
 
-| Function Name                         | Identifier / Enum        | Description                                                     |
-|---------------------------------------|--------------------------|-----------------------------------------------------------------|
-| `GroundStatePartitionFunction`        | "GroundState"            | Weights using nuclear ground-state spin factors.                |
-| `RauscherThielemannPartitionFunction` | "RauscherThielemann"     | Interpolates normalized g-factors per Rauscher & Thielemann.    |
-| `CompositePartitionFunction`          | "Composite"              | Combines multiple partition functions for situations where different partitions functions are used for different domains |
+| Function Name                         | Identifier / Enum    | Description                                                                                                              |
+|---------------------------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `GroundStatePartitionFunction`        | "GroundState"        | Weights using nuclear ground-state spin factors.                                                                         |
+| `RauscherThielemannPartitionFunction` | "RauscherThielemann" | Interpolates normalized g-factors per Rauscher & Thielemann.                                                             |
+| `CompositePartitionFunction`          | "Composite"          | Combines multiple partition functions for situations where different partitions functions are used for different domains |
 
 ### AutoDiff
 One of the primary tasks any engine must accomplish is to report the jacobian
 matrix of the system to the solver. `GraphEngine`  uses `CppAD`, a C++ auto
-differentiation library, to generate analytic jacobian matricies very
+differentiation library, to generate analytic jacobian matrices very
 efficiently.
 
 
@@ -376,14 +376,14 @@ All reactions in JINA Reaclib which only include reactants iron and lighter
 were downloaded on June 17th, 2025 where the most recent documented change on
 the JINA Reaclib site was on June 24th, 2021.
 
-All of thes reactions have been compiled into a header file which is then
+All of these reactions have been compiled into a header file which is then
 statically compiled into the gridfire binaries (specifically into
 lib_reaction_reaclib.cpp.o). This does increase the binary size by a few MB;
-however, the benafit is faster load times and more importantly no need for end
+however, the benefit is faster load times and more importantly no need for end
 users to manage resource files.
 
 If a developer wants to add new reaclib reactions we include a script at
-`utils/reaclib/format.py` which can injest a reaclib data file and produce the
+`utils/reaclib/format.py` which can ingest a reaclib data file and produce the
 needed header file. More details on this process are included in
 `utils/reaclib/readme.md`
 
@@ -394,13 +394,13 @@ The GridFire engine supports multiple engine view strategies to adapt or
 restrict network topology. Generally when extending GridFire the approach is
 likely to be one of adding new `EngineViews`.
 
-| View Name                             | Purpose                                                                          | Algorithm / Reference                                                                                   | When to Use                                                     |
-|---------------------------------------|----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|
-| AdaptiveEngineView                    | Dynamically culls low-flow species and reactions during runtime                 | Iterative flux thresholding to remove reactions below a flow threshold                                   | Large networks to reduce computational cost                     |
-| DefinedEngineView                     | Restricts the network to a user-specified subset of species and reactions        | Static network masking based on user-provided species/reaction lists                                      | Targeted pathway studies or code-to-code comparisons            |
-| FileDefinedEngineView                 | Load a defined engine view from a file using some parser                         | Same as DefinedEngineView but loads from a file                                                           | Same as DefinedEngineView
-| MultiscalePartitioningEngineView      | Partitions the network into fast and slow subsets based on reaction timescales   | Network partitioning following Hix & Thielemann Silicon Burning I & II (DOI:10.1086/177016,10.1086/306692)| Stiff, multi-scale networks requiring tailored integration      |
-| NetworkPrimingEngineView              | Primes the network with an initial species or set of species for ignition studies| Single-species ignition and network priming                                                               | Investigations of ignition triggers or initial seed sensitivities|
+| View Name                        | Purpose                                                                           | Algorithm / Reference                                                                                      | When to Use                                                       |
+|----------------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| AdaptiveEngineView               | Dynamically culls low-flow species and reactions during runtime                   | Iterative flux thresholding to remove reactions below a flow threshold                                     | Large networks to reduce computational cost                       |
+| DefinedEngineView                | Restricts the network to a user-specified subset of species and reactions         | Static network masking based on user-provided species/reaction lists                                       | Targeted pathway studies or code-to-code comparisons              |
+| FileDefinedEngineView            | Load a defined engine view from a file using some parser                          | Same as DefinedEngineView but loads from a file                                                            | Same as DefinedEngineView                                         |
+| MultiscalePartitioningEngineView | Partitions the network into fast and slow subsets based on reaction timescales    | Network partitioning following Hix & Thielemann Silicon Burning I & II (DOI:10.1086/177016,10.1086/306692) | Stiff, multi-scale networks requiring tailored integration        |
+| NetworkPrimingEngineView         | Primes the network with an initial species or set of species for ignition studies | Single-species ignition and network priming                                                                | Investigations of ignition triggers or initial seed sensitivities |
 
 These engine views implement the common Engine interface and may be composed in
 any order to build complex network pipelines. New view types can be added by
@@ -409,11 +409,11 @@ chain without modifying core engine code.
 
 ### A Note about composability
 There are certain functions for which it is expected that a call to an engine
-view will propegate the result down the chain of engine views, eventually
+view will propagate the result down the chain of engine views, eventually
 reaching the base engine (e.g. `DynamicEngine::update`). We do not strongly
 enforce this as it is not hard to contrive a situation where that is not the
-mose useful behavior; however, we do strongly encorage developers to think
-carefully about passing along calls to base engine methods when implimenting
+mose useful behavior; however, we do strongly encourage developers to think
+carefully about passing along calls to base engine methods when implementing
 new views.
 
 ## Numerical Solver Strategies
@@ -424,7 +424,7 @@ integration algorithms to be used interchangeably with any engine that
 implements the `Engine` or `DynamicEngine` contract.
 
 ### NetworkSolverStrategy&lt;EngineT&gt;:
-All GridFire solvers impliment the abstract strategy templated by
+All GridFire solvers implement the abstract strategy templated by
 `NetworkSolverStrategy` which enforces only that there is some `evaluate`
 method with the following signature
 
@@ -436,7 +436,7 @@ abundances, temperature, density, and diagnostics.
 
 ### NetIn and NetOut
 GridFire solvers use a unified input and output type for their public interface
-(though as developers will quickly learn, internally these are immediatly
+(though as developers will quickly learn, internally these are immediately
 broken down into simpler data structures). All solvers expect a `NetIn` struct
 for the input type to the `evaluate` method and return a `NetOut` struct.
 
@@ -450,11 +450,11 @@ A `NetIn` struct contains
 - The initial energy in the system in ergs (`NetIn::energy`)
 
 >**Note:** It is often useful to set `NetIn::dt0` to something *very* small and
->let an iterative timestepper push the timestep up. Often for main sequence
+>let an iterative time stepper push the timestep up. Often for main sequence
 >burning I use ~1e-12 for dt0
 
 >**Note:** The composition must be a `fourdst::composition::Composition`
->object. This is made avalible through the `foursdt` library and the
+>object. This is made available through the `foursdt` library and the
 >`fourdst/composition/Composition.h` header. `fourdst` is installed
 >automatically with GridFire
 
@@ -479,14 +479,14 @@ A `NetOut` struct contains
   `rosenbrock4<double>`, optimized for stiff reaction networks with adaptive step
   size control using configurable absolute and relative tolerances.
 - **Jacobian Assembly:** Asks the base engine for the Jacobian Matrix
-- **RHS Evaluation:** Assk the base engine for RHS of the abundance evolution
+- **RHS Evaluation:** Asks the base engine for RHS of the abundance evolution
   equations
 - **Linear Algebra:** Utilizes `Boost.uBLAS` for state vectors and dense Jacobian
   matrices, with sparse access patterns supported via coordinate lists of nonzero
   entries.
 - **Error Control and Logging:** Absolute and relative tolerance parameters
   (`absTol`, `relTol`) are read from configuration; Quill loggers, which run in a
-  seperate non blocking thread, capture integration diagnostics and step
+  separate non blocking thread, capture integration diagnostics and step
   statistics.
 
 ### Algorithmic Workflow in DirectNetworkSolver
@@ -495,20 +495,20 @@ A `NetOut` struct contains
 2. **Integrator Setup:** Construct the controlled Rosenbrock4 stepper and bind
    `RHSManager` and `JacobianFunctor`.
 3. **Adaptive Integration Loop:**
-  - Perform `integrate_adaptive` advancing until `tMax`, catching any
-    `StaleEngineTrigger` to repartition the network and update composition.
-  - On each substep, observe states and log via `RHSManager::observe`.
+   - Perform `integrate_adaptive` advancing until `tMax`, catching any
+     `StaleEngineTrigger` to repartition the network and update composition.
+   - On each substep, observe states and log via `RHSManager::observe`.
 4. **Finalization:** Assemble final mass fractions, compute accumulated energy,
    and populate `NetOut` with updated composition and diagnostics.
 
 ### Future Solver Implementations
 - **Operator Splitting Solvers:** Strategies to decouple thermodynamics,
-  screening, and reaction substeps for performance on stiff, multi-scale
+  screening, and reaction substeps for performance on stiff, multiscale
   networks.
 - **GPU-Accelerated Solvers:** Planned use of CUDA/OpenCL backends for
   large-scale network integration.
 - **Callback observer support:** Currently we use an observer built into our
-  `RHSManager` (`RHSManager::observe`); however, we intend to inlucde support for
+  `RHSManager` (`RHSManager::observe`); however, we intend to include support for
   custom, user defined, observer method.
 
 These strategies can be developed by inheriting from `NetworkSolverStrategy`
@@ -640,7 +640,7 @@ accuracy and performance.
 ### Callback Example
 Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide
 different context to the callback function, you should use the struct `gridfire::solver::<SolverName>::TimestepContext`
-as the argument type for the callback function. This struct contains all of the information provided by that solver to
+as the argument type for the callback function. This struct contains all the information provided by that solver to
 the callback function.
 
 ```c++
@@ -703,6 +703,18 @@ int main(){
 >**Note:** The order of species in the boost state vector (`ctx.state`) is **not guaranteed** to be any particular order run over run. Therefore, in order to reliably extract
 > values from it, you **must** use the `getSpeciesIndex` method of the engine to get the index of the species you are interested in (these will always be in the same order).
 
+#### Callback Context
+
+Since each solver may provide different context to the callback function, and it may be frustrating to refer to the
+documentation every time, we also enforce that all solvers must implement a `descripe_callback_context` method which
+returns a vector of tuples<string, string> where the first element is the name of the field and the second is its 
+datatype. It is on the developer to ensure that this information is accurate.
+
+```c++
+...
+std::cout << solver.describe_callback_context() << std::endl;
+```
+
 ## Python
 The python bindings intentionally look **very** similar to the C++ code.
 Generally all examples can be adapted to python by replacing includes of paths
@@ -712,8 +724,8 @@ with imports of modules such that
 
 All GridFire C++ types have been bound and can be passed around as one would expect.
 
-### Common Workflow Examople
-This example impliments the same logic as the above C++ example
+### Common Workflow Example
+This example implements the same logic as the above C++ example
 ```python
 from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
 from gridfire.solver import DirectNetworkSolver
