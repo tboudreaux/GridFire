@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive GridFire Workflow (Developer Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Syntax Highlighting CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+
+    <script>
+        // Tailwind CSS dark mode setup
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .flow-node-container {
+            position: relative;
+            cursor: pointer;
+        }
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+            position: absolute;
+            z-index: 50;
+            width: 420px;
+            max-width: 90vw;
+            pointer-events: none;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tooltip-details {
+            bottom: 110%;
+        }
+        .tooltip-code {
+            top: 110%;
+        }
+
+        /* Show tooltips on hover for non-touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            .flow-node-container:hover .tooltip {
+                visibility: visible;
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
+        /* Show tooltips via class for touch devices */
+        .flow-node-container.show-tooltips .tooltip {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .flow-arrow {
+            position: relative;
+            height: 40px;
+            width: 2px;
+            margin: 8px auto;
+        }
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #9ca3af;
+        }
+        .dark .flow-arrow::after {
+            border-top-color: #4b5563;
+        }
+        .lib-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            transform: rotate(10deg);
+        }
+        .dark .hljs {
+            background: #1f2937;
+        }
+        .info-icon-container {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+        /* Modal styles */
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+<div class="container mx-auto px-4 py-8 sm:py-12">
+    <header class="text-center mb-12">
+        <nav class="mb-8 flex justify-center items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium">
+            <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Home</a>
+            <a href="html/index.html" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">API Docs</a>
+            <a href="https://github.com/4D-STAR/GridFire" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">GitHub</a>
+            <button id="funding-btn" class="text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Funding</button>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">GridFire Workflow</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Hover or tap on the flowchart elements for details.</p>
+        <div class="mt-6 flex justify-center items-center">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-3">Code Language:</span>
+            <div id="lang-switcher" class="flex space-x-1 rounded-lg bg-gray-200 dark:bg-gray-700 p-1 cursor-pointer">
+                <button class="lang-toggle text-sm font-semibold px-4 py-1 rounded-md" data-lang="python">Python</button>
+                <button class="lang-toggle text-sm font-semibold px-4 py-1 rounded-md" data-lang="cpp">C++</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex flex-col items-center">
+        <!-- STEPS -->
+        <div data-step="composition" class="flow-node-container w-full max-w-md">
+            <div class="tooltip tooltip-details"></div>
+            <div class="bg-sky-100 dark:bg-sky-900/50 border-2 border-sky-300 dark:border-sky-700 rounded-lg p-4 shadow-md text-center relative">
+                <div class="lib-badge text-xs bg-sky-200 dark:bg-sky-800 text-sky-800 dark:text-sky-200 px-2 py-0.5 rounded-full code-font"></div>
+                <h3 class="font-semibold text-lg text-sky-900 dark:text-sky-100">Composition</h3>
+            </div>
+            <div class="tooltip tooltip-code"></div>
+        </div>
+        <div class="flow-arrow bg-gray-400 dark:bg-gray-600"></div>
+
+        <div data-step="netIn" class="flow-node-container w-full max-w-md">
+            <div class="tooltip tooltip-details"></div>
+            <div class="bg-slate-100 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 rounded-lg p-4 shadow-md text-center relative">
+                <div class="lib-badge text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded-full code-font"></div>
+                <h3 class="font-semibold text-lg text-slate-900 dark:text-slate-100">NetIn Object</h3>
+            </div>
+            <div class="tooltip tooltip-code"></div>
+        </div>
+        <div class="flow-arrow bg-gray-400 dark:bg-gray-600"></div>
+
+        <div data-step="baseEngine" class="flow-node-container w-full max-w-md">
+            <div class="tooltip tooltip-details"></div>
+            <div class="bg-green-100 dark:bg-green-900/50 border-2 border-green-300 dark:border-green-700 rounded-lg p-4 shadow-md text-center relative">
+                <div class="lib-badge text-xs bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-0.5 rounded-full code-font"></div>
+                <h3 class="font-semibold text-lg text-green-900 dark:text-green-100">Base Engine</h3>
+            </div>
+            <div class="tooltip tooltip-code"></div>
+        </div>
+        <div class="flow-arrow bg-gray-400 dark:bg-gray-600"></div>
+
+        <!-- Optional Views Section -->
+        <div class="w-full max-w-lg relative">
+            <div class="border-2 border-dashed border-gray-400 dark:border-gray-600 rounded-xl p-4 sm:p-6 my-4 text-center">
+
+                <div data-step="viewChain" class="flow-node-container info-icon-container">
+                    <div class="tooltip tooltip-details"></div>
+                    <div class="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-sm cursor-pointer select-none">i</div>
+                </div>
+
+                <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Optional Engine View Chain</h4>
+                <div class="space-y-2">
+                    <div data-step="viewMulti" class="flow-node-container w-full max-w-md mx-auto">
+                        <div class="tooltip tooltip-details"></div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900/40 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg p-3 shadow-md text-center relative">
+                            <div class="lib-badge text-xs bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full code-font"></div>
+                            <h3 class="font-semibold text-yellow-900 dark:text-yellow-100">MultiscalePartitioning...</h3>
+                            <p class="text-sm text-yellow-700 dark:text-yellow-400">Partition by timescale</p>
+                        </div>
+                        <div class="tooltip tooltip-code"></div>
+                    </div>
+                    <div data-step="viewAdaptive" class="flow-node-container w-full max-w-md mx-auto">
+                        <div class="tooltip tooltip-details"></div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900/40 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg p-3 shadow-md text-center relative mt-2">
+                            <div class="lib-badge text-xs bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full code-font"></div>
+                            <h3 class="font-semibold text-yellow-900 dark:text-yellow-100">AdaptiveEngineView</h3>
+                            <p class="text-sm text-yellow-700 dark:text-yellow-400">Cull low-flow pathways</p>
+                        </div>
+                        <div class="tooltip tooltip-code"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flow-arrow bg-gray-400 dark:bg-gray-600"></div>
+
+        <div data-step="solver" class="flow-node-container w-full max-w-md">
+            <div class="tooltip tooltip-details"></div>
+            <div class="bg-red-100 dark:bg-red-900/50 border-2 border-red-300 dark:border-red-700 rounded-lg p-4 shadow-md text-center relative">
+                <div class="lib-badge text-xs bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200 px-2 py-0.5 rounded-full code-font"></div>
+                <h3 class="font-semibold text-lg text-red-900 dark:text-red-100">Numerical Solver</h3>
+            </div>
+            <div class="tooltip tooltip-code"></div>
+        </div>
+        <div class="flow-arrow bg-gray-400 dark:bg-gray-600 relative">
+            <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs code-font">.evaluate(net_in)</span>
+        </div>
+
+        <div data-step="netOut" class="flow-node-container w-full max-w-md">
+            <div class="tooltip tooltip-details"></div>
+            <div class="bg-purple-100 dark:bg-purple-900/50 border-2 border-purple-300 dark:border-purple-700 rounded-lg p-4 shadow-md text-center relative">
+                <div class="lib-badge text-xs bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded-full code-font"></div>
+                <h3 class="font-semibold text-lg text-purple-900 dark:text-purple-100">Final State (NetOut)</h3>
+            </div>
+            <div class="tooltip tooltip-code"></div>
+        </div>
+    </main>
+</div>
+
+<!-- Funding Modal -->
+<div id="funding-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div id="modal-overlay" class="modal-overlay fixed inset-0 bg-black/60"></div>
+    <div class="modal-content w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 sm:p-8 relative transform scale-95">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Funding & Acknowledgements</h2>
+        <div class="text-gray-600 dark:text-gray-300 space-y-4 text-sm leading-relaxed">
+            <p>GridFire is a part of the 4D-STAR collaboration.</p>
+            <p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR). Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council.</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 pt-4">© 2025 4D-STAR Collaboration.</p>
+        </div>
+        <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const workflowData = {
+            composition: {
+                title: 'Composition',
+                description: 'Defines the initial isotopic mass fractions of the plasma. This object from the `fourdst` library is the fundamental starting point for any network calculation.',
+                python_lib: 'fourdst.composition',
+                cpp_lib: 'fourdst::composition',
+                code: {
+                    python: {
+                        from: `from fourdst.composition import Composition`,
+                        usage: `comp = Composition()\ncomp.setMassFraction({"H-1": 0.7, "He-4": 0.3})\ncomp.finalize()`
+                    },
+                    cpp: {
+                        from: `#include "fourdst/composition/composition.h"`,
+                        usage: `fourdst::composition::Composition comp;\ncomp.setMassFraction("H-1", 0.7);\ncomp.setMassFraction("He-4", 0.3);\ncomp.finalize(true);`
+                    }
+                }
+            },
+            netIn: {
+                title: 'NetIn Object',
+                description: 'A simple data structure that bundles all physical inputs for the solver: the `Composition` object, temperature (T), density (ρ), and maximum integration time (tMax).',
+                python_lib: 'gridfire.type',
+                cpp_lib: 'gridfire',
+                code: {
+                    python: {
+                        from: `from gridfire.type import NetIn`,
+                        usage: `net_in = NetIn(\n    composition=comp,\n    temperature=1.5e7,\n    density=1.6e2,\n    tMax=1e9\n)`
+                    },
+                    cpp: {
+                        from: `#include "gridfire/network.h"`,
+                        usage: `gridfire::NetIn net_in {\n    comp,       // composition\n    1.5e7,      // temperature [K]\n    1.6e2,      // density [g/cm^3]\n    1e9         // tMax [s]\n};`
+                    }
+                }
+            },
+            baseEngine: {
+                title: 'Base Engine: GraphEngine',
+                description: 'The core component that constructs the full reaction network. It takes the initial composition and recursively builds a complete graph of all possible reactions based on the JINA Reaclib database.',
+                python_lib: 'gridfire.engine',
+                cpp_lib: 'gridfire::engine',
+                code: {
+                    python: {
+                        from: `from gridfire.engine import GraphEngine`,
+                        usage: `base_engine = GraphEngine(net_in.composition, 2)`
+                    },
+                    cpp: {
+                        from: `#include "gridfire/engine/engine_graph.h"`,
+                        usage: `auto baseEngine = gridfire::GraphEngine(net_in.composition, 2);`
+                    }
+                }
+            },
+            viewChain: {
+                title: 'Optional Engine View Chain',
+                description: 'Engine Views are composable wrappers that modify the base engine\'s behavior. They are chained together to create a pipeline that optimizes the network before it\'s passed to the solver, which can dramatically improve stability and performance for complex problems.',
+                python_lib: 'gridfire.engine.views',
+                cpp_lib: 'gridfire::engine',
+                code: null
+            },
+            viewMulti: {
+                title: 'View: MultiscalePartitioningEngineView',
+                description: 'Partitions the network into fast and slow subsets based on their characteristic reaction timescales. This is essential for handling stiff, multi-timescale problems like silicon burning.',
+                python_lib: 'gridfire.engine.views',
+                cpp_lib: 'gridfire::engine',
+                code: {
+                    python: {
+                        from: `from gridfire.engine import MultiscalePartitioningEngineView`,
+                        usage: `# Wrap the previous engine\nengine = MultiscalePartitioningEngineView(base_engine)`
+                    },
+                    cpp: {
+                        from: `#include "gridfire/engine/views/engine_multiscale.h"`,
+                        usage: `// Wrap the previous engine\nauto engine = gridfire::MultiscalePartitioningEngineView(baseEngine);`
+                    }
+                }
+            },
+            viewAdaptive: {
+                title: 'View: AdaptiveEngineView',
+                description: 'Dynamically removes species and reactions that have a negligible contribution ("low flow") at runtime. This reduces the size and complexity of the network, improving computational performance.',
+                python_lib: 'gridfire.engine.views',
+                cpp_lib: 'gridfire::engine',
+                code: {
+                    python: {
+                        from: `from gridfire.engine import AdaptiveEngineView`,
+                        usage: `# Wrap the previous engine in the chain\nfinal_engine = AdaptiveEngineView(engine)`
+                    },
+                    cpp: {
+                        from: `#include "gridfire/engine/views/engine_adaptive.h"`,
+                        usage: `// Wrap the previous engine in the chain\nauto final_engine = gridfire::AdaptiveEngineView(engine);`
+                    }
+                }
+            },
+            solver: {
+                title: 'Numerical Solver: DirectNetworkSolver',
+                description: 'Takes the final, (optionally) modified engine and integrates the system of stiff Ordinary Differential Equations (ODEs) over time. It uses a robust method like the Rosenbrock4 integrator, which is designed for stability.',
+                python_lib: 'gridfire.solver',
+                cpp_lib: 'gridfire::solver',
+                code: {
+                    python: {
+                        from: `from gridfire.solver import DirectNetworkSolver`,
+                        usage: `solver = DirectNetworkSolver(final_engine)`
+                    },
+                    cpp: {
+                        from: `#include "gridfire/solver/solver_direct.h"`,
+                        usage: `auto solver = gridfire::DirectNetworkSolver(final_engine);`
+                    }
+                }
+            },
+            netOut: {
+                title: 'Final State: NetOut Object',
+                description: 'The data structure returned by the solver\'s `.evaluate()` method. It contains the final state of the system, including the updated composition, the total energy generated, and other diagnostics.',
+                python_lib: 'gridfire.type',
+                cpp_lib: 'gridfire',
+                code: {
+                    python: {
+                        from: `# Returned from solver.evaluate()`,
+                        usage: `net_out = solver.evaluate(net_in)\nprint(f"Final H-1: {net_out.composition.getMassFraction('H-1')}")`
+                    },
+                    cpp: {
+                        from: `// Returned from solver.evaluate()`,
+                        usage: `gridfire::NetOut net_out = solver.evaluate(net_in);\nstd::cout << "Final H-1: " << net_out.composition.getMassFraction("H-1");`
+                    }
+                }
+            }
+        };
+
+        const langSwitcher = document.getElementById('lang-switcher');
+        const langToggles = langSwitcher.querySelectorAll('.lang-toggle');
+        const flowNodeContainers = document.querySelectorAll('.flow-node-container');
+
+        let currentLang = 'python';
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        function setLanguage(lang) {
+            currentLang = lang;
+
+            langToggles.forEach(toggle => {
+                const isSelected = toggle.dataset.lang === lang;
+                toggle.classList.toggle('bg-white', isSelected);
+                toggle.classList.toggle('dark:bg-gray-500', isSelected);
+                toggle.classList.toggle('shadow-sm', isSelected);
+                toggle.classList.toggle('text-gray-500', !isSelected);
+                toggle.classList.toggle('dark:text-gray-400', !isSelected);
+            });
+
+            flowNodeContainers.forEach(container => {
+                const stepKey = container.dataset.step;
+                const data = workflowData[stepKey];
+                if (data) {
+                    const badge = container.querySelector('.lib-badge');
+                    if(badge) badge.textContent = data[`${currentLang}_lib`];
+                }
+            });
+
+            const activeNode = document.querySelector('.flow-node-container.show-tooltips');
+            if (activeNode) {
+                populateTooltips(activeNode);
+            }
+        }
+
+        function createDetailsTooltip(stepKey) {
+            const data = workflowData[stepKey];
+            if (!data) return '';
+            return `<div class="bg-gray-800 text-white p-3 rounded-lg shadow-xl text-sm leading-relaxed">${data.description}</div>`;
+        }
+
+        function createCodeTooltip(stepKey) {
+            const data = workflowData[stepKey];
+            if (!data || !data.code) return '';
+
+            const codeLang = data.code[currentLang];
+
+            return `
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700">
+                <h5 class="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">From</h5>
+                <pre class="text-xs rounded mb-3"><code class="language-${currentLang} code-font">${codeLang.from}</code></pre>
+                <h5 class="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Usage</h5>
+                <pre class="text-xs rounded"><code class="language-${currentLang} code-font">${codeLang.usage}</code></pre>
+            </div>
+        `;
+        }
+
+        function populateTooltips(container) {
+            const stepKey = container.dataset.step;
+            const detailsNode = container.querySelector('.tooltip-details');
+            const codeNode = container.querySelector('.tooltip-code');
+
+            if (detailsNode) {
+                detailsNode.innerHTML = createDetailsTooltip(stepKey);
+            }
+            if (codeNode) {
+                codeNode.innerHTML = createCodeTooltip(stepKey);
+                codeNode.querySelectorAll('pre code').forEach(el => {
+                    hljs.highlightElement(el);
+                });
+            }
+        }
+
+        // --- Event Handling ---
+
+        langSwitcher.addEventListener('click', (e) => {
+            if (e.target.matches('.lang-toggle')) {
+                setLanguage(e.target.dataset.lang);
+            }
+        });
+
+        if (isTouchDevice) {
+            // --- Touch Device Logic (Tap to toggle) ---
+            let activeNode = null;
+
+            flowNodeContainers.forEach(container => {
+                container.addEventListener('click', (e) => {
+                    e.stopPropagation();
+
+                    if (activeNode && activeNode !== container) {
+                        activeNode.classList.remove('show-tooltips');
+                    }
+
+                    container.classList.toggle('show-tooltips');
+
+                    if (container.classList.contains('show-tooltips')) {
+                        activeNode = container;
+                        populateTooltips(container);
+                    } else {
+                        activeNode = null;
+                    }
+                });
+            });
+
+            document.addEventListener('click', () => {
+                if (activeNode) {
+                    activeNode.classList.remove('show-tooltips');
+                    activeNode = null;
+                }
+            });
+
+        } else {
+            // --- Desktop Logic (Hover to show) ---
+            flowNodeContainers.forEach(container => {
+                container.addEventListener('mouseenter', () => {
+                    populateTooltips(container);
+                });
+            });
+        }
+
+        // --- Modal Logic ---
+        const fundingModal = document.getElementById('funding-modal');
+        const fundingBtn = document.getElementById('funding-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = fundingModal.querySelector('.modal-content');
+
+        function openModal() {
+            fundingModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            setTimeout(() => {
+                modalOverlay.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                fundingModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }, 300);
+        }
+
+        fundingBtn.addEventListener('click', openModal);
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', closeModal);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !fundingModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+
+        // --- Initial State Setup ---
+        setLanguage('python');
+    });
+</script>
+
+</body>
+</html>
