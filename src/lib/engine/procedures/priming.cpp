@@ -24,11 +24,11 @@ namespace gridfire {
         const reaction::Reaction* dominateReaction = nullptr;
         double maxFlow = -1.0;
         for (const auto& reaction : engine.getNetworkReactions()) {
-            if (reaction.contains(species) && reaction.stoichiometry(species) > 0) {
-                const double flow = engine.calculateMolarReactionFlow(reaction, Y, T9, rho);
+            if (reaction->contains(species) && reaction->stoichiometry(species) > 0) {
+                const double flow = engine.calculateMolarReactionFlow(*reaction, Y, T9, rho);
                 if (flow > maxFlow) {
                     maxFlow = flow;
-                    dominateReaction = &reaction;
+                    dominateReaction = reaction.get();
                 }
             }
         }
@@ -105,9 +105,8 @@ namespace gridfire {
             const auto Y = primer.mapNetInToMolarAbundanceVector(tempNetIn);
             const double destructionRateConstant = calculateDestructionRateConstant(primer, primingSpecies, Y, T9, rho);
 
-            double equilibriumMassFraction = 0.0;
-
             if (destructionRateConstant > 1e-99) {
+                double equilibriumMassFraction = 0.0;
                 const double creationRate = calculateCreationRate(primer, primingSpecies, Y, T9, rho);
                 equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
                 if (std::isnan(equilibriumMassFraction)) {
@@ -116,9 +115,7 @@ namespace gridfire {
                 }
                 LOG_TRACE_L3(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
 
-                const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho);
-
-                if (dominantChannel) {
+                if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho)) {
                     LOG_TRACE_L3(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->peName());
 
                     double totalReactantMass = 0.0;
@@ -170,7 +167,7 @@ namespace gridfire {
         std::vector<std::string> final_symbols;
         std::vector<double> final_mass_fractions;
         for(const auto& [species, mass_fraction] : currentMassFractions) {
-            final_symbols.push_back(std::string(species.name()));
+            final_symbols.emplace_back(species.name());
             if (mass_fraction < 0.0 && std::abs(mass_fraction) < 1e-16) {
                 final_mass_fractions.push_back(0.0); // Avoid negative mass fractions
             } else {
@@ -197,14 +194,14 @@ namespace gridfire {
         const double T9,
         const double rho
     ) {
-        const int speciesIndex = engine.getSpeciesIndex(species);
+        const size_t speciesIndex = engine.getSpeciesIndex(species);
         std::vector<double> Y_scaled(Y.begin(), Y.end());
         Y_scaled[speciesIndex] = 1.0; // Set the abundance of the species to 1.0 for rate constant calculation
         double destructionRateConstant = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
-            if (reaction.contains_reactant(species)) {
-                const int stoichiometry = reaction.stoichiometry(species);
-                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(reaction, Y_scaled, T9, rho);
+            if (reaction->contains_reactant(species)) {
+                const int stoichiometry = reaction->stoichiometry(species);
+                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(*reaction, Y_scaled, T9, rho);
             }
         }
         return destructionRateConstant;
@@ -219,9 +216,9 @@ namespace gridfire {
     ) {
         double creationRate = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
-            const int stoichiometry = reaction.stoichiometry(species);
+            const int stoichiometry = reaction->stoichiometry(species);
             if (stoichiometry > 0) {
-                creationRate += stoichiometry * engine.calculateMolarReactionFlow(reaction, Y, T9, rho);
+                creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, Y, T9, rho);
             }
         }
         return creationRate;

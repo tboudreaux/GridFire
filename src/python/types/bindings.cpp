@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 #include "gridfire/network.h"
 
-void register_type_bindings(pybind11::module &m) {
+void register_type_bindings(const pybind11::module &m) {
     py::class_<gridfire::NetIn>(m, "NetIn")
     .def(py::init<>())
     .def_readwrite("composition", &gridfire::NetIn::composition)

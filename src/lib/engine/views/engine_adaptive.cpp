@@ -70,12 +70,12 @@ namespace gridfire {
         reactionIndexMap.reserve(m_activeReactions.size());
 
         for (const auto& active_reaction_ptr : m_activeReactions) {
-            auto it = fullReactionReverseMap.find(active_reaction_ptr.id());
+            auto it = fullReactionReverseMap.find(active_reaction_ptr->id());
 
             if (it != fullReactionReverseMap.end()) {
                 reactionIndexMap.push_back(it->second);
             } else {
-                LOG_ERROR(m_logger, "Active reaction '{}' not found in base engine during reaction index map construction.", active_reaction_ptr.id());
+                LOG_ERROR(m_logger, "Active reaction '{}' not found in base engine during reaction index map construction.", active_reaction_ptr->id());
                 m_logger->flush_log();
                 throw std::runtime_error("Mismatch between active reactions and base engine.");
             }
@@ -89,11 +89,6 @@ namespace gridfire {
         fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
         NetIn updatedNetIn = netIn;
 
-        // for (const auto &entry: netIn.composition | std::views::values) {
-        //     if (baseUpdatedComposition.contains(entry.isotope())) {
-        //         updatedNetIn.composition.setMassFraction(entry.isotope(), baseUpdatedComposition.getMassFraction(entry.isotope()));
-        //     }
-        // }
         updatedNetIn.composition = baseUpdatedComposition;
 
         updatedNetIn.composition.finalize(false);
@@ -115,7 +110,7 @@ namespace gridfire {
         const std::unordered_set<Species> reachableSpecies = findReachableSpecies(updatedNetIn);
         LOG_DEBUG(m_logger, "Found {} reachable species in adaptive engine view.", reachableSpecies.size());
 
-        const std::vector<const reaction::LogicalReaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, Y_Full, maxFlow);
+        const std::vector<const reaction::Reaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, Y_Full, maxFlow);
 
         finalizeActiveSet(finalReactions);
 
@@ -191,7 +186,7 @@ namespace gridfire {
         const size_t i_full = mapCulledToFullSpeciesIndex(i_culled);
         const size_t j_full = mapCulledToFullSpeciesIndex(j_culled);
 
-        return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
+        return m_baseEngine.getJacobianMatrixEntry(static_cast<int>(i_full), static_cast<int>(j_full));
     }
 
     void AdaptiveEngineView::generateStoichiometryMatrix() {
@@ -206,7 +201,7 @@ namespace gridfire {
         validateState();
         const size_t speciesIndex_full = mapCulledToFullSpeciesIndex(speciesIndex_culled);
         const size_t reactionIndex_full = mapCulledToFullReactionIndex(reactionIndex_culled);
-        return m_baseEngine.getStoichiometryMatrixEntry(speciesIndex_full, reactionIndex_full);
+        return m_baseEngine.getStoichiometryMatrixEntry(static_cast<int>(speciesIndex_full), static_cast<int>(reactionIndex_full));
     }
 
     double AdaptiveEngineView::calculateMolarReactionFlow(
@@ -226,11 +221,11 @@ namespace gridfire {
         return m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho);
     }
 
-    const reaction::LogicalReactionSet & AdaptiveEngineView::getNetworkReactions() const {
+    const reaction::ReactionSet & AdaptiveEngineView::getNetworkReactions() const {
         return m_activeReactions;
     }
 
-    void AdaptiveEngineView::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+    void AdaptiveEngineView::setNetworkReactions(const reaction::ReactionSet &reactions) {
         LOG_CRITICAL(m_logger, "AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
         throw exceptions::UnableToSetNetworkReactionsError("AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
     }
@@ -248,7 +243,7 @@ namespace gridfire {
             return std::unexpected{result.error()};
         }
 
-        const std::unordered_map<Species, double> fullTimescales = result.value();
+        const std::unordered_map<Species, double>& fullTimescales = result.value();
 
 
         std::unordered_map<Species, double> culledTimescales;
@@ -262,22 +257,21 @@ namespace gridfire {
 
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
+    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError>
     AdaptiveEngineView::getSpeciesDestructionTimescales(
         const std::vector<double> &Y,
-        double T9,
-        double rho
+        const double T9,
+        const double rho
     ) const {
         validateState();
 
-        const auto Y_full = mapCulledToFull(Y);
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
+        const std::vector<double> Y_full = mapCulledToFull(Y);
 
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
-
-        const std::unordered_map<Species, double> destructionTimescales = result.value();
+        const std::unordered_map<Species, double>& destructionTimescales = result.value();
 
         std::unordered_map<Species, double> culledTimescales;
         culledTimescales.reserve(m_activeSpecies.size());
@@ -309,7 +303,7 @@ namespace gridfire {
         return m_baseEngine.primeEngine(netIn);
     }
 
-    int AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+    size_t AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
         const auto it = std::ranges::find(m_activeSpecies, species);
         if (it != m_activeSpecies.end()) {
             return static_cast<int>(std::distance(m_activeSpecies.begin(), it));
@@ -389,8 +383,8 @@ namespace gridfire {
         const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
         reactionFlows.reserve(fullReactionSet.size());
         for (const auto& reaction : fullReactionSet) {
-            const double flow = m_baseEngine.calculateMolarReactionFlow(reaction, out_Y_Full, T9, rho);
-            reactionFlows.push_back({&reaction, flow});
+            const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, out_Y_Full, T9, rho);
+            reactionFlows.push_back({reaction.get(), flow});
             LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction.id(), flow);
         }
         return reactionFlows;
@@ -418,14 +412,14 @@ namespace gridfire {
             new_species_found_in_pass = false;
             for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
                 bool all_reactants_reachable = true;
-                for (const auto& reactant: reaction.reactants()) {
+                for (const auto& reactant: reaction->reactants()) {
                     if (!reachable.contains(reactant)) {
                         all_reactants_reachable = false;
                         break;
                     }
                 }
                 if (all_reactants_reachable) {
-                    for (const auto& product: reaction.products()) {
+                    for (const auto& product: reaction->products()) {
                         if (!reachable.contains(product)) {
                             reachable.insert(product);
                             new_species_found_in_pass = true;
@@ -439,7 +433,7 @@ namespace gridfire {
         return reachable;
     }
 
-    std::vector<const reaction::LogicalReaction *> AdaptiveEngineView::cullReactionsByFlow(
+    std::vector<const reaction::Reaction *> AdaptiveEngineView::cullReactionsByFlow(
         const std::vector<ReactionFlow> &allFlows,
         const std::unordered_set<fourdst::atomic::Species> &reachableSpecies,
         const std::vector<double> &Y_full,
@@ -449,7 +443,7 @@ namespace gridfire {
         const auto relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
         double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
         LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
-        std::vector<const reaction::LogicalReaction*> culledReactions;
+        std::vector<const reaction::Reaction*> culledReactions;
         for (const auto& [reactionPtr, flowRate]: allFlows) {
             bool keepReaction = false;
             if (flowRate > absoluteCullingThreshold) {
@@ -487,7 +481,7 @@ namespace gridfire {
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies,
-        const reaction::LogicalReactionSet &activeReactions
+        const reaction::ReactionSet &activeReactions
     ) const {
         const auto result = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
         if (!result) {
@@ -497,7 +491,7 @@ namespace gridfire {
         std::unordered_map<Species, double> timescales = result.value();
         std::set<Species> onlyProducedSpecies;
         for (const auto& reaction : activeReactions) {
-            const std::vector<Species> products = reaction.products();
+            const std::vector<Species>& products = reaction->products();
             onlyProducedSpecies.insert(products.begin(), products.end());
         }
 
@@ -506,7 +500,7 @@ namespace gridfire {
             onlyProducedSpecies,
             [&](const Species &species) {
                 for (const auto& reaction : activeReactions) {
-                    if (reaction.contains_reactant(species)) {
+                    if (reaction->contains_reactant(species)) {
                         return true; // If any active reaction consumes the species then erase it from the set.
                     }
                 }
@@ -545,26 +539,26 @@ namespace gridfire {
             }()
         );
 
-        std::unordered_map<Species, const reaction::LogicalReaction*> reactionsToRescue;
+        std::unordered_map<Species, const reaction::Reaction*> reactionsToRescue;
         for (const auto& species : onlyProducedSpecies) {
             double maxSpeciesConsumptionRate = 0.0;
             for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
-                const bool speciesToCheckIsConsumed = reaction.contains_reactant(species);
+                const bool speciesToCheckIsConsumed = reaction->contains_reactant(species);
                 if (!speciesToCheckIsConsumed) {
                     continue; // If the species is not consumed by this reaction, skip it.
                 }
                 bool allOtherReactantsAreAvailable = true;
-                for (const auto& reactant : reaction.reactants()) {
+                for (const auto& reactant : reaction->reactants()) {
                     const bool reactantIsAvailable = std::ranges::contains(activeSpecies, reactant);
                     if (!reactantIsAvailable && reactant != species) {
                         allOtherReactantsAreAvailable = false;
                     }
                 }
                 if (allOtherReactantsAreAvailable && speciesToCheckIsConsumed) {
-                    double rate = reaction.calculate_rate(T9);
+                    double rate = reaction->calculate_rate(T9, rho, Y_full);
                     if (rate > maxSpeciesConsumptionRate) {
                         maxSpeciesConsumptionRate = rate;
-                        reactionsToRescue[species] = &reaction;
+                        reactionsToRescue[species] = reaction.get();
                     }
                 }
             }
@@ -626,7 +620,7 @@ namespace gridfire {
         );
 
         RescueSet rescueSet;
-        std::unordered_set<const reaction::LogicalReaction*> newReactions;
+        std::unordered_set<const reaction::Reaction*> newReactions;
         std::unordered_set<Species> newSpecies;
 
         for (const auto &reactionPtr: reactionsToRescue | std::views::values) {
@@ -639,7 +633,7 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::finalizeActiveSet(
-        const std::vector<const reaction::LogicalReaction *> &finalReactions
+        const std::vector<const reaction::Reaction *> &finalReactions
     ) {
         std::unordered_set<Species>finalSpeciesSet;
         m_activeReactions.clear();

@@ -86,7 +86,7 @@ namespace gridfire {
          * This method combines the hashes of the binned temperature, density, and
          * each species abundance. The `bin()` static method is used for discretization.
          */
-        size_t hash() const;
+        [[nodiscard]] size_t hash() const;
 
         /**
          * @brief Converts a value to a discrete bin based on a tolerance.
@@ -110,20 +110,18 @@ namespace gridfire {
 }
 
 // Needs to be in this order (splitting gridfire namespace up) to avoid some issues with forward declarations and the () operator.
-namespace std {
-    template <>
-    struct hash<gridfire::QSECacheKey> {
-        /**
+template <>
+struct std::hash<gridfire::QSECacheKey> {
+    /**
          * @brief Computes the hash of a QSECacheKey for use in `std::unordered_map`.
          * @param key The QSECacheKey to hash.
          * @return The pre-computed hash value of the key.
          */
-        size_t operator()(const gridfire::QSECacheKey& key) const noexcept {
-            // The hash is pre-computed, so we just return it.
-            return key.m_hash;
-        }
-    };
-} // namespace std
+    size_t operator()(const gridfire::QSECacheKey& key) const noexcept {
+        // The hash is pre-computed, so we just return it.
+        return key.m_hash;
+    }
+}; // namespace std
 
 namespace gridfire {
     /**
@@ -356,7 +354,7 @@ namespace gridfire {
          * @return A const reference to the `LogicalReactionSet` from the base engine,
          *         containing all reactions in the full network.
          */
-        [[nodiscard]] const reaction::LogicalReactionSet & getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet & getNetworkReactions() const override;
 
         /**
          * @brief Sets the set of logical reactions in the network.
@@ -375,7 +373,7 @@ namespace gridfire {
          * @throws exceptions::UnableToSetNetworkReactionsError Always.
          */
         void setNetworkReactions(
-            const reaction::LogicalReactionSet &reactions
+            const reaction::ReactionSet &reactions
         ) override;
 
         /**
@@ -615,7 +613,7 @@ namespace gridfire {
          * @par How
          * This method delegates directly to the base engine's `getSpeciesIndex()`.
          */
-        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
         /**
          * @brief Maps a `NetIn` struct to a molar abundance vector for the full network.
@@ -841,12 +839,12 @@ namespace gridfire {
              * @brief Gets the number of output values from the functor (size of the residual vector).
              * @return The number of algebraic species being solved.
              */
-            [[nodiscard]] int values() const { return m_qse_solve_indices.size(); }
+            [[nodiscard]] size_t values() const { return m_qse_solve_indices.size(); }
             /**
              * @brief Gets the number of input values to the functor (size of the variable vector).
              * @return The number of algebraic species being solved.
              */
-            [[nodiscard]] int inputs() const { return m_qse_solve_indices.size(); }
+            [[nodiscard]] size_t inputs() const { return m_qse_solve_indices.size(); }
 
             /**
              * @brief Evaluates the functor's residual vector `f_qse = dY_alg/dt`.
@@ -1036,25 +1034,6 @@ namespace gridfire {
             const std::vector<double> &Y_full,
             double T9,
             double rho
-        ) const;
-
-        /**
-         * @brief Builds a connectivity graph from a set of fast reaction indices.
-         *
-         * @param fast_reaction_indices A set of indices for reactions considered "fast".
-         * @return An unordered map representing the adjacency list of the connectivity graph,
-         *         where keys are species indices and values are vectors of connected species indices.
-         *
-         * @par Purpose
-         * To represent the reaction pathways among a subset of reactions.
-         *
-         * @par How
-         * It iterates through the specified fast reactions. For each reaction, it creates
-         *      a two-way edge in the graph between every reactant and every product, signifying
-         *      that mass can flow between them.
-         */
-        std::unordered_map<size_t, std::vector<size_t>> buildConnectivityGraph(
-            const std::unordered_set<size_t> &fast_reaction_indices
         ) const;
 
         /**

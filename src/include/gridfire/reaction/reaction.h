@@ -11,7 +11,6 @@
 
 
 #include "cppad/cppad.hpp"
-#include "xxhash64.h"
 
 /**
  * @file reaction.h
@@ -20,9 +19,14 @@
  * This file contains the core data structures for handling nuclear reactions,
  * including individual reactions from specific sources (`Reaction`), collections
  * of reactions (`ReactionSet`), and logical reactions that aggregate rates from
-* multiple sources (`LogicalReaction`, `LogicalReactionSet`).
+* multiple sources (`LogicalReaclibReaction`, `LogicalReactionSet`).
  */
 namespace gridfire::reaction {
+    enum class ReactionType {
+        WEAK,
+        REACLIB,
+        LOGICAL_REACLIB,
+    };
     /**
      * @struct RateCoefficientSet
      * @brief Holds the seven coefficients for the REACLIB rate equation.
@@ -69,12 +73,50 @@ namespace gridfire::reaction {
      * double rate = p_gamma_d.calculate_rate(0.1); // T9 = 0.1
      * @endcode
      */
+
     class Reaction {
     public:
-        /**
-         * @brief Virtual destructor.
-         */
         virtual ~Reaction() = default;
+
+        [[nodiscard]] virtual double calculate_rate(double T9, double rho, const std::vector<double>& Y) const = 0;
+        [[nodiscard]] virtual CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const = 0;
+
+        [[nodiscard]] virtual std::string_view id() const = 0;
+        [[nodiscard]] virtual const std::vector<fourdst::atomic::Species>& reactants() const = 0;
+        [[nodiscard]] virtual const std::vector<fourdst::atomic::Species>& products() const = 0;
+
+        [[nodiscard]] virtual bool contains(const fourdst::atomic::Species& species) const = 0;
+        [[nodiscard]] virtual bool contains_reactant(const fourdst::atomic::Species& species) const = 0;
+        [[nodiscard]] virtual bool contains_product(const fourdst::atomic::Species& species) const = 0;
+
+        [[nodiscard]] virtual bool is_reverse() const = 0;
+
+        [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> all_species() const = 0;
+        [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> reactant_species() const = 0;
+        [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> product_species() const = 0;
+
+        [[nodiscard]] virtual size_t num_species() const = 0;
+
+        [[nodiscard]] virtual std::unordered_map<fourdst::atomic::Species, int> stoichiometry() const = 0;
+        [[nodiscard]] virtual int stoichiometry(const fourdst::atomic::Species& species) const = 0;
+
+        [[nodiscard]] virtual uint64_t hash(uint64_t seed) const = 0;
+
+        [[nodiscard]] virtual double qValue() const = 0;
+        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const = 0;
+
+        [[nodiscard]] virtual ReactionType type() const = 0;
+
+        [[nodiscard]] virtual std::unique_ptr<Reaction> clone() const = 0;
+
+        friend std::ostream& operator<<(std::ostream& os, const Reaction& r) {
+            os << "Reaction(ID: " << r.id() << ")";
+            return os;
+        }
+    };
+    class ReaclibReaction : public Reaction {
+    public:
+        ~ReaclibReaction() override = default;
 
         /**
          * @brief Constructs a Reaction object.
@@ -88,7 +130,7 @@ namespace gridfire::reaction {
          * @param sets The set of rate coefficients.
          * @param reverse True if this is a reverse reaction rate.
          */
-        Reaction(
+        ReaclibReaction(
             const std::string_view id,
             const std::string_view peName,
             const int chapter,
@@ -102,18 +144,22 @@ namespace gridfire::reaction {
         /**
          * @brief Calculates the reaction rate for a given temperature.
          * @param T9 The temperature in units of 10^9 K.
+         * @param rho Density [Not used in this implementation].
+         * @param Y Molar abundances of species [Not used in this implementation].
          * @return The calculated reaction rate.
          */
-        [[nodiscard]] virtual double calculate_rate(const double T9) const;
+        [[nodiscard]] double calculate_rate(double T9, double rho, const std::vector<double>& Y) const override;
 
         /**
          * @brief Calculates the reaction rate for a given temperature using CppAD types.
          * @param T9 The temperature in units of 10^9 K, as a CppAD::AD<double>.
+         * @param rho Density, as a CppAD::AD<double> [Not used in this implementation].
+         * @param Y Molar abundances of species, as a vector of CppAD::AD<double> [Not used in this implementation].
          * @return The calculated reaction rate, as a CppAD::AD<double>.
          */
-        [[nodiscard]] virtual CppAD::AD<double> calculate_rate(const CppAD::AD<double> T9) const;
+        [[nodiscard]] CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const override;
 
-        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(const double T9) const;
+        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const override;
 
         /**
          * @brief Gets the reaction name in (projectile, ejectile) notation.
@@ -133,6 +179,8 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] std::string_view sourceLabel() const { return m_sourceLabel; }
 
+        [[nodiscard]] ReactionType type() const override { return ReactionType::REACLIB; }
+
         /**
          * @brief Gets the set of rate coefficients.
          * @return A const reference to the RateCoefficientSet.
@@ -144,88 +192,88 @@ namespace gridfire::reaction {
          * @param species The species to check for.
          * @return True if the species is involved, false otherwise.
          */
-        [[nodiscard]] bool contains(const fourdst::atomic::Species& species) const;
+        [[nodiscard]] bool contains(const fourdst::atomic::Species& species) const override;
 
         /**
          * @brief Checks if the reaction involves a given species as a reactant.
          * @param species The species to check for.
          * @return True if the species is a reactant, false otherwise.
          */
-        [[nodiscard]] bool contains_reactant(const fourdst::atomic::Species& species) const;
+        [[nodiscard]] bool contains_reactant(const fourdst::atomic::Species& species) const override;
 
         /**
          * @brief Checks if the reaction involves a given species as a product.
          * @param species The species to check for.
          * @return True if the species is a product, false otherwise.
          */
-        [[nodiscard]] bool contains_product(const fourdst::atomic::Species& species) const;
+        [[nodiscard]] bool contains_product(const fourdst::atomic::Species& species) const override;
 
         /**
          * @brief Gets a set of all unique species involved in the reaction.
          * @return An unordered_set of all reactant and product species.
          */
-        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> all_species() const;
+        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> all_species() const override;
 
         /**
          * @brief Gets a set of all unique reactant species.
          * @return An unordered_set of reactant species.
          */
-        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> reactant_species() const;
+        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> reactant_species() const override;
 
         /**
          * @brief Gets a set of all unique product species.
          * @return An unordered_set of product species.
          */
-        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> product_species() const;
+        [[nodiscard]] std::unordered_set<fourdst::atomic::Species> product_species() const override;
 
         /**
          * @brief Gets the number of unique species involved in the reaction.
          * @return The count of unique species.
          */
-        [[nodiscard]] size_t num_species() const;
+        [[nodiscard]] size_t num_species() const override;
 
         /**
          * @brief Calculates the stoichiometric coefficient for a given species.
          * @param species The species for which to find the coefficient.
          * @return The stoichiometric coefficient (negative for reactants, positive for products).
          */
-        [[nodiscard]] int stoichiometry(const fourdst::atomic::Species& species) const;
+        [[nodiscard]] int stoichiometry(const fourdst::atomic::Species& species) const override;
 
         /**
          * @brief Gets a map of all species to their stoichiometric coefficients.
          * @return An unordered_map from species to their integer coefficients.
          */
-        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, int> stoichiometry() const;
+        [[nodiscard]] std::unordered_map<fourdst::atomic::Species, int> stoichiometry() const override;
 
         /**
          * @brief Gets the unique identifier of the reaction.
          * @return The reaction ID.
          */
-        [[nodiscard]] std::string_view id() const { return m_id; }
+        [[nodiscard]] std::string_view id() const override { return m_id; }
 
         /**
          * @brief Gets the Q-value of the reaction.
          * @return The Q-value in whatever units the reaction was defined in (usually MeV).
          */
-        [[nodiscard]] double qValue() const { return m_qValue; }
+        [[nodiscard]] double qValue() const override { return m_qValue; }
 
         /**
          * @brief Gets the vector of reactant species.
          * @return A const reference to the vector of reactants.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& reactants() const { return m_reactants; }
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& reactants() const override { return m_reactants; }
 
         /**
          * @brief Gets the vector of product species.
          * @return A const reference to the vector of products.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& products() const { return m_products; }
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& products() const override { return m_products; }
 
         /**
          * @brief Checks if this is a reverse reaction rate.
          * @return True if it is a reverse rate, false otherwise.
          */
-        [[nodiscard]] bool is_reverse() const { return m_reverse; }
+        [[nodiscard]] bool is_reverse() const override { return m_reverse; }
 
         /**
          * @brief Calculates the excess energy from the mass difference of reactants and products.
@@ -238,14 +286,14 @@ namespace gridfire::reaction {
          * @param other The other Reaction to compare with.
          * @return True if the reaction IDs are the same.
          */
-        bool operator==(const Reaction& other) const { return m_id == other.m_id; }
+        bool operator==(const ReaclibReaction& other) const { return m_id == other.m_id; }
 
         /**
          * @brief Compares this reaction with another for inequality.
          * @param other The other Reaction to compare with.
          * @return True if the reactions are not equal.
          */
-        bool operator!=(const Reaction& other) const { return !(*this == other); }
+        bool operator!=(const ReaclibReaction& other) const { return !(*this == other); }
 
         /**
          * @brief Computes a hash for the reaction based on its ID.
@@ -253,10 +301,12 @@ namespace gridfire::reaction {
          * @return A 64-bit hash value.
          * @details Uses the XXHash64 algorithm on the reaction's ID string.
          */
-        [[nodiscard]] uint64_t hash(uint64_t seed = 0) const;
+        [[nodiscard]] uint64_t hash(uint64_t seed) const override;
 
-        friend std::ostream& operator<<(std::ostream& os, const Reaction& r) {
-            return os << "(Reaction:" << r.m_id << ")";
+        [[nodiscard]] std::unique_ptr<Reaction> clone() const override;
+
+        friend std::ostream& operator<<(std::ostream& os, const ReaclibReaction& r) {
+            return os << "(ReaclibReaction:" << r.m_id << ")";
         }
 
     protected:
@@ -296,25 +346,24 @@ namespace gridfire::reaction {
     };
 
 
-
     /**
-     * @class LogicalReaction
+     * @class LogicalReaclibReaction
      * @brief Represents a "logical" reaction that aggregates rates from multiple sources.
      *
-     * A LogicalReaction shares the same reactants and products but combines rates
+     * A LogicalReaclibReaction shares the same reactants and products but combines rates
      * from different evaluations (e.g., "wc12" and "st08" for the same physical
      * reaction). The total rate is the sum of the individual rates.
      * It inherits from Reaction, using the properties of the first provided reaction
      * as its base properties (reactants, products, Q-value, etc.).
      */
-    class LogicalReaction final : public Reaction {
+    class LogicalReaclibReaction final : public ReaclibReaction {
     public:
         /**
          * @brief Constructs a LogicalReaction from a vector of `Reaction` objects.
          * @param reactions A vector of reactions that represent the same logical process.
          * @throws std::runtime_error if the provided reactions have inconsistent Q-values.
          */
-        explicit LogicalReaction(const std::vector<Reaction> &reactions);
+        explicit LogicalReaclibReaction(const std::vector<ReaclibReaction> &reactions);
 
         /**
          * @brief Adds another `Reaction` source to this logical reaction.
@@ -322,7 +371,7 @@ namespace gridfire::reaction {
          * @throws std::runtime_error if the reaction has a different `peName`, a duplicate
          *         source label, or an inconsistent Q-value.
          */
-        void add_reaction(const Reaction& reaction);
+        void add_reaction(const ReaclibReaction& reaction);
 
         /**
          * @brief Gets the number of source rates contributing to this logical reaction.
@@ -339,18 +388,26 @@ namespace gridfire::reaction {
         /**
          * @brief Calculates the total reaction rate by summing all source rates.
          * @param T9 The temperature in units of 10^9 K.
+         * @param rho
+         * @param Y
          * @return The total calculated reaction rate.
          */
-        [[nodiscard]] double calculate_rate(const double T9) const override;
+        [[nodiscard]] double calculate_rate(double T9, double rho, const std::vector<double>& Y) const override;
 
-        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(const double T9) const override;
+        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const override;
+
+        [[nodiscard]] ReactionType type() const override { return ReactionType::LOGICAL_REACLIB; }
+
+        [[nodiscard]] std::unique_ptr<Reaction> clone() const override;
 
         /**
          * @brief Calculates the total reaction rate using CppAD types.
          * @param T9 The temperature in units of 10^9 K, as a CppAD::AD<double>.
+         * @param rho
+         * @param Y
          * @return The total calculated reaction rate, as a CppAD::AD<double>.
          */
-        [[nodiscard]] CppAD::AD<double> calculate_rate(const CppAD::AD<double> T9) const override;
+        [[nodiscard]] CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const override;
 
         /** @name Iterators
          *  Provides iterators to loop over the rate coefficient sets.
@@ -363,8 +420,8 @@ namespace gridfire::reaction {
         ///@}
         ///
 
-        friend std::ostream& operator<<(std::ostream& os, const LogicalReaction& r) {
-            os << "(LogicalReaction: " << r.id() << ", reverse: " << r.is_reverse() << ")";
+        friend std::ostream& operator<<(std::ostream& os, const LogicalReaclibReaction& r) {
+            os << "(LogicalReaclibReaction: " << r.id() << ", reverse: " << r.is_reverse() << ")";
             return os;
         }
 
@@ -402,41 +459,44 @@ namespace gridfire::reaction {
         }
     };
 
-    template <typename ReactionT>
-    class TemplatedReactionSet final {
+    class ReactionSet final {
     public:
         /**
          * @brief Constructs a ReactionSet from a vector of reactions.
          * @param reactions The initial vector of Reaction objects.
          */
-        explicit TemplatedReactionSet(std::vector<ReactionT> reactions);
+        explicit ReactionSet(std::vector<std::unique_ptr<Reaction>>&& reactions);
 
-        TemplatedReactionSet();
+        explicit ReactionSet(const std::vector<Reaction*>& reactions);
+
+        ReactionSet();
 
         /**
          * @brief Copy constructor.
          * @param other The ReactionSet to copy.
          */
-        TemplatedReactionSet(const TemplatedReactionSet<ReactionT>& other);
+        ReactionSet(const ReactionSet& other);
 
         /**
          * @brief Copy assignment operator.
          * @param other The ReactionSet to assign from.
          * @return A reference to this ReactionSet.
          */
-        TemplatedReactionSet<ReactionT>& operator=(const TemplatedReactionSet<ReactionT>& other);
+        ReactionSet& operator=(const ReactionSet& other);
 
         /**
          * @brief Adds a reaction to the set.
          * @param reaction The Reaction to add.
          */
-        void add_reaction(ReactionT reaction);
+        void add_reaction(const Reaction& reaction);
+
+        void add_reaction(std::unique_ptr<Reaction>&& reaction);
 
         /**
          * @brief Removes a reaction from the set.
          * @param reaction The Reaction to remove.
          */
-        void remove_reaction(const ReactionT& reaction);
+        void remove_reaction(const Reaction& reaction);
 
         /**
          * @brief Checks if the set contains a reaction with the given ID.
@@ -490,7 +550,7 @@ namespace gridfire::reaction {
          * @return A const reference to the Reaction.
          * @throws std::out_of_range if the index is out of bounds.
          */
-        [[nodiscard]] const ReactionT& operator[](size_t index) const;
+        [[nodiscard]] const Reaction& operator[](size_t index) const;
 
         /**
          * @brief Accesses a reaction by its ID.
@@ -498,21 +558,21 @@ namespace gridfire::reaction {
          * @return A const reference to the Reaction.
          * @throws std::out_of_range if no reaction with the given ID exists.
          */
-        [[nodiscard]] const ReactionT& operator[](const std::string_view& id) const;
+        [[nodiscard]] const Reaction& operator[](const std::string_view& id) const;
 
         /**
          * @brief Compares this set with another for equality.
          * @param other The other ReactionSet to compare with.
          * @return True if the sets are equal (same size and hash).
          */
-        bool operator==(const TemplatedReactionSet& other) const;
+        bool operator==(const ReactionSet& other) const;
 
         /**
          * @brief Compares this set with another for inequality.
          * @param other The other ReactionSet to compare with.
          * @return True if the sets are not equal.
          */
-        bool operator!=(const TemplatedReactionSet& other) const;
+        bool operator!=(const ReactionSet& other) const;
 
         /**
          * @brief Computes a hash for the entire set.
@@ -522,7 +582,7 @@ namespace gridfire::reaction {
          * sorts the hashes, and then computes a final hash over the sorted list
          * of hashes. This ensures the hash is order-independent.
          */
-        [[nodiscard]] uint64_t hash(uint64_t seed = 0) const;
+        [[nodiscard]] uint64_t hash(uint64_t seed) const;
 
         /** @name Iterators
          *  Provides iterators to loop over the reactions in the set.
@@ -534,210 +594,30 @@ namespace gridfire::reaction {
         [[nodiscard]] auto end() const { return m_reactions.cend(); }
         ///@}
         ///
-        friend std::ostream& operator<<(std::ostream& os, const TemplatedReactionSet<ReactionT>& r) {
-            os << "(ReactionSet: [";
-            size_t counter = 0;
-            for (const auto& reaction : r.m_reactions) {
-                os << reaction;
-                if (counter < r.m_reactions.size() - 2) {
-                    os << ", ";
-                } else if (counter == r.m_reactions.size() - 2) {
-                    os << " and ";
-                }
-                ++counter;
-            }
-            os << "])";
-            return os;
-        }
 
         [[nodiscard]] std::unordered_set<fourdst::atomic::Species> getReactionSetSpecies() const;
+
+        friend std::ostream& operator<<(std::ostream& os, const ReactionSet& rs) {
+            os << "(ReactionSet: {";
+            int i = 0;
+            for (const auto& reaction : rs.m_reactions) {
+                os << *reaction;
+                if (i < rs.m_reactions.size() - 1) {
+                    os << ", ";
+                }
+            }
+            os << "})";
+            return os;
+        }
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        std::vector<ReactionT> m_reactions;
+        std::vector<std::unique_ptr<Reaction>> m_reactions;
         std::string m_id;
-        std::unordered_map<std::string, ReactionT> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
+        std::unordered_map<std::string, size_t> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
 
     };
 
-    using ReactionSet = TemplatedReactionSet<Reaction>; ///< A set of reactions, typically from a single source like REACLIB.
-    using LogicalReactionSet = TemplatedReactionSet<LogicalReaction>; ///< A set of logical reactions.
+    ReactionSet packReactionSet(const ReactionSet& reactionSet);
 
-    LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet& reactionSet);
-
-    template <typename ReactionT>
-    TemplatedReactionSet<ReactionT>::TemplatedReactionSet(
-        std::vector<ReactionT> reactions
-    ) :
-    m_reactions(std::move(reactions)) {
-        if (m_reactions.empty()) {
-            return; // Case where the reactions will be added later.
-        }
-        m_reactionNameMap.reserve(reactions.size());
-        for (const auto& reaction : m_reactions) {
-            m_id += reaction.id();
-            m_reactionNameMap.emplace(reaction.id(), reaction);
-        }
-    }
-
-    template<typename ReactionT>
-    TemplatedReactionSet<ReactionT>::TemplatedReactionSet() {}
-
-    template <typename ReactionT>
-    TemplatedReactionSet<ReactionT>::TemplatedReactionSet(const TemplatedReactionSet<ReactionT> &other) {
-        m_reactions.reserve(other.m_reactions.size());
-        for (const auto& reaction_ptr: other.m_reactions) {
-            m_reactions.push_back(reaction_ptr);
-        }
-
-        m_reactionNameMap.reserve(other.m_reactionNameMap.size());
-        for (const auto& reaction_ptr : m_reactions) {
-            m_reactionNameMap.emplace(reaction_ptr.id(), reaction_ptr);
-        }
-    }
-
-    template <typename ReactionT>
-    TemplatedReactionSet<ReactionT>& TemplatedReactionSet<ReactionT>::operator=(const TemplatedReactionSet<ReactionT> &other) {
-        if (this != &other) {
-            TemplatedReactionSet temp(other);
-            std::swap(m_reactions, temp.m_reactions);
-            std::swap(m_reactionNameMap, temp.m_reactionNameMap);
-        }
-        return *this;
-    }
-
-    template <typename ReactionT>
-    void TemplatedReactionSet<ReactionT>::add_reaction(ReactionT reaction) {
-        m_reactions.emplace_back(reaction);
-        m_id += m_reactions.back().id();
-        m_reactionNameMap.emplace(m_reactions.back().id(), m_reactions.back());
-    }
-
-    template <typename ReactionT>
-    void TemplatedReactionSet<ReactionT>::remove_reaction(const ReactionT& reaction) {
-        if (!m_reactionNameMap.contains(std::string(reaction.id()))) {
-            return;
-        }
-
-        m_reactionNameMap.erase(std::string(reaction.id()));
-
-        std::erase_if(m_reactions, [&reaction](const Reaction& r) {
-            return r == reaction;
-        });
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::contains(const std::string_view& id) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.id() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::contains(const Reaction& reaction) const {
-        for (const auto& r : m_reactions) {
-            if (r == reaction) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename ReactionT>
-    void TemplatedReactionSet<ReactionT>::clear() {
-        m_reactions.clear();
-        m_reactionNameMap.clear();
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::contains_species(const fourdst::atomic::Species& species) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction.contains(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::contains_reactant(const fourdst::atomic::Species& species) const {
-        for (const auto& r : m_reactions) {
-            if (r.contains_reactant(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::contains_product(const fourdst::atomic::Species& species) const {
-        for (const auto& r : m_reactions) {
-            if (r.contains_product(species)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename ReactionT>
-    const ReactionT& TemplatedReactionSet<ReactionT>::operator[](const size_t index) const {
-        if (index >= m_reactions.size()) {
-            m_logger -> flush_log();
-            throw std::out_of_range("Index" + std::to_string(index) + " out of range for ReactionSet of size " + std::to_string(m_reactions.size()) + ".");
-        }
-        return m_reactions[index];
-    }
-
-    template <typename ReactionT>
-    const ReactionT& TemplatedReactionSet<ReactionT>::operator[](const std::string_view& id) const {
-        if (auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
-            return it->second;
-        }
-        m_logger -> flush_log();
-        throw std::out_of_range("Species " + std::string(id) + " does not exist in ReactionSet.");
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::operator==(const TemplatedReactionSet<ReactionT>& other) const {
-        if (size() != other.size()) {
-            return false;
-        }
-        return hash() == other.hash();
-    }
-
-    template <typename ReactionT>
-    bool TemplatedReactionSet<ReactionT>::operator!=(const TemplatedReactionSet<ReactionT>& other) const {
-        return !(*this == other);
-    }
-
-    template <typename ReactionT>
-    uint64_t TemplatedReactionSet<ReactionT>::hash(uint64_t seed) const {
-        if (m_reactions.empty()) {
-            return XXHash64::hash(nullptr, 0, seed);
-        }
-        std::vector<uint64_t> individualReactionHashes;
-        individualReactionHashes.reserve(m_reactions.size());
-        for (const auto& reaction : m_reactions) {
-            individualReactionHashes.push_back(reaction.hash(seed));
-        }
-
-        std::ranges::sort(individualReactionHashes);
-
-        const auto data = static_cast<const void*>(individualReactionHashes.data());
-        const size_t sizeInBytes = individualReactionHashes.size() * sizeof(uint64_t);
-        return XXHash64::hash(data, sizeInBytes, seed);
-    }
-
-    template<typename ReactionT>
-    std::unordered_set<fourdst::atomic::Species> TemplatedReactionSet<ReactionT>::getReactionSetSpecies() const {
-        std::unordered_set<fourdst::atomic::Species> species;
-        for (const auto& reaction : m_reactions) {
-            const auto reactionSpecies = reaction.all_species();
-            species.insert(reactionSpecies.begin(), reactionSpecies.end());
-        }
-        return species;
-    }
 }
 

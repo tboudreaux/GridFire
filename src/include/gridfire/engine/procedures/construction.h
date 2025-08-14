@@ -30,7 +30,7 @@ namespace gridfire {
      * @return A LogicalReactionSet encapsulating the collected reactions for graph-based engines.
      * @throws std::logic_error If the resolved network depth is zero (no reactions can be collected).
      */
-    reaction::LogicalReactionSet build_reaclib_nuclear_network(
+    reaction::ReactionSet build_reaclib_nuclear_network(
         const fourdst::composition::Composition &composition,
         BuildDepthType maxLayers = NetworkBuildDepth::Full,
         bool reverse = false

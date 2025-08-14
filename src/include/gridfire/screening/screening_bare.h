@@ -52,7 +52,7 @@ namespace gridfire::screening {
          * @endcode
          */
         [[nodiscard]] std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<double>& Y,
             const double T9,
@@ -75,7 +75,7 @@ namespace gridfire::screening {
          *         size as the `reactions` set.
          */
         [[nodiscard]] std::vector<ADDouble> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<ADDouble>& Y,
             const ADDouble T9,
@@ -99,7 +99,7 @@ namespace gridfire::screening {
          */
         template <typename T>
         [[nodiscard]] std::vector<T> calculateFactors_impl(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<T>& Y,
             const T T9,
@@ -124,7 +124,7 @@ namespace gridfire::screening {
      */
     template<typename T>
     std::vector<T> BareScreeningModel::calculateFactors_impl(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species> &species,
         const std::vector<T> &Y,
         const T T9,

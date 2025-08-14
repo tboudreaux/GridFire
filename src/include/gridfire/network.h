@@ -28,8 +28,6 @@
 #include "fourdst/composition/composition.h"
 #include "fourdst/constants/const.h"
 
-#include "gridfire/reaction/reaction.h"
-
 #include "quill/Logger.h"
 
 #include <unordered_map>

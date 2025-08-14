@@ -32,6 +32,7 @@ gridfire_build_dependencies = [
     log_dep,
     xxhash_dep,
     eigen_dep,
+    plugin_dep,
 ]
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
@@ -76,5 +77,11 @@ gridfire_headers = files(
     'include/gridfire/utils/logging.h',
 )
 install_headers(gridfire_headers, subdir : 'gridfire')
+
+solver_interface_headers = files(
+    'include/gridfire/interfaces/solver/solver_interfaces.h',
+)
+
+install_headers(solver_interface_headers, subdir : 'gridfire/interfaces/solver')
 
 subdir('python')

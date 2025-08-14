@@ -12,8 +12,6 @@ namespace gridfire::screening {
                 return std::make_unique<WeakScreeningModel>();
             case ScreeningType::BARE:
                 return std::make_unique<BareScreeningModel>();
-            default:
-                return std::make_unique<BareScreeningModel>();
         }
     }
 }

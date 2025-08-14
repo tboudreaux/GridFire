@@ -10,7 +10,7 @@
 namespace gridfire::screening {
     using ADDouble = CppAD::AD<double>;
     std::vector<ADDouble> WeakScreeningModel::calculateScreeningFactors(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species>& species,
         const std::vector<ADDouble> &Y,
         const ADDouble T9,
@@ -20,7 +20,7 @@ namespace gridfire::screening {
     }
 
     std::vector<double> WeakScreeningModel::calculateScreeningFactors(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species>& species,
         const std::vector<double> &Y,
         const double T9,

@@ -26,7 +26,7 @@ std::string trim_whitespace(const std::string& str) {
 }
 
 namespace gridfire::reaclib {
-    static reaction::LogicalReactionSet* s_all_reaclib_reactions_ptr = nullptr;
+    static reaction::ReactionSet* s_all_reaclib_reactions_ptr = nullptr;
 
     #pragma pack(push, 1)
     struct ReactionRecord {
@@ -85,7 +85,7 @@ namespace gridfire::reaclib {
         const auto* records = reinterpret_cast<const ReactionRecord*>(raw_reactions_data);
         constexpr size_t num_reactions = raw_reactions_data_len / sizeof(ReactionRecord);
 
-        std::vector<reaction::Reaction> reaction_list;
+        std::vector<std::unique_ptr<reaction::Reaction>> reaction_list;
         reaction_list.reserve(num_reactions);
 
         for (size_t i = 0; i < num_reactions; ++i) {
@@ -108,7 +108,7 @@ namespace gridfire::reaclib {
             };
 
             // Construct the Reaction object. We use rpName for both the unique ID and the human-readable name.
-            reaction_list.emplace_back(
+            reaction_list.emplace_back(std::make_unique<reaction::ReaclibReaction>(
                 rpName_sv,
                 rpName_sv,
                 chapter,
@@ -118,15 +118,15 @@ namespace gridfire::reaclib {
                 label_sv,
                 rate_coeffs,
                 reverse
-            );
+            ));
         }
 
         // The ReactionSet takes the vector of all individual reactions.
         const reaction::ReactionSet reaction_set(std::move(reaction_list));
 
         // The LogicalReactionSet groups reactions by their peName, which is what we want.
-        s_all_reaclib_reactions_ptr = new reaction::LogicalReactionSet(
-            reaction::packReactionSetToLogicalReactionSet(reaction_set)
+        s_all_reaclib_reactions_ptr = new reaction::ReactionSet(
+            reaction::packReactionSet(reaction_set)
         );
 
         s_initialized = true;
@@ -135,7 +135,7 @@ namespace gridfire::reaclib {
 
     // --- Public Interface Implementation ---
 
-    const reaction::LogicalReactionSet& get_all_reactions() {
+    const reaction::ReactionSet &get_all_reaclib_reactions() {
         // This ensures that the initialization happens only on the first call.
         if (!s_initialized) {
             initializeAllReaclibReactions();

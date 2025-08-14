@@ -3,11 +3,9 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/views/engine_defined.h"
 
-#include "gridfire/network.h"
 
 #include "fourdst/logging/logging.h"
 #include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/composition.h"
 
 #include "quill/Logger.h"
 
@@ -66,7 +64,7 @@ namespace gridfire {
          * @return Vector of reaction name strings containing the priming species.
          * @throws std::runtime_error If no reactions involve the priming species.
          */
-        std::vector<std::string> constructPrimingReactionSet(
+        [[nodiscard]] std::vector<std::string> constructPrimingReactionSet(
             const fourdst::atomic::Species& primingSpecies,
             const DynamicEngine& baseEngine
         ) const;

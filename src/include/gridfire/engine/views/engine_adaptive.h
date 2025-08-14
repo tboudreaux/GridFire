@@ -9,7 +9,6 @@
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
-#include "gridfire/engine/procedures/priming.h"
 #include "gridfire/engine/procedures/construction.h"
 
 #include "quill/Logger.h"
@@ -203,9 +202,9 @@ namespace gridfire {
          *
          * @return Reference to the LogicalReactionSet containing all active reactions.
          */
-        [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
-        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
 
         /**
          * @brief Computes timescales for all active species in the network.
@@ -270,7 +269,7 @@ namespace gridfire {
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
-        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
@@ -289,7 +288,7 @@ namespace gridfire {
         /** @brief The set of species that are currently active in the network. */
         std::vector<fourdst::atomic::Species> m_activeSpecies;
         /** @brief The set of reactions that are currently active in the network. */
-        reaction::LogicalReactionSet m_activeReactions;
+        reaction::ReactionSet m_activeReactions;
 
         /** @brief A map from the indices of the active species to the indices of the corresponding species in the full network. */
         std::vector<size_t> m_speciesIndexMap;
@@ -304,7 +303,7 @@ namespace gridfire {
          * @brief A struct to hold a reaction and its flow rate.
          */
         struct ReactionFlow {
-            const reaction::LogicalReaction* reactionPtr;
+            const reaction::Reaction* reactionPtr;
             double flowRate;
         };
     private:
@@ -442,20 +441,20 @@ namespace gridfire {
          * 4. A reaction is kept if its `flowRate` is greater than the `absoluteCullingThreshold`.
          * 5. The pointers to the kept reactions are stored in a vector and returned.
          */
-        [[nodiscard]] std::vector<const reaction::LogicalReaction*> cullReactionsByFlow(
+        [[nodiscard]] std::vector<const reaction::Reaction*> cullReactionsByFlow(
             const std::vector<ReactionFlow>& allFlows,
             const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
             const std::vector<double>& Y_full,
             double maxFlow
         ) const;
 
-        typedef std::pair<std::unordered_set<const reaction::LogicalReaction*>, std::unordered_set<fourdst::atomic::Species>> RescueSet;
+        typedef std::pair<std::unordered_set<const reaction::Reaction*>, std::unordered_set<fourdst::atomic::Species>> RescueSet;
         [[nodiscard]] RescueSet rescueEdgeSpeciesDestructionChannel(
             const std::vector<double>& Y_full,
             const double T9,
             const double rho,
             const std::vector<fourdst::atomic::Species>& activeSpecies,
-            const reaction::LogicalReactionSet& activeReactions
+            const reaction::ReactionSet& activeReactions
         ) const;
         /**
          * @brief Finalizes the set of active species and reactions.
@@ -473,7 +472,7 @@ namespace gridfire {
          * - `m_activeSpecies` is sorted by atomic mass.
          */
         void finalizeActiveSet(
-            const std::vector<const reaction::LogicalReaction*>& finalReactions
+            const std::vector<const reaction::Reaction*>& finalReactions
         );
     };
 }

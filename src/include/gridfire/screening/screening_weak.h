@@ -48,7 +48,7 @@ namespace gridfire::screening {
          * @endcode
          */
         [[nodiscard]] std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<double>& Y,
             const double T9,
@@ -70,7 +70,7 @@ namespace gridfire::screening {
          * @return A vector of screening factors as AD types.
          */
         [[nodiscard]] std::vector<CppAD::AD<double>> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<CppAD::AD<double>>& Y,
             const CppAD::AD<double> T9,
@@ -98,7 +98,7 @@ namespace gridfire::screening {
          */
         template <typename T>
         [[nodiscard]] std::vector<T> calculateFactors_impl(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<T>& Y,
             const T T9,
@@ -139,7 +139,7 @@ namespace gridfire::screening {
      */
     template <typename T>
     std::vector<T> WeakScreeningModel::calculateFactors_impl(
-        const reaction::LogicalReactionSet& reactions,
+        const reaction::ReactionSet& reactions,
         const std::vector<fourdst::atomic::Species>& species,
         const std::vector<T>& Y,
         const T T9,
@@ -177,7 +177,7 @@ namespace gridfire::screening {
         factors.reserve(reactions.size());
         for (const auto& reaction : reactions) {
             T H_12(0.0); // screening abundance term
-            const auto& reactants = reaction.reactants();
+            const auto& reactants = reaction->reactants();
             const bool isTripleAlpha = (
                 reactants.size() == 3 &&
                 reactants[0].m_z == 2 &&

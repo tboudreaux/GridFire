@@ -68,7 +68,7 @@ namespace gridfire {
         const size_t i_full = mapViewToFullSpeciesIndex(i_defined);
         const size_t j_full = mapViewToFullSpeciesIndex(j_defined);
 
-        return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
+        return m_baseEngine.getJacobianMatrixEntry(static_cast<int>(i_full), static_cast<int>(j_full));
     }
 
     void DefinedEngineView::generateStoichiometryMatrix() {
@@ -85,7 +85,7 @@ namespace gridfire {
 
         const size_t i_full = mapViewToFullSpeciesIndex(speciesIndex_defined);
         const size_t j_full = mapViewToFullReactionIndex(reactionIndex_defined);
-        return m_baseEngine.getStoichiometryMatrixEntry(i_full, j_full);
+        return m_baseEngine.getStoichiometryMatrixEntry(static_cast<int>(i_full), static_cast<int>(j_full));
     }
 
     double DefinedEngineView::calculateMolarReactionFlow(
@@ -105,16 +105,16 @@ namespace gridfire {
         return m_baseEngine.calculateMolarReactionFlow(reaction, Y_full, T9, rho);
     }
 
-    const reaction::LogicalReactionSet & DefinedEngineView::getNetworkReactions() const {
+    const reaction::ReactionSet & DefinedEngineView::getNetworkReactions() const {
         validateNetworkState();
 
         return m_activeReactions;
     }
 
-    void DefinedEngineView::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+    void DefinedEngineView::setNetworkReactions(const reaction::ReactionSet &reactions) {
         std::vector<std::string> peNames;
         for (const auto& reaction : reactions) {
-            peNames.push_back(std::string(reaction.id()));
+            peNames.emplace_back(reaction->id());
         }
         collect(peNames);
     }
@@ -185,7 +185,7 @@ namespace gridfire {
         return m_baseEngine.getScreeningModel();
     }
 
-    int DefinedEngineView::getSpeciesIndex(const Species &species) const {
+    size_t DefinedEngineView::getSpeciesIndex(const Species &species) const {
         validateNetworkState();
 
         const auto it = std::ranges::find(m_activeSpecies, species);
@@ -259,12 +259,12 @@ namespace gridfire {
         reactionIndexMap.reserve(m_activeReactions.size());
 
         for (const auto& active_reaction_ptr : m_activeReactions) {
-            auto it = fullReactionReverseMap.find(active_reaction_ptr.id());
+            auto it = fullReactionReverseMap.find(active_reaction_ptr->id());
 
             if (it != fullReactionReverseMap.end()) {
                 reactionIndexMap.push_back(it->second);
             } else {
-                LOG_ERROR(m_logger, "Active reaction '{}' not found in base engine during reaction index map construction.", active_reaction_ptr.id());
+                LOG_ERROR(m_logger, "Active reaction '{}' not found in base engine during reaction index map construction.", active_reaction_ptr->id());
                 m_logger->flush_log();
                 throw std::runtime_error("Mismatch between active reactions and base engine.");
             }
@@ -328,20 +328,20 @@ namespace gridfire {
                 m_logger->flush_log();
                 throw std::runtime_error("Reaction with name '" + std::string(peName) + "' not found in the base engine's network reactions.");
             }
-            auto reaction = fullNetworkReactionSet[peName];
-            for (const auto& reactant : reaction.reactants()) {
+            const reaction::Reaction* reaction = &fullNetworkReactionSet[peName];
+            for (const auto& reactant : reaction->reactants()) {
                 if (!seenSpecies.contains(reactant)) {
                     seenSpecies.insert(reactant);
                     m_activeSpecies.push_back(reactant);
                 }
             }
-            for (const auto& product : reaction.products()) {
+            for (const auto& product : reaction->products()) {
                 if (!seenSpecies.contains(product)) {
                     seenSpecies.insert(product);
                     m_activeSpecies.push_back(product);
                 }
             }
-            m_activeReactions.add_reaction(reaction);
+            m_activeReactions.add_reaction(*reaction);
         }
         LOG_TRACE_L3(m_logger, "DefinedEngineView built with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
         LOG_TRACE_L3(m_logger, "Active species: {}", [this]() -> std::string {

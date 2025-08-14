@@ -25,16 +25,10 @@
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/speed/sparse_jac_fun.hpp"
 
-#include "procedures/priming.h"
-
-
-#include "quill/LogMacros.h"
-
 // PERF: The function getNetReactionStoichiometry returns a map of species to their stoichiometric coefficients for a given reaction.
 //       this makes extra copies of the species, which is not ideal and could be optimized further.
 //       Even more relevant is the member m_reactionIDMap which makes copies of a REACLIBReaction for each reaction ID.
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
-// static bool isF17 = false;
 namespace gridfire {
     /**
      * @brief Alias for CppAD AD type for double precision.
@@ -128,7 +122,7 @@ namespace gridfire {
          * This constructor uses the given set of reactions to construct the
          * reaction network.
          */
-        explicit GraphEngine(const reaction::LogicalReactionSet &reactions);
+        explicit GraphEngine(const reaction::ReactionSet &reactions);
 
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation rate.
@@ -212,9 +206,9 @@ namespace gridfire {
          * @brief Gets the set of logical reactions in the network.
          * @return Reference to the LogicalReactionSet containing all reactions.
          */
-        [[nodiscard]] const reaction::LogicalReactionSet& getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
-        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
 
         /**
          * @brief Gets an entry from the previously generated Jacobian matrix.
@@ -394,6 +388,8 @@ namespace gridfire {
          *
          * @param reaction The reaction for which to calculate the reverse rate.
          * @param T9 Temperature in units of 10^9 K.
+         * @param rho
+         * @param Y
          * @return Reverse rate for the reaction (e.g., mol/g/s).
          *
          * This method computes the reverse rate based on the forward rate and
@@ -401,7 +397,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateReverseRate(
             const reaction::Reaction &reaction,
-            double T9
+            double T9, double rho, const std::vector<double> &Y
         ) const;
 
         /**
@@ -426,7 +422,7 @@ namespace gridfire {
         [[nodiscard]] double calculateReverseRateTwoBodyDerivative(
             const reaction::Reaction &reaction,
             const double T9,
-            const double reverseRate
+            double rho, const std::vector<double> &Y, const double reverseRate
         ) const;
 
         /**
@@ -458,8 +454,8 @@ namespace gridfire {
          * This method returns the index of the given species in the network's
          * species vector. If the species is not found, it returns -1.
          */
-        [[nodiscard]] int getSpeciesIndex(
-            const fourdst::atomic::Species& species
+        [[nodiscard]] size_t getSpeciesIndex(
+            const fourdst::atomic::Species &species
         ) const override;
 
         /**
@@ -574,7 +570,7 @@ namespace gridfire {
 
         constants m_constants;
 
-        reaction::LogicalReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
+        reaction::ReactionSet m_reactions; ///< Set of REACLIB reactions in the network.
         std::unordered_map<std::string_view, reaction::Reaction*> m_reactionIDMap; ///< Map from reaction ID to REACLIBReaction. //PERF: This makes copies of REACLIBReaction and could be a performance bottleneck.
 
         std::vector<fourdst::atomic::Species> m_networkSpecies; ///< Vector of unique species in the network.
@@ -654,7 +650,7 @@ namespace gridfire {
          *
          * @throws std::runtime_error If there are no species in the network.
          */
-        void recordADTape();
+        void recordADTape() const;
 
         void collectAtomicReverseRateAtomicBases();
 
@@ -708,7 +704,7 @@ namespace gridfire {
             std::vector<T> screeningFactors,
             std::vector<T> Y,
             size_t reactionIndex,
-            const reaction::LogicalReaction &reaction
+            const reaction::Reaction &reaction
         ) const;
 
         /**
@@ -776,7 +772,7 @@ namespace gridfire {
         std::vector<T> screeningFactors,
         std::vector<T> Y,
         size_t reactionIndex,
-        const reaction::LogicalReaction &reaction
+        const reaction::Reaction &reaction
     ) const {
         if (!m_useReverseReactions) {
             return static_cast<T>(0.0); // If reverse reactions are not used, return zero
@@ -800,7 +796,7 @@ namespace gridfire {
                 }
             } else {
                 // A,B If not calling with an AD type, calculate the reverse rate directly
-                reverseRateConstant = calculateReverseRate(reaction, T9);
+                reverseRateConstant = calculateReverseRate(reaction, T9, 0, {});
             }
 
             // C. Get product multiplicities
@@ -888,14 +884,18 @@ namespace gridfire {
                 calculateMolarReactionFlow<T>(reaction, Y, T9, rho);
 
             // 2. Calculate reverse reaction rate
-            T reverseMolarFlow = calculateReverseMolarReactionFlow<T>(
-                T9,
-                rho,
-                screeningFactors,
-                Y,
-                reactionIndex,
-                reaction
-            );
+            T reverseMolarFlow = static_cast<T>(0.0);
+            // Do not calculate reverse flow for weak reactions
+            if (reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB) {
+                reverseMolarFlow = calculateReverseMolarReactionFlow<T>(
+                    T9,
+                    rho,
+                    screeningFactors,
+                    Y,
+                    reactionIndex,
+                    reaction
+                );
+            }
 
             const T molarReactionFlow = forwardMolarReactionFlow - reverseMolarFlow; // Net molar reaction flow
 
@@ -930,7 +930,7 @@ namespace gridfire {
         const T zero = static_cast<T>(0.0);
 
         // --- Calculate the molar reaction rate (in units of [s^-1][cm^3(N-1)][mol^(1-N)] for N reactants) ---
-        const T k_reaction = reaction.calculate_rate(T9);
+        const T k_reaction = reaction.calculate_rate(T9, rho, Y);
 
         // --- Cound the number of each reactant species to account for species multiplicity ---
         std::unordered_map<std::string, int> reactant_counts;

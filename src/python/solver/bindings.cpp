@@ -2,7 +2,6 @@
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
 #include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 #include <pybind11/numpy.h>
-#include <pybind11/functional.h> // Needed for std::function
 
 #include <boost/numeric/ublas/vector.hpp>
 
@@ -30,7 +29,7 @@ void register_solver_bindings(const py::module &m) {
     );
 
     py_direct_network_solver.def("set_callback",
-        [](gridfire::solver::DirectNetworkSolver &self, gridfire::solver::DirectNetworkSolver::TimestepCallback cb) {
+        [](gridfire::solver::DirectNetworkSolver &self, const gridfire::solver::DirectNetworkSolver::TimestepCallback& cb) {
             self.set_callback(cb);
         },
         py::arg("callback"),

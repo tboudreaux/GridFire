@@ -16,6 +16,8 @@
 
 #include "fourdst/composition/composition.h"
 
+#include "fourdst/plugin/bundle/bundle.h"
+
 #include "fourdst/logging/logging.h"
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
@@ -29,7 +31,7 @@
 
 static std::terminate_handler g_previousHandler = nullptr;
 
-static std::ofstream consumptionFile("consumption.txt");
+
 
 void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& ctx) {
     const auto H1IndexPtr = std::ranges::find(ctx.engine.getNetworkSpecies(), fourdst::atomic::H_1);
@@ -38,10 +40,10 @@ void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& ctx)
     const size_t H1Index = H1IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), H1IndexPtr) : -1;
     const size_t He4Index = He4IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), He4IndexPtr) : -1;
 
-    if (H1Index != -1 && He4Index != -1) {
-        std::cout << "Found H-1 at index: " << H1Index << ", He-4 at index: " << He4Index << "\n";
-        consumptionFile << ctx.t << "," << ctx.state(H1Index) << "," << ctx.state(He4Index) << "\n";
-    }
+    std::cout << "Time: " << ctx.t << ", H-1: " << ctx.state(H1Index) << ", He-4: " << ctx.state(He4Index) << "\n";
+
+    size_t i = 0;
+
 }
 
 void measure_execution_time(const std::function<void()>& callback, const std::string& name)
@@ -63,7 +65,39 @@ void quill_terminate_handler()
         std::abort();
 }
 
-int main() {
+int main(int argc, char* argv[]){
+
+    // Valid usages are either
+    // ./graphnet_sandbox
+    //or
+    // ./graphnet_sandbox --plug <plugin_bundle_path>
+    if (argc == 3 && std::string(argv[1]) == "--plug") {
+        std::filesystem::path pluginBundlePath(argv[2]);
+        if (!std::filesystem::exists(pluginBundlePath)) {
+            std::cerr << "Error: Plugin bundle path does not exist: " << pluginBundlePath << "\n";
+            std::cerr << "Usage: " << argv[0] << " [--plug <plugin_bundle_path>]\n";
+            return 1;
+        }
+        std::cout << "Loading plugin bundle from: " << pluginBundlePath << "\n";
+        fourdst::plugin::bundle::PluginBundle pluginBundle(pluginBundlePath);
+    }
+    if (argc == 2 && std::string(argv[1]) != "--plug") {
+        std::cerr << "Invalid argument: " << argv[1] << "\n";
+        std::cerr << "Usage: " << argv[0] << " [--plug <plugin_bundle_path>]\n";
+        return 1;
+    }
+    if (argc == 2 && std::string(argv[1]) == "--plug") {
+        std::cerr << "Error: No plugin bundle path provided.\n";
+        std::cerr << "Usage: " << argv[0] << " [--plug <plugin_bundle_path>]\n";
+        return 1;
+    }
+    if (argc > 3) {
+        std::cerr << "Too many arguments provided.\n";
+        std::cerr << "Usage: " << argv[0] << " [--plug <plugin_bundle_path>]\n";
+        return 1;
+    }
+
+
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
     logger->set_log_level(quill::LogLevel::Info);
@@ -101,13 +135,13 @@ int main() {
     AdaptiveEngineView adaptiveView(partitioningView);
     //
     solver::DirectNetworkSolver solver(adaptiveView);
-    consumptionFile << "t,X,a,b,c\n";
+    // consumptionFile << "t,X,a,b,c\n";
     solver.set_callback(callback);
     NetOut netOut;
 
 
     netOut = solver.evaluate(netIn);
-    consumptionFile.close();
+    // consumptionFile.close();
     std::cout << "Initial H-1: " << netIn.composition.getMassFraction("H-1") << std::endl;
     std::cout << "NetOut H-1: " << netOut.composition.getMassFraction("H-1") << std::endl;
 

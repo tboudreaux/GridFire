@@ -2,7 +2,6 @@
 #include "gridfire/solver/solver.h"
 
 #include "fourdst/composition/species.h"
-#include "fourdst/logging/logging.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
@@ -12,9 +11,6 @@
 #include <unordered_set>
 #include <stdexcept>
 #include <unordered_map>
-#include <utility>
-#include <ranges>
-#include <cmath>
 
 
 namespace gridfire {
@@ -54,8 +50,8 @@ namespace gridfire {
     ) const {
         std::unordered_set<std::string> primeReactions;
         for (const auto &reaction : baseEngine.getNetworkReactions()) {
-            if (reaction.contains(primingSpecies)) {
-                primeReactions.insert(std::string(reaction.peName()));
+            if (reaction->contains(primingSpecies)) {
+                primeReactions.insert(std::string(reaction->id()));
             }
         }
         if (primeReactions.empty()) {

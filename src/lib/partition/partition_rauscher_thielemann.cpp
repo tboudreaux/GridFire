@@ -23,10 +23,10 @@ namespace gridfire::partition {
         const auto* records = reinterpret_cast<const record::RauscherThielemannPartitionDataRecord*>(rauscher_thielemann_partition_data);
         for (size_t i = 0; i < numRecords; ++i) {
             const auto&[z, a, ground_state_spin, normalized_g_values] = records[i];
-            IsotopeData data;
+            IsotopeData data{};
             data.ground_state_spin = ground_state_spin;
             std::ranges::copy(normalized_g_values, data.normalized_g_values.begin());
-            const int key = make_key(z, a);
+            const int key = make_key(static_cast<int>(z), static_cast<int>(a));
             LOG_TRACE_L3_LIMIT_EVERY_N(
                 100,
                 m_logger,
@@ -36,7 +36,7 @@ namespace gridfire::partition {
                 key
             );
 
-            m_partitionData[key] = std::move(data);
+            m_partitionData[key] = data;
         }
     }
 

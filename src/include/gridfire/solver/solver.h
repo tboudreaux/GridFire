@@ -36,7 +36,7 @@ namespace gridfire::solver {
          * the context that will be passed to the callback function, and use this information to craft their own
          * callback function.
          */
-        virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
+        [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
     };
     /**
      * @class NetworkSolverStrategy
@@ -92,7 +92,7 @@ namespace gridfire::solver {
          * the context that will be passed to the callback function, and use this information to craft their own
          * callback function.
          */
-        virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
+        [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
     protected:
         EngineT& m_engine; ///< The engine used by this solver strategy.
     };
@@ -191,7 +191,7 @@ namespace gridfire::solver {
              *
              * @implements SolverContextBase::describe
              */
-            std::vector<std::tuple<std::string, std::string>> describe() const override;
+            [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
         };
 
         /**
@@ -228,7 +228,7 @@ namespace gridfire::solver {
          *
          * @implements SolverContextBase::describe
          */
-        std::vector<std::tuple<std::string, std::string>> describe_callback_context() const override;
+        [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe_callback_context() const override;
 
 
     private:

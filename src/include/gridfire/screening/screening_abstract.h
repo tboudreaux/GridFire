@@ -70,8 +70,8 @@ namespace gridfire::screening {
          * }
          * @endcode
          */
-        virtual std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+        [[nodiscard]] virtual std::vector<double> calculateScreeningFactors(
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<double>& Y,
             const double T9,
@@ -97,8 +97,8 @@ namespace gridfire::screening {
          * This method is essential for including the effects of screening in the
          * Jacobian matrix of the reaction network.
          */
-        virtual std::vector<ADDouble> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+        [[nodiscard]] virtual std::vector<ADDouble> calculateScreeningFactors(
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<ADDouble>& Y,
             const ADDouble T9,

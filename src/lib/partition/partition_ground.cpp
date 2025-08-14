@@ -2,7 +2,6 @@
 
 #include <ranges>
 
-#include "fourdst/logging/logging.h"
 #include "fourdst/composition/atomicSpecies.h"
 #include "fourdst/composition/species.h"
 

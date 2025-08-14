@@ -447,10 +447,10 @@ namespace gridfire::approx8{
 		m_tMax = netIn.tMax;
 		m_dt0 = netIn.dt0;
 
-		const double stiff_abs_tol = m_config.get<double>("Network:Approx8:Stiff:AbsTol", 1.0e-6);
-		const double stiff_rel_tol = m_config.get<double>("Network:Approx8:Stiff:RelTol", 1.0e-6);
-		const double nonstiff_abs_tol = m_config.get<double>("Network:Approx8:NonStiff:AbsTol", 1.0e-6);
-		const double nonstiff_rel_tol = m_config.get<double>("Network:Approx8:NonStiff:RelTol", 1.0e-6);
+		const auto stiff_abs_tol = m_config.get<double>("Network:Approx8:Stiff:AbsTol", 1.0e-6);
+		const auto stiff_rel_tol = m_config.get<double>("Network:Approx8:Stiff:RelTol", 1.0e-6);
+		const auto nonstiff_abs_tol = m_config.get<double>("Network:Approx8:NonStiff:AbsTol", 1.0e-6);
+		const auto nonstiff_rel_tol = m_config.get<double>("Network:Approx8:NonStiff:RelTol", 1.0e-6);
 
 		int num_steps = -1;
 

@@ -1,8 +1,4 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
-#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc if needed directly
-
-#include <iostream>
 
 #include "bindings.h"
 
@@ -10,7 +6,7 @@ namespace py = pybind11;
 
 #include "gridfire/exceptions/exceptions.h"
 
-void register_exception_bindings(py::module &m) {
+void register_exception_bindings(const py::module &m) {
     py::register_exception<gridfire::exceptions::EngineError>(m, "GridFireEngineError");
 
     // TODO: Make it so that we can grab the stale state in python

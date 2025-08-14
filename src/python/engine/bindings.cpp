@@ -1,8 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
-#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc if needed directly
-
-#include <iostream>
+#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 
 #include "bindings.h"
 
@@ -152,7 +150,7 @@ void register_engine_bindings(py::module &m) {
         );
 }
 
-void register_base_engine_bindings(pybind11::module &m) {
+void register_base_engine_bindings(const pybind11::module &m) {
 
     py::class_<gridfire::StepDerivatives<double>>(m, "StepDerivatives")
         .def_readonly("dYdt", &gridfire::StepDerivatives<double>::dydt, "The right-hand side (dY/dt) of the ODE system.")
@@ -165,15 +163,15 @@ void register_base_engine_bindings(pybind11::module &m) {
     con_stype_register_graph_engine_bindings(m);
 }
 
-void abs_stype_register_engine_bindings(pybind11::module &m) {
+void abs_stype_register_engine_bindings(const pybind11::module &m) {
     py::class_<gridfire::Engine, PyEngine>(m, "Engine");
 }
 
-void abs_stype_register_dynamic_engine_bindings(pybind11::module &m) {
+void abs_stype_register_dynamic_engine_bindings(const pybind11::module &m) {
     const auto a = py::class_<gridfire::DynamicEngine, PyDynamicEngine>(m, "DynamicEngine");
 }
 
-void con_stype_register_graph_engine_bindings(pybind11::module &m) {
+void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
     py::enum_<gridfire::NetworkBuildDepth>(m, "NetworkBuildDepth")
         .value("Full", gridfire::NetworkBuildDepth::Full, "Full network build depth")
         .value("Shallow", gridfire::NetworkBuildDepth::Shallow, "Shallow network build depth")
@@ -199,7 +197,7 @@ void con_stype_register_graph_engine_bindings(pybind11::module &m) {
         py::arg("depth") = gridfire::NetworkBuildDepth::Full,
         "Initialize GraphEngine with a composition, partition function and build depth."
     );
-    py_dynamic_engine_bindings.def(py::init<const gridfire::reaction::LogicalReactionSet &>(),
+    py_dynamic_engine_bindings.def(py::init<const gridfire::reaction::ReactionSet &>(),
         py::arg("reactions"),
         "Initialize GraphEngine with a set of reactions."
     );
@@ -267,7 +265,7 @@ void con_stype_register_graph_engine_bindings(pybind11::module &m) {
     registerDynamicEngineDefs<gridfire::GraphEngine, gridfire::DynamicEngine>(py_dynamic_engine_bindings);
 }
 
-void register_engine_view_bindings(pybind11::module &m) {
+void register_engine_view_bindings(const pybind11::module &m) {
     auto py_defined_engine_view_bindings = py::class_<gridfire::DefinedEngineView, gridfire::DynamicEngine>(m, "DefinedEngineView");
 
     py_defined_engine_view_bindings.def(py::init<std::vector<std::string>, gridfire::DynamicEngine&>(),

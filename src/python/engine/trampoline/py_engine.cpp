@@ -23,10 +23,9 @@ const std::vector<fourdst::atomic::Species>& PyEngine::getNetworkSpecies() const
     /*
      * get_override() looks for a Python method that overrides this C++ one.
      */
-    py::function override = py::get_override(this, "getNetworkSpecies");
 
-    if (override) {
-        py::object result = override();
+    if (const py::function override = py::get_override(this, "getNetworkSpecies")) {
+        const py::object result = override();
         m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
         return m_species_cache;
     }
@@ -57,10 +56,9 @@ const std::vector<fourdst::atomic::Species>& PyDynamicEngine::getNetworkSpecies(
     /*
      * get_override() looks for a Python method that overrides this C++ one.
      */
-    py::function override = py::get_override(this, "getNetworkSpecies");
 
-    if (override) {
-        py::object result = override();
+    if (const py::function override = py::get_override(this, "getNetworkSpecies")) {
+        const py::object result = override();
         m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
         return m_species_cache;
     }
@@ -129,15 +127,15 @@ double PyDynamicEngine::calculateMolarReactionFlow(const gridfire::reaction::Rea
     );
 }
 
-const gridfire::reaction::LogicalReactionSet& PyDynamicEngine::getNetworkReactions() const {
+const gridfire::reaction::ReactionSet& PyDynamicEngine::getNetworkReactions() const {
     PYBIND11_OVERRIDE_PURE(
-        const gridfire::reaction::LogicalReactionSet&,
+        const gridfire::reaction::ReactionSet&,
         gridfire::DynamicEngine,
         getNetworkReactions
     );
 }
 
-void PyDynamicEngine::setNetworkReactions(const gridfire::reaction::LogicalReactionSet& reactions) {
+void PyDynamicEngine::setNetworkReactions(const gridfire::reaction::ReactionSet& reactions) {
     PYBIND11_OVERRIDE_PURE(
         void,
         gridfire::DynamicEngine,
@@ -199,7 +197,7 @@ gridfire::screening::ScreeningType PyDynamicEngine::getScreeningModel() const {
     );
 }
 
-int PyDynamicEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+size_t PyDynamicEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
     PYBIND11_OVERRIDE_PURE(
         int,
         gridfire::DynamicEngine,

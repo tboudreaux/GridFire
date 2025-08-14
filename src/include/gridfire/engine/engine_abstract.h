@@ -215,9 +215,9 @@ namespace gridfire {
          *
          * @return Reference to the LogicalReactionSet containing all reactions.
          */
-        [[nodiscard]] virtual const reaction::LogicalReactionSet& getNetworkReactions() const = 0;
+        [[nodiscard]] virtual const reaction::ReactionSet& getNetworkReactions() const = 0;
 
-        virtual void setNetworkReactions(const reaction::LogicalReactionSet& reactions) = 0;
+        virtual void setNetworkReactions(const reaction::ReactionSet& reactions) = 0;
 
         /**
          * @brief Compute timescales for all species in the network.
@@ -305,7 +305,7 @@ namespace gridfire {
          * engine's internal representation. It is useful for accessing species
          * data efficiently.
          */
-        [[nodiscard]] virtual int getSpeciesIndex(const fourdst::atomic::Species &species) const = 0;
+        [[nodiscard]] virtual size_t getSpeciesIndex(const fourdst::atomic::Species &species) const = 0;
 
         /**
          * @brief Map a NetIn object to a vector of molar abundances.
@@ -357,6 +357,7 @@ namespace gridfire {
          */
         virtual void rebuild(const fourdst::composition::Composition& comp, BuildDepthType depth) {
             throw std::logic_error("Setting network depth not supported by this engine.");
+            // ReSharper disable once CppDFAUnreachableCode
         }
 
     };

@@ -1,6 +1,8 @@
 cmake = import('cmake')
 
 subdir('fourdst')
+subdir('libplugin')
+
 subdir('boost')
 subdir('cppad')
 subdir('xxHash')

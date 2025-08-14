@@ -3,12 +3,7 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/network.h"
 
-#include "fourdst/composition/composition.h"
 #include "fourdst/composition/atomicSpecies.h"
-
-#include <map>
-#include <ranges>
-#include <sstream>
 
 
 namespace gridfire {
@@ -30,7 +25,7 @@ namespace gridfire {
      * @return PrimingReport encapsulating the results of the priming operation.
      */
      PrimingReport primeNetwork(
-         const NetIn&,
+         const NetIn& netIn,
          DynamicEngine& engine
      );
 

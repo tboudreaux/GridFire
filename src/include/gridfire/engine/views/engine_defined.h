@@ -16,14 +16,14 @@ namespace gridfire{
     class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {
     public:
         DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine);
-        const DynamicEngine& getBaseEngine() const override;
+        [[nodiscard]] const DynamicEngine& getBaseEngine() const override;
 
         // --- Engine Interface ---
         /**
          * @brief Gets the list of active species in the network defined by the file.
          * @return A const reference to the vector of active species.
          */
-        const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
 
         // --- DynamicEngine Interface ---
         /**
@@ -37,7 +37,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
-        std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
             const std::vector<double>& Y_defined,
             const double T9,
             const double rho
@@ -66,7 +66,7 @@ namespace gridfire{
          * @throws std::runtime_error If the view is stale.
          * @throws std::out_of_range If an index is out of bounds.
          */
-        double getJacobianMatrixEntry(
+        [[nodiscard]] double getJacobianMatrixEntry(
             const int i_defined,
             const int j_defined
         ) const override;
@@ -86,7 +86,7 @@ namespace gridfire{
          * @throws std::runtime_error If the view is stale.
          * @throws std::out_of_range If an index is out of bounds.
          */
-        int getStoichiometryMatrixEntry(
+        [[nodiscard]] int getStoichiometryMatrixEntry(
             const int speciesIndex_defined,
             const int reactionIndex_defined
         ) const override;
@@ -101,7 +101,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale or if the reaction is not in the active set.
          */
-        double calculateMolarReactionFlow(
+        [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
             const std::vector<double>& Y_defined,
             const double T9,
@@ -114,9 +114,9 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        const reaction::LogicalReactionSet& getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
-        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
         /**
          * @brief Computes timescales for all active species in the network.
          *
@@ -168,7 +168,7 @@ namespace gridfire{
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
-        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
@@ -181,7 +181,7 @@ namespace gridfire{
         ///< Active species in the defined engine.
         std::vector<fourdst::atomic::Species> m_activeSpecies;
         ///< Active reactions in the defined engine.
-        reaction::LogicalReactionSet m_activeReactions;
+        reaction::ReactionSet m_activeReactions;
 
         ///< Maps indices of active species to indices in the full network.
         std::vector<size_t> m_speciesIndexMap;
@@ -198,7 +198,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If an active species is not found in the base engine's species list.
          */
-        std::vector<size_t> constructSpeciesIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap() const;
 
         /**
          * @brief Constructs the reaction index map.
@@ -210,7 +210,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If an active reaction is not found in the base engine's reaction list.
          */
-        std::vector<size_t> constructReactionIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructReactionIndexMap() const;
 
         /**
          * @brief Maps a vector of culled abundances to a vector of full abundances.
@@ -219,7 +219,7 @@ namespace gridfire{
          * @return A vector of abundances for the full network, with the abundances of the active
          *         species copied from the defined vector.
          */
-        std::vector<double> mapViewToFull(const std::vector<double>& defined) const;
+        [[nodiscard]] std::vector<double> mapViewToFull(const std::vector<double>& defined) const;
 
         /**
          * @brief Maps a vector of full abundances to a vector of culled abundances.
@@ -228,7 +228,7 @@ namespace gridfire{
          * @return A vector of abundances for the active species, with the abundances of the active
          *         species copied from the full vector.
          */
-        std::vector<double> mapFullToView(const std::vector<double>& full) const;
+        [[nodiscard]] std::vector<double> mapFullToView(const std::vector<double>& full) const;
 
         /**
          * @brief Maps a culled species index to a full species index.
@@ -238,7 +238,7 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the defined index is out of bounds for the species index map.
          */
-        size_t mapViewToFullSpeciesIndex(size_t definedSpeciesIndex) const;
+        [[nodiscard]] size_t mapViewToFullSpeciesIndex(size_t definedSpeciesIndex) const;
 
         /**
          * @brief Maps a culled reaction index to a full reaction index.
@@ -248,7 +248,7 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the defined index is out of bounds for the reaction index map.
          */
-        size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
+        [[nodiscard]] size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
 
         void validateNetworkState() const;
 
@@ -263,8 +263,8 @@ namespace gridfire{
             const std::string& fileName,
             const io::NetworkFileParser& parser
         );
-        std::string getNetworkFile() const { return m_fileName; }
-        const io::NetworkFileParser& getParser() const { return m_parser; }
+        [[nodiscard]] std::string getNetworkFile() const { return m_fileName; }
+        [[nodiscard]] const io::NetworkFileParser& getParser() const { return m_parser; }
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;

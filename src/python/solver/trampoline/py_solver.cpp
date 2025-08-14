@@ -2,7 +2,6 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <pybind11/functional.h> // Needed for std::function
 
 #include <vector>
 #include <tuple>

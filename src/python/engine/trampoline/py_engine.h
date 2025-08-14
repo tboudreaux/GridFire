@@ -27,15 +27,16 @@ public:
     void generateStoichiometryMatrix() override;
     int getStoichiometryMatrixEntry(int speciesIndex, int reactionIndex) const override;
     double calculateMolarReactionFlow(const gridfire::reaction::Reaction &reaction, const std::vector<double> &Y, double T9, double rho) const override;
-    const gridfire::reaction::LogicalReactionSet& getNetworkReactions() const override;
-    void setNetworkReactions(const gridfire::reaction::LogicalReactionSet& reactions) override;
+    const gridfire::reaction::ReactionSet& getNetworkReactions() const override;
+    void setNetworkReactions(const gridfire::reaction::ReactionSet& reactions) override;
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> getSpeciesTimescales(const std::vector<double> &Y, double T9, double rho) const override;
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> getSpeciesDestructionTimescales(const std::vector<double> &Y, double T9, double rho) const override;
     fourdst::composition::Composition update(const gridfire::NetIn &netIn) override;
     bool isStale(const gridfire::NetIn &netIn) override;
     void setScreeningModel(gridfire::screening::ScreeningType model) override;
     gridfire::screening::ScreeningType getScreeningModel() const override;
-    int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+
+    size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
     std::vector<double> mapNetInToMolarAbundanceVector(const gridfire::NetIn &netIn) const override;
     gridfire::PrimingReport primeEngine(const gridfire::NetIn &netIn) override;
     gridfire::BuildDepthType getDepth() const override {

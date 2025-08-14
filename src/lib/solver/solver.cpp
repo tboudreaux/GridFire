@@ -7,6 +7,10 @@
 #include "fourdst/composition/composition.h"
 #include "fourdst/config/config.h"
 
+#include "fourdst/plugin/plugin.h"
+
+#include "gridfire/interfaces/solver/solver_interfaces.h"
+
 #include "unsupported/Eigen/NonLinearOptimization"
 
 #include <boost/numeric/odeint.hpp>
@@ -50,7 +54,6 @@ namespace gridfire::solver {
                     Y(i) = comp.getMolarAbundance(species);
                 }
             }
-
             // TODO: a good starting point to make the temperature, density, and energy self consistent would be to turn this into an accumulator
             Y(numSpeciesInternal) = 0.0; // Specific energy rate, initialized to zero
         };
@@ -109,7 +112,7 @@ namespace gridfire::solver {
                 NetIn netInTemp = netIn;
                 netInTemp.temperature = e.temperature();
                 netInTemp.density = e.density();
-                netInTemp.composition = std::move(temp_comp);
+                netInTemp.composition = temp_comp;
 
                 Composition currentComposition = m_engine.update(netInTemp);
                 populateY(currentComposition);
@@ -219,6 +222,13 @@ namespace gridfire::solver {
         oss << std::scientific << std::setprecision(3);
         oss << "(Step: " << std::setw(10) << m_num_steps << ") t = " << t << " (dt = " << dt << ", eps_nuc: " << state(state.size() - 1) << " [erg])\n";
         std::cout << oss.str();
+
+        fourdst::plugin::manager::PluginManager &pluginManager = fourdst::plugin::manager::PluginManager::getInstance();
+
+        if (pluginManager.has("gridfire/solver")) {
+            auto* plugin = pluginManager.get<SolverPluginInterface>("gridfire/solver");
+            plugin -> log_time(t, dt);
+        }
 
         // Callback logic
         if (m_callback) {
