@@ -11,6 +11,7 @@
 #include "gridfire/io/network_file.h"
 
 #include "gridfire/solver/solver.h"
+#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
 
 #include "gridfire/network.h"
 
@@ -41,8 +42,6 @@ void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& ctx)
     const size_t He4Index = He4IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), He4IndexPtr) : -1;
 
     std::cout << "Time: " << ctx.t << ", H-1: " << ctx.state(H1Index) << ", He-4: " << ctx.state(He4Index) << "\n";
-
-    size_t i = 0;
 
 }
 
@@ -100,8 +99,8 @@ int main(int argc, char* argv[]){
 
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::Info);
-    LOG_DEBUG(logger, "Starting Adaptive Engine View Example...");
+    logger->set_log_level(quill::LogLevel::TraceL1);
+    LOG_INFO(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
     const std::vector<double> comp = {0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
@@ -129,14 +128,10 @@ int main(int argc, char* argv[]){
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
     ReaclibEngine.setUseReverseReactions(false);
-    // ReaclibEngine.setScreeningModel(screening::ScreeningType::WEAK);
-    //
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
     AdaptiveEngineView adaptiveView(partitioningView);
-    //
-    solver::DirectNetworkSolver solver(adaptiveView);
-    // consumptionFile << "t,X,a,b,c\n";
-    solver.set_callback(callback);
+
+    solver::CVODESolverStrategy solver(adaptiveView);
     NetOut netOut;
 
 

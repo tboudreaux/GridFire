@@ -22,11 +22,11 @@ std::string trim_whitespace(const std::string& str) {
     }
     const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
                              [](const unsigned char ch){ return !std::isspace(ch); });
-    return std::string(startIt, ritr.base());
+    return {startIt, ritr.base()};
 }
 
 namespace gridfire::reaclib {
-    static reaction::ReactionSet* s_all_reaclib_reactions_ptr = nullptr;
+    static std::unique_ptr<reaction::ReactionSet> s_all_reaclib_reactions_ptr = nullptr;
 
     #pragma pack(push, 1)
     struct ReactionRecord {
@@ -125,9 +125,7 @@ namespace gridfire::reaclib {
         const reaction::ReactionSet reaction_set(std::move(reaction_list));
 
         // The LogicalReactionSet groups reactions by their peName, which is what we want.
-        s_all_reaclib_reactions_ptr = new reaction::ReactionSet(
-            reaction::packReactionSet(reaction_set)
-        );
+        s_all_reaclib_reactions_ptr = std::make_unique<reaction::ReactionSet>(reaction::packReactionSet(reaction_set));
 
         s_initialized = true;
     }

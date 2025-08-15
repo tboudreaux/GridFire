@@ -1020,7 +1020,7 @@ namespace gridfire {
                     LOG_TRACE_L3(
                         m_logger,
                         "Reaction {} is internal to the group containing {} and contributes to internal flux by {}",
-                        reaction.id(),
+                        reaction->id(),
                         [&]() -> std::string {
                             std::stringstream ss;
                             int count = 0;
@@ -1040,7 +1040,7 @@ namespace gridfire {
                     LOG_TRACE_L3(
                         m_logger,
                         "Reaction {} is external to the group containing {} and contributes to external flux by {}",
-                        reaction.id(),
+                        reaction->id(),
                         [&]() -> std::string {
                             std::stringstream ss;
                             int count = 0;
@@ -1406,13 +1406,13 @@ namespace gridfire {
                         for (const auto& reactant : reaction->reactants()) {
                             if (std::ranges::find(pool, m_baseEngine.getSpeciesIndex(reactant)) == pool.end()) {
                                 has_external_reactant = true;
-                                LOG_TRACE_L3(m_logger, "Found external reactant {} in reaction {} for species {}.", reactant.name(), reaction.id(), ash.name());
+                                LOG_TRACE_L3(m_logger, "Found external reactant {} in reaction {} for species {}.", reactant.name(), reaction->id(), ash.name());
                                 break; // Found an external reactant, no need to check further
                             }
                         }
                         if (has_external_reactant) {
                             double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, Y, T9, rho));
-                            LOG_TRACE_L3(m_logger, "Found bridge reaction {} with flow {} for species {}.", reaction.id(), flow, ash.name());
+                            LOG_TRACE_L3(m_logger, "Found bridge reaction {} with flow {} for species {}.", reaction->id(), flow, ash.name());
                             bridge_reactions.emplace_back(reaction.get(), flow);
                         }
                     }

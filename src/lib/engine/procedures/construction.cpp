@@ -48,7 +48,7 @@ namespace gridfire {
         if (depth == static_cast<int>(NetworkBuildDepth::Full)) {
             LOG_INFO(logger, "Building full nuclear network with a total of {} reactions.", allReactions.size());
             const ReactionSet reactionSet(remainingReactions);
-            return reaction::packReactionSet(reactionSet);
+            return reactionSet;
         }
 
         std::unordered_set<Species> availableSpecies;
@@ -104,7 +104,7 @@ namespace gridfire {
 
         LOG_INFO(logger, "Network construction completed with {} reactions collected.", collectedReactions.size());
         const ReactionSet reactionSet(collectedReactions);
-        return reaction::packReactionSet(reactionSet);
+        return reactionSet;
     }
 
 }

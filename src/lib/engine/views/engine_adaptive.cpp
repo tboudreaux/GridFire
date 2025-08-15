@@ -385,7 +385,7 @@ namespace gridfire {
         for (const auto& reaction : fullReactionSet) {
             const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, out_Y_Full, T9, rho);
             reactionFlows.push_back({reaction.get(), flow});
-            LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction.id(), flow);
+            LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction->id(), flow);
         }
         return reactionFlows;
     }
@@ -423,7 +423,7 @@ namespace gridfire {
                         if (!reachable.contains(product)) {
                             reachable.insert(product);
                             new_species_found_in_pass = true;
-                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is reachable via reaction '{}'.", product.name(), reaction.id());
+                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is reachable via reaction '{}'.", product.name(), reaction->id());
                         }
                     }
                 }

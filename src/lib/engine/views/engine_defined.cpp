@@ -358,7 +358,7 @@ namespace gridfire {
         LOG_TRACE_L3(m_logger, "Active reactions: {}", [this]() -> std::string {
             std::string result;
             for (const auto& reaction : m_activeReactions) {
-                result += std::string(reaction.id()) + ", ";
+                result += std::string(reaction->id()) + ", ";
             }
             if (!result.empty()) {
                 result.pop_back(); // Remove last space

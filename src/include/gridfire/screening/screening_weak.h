@@ -187,13 +187,13 @@ namespace gridfire::screening {
                 reactants[1] == reactants[2]
                 );
             if (reactants.size() == 2) {
-                LOG_TRACE_L3(m_logger, "Calculating screening factor for reaction: {}", reaction.peName());
+                LOG_TRACE_L3(m_logger, "Calculating screening factor for reaction: {}", reaction->id());
                 const T Z1 = static_cast<T>(reactants[0].m_z);
                 const T Z2 = static_cast<T>(reactants[1].m_z);
                 H_12 = prefactor * Z1 * Z2;
             }
             else if (isTripleAlpha) {
-                LOG_TRACE_L3(m_logger, "Special case for triple alpha process in reaction: {}", reaction.peName());
+                LOG_TRACE_L3(m_logger, "Special case for triple alpha process in reaction: {}", reaction->id());
                 // Special case for triple alpha process
                 const T Z_alpha = static_cast<T>(2.0);
                 const T H_alpha_alpha = prefactor * Z_alpha * Z_alpha;

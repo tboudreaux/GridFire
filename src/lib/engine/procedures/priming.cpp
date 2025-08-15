@@ -116,7 +116,7 @@ namespace gridfire {
                 LOG_TRACE_L3(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
 
                 if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho)) {
-                    LOG_TRACE_L3(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->peName());
+                    LOG_TRACE_L3(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->id());
 
                     double totalReactantMass = 0.0;
                     for (const auto& reactant : dominantChannel->reactants()) {
@@ -209,7 +209,7 @@ namespace gridfire {
 
     double calculateCreationRate(
         const DynamicEngine& engine,
-        const fourdst::atomic::Species& species,
+        const Species& species,
         const std::vector<double>& Y,
         const double T9,
         const double rho
@@ -218,6 +218,8 @@ namespace gridfire {
         for (const auto& reaction: engine.getNetworkReactions()) {
             const int stoichiometry = reaction->stoichiometry(species);
             if (stoichiometry > 0) {
+                if (engine.calculateMolarReactionFlow(*reaction, Y, T9, rho) > 0.0) {
+                }
                 creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, Y, T9, rho);
             }
         }
