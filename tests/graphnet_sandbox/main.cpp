@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
 
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL1);
+    logger->set_log_level(quill::LogLevel::TraceL3);
     LOG_INFO(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -122,12 +122,15 @@ int main(int argc, char* argv[]){
     netIn.temperature = 1.5e7;
     netIn.density = 1.6e2;
     netIn.energy = 0;
-    netIn.tMax = 5e17;
+    netIn.tMax = 1e2;
     // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
+
     ReaclibEngine.setUseReverseReactions(false);
+    ReaclibEngine.setPrecomputation(false);
+
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
     AdaptiveEngineView adaptiveView(partitioningView);
 
@@ -144,5 +147,6 @@ int main(int argc, char* argv[]){
     double finalHydrogen = netOut.composition.getMassFraction("H-1");
     double fractionalConsumedHydrogen = (initialHydrogen - finalHydrogen) / initialHydrogen * 100.0;
     std::cout << "Fractional consumed hydrogen: " << fractionalConsumedHydrogen << "%" << std::endl;
+    std::cout << netOut << std::endl;
 
 }

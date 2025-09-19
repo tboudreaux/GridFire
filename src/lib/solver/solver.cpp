@@ -137,7 +137,7 @@ namespace gridfire::solver {
         std::vector<std::string> speciesNames;
         speciesNames.reserve(numSpecies);
         for (const auto& species : m_engine.getNetworkSpecies()) {
-            speciesNames.push_back(std::string(species.name()));
+            speciesNames.emplace_back(species.name());
         }
 
         Composition outputComposition(speciesNames);
@@ -145,9 +145,18 @@ namespace gridfire::solver {
         outputComposition.finalize(true);
 
         NetOut netOut;
-        netOut.composition = std::move(outputComposition);
+        netOut.composition = outputComposition;
         netOut.energy = accumulated_energy; // Specific energy rate
         netOut.num_steps = manager.m_num_steps;
+
+        auto [dEps_dT, dEps_dRho] = m_engine.calculateEpsDerivatives(
+            std::vector<double>(Y.begin(), Y.begin() + numSpecies), // TODO: This narrowing should probably be solved. Its possible unforeseen bugs will arise from this
+            T9,
+            netIn.density
+        );
+
+        netOut.dEps_dT = dEps_dT;
+        netOut.dEps_dRho = dEps_dRho;
 
         return netOut;
     }

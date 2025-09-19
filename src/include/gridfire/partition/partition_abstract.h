@@ -4,7 +4,6 @@
 #include <memory>
 
 namespace gridfire::partition {
-
     /**
      * @class PartitionFunction
      * @brief Abstract interface for evaluating nuclear partition functions.

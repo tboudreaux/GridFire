@@ -64,6 +64,16 @@ namespace gridfire {
 
     using SparsityPattern = std::vector<std::pair<size_t, size_t>>;
 
+    struct EnergyDerivatives {
+        double dEps_dT = 0.0;  ///< Partial derivative of energy generation rate with respect to temperature.
+        double dEps_dRho = 0.0;///< Partial derivative of energy generation rate with respect to density.
+
+        friend std::ostream& operator<<(std::ostream& os, const EnergyDerivatives& ed) {
+            os << "<dε/dT: " << ed.dEps_dT << ", dε/dρ: " << ed.dEps_dRho << ">";
+            return os;
+        }
+    };
+
     /**
      * @brief Abstract base class for a reaction network engine.
      *
@@ -208,6 +218,23 @@ namespace gridfire {
             const std::vector<double>& Y,
             double T9,
             double rho
+        ) const = 0;
+
+        /**
+         * @brief Calculate the derivatives of the energy generation rate with respect to T and rho.
+         *
+         * @param Y Vector of current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return EnergyDerivatives containing dEps/dT and dEps/dRho.
+         *
+         * This method computes the partial derivatives of the specific nuclear energy
+         * generation rate with respect to temperature and density for the current state.
+         */
+        [[nodiscard]] virtual EnergyDerivatives calculateEpsDerivatives(
+            const std::vector<double>& Y,
+            const double T9,
+            const double rho
         ) const = 0;
 
         /**

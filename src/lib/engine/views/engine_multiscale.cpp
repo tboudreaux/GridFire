@@ -1,5 +1,6 @@
 #include "gridfire/engine/views/engine_multiscale.h"
 #include "gridfire/exceptions/error_engine.h"
+#include "gridfire/engine/procedures/priming.h"
 
 #include <stdexcept>
 #include <vector>
@@ -11,6 +12,7 @@
 #include <ranges>
 #include <algorithm>
 
+#include "gridfire/utils/logging.h"
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
@@ -200,6 +202,14 @@ namespace gridfire {
         return deriv;
     }
 
+    EnergyDerivatives MultiscalePartitioningEngineView::calculateEpsDerivatives(
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
+        return m_baseEngine.calculateEpsDerivatives(Y, T9, rho);
+    }
+
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
         const std::vector<double> &Y_full,
         const double T9,
@@ -228,12 +238,12 @@ namespace gridfire {
         const int i_full,
         const int j_full
     ) const {
-        // // Check if the species we are differentiating with respect to is algebraic or dynamic. If it is algebraic we can reduce the work significantly...
-        // if (std::ranges::contains(m_algebraic_species_indices, j_full)) {
-        //     const auto& species = m_baseEngine.getNetworkSpecies()[j_full];
-        //     // If j is algebraic, we can return 0.0 since the Jacobian entry for algebraic species is always zero.
-        //     return 0.0;
-        // }
+        // Check if the species we are differentiating with respect to is algebraic or dynamic. If it is algebraic we can reduce the work significantly...
+        if (std::ranges::contains(m_algebraic_species_indices, j_full)) {
+            // const auto& species = m_baseEngine.getNetworkSpecies()[j_full];
+            // If j is algebraic, we can return 0.0 since the Jacobian entry for algebraic species is always zero.
+            return 0.0;
+        }
         // Otherwise we need to query the full jacobian
         return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
     }
@@ -481,9 +491,42 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Identifying potential seed species for candidate pools...");
         const std::vector<QSEGroup> candidate_groups = constructCandidateGroups(connected_pools, Y, T9, rho);
         LOG_TRACE_L1(m_logger, "Found {} candidate QSE groups for further analysis", candidate_groups.size());
+        LOG_TRACE_L2(
+            m_logger,
+            "{}",
+             [&]() -> std::string {
+                 std::stringstream ss;
+                 int j = 0;
+                 for (const auto& group : candidate_groups) {
+                     ss << "CandidateQSEGroup(Algebraic: {";
+                     int i = 0;
+                     for (const auto& index : group.algebraic_indices) {
+                         ss << m_baseEngine.getNetworkSpecies()[index].name();
+                         if (i < group.algebraic_indices.size() - 1) {
+                             ss << ", ";
+                         }
+                     }
+                     ss << "}, Seed: {";
+                     i = 0;
+                     for (const auto& index : group.seed_indices) {
+                         ss << m_baseEngine.getNetworkSpecies()[index].name();
+                         if (i < group.seed_indices.size() - 1) {
+                             ss << ", ";
+                         }
+                         i++;
+                     }
+                     ss << "})";
+                     if (j < candidate_groups.size() - 1) {
+                         ss << ", ";
+                     }
+                     j++;
+                 }
+                 return ss.str();
+             }()
+        );
 
         LOG_TRACE_L1(m_logger, "Validating candidate groups with flux analysis...");
-        const std::vector<QSEGroup> validated_groups = validateGroupsWithFluxAnalysis(candidate_groups, Y, T9, rho);
+        const auto [validated_groups, invalidate_groups] = validateGroupsWithFluxAnalysis(candidate_groups, Y, T9, rho);
         LOG_TRACE_L1(
             m_logger,
             "Validated {} group(s) QSE groups. {}",
@@ -506,6 +549,13 @@ namespace gridfire {
                 return ss.str();
             }()
         );
+
+        // Push the invalidated groups' species into the dynamic set
+        for (const auto& group : invalidate_groups) {
+            for (const auto& index : group.algebraic_indices) {
+                m_dynamic_species.push_back(m_baseEngine.getNetworkSpecies()[index]);
+            }
+        }
 
         m_qse_groups = validated_groups;
         LOG_TRACE_L1(m_logger, "Identified {} QSE groups.", m_qse_groups.size());
@@ -541,6 +591,10 @@ namespace gridfire {
             m_qse_groups.size(),
             m_qse_groups.size() == 1 ? "" : "s"
         );
+
+        // throw std::runtime_error(
+        //     "Partitioning complete. Throwing an error to end the program during debugging. This error should not be caught by the caller. "
+        // );
 
     }
 
@@ -846,6 +900,8 @@ namespace gridfire {
         return m_baseEngine.getSpeciesIndex(species);
     }
 
+
+
     std::vector<std::vector<size_t>> MultiscalePartitioningEngineView::partitionByTimescale(
         const std::vector<double>& Y_full,
         const double T9,
@@ -853,19 +909,31 @@ namespace gridfire {
     ) const {
         LOG_TRACE_L1(m_logger, "Partitioning by timescale...");
         const auto result= m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
+        const auto netTimescale = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        std::cout << gridfire::utils::formatNuclearTimescaleLogString(m_baseEngine, Y_full, T9, rho) << std::endl;
         if (!result) {
-            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            LOG_ERROR(m_logger, "Failed to get species destruction timescales due to stale engine state");
             m_logger->flush_log();
-            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+            throw exceptions::StaleEngineError("Failed to get species destruction timescales due to stale engine state");
+        }
+        if (!netTimescale) {
+            LOG_ERROR(m_logger, "Failed to get net species timescales due to stale engine state");
+            m_logger->flush_log();
+            throw exceptions::StaleEngineError("Failed to get net species timescales due to stale engine state");
         }
         const std::unordered_map<Species, double>& all_timescales = result.value();
+        const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
         std::vector<std::pair<double, size_t>> sorted_timescales;
         for (size_t i = 0; i < all_species.size(); ++i) {
             double timescale = all_timescales.at(all_species[i]);
+            double net_timescale = net_timescales.at(all_species[i]);
             if (std::isfinite(timescale) && timescale > 0) {
+                LOG_TRACE_L3(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", all_species[i].name(), timescale, net_timescale);
                 sorted_timescales.emplace_back(timescale, i);
+            } else {
+                LOG_TRACE_L3(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", all_species[i].name(), timescale, net_timescale);
             }
         }
 
@@ -971,98 +1039,120 @@ namespace gridfire {
 
     }
 
-    std::vector<MultiscalePartitioningEngineView::QSEGroup>
+    std::pair<std::vector<MultiscalePartitioningEngineView::QSEGroup>, std::vector<MultiscalePartitioningEngineView::
+    QSEGroup>>
     MultiscalePartitioningEngineView::validateGroupsWithFluxAnalysis(
         const std::vector<QSEGroup> &candidate_groups,
         const std::vector<double> &Y,
         const double T9, const double rho
     ) const {
-        constexpr double FLUX_RATIO_THRESHOLD = 100;
-        std::vector<QSEGroup> validated_groups = candidate_groups;
-        for (auto& group : validated_groups) {
-            double internal_flux = 0.0;
-            double external_flux = 0.0;
-
-            const std::unordered_set<size_t> group_members(
-                group.species_indices.begin(),
-                group.species_indices.end()
+        constexpr double FLUX_RATIO_THRESHOLD = 5;
+        std::vector<QSEGroup> validated_groups;
+        std::vector<QSEGroup> invalidated_groups;
+        validated_groups.reserve(candidate_groups.size());
+        for (auto& group : candidate_groups) {
+            const std::unordered_set<size_t> algebraic_group_members(
+                group.algebraic_indices.begin(),
+                group.algebraic_indices.end()
             );
+
+            const std::unordered_set<size_t> seed_group_members(
+                group.seed_indices.begin(),
+                group.seed_indices.end()
+            );
+
+            double coupling_flux = 0.0;
+            double leakage_flux = 0.0;
 
             for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
                 const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, Y, T9, rho));
                 if (flow == 0.0) {
                     continue; // Skip reactions with zero flow
                 }
-                bool has_internal_reactant = false;
-                bool has_external_reactant = false;
+                bool has_internal_algebraic_reactant = false;
 
                 for (const auto& reactant : reaction->reactants()) {
-                    if (group_members.contains(m_baseEngine.getSpeciesIndex(reactant))) {
-                        has_internal_reactant = true;
-                    } else {
-                        has_external_reactant = true;
+                    if (algebraic_group_members.contains(m_baseEngine.getSpeciesIndex(reactant))) {
+                        has_internal_algebraic_reactant = true;
                     }
                 }
 
-                bool has_internal_product = false;
-                bool has_external_product = false;
+                bool has_internal_algebraic_product = false;
 
                 for (const auto& product : reaction->products()) {
-                    if (group_members.contains(m_baseEngine.getSpeciesIndex(product))) {
-                        has_internal_product = true;
-                    } else {
-                        has_external_product = true;
+                    if (algebraic_group_members.contains(m_baseEngine.getSpeciesIndex(product))) {
+                        has_internal_algebraic_product = true;
                     }
                 }
 
-                // Classify the reaction based on its participants
-                if ((has_internal_reactant && has_internal_product) && !(has_external_reactant || has_external_product)) {
-                    LOG_TRACE_L3(
-                        m_logger,
-                        "Reaction {} is internal to the group containing {} and contributes to internal flux by {}",
-                        reaction->id(),
-                        [&]() -> std::string {
-                            std::stringstream ss;
-                            int count = 0;
-                            for (const auto& idx : group.algebraic_indices) {
-                                ss << m_baseEngine.getNetworkSpecies()[idx].name();
-                                if (count < group.species_indices.size() - 1) {
-                                    ss << ", ";
-                                }
-                                count++;
-                            }
-                            return ss.str();
-                        }(),
-                        flow
-                    );
-                    internal_flux += flow; // Internal flux within the group
-                } else if ((has_internal_reactant || has_internal_product) && (has_external_reactant || has_external_product)) {
-                    LOG_TRACE_L3(
-                        m_logger,
-                        "Reaction {} is external to the group containing {} and contributes to external flux by {}",
-                        reaction->id(),
-                        [&]() -> std::string {
-                            std::stringstream ss;
-                            int count = 0;
-                            for (const auto& idx : group.algebraic_indices) {
-                                ss << m_baseEngine.getNetworkSpecies()[idx].name();
-                                if (count < group.species_indices.size() - 1) {
-                                    ss << ", ";
-                                }
-                                count++;
-                            }
-                            return ss.str();
-                        }(),
-                        flow
-                    );
-                    external_flux += flow; // External flux to/from the group
+                if (!has_internal_algebraic_product && !has_internal_algebraic_reactant) {
+                    LOG_TRACE_L3(m_logger, "{}: Skipping reaction {} as it has no internal algebraic species in reactants or products.", group.toString(m_baseEngine), reaction->id());
+                    continue;
                 }
-                // otherwise the reaction is fully decoupled from the QSE group and can be ignored.
+
+                double algebraic_participants = 0;
+                double seed_participants = 0;
+                double external_participants = 0;
+
+                std::unordered_set<Species> participants;
+                for(const auto& p : reaction->reactants()) participants.insert(p);
+                for(const auto& p : reaction->products()) participants.insert(p);
+
+                for (const auto& species : participants) {
+                    const size_t species_idx = m_baseEngine.getSpeciesIndex(species);
+                    if (algebraic_group_members.contains(species_idx)) {
+                        LOG_TRACE_L3(m_logger, "{}: Species {} is an algebraic participant in reaction {}.", group.toString(m_baseEngine), species.name(), reaction->id());
+                        algebraic_participants++;
+                    } else if (seed_group_members.contains(species_idx)) {
+                        LOG_TRACE_L3(m_logger, "{}: Species {} is a seed participant in reaction {}.", group.toString(m_baseEngine), species.name(), reaction->id());
+                        seed_participants++;
+                    } else {
+                        LOG_TRACE_L3(m_logger, "{}: Species {} is an external participant in reaction {}.", group.toString(m_baseEngine), species.name(), reaction->id());
+                        external_participants++;
+                    }
+                }
+
+                const double total_participants = algebraic_participants + seed_participants + external_participants;
+
+                if (total_participants == 0) {
+                    LOG_CRITICAL(m_logger, "Some catastrophic error has occurred. Reaction {} has no participants.", reaction->id());
+                    throw std::runtime_error("Some catastrophic error has occurred. Reaction " + std::string(reaction->id()) + " has no participants.");
+                }
+
+                const double leakage_fraction = external_participants / total_participants;
+                const double coupling_fraction = (algebraic_participants + seed_participants) / total_participants;
+
+                leakage_flux += flow * leakage_fraction;
+                coupling_flux += flow * coupling_fraction;
             }
-            if (internal_flux > FLUX_RATIO_THRESHOLD * external_flux) {
+
+            // if (leakage_flux < 1e-99) {
+            //     LOG_TRACE_L1(
+            //         m_logger,
+            //         "Group containing {} is in equilibrium due to vanishing leakage: leakage flux = {}, coupling flux = {}, ratio = {}",
+            //         [&]() -> std::string {
+            //             std::stringstream ss;
+            //             int count = 0;
+            //             for (const auto& idx : group.algebraic_indices) {
+            //                 ss << m_baseEngine.getNetworkSpecies()[idx].name();
+            //                 if (count < group.species_indices.size() - 1) {
+            //                     ss << ", ";
+            //                 }
+            //                 count++;
+            //             }
+            //             return ss.str();
+            //         }(),
+            //         leakage_flux,
+            //         coupling_flux,
+            //         coupling_flux / leakage_flux
+            //     );
+            //     validated_groups.emplace_back(group);
+            //     validated_groups.back().is_in_equilibrium = true;
+            // } else if ((coupling_flux / leakage_flux ) > FLUX_RATIO_THRESHOLD) {
+            if ((coupling_flux / leakage_flux ) > FLUX_RATIO_THRESHOLD) {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is in equilibrium: internal flux = {}, external flux = {}, ratio = {}",
+                    "Group containing {} is in equilibrium due to high coupling flux threshold: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1075,15 +1165,17 @@ namespace gridfire {
                         }
                         return ss.str();
                     }(),
-                    internal_flux,
-                    external_flux,
-                    internal_flux / external_flux
+                    leakage_flux,
+                    coupling_flux,
+                    coupling_flux / leakage_flux,
+                    FLUX_RATIO_THRESHOLD
                 );
-                group.is_in_equilibrium = true; // This group is in equilibrium if internal flux is significantly larger than external flux.
+                validated_groups.emplace_back(group);
+                validated_groups.back().is_in_equilibrium = true;
             } else {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is NOT in equilibrium: internal flux = {}, external flux = {}, ratio = {}",
+                    "Group containing {} is NOT in equilibrium: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1096,14 +1188,16 @@ namespace gridfire {
                         }
                         return ss.str();
                     }(),
-                    internal_flux,
-                    external_flux,
-                    internal_flux / external_flux
+                    leakage_flux,
+                    coupling_flux,
+                    coupling_flux / leakage_flux,
+                    FLUX_RATIO_THRESHOLD
                 );
-                group.is_in_equilibrium = false;
+                invalidated_groups.emplace_back(group);
+                invalidated_groups.back().is_in_equilibrium = false;
             }
         }
-        return validated_groups;
+        return {validated_groups, invalidated_groups};
     }
 
     std::vector<double> MultiscalePartitioningEngineView::solveQSEAbundances(
@@ -1543,10 +1637,11 @@ namespace gridfire {
         hash_combine(seed, bin(m_T9, m_cacheConfig.T9_tol));
         hash_combine(seed, bin(m_rho, m_cacheConfig.rho_tol));
 
+        double negThresh = 1e-10; // Threshold for considering a value as negative.
         for (double Yi : m_Y) {
-            if (Yi < 0.0 && std::abs(Yi) < 1e-20) {
+            if (Yi < 0.0 && std::abs(Yi) < negThresh) {
                 Yi = 0.0; // Avoid negative abundances
-            } else if (Yi < 0.0 && std::abs(Yi) >= 1e-20) {
+            } else if (Yi < 0.0 && std::abs(Yi) >= negThresh) {
                 throw std::invalid_argument("Yi should be positive for valid hashing (expected Yi > 0, received " + std::to_string(Yi) + ")");
             }
             hash_combine(seed, bin(Yi, m_cacheConfig.Yi_tol));
@@ -1578,6 +1673,55 @@ namespace gridfire {
 
     bool MultiscalePartitioningEngineView::QSEGroup::operator!=(const QSEGroup &other) const {
         return !(*this == other);
+    }
+
+    std::string MultiscalePartitioningEngineView::QSEGroup::toString() const {
+        std::stringstream ss;
+        ss << "QSEGroup(Algebraic: [";
+        size_t count = 0;
+        for (const auto& idx : algebraic_indices) {
+            ss << idx;
+            if (count < algebraic_indices.size() - 1) {
+                ss << ", ";
+            }
+            count++;
+        }
+        ss << "], Seed: [";
+        count = 0;
+        for (const auto& idx : seed_indices) {
+            ss << idx;
+            if (count < seed_indices.size() - 1) {
+                ss << ", ";
+            }
+            count++;
+        }
+        ss << "], Mean Timescale: " << mean_timescale << ", Is In Equilibrium: " << (is_in_equilibrium ? "True" : "False") << ")";
+        return ss.str();
+
+    }
+
+    std::string MultiscalePartitioningEngineView::QSEGroup::toString(DynamicEngine &engine) const {
+        std::stringstream ss;
+        ss << "QSEGroup(Algebraic: [";
+        size_t count = 0;
+        for (const auto& idx : algebraic_indices) {
+            ss << engine.getNetworkSpecies()[idx].name();
+            if (count < algebraic_indices.size() - 1) {
+                ss << ", ";
+            }
+            count++;
+        }
+        ss << "], Seed: [";
+        count = 0;
+        for (const auto& idx : seed_indices) {
+            ss << engine.getNetworkSpecies()[idx].name();
+            if (count < seed_indices.size() - 1) {
+                ss << ", ";
+            }
+            count++;
+        }
+        ss << "], Mean Timescale: " << mean_timescale << ", Is In Equilibrium: " << (is_in_equilibrium ? "True" : "False") << ")";
+        return ss.str();
     }
 
     void MultiscalePartitioningEngineView::CacheStats::hit(const operators op) {

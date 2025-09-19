@@ -236,6 +236,12 @@ namespace gridfire {
             double rho
         ) const override;
 
+        [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            const std::vector<double> &Y,
+            const double T9,
+            const double rho
+        ) const override;
+
         /**
          * @brief Generates the Jacobian matrix for the current state.
          *
@@ -754,6 +760,10 @@ namespace gridfire {
              * @return True if the sets of species indices are not identical.
              */
             bool operator!=(const QSEGroup& other) const;
+
+            std::string toString() const;
+
+            std::string toString(DynamicEngine &engine) const;
         };
 
         /**
@@ -1056,9 +1066,11 @@ namespace gridfire {
          *      flux exceeds a configurable threshold, the group is considered valid and is added
          *      to the returned vector.
          */
-        std::vector<QSEGroup> validateGroupsWithFluxAnalysis(
+        std::pair<std::vector<MultiscalePartitioningEngineView::QSEGroup>, std::vector<MultiscalePartitioningEngineView
+        ::
+        QSEGroup>> validateGroupsWithFluxAnalysis(
             const std::vector<QSEGroup> &candidate_groups,
-            const std::vector<double>& Y,
+            const std::vector<double> &Y,
             double T9,
             double rho
         ) const;

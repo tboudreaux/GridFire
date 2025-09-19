@@ -98,16 +98,18 @@ namespace gridfire::solver {
             DynamicEngine* engine;
             double T9;
             double rho;
+            double energy;
             const std::vector<fourdst::atomic::Species>* networkSpecies;
             std::unique_ptr<exceptions::StaleEngineTrigger> captured_exception = nullptr;
         };
 
     private:
         Config& m_config = Config::getInstance();
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         static int cvode_rhs_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, void *user_data);
         static int cvode_jac_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, SUNMatrix J, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
-        int calculate_rhs(sunrealtype t, N_Vector y, N_Vector ydot, const CVODEUserData* data) const;
+        void calculate_rhs(sunrealtype t, N_Vector y, N_Vector ydot, const CVODEUserData* data) const;
 
         void initialize_cvode_integration_resources(
             uint64_t N,
@@ -120,10 +122,13 @@ namespace gridfire::solver {
         );
 
         void cleanup_cvode_resources(bool memFree);
+
+        void log_step_diagnostics(const CVODEUserData& user_data) const;
     private:
         SUNContext m_sun_ctx = nullptr;
         void* m_cvode_mem = nullptr;
         N_Vector m_Y = nullptr;
+        N_Vector m_YErr = nullptr;
         SUNMatrix m_J = nullptr;
         SUNLinearSolver m_LS = nullptr;
 

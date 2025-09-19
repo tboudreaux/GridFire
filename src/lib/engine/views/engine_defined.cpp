@@ -48,6 +48,17 @@ namespace gridfire {
         return definedResults;
     }
 
+    EnergyDerivatives DefinedEngineView::calculateEpsDerivatives(
+        const std::vector<double> &Y_dynamic,
+        const double T9,
+        const double rho
+    ) const {
+        validateNetworkState();
+
+        const auto Y_full = mapViewToFull(Y_dynamic);
+        return m_baseEngine.calculateEpsDerivatives(Y_full, T9, rho);
+    }
+
     void DefinedEngineView::generateJacobianMatrix(
         const std::vector<double> &Y_dynamic,
         const double T9,

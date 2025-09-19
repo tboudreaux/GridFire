@@ -9,6 +9,7 @@ gridfire_sources = files(
     'lib/engine/views/engine_priming.cpp',
     'lib/engine/procedures/priming.cpp',
     'lib/engine/procedures/construction.cpp',
+    'lib/engine/diagnostics/dynamic_engine_diagnostics.cpp',
     'lib/reaction/reaction.cpp',
     'lib/reaction/reaclib.cpp',
     'lib/io/network_file.cpp',
@@ -53,4 +54,9 @@ gridfire_dep = declare_dependency(
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
-subdir('python')
+if get_option('build-python')
+    message('Configuring Python bindings...')
+    subdir('src-pybind')
+else
+    message('Skipping Python bindings...')
+endif

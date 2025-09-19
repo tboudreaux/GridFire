@@ -79,9 +79,19 @@ subdir('build-config')
 
 subdir('src')
 
-subdir('build-python')
+if get_option('build-python')
+    message('Configuring Python bindings...')
+    subdir('src-pybind')
+else
+    message('Skipping Python bindings...')
+endif
 
-subdir('tests')
+if get_option('build-tests')
+    message('Setting up tests for GridFire...')
+    subdir('tests')
+else
+    message('Skipping tests for GridFire...')
+endif
 
 
 if get_option('pkg-config')

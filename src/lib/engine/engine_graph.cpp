@@ -78,6 +78,49 @@ namespace gridfire {
         }
     }
 
+    EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
+        const size_t numSpecies = m_networkSpecies.size();
+        const size_t numADInputs = numSpecies + 2; // +2 for T9 and rho
+
+        if (Y.size() != numSpecies) {
+            LOG_ERROR(m_logger, "Input abundance vector size ({}) does not match number of species in the network ({}).",
+                      Y.size(), numSpecies);
+            throw std::invalid_argument("Input abundance vector size does not match number of species in the network.");
+        }
+
+        std::vector<double> x(numADInputs);
+        for (size_t i = 0; i < numSpecies; ++i) {
+            x[i] = Y[i];
+        }
+
+        x[numSpecies] = T9;
+        x[numSpecies + 1] = rho;
+
+        // Use reverse mode to get the gradient. W selects which dependent variable we care about, the Eps AD tape only has eps as a dependent variable so we just select set the 0th element to 1.
+        std::vector<double> w(1);
+        w[0] = 1.0; // We want the derivative of the energy generation rate
+
+        // Sweep the tape forward to record the function value at x
+        m_epsADFun.Forward(0, x);
+
+        // Extract the gradient at the previously evaluated point x using reverse mode
+        const std::vector<double> eps_derivatives = m_epsADFun.Reverse(1, w);
+
+        const double dEps_dT9 = eps_derivatives[numSpecies];
+        const double dEps_dRho = eps_derivatives[numSpecies + 1];
+
+        // Chain rule to scale from deps/dT9 to deps/dT
+        // dT9/dT = 1e-9
+        const double dEps_dT = dEps_dT9 * 1e-9;
+
+
+        return {dEps_dT, dEps_dRho};
+    }
+
     void GraphEngine::syncInternalMaps() {
         LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
         collectNetworkSpecies();
@@ -86,7 +129,8 @@ namespace gridfire {
         collectAtomicReverseRateAtomicBases();
         generateStoichiometryMatrix();
         reserveJacobianMatrix();
-        recordADTape();
+        recordADTape(); // Record the AD tape for the RHS function
+        recordEpsADTape(); // Record the AD tape for the energy generation rate function
 
         const size_t n = m_rhsADFun.Domain();
         const size_t m = m_rhsADFun.Range();
@@ -161,13 +205,13 @@ namespace gridfire {
     // --- Basic Accessors and Queries ---
     const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
         // Returns a constant reference to the vector of unique species in the network.
-        LOG_TRACE_L3(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
+        // LOG_TRACE_L3(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
         return m_networkSpecies;
     }
 
     const reaction::ReactionSet& GraphEngine::getNetworkReactions() const {
         // Returns a constant reference to the set of reactions in the network.
-        LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
+        // LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
         return m_reactions;
     }
 
@@ -929,6 +973,43 @@ namespace gridfire {
 
         LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS calculation. Number of independent variables: {}.",
                  adInput.size());
+    }
+
+    void GraphEngine::recordEpsADTape() const {
+        LOG_TRACE_L1(m_logger, "Recording AD tape for the EPS calculation...");
+
+        const size_t numSpecies = m_networkSpecies.size();
+        if (numSpecies == 0) {
+            LOG_ERROR(m_logger, "Cannot record EPS tape: No species in the network.");
+            throw std::runtime_error("Cannot record EPS AD tape: No species in the network.");
+        }
+
+        const size_t numADInputs = numSpecies + 2; // Y + T9 + rho
+
+        std::vector<CppAD::AD<double>> adInput(numADInputs, 0.0);
+
+        for (size_t i = 0; i < numSpecies; ++i) {
+            adInput[i] = static_cast<CppAD::AD<double>>(1.0 / static_cast<double>(numSpecies)); // Uniform distribution
+        }
+        adInput[numSpecies]     = 1.0; // Dummy T9
+        adInput[numSpecies + 1] = 1.0; // Dummy rho
+
+        CppAD::Independent(adInput);
+
+        const std::vector<CppAD::AD<double>> adY(adInput.begin(), adInput.begin() + numSpecies);
+        const CppAD::AD<double> adT9  = adInput[numSpecies];
+        const CppAD::AD<double> adRho = adInput[numSpecies + 1];
+
+        StepDerivatives<CppAD::AD<double>> derivatives = calculateAllDerivatives<CppAD::AD<double>>(adY, adT9, adRho);
+
+        std::vector<CppAD::AD<double>> adOutput(1);
+        adOutput[0] = derivatives.nuclearEnergyGenerationRate;
+        m_epsADFun.Dependent(adInput, adOutput);
+        // m_epsADFun.optimize();
+
+        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the EPS calculation. Number of independent variables: {}.", adInput.size());
+
+
     }
 
     void GraphEngine::collectAtomicReverseRateAtomicBases() {

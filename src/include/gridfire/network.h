@@ -57,16 +57,18 @@ namespace gridfire {
         double energy; ///< Energy in ergs
         double culling = 0.0; ///< Culling threshold for reactions (default is 0.0, meaning no culling)
 
-        std::vector<double> MolarAbundance() const;
+        [[nodiscard]] std::vector<double> MolarAbundance() const;
     };
 
     struct NetOut {
         fourdst::composition::Composition composition; ///< Composition of the network after evaluation
         int num_steps; ///< Number of steps taken in the evaluation
         double energy; ///< Energy in ergs after evaluation
+        double dEps_dT; ///< Partial derivative of energy generation rate with respect to temperature
+        double dEps_dRho; ///< Partial derivative of energy generation rate with respect to density
 
         friend std::ostream& operator<<(std::ostream& os, const NetOut& netOut) {
-            os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", energy=" << netOut.energy << ")";
+            os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", ε=" << netOut.energy << ", dε/dT=" << netOut.dEps_dT << ", dε/dρ=" << netOut.dEps_dRho << ")";
             return os;
         }
     };

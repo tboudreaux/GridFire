@@ -42,6 +42,13 @@ namespace gridfire{
             const double T9,
             const double rho
         ) const override;
+
+        [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            const std::vector<double> &Y,
+            const double T9,
+            const double rho
+        ) const override;
+
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *

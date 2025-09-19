@@ -68,6 +68,7 @@ namespace gridfire {
     static constexpr double MIN_JACOBIAN_THRESHOLD = 1e-24;
 
 
+
     /**
      * @class GraphEngine
      * @brief A reaction network engine that uses a graph-based representation.
@@ -138,6 +139,12 @@ namespace gridfire {
          * @see StepDerivatives
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+            const std::vector<double>& Y,
+            const double T9,
+            const double rho
+        ) const override;
+
+        [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
             const std::vector<double>& Y,
             const double T9,
             const double rho
@@ -581,6 +588,7 @@ namespace gridfire {
 
         mutable boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
+        mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
         CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
 
@@ -651,6 +659,8 @@ namespace gridfire {
          * @throws std::runtime_error If there are no species in the network.
          */
         void recordADTape() const;
+
+        void recordEpsADTape() const;
 
         void collectAtomicReverseRateAtomicBases();
 

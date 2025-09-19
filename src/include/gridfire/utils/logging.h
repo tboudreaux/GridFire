@@ -4,6 +4,12 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+#include <numeric>
+#include <iostream>
+
 
 namespace gridfire::utils {
     /**
@@ -62,4 +68,6 @@ namespace gridfire::utils {
         const double T9,
         const double rho
     );
+
+
 }
