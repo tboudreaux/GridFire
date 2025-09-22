@@ -122,7 +122,7 @@ int main(int argc, char* argv[]){
     netIn.temperature = 1.5e7;
     netIn.density = 1.6e2;
     netIn.energy = 0;
-    netIn.tMax = 1e2;
+    netIn.tMax = 3e13;
     // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 

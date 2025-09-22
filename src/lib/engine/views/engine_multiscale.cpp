@@ -244,6 +244,9 @@ namespace gridfire {
             // If j is algebraic, we can return 0.0 since the Jacobian entry for algebraic species is always zero.
             return 0.0;
         }
+        if (std::ranges::contains(m_algebraic_species_indices, i_full)) {
+            return 0.0;
+        }
         // Otherwise we need to query the full jacobian
         return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
     }

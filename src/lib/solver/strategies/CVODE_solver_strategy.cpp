@@ -160,6 +160,18 @@ namespace gridfire::solver {
                     << " | NonlinIters: " << std::setw(2) << nliters
                     << " | ConvFails: " << std::setw(2) << nlcfails
                     << std::endl;
+                if (n_steps % 300 == 0) {
+                    std::cout << "Manually triggering engine update at step " << n_steps << "..." << std::endl;
+                    exceptions::StaleEngineTrigger::state staleState {
+                        T9,
+                        netIn.density,
+                        std::vector<double>(y_data, y_data + numSpecies),
+                        current_time,
+                        static_cast<int>(n_steps),
+                        current_energy
+                    };
+                    throw exceptions::StaleEngineTrigger(staleState);
+                }
 
                 // if (n_steps % 50 == 0) {
                 //     std::cout << "Logging step diagnostics at step " << n_steps << "..." << std::endl;
@@ -390,6 +402,26 @@ namespace gridfire::solver {
         check_cvode_flag(CVodeInit(m_cvode_mem, cvode_rhs_wrapper, current_time, m_Y), "CVodeInit");
         check_cvode_flag(CVodeSStolerances(m_cvode_mem, relTol, absTol), "CVodeSStolerances");
 
+        // Constraints
+        // We constrain the solution vector using CVODE's built in constraint flags as outlines on page 53 of the CVODE manual
+        // https://computing.llnl.gov/sites/default/files/cv_guide-5.7.0.pdf
+        // For completeness and redundancy against future dead links the flags have been copied here
+        // 0.0: No constraint on the corresponding component of y.
+        // 1.0: The corresponding component of y is constrained to be >= 0.
+        // -1.0: The corresponding component of y is constrained to be <= 0.
+        // 2.0: The corresponding component of y is constrained to be > 0.
+        // -2.0: The corresponding component of y is constrained to be < 0
+        // Here we use 1.0 for all species to ensure they remain non-negative.
+
+        m_constraints = N_VClone(m_Y);
+        if (m_constraints == nullptr) {
+            LOG_ERROR(m_logger, "Failed to create constraints vector for CVODE");
+            throw std::runtime_error("Failed to create constraints vector for CVODE");
+        }
+        N_VConst(1.0, m_constraints); // Set all constraints to >= 0 (note this is where the flag values are set)
+
+        check_cvode_flag(CVodeSetConstraints(m_cvode_mem, m_constraints), "CVodeSetConstraints");
+
         check_cvode_flag(CVodeSetMaxStep(m_cvode_mem, 1.0e20), "CVodeSetMaxStep");
 
         m_J = SUNDenseMatrix(static_cast<sunindextype>(N), static_cast<sunindextype>(N), m_sun_ctx);
@@ -406,11 +438,13 @@ namespace gridfire::solver {
         if (m_J) SUNMatDestroy(m_J);
         if (m_Y) N_VDestroy(m_Y);
         if (m_YErr) N_VDestroy(m_YErr);
+        if (m_constraints) N_VDestroy(m_constraints);
 
         m_LS = nullptr;
         m_J = nullptr;
         m_Y = nullptr;
         m_YErr = nullptr;
+        m_constraints = nullptr;
 
         if (memFree) {
             if (m_cvode_mem) CVodeFree(&m_cvode_mem);

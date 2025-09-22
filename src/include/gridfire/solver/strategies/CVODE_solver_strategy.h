@@ -137,5 +137,7 @@ namespace gridfire::solver {
         int m_num_steps = 0;
 
         bool m_stdout_logging_enabled = true;
+
+        N_Vector m_constraints = nullptr;
     };
 }
