@@ -176,20 +176,6 @@ namespace gridfire {
         }
 
         // Check the cache to see if the network needs to be repartitioned. Note that the QSECacheKey manages binning of T9, rho, and Y_full to ensure that small changes (which would likely not result in a repartitioning) do not trigger a cache miss.
-        const QSECacheKey key(T9, rho, Y_full);
-        if (! m_qse_abundance_cache.contains(key)) {
-            m_cacheStats.miss(CacheStats::operators::CalculateRHSAndEnergy);
-            LOG_ERROR(
-                m_logger,
-                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). calculateRHSAndEnergy does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
-                T9,
-                rho,
-                m_cacheStats.misses(),
-                m_cacheStats.hits()
-            );
-            return std::unexpected{expectations::StaleEngineError(expectations::StaleEngineErrorTypes::SYSTEM_RESIZED)};
-        }
-        m_cacheStats.hit(CacheStats::operators::CalculateRHSAndEnergy);
         const auto result = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
@@ -215,21 +201,6 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const QSECacheKey key(T9, rho, Y_full);
-        if (!m_qse_abundance_cache.contains(key)) {
-            m_cacheStats.miss(CacheStats::operators::GenerateJacobianMatrix);
-            LOG_ERROR(
-                m_logger,
-                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). generateJacobianMatrix does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
-                T9,
-                rho,
-                m_cacheStats.misses(),
-                m_cacheStats.hits()
-            );
-            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
-        }
-        m_cacheStats.hit(CacheStats::operators::GenerateJacobianMatrix);
-
         // TODO: Add sparsity pattern to this to prevent base engine from doing unnecessary work.
         m_baseEngine.generateJacobianMatrix(Y_full, T9, rho);
     }
@@ -268,27 +239,11 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const auto key = QSECacheKey(T9, rho, Y_full);
-        if (!m_qse_abundance_cache.contains(key)) {
-            m_cacheStats.miss(CacheStats::operators::CalculateMolarReactionFlow);
-            LOG_ERROR(
-                m_logger,
-                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). calculateMolarReactionFlow does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
-                T9,
-                rho,
-                m_cacheStats.misses(),
-                m_cacheStats.hits()
-            );
-            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
-        }
-        m_cacheStats.hit(CacheStats::operators::CalculateMolarReactionFlow);
-        std::vector<double> Y_algebraic = m_qse_abundance_cache.at(key);
-
-        assert(Y_algebraic.size() == m_algebraic_species_indices.size());
+        assert(m_Y_algebraic.size() == m_algebraic_species_indices.size());
 
         // Fix the algebraic species to the equilibrium abundances we calculate.
         std::vector<double> Y_mutable = Y_full;
-        for (const auto& [index, Yi] : std::views::zip(m_algebraic_species_indices, Y_algebraic)) {
+        for (const auto& [index, Yi] : std::views::zip(m_algebraic_species_indices, m_Y_algebraic)) {
             Y_mutable[index] = Yi;
 
         }
@@ -309,20 +264,6 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const auto key = QSECacheKey(T9, rho, Y);
-        if (!m_qse_abundance_cache.contains(key)) {
-            m_cacheStats.miss(CacheStats::operators::GetSpeciesTimescales);
-            LOG_ERROR(
-                m_logger,
-                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). getSpeciesTimescales does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
-                T9,
-                rho,
-                m_cacheStats.misses(),
-                m_cacheStats.hits()
-            );
-            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
-        }
-        m_cacheStats.hit(CacheStats::operators::GetSpeciesTimescales);
         const auto result  = m_baseEngine.getSpeciesTimescales(Y, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
@@ -337,23 +278,9 @@ namespace gridfire {
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
     MultiscalePartitioningEngineView::getSpeciesDestructionTimescales(
         const std::vector<double> &Y,
-        double T9,
-        double rho
+        const double T9,
+        const double rho
     ) const {
-        const auto key = QSECacheKey(T9, rho, Y);
-        if (!m_qse_abundance_cache.contains(key)) {
-            m_cacheStats.miss(CacheStats::operators::GetSpeciesDestructionTimescales);
-            LOG_ERROR(
-                m_logger,
-                "QSE abundance cache miss for T9 = {}, rho = {} (misses: {}, hits: {}). getSpeciesDestructionTimescales does not receive sufficient context to partition and stabilize the network. Throwing an error which should be caught by the caller and trigger a re-partition stage.",
-                T9,
-                rho,
-                m_cacheStats.misses(),
-                m_cacheStats.hits()
-            );
-            throw exceptions::StaleEngineError("QSE Cache Miss while lacking context for partitioning. This should be caught by the caller and trigger a re-partition stage.");
-        }
-        m_cacheStats.hit(CacheStats::operators::GetSpeciesDestructionTimescales);
         const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
@@ -367,16 +294,7 @@ namespace gridfire {
 
     fourdst::composition::Composition MultiscalePartitioningEngineView::update(const NetIn &netIn) {
         const fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
-        double T9 = netIn.temperature / 1.0e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
 
-        const auto preKey = QSECacheKey(
-            T9,
-            netIn.density,
-            packCompositionToVector(baseUpdatedComposition, m_baseEngine)
-        );
-        if (m_qse_abundance_cache.contains(preKey)) {
-            return baseUpdatedComposition;
-        }
         NetIn baseUpdatedNetIn = netIn;
         baseUpdatedNetIn.composition = baseUpdatedComposition;
         const fourdst::composition::Composition equilibratedComposition = equilibrateNetwork(baseUpdatedNetIn);
@@ -386,15 +304,7 @@ namespace gridfire {
             Y_algebraic[i] = equilibratedComposition.getMolarAbundance(m_baseEngine.getNetworkSpecies()[species_index]);
         }
 
-        // We store the algebraic abundances in the cache for both pre- and post-conditions to avoid recalculating them.
-        m_qse_abundance_cache[preKey] = Y_algebraic;
-
-        const auto postKey = QSECacheKey(
-            T9,
-            netIn.density,
-            packCompositionToVector(equilibratedComposition, m_baseEngine)
-        );
-        m_qse_abundance_cache[postKey] = Y_algebraic;
+        m_Y_algebraic = std::move(Y_algebraic);
 
         return equilibratedComposition;
     }
@@ -594,11 +504,6 @@ namespace gridfire {
             m_qse_groups.size(),
             m_qse_groups.size() == 1 ? "" : "s"
         );
-
-        // throw std::runtime_error(
-        //     "Partitioning complete. Throwing an error to end the program during debugging. This error should not be caught by the caller. "
-        // );
-
     }
 
     void MultiscalePartitioningEngineView::partitionNetwork(
@@ -1129,29 +1034,6 @@ namespace gridfire {
                 coupling_flux += flow * coupling_fraction;
             }
 
-            // if (leakage_flux < 1e-99) {
-            //     LOG_TRACE_L1(
-            //         m_logger,
-            //         "Group containing {} is in equilibrium due to vanishing leakage: leakage flux = {}, coupling flux = {}, ratio = {}",
-            //         [&]() -> std::string {
-            //             std::stringstream ss;
-            //             int count = 0;
-            //             for (const auto& idx : group.algebraic_indices) {
-            //                 ss << m_baseEngine.getNetworkSpecies()[idx].name();
-            //                 if (count < group.species_indices.size() - 1) {
-            //                     ss << ", ";
-            //                 }
-            //                 count++;
-            //             }
-            //             return ss.str();
-            //         }(),
-            //         leakage_flux,
-            //         coupling_flux,
-            //         coupling_flux / leakage_flux
-            //     );
-            //     validated_groups.emplace_back(group);
-            //     validated_groups.back().is_in_equilibrium = true;
-            // } else if ((coupling_flux / leakage_flux ) > FLUX_RATIO_THRESHOLD) {
             if ((coupling_flux / leakage_flux ) > FLUX_RATIO_THRESHOLD) {
                 LOG_TRACE_L1(
                     m_logger,
@@ -1703,7 +1585,7 @@ namespace gridfire {
 
     }
 
-    std::string MultiscalePartitioningEngineView::QSEGroup::toString(DynamicEngine &engine) const {
+    std::string MultiscalePartitioningEngineView::QSEGroup::toString(const DynamicEngine &engine) const {
         std::stringstream ss;
         ss << "QSEGroup(Algebraic: [";
         size_t count = 0;

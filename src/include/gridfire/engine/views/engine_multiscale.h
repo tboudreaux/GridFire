@@ -57,9 +57,9 @@ namespace gridfire {
 
         // TODO: We should probably sort out how to adjust these from absolute to relative tolerances.
         QSECacheConfig m_cacheConfig = {
-            1e-3, // Default tolerance for T9
-            1e-1, // Default tolerance for rho
-            1e-3  // Default tolerance for species abundances
+            1e-10, // Default tolerance for T9
+            1e-10, // Default tolerance for rho
+            1e-10  // Default tolerance for species abundances
         };
 
         /**
@@ -763,7 +763,7 @@ namespace gridfire {
 
             std::string toString() const;
 
-            std::string toString(DynamicEngine &engine) const;
+            std::string toString(const DynamicEngine &engine) const;
         };
 
         /**
@@ -989,6 +989,11 @@ namespace gridfire {
          * @brief Species that are treated as algebraic (in QSE) in the QSE groups.
          */
         std::vector<fourdst::atomic::Species> m_algebraic_species;
+
+        /**
+         * @breif Stateful storage of the current algebraic species abundances. This is updated every time the update method is called.
+         */
+        std::vector<double> m_Y_algebraic;
         /**
          * @brief Indices of algebraic species in the full network.
          */
@@ -1003,7 +1008,6 @@ namespace gridfire {
          */
         std::vector<size_t> m_activeReactionIndices;
 
-        // TODO: Enhance the hashing for the cache to consider not just T and rho but also the current abundance in some careful way that automatically ignores small changes (i.e. network should only be repartitioned sometimes)
         /**
          * @brief Cache for QSE abundances based on T9, rho, and Y.
          *

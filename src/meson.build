@@ -15,6 +15,7 @@ gridfire_sources = files(
     'lib/io/network_file.cpp',
     'lib/solver/solver.cpp',
     'lib/solver/strategies/CVODE_solver_strategy.cpp',
+    'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',
     'lib/screening/screening_bare.cpp',
@@ -56,7 +57,7 @@ install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
 if get_option('build-python')
     message('Configuring Python bindings...')
-    subdir('src-pybind')
+    subdir('python')
 else
     message('Skipping Python bindings...')
 endif

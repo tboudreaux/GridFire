@@ -81,7 +81,7 @@ subdir('src')
 
 if get_option('build-python')
     message('Configuring Python bindings...')
-    subdir('src-pybind')
+    subdir('build-python')
 else
     message('Skipping Python bindings...')
 endif
