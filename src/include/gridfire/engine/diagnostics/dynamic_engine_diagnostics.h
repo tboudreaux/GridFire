@@ -19,14 +19,14 @@ namespace gridfire::diagnostics {
     void inspect_species_balance(
         const DynamicEngine& engine,
         const std::string& species_name,
-        const std::vector<double>& Y_full,
+        const fourdst::composition::Composition &comp,
         double T9,
         double rho
     );
 
     void inspect_jacobian_stiffness(
         const DynamicEngine& engine,
-        const std::vector<double>& Y_full,
+        const fourdst::composition::Composition &comp,
         double T9,
         double rho
     );

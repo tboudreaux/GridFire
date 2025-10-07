@@ -99,7 +99,7 @@ namespace gridfire::io {
          * ParsedNetworkData data = parser.parse("reactions.txt");
          * @endcode
          */
-        ParsedNetworkData parse(const std::string& filename) const override;
+        [[nodiscard]] ParsedNetworkData parse(const std::string& filename) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
@@ -139,7 +139,7 @@ namespace gridfire::io {
          * @throws std::runtime_error If the file cannot be opened or if it
          * contains formatting errors.
          */
-        ParsedNetworkData parse(const std::string& filename) const override;
+        [[nodiscard]] ParsedNetworkData parse(const std::string& filename) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;

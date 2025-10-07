@@ -12,7 +12,7 @@ namespace gridfire::screening {
     std::vector<ADDouble> BareScreeningModel::calculateScreeningFactors(
         const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species>& species,
-        const std::vector<ADDouble> &Y,
+        const std::vector<screening::ADDouble> &Y,
         const ADDouble T9,
         const ADDouble rho
     ) const {

@@ -17,7 +17,7 @@ namespace gridfire {
     const reaction::Reaction* findDominantCreationChannel (
         const DynamicEngine& engine,
         const Species& species,
-        const std::vector<double>& Y,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) {
@@ -25,7 +25,7 @@ namespace gridfire {
         double maxFlow = -1.0;
         for (const auto& reaction : engine.getNetworkReactions()) {
             if (reaction->contains(species) && reaction->stoichiometry(species) > 0) {
-                const double flow = engine.calculateMolarReactionFlow(*reaction, Y, T9, rho);
+                const double flow = engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
                 if (flow > maxFlow) {
                     maxFlow = flow;
                     dominateReaction = reaction.get();
@@ -67,7 +67,7 @@ namespace gridfire {
      * robustly primed composition.
      */
     PrimingReport primeNetwork(const NetIn& netIn, DynamicEngine& engine) {
-        auto logger = LogManager::getInstance().getLogger("log");
+        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
         // --- Initial Setup ---
         // Identify all species with zero initial mass fraction that need to be primed.
@@ -127,9 +127,6 @@ namespace gridfire {
             }
             tempComp.finalize(true);
 
-            NetIn tempNetIn = netIn;
-            tempNetIn.composition = tempComp;
-
             NetworkPrimingEngineView primer(primingSpecies, engine);
             if (primer.getNetworkReactions().size() == 0) {
                 LOG_ERROR(logger, "No priming reactions found for species {}.", primingSpecies.name());
@@ -138,15 +135,14 @@ namespace gridfire {
                 continue;
             }
 
-            const auto Y = primer.mapNetInToMolarAbundanceVector(tempNetIn);
-            const double destructionRateConstant = calculateDestructionRateConstant(primer, primingSpecies, Y, T9, rho);
+            const double destructionRateConstant = calculateDestructionRateConstant(primer, primingSpecies, tempComp, T9, rho);
 
             if (destructionRateConstant > 1e-99) {
-                const double creationRate = calculateCreationRate(primer, primingSpecies, Y, T9, rho);
+                const double creationRate = calculateCreationRate(primer, primingSpecies, tempComp, T9, rho);
                 double equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
                 if (std::isnan(equilibriumMassFraction)) equilibriumMassFraction = 0.0;
 
-                if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho)) {
+                if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, tempComp, T9, rho)) {
                     // Store the request instead of applying it immediately.
                     requests.push_back({primingSpecies, equilibriumMassFraction, dominantChannel->reactants()});
                 } else {
@@ -403,19 +399,17 @@ namespace gridfire {
 
   double calculateDestructionRateConstant(
         const DynamicEngine& engine,
-        const fourdst::atomic::Species& species,
-        const std::vector<double>& Y,
+        const Species& species,
+        const Composition& comp,
         const double T9,
         const double rho
     ) {
-        const size_t speciesIndex = engine.getSpeciesIndex(species);
-        std::vector<double> Y_scaled(Y.begin(), Y.end());
-        Y_scaled[speciesIndex] = 1.0; // Set the abundance of the species to 1.0 for rate constant calculation
+        //TODO: previously (when using raw vectors) I set y[speciesIndex] = 1.0 to let there be enough so that just the destruction rate could be found (without bottlenecks from abundance) we will need to do a similar thing here.
         double destructionRateConstant = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
             if (reaction->contains_reactant(species)) {
                 const int stoichiometry = reaction->stoichiometry(species);
-                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(*reaction, Y_scaled, T9, rho);
+                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
             }
         }
         return destructionRateConstant;
@@ -424,7 +418,7 @@ namespace gridfire {
     double calculateCreationRate(
         const DynamicEngine& engine,
         const Species& species,
-        const std::vector<double>& Y,
+        const Composition& comp,
         const double T9,
         const double rho
     ) {
@@ -432,9 +426,9 @@ namespace gridfire {
         for (const auto& reaction: engine.getNetworkReactions()) {
             const int stoichiometry = reaction->stoichiometry(species);
             if (stoichiometry > 0) {
-                if (engine.calculateMolarReactionFlow(*reaction, Y, T9, rho) > 0.0) {
+                if (engine.calculateMolarReactionFlow(*reaction, comp, T9, rho) > 0.0) {
                 }
-                creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, Y, T9, rho);
+                creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
             }
         }
         return creationRate;

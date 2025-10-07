@@ -33,7 +33,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances (mol/g) for each species.
+         * @param Y The composition object giving the current molar abundances.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The plasma density in g/cm^3.
          * @return A vector of screening factors (dimensionless), one for each reaction.
@@ -50,9 +50,9 @@ namespace gridfire::screening {
         [[nodiscard]] std::vector<double> calculateScreeningFactors(
             const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
+            const std::vector<double> &Y,
+            double T9,
+            double rho
         ) const override;
 
         /**
@@ -64,7 +64,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances as AD types.
+         * @param Y The composition object giving the current molar abundances.
          * @param T9 The temperature as an AD type.
          * @param rho The plasma density as an AD type.
          * @return A vector of screening factors as AD types.
@@ -72,9 +72,9 @@ namespace gridfire::screening {
         [[nodiscard]] std::vector<CppAD::AD<double>> calculateScreeningFactors(
             const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<CppAD::AD<double>>& Y,
-            const CppAD::AD<double> T9,
-            const CppAD::AD<double> rho
+            const std::vector<CppAD::AD<double>> &Y,
+            CppAD::AD<double> T9,
+            CppAD::AD<double> rho
         ) const override;
     private:
         /// @brief Logger instance for recording trace and debug information.
@@ -91,7 +91,7 @@ namespace gridfire::screening {
          * @tparam T The numeric type, either `double` or `CppAD::AD<double>`.
          * @param reactions The set of reactions.
          * @param species A vector of all species in the network.
-         * @param Y A vector of molar abundances.
+         * @param Y The composition object with current molar abundances.
          * @param T9 The temperature in 10^9 K.
          * @param rho The density in g/cm^3.
          * @return A vector of screening factors of type `T`.
@@ -101,8 +101,8 @@ namespace gridfire::screening {
             const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<T>& Y,
-            const T T9,
-            const T rho
+            T T9,
+            T rho
         ) const;
     };
 
@@ -115,7 +115,7 @@ namespace gridfire::screening {
      * @tparam T The numeric type (`double` or `CppAD::AD<double>`).
      * @param reactions The set of reactions to be screened.
      * @param species The list of all species in the network.
-     * @param Y The molar abundances of the species.
+     * @param Y The composition object providing current molar abundances.
      * @param T9 The temperature in 10^9 K.
      * @param rho The density in g/cm^3.
      * @return A vector of screening factors, one for each reaction.

@@ -28,58 +28,48 @@ namespace gridfire {
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> DefinedEngineView::calculateRHSAndEnergy(
-        const std::vector<double> &Y_defined,
+        const fourdst::composition::Composition& comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
 
-        const auto Y_full = mapViewToFull(Y_defined);
-        const auto result = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
         }
 
-        const auto [dydt, nuclearEnergyGenerationRate] = result.value();
-        StepDerivatives<double> definedResults;
-        definedResults.nuclearEnergyGenerationRate = nuclearEnergyGenerationRate;
-        definedResults.dydt = mapFullToView(dydt);
-        return definedResults;
+        return result.value();
     }
 
     EnergyDerivatives DefinedEngineView::calculateEpsDerivatives(
-        const std::vector<double> &Y_dynamic,
+        const fourdst::composition::Composition& comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
 
-        const auto Y_full = mapViewToFull(Y_dynamic);
-        return m_baseEngine.calculateEpsDerivatives(Y_full, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
     }
 
     void DefinedEngineView::generateJacobianMatrix(
-        const std::vector<double> &Y_dynamic,
+        const fourdst::composition::Composition& comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
 
-        const auto Y_full = mapViewToFull(Y_dynamic);
-        m_baseEngine.generateJacobianMatrix(Y_full, T9, rho);
+        m_baseEngine.generateJacobianMatrix(comp, T9, rho);
     }
 
     double DefinedEngineView::getJacobianMatrixEntry(
-        const int i_defined,
-        const int j_defined
+        const Species& rowSpecies,
+        const Species& colSpecies
     ) const {
         validateNetworkState();
 
-        const size_t i_full = mapViewToFullSpeciesIndex(i_defined);
-        const size_t j_full = mapViewToFullSpeciesIndex(j_defined);
-
-        return m_baseEngine.getJacobianMatrixEntry(static_cast<int>(i_full), static_cast<int>(j_full));
+        return m_baseEngine.getJacobianMatrixEntry(rowSpecies, colSpecies);
     }
 
     void DefinedEngineView::generateStoichiometryMatrix() {
@@ -89,19 +79,17 @@ namespace gridfire {
     }
 
     int DefinedEngineView::getStoichiometryMatrixEntry(
-        const int speciesIndex_defined,
-        const int reactionIndex_defined
+        const Species& species,
+        const reaction::Reaction& reaction
     ) const {
         validateNetworkState();
 
-        const size_t i_full = mapViewToFullSpeciesIndex(speciesIndex_defined);
-        const size_t j_full = mapViewToFullReactionIndex(reactionIndex_defined);
-        return m_baseEngine.getStoichiometryMatrixEntry(static_cast<int>(i_full), static_cast<int>(j_full));
+        return m_baseEngine.getStoichiometryMatrixEntry(species, reaction);
     }
 
     double DefinedEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const std::vector<double> &Y_defined,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) const {
@@ -112,8 +100,7 @@ namespace gridfire {
             m_logger -> flush_log();
             throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
         }
-        const auto Y_full = mapViewToFull(Y_defined);
-        return m_baseEngine.calculateMolarReactionFlow(reaction, Y_full, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
     }
 
     const reaction::ReactionSet & DefinedEngineView::getNetworkReactions() const {
@@ -131,14 +118,13 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesTimescales(
-        const std::vector<double> &Y_defined,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
 
-        const auto Y_full = mapViewToFull(Y_defined);
-        const auto result = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -155,14 +141,13 @@ namespace gridfire {
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
     DefinedEngineView::getSpeciesDestructionTimescales(
-        const std::vector<double> &Y_defined,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
 
-        const auto Y_full = mapViewToFull(Y_defined);
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
@@ -304,7 +289,7 @@ namespace gridfire {
     }
 
     size_t DefinedEngineView::mapViewToFullSpeciesIndex(size_t culledSpeciesIndex) const {
-        if (culledSpeciesIndex < 0 || culledSpeciesIndex >= m_speciesIndexMap.size()) {
+        if (culledSpeciesIndex >= m_speciesIndexMap.size()) {
             LOG_ERROR(m_logger, "Defined index {} is out of bounds for species index map of size {}.", culledSpeciesIndex, m_speciesIndexMap.size());
             m_logger->flush_log();
             throw std::out_of_range("Defined index " + std::to_string(culledSpeciesIndex) + " is out of bounds for species index map of size " + std::to_string(m_speciesIndexMap.size()) + ".");
@@ -313,7 +298,7 @@ namespace gridfire {
     }
 
     size_t DefinedEngineView::mapViewToFullReactionIndex(size_t culledReactionIndex) const {
-        if (culledReactionIndex < 0 || culledReactionIndex >= m_reactionIndexMap.size()) {
+        if (culledReactionIndex >= m_reactionIndexMap.size()) {
             LOG_ERROR(m_logger, "Defined index {} is out of bounds for reaction index map of size {}.", culledReactionIndex, m_reactionIndexMap.size());
             m_logger->flush_log();
             throw std::out_of_range("Defined index " + std::to_string(culledReactionIndex) + " is out of bounds for reaction index map of size " + std::to_string(m_reactionIndexMap.size()) + ".");

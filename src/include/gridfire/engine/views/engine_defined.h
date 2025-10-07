@@ -29,7 +29,7 @@ namespace gridfire{
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation for the active species.
          *
-         * @param Y_defined A vector of abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          * @return A StepDerivatives struct containing the derivatives of the active species and the
@@ -38,44 +38,44 @@ namespace gridfire{
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const std::vector<double> &Y,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param Y_dynamic A vector of abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          *
          * @throws std::runtime_error If the view is stale.
          */
         void generateJacobianMatrix(
-            const std::vector<double>& Y_dynamic,
+            const fourdst::composition::Composition& comp,
             const double T9,
             const double rho
         ) const override;
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
          *
-         * @param i_defined The row index (species index) in the defined matrix.
-         * @param j_defined The column index (species index) in the defined matrix.
-         * @return The value of the Jacobian matrix at (i_defined, j_defined).
+         * @param rowSpecies The species corresponding to the row index.
+         * @param colSpecies The species corresponding to the column index.
+         * @return The value of the Jacobian matrix at (row species index, col species index).
          *
          * @throws std::runtime_error If the view is stale.
          * @throws std::out_of_range If an index is out of bounds.
          */
         [[nodiscard]] double getJacobianMatrixEntry(
-            const int i_defined,
-            const int j_defined
+            const fourdst::atomic::Species& rowSpecies,
+            const fourdst::atomic::Species& colSpecies
         ) const override;
         /**
          * @brief Generates the stoichiometry matrix for the active reactions and species.
@@ -86,22 +86,22 @@ namespace gridfire{
         /**
          * @brief Gets an entry from the stoichiometry matrix for the active species and reactions.
          *
-         * @param speciesIndex_defined The index of the species in the defined species list.
-         * @param reactionIndex_defined The index of the reaction in the defined reaction list.
+         * @param species The species for which to get the stoichiometric coefficient.
+         * @param reaction The reaction for which to get the stoichiometric coefficient.
          * @return The stoichiometric coefficient for the given species and reaction.
          *
          * @throws std::runtime_error If the view is stale.
          * @throws std::out_of_range If an index is out of bounds.
          */
         [[nodiscard]] int getStoichiometryMatrixEntry(
-            const int speciesIndex_defined,
-            const int reactionIndex_defined
+            const fourdst::atomic::Species& species,
+            const reaction::Reaction& reaction
         ) const override;
         /**
          * @brief Calculates the molar reaction flow for a given reaction in the active network.
          *
          * @param reaction The reaction for which to calculate the flow.
-         * @param Y_defined Vector of current abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
@@ -110,9 +110,9 @@ namespace gridfire{
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
         /**
          * @brief Gets the set of active logical reactions in the network.
@@ -127,7 +127,7 @@ namespace gridfire{
         /**
          * @brief Computes timescales for all active species in the network.
          *
-         * @param Y_defined Vector of current abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Map from Species to their characteristic timescales (s).
@@ -135,15 +135,15 @@ namespace gridfire{
          * @throws std::runtime_error If the view is stale.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
         /**

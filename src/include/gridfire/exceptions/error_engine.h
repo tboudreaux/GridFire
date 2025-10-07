@@ -2,7 +2,7 @@
 
 #include <exception>
 #include <string>
-#include <iostream>
+#include <vector>
 
 namespace gridfire::exceptions {
     class EngineError : public std::exception {};

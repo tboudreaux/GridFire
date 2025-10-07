@@ -11,11 +11,11 @@
 
 std::string gridfire::utils::formatNuclearTimescaleLogString(
     const DynamicEngine& engine,
-    std::vector<double> const& Y,
+    const fourdst::composition::Composition& composition,
     const double T9,
     const double rho
 ) {
-    auto const& result = engine.getSpeciesTimescales(Y, T9, rho);
+    auto const& result = engine.getSpeciesTimescales(composition, T9, rho);
     if (!result) {
         std::ostringstream ss;
         ss << "Failed to get species timescales: " << result.error();

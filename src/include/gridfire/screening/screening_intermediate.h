@@ -39,7 +39,7 @@ namespace gridfire::screening {
     std::vector<T> IntermediateScreeningModel::calculateFactors_impl(
         const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species> &species,
-        const std::vector<T> &Y,
+        const std::vector<T>& Y,
         const T T9,
         const T rho
     ) const {

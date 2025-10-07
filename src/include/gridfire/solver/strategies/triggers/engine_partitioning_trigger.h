@@ -23,7 +23,7 @@ namespace gridfire::trigger::solver::CVODE {
         size_t numTriggers() const override;
         size_t numMisses() const override;
     private:
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         mutable size_t m_hits = 0;
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
@@ -48,7 +48,7 @@ namespace gridfire::trigger::solver::CVODE {
         size_t numTriggers() const override;
         size_t numMisses() const override;
     private:
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         mutable size_t m_hits = 0;
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
@@ -71,7 +71,7 @@ namespace gridfire::trigger::solver::CVODE {
         size_t numTriggers() const override;
         size_t numMisses() const override;
     private:
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         mutable size_t m_hits = 0;
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;

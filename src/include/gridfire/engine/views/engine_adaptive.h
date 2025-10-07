@@ -88,7 +88,7 @@ namespace gridfire {
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation for the active species.
          *
-         * @param Y_culled A vector of abundances for the active species.
+         * @param comp The current composition of the system.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          * @return A StepDerivatives struct containing the derivatives of the active species and the
@@ -102,21 +102,29 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const std::vector<double> &Y_culled,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
+
+        /**
+         *
+         * @param comp The current composition of the system.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @return A struct containing the derivatives of the energy generation rate with respect to temperature and density.
+         */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const std::vector<double> &Y_culled,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho
         ) const override;
 
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param Y_dynamic A vector of abundances for the active species.
+         * @param comp The current composition of the system.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          *
@@ -127,16 +135,16 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         void generateJacobianMatrix(
-            const std::vector<double> &Y_dynamic,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
         ) const override;
 
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
          *
-         * @param i_culled The row index (species index) in the culled matrix.
-         * @param j_culled The column index (species index) in the culled matrix.
+         * @param rowSpecies The species corresponding to the row index in the culled species list.
+         * @param colSpecies The species corresponding to the column index in the culled species list
          * @return The value of the Jacobian matrix at (i_culled, j_culled).
          *
          * This method maps the culled indices to the full network indices and calls the base engine
@@ -147,8 +155,8 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         [[nodiscard]] double getJacobianMatrixEntry(
-            const int i_culled,
-            const int j_culled
+            const fourdst::atomic::Species& rowSpecies,
+            const fourdst::atomic::Species& colSpecies
         ) const override;
 
         /**
@@ -165,8 +173,8 @@ namespace gridfire {
         /**
          * @brief Gets an entry from the stoichiometry matrix for the active species and reactions.
          *
-         * @param speciesIndex_culled The index of the species in the culled species list.
-         * @param reactionIndex_culled The index of the reaction in the culled reaction list.
+         * @param species The species for which to get the stoichiometric coefficient.
+         * @param reaction The reaction for which to get the stoichiometric coefficient.
          * @return The stoichiometric coefficient for the given species and reaction.
          *
          * This method maps the culled indices to the full network indices and calls the base engine
@@ -177,15 +185,15 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         [[nodiscard]] int getStoichiometryMatrixEntry(
-            const int speciesIndex_culled,
-            const int reactionIndex_culled
+            const fourdst::atomic::Species& species,
+            const reaction::Reaction& reaction
         ) const override;
 
         /**
          * @brief Calculates the molar reaction flow for a given reaction in the active network.
          *
          * @param reaction The reaction for which to calculate the flow.
-         * @param Y_culled Vector of current abundances for the active species.
+         * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
@@ -198,7 +206,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
-            const std::vector<double> &Y_culled,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const override;
@@ -215,7 +223,7 @@ namespace gridfire {
         /**
          * @brief Computes timescales for all active species in the network.
          *
-         * @param Y_culled Vector of current abundances for the active species.
+         * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Map from Species to their characteristic timescales (s).
@@ -226,13 +234,13 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const std::vector<double> &Y_culled,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const override;
 
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const std::vector<double> &Y,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const override;
@@ -391,21 +399,18 @@ namespace gridfire {
          * full network.
          *
          * @param netIn The current network input, containing temperature, density, and composition.
-         * @param out_Y_Full A vector that will be populated with the molar abundances of all species in the full network.
-         * @return A vector of ReactionFlow structs, each containing a pointer to a reaction and its calculated flow rate.
+         * @return A pair with the first element a vector of ReactionFlow structs, each containing a pointer to a reaction and its calculated flow rate and the second being a composition object where species which were not present in netIn but are present in the definition of the base engine are registered but have 0 mass fraction.
          *
          * @par Algorithm:
-         * 1. Clears and reserves space in `out_Y_Full`.
-         * 2. Iterates through all species in the base engine's network.
-         * 3. For each species, it retrieves the molar abundance from `netIn.composition`. If the species is not found, its abundance is set to 0.0.
-         * 4. Converts the temperature from Kelvin to T9.
-         * 5. Iterates through all reactions in the base engine's network.
-         * 6. For each reaction, it calls the base engine's `calculateMolarReactionFlow` to get the flow rate.
-         * 7. Stores the reaction pointer and its flow rate in a `ReactionFlow` struct and adds it to the returned vector.
+         * 1. Iterates through all species in the base engine's network.
+         * 2. For each species, it retrieves the molar abundance from `netIn.composition`. If the species is not found, its abundance is set to 0.0.
+         * 3. Converts the temperature from Kelvin to T9.
+         * 4. Iterates through all reactions in the base engine's network.
+         * 5. For each reaction, it calls the base engine's `calculateMolarReactionFlow` to get the flow rate.
+         * 6. Stores the reaction pointer and its flow rate in a `ReactionFlow` struct and adds it to the returned vector.
          */
-        std::vector<ReactionFlow> calculateAllReactionFlows(
-            const NetIn& netIn,
-            std::vector<double>& out_Y_Full
+        std::pair<std::vector<ReactionFlow>, fourdst::composition::Composition> calculateAllReactionFlows(
+            const NetIn& netIn
         ) const;
         /**
          * @brief Finds all species that are reachable from the initial fuel through the reaction network.
@@ -436,7 +441,7 @@ namespace gridfire {
          *
          * @param allFlows A vector of all reactions and their flow rates.
          * @param reachableSpecies A set of all species reachable from the initial fuel.
-         * @param Y_full A vector of molar abundances for all species in the full network.
+         * @param comp The current composition of the system.
          * @param maxFlow The maximum reaction flow rate in the network.
          * @return A vector of pointers to the reactions that have been kept after culling.
          *
@@ -450,15 +455,15 @@ namespace gridfire {
         [[nodiscard]] std::vector<const reaction::Reaction*> cullReactionsByFlow(
             const std::vector<ReactionFlow>& allFlows,
             const std::unordered_set<fourdst::atomic::Species>& reachableSpecies,
-            const std::vector<double>& Y_full,
+            const fourdst::composition::Composition& comp,
             double maxFlow
         ) const;
 
         typedef std::pair<std::unordered_set<const reaction::Reaction*>, std::unordered_set<fourdst::atomic::Species>> RescueSet;
         [[nodiscard]] RescueSet rescueEdgeSpeciesDestructionChannel(
-            const std::vector<double>& Y_full,
-            const double T9,
-            const double rho,
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho,
             const std::vector<fourdst::atomic::Species>& activeSpecies,
             const reaction::ReactionSet& activeReactions
         ) const;

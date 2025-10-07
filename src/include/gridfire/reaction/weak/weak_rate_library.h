@@ -8,25 +8,10 @@
 
 #include <array>
 
-#include <cstdint>
+#include "gridfire/reaction/weak/weak.h"
+
 
 namespace gridfire::rates::weak {
-
-    // Represents a single row from the unified weak rate table
-    struct RateDataRow {
-        uint16_t A;
-        uint8_t Z;
-        float t9;
-        float log_rhoye;
-        float mu_e;
-        float log_beta_plus;
-        float log_electron_capture;
-        float log_neutrino_loss_ec;
-        float log_beta_minus;
-        float log_positron_capture;
-        float log_antineutrino_loss_bd;
-    };
-
     // The complete, pre-processed weak rate table data
     static constexpr std::array<RateDataRow, 77400> UNIFIED_WEAK_DATA = {
         RateDataRow(6, 3, 0.01, 5.0, 0.485, -60.0, -60.0, -60.0, -60.0, -60.0, -60.0),

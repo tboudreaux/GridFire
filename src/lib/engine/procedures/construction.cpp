@@ -1,7 +1,11 @@
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/reaction/weak/weak_interpolator.h"
+#include "gridfire/reaction/weak/weak.h"
+#include "gridfire/reaction/weak/weak_types.h"
 
 #include <ranges>
 #include <stdexcept>
+#include <memory>
 
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/reaction/reaclib.h"
@@ -20,11 +24,11 @@ namespace gridfire {
     using fourdst::atomic::Species;
 
 
-    ReactionSet build_reaclib_nuclear_network(
-        const Composition &composition,
-        BuildDepthType maxLayers,
-        bool reverse
-    ) {
+    ReactionSet build_nuclear_network(
+    const Composition& composition,
+    const rates::weak::WeakRateInterpolator& weak_interpolator,
+    BuildDepthType maxLayers,
+    bool reverse_reaclib) {
         int depth;
         if (std::holds_alternative<NetworkBuildDepth>(maxLayers)) {
             depth = static_cast<int>(std::get<NetworkBuildDepth>(maxLayers));
@@ -37,31 +41,71 @@ namespace gridfire {
             throw std::logic_error("Network build depth is set to 0. No reactions will be collected.");
         }
 
-        const auto& allReactions = reaclib::get_all_reaclib_reactions();
-        std::vector<Reaction*> remainingReactions;
-        for (const auto& reaction : allReactions) {
-            if (reaction->is_reverse() == reverse) {
-                remainingReactions.push_back(reaction.get());
+        // --- Step 1: Create a single master pool that owns all possible reactions ---
+        ReactionSet master_reaction_pool;
+
+        // Clone all relevant REACLIB reactions into the master pool
+        const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
+        for (const auto& reaction : allReaclibReactions) {
+            if (reaction->is_reverse() == reverse_reaclib) {
+                master_reaction_pool.add_reaction(reaction->clone());
             }
         }
 
-        if (depth == static_cast<int>(NetworkBuildDepth::Full)) {
-            LOG_INFO(logger, "Building full nuclear network with a total of {} reactions.", allReactions.size());
-            const ReactionSet reactionSet(remainingReactions);
-            return reactionSet;
+        for (const auto& parent_species: weak_interpolator.available_isotopes()) {
+            master_reaction_pool.add_reaction(
+                std::make_unique<rates::weak::WeakReaction>(
+                    parent_species,
+                    rates::weak::WeakReactionType::BETA_PLUS_DECAY,
+                    weak_interpolator
+                )
+            );
+            master_reaction_pool.add_reaction(
+                std::make_unique<rates::weak::WeakReaction>(
+                    parent_species,
+                    rates::weak::WeakReactionType::BETA_MINUS_DECAY,
+                    weak_interpolator
+                )
+            );
+            master_reaction_pool.add_reaction(
+                std::make_unique<rates::weak::WeakReaction>(
+                    parent_species,
+                    rates::weak::WeakReactionType::ELECTRON_CAPTURE,
+                    weak_interpolator
+                )
+            );
+            master_reaction_pool.add_reaction(
+                std::make_unique<rates::weak::WeakReaction>(
+                    parent_species,
+                    rates::weak::WeakReactionType::POSITRON_CAPTURE,
+                    weak_interpolator
+                )
+            );
         }
 
+        // --- Step 2: Use non-owning raw pointers for the fast build algorithm ---
+        std::vector<Reaction*> remainingReactions;
+        remainingReactions.reserve(master_reaction_pool.size());
+        for(const auto& reaction : master_reaction_pool) {
+            remainingReactions.push_back(reaction.get());
+        }
+
+        if (depth == static_cast<int>(NetworkBuildDepth::Full)) {
+            LOG_INFO(logger, "Building full nuclear network with a total of {} reactions.", remainingReactions.size());
+            return master_reaction_pool; // No need to build layer by layer if we want the full network
+        }
+
+        // --- Step 3: Execute the layered network build using observing pointers ---
         std::unordered_set<Species> availableSpecies;
-        for (const auto &entry: composition | std::views::values) {
+        for (const auto& entry : composition | std::views::values) {
             if (entry.mass_fraction() > 0.0) {
                 availableSpecies.insert(entry.isotope());
             }
         }
 
-
-        std::vector<Reaction*> collectedReactions;
-
+        std::vector<Reaction*> collectedReactionPtrs;
         LOG_INFO(logger, "Starting network construction with {} available species.", availableSpecies.size());
+
         for (int layer = 0; layer < depth && !remainingReactions.empty(); ++layer) {
             LOG_TRACE_L1(logger, "Collecting reactions for layer {} with {} remaining reactions. Currently there are {} available species", layer, remainingReactions.size(), availableSpecies.size());
             std::vector<Reaction*> reactionsForNextPass;
@@ -70,7 +114,7 @@ namespace gridfire {
 
             reactionsForNextPass.reserve(remainingReactions.size());
 
-            for (const auto &reaction : remainingReactions) {
+            for (Reaction* reaction : remainingReactions) {
                 bool allReactantsAvailable = true;
                 for (const auto& reactant : reaction->reactants()) {
                     if (!availableSpecies.contains(reactant)) {
@@ -80,7 +124,7 @@ namespace gridfire {
                 }
 
                 if (allReactantsAvailable) {
-                    collectedReactions.push_back(reaction);
+                    collectedReactionPtrs.push_back(reaction);
                     newReactionsAdded = true;
 
                     for (const auto& product : reaction->products()) {
@@ -92,19 +136,29 @@ namespace gridfire {
             }
 
             if (!newReactionsAdded) {
-                LOG_INFO(logger, "No new reactions added in layer {}. Stopping network construction with {} reactions collected.", layer, collectedReactions.size());
+                LOG_INFO(logger, "No new reactions added in layer {}. Stopping network construction.", layer);
                 break;
             }
 
-            LOG_TRACE_L1(logger, "Layer {}: Collected {} reactions. New products this layer: {}", layer, collectedReactions.size(), newProductsThisLayer.size());
+            LOG_TRACE_L1(logger, "Layer {}: Collected {} new reactions. New products this layer: {}", collectedReactionPtrs.size() - collectedReactionPtrs.size(), newProductsThisLayer.size());
             availableSpecies.insert(newProductsThisLayer.begin(), newProductsThisLayer.end());
-
             remainingReactions = std::move(reactionsForNextPass);
         }
 
-        LOG_INFO(logger, "Network construction completed with {} reactions collected.", collectedReactions.size());
-        const ReactionSet reactionSet(collectedReactions);
-        return reactionSet;
+        // --- Step 4: Construct the final ReactionSet by moving ownership ---
+        LOG_INFO(logger, "Network construction completed. Assembling final set of {} reactions.", collectedReactionPtrs.size());
+        ReactionSet finalReactionSet;
+
+        std::unordered_set<Reaction*> collectedPtrSet(collectedReactionPtrs.begin(), collectedReactionPtrs.end());
+
+        for (auto& reaction_ptr : master_reaction_pool) {
+            if (reaction_ptr && collectedPtrSet.contains(reaction_ptr.get())) {
+                finalReactionSet.add_reaction(std::move(reaction_ptr));
+            }
+        }
+
+        return finalReactionSet;
     }
+
 
 }

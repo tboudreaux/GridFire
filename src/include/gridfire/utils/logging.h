@@ -4,11 +4,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
-#include <numeric>
-#include <iostream>
 
 
 namespace gridfire::utils {
@@ -64,9 +59,9 @@ namespace gridfire::utils {
      */
     std::string formatNuclearTimescaleLogString(
         const DynamicEngine& engine,
-        const std::vector<double>& Y,
-        const double T9,
-        const double rho
+        const fourdst::composition::Composition& composition,
+        double T9,
+        double rho
     );
 
 

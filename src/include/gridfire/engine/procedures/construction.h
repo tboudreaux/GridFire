@@ -7,6 +7,8 @@
 
 #include <variant>
 
+#include "gridfire/reaction/weak/weak_interpolator.h"
+
 namespace gridfire {
 
     /**
@@ -21,6 +23,7 @@ namespace gridfire {
      *
      * @param composition Mapping of isotopic species to their mass fractions; species with positive
      *        mass fraction seed the network.
+     * @param weakInterpolator
      * @param maxLayers Variant specifying either a predefined NetworkBuildDepth or a custom integer depth;
      *        negative depth (Full) collects all reactions, zero is invalid.
      * @param reverse If true, collects reverse reactions (decays or back-reactions); if false, uses forward reactions.
@@ -32,7 +35,7 @@ namespace gridfire {
      */
     reaction::ReactionSet build_reaclib_nuclear_network(
         const fourdst::composition::Composition &composition,
-        BuildDepthType maxLayers = NetworkBuildDepth::Full,
-        bool reverse = false
+        const rates::weak::WeakRateInterpolator &weakInterpolator,
+        BuildDepthType maxLayers = NetworkBuildDepth::Full, bool reverse = false
     );
 }

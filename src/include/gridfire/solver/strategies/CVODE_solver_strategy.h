@@ -55,7 +55,7 @@ namespace gridfire::solver {
 
         void set_callback(const std::any &callback) override;
 
-        bool get_stdout_logging_enabled() const;
+        [[nodiscard]] bool get_stdout_logging_enabled() const;
 
         void set_stdout_logging_enabled(const bool value);
 
@@ -69,14 +69,14 @@ namespace gridfire::solver {
             const double last_step_time;
             const double T9;
             const double rho;
-            const int num_steps;
+            const size_t num_steps;
             const DynamicEngine& engine;
             const std::vector<fourdst::atomic::Species>& networkSpecies;
 
             // Constructor
             TimestepContext(
                 double t, const N_Vector& state, double dt, double last_step_time,
-                double t9, double rho, int num_steps, const DynamicEngine& engine,
+                double t9, double rho, size_t num_steps, const DynamicEngine& engine,
                 const std::vector<fourdst::atomic::Species>& networkSpecies
             );
 
@@ -104,8 +104,8 @@ namespace gridfire::solver {
         };
 
     private:
-        Config& m_config = Config::getInstance();
-        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
+        fourdst::config::Config& m_config = fourdst::config::Config::getInstance();
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         static int cvode_rhs_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, void *user_data);
         static int cvode_jac_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, SUNMatrix J, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 

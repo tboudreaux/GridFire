@@ -19,7 +19,6 @@
 //
 // *********************************************************************** */
 #include "gridfire/network.h"
-#include "gridfire/reaction/reaclib.h"
 #include "gridfire/reaction/reaction.h"
 
 #include <ranges>
@@ -74,7 +73,7 @@ namespace gridfire {
         }
         const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
                                  [](const unsigned char ch){ return !std::isspace(ch); });
-        return std::string(startIt, ritr.base());
+        return {startIt, ritr.base()};
     }
 
 }

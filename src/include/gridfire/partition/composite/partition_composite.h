@@ -99,6 +99,6 @@ namespace gridfire::partition {
          * @return Unique pointer to a new PartitionFunction instance of the given type.
          * @throws std::runtime_error If the given type is not recognized.
 +         */
-         std::unique_ptr<PartitionFunction> selectPartitionFunction(const BasePartitionType type) const;
+         [[nodiscard]] std::unique_ptr<PartitionFunction> selectPartitionFunction(const BasePartitionType type) const;
      };
  }

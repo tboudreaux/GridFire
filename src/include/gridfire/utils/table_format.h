@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -15,20 +16,20 @@ namespace gridfire::utils {
     public:
         virtual ~ColumnBase() = default;
         // Gets the string representation of the data at a given row
-        virtual std::string getCellData(size_t rowIndex) const = 0;
+        [[nodiscard]] virtual std::string getCellData(size_t rowIndex) const = 0;
         // Gets the header text for the column
-        virtual std::string getHeader() const = 0;
+        [[nodiscard]] virtual std::string getHeader() const = 0;
         // Gets the number of data rows in the column
-        virtual size_t getRowCount() const = 0;
+        [[nodiscard]] virtual size_t getRowCount() const = 0;
     };
 
     template<typename T>
     class Column final : public ColumnBase {
     public:
-        Column(const std::string& header, const std::vector<T>& data)
-            : m_header(header), m_data(data) {}
+        Column(std::string header, const std::vector<T>& data)
+            : m_header(std::move(header)), m_data(data) {}
 
-        std::string getCellData(size_t rowIndex) const override {
+        [[nodiscard]] std::string getCellData(size_t rowIndex) const override {
             std::stringstream ss;
             if (rowIndex < m_data.size()) {
                 ss << m_data[rowIndex];
@@ -36,11 +37,11 @@ namespace gridfire::utils {
             return ss.str();
         }
 
-        std::string getHeader() const override {
+        [[nodiscard]] std::string getHeader() const override {
             return m_header;
         }
 
-        size_t getRowCount() const override {
+        [[nodiscard]] size_t getRowCount() const override {
             return m_data.size();
         }
     private:
@@ -74,8 +75,8 @@ namespace gridfire::utils {
         std::stringstream table_ss;
 
         // --- Table Title ---
-        size_t total_width = std::accumulate(col_widths.begin(), col_widths.end(), 0) + (num_cols * 3) + 1;
-        size_t title_padding = (total_width > tableName.length()) ? (total_width - tableName.length()) / 2 : 0;
+        const size_t total_width = std::accumulate(col_widths.begin(), col_widths.end(), 0) + (num_cols * 3) + 1; // NOLINT(*-fold-init-type)
+        const size_t title_padding = (total_width > tableName.length()) ? (total_width - tableName.length()) / 2 : 0;
         table_ss << std::string(title_padding, ' ') << tableName << "\n";
 
         // --- Helper to draw horizontal border ---
@@ -94,7 +95,7 @@ namespace gridfire::utils {
         // --- Draw Header Row ---
         table_ss << "|";
         for (size_t j = 0; j < num_cols; ++j) {
-            table_ss << " " << std::left << std::setw(col_widths[j]) << columns[j]->getHeader() << " |";
+            table_ss << " " << std::left << std::setw(col_widths[j]) << columns[j]->getHeader() << " |"; // NOLINT(*-narrowing-conversions)
         }
         table_ss << "\n";
 
@@ -105,7 +106,7 @@ namespace gridfire::utils {
         for (size_t i = 0; i < num_rows; ++i) {
             table_ss << "|";
             for (size_t j = 0; j < num_cols; ++j) {
-                table_ss << " " << std::left << std::setw(col_widths[j]) << columns[j]->getCellData(i) << " |";
+                table_ss << " " << std::left << std::setw(col_widths[j]) << columns[j]->getCellData(i) << " |"; // NOLINT(*-narrowing-conversions)
             }
             table_ss << "\n";
         }

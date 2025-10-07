@@ -89,7 +89,7 @@ namespace gridfire {
              */
             virtual NetOut evaluate(const NetIn &netIn) = 0;
 
-            virtual bool isStiff() const { return m_stiff; }
+            [[nodiscard]] virtual bool isStiff() const { return m_stiff; }
             virtual void setStiff(const bool stiff) { m_stiff = stiff; }
 
         protected:

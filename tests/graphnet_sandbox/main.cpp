@@ -5,12 +5,7 @@
 #include "gridfire/engine/engine_approx8.h"
 #include "gridfire/engine/views/engine_adaptive.h"
 #include "gridfire/partition/partition_types.h"
-#include "gridfire/engine/views/engine_defined.h"
 #include "gridfire/engine/views/engine_multiscale.h"
-#include "gridfire/engine/procedures/priming.h"
-#include "gridfire/io/network_file.h"
-
-#include "gridfire/solver/solver.h"
 #include "gridfire/solver/strategies/CVODE_solver_strategy.h"
 
 #include "gridfire/network.h"
@@ -31,19 +26,6 @@
 #include "gridfire/partition/composite/partition_composite.h"
 
 static std::terminate_handler g_previousHandler = nullptr;
-
-
-
-void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& ctx) {
-    const auto H1IndexPtr = std::ranges::find(ctx.engine.getNetworkSpecies(), fourdst::atomic::H_1);
-    const auto He4IndexPtr = std::ranges::find(ctx.engine.getNetworkSpecies(), fourdst::atomic::He_4);
-
-    const size_t H1Index = H1IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), H1IndexPtr) : -1;
-    const size_t He4Index = He4IndexPtr != ctx.engine.getNetworkSpecies().end() ? std::distance(ctx.engine.getNetworkSpecies().begin(), He4IndexPtr) : -1;
-
-    std::cout << "Time: " << ctx.t << ", H-1: " << ctx.state(H1Index) << ", He-4: " << ctx.state(He4Index) << "\n";
-
-}
 
 void measure_execution_time(const std::function<void()>& callback, const std::string& name)
 {

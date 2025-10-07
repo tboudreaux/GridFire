@@ -39,7 +39,7 @@ namespace gridfire::io {
 
 
     }
-    SimpleReactionListFileParser::SimpleReactionListFileParser() {}
+    SimpleReactionListFileParser::SimpleReactionListFileParser() = default;
 
     ParsedNetworkData SimpleReactionListFileParser::parse(const std::string& filename) const {
         LOG_TRACE_L1(m_logger, "Parsing simple reaction list file: {}", filename);

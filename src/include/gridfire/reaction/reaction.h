@@ -11,6 +11,7 @@
 
 
 #include "cppad/cppad.hpp"
+#include "fourdst/composition/composition.h"
 
 /**
  * @file reaction.h
@@ -78,8 +79,18 @@ namespace gridfire::reaction {
     public:
         virtual ~Reaction() = default;
 
-        [[nodiscard]] virtual double calculate_rate(double T9, double rho, const std::vector<double>& Y) const = 0;
-        [[nodiscard]] virtual CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const = 0;
+        [[nodiscard]] virtual double calculate_rate(
+            double T9,
+            double rho,
+            double Ye,
+            double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const = 0;
+        [[nodiscard]] virtual CppAD::AD<double> calculate_rate(
+            CppAD::AD<double> T9,
+            CppAD::AD<double> rho,
+            CppAD::AD<double> Ye,
+            CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const = 0;
 
         [[nodiscard]] virtual std::string_view id() const = 0;
         [[nodiscard]] virtual const std::vector<fourdst::atomic::Species>& reactants() const = 0;
@@ -103,7 +114,26 @@ namespace gridfire::reaction {
         [[nodiscard]] virtual uint64_t hash(uint64_t seed) const = 0;
 
         [[nodiscard]] virtual double qValue() const = 0;
-        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const = 0;
+
+        [[nodiscard]] virtual double calculate_energy_generation_rate(
+            double T9,
+            double rho,
+            double Ye,
+            double mue, const std::vector<double>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const {
+            return calculate_rate(T9, rho, 0, 0, Y, index_to_species_map) * qValue();
+        }
+
+        [[nodiscard]] virtual CppAD::AD<double> calculate_energy_generation_rate(
+            const CppAD::AD<double>& T9,
+            const CppAD::AD<double>& rho,
+            const CppAD::AD<double> &Ye,
+            const CppAD::AD<double> &mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const {
+            return calculate_rate(T9, rho, {}, {}, Y, index_to_species_map) * qValue();
+        }
+
+        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(double T9, double rho, double Ye, double mue, const fourdst::composition::Composition& comp) const = 0;
 
         [[nodiscard]] virtual ReactionType type() const = 0;
 
@@ -145,21 +175,37 @@ namespace gridfire::reaction {
          * @brief Calculates the reaction rate for a given temperature.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho Density [Not used in this implementation].
-         * @param Y Molar abundances of species [Not used in this implementation].
+         * @param Ye
+         * @param mue
+         * @param Y
+         * @param index_to_species_map
          * @return The calculated reaction rate.
          */
-        [[nodiscard]] double calculate_rate(double T9, double rho, const std::vector<double>& Y) const override;
+        [[nodiscard]] double calculate_rate(
+            double T9,
+            double rho,
+            double Ye,
+            double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const override;
 
         /**
          * @brief Calculates the reaction rate for a given temperature using CppAD types.
          * @param T9 The temperature in units of 10^9 K, as a CppAD::AD<double>.
          * @param rho Density, as a CppAD::AD<double> [Not used in this implementation].
+         * @param Ye
+         * @param mue
          * @param Y Molar abundances of species, as a vector of CppAD::AD<double> [Not used in this implementation].
+         * @param index_to_species_map
          * @return The calculated reaction rate, as a CppAD::AD<double>.
          */
-        [[nodiscard]] CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const override;
+        [[nodiscard]] CppAD::AD<double> calculate_rate(
+            CppAD::AD<double> T9,
+            CppAD::AD<double> rho,
+            CppAD::AD<double> Ye,
+            CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const override;
 
-        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const override;
+        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, double Ye, double mue, const fourdst::composition::Composition& comp) const override;
 
         /**
          * @brief Gets the reaction name in (projectile, ejectile) notation.
@@ -389,12 +435,24 @@ namespace gridfire::reaction {
          * @brief Calculates the total reaction rate by summing all source rates.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho
+         * @param Ye
+         * @param mue
          * @param Y
+         * @param index_to_species_map
          * @return The total calculated reaction rate.
          */
-        [[nodiscard]] double calculate_rate(double T9, double rho, const std::vector<double>& Y) const override;
+        [[nodiscard]] double calculate_rate(
+            double T9,
+            double rho,
+            double Ye,
+            double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+        ) const override;
 
-        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, const std::vector<double>& Y) const override;
+        [[nodiscard]] double calculate_forward_rate_log_derivative(
+            double T9,
+            double rho,
+            double Ye, double mue, const fourdst::composition::Composition& comp
+        ) const override;
 
         [[nodiscard]] ReactionType type() const override { return ReactionType::LOGICAL_REACLIB; }
 
@@ -404,10 +462,18 @@ namespace gridfire::reaction {
          * @brief Calculates the total reaction rate using CppAD types.
          * @param T9 The temperature in units of 10^9 K, as a CppAD::AD<double>.
          * @param rho
+         * @param Ye
+         * @param mue
          * @param Y
+         * @param index_to_species_map
          * @return The total calculated reaction rate, as a CppAD::AD<double>.
          */
-        [[nodiscard]] CppAD::AD<double> calculate_rate(CppAD::AD<double> T9, CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const override;
+        [[nodiscard]] CppAD::AD<double> calculate_rate(
+            CppAD::AD<double> T9,
+            CppAD::AD<double> rho,
+            CppAD::AD<double> Ye,
+            CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t,fourdst::atomic::Species>& index_to_species_map
+        ) const override;
 
         /** @name Iterators
          *  Provides iterators to loop over the rate coefficient sets.

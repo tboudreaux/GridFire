@@ -37,7 +37,7 @@ namespace gridfire {
      *
      * @param engine Engine providing the current set of network reactions and flow calculations.
      * @param species The atomic species whose destruction rate is computed.
-     * @param Y Vector of molar abundances for all species in the engine.
+     * @param composition Current composition providing abundances for all species.
      * @param T9 Temperature in units of 10^9 K.
      * @param rho Density of the medium.
      * @pre Y.size() matches engine.getNetworkReactions().size() mapping species order.
@@ -47,7 +47,7 @@ namespace gridfire {
      double calculateDestructionRateConstant(
          const DynamicEngine& engine,
          const fourdst::atomic::Species& species,
-         const std::vector<double>& Y,
+         const fourdst::composition::Composition& composition,
          double T9,
          double rho
      );
@@ -60,7 +60,7 @@ namespace gridfire {
      *
      * @param engine Engine providing the current set of network reactions and flow calculations.
      * @param species The atomic species whose creation rate is computed.
-     * @param Y Vector of molar abundances for all species in the engine.
+     * @param composition Composition object containing current abundances.
      * @param T9 Temperature in units of 10^9 K.
      * @param rho Density of the medium.
      * @pre Y.size() matches engine.getNetworkReactions().size() mapping species order.
@@ -70,7 +70,7 @@ namespace gridfire {
      double calculateCreationRate(
          const DynamicEngine& engine,
          const fourdst::atomic::Species& species,
-         const std::vector<double>& Y,
+         const fourdst::composition::Composition& composition,
          double T9,
          double rho
      );

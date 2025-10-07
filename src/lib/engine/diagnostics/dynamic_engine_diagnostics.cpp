@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <iomanip>
 #include <algorithm>
 
 namespace gridfire::diagnostics {
@@ -73,7 +72,7 @@ namespace gridfire::diagnostics {
     void inspect_species_balance(
         const DynamicEngine& engine,
         const std::string& species_name,
-        const std::vector<double>& Y_full,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) {
@@ -89,15 +88,15 @@ namespace gridfire::diagnostics {
             const int stoichiometry = reaction->stoichiometry(species_obj);
             if (stoichiometry == 0) continue;
 
-            const double flow = engine.calculateMolarReactionFlow(*reaction, Y_full, T9, rho);
+            const double flow = engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
 
             if (stoichiometry > 0) {
-                creation_ids.push_back(std::string(reaction->id()));
+                creation_ids.emplace_back(reaction->id());
                 creation_stoichiometry.push_back(stoichiometry);
                 creation_flows.push_back(flow);
                 total_creation_flow += stoichiometry * flow;
             } else {
-                destruction_ids.push_back(std::string(reaction->id()));
+                destruction_ids.emplace_back(reaction->id());
                 destruction_stoichiometry.push_back(stoichiometry);
                 destruction_flows.push_back(flow);
                 total_destruction_flow += std::abs(stoichiometry) * flow;
@@ -129,38 +128,38 @@ namespace gridfire::diagnostics {
 
     void inspect_jacobian_stiffness(
         const DynamicEngine& engine,
-        const std::vector<double>& Y_full,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) {
-        engine.generateJacobianMatrix(Y_full, T9, rho);
+        engine.generateJacobianMatrix(comp, T9, rho);
         const auto& species_list = engine.getNetworkSpecies();
 
         double max_diag = 0.0;
         double max_off_diag = 0.0;
-        int max_diag_idx = -1;
-        int max_off_diag_i = -1, max_off_diag_j = -1;
+        std::optional<fourdst::atomic::Species> max_diag_species = std::nullopt;
+        std::optional<std::pair<fourdst::atomic::Species, fourdst::atomic::Species>> max_off_diag_species = std::nullopt;
 
-        for (size_t i = 0; i < species_list.size(); ++i) {
-            for (size_t j = 0; j < species_list.size(); ++j) {
-                const double val = std::abs(engine.getJacobianMatrixEntry(i, j));
-                if (i == j) {
-                    if (val > max_diag) { max_diag = val; max_diag_idx = i; }
+        for (const auto& rowSpecies : species_list) {
+            for (const auto& colSpecies : species_list) {
+                const double val = std::abs(engine.getJacobianMatrixEntry(rowSpecies, colSpecies));
+                if (rowSpecies == colSpecies) {
+                    if (val > max_diag) { max_diag = val; max_diag_species = colSpecies; }
                 } else {
-                    if (val > max_off_diag) { max_off_diag = val; max_off_diag_i = i; max_off_diag_j = j; }
+                    if (val > max_off_diag) { max_off_diag = val; max_off_diag_species = {rowSpecies, colSpecies};}
                 }
             }
         }
 
         std::cout << "\n--- Jacobian Stiffness Report ---" << std::endl;
-        if (max_diag_idx != -1) {
+        if (max_diag_species.has_value()) {
             std::cout << "  Largest Diagonal Element (d(dYi/dt)/dYi): " << std::scientific << max_diag
-                      << " for species " << species_list[max_diag_idx].name() << std::endl;
+                      << " for species " << max_diag_species->name() << std::endl;
         }
-        if (max_off_diag_i != -1) {
+        if (max_off_diag_species.has_value()) {
             std::cout << "  Largest Off-Diagonal Element (d(dYi/dt)/dYj): " << std::scientific << max_off_diag
-                      << " for d(" << species_list[max_off_diag_i].name()
-                      << ")/d(" << species_list[max_off_diag_j].name() << ")" << std::endl;
+                      << " for d(" << max_off_diag_species->first.name()
+                      << ")/d(" << max_off_diag_species->second.name() << ")" << std::endl;
         }
         std::cout << "---------------------------------" << std::endl;
     }

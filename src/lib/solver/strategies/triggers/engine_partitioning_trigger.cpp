@@ -94,13 +94,12 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool OffDiagonalTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
-        const size_t numSpecies = ctx.engine.getNetworkSpecies().size();
-        for (int row = 0; row < numSpecies; ++row) {
-            for (int col = 0; col < numSpecies; ++col) {
-                double DRowDCol = std::abs(ctx.engine.getJacobianMatrixEntry(row, col));
-                if (row != col && DRowDCol > m_threshold) {
+        for (const auto& rowSpecies : ctx.engine.getNetworkSpecies()) {
+            for (const auto& colSpecies : ctx.engine.getNetworkSpecies()) {
+                double DRowDCol = std::abs(ctx.engine.getJacobianMatrixEntry(rowSpecies, colSpecies));
+                if (rowSpecies != colSpecies && DRowDCol > m_threshold) {
                     m_hits++;
-                    LOG_TRACE_L2(m_logger, "OffDiagonalTrigger triggered at t = {} due to entry ({}, {}) = {}", ctx.t, row, col, DRowDCol);
+                    LOG_TRACE_L2(m_logger, "OffDiagonalTrigger triggered at t = {} due to entry ({}, {}) = {}", ctx.t, rowSpecies.name(), colSpecies.name(), DRowDCol);
                     return true;
                 }
             }
@@ -173,7 +172,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool TimestepCollapseTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
-        if (m_timestep_window.size() < 1) {
+        if (m_timestep_window.empty()) {
             m_misses++;
             return false;
         }
@@ -181,7 +180,7 @@ namespace gridfire::trigger::solver::CVODE {
         for (const auto& dt : m_timestep_window) {
             averageTimestep += dt;
         }
-        averageTimestep /= m_timestep_window.size();
+        averageTimestep /= static_cast<double>(m_timestep_window.size());
         if (m_relative && (std::abs(ctx.dt - averageTimestep) / averageTimestep) >= m_threshold) {
             m_hits++;
             LOG_TRACE_L2(m_logger, "TimestepCollapseTrigger triggered at t = {} due to relative growth: dt = {}, average dt = {}, threshold = {}", ctx.t, ctx.dt, averageTimestep, m_threshold);
@@ -250,6 +249,12 @@ namespace gridfire::trigger::solver::CVODE {
         using ctx_t = gridfire::solver::CVODESolverStrategy::TimestepContext;
 
         // Create the individual conditions that can trigger a repartitioning
+        // The current trigger logic is as follows
+        // 1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
+        // 2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
+        // 3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
+
+        // TODO: This logic likely needs to be revisited; however, for now it is easy enough to change and test and it works reasonably well
         auto simulationTimeTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<SimulationTimeTrigger>(simulationTimeInterval), 1000);
         auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(offDiagonalThreshold);
         auto timestepGrowthTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<TimestepCollapseTrigger>(timestepGrowthThreshold, timestepGrowthRelative, timestepGrowthWindowSize), 10);

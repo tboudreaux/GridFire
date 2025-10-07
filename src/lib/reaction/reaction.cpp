@@ -45,15 +45,35 @@ namespace gridfire::reaction {
     m_rateCoefficients(sets),
     m_reverse(reverse) {}
 
-    double ReaclibReaction::calculate_rate(const double T9, const double rho, const std::vector<double>& Y) const {
+    double ReaclibReaction::calculate_rate(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue,
+        const std::vector<double> &Y,
+        const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<double>(T9);
     }
 
-    CppAD::AD<double> ReaclibReaction::calculate_rate(const CppAD::AD<double> T9, const CppAD::AD<double> rho, const std::vector<CppAD::AD<double>>& Y) const {
+    CppAD::AD<double> ReaclibReaction::calculate_rate(
+        const CppAD::AD<double> T9,
+        const CppAD::AD<double> rho,
+        CppAD::AD<double> Ye,
+        CppAD::AD<double> mue,
+        const std::vector<CppAD::AD<double>>& Y,
+        const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
-    double ReaclibReaction::calculate_forward_rate_log_derivative(const double T9, const double rho, const std::vector<double>& Y) const {
+    double ReaclibReaction::calculate_forward_rate_log_derivative(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue,
+        const fourdst::composition::Composition& comp
+    ) const {
         constexpr double r_p13 = 1.0 / 3.0;
         constexpr double r_p53 = 5.0 / 3.0;
         constexpr double r_p23 = 2.0 / 3.0;
@@ -80,21 +100,11 @@ namespace gridfire::reaction {
 
 
     bool ReaclibReaction::contains_reactant(const Species& species) const {
-        for (const auto& reactant : m_reactants) {
-            if (reactant == species) {
-                return true;
-            }
-        }
-        return false;
+        return std::ranges::any_of(m_reactants, [&](const Species& r) { return r == species; });
     }
 
     bool ReaclibReaction::contains_product(const Species& species) const {
-        for (const auto& product : m_products) {
-            if (product == species) {
-                return true;
-            }
-        }
-        return false;
+        return std::ranges::any_of(m_products, [&](const Species& p) { return p == species; });
     }
 
     std::unordered_set<Species> ReaclibReaction::all_species() const {
@@ -224,11 +234,20 @@ namespace gridfire::reaction {
         m_rates.push_back(reaction.rateCoefficients());
     }
 
-    double LogicalReaclibReaction::calculate_rate(const double T9, const double rho, const std::vector<double>& Y) const {
+    double LogicalReaclibReaction::calculate_rate(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue, const std::vector<double> &Y, const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<double>(T9);
     }
 
-    double LogicalReaclibReaction::calculate_forward_rate_log_derivative(const double T9, const double rho, const std::vector<double>& Y) const {
+    double LogicalReaclibReaction::calculate_forward_rate_log_derivative(
+        const double T9,
+        const double rho,
+        double Ye, double mue, const fourdst::composition::Composition& comp
+    ) const {
         constexpr double r_p13 = 1.0 / 3.0;
         constexpr double r_p53 = 5.0 / 3.0;
         constexpr double r_p23 = 2.0 / 3.0;
@@ -286,7 +305,8 @@ namespace gridfire::reaction {
     CppAD::AD<double> LogicalReaclibReaction::calculate_rate(
         const CppAD::AD<double> T9,
         const CppAD::AD<double> rho,
-        const std::vector<CppAD::AD<double>>& Y
+        CppAD::AD<double> Ye,
+        CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
         return calculate_rate<CppAD::AD<double>>(T9);
     }

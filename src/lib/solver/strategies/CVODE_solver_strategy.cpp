@@ -17,6 +17,7 @@
 #include <algorithm>
 
 #include "fourdst/composition/exceptions/exceptions_composition.h"
+#include "gridfire/engine/engine_graph.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 
@@ -71,7 +72,7 @@ namespace {
 #elif SUNDIALS_HAVE_PTHREADS
         N_Vector vec = N_VNew_Pthreads(size, sun_ctx);
 #else
-        N_Vector vec = N_VNew_Serial(size, sun_ctx);
+        N_Vector vec = N_VNew_Serial(static_cast<long long>(size), sun_ctx);
 #endif
         check_cvode_flag(vec == nullptr ? -1 : 0, "N_VNew");
         return vec;
@@ -87,7 +88,7 @@ namespace gridfire::solver {
         const double last_step_time,
         const double t9,
         const double rho,
-        const int num_steps,
+        const size_t num_steps,
         const DynamicEngine &engine,
         const std::vector<fourdst::atomic::Species> &networkSpecies
     ) :
@@ -157,6 +158,7 @@ namespace gridfire::solver {
         user_data.engine = &m_engine;
 
         double current_time = 0;
+        // ReSharper disable once CppTooWideScope
         [[maybe_unused]] double last_callback_time = 0;
         m_num_steps = 0;
         double accumulated_energy = 0.0;
@@ -169,7 +171,7 @@ namespace gridfire::solver {
 
             check_cvode_flag(CVodeSetUserData(m_cvode_mem, &user_data), "CVodeSetUserData");
 
-            int flag = -1;
+            int flag{};
             if (m_stdout_logging_enabled) {
                 flag = CVode(m_cvode_mem, netIn.tMax, m_Y, &current_time, CV_ONE_STEP);
             } else {
@@ -304,10 +306,8 @@ namespace gridfire::solver {
         netOut.energy = accumulated_energy;
         check_cvode_flag(CVodeGetNumSteps(m_cvode_mem, reinterpret_cast<long int *>(&netOut.num_steps)), "CVodeGetNumSteps");
 
-        outputComposition.setCompositionMode(false); // set to number fraction mode
-        std::vector<double> Y = outputComposition.getNumberFractionVector(); // TODO need to ensure that the canonical vector representation is used throughout the code to make sure tracking does not get messed up
         auto [dEps_dT, dEps_dRho] = m_engine.calculateEpsDerivatives(
-            std::vector<double>(Y.begin(), Y.begin() + numSpecies), // TODO: This narrowing should probably be solved. Its possible unforeseen bugs will arise from this
+            outputComposition,
             T9,
             netIn.density
         );
@@ -374,9 +374,11 @@ namespace gridfire::solver {
 
         for (size_t j = 0; j < numSpecies; ++j) {
             for (size_t i = 0; i < numSpecies; ++i) {
+                const fourdst::atomic::Species& species_j = engine->getNetworkSpecies()[j];
+                const fourdst::atomic::Species& species_i = engine->getNetworkSpecies()[i];
                 // J(i,j) = d(f_i)/d(y_j)
                 // Column-major order format for SUNDenseMatrix: J_data[j*N + i]
-                J_data[j * N + i] = engine->getJacobianMatrixEntry(i, j);
+                J_data[j * N + i] = engine->getJacobianMatrixEntry(species_i, species_j);
             }
         }
 
@@ -398,11 +400,30 @@ namespace gridfire::solver {
         const size_t numSpecies = m_engine.getNetworkSpecies().size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
+        // PERF: The trade off of ensured index consistency is some performance here. If this becomes a bottleneck we can revisit.
+        //       The specific trade off is that we have decided to enforce that all interfaces accept composition objects rather
+        //       than raw vectors of molar abundances. This then lets any method lookup the species by name rather than relying on
+        //       the index in the vector being consistent. The trade off is that sometimes we need to construct a composition object
+        //       which, at the moment, requires a somewhat expensive set of operations. Perhaps in the future we could enforce
+        //       some consistent memory layout for the composition object to make this cheeper. That optimization would need to be
+        //       done in the libcomposition library though...
         std::vector<double> y_vec(y_data, y_data + numSpecies);
+        std::vector<std::string> symbols;
+        symbols.reserve(numSpecies);
+        for (const auto& species : m_engine.getNetworkSpecies()) {
+            symbols.emplace_back(species.name());
+        }
+        std::vector<double> X;
+        X.reserve(numSpecies);
+        for (size_t i = 0; i < numSpecies; ++i) {
+            const double molarMass = m_engine.getNetworkSpecies()[i].mass();
+            X.push_back(y_vec[i] * molarMass); // Convert from molar abundance to mass fraction
+        }
+        fourdst::composition::Composition composition(symbols, X);
 
         std::ranges::replace_if(y_vec, [](const double val) { return val < 0.0; }, 0.0);
 
-        const auto result = m_engine.calculateRHSAndEnergy(y_vec, data->T9, data->rho);
+        const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
         if (!result) {
             throw exceptions::StaleEngineTrigger({data->T9, data->rho, y_vec, t, m_num_steps, y_data[numSpecies]});
         }
@@ -411,7 +432,7 @@ namespace gridfire::solver {
         const auto& [dydt, nuclearEnergyGenerationRate] = result.value();
 
         for (size_t i = 0; i < numSpecies; ++i) {
-            ydot_data[i] = dydt[i];
+            ydot_data[i] = dydt.at(m_engine.getNetworkSpecies()[i]);
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
     }
@@ -513,6 +534,7 @@ namespace gridfire::solver {
 
         std::vector<double> Y_full(y_data, y_data + num_components - 1);
 
+
         std::ranges::replace_if(
             Y_full,
             [](const double val) {
@@ -528,8 +550,9 @@ namespace gridfire::solver {
             const double err_ratio = std::abs(y_err_data[i]) / weight;
 
             err_ratios[i] = err_ratio;
-            speciesNames.push_back(std::string(user_data.networkSpecies->at(i).name()));
+            speciesNames.emplace_back(user_data.networkSpecies->at(i).name());
         }
+        fourdst::composition::Composition composition(speciesNames, Y_full);
 
         if (err_ratios.empty()) {
             return;
@@ -565,9 +588,9 @@ namespace gridfire::solver {
         columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
 
         std::cout << utils::format_table("Species Error Ratios", columns) << std::endl;
-        diagnostics::inspect_jacobian_stiffness(*user_data.engine, Y_full, user_data.T9, user_data.rho);
-        diagnostics::inspect_species_balance(*user_data.engine, "N-14", Y_full, user_data.T9, user_data.rho);
-        diagnostics::inspect_species_balance(*user_data.engine, "n-1", Y_full, user_data.T9, user_data.rho);
+        diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
+        diagnostics::inspect_species_balance(*user_data.engine, "N-14", composition, user_data.T9, user_data.rho);
+        diagnostics::inspect_species_balance(*user_data.engine, "n-1", composition, user_data.T9, user_data.rho);
 
     }
 }

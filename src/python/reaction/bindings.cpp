@@ -48,7 +48,7 @@ void register_reaction_bindings(py::module &m) {
         .def(
             "calculate_rate",
              [](const gridfire::reaction::ReaclibReaction& self, const double T9, const double rho, const std::vector<double>& Y) -> double {
-                 return self.calculate_rate(T9, rho, Y);
+                 return self.calculate_rate(T9, rho, 0, TODO, Y, TODO);
              },
              py::arg("T9"),
              py::arg("rho"),
@@ -211,7 +211,7 @@ void register_reaction_bindings(py::module &m) {
         .def(
             "calculate_rate",
             [](const gridfire::reaction::LogicalReaclibReaction& self, const double T9, const double rho, const std::vector<double>& Y) -> double {
-                return self.calculate_rate(T9, rho, Y);
+                return self.calculate_rate(T9, rho, 0, TODO, Y, TODO);
             },
             py::arg("T9"),
             "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K)."

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <utility>
 
 namespace gridfire::expectations {
     enum class EngineErrorTypes {
@@ -19,8 +20,8 @@ namespace gridfire::expectations {
         std::string m_message;
         const EngineErrorTypes type = EngineErrorTypes::FAILURE;
 
-        explicit EngineError(const std::string &message, const EngineErrorTypes type)
-            : m_message(message), type(type) {}
+        explicit EngineError(std::string message, const EngineErrorTypes type)
+            : m_message(std::move(message)), type(type) {}
 
         virtual ~EngineError() = default;
 
