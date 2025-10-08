@@ -6,24 +6,75 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 namespace gridfire::trigger {
+    /**
+     * @file trigger_logical.h
+     * @brief Combinators for composing triggers with boolean logic (AND/OR/NOT/EveryNth).
+     *
+     * These templates wrap any Trigger<Context> and provide convenient composition. They also
+     * maintain simple hit/miss counters and implement short-circuit logic in check() and why().
+     */
     template <typename TriggerContextStruct>
     class LogicalTrigger : public Trigger<TriggerContextStruct> {};
 
+    /**
+     * @class AndTrigger
+     * @brief Logical conjunction of two triggers with short-circuit evaluation.
+     *
+     * check(ctx) returns A.check(ctx) && B.check(ctx). The why(ctx) explanation short-circuits
+     * if A is false, avoiding evaluation of B. update(ctx) calls update() on both A and B.
+     *
+     * Counters (mutable) are incremented inside const check(): m_hits on true; m_misses on false;
+     * m_updates on each update(); m_resets on reset().
+     *
+     * @par Example
+     * @code
+     * auto t = AndTrigger(ctxA, ctxB);
+     * if (t.check(ctx)) { (void)ctx; }
+     * @endcode
+     */
     template <typename TriggerContextStruct>
     class AndTrigger final : public LogicalTrigger<TriggerContextStruct> {
     public:
+        /**
+         * @brief Construct AND from two triggers (ownership transferred).
+         */
         AndTrigger(std::unique_ptr<Trigger<TriggerContextStruct>> A, std::unique_ptr<Trigger<TriggerContextStruct>> B);
         ~AndTrigger() override = default;
 
+        /**
+         * @brief Evaluate A && B; increments hit/miss counters.
+         */
         bool check(const TriggerContextStruct& ctx) const override;
+        /**
+         * @brief Update both sub-triggers and increment update counter.
+         */
         void update(const TriggerContextStruct& ctx) override;
+        /**
+         * @brief Reset both sub-triggers and local counters.
+         */
         void reset() override;
+        /**
+         * @brief Human-readable name.
+         */
         std::string name() const override;
+        /**
+         * @brief Structured explanation; short-circuits on A=false.
+         */
         TriggerResult why(const TriggerContextStruct& ctx) const override;
+        /**
+         * @brief Description expression e.g. "(A) AND (B)".
+         */
         std::string describe() const override;
+        /**
+         * @brief Number of true evaluations since last reset.
+         */
         size_t numTriggers() const override;
+        /**
+         * @brief Number of false evaluations since last reset.
+         */
         size_t numMisses() const override;
     private:
         std::unique_ptr<Trigger<TriggerContextStruct>> m_A;
@@ -35,6 +86,13 @@ namespace gridfire::trigger {
         mutable size_t m_resets = 0;
     };
 
+    /**
+     * @class OrTrigger
+     * @brief Logical disjunction of two triggers with short-circuit evaluation.
+     *
+     * check(ctx) returns A.check(ctx) || B.check(ctx). why(ctx) returns early when A is true.
+     * update(ctx) calls update() on both A and B. Counters behave as in AndTrigger.
+     */
     template <typename TriggerContextStruct>
     class OrTrigger final : public LogicalTrigger<TriggerContextStruct> {
     public:
@@ -60,6 +118,13 @@ namespace gridfire::trigger {
         mutable size_t m_resets = 0;
     };
 
+    /**
+     * @class NotTrigger
+     * @brief Logical negation of a trigger.
+     *
+     * check(ctx) returns !A.check(ctx). why(ctx) explains the inverted condition. Counter
+     * semantics match the other logical triggers.
+     */
     template <typename TriggerContextStruct>
     class NotTrigger final : public LogicalTrigger<TriggerContextStruct> {
     public:
@@ -86,6 +151,15 @@ namespace gridfire::trigger {
 
     };
 
+    /**
+     * @class EveryNthTrigger
+     * @brief Pass-through trigger that fires every Nth time its child trigger is true.
+     *
+     * On update(ctx), increments an internal counter when A.check(ctx) is true. check(ctx)
+     * returns true only when A.check(ctx) is true and the internal counter is a multiple of N.
+     *
+     * @throws std::invalid_argument When constructed with N==0.
+     */
     template <typename TriggerContextStruct>
     class EveryNthTrigger final : public LogicalTrigger<TriggerContextStruct> {
     public:

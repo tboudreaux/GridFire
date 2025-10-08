@@ -24,29 +24,135 @@
 
 
 namespace gridfire::rates::weak {
+    /**
+     * @class WeakReactionMap
+     * @brief Index of available weak reactions keyed by species.
+     *
+     * Builds an in-memory map from the compiled weak-rate tables and provides
+     * simple query helpers to retrieve all weak reactions or those that involve
+     * a particular nuclide.
+     *
+     * Implementation summary: the constructor iterates over UNIFIED_WEAK_DATA and
+     * inserts entries keyed by the parent Species. For each channel (β−, β+, e−-capture,
+     * e+-capture), if the tabulated log10(rate) is above the sentinel (-60), a
+     * WeakReactionEntry is pushed containing the grids t9, log10(rho*Ye), mu_e, the log10(rate),
+     * and the corresponding log10(neutrino loss) column.
+     */
     class WeakReactionMap {
     public:
+        /**
+         * @brief Construct the map by loading all weak reaction entries.
+         * @post All valid reactions from the compiled data are available via
+         *       get_all_reactions() and get_species_reactions().
+         * Implementation: iterates UNIFIED_WEAK_DATA, filters any log(rate) <= -60,
+         * and groups entries by parent Species.
+         */
         WeakReactionMap();
         ~WeakReactionMap() = default;
 
+        /**
+         * @brief Return a flat list of all weak reaction entries.
+         * @return Vector of WeakReactionEntry records.
+         * @par Example
+         * @code
+         * WeakReactionMap map;
+         * auto all = map.get_all_reactions();
+         * // iterate or group as needed
+         * @endcode
+         */
         [[nodiscard]] std::vector<WeakReactionEntry> get_all_reactions() const;
 
+        /**
+         * @brief Get all weak reaction entries for a given species.
+         * @param species Nuclide to query (A,Z).
+         * @return expected<vector<WeakReactionEntry>, WeakMapError>
+         *         containing reactions on success or SPECIES_NOT_FOUND on failure.
+         * @par Example
+         * @code
+         * using fourdst::atomic::Species;
+         * WeakReactionMap map;
+         * Species fe52 = fourdst::atomic::az_to_species(52, 26);
+         * if (auto res = map.get_species_reactions(fe52); res) {
+         *     for (const auto& e : *res) { } // use e
+         * } else {
+         *     // handle WeakMapError::SPECIES_NOT_FOUND
+         * }
+         * @endcode
+         */
         [[nodiscard]] std::expected<std::vector<WeakReactionEntry>, WeakMapError> get_species_reactions(
-            const fourdst::atomic::Species &species) const;
+            const fourdst::atomic::Species &species
+        ) const;
 
+        /**
+         * @brief Get all weak reaction entries for a given species by name.
+         * @param species_name Symbolic name (e.g., "Fe52").
+         * @return expected<vector<WeakReactionEntry>, WeakMapError>
+         *         containing reactions on success or SPECIES_NOT_FOUND on failure.
+         * @par Example
+         * @code
+         * WeakReactionMap map;
+         * if (auto res = map.get_species_reactions("Fe52"); res) {
+         *     // use *res
+         * }
+         * @endcode
+         */
         [[nodiscard]] std::expected<std::vector<WeakReactionEntry>, WeakMapError> get_species_reactions(
-            const std::string &species_name) const;
+            const std::string &species_name
+        ) const;
     private:
         std::unordered_map<fourdst::atomic::Species, std::vector<WeakReactionEntry>> m_weak_network;
     };
 
+    /**
+     * @class WeakReaction
+     * @brief Concrete Reaction representing a single weak process (beta±, e−/e+ capture).
+     *
+     * Wraps interpolation logic for tabulated weak rates and provides both scalar and AD
+     * interfaces for rate and energy generation. The reactants/products are the parent/daughter
+     * nuclei of the weak process.
+     *
+     * @details the product nucleus is resolved from (A,Z) and channel via
+     * simple charge-changing rules (β−: Z+1; β+: Z−1; e− capture: Z−1; e+ capture: Z+1).
+     * The reaction ID is formatted like "Parent(channel)Product" with ν/ν̄ decorations, and
+     * an internal CppAD atomic (AtomicWeakRate) is prepared for AD energy calculations.
+     */
     class WeakReaction final : public reaction::Reaction {
     public:
+        /**
+         * @brief Construct a WeakReaction for a specific weak channel and parent species.
+         * @param species Parent nuclide undergoing the weak process.
+         * @param type The weak reaction channel (beta−, beta+, e− capture, e+ capture).
+         * @param interpolator Reference to a WeakRateInterpolator providing tabulated data.
+         * @pre The product nuclide must be resolvable for the given (species, type).
+         * @post Object is ready to compute rates using the provided interpolator.
+         * @throws std::runtime_error If the product species cannot be resolved for the channel
+         *         (product resolution uses the charge-changing rules described above).
+         */
         explicit WeakReaction(
             const fourdst::atomic::Species &species,
             WeakReactionType type,
             const WeakRateInterpolator& interpolator
         );
+        /**
+         * @brief Scalar weak reaction rate λ(T9, rho, Ye, μe) in 1/s.
+         *
+         * @details Performs a single interpolation of the weak-rate tables at (T9, log10(rho*Ye), μe).
+         * If the selected log10(rate) is ≤ sentinel (-60), returns 0; otherwise returns 10^{log10(rate)}.
+         * On interpolation failure, throws with a message including (A,Z) and the state point.
+         *
+         * @param T9 Temperature in GK (1e9 K).
+         * @param rho Mass density (g cm^-3).
+         * @param Ye Electron fraction.
+         * @param mue Electron chemical potential (MeV).
+         * @param Y Composition vector (unused for weak channels).
+         * @param index_to_species_map Index-to-species map (unused for weak channels).
+         * @return Reaction rate (1/s).
+         * @throws std::runtime_error On interpolation failure.
+         * @par Example
+         * @code
+         * double lambda = rxn.calculate_rate(2.0, 1e8, 0.4, 1.5, {}, {});
+         * @endcode
+         */
         [[nodiscard]] double calculate_rate(
             double T9,
             double rho,
@@ -55,6 +161,26 @@ namespace gridfire::rates::weak {
             const std::vector<double> &Y,
             const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const override;
+        /**
+         * @brief AD-enabled weak reaction rate λ(T9, rho, Ye, μe) in 1/s.
+         *
+         * @details Current implementation returns 0.0. AD support is provided for the energy-generation
+         * overload below using an internal CppAD atomic that evaluates both the rate and neutrino
+         * loss consistently. A future implementation may mirror that atomic here and return the AD rate.
+         *
+         * @param T9 Temperature in GK (AD type).
+         * @param rho Mass density (g cm^-3, AD type).
+         * @param Ye Electron fraction (AD type).
+         * @param mue Electron chemical potential (MeV, AD type).
+         * @param Y Composition vector (unused for weak channels).
+         * @param index_to_species_map Index-to-species map (unused for weak channels).
+         * @return Reaction rate (1/s) as CppAD::AD<double> (currently 0.0).
+         * @par Example
+         * @code
+         * using AD = CppAD::AD<double>;
+         * AD lambda_ad = rxn.calculate_rate(AD(3.0), AD(1e7), AD(0.5), AD(2.0), {}, {});
+         * @endcode
+         */
         [[nodiscard]] CppAD::AD<double> calculate_rate(
             CppAD::AD<double> T9,
             CppAD::AD<double> rho,
@@ -63,20 +189,108 @@ namespace gridfire::rates::weak {
             const std::vector<CppAD::AD<double>> &Y,
             const std::unordered_map<size_t,fourdst::atomic::Species>& index_to_species_map
         ) const override;
-        [[nodiscard]] std::string_view id() const override { return m_id; }
-        [[nodiscard]] const std::vector<fourdst::atomic::Species> &reactants() const override { return {m_reactant}; }
-        [[nodiscard]] const std::vector<fourdst::atomic::Species> &products() const override { return {m_product}; }
+
+        /**
+         * @brief Unique identifier string for the weak channel.
+         * @return A stable string view (e.g., "Fe52(e-,ν)Mn52").
+         */
+        [[nodiscard]] std::string_view id() const override;
+
+        /**
+         * @brief Reactants list (parent nuclide only).
+         * @return Vector with the parent species.
+         */
+        [[nodiscard]] const std::vector<fourdst::atomic::Species> &reactants() const override;
+
+        /**
+         * @brief Products list (daughter nuclide only).
+         * @return Vector with the daughter species.
+         */
+        [[nodiscard]] const std::vector<fourdst::atomic::Species> &products() const override;
+
+        /**
+         * @brief Check if a species participates in this weak reaction.
+         */
         [[nodiscard]] bool contains(const fourdst::atomic::Species &species) const override;
+
+        /**
+         * @brief Check if a species is the reactant (parent).
+         */
         [[nodiscard]] bool contains_reactant(const fourdst::atomic::Species &species) const override;
+
+        /**
+         * @brief Check if a species is the product (daughter).
+         */
         [[nodiscard]] bool contains_product(const fourdst::atomic::Species &species) const override;
+
+        /**
+         * @brief Set of both parent and daughter species.
+         */
         [[nodiscard]] std::unordered_set<fourdst::atomic::Species> all_species() const override;
+
+        /**
+         * @brief Singleton set containing only the parent species.
+         */
         [[nodiscard]] std::unordered_set<fourdst::atomic::Species> reactant_species() const override;
+
+        /**
+         * @brief Singleton set containing only the daughter species.
+         */
         [[nodiscard]] std::unordered_set<fourdst::atomic::Species> product_species() const override;
-        [[nodiscard]] size_t num_species() const override { return 2; } // Always 2 for weak reactions
+
+        /**
+         * @brief Number of unique species involved (always 2 for weak reactions).
+         */
+        [[nodiscard]] size_t num_species() const override;
+
+        /**
+         * @brief Full stoichiometry map: parent -1, daughter +1.
+         */
         [[nodiscard]] std::unordered_map<fourdst::atomic::Species, int> stoichiometry() const override;
+
+        /**
+         * @brief Stoichiometric coefficient for a species: -1 (parent), +1 (daughter), 0 otherwise.
+         */
         [[nodiscard]] int stoichiometry(const fourdst::atomic::Species &species) const override;
+
+        /**
+         * @brief Content-based 64-bit hash for this reaction.
+         */
         [[nodiscard]] uint64_t hash(uint64_t seed) const override;
+
+        /**
+         * @brief Q-value (MeV) based on nuclear mass differences and channel.
+         *
+         * Computes Q = (M_parent − M_daughter) c^2 converted to MeV. For β+ decay subtract 2 m_e c^2,
+         * for e+ capture add 2 m_e c^2; for β− and e− capture it is just the nuclear mass difference.
+         * Neutrino rest mass is ignored.
+         */
         [[nodiscard]] double qValue() const override;
+
+        /**
+         * @brief Net energy generation rate (MeV/s) for this weak reaction.
+         *
+         * Interpolates once to obtain both the log10(rate) and the appropriate log10(neutrino-loss)
+         * for the channel, converts to linear values, computes E_deposited = Q − ν_loss, and returns
+         * λ · E_deposited. Throws on interpolation failure.
+         *
+         * Channel mapping for neutrino-loss column:
+         *  - β− decay and e+ capture: use log_antineutrino_loss_bd
+         *  - β+ decay and e− capture: use log_neutrino_loss_ec
+         *
+         * @param T9 Temperature in GK.
+         * @param rho Density in g cm^-3.
+         * @param Ye Electron fraction.
+         * @param mue Electron chemical potential (MeV).
+         * @param Y Composition vector (unused for weak channels).
+         * @param index_to_species_map Index-to-species map (unused for weak channels).
+         * @return Energy generation rate in MeV/s.
+         * @throws std::runtime_error On interpolation failure.
+         * @par Example
+         * @code
+         * double eps = rxn.calculate_energy_generation_rate(3.0, 1e7, 0.5, 2.0, {}, {});
+         * @endcode
+         */
         [[nodiscard]] double calculate_energy_generation_rate(
             double T9,
             double rho,
@@ -85,6 +299,16 @@ namespace gridfire::rates::weak {
             const std::vector<double>& Y,
             const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const override;
+
+        /**
+         * @brief AD-enabled net energy generation rate (MeV/s).
+         *
+         * Uses an internal CppAD atomic to compute two outputs at once: the rate λ and the neutrino
+         * loss ν_loss at (T9, log10(rho*Ye), μe). Returns λ · (Q − ν_loss). The atomic throws on
+         * interpolation failure.
+         *
+         * @throws std::runtime_error If the atomic rate evaluation fails to interpolate.
+         */
         [[nodiscard]] CppAD::AD<double> calculate_energy_generation_rate(
             const CppAD::AD<double> &T9,
             const CppAD::AD<double> &rho,
@@ -93,18 +317,64 @@ namespace gridfire::rates::weak {
             const std::vector<CppAD::AD<double>> &Y,
             const std::unordered_map<size_t, fourdst::atomic::Species> &index_to_species_map
         ) const override;
-        [[nodiscard]] double calculate_forward_rate_log_derivative(
+
+        /**
+         * @brief Logarithmic temperature sensitivity of the rate at the given state.
+         *
+         * Implementation status: requests derivative tables from the interpolator and throws on
+         * failure; otherwise the function is not yet implemented and does not return a value.
+         * Avoid calling until implemented.
+         *
+         * @param T9 Temperature in GK.
+         * @param rho Density in g cm^-3.
+         * @param Ye Electron fraction.
+         * @param mue Electron chemical potential (MeV).
+         * @param composition Composition context (not used by weak channels presently).
+         * @return d ln λ / d ln T9.
+         * @throws std::runtime_error On interpolation failure.
+         */
+        [[nodiscard]] double calculate_log_rate_partial_deriv_wrt_T9(
             double T9,
             double rho,
             double Ye,
             double mue,
             const fourdst::composition::Composition& composition
         ) const override;
-        [[nodiscard]] reaction::ReactionType type() const override { return reaction::ReactionType::WEAK; }
+
+        /**
+         * @brief Reaction type tag for runtime dispatch.
+         */
+        [[nodiscard]] reaction::ReactionType type() const override;
+
+        /**
+         * @brief Polymorphic deep copy.
+         */
         [[nodiscard]] std::unique_ptr<Reaction> clone() const override;
-        [[nodiscard]] bool is_reverse() const override { return false; };
+
+        /**
+         * @brief Weak reactions are parameterized in the forward sense (never reverse).
+         */
+        [[nodiscard]] bool is_reverse() const override;
+
+        /**
+         * @brief Access the underlying rate interpolator used by this reaction.
+         */
+        [[nodiscard]] const WeakRateInterpolator& getWeakRateInterpolator() const;
 
     private:
+        /**
+         * @brief Internal unified implementation for scalar/AD rate evaluation.
+         * @tparam T double or CppAD::AD<double>.
+         * @param T9, rho, Ye, mue Thermodynamic state.
+         * @param Y Composition vector (unused for weak channels).
+         * @param index_to_species_map Index-to-species map (unused for weak channels).
+         * @return Reaction rate (1/s) as T. For double, performs table interpolation and returns
+         *         0 when the tabulated log10(rate) ≤ sentinel; for AD, calls the atomic and returns
+         *         the first output.
+         * @pre T9 > 0, rho > 0, 0 < Ye <= 1.
+         * @post No persistent state is modified.
+         * @throws std::runtime_error If interpolation fails (double path) or the atomic fails (AD path).
+         */
         template<IsArithmeticOrAD T>
         T calculate_rate(
             T T9,
@@ -115,11 +385,37 @@ namespace gridfire::rates::weak {
             const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const;
 
+        /**
+         * @brief Extract the channel-specific log10(rate) from an interpolated payload.
+         * Mapping: β−→log_beta_minus, β+→log_beta_plus, e− capture→log_electron_capture,
+         * e+ capture→log_positron_capture.
+         */
         double get_log_rate_from_payload(const WeakRatePayload& payload) const;
 
+        /**
+         * @brief Extract the channel-specific log10(neutrino loss) from a payload.
+         * Mapping: β−/e+ capture→log_antineutrino_loss_bd; β+/e− capture→log_neutrino_loss_ec.
+         */
+        double get_log_neutrino_loss_from_payload(const WeakRatePayload& payload) const;
+
     private:
+        /**
+         * @brief CppAD atomic that wraps weak-rate interpolation for AD evaluation.
+         *
+         * Forward pass computes two outputs (λ, ν_loss) by interpolating the tables at the
+         * provided state; reverse pass uses derivative tables to backpropagate adjoints for
+         * all three inputs (T9, log10(rho*Ye), μe). Sparsity routines declare full dependence
+         * of both outputs on all inputs.
+         */
         class AtomicWeakRate final : public CppAD::atomic_base<double> {
         public:
+            /**
+             * @brief Construct the atomic operation for a specific (A,Z) and channel.
+             * @param interpolator Rate source.
+             * @param a Mass number A of the parent.
+             * @param z Proton number Z of the parent.
+             * @param type Weak channel.
+             */
             AtomicWeakRate(
                 const WeakRateInterpolator& interpolator,
                 const size_t a,
@@ -132,6 +428,11 @@ namespace gridfire::rates::weak {
             m_z(z) ,
             m_type(type) {}
 
+            /**
+             * @brief Forward pass: compute rate and neutrino-loss values for AD.
+             * On failure to interpolate, throws a std::runtime_error with details; sets output
+             * sparsity such that both outputs depend on all inputs when any input is variable.
+             */
             bool forward(
                 size_t p,
                 size_t q,
@@ -140,6 +441,12 @@ namespace gridfire::rates::weak {
                 const CppAD::vector<double>& tx,
                 CppAD::vector<double>& ty
             ) override;
+
+            /**
+             * @brief Reverse pass: propagate adjoints using tabulated derivatives.
+             * Uses d log10 columns, converting to linear-scale derivatives via ln(10) scaling and
+             * chain rule with the forward-pass outputs.
+             */
             bool reverse(
                 size_t q,
                 const CppAD::vector<double>& tx,
@@ -147,11 +454,19 @@ namespace gridfire::rates::weak {
                 CppAD::vector<double>& px,
                 const CppAD::vector<double>& py
             ) override;
+
+            /**
+             * @brief Forward-mode sparsity for Jacobian.
+             */
             bool for_sparse_jac(
                 size_t q,
                 const CppAD::vector<std::set<size_t>>&r,
                 CppAD::vector<std::set<size_t>>& s
             ) override;
+
+            /**
+             * @brief Reverse-mode sparsity for Jacobian.
+             */
             bool rev_sparse_jac(
                 size_t q,
                 const CppAD::vector<std::set<size_t>>&rt,
@@ -190,6 +505,9 @@ namespace gridfire::rates::weak {
         fourdst::atomic::Species m_reactant;
         fourdst::atomic::Species m_product;
 
+        std::vector<fourdst::atomic::Species> m_reactants;
+        std::vector<fourdst::atomic::Species> m_products;
+
         size_t m_reactant_a;
         size_t m_reactant_z;
         size_t m_product_a;
@@ -200,10 +518,11 @@ namespace gridfire::rates::weak {
 
         const WeakRateInterpolator& m_interpolator;
 
-        AtomicWeakRate m_atomic;
+        mutable AtomicWeakRate m_atomic;
 
     };
 
+    // template implementation lives at the end of the header for AD instantiation
     template<IsArithmeticOrAD T>
     T WeakReaction::calculate_rate(
         T T9,
@@ -218,7 +537,7 @@ namespace gridfire::rates::weak {
         T rateConstant = static_cast<T>(0.0);
         if constexpr (std::is_same_v<T, CppAD::AD<double>>) { // Case where T is an AD type
             std::vector<T> ax = {T9, log_rhoYe, mue};
-            std::vector<T> ay(1);
+            std::vector<T> ay(2);
             m_atomic(ax, ay);
             rateConstant = static_cast<T>(ay[0]);
         } else { // The case where T is of type double
@@ -250,6 +569,4 @@ namespace gridfire::rates::weak {
         return rateConstant;
     }
 }
-
-
 

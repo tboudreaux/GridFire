@@ -170,7 +170,6 @@ namespace gridfire {
         }
         auto deriv = result.value();
 
-        //TODO: Sort out how to deal with this. Need to return something like a step derivative but with the index consistent...
         for (const auto& species : m_algebraic_species) {
             deriv.dydt[species] = 0.0; // Fix the algebraic species to the equilibrium abundances we calculate.
         }
@@ -1115,7 +1114,7 @@ namespace gridfire {
                     normalized_composition.getMolarAbundance(species),
                     Y_final_qse(i)
                 );
-                //TODO: CHeck this conversion
+                //TODO: Check this conversion
                 double Xi = Y_final_qse(i) * species.mass(); // Convert from molar abundance to mass fraction
                 if (!outputComposition.contains(species)) {
                     outputComposition.registerSpecies(species);

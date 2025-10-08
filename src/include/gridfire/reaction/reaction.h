@@ -77,66 +77,253 @@ namespace gridfire::reaction {
 
     class Reaction {
     public:
+        /**
+         * @brief Virtual destructor for correct polymorphic cleanup.
+         */
         virtual ~Reaction() = default;
 
+        /**
+         * @brief Compute the temperature- and composition-dependent reaction rate.
+         *
+         * This is the primary interface used by the network to obtain the rate of a single
+         * reaction at the given thermodynamic state and composition. The exact units and
+         * normalization are defined by the concrete implementation (e.g., REACLIB typically
+         * provides NA<sigma v> with units depending on the reaction order). Implementations may
+         * use density/electron properties for weak processes or screening, and the composition
+         * vector for multi-body reactions.
+         *
+         * @param T9 Temperature in GK (10^9 K).
+         * @param rho Mass density (g cm^-3). May be unused for some reaction types.
+         * @param Ye Electron fraction. May be unused depending on the reaction type.
+         * @param mue Electron chemical potential. May be unused depending on the reaction type.
+         * @param Y Composition vector (molar abundances or number fractions) indexed consistently
+         *          with index_to_species_map.
+         * @param index_to_species_map Mapping from state-vector index to Species, used to interpret Y.
+         * @return The reaction rate for the forward direction, with units/normalization defined by the
+         *         specific model (implementation must document its convention).
+         */
         [[nodiscard]] virtual double calculate_rate(
             double T9,
             double rho,
             double Ye,
-            double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+            double mue,
+            const std::vector<double> &Y,
+            const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const = 0;
+
+        /**
+         * @brief AD-enabled reaction rate for algorithmic differentiation.
+         *
+         * This overload mirrors calculate_rate(double, ...) but operates on CppAD types to
+         * enable derivative calculations w.r.t. its inputs.
+         *
+         * @param T9 Temperature in GK as CppAD::AD<double>.
+         * @param rho Mass density as CppAD::AD<double>.
+         * @param Ye Electron fraction as CppAD::AD<double>.
+         * @param mue Electron chemical potential as CppAD::AD<double>.
+         * @param Y Composition vector as CppAD::AD<double> values.
+         * @param index_to_species_map Mapping from state-vector index to Species, used to interpret Y.
+         * @return The reaction rate as a CppAD::AD<double> value.
+         */
         [[nodiscard]] virtual CppAD::AD<double> calculate_rate(
             CppAD::AD<double> T9,
             CppAD::AD<double> rho,
             CppAD::AD<double> Ye,
-            CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+            CppAD::AD<double> mue,
+            const std::vector<CppAD::AD<double>>& Y,
+            const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const = 0;
 
+        /**
+         * @brief A stable, unique identifier for this reaction instance.
+         * @return String view of the reaction ID (stable across runs and suitable for lookups).
+         */
         [[nodiscard]] virtual std::string_view id() const = 0;
+
+        /**
+         * @brief Ordered list of reactant species.
+         *
+         * Multiplicity is represented by duplicates, e.g., (p, p) would list H1 twice.
+         * @return Const reference to the vector of reactants.
+         */
         [[nodiscard]] virtual const std::vector<fourdst::atomic::Species>& reactants() const = 0;
+
+        /**
+         * @brief Ordered list of product species.
+         *
+         * Multiplicity is represented by duplicates if applicable.
+         * @return Const reference to the vector of products.
+         */
         [[nodiscard]] virtual const std::vector<fourdst::atomic::Species>& products() const = 0;
 
+        /**
+         * @brief True if the species appears as a reactant or a product.
+         * @param species Species to test.
+         * @return Whether the species participates in the reaction (either side).
+         */
         [[nodiscard]] virtual bool contains(const fourdst::atomic::Species& species) const = 0;
+
+        /**
+         * @brief True if the species appears among the reactants.
+         * @param species Species to test.
+         * @return Whether the species is a reactant.
+         */
         [[nodiscard]] virtual bool contains_reactant(const fourdst::atomic::Species& species) const = 0;
+
+        /**
+         * @brief True if the species appears among the products.
+         * @param species Species to test.
+         * @return Whether the species is a product.
+         */
         [[nodiscard]] virtual bool contains_product(const fourdst::atomic::Species& species) const = 0;
 
+        /**
+         * @brief Whether this object represents a reverse (backward) rate.
+         *
+         * Implementations may pair forward/reverse rates for detailed balance. This flag indicates
+         * that the parameterization corresponds to the reverse direction.
+         * @return True for a reverse rate, false for a forward rate.
+         */
         [[nodiscard]] virtual bool is_reverse() const = 0;
 
+        /**
+         * @brief Set of all unique species appearing in the reaction.
+         * @return Unordered set of all reactants and products (no duplicates).
+         */
         [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> all_species() const = 0;
+
+        /**
+         * @brief Set of unique reactant species.
+         * @return Unordered set of reactant species (no duplicates).
+         */
         [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> reactant_species() const = 0;
+
+        /**
+         * @brief Set of unique product species.
+         * @return Unordered set of product species (no duplicates).
+         */
         [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> product_species() const = 0;
 
+        /**
+         * @brief Number of unique species involved in the reaction.
+         * @return Count of distinct species across reactants and products.
+         */
         [[nodiscard]] virtual size_t num_species() const = 0;
 
+        /**
+         * @brief Full stoichiometry map for this reaction.
+         *
+         * Coefficients are negative for reactants and positive for products; multiplicity is reflected
+         * in the magnitude (e.g., 2H -> He gives H: -2, He: +1).
+         * @return Map from Species to integer stoichiometric coefficient.
+         */
         [[nodiscard]] virtual std::unordered_map<fourdst::atomic::Species, int> stoichiometry() const = 0;
+
+        /**
+         * @brief Stoichiometric coefficient for a particular species.
+         * @param species Species for which to query the coefficient.
+         * @return Negative for reactants, positive for products, zero if absent.
+         */
         [[nodiscard]] virtual int stoichiometry(const fourdst::atomic::Species& species) const = 0;
 
+        /**
+         * @brief Stable content-based hash for this reaction.
+         *
+         * Intended for use in caches, sets, and order-independent hashing of Reaction collections.
+         * Implementations should produce the same value across processes for the same content and seed.
+         * @param seed Seed value to initialize/mix into the hash.
+         * @return 64-bit hash value.
+         */
         [[nodiscard]] virtual uint64_t hash(uint64_t seed) const = 0;
 
+        /**
+         * @brief Q-value of the reaction (typically MeV), positive if exothermic.
+         * @return Reaction Q-value used for energy accounting.
+         */
         [[nodiscard]] virtual double qValue() const = 0;
 
+        /**
+         * @brief Convenience: energy generation rate from this reaction (double version).
+         *
+         * Default implementation multiplies the scalar rate by the reaction Q-value. Electron
+         * quantities (Ye, mue) are ignored in this default, so override in derived classes if
+         * needed. Sign convention follows qValue().
+         *
+         * @param T9 Temperature in GK (10^9 K).
+         * @param rho Mass density (g cm^-3).
+         * @param Ye Electron fraction (ignored by default implementation).
+         * @param mue Electron chemical potential (ignored by default implementation).
+         * @param Y Composition vector.
+         * @param index_to_species_map Mapping from state-vector index to Species.
+         * @return Energy generation rate, typically rate * qValue().
+         */
         [[nodiscard]] virtual double calculate_energy_generation_rate(
-            double T9,
-            double rho,
-            double Ye,
-            double mue, const std::vector<double>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+            const double T9,
+            const double rho,
+            const double Ye,
+            double mue,
+            const std::vector<double>& Y,
+            const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const {
             return calculate_rate(T9, rho, 0, 0, Y, index_to_species_map) * qValue();
         }
 
+        /**
+         * @brief Convenience: AD-enabled energy generation rate (AD version).
+         *
+         * Default implementation multiplies the AD rate by the reaction Q-value. Electron
+         * quantities (Ye, mue) are ignored in this default, so override if they contribute.
+         *
+         * @param T9 Temperature in GK as CppAD::AD<double>.
+         * @param rho Mass density as CppAD::AD<double>.
+         * @param Ye Electron fraction as CppAD::AD<double> (ignored by default).
+         * @param mue Electron chemical potential as CppAD::AD<double> (ignored by default).
+         * @param Y Composition vector as CppAD::AD<double> values.
+         * @param index_to_species_map Mapping from state-vector index to Species.
+         * @return Energy generation rate as CppAD::AD<double>.
+         */
         [[nodiscard]] virtual CppAD::AD<double> calculate_energy_generation_rate(
             const CppAD::AD<double>& T9,
             const CppAD::AD<double>& rho,
             const CppAD::AD<double> &Ye,
-            const CppAD::AD<double> &mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+            const CppAD::AD<double> &mue,
+            const std::vector<CppAD::AD<double>>& Y,
+            const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const {
             return calculate_rate(T9, rho, {}, {}, Y, index_to_species_map) * qValue();
         }
 
-        [[nodiscard]] virtual double calculate_forward_rate_log_derivative(double T9, double rho, double Ye, double mue, const fourdst::composition::Composition& comp) const = 0;
+        /**
+         * @brief Logarithmic partial derivative of the rate with respect to temperature.
+         *
+         * Implementations return d(ln rate)/d(ln T9) or an equivalent measure (as documented by the
+         * concrete class), evaluated at the provided state.
+         *
+         * @param T9 Temperature in GK (10^9 K).
+         * @param rho Mass density (g cm^-3).
+         * @param Ye Electron fraction.
+         * @param mue Electron chemical potential.
+         * @param comp Composition object providing composition in a convenient form.
+         * @return The logarithmic temperature derivative of the rate.
+         */
+        [[nodiscard]] virtual double calculate_log_rate_partial_deriv_wrt_T9(
+            double T9,
+            double rho,
+            double Ye,
+            double mue,
+            const fourdst::composition::Composition& comp
+        ) const = 0;
 
+        /**
+         * @brief Category of this reaction (e.g., REACLIB, WEAK, LOGICAL_REACLIB).
+         * @return Enumerated reaction type for runtime dispatch and filtering.
+         */
         [[nodiscard]] virtual ReactionType type() const = 0;
 
+        /**
+         * @brief Polymorphic deep copy.
+         * @return A std::unique_ptr owning a new Reaction equal to this one.
+         */
         [[nodiscard]] virtual std::unique_ptr<Reaction> clone() const = 0;
 
         friend std::ostream& operator<<(std::ostream& os, const Reaction& r) {
@@ -161,15 +348,15 @@ namespace gridfire::reaction {
          * @param reverse True if this is a reverse reaction rate.
          */
         ReaclibReaction(
-            const std::string_view id,
-            const std::string_view peName,
-            const int chapter,
+            std::string_view id,
+            std::string_view peName,
+            int chapter,
             const std::vector<fourdst::atomic::Species> &reactants,
             const std::vector<fourdst::atomic::Species> &products,
-            const double qValue,
-            const std::string_view label,
+            double qValue,
+            std::string_view label,
             const RateCoefficientSet &sets,
-            const bool reverse = false);
+            bool reverse = false);
 
         /**
          * @brief Calculates the reaction rate for a given temperature.
@@ -185,7 +372,10 @@ namespace gridfire::reaction {
             double T9,
             double rho,
             double Ye,
-            double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
+            double mue,
+            const std::vector<double> &Y,
+            const std::unordered_map<size_t,
+            fourdst::atomic::Species>& index_to_species_map
         ) const override;
 
         /**
@@ -205,7 +395,13 @@ namespace gridfire::reaction {
             CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const override;
 
-        [[nodiscard]] double calculate_forward_rate_log_derivative(double T9, double rho, double Ye, double mue, const fourdst::composition::Composition& comp) const override;
+        [[nodiscard]] double calculate_log_rate_partial_deriv_wrt_T9(
+            double T9,
+            double rho,
+            double Ye,
+            double mue,
+            const fourdst::composition::Composition& comp
+        ) const override;
 
         /**
          * @brief Gets the reaction name in (projectile, ejectile) notation.
@@ -448,7 +644,7 @@ namespace gridfire::reaction {
             double mue, const std::vector<double> &Y, const std::unordered_map<size_t, fourdst::atomic::Species>& index_to_species_map
         ) const override;
 
-        [[nodiscard]] double calculate_forward_rate_log_derivative(
+        [[nodiscard]] double calculate_log_rate_partial_deriv_wrt_T9(
             double T9,
             double rho,
             double Ye, double mue, const fourdst::composition::Composition& comp
@@ -686,4 +882,3 @@ namespace gridfire::reaction {
     ReactionSet packReactionSet(const ReactionSet& reactionSet);
 
 }
-

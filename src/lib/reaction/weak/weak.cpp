@@ -162,6 +162,8 @@ namespace gridfire::rates::weak {
     ) :
     m_reactant(species),
     m_product(resolve_weak_product(type, species)),
+    m_reactants({m_reactant}),
+    m_products({m_product}),
     m_reactant_a(species.a()),
     m_reactant_z(species.z()),
     m_product_a(m_product.a()),
@@ -183,12 +185,26 @@ namespace gridfire::rates::weak {
     }
 
     CppAD::AD<double> WeakReaction::calculate_rate(
-        CppAD::AD<double> T9,
-        CppAD::AD<double> rho,
-        CppAD::AD<double> Ye,
-        CppAD::AD<double> mue, const std::vector<CppAD::AD<double>> &Y, const std::unordered_map<size_t,fourdst::atomic::Species>& index_to_species_map
+        const CppAD::AD<double> T9,
+        const CppAD::AD<double> rho,
+        const CppAD::AD<double> Ye,
+        const CppAD::AD<double> mue,
+        const std::vector<CppAD::AD<double>> &Y,
+        const std::unordered_map<size_t,fourdst::atomic::Species>& index_to_species_map
     ) const {
-        return static_cast<CppAD::AD<double>>(0.0);
+        return calculate_rate<CppAD::AD<double>>(T9, rho, Ye, mue, Y, index_to_species_map);
+    }
+
+    std::string_view WeakReaction::id() const {
+        return m_id;
+    }
+
+    const std::vector<fourdst::atomic::Species> & WeakReaction::reactants() const {
+        return m_reactants;
+    }
+
+    const std::vector<fourdst::atomic::Species> & WeakReaction::products() const {
+        return m_products;
     }
 
     bool WeakReaction::contains(const fourdst::atomic::Species &species) const {
@@ -219,6 +235,10 @@ namespace gridfire::rates::weak {
 
     std::unordered_set<fourdst::atomic::Species> WeakReaction::product_species() const {
         return {m_product};
+    }
+
+    size_t WeakReaction::num_species() const {
+        return 2;
     }
 
     int WeakReaction::stoichiometry(const fourdst::atomic::Species &species) const {
@@ -330,14 +350,49 @@ namespace gridfire::rates::weak {
         const std::unordered_map<size_t, fourdst::atomic::Species> &index_to_species_map
     ) const {
         const CppAD::AD<double> log_rhoYe = CppAD::log10(rho * Ye);
-        std::vector<CppAD::AD<double>> ax = {T9, log_rhoYe, mue};
-        std::vector<CppAD::AD<double>> ay(1);
-        m_atomic(ax, ay); // TODO: Sort out why this isn't working and checkline 222 in weak.h where a similar line is
-        //TODO: think about how to get out neutrino loss in a autodiff safe way. This may mean I need to add an extra output to the atomic base
-        //      so that I can get out both the rate and the neutrino loss rate. This will also mean that the sparsity pattern will need to
-        //      be updated to account for the extra output.
-        CppAD::AD<double> rateConstant = ay[0];
 
+        const std::vector<CppAD::AD<double>> ax = {T9, log_rhoYe, mue};
+        std::vector<CppAD::AD<double>> ay(2); // 2 outputs are the reaction rate (1/s) and the neutrino loss (MeV)
+
+        m_atomic(ax, ay); // Note: We needed to make m_atomic mutable to allow this call in a const method.
+
+        const CppAD::AD<double> rateConstant = ay[0];
+        const CppAD::AD<double> NuLoss = ay[1];
+
+        return rateConstant * (qValue() - NuLoss); // returns in MeV / s
+    }
+
+    double WeakReaction::calculate_log_rate_partial_deriv_wrt_T9(
+        const double T9,
+        const double rho,
+        const double Ye,
+        const double mue,
+        const fourdst::composition::Composition &composition
+    ) const {
+        const double log_rhoYe = std::log10(rho * Ye);
+        std::expected<WeakRateDerivatives, InterpolationError> rates =  m_interpolator.get_rate_derivatives(
+            static_cast<uint16_t>(m_reactant_a),
+            static_cast<uint8_t>(m_reactant_z),
+            T9,
+            log_rhoYe,
+            mue
+        );
+        if (!rates.has_value()) {
+            const InterpolationErrorType type = rates.error().type;
+            const std::string msg = std::format(
+                "Failed to interpolate weak rate for (A={}, Z={}) at T9={}, log10(rho*Ye)={}, mu_e={} with error: {}",
+                m_reactant.name(), m_reactant_a, m_reactant_z, T9, log_rhoYe, mue, InterpolationErrorTypeMap.at(type)
+            );
+            throw std::runtime_error(msg);
+        }
+
+        // TODO: Finish implementing this (just need a switch statement)
+        return 0.0;
+
+    }
+
+    reaction::ReactionType WeakReaction::type() const {
+        return reaction::ReactionType::WEAK;
     }
 
     std::unique_ptr<reaction::Reaction> WeakReaction::clone() const {
@@ -347,6 +402,14 @@ namespace gridfire::rates::weak {
             m_interpolator
         );
         return reaction_ptr;
+    }
+
+    bool WeakReaction::is_reverse() const {
+        return false;
+    }
+
+    const WeakRateInterpolator & WeakReaction::getWeakRateInterpolator() const {
+        return m_interpolator;
     }
 
     double WeakReaction::get_log_rate_from_payload(const WeakRatePayload &payload) const {
@@ -366,6 +429,25 @@ namespace gridfire::rates::weak {
                 break;
         }
         return logRate;
+    }
+
+    double WeakReaction::get_log_neutrino_loss_from_payload(const WeakRatePayload &payload) const {
+        double logNeutrinoLoss = 0.0;
+        switch (m_type) {
+            case WeakReactionType::BETA_MINUS_DECAY:
+                logNeutrinoLoss = payload.log_antineutrino_loss_bd;
+                break;
+            case WeakReactionType::BETA_PLUS_DECAY:
+                logNeutrinoLoss = payload.log_neutrino_loss_ec;
+                break;
+            case WeakReactionType::ELECTRON_CAPTURE:
+                logNeutrinoLoss = payload.log_neutrino_loss_ec;
+                break;
+            case WeakReactionType::POSITRON_CAPTURE:
+                logNeutrinoLoss = payload.log_antineutrino_loss_bd;
+                break;
+        }
+        return logNeutrinoLoss;
     }
 
     bool WeakReaction::AtomicWeakRate::forward (
@@ -393,28 +475,35 @@ namespace gridfire::rates::weak {
         );
         if (!result.has_value()) {
             const InterpolationErrorType type = result.error().type;
-            std::string msg = std::format(
+            const std::string msg = std::format(
                 "Failed to interpolate weak rate for (A={}, Z={}) at T9={}, log10(rho*Ye)={}, mu_e={} with error: {}",
                 m_a, m_z, T9, log10_rhoye, mu_e, InterpolationErrorTypeMap.at(type)
             );
+            throw std::runtime_error(msg);
         }
         switch (m_type) {
             case WeakReactionType::BETA_MINUS_DECAY:
                 ty[0] = std::pow(10, result.value().log_beta_minus);
+                ty[1] = std::pow(10, result.value().log_antineutrino_loss_bd);
                 break;
             case WeakReactionType::BETA_PLUS_DECAY:
                 ty[0] = std::pow(10, result.value().log_beta_plus);
+                ty[1] = std::pow(10, result.value().log_neutrino_loss_ec);
                 break;
             case WeakReactionType::ELECTRON_CAPTURE:
                 ty[0] = std::pow(10, result.value().log_electron_capture);
+                ty[1] = std::pow(10, result.value().log_neutrino_loss_ec);
                 break;
             case WeakReactionType::POSITRON_CAPTURE:
                 ty[0] = std::pow(10, result.value().log_positron_capture);
+                ty[1] = std::pow(10, result.value().log_antineutrino_loss_bd);
                 break;
         }
 
-        if (vx.size() > 0) {
-            vy[0] = vx[0] || vx[1] || vx[2]; // Sets the output sparsity pattern
+        if (vx.size() > 0) { // Set up the sparsity pattern. This is saying that all input variables affect the output variable.
+            const bool any_input_varies = vx[0] || vx[1] || vx[2];
+            vy[0] = any_input_varies;
+            vy[1] = any_input_varies;
         }
         return true;
     }
@@ -429,6 +518,9 @@ namespace gridfire::rates::weak {
         const double T9 = tx[0];
         const double log10_rhoye = tx[1];
         const double mu_e = tx[2];
+
+        const double forwardPassRate = ty[0]; // This is the rate from the forward pass.
+        const double forwardPassNeutrinoLossRate = ty[1]; // This is the neutrino loss rate from the forward pass.
 
         const std::expected<WeakRateDerivatives, InterpolationError> result = m_interpolator.get_rate_derivatives(
             static_cast<uint16_t>(m_a),
@@ -447,37 +539,56 @@ namespace gridfire::rates::weak {
             throw std::runtime_error(msg);
         }
 
-        WeakRateDerivatives derivatives = result.value();
+        const WeakRateDerivatives derivatives = result.value();
 
-        double dT9 = 0.0;
-        double dRho = 0.0;
-        double dMuE = 0.0;
+        std::array<double, 3> dLogRate; // d(rate)/dT9, d(rate)/dlogRhoYe, d(rate)/dMuE
+        std::array<double, 3> dLogNuLoss; // d(nu loss)/dT9, d(nu loss)/dlogRhoYe, d(nu loss)/dMuE
         switch (m_type) {
             case WeakReactionType::BETA_MINUS_DECAY:
-                dT9 = py[0] * derivatives.d_log_beta_minus[0];
-                dRho = py[0] * derivatives.d_log_beta_minus[1];
-                dMuE = py[0] * derivatives.d_log_beta_minus[2];
+                dLogRate[0]     = derivatives.d_log_beta_minus[0];
+                dLogRate[1]     = derivatives.d_log_beta_minus[1];
+                dLogRate[2]     = derivatives.d_log_beta_minus[2];
+                dLogNuLoss[0]   = derivatives.d_log_antineutrino_loss_bd[0];
+                dLogNuLoss[1]   = derivatives.d_log_antineutrino_loss_bd[1];
+                dLogNuLoss[2]   = derivatives.d_log_antineutrino_loss_bd[2];
                 break;
             case WeakReactionType::BETA_PLUS_DECAY:
-                dT9 = py[0] * derivatives.d_log_beta_plus[0];
-                dRho = py[0] * derivatives.d_log_beta_plus[1];
-                dMuE = py[0] * derivatives.d_log_beta_plus[2];
+                dLogRate[0]     = derivatives.d_log_beta_plus[0];
+                dLogRate[1]     = derivatives.d_log_beta_plus[1];
+                dLogRate[2]     = derivatives.d_log_beta_plus[2];
+                dLogNuLoss[0]   = derivatives.d_log_neutrino_loss_ec[0];
+                dLogNuLoss[1]   = derivatives.d_log_neutrino_loss_ec[1];
+                dLogNuLoss[2]   = derivatives.d_log_neutrino_loss_ec[2];
                 break;
             case WeakReactionType::ELECTRON_CAPTURE:
-                dT9 = py[0] * derivatives.d_log_electron_capture[0];
-                dRho = py[0] * derivatives.d_log_electron_capture[1];
-                dMuE = py[0] * derivatives.d_log_electron_capture[2];
+                dLogRate[0]     = derivatives.d_log_electron_capture[0];
+                dLogRate[1]     = derivatives.d_log_electron_capture[1];
+                dLogRate[2]     = derivatives.d_log_electron_capture[2];
+                dLogNuLoss[0]   = derivatives.d_log_neutrino_loss_ec[0];
+                dLogNuLoss[1]   = derivatives.d_log_neutrino_loss_ec[1];
+                dLogNuLoss[2]   = derivatives.d_log_neutrino_loss_ec[2];
                 break;
             case WeakReactionType::POSITRON_CAPTURE:
-                dT9 = py[0] * derivatives.d_log_positron_capture[0];
-                dRho = py[0] * derivatives.d_log_positron_capture[1];
-                dMuE = py[0] * derivatives.d_log_positron_capture[2];
+                dLogRate[0]     = derivatives.d_log_positron_capture[0];
+                dLogRate[1]     = derivatives.d_log_positron_capture[1];
+                dLogRate[2]     = derivatives.d_log_positron_capture[2];
+                dLogNuLoss[0]   = derivatives.d_log_antineutrino_loss_bd[0];
+                dLogNuLoss[1]   = derivatives.d_log_antineutrino_loss_bd[1];
+                dLogNuLoss[2]   = derivatives.d_log_antineutrino_loss_bd[2];
                 break;
         }
 
-        px[0] = py[0] * dT9;       // d(rate)/dT9
-        px[1] = py[0] * dRho;      // d(rate)/dlogRhoYe
-        px[2] = py[0] * dMuE;      // d(rate)/dMuE
+        const double ln10 = std::log(10.0);
+
+        // Contributions from the reaction rate (output 0)
+        px[0] = py[0] * forwardPassRate * ln10 * dLogRate[0];
+        px[1] = py[0] * forwardPassRate * ln10 * dLogRate[1];
+        px[2] = py[0] * forwardPassRate * ln10 * dLogRate[2];
+
+        // Contributions from the neutrino loss rate (output 1)
+        px[0] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[0];
+        px[1] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[1];
+        px[2] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[2];
 
         return true;
 
@@ -488,9 +599,14 @@ namespace gridfire::rates::weak {
         const CppAD::vector<std::set<size_t> > &r,
         CppAD::vector<std::set<size_t> > &s
     ) {
-        s[0] = r[0];
-        s[0].insert(r[1].begin(), r[1].end());
-        s[0].insert(r[2].begin(), r[2].end());
+        std::set<size_t> all_input_deps;
+        all_input_deps.insert(r[0].begin(), r[0].end());
+        all_input_deps.insert(r[1].begin(), r[1].end());
+        all_input_deps.insert(r[2].begin(), r[2].end());
+
+        // What this is saying is that both output variables depend on all input variables.
+        s[0] = all_input_deps;
+        s[1] = all_input_deps;
 
         return true;
     }
@@ -500,12 +616,14 @@ namespace gridfire::rates::weak {
         const CppAD::vector<std::set<size_t> > &rt,
         CppAD::vector<std::set<size_t> > &st
     ) {
-        // What this is saying is that each of the three input variables (T9, rho, Ye)
-        // all only affect the output variable (the rate) since there is only
-        // one output variable.
-        st[0] = rt[0];
-        st[1] = rt[0];
-        st[2] = rt[0];
+        // What this is saying is that all input variables may affect both output variables.
+        std::set<size_t> all_output_deps;
+        all_output_deps.insert(rt[0].begin(), rt[0].end());
+        all_output_deps.insert(rt[1].begin(), rt[1].end());
+
+        st[0] = all_output_deps;
+        st[1] = all_output_deps;
+        st[2] = all_output_deps;
         return true;
 
     }

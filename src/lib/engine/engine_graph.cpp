@@ -40,7 +40,7 @@ namespace gridfire {
         const partition::PartitionFunction& partitionFunction,
         const BuildDepthType buildDepth) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
-    m_reactions(build_reaclib_nuclear_network(composition, m_weakRateInterpolator, buildDepth, false)),
+    m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, false)),
     m_depth(buildDepth),
     m_partitionFunction(partitionFunction.clone())
     {
@@ -419,7 +419,7 @@ namespace gridfire {
         double Ye = comp.getElectronAbundance();
         // TODO: This is a dummy value for the electron chemical potential. We eventually need to replace this with an EOS call.
         double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
-        const double d_log_kFwd = reaction.calculate_forward_rate_log_derivative(T9, rho, Ye, mue, comp);
+        const double d_log_kFwd = reaction.calculate_log_rate_partial_deriv_wrt_T9(T9, rho, Ye, mue, comp);
 
         auto log_deriv_pf_op = [&](double acc, const auto& species) {
             const double g = m_partitionFunction->evaluate(species.z(), species.a(), T9);
@@ -505,7 +505,7 @@ namespace gridfire {
     void GraphEngine::rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) {
         if (depth != m_depth) {
             m_depth = depth;
-            m_reactions = build_reaclib_nuclear_network(comp, m_weakRateInterpolator, m_depth, false);
+            m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth, false);
             syncInternalMaps(); // Resync internal maps after changing the depth
         } else {
             LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");

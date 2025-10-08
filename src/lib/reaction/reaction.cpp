@@ -67,7 +67,7 @@ namespace gridfire::reaction {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
-    double ReaclibReaction::calculate_forward_rate_log_derivative(
+    double ReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9(
         const double T9,
         const double rho,
         double Ye,
@@ -243,7 +243,7 @@ namespace gridfire::reaction {
         return calculate_rate<double>(T9);
     }
 
-    double LogicalReaclibReaction::calculate_forward_rate_log_derivative(
+    double LogicalReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9(
         const double T9,
         const double rho,
         double Ye, double mue, const fourdst::composition::Composition& comp
