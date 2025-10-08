@@ -7,5 +7,6 @@ var searchData=
   ['networkprimingengineview_4',['NetworkPrimingEngineView',['../classgridfire_1_1_network_priming_engine_view.html',1,'gridfire']]],
   ['networkresizederror_5',['NetworkResizedError',['../classgridfire_1_1exceptions_1_1_network_resized_error.html',1,'gridfire::exceptions']]],
   ['networksolverstrategy_6',['NetworkSolverStrategy',['../classgridfire_1_1solver_1_1_network_solver_strategy.html',1,'gridfire::solver']]],
-  ['networksolverstrategy_3c_20dynamicengine_20_3e_7',['NetworkSolverStrategy&lt; DynamicEngine &gt;',['../classgridfire_1_1solver_1_1_network_solver_strategy.html',1,'gridfire::solver']]]
+  ['networksolverstrategy_3c_20dynamicengine_20_3e_7',['NetworkSolverStrategy&lt; DynamicEngine &gt;',['../classgridfire_1_1solver_1_1_network_solver_strategy.html',1,'gridfire::solver']]],
+  ['nottrigger_8',['NotTrigger',['../classgridfire_1_1trigger_1_1_not_trigger.html',1,'gridfire::trigger']]]
 ];

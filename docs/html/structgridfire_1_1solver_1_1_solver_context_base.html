@@ -116,7 +116,7 @@ Inheritance diagram for gridfire::solver::SolverContextBase:</div>
  <div class="center">
   <img src="structgridfire_1_1solver_1_1_solver_context_base.png" usemap="#gridfire::solver::SolverContextBase_map" alt=""/>
   <map id="gridfire::solver::SolverContextBase_map" name="gridfire::solver::SolverContextBase_map">
-<area href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html" title="Context for the timestep callback function for the DirectNetworkSolver." alt="gridfire::solver::DirectNetworkSolver::TimestepContext" shape="rect" coords="0,56,314,80"/>
+<area href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html" title="Immutable view of the current integration state passed to callbacks." alt="gridfire::solver::CVODESolverStrategy::TimestepContext" shape="rect" coords="0,56,326,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -176,7 +176,7 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -185,7 +185,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A vector of tuples, each containing a string for the parameters name and a string for its type.</dd></dl>
 <p>This method should be overridden by derived classes to provide a description of the context that will be passed to the callback function. The intent of this method is that an end user can investigate the context that will be passed to the callback function, and use this information to craft their own callback function. </p>
 
-<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_direct_network_solver_1_1_timestep_context.html#ab032139a719e551f888ae012ef8018ee">gridfire::solver::DirectNetworkSolver::TimestepContext</a>.</p>
+<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#ae3c6320ce7a8f41c9ae36c42d62b4204">gridfire::solver::CVODESolverStrategy::TimestepContext</a>.</p>
 
 </div>
 </div>

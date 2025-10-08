@@ -1,4 +1,4 @@
 var types_2bindings_8cpp =
 [
-    [ "register_type_bindings", "types_2bindings_8cpp.html#a37d2e0b6a2605d063eec5e2a64e9bcc5", null ]
+    [ "register_type_bindings", "types_2bindings_8cpp.html#aa0589677938fad59ffce3f6981f53ff0", null ]
 ];

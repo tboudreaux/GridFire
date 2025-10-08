@@ -1,20 +1,26 @@
 var namespacegridfire =
 [
     [ "approx8", "namespacegridfire_1_1approx8.html", "namespacegridfire_1_1approx8" ],
+    [ "diagnostics", "namespacegridfire_1_1diagnostics.html", [
+      [ "inspect_jacobian_stiffness", "namespacegridfire_1_1diagnostics.html#a066ee899bd259062716f25abae3890b0", null ],
+      [ "inspect_species_balance", "namespacegridfire_1_1diagnostics.html#a11c0d538e7244bee168d7f9217442128", null ],
+      [ "report_limiting_species", "namespacegridfire_1_1diagnostics.html#a9d95a6c9c4a942d71ff4c8046fe4107a", null ]
+    ] ],
     [ "exceptions", "namespacegridfire_1_1exceptions.html", "namespacegridfire_1_1exceptions" ],
     [ "expectations", "namespacegridfire_1_1expectations.html", "namespacegridfire_1_1expectations" ],
     [ "io", "namespacegridfire_1_1io.html", "namespacegridfire_1_1io" ],
     [ "partition", "namespacegridfire_1_1partition.html", "namespacegridfire_1_1partition" ],
+    [ "rates", "namespacegridfire_1_1rates.html", "namespacegridfire_1_1rates" ],
     [ "reaclib", "namespacegridfire_1_1reaclib.html", "namespacegridfire_1_1reaclib" ],
     [ "reaction", "namespacegridfire_1_1reaction.html", "namespacegridfire_1_1reaction" ],
     [ "screening", "namespacegridfire_1_1screening.html", "namespacegridfire_1_1screening" ],
     [ "solver", "namespacegridfire_1_1solver.html", "namespacegridfire_1_1solver" ],
-    [ "utils", "namespacegridfire_1_1utils.html", [
-      [ "formatNuclearTimescaleLogString", "namespacegridfire_1_1utils.html#af56693a70d9e2b40c8ae2c3bcd4b26c8", null ]
-    ] ],
+    [ "trigger", "namespacegridfire_1_1trigger.html", "namespacegridfire_1_1trigger" ],
+    [ "utils", "namespacegridfire_1_1utils.html", "namespacegridfire_1_1utils" ],
     [ "AdaptiveEngineView", "classgridfire_1_1_adaptive_engine_view.html", "classgridfire_1_1_adaptive_engine_view" ],
     [ "DefinedEngineView", "classgridfire_1_1_defined_engine_view.html", "classgridfire_1_1_defined_engine_view" ],
     [ "DynamicEngine", "classgridfire_1_1_dynamic_engine.html", "classgridfire_1_1_dynamic_engine" ],
+    [ "EnergyDerivatives", "structgridfire_1_1_energy_derivatives.html", "structgridfire_1_1_energy_derivatives" ],
     [ "Engine", "classgridfire_1_1_engine.html", "classgridfire_1_1_engine" ],
     [ "EngineView", "classgridfire_1_1_engine_view.html", "classgridfire_1_1_engine_view" ],
     [ "FileDefinedEngineView", "classgridfire_1_1_file_defined_engine_view.html", "classgridfire_1_1_file_defined_engine_view" ],
@@ -28,13 +34,12 @@ var namespacegridfire =
     [ "QSECacheConfig", "structgridfire_1_1_q_s_e_cache_config.html", "structgridfire_1_1_q_s_e_cache_config" ],
     [ "QSECacheKey", "structgridfire_1_1_q_s_e_cache_key.html", "structgridfire_1_1_q_s_e_cache_key" ],
     [ "Reaction", "classgridfire_1_1_reaction.html", "classgridfire_1_1_reaction" ],
+    [ "ReactionSet", "classgridfire_1_1_reaction_set.html", "classgridfire_1_1_reaction_set" ],
     [ "StepDerivatives", "structgridfire_1_1_step_derivatives.html", "structgridfire_1_1_step_derivatives" ],
     [ "IsArithmeticOrAD", "conceptgridfire_1_1_is_arithmetic_or_a_d.html", null ],
     [ "EngineType", "conceptgridfire_1_1_engine_type.html", null ],
     [ "ADDouble", "namespacegridfire.html#a1121d0b2d005195333412559fa29d3cc", null ],
     [ "BuildDepthType", "namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6", null ],
-    [ "LogicalReactionSet", "namespacegridfire.html#aa86f08712565f278adacc7cd2361eb31", null ],
-    [ "ReactionSet", "namespacegridfire.html#ad838ce3fb6cc02c3fd90b924a0dd91b1", null ],
     [ "SparsityPattern", "namespacegridfire.html#a898dfe22579e649935645cbd6f073178", null ],
     [ "NetworkBuildDepth", "namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57", [
       [ "Full", "namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75", null ],
@@ -58,17 +63,18 @@ var namespacegridfire =
       [ "FAILED_TO_FIND_PRIMING_REACTIONS", "namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a186367e42446c004076290ca7913d931", null ],
       [ "BASE_NETWORK_TOO_SHALLOW", "namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154ab837953f2841baabbae6bb5f2e43e71e", null ]
     ] ],
-    [ "build_reaclib_nuclear_network", "namespacegridfire.html#a745c6568723947f8e1ff874c9d3f4733", null ],
-    [ "build_reaclib_nuclear_network", "namespacegridfire.html#aedddb89e400a6111f69bfe0c3fd4214e", null ],
-    [ "calculateCreationRate", "namespacegridfire.html#a7c4b6104d5dfc5afddda36f726c5d07d", null ],
-    [ "calculateDestructionRateConstant", "namespacegridfire.html#a8f26d5f5fabb42e88261e42bc060cea2", null ],
-    [ "findDominantCreationChannel", "namespacegridfire.html#aefc63ddbfe97dcb4178c94dfd1c4b256", null ],
-    [ "primeNetwork", "namespacegridfire.html#acd0bfdfbce4e84af102d62ff8a797c9f", null ],
+    [ "build_nuclear_network", "namespacegridfire.html#a58a036e8883e75a8abd3e18798563f71", null ],
+    [ "build_reaclib_nuclear_network", "namespacegridfire.html#a384323338f13166d87c7ac047434bd38", null ],
+    [ "calculateCreationRate", "namespacegridfire.html#a8995b949592d59850e45a3fd27306369", null ],
+    [ "calculateCreationRate", "namespacegridfire.html#a553717597efebcea94232a4a1d80e31d", null ],
+    [ "calculateDestructionRateConstant", "namespacegridfire.html#ab6e14208fad69f4031411a9346c12397", null ],
+    [ "calculateDestructionRateConstant", "namespacegridfire.html#a023dc09e48b62e3f93f9a8b70cb2c63f", null ],
+    [ "findDominantCreationChannel", "namespacegridfire.html#a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f", null ],
+    [ "primeNetwork", "namespacegridfire.html#a3cd451f4b7a7bc7c2d7007ebb343e9ac", null ],
     [ "trim_whitespace", "namespacegridfire.html#a8b245f261cd8d1711ae8d593b054cf98", null ],
     [ "FormatStringLookup", "namespacegridfire.html#a4e9cabad30b57d636c2f0d73d8cc6bb4", null ],
     [ "MIN_ABUNDANCE_THRESHOLD", "namespacegridfire.html#a96c062f94713921e5d7568ecedcdcb06", null ],
     [ "MIN_DENSITY_THRESHOLD", "namespacegridfire.html#ada3c137c014ecd8d06200fea2d1a9f50", null ],
     [ "MIN_JACOBIAN_THRESHOLD", "namespacegridfire.html#ae01b1738df1921db565bcbd68dd6cf64", null ],
-    [ "PrimingReportStatusStrings", "namespacegridfire.html#a02be158966bf82a91b159b7a962c3fa5", null ],
-    [ "s_operator_parens_called", "namespacegridfire.html#a8b632637f62614f509cde0e404a79054", null ]
+    [ "PrimingReportStatusStrings", "namespacegridfire.html#a02be158966bf82a91b159b7a962c3fa5", null ]
 ];

@@ -102,14 +102,17 @@ $(function(){initNavTree('construction_8cpp.html',''); initResizable(true); });
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">construction.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="construction_8h.html">gridfire/engine/procedures/construction.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weak__interpolator_8h.html">gridfire/reaction/weak/weak_interpolator.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weak_8h.html">gridfire/reaction/weak/weak.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weak__types_8h.html">gridfire/reaction/weak/weak_types.h</a>&quot;</code><br />
 <code>#include &lt;ranges&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &quot;<a class="el" href="reaction_8h.html">gridfire/reaction/reaction.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="reaclib_8h.html">gridfire/reaction/reaclib.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/composition/composition.h&quot;</code><br />
@@ -119,6 +122,8 @@ $(function(){initNavTree('construction_8cpp.html',''); initResizable(true); });
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_reaction_set.html">gridfire::ReactionSet</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_reaction.html">gridfire::Reaction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single nuclear reaction from a specific data source.  <a href="classgridfire_1_1_reaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,19 +133,10 @@ Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:aa86f08712565f278adacc7cd2361eb31" id="r_aa86f08712565f278adacc7cd2361eb31"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#aa86f08712565f278adacc7cd2361eb31">gridfire::LogicalReactionSet</a></td></tr>
-<tr class="memdesc:aa86f08712565f278adacc7cd2361eb31"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of logical reactions.  <br /></td></tr>
-<tr class="separator:aa86f08712565f278adacc7cd2361eb31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad838ce3fb6cc02c3fd90b924a0dd91b1" id="r_ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#ad838ce3fb6cc02c3fd90b924a0dd91b1">gridfire::ReactionSet</a></td></tr>
-<tr class="memdesc:ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of reactions, typically from a single source like REACLIB.  <br /></td></tr>
-<tr class="separator:ad838ce3fb6cc02c3fd90b924a0dd91b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a745c6568723947f8e1ff874c9d3f4733" id="r_a745c6568723947f8e1ff874c9d3f4733"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">LogicalReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a745c6568723947f8e1ff874c9d3f4733">gridfire::build_reaclib_nuclear_network</a> (const Composition &amp;composition, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers, bool reverse)</td></tr>
-<tr class="separator:a745c6568723947f8e1ff874c9d3f4733"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58a036e8883e75a8abd3e18798563f71" id="r_a58a036e8883e75a8abd3e18798563f71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a58a036e8883e75a8abd3e18798563f71">gridfire::build_nuclear_network</a> (const Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weak_interpolator, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers, bool reverse_reaclib)</td></tr>
+<tr class="separator:a58a036e8883e75a8abd3e18798563f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

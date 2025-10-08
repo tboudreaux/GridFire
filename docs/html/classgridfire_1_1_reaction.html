@@ -101,11 +101,9 @@ $(function(){initNavTree('classgridfire_1_1_reaction.html',''); initResizable(tr
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classgridfire_1_1_reaction-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">gridfire::Reaction Class Reference</div></div>
+  <div class="headertitle"><div class="title">gridfire::Reaction Class Reference<span class="mlabels"><span class="mlabel abstract">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -119,131 +117,83 @@ Inheritance diagram for gridfire::Reaction:</div>
  <div class="center">
   <img src="classgridfire_1_1_reaction.png" usemap="#gridfire::Reaction_map" alt=""/>
   <map id="gridfire::Reaction_map" name="gridfire::Reaction_map">
-<area href="classgridfire_1_1reaction_1_1_logical_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources." alt="gridfire::reaction::LogicalReaction" shape="rect" coords="0,56,201,80"/>
+<area href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html" title="Concrete Reaction representing a single weak process (beta±, e−/e+ capture)." alt="gridfire::rates::weak::WeakReaction" shape="rect" coords="0,56,243,80"/>
+<area href="classgridfire_1_1reaction_1_1_reaclib_reaction.html" alt="gridfire::reaction::ReaclibReaction" shape="rect" coords="253,56,496,80"/>
+<area href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources." alt="gridfire::reaction::LogicalReaclibReaction" shape="rect" coords="253,112,496,136"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab1860df84843be70f97469761e11ab6a" id="r_ab1860df84843be70f97469761e11ab6a"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1860df84843be70f97469761e11ab6a">~Reaction</a> ()=default</td></tr>
-<tr class="memdesc:ab1860df84843be70f97469761e11ab6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
+<tr class="memdesc:ab1860df84843be70f97469761e11ab6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for correct polymorphic cleanup.  <br /></td></tr>
 <tr class="separator:ab1860df84843be70f97469761e11ab6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dff19d387e771d96c26e98d75ee9d5c" id="r_a7dff19d387e771d96c26e98d75ee9d5c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dff19d387e771d96c26e98d75ee9d5c">Reaction</a> (const std::string_view <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a084c38181408ed5e6fa2a2dd4d0ec905">id</a>, const std::string_view <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a78f42664cc957e266b6cf15fda09be97">peName</a>, const int <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a5cb438adfefb640e4bc58e09053bd629">chapter</a>, const std::vector&lt; fourdst::atomic::Species &gt; &amp;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a0b543e9b0bb4a21efe4b29780d9bdf5b">reactants</a>, const std::vector&lt; fourdst::atomic::Species &gt; &amp;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a6e2ff61b9e8409f2a561663628b8ce02">products</a>, const double <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#abda0b4e4313e6d4ba57acf37d5976fb8">qValue</a>, const std::string_view label, const RateCoefficientSet &amp;sets, const bool reverse=false)</td></tr>
-<tr class="memdesc:a7dff19d387e771d96c26e98d75ee9d5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> object.  <br /></td></tr>
-<tr class="separator:a7dff19d387e771d96c26e98d75ee9d5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad81e9b2a1773470059ca6989c60556ec" id="r_ad81e9b2a1773470059ca6989c60556ec"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad81e9b2a1773470059ca6989c60556ec">calculate_rate</a> (const double T9) const</td></tr>
-<tr class="memdesc:ad81e9b2a1773470059ca6989c60556ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reaction rate for a given temperature.  <br /></td></tr>
-<tr class="separator:ad81e9b2a1773470059ca6989c60556ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a735192a42f72cd68f289493753e1a616" id="r_a735192a42f72cd68f289493753e1a616"><td class="memItemLeft" align="right" valign="top">virtual CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a735192a42f72cd68f289493753e1a616">calculate_rate</a> (const CppAD::AD&lt; double &gt; T9) const</td></tr>
-<tr class="memdesc:a735192a42f72cd68f289493753e1a616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reaction rate for a given temperature using CppAD types.  <br /></td></tr>
-<tr class="separator:a735192a42f72cd68f289493753e1a616"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a8ba9212d76d5ce51f20df6892c6061" id="r_a3a8ba9212d76d5ce51f20df6892c6061"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a8ba9212d76d5ce51f20df6892c6061">calculate_forward_rate_log_derivative</a> (const double T9) const</td></tr>
-<tr class="separator:a3a8ba9212d76d5ce51f20df6892c6061"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78f42664cc957e266b6cf15fda09be97" id="r_a78f42664cc957e266b6cf15fda09be97"><td class="memItemLeft" align="right" valign="top">virtual std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78f42664cc957e266b6cf15fda09be97">peName</a> () const</td></tr>
-<tr class="memdesc:a78f42664cc957e266b6cf15fda09be97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the reaction name in (projectile, ejectile) notation.  <br /></td></tr>
-<tr class="separator:a78f42664cc957e266b6cf15fda09be97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cb438adfefb640e4bc58e09053bd629" id="r_a5cb438adfefb640e4bc58e09053bd629"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cb438adfefb640e4bc58e09053bd629">chapter</a> () const</td></tr>
-<tr class="memdesc:a5cb438adfefb640e4bc58e09053bd629"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the REACLIB chapter number.  <br /></td></tr>
-<tr class="separator:a5cb438adfefb640e4bc58e09053bd629"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a410e2ab0784ad751f82bbe55be603db0" id="r_a410e2ab0784ad751f82bbe55be603db0"><td class="memItemLeft" align="right" valign="top">std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a410e2ab0784ad751f82bbe55be603db0">sourceLabel</a> () const</td></tr>
-<tr class="memdesc:a410e2ab0784ad751f82bbe55be603db0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the source label for the rate data.  <br /></td></tr>
-<tr class="separator:a410e2ab0784ad751f82bbe55be603db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85968076e686e67763f4fdf4f72a892e" id="r_a85968076e686e67763f4fdf4f72a892e"><td class="memItemLeft" align="right" valign="top">const RateCoefficientSet &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85968076e686e67763f4fdf4f72a892e">rateCoefficients</a> () const</td></tr>
-<tr class="memdesc:a85968076e686e67763f4fdf4f72a892e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of rate coefficients.  <br /></td></tr>
-<tr class="separator:a85968076e686e67763f4fdf4f72a892e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab92785f331a446e51a0960b75d60b37b" id="r_ab92785f331a446e51a0960b75d60b37b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab92785f331a446e51a0960b75d60b37b">contains</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
-<tr class="memdesc:ab92785f331a446e51a0960b75d60b37b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the reaction involves a given species as a reactant or product.  <br /></td></tr>
-<tr class="separator:ab92785f331a446e51a0960b75d60b37b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe243affa61ba9b2cd2a7b905cd5e45" id="r_abbe243affa61ba9b2cd2a7b905cd5e45"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbe243affa61ba9b2cd2a7b905cd5e45">contains_reactant</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
-<tr class="memdesc:abbe243affa61ba9b2cd2a7b905cd5e45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the reaction involves a given species as a reactant.  <br /></td></tr>
-<tr class="separator:abbe243affa61ba9b2cd2a7b905cd5e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a074d3cd2421fd5d0133e47f0522403e2" id="r_a074d3cd2421fd5d0133e47f0522403e2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a074d3cd2421fd5d0133e47f0522403e2">contains_product</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
-<tr class="memdesc:a074d3cd2421fd5d0133e47f0522403e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the reaction involves a given species as a product.  <br /></td></tr>
-<tr class="separator:a074d3cd2421fd5d0133e47f0522403e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dc8fda87e0581fde6da0a81cf4d7224" id="r_a7dc8fda87e0581fde6da0a81cf4d7224"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dc8fda87e0581fde6da0a81cf4d7224">all_species</a> () const</td></tr>
-<tr class="memdesc:a7dc8fda87e0581fde6da0a81cf4d7224"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a set of all unique species involved in the reaction.  <br /></td></tr>
-<tr class="separator:a7dc8fda87e0581fde6da0a81cf4d7224"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a855ea65e4b62fb0cddc550424a4bc923" id="r_a855ea65e4b62fb0cddc550424a4bc923"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a855ea65e4b62fb0cddc550424a4bc923">reactant_species</a> () const</td></tr>
-<tr class="memdesc:a855ea65e4b62fb0cddc550424a4bc923"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a set of all unique reactant species.  <br /></td></tr>
-<tr class="separator:a855ea65e4b62fb0cddc550424a4bc923"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01c67726efbaa2ff8e4d6f2c965f485c" id="r_a01c67726efbaa2ff8e4d6f2c965f485c"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c67726efbaa2ff8e4d6f2c965f485c">product_species</a> () const</td></tr>
-<tr class="memdesc:a01c67726efbaa2ff8e4d6f2c965f485c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a set of all unique product species.  <br /></td></tr>
-<tr class="separator:a01c67726efbaa2ff8e4d6f2c965f485c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d3c8ab6d55155f9a21ad80ed8b9ef97" id="r_a1d3c8ab6d55155f9a21ad80ed8b9ef97"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d3c8ab6d55155f9a21ad80ed8b9ef97">num_species</a> () const</td></tr>
-<tr class="memdesc:a1d3c8ab6d55155f9a21ad80ed8b9ef97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of unique species involved in the reaction.  <br /></td></tr>
-<tr class="separator:a1d3c8ab6d55155f9a21ad80ed8b9ef97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf0c94db6536b4a9ac1ec08a5c8f01ac" id="r_aaf0c94db6536b4a9ac1ec08a5c8f01ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf0c94db6536b4a9ac1ec08a5c8f01ac">stoichiometry</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
-<tr class="memdesc:aaf0c94db6536b4a9ac1ec08a5c8f01ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the stoichiometric coefficient for a given species.  <br /></td></tr>
-<tr class="separator:aaf0c94db6536b4a9ac1ec08a5c8f01ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad359c06d7196c1a7a955a7b66a51dbe3" id="r_ad359c06d7196c1a7a955a7b66a51dbe3"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; fourdst::atomic::Species, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad359c06d7196c1a7a955a7b66a51dbe3">stoichiometry</a> () const</td></tr>
-<tr class="memdesc:ad359c06d7196c1a7a955a7b66a51dbe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a map of all species to their stoichiometric coefficients.  <br /></td></tr>
-<tr class="separator:ad359c06d7196c1a7a955a7b66a51dbe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a084c38181408ed5e6fa2a2dd4d0ec905" id="r_a084c38181408ed5e6fa2a2dd4d0ec905"><td class="memItemLeft" align="right" valign="top">std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a084c38181408ed5e6fa2a2dd4d0ec905">id</a> () const</td></tr>
-<tr class="memdesc:a084c38181408ed5e6fa2a2dd4d0ec905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the unique identifier of the reaction.  <br /></td></tr>
-<tr class="separator:a084c38181408ed5e6fa2a2dd4d0ec905"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abda0b4e4313e6d4ba57acf37d5976fb8" id="r_abda0b4e4313e6d4ba57acf37d5976fb8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abda0b4e4313e6d4ba57acf37d5976fb8">qValue</a> () const</td></tr>
-<tr class="memdesc:abda0b4e4313e6d4ba57acf37d5976fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the Q-value of the reaction.  <br /></td></tr>
-<tr class="separator:abda0b4e4313e6d4ba57acf37d5976fb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b543e9b0bb4a21efe4b29780d9bdf5b" id="r_a0b543e9b0bb4a21efe4b29780d9bdf5b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b543e9b0bb4a21efe4b29780d9bdf5b">reactants</a> () const</td></tr>
-<tr class="memdesc:a0b543e9b0bb4a21efe4b29780d9bdf5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the vector of reactant species.  <br /></td></tr>
-<tr class="separator:a0b543e9b0bb4a21efe4b29780d9bdf5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e2ff61b9e8409f2a561663628b8ce02" id="r_a6e2ff61b9e8409f2a561663628b8ce02"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e2ff61b9e8409f2a561663628b8ce02">products</a> () const</td></tr>
-<tr class="memdesc:a6e2ff61b9e8409f2a561663628b8ce02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the vector of product species.  <br /></td></tr>
-<tr class="separator:a6e2ff61b9e8409f2a561663628b8ce02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa67d05dfabf007c1acad34052d9a1dba" id="r_aa67d05dfabf007c1acad34052d9a1dba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa67d05dfabf007c1acad34052d9a1dba">is_reverse</a> () const</td></tr>
-<tr class="memdesc:aa67d05dfabf007c1acad34052d9a1dba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if this is a reverse reaction rate.  <br /></td></tr>
-<tr class="separator:aa67d05dfabf007c1acad34052d9a1dba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1d71e38fc55ae691dbb9ec459a612a5" id="r_aa1d71e38fc55ae691dbb9ec459a612a5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1d71e38fc55ae691dbb9ec459a612a5">excess_energy</a> () const</td></tr>
-<tr class="memdesc:aa1d71e38fc55ae691dbb9ec459a612a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the excess energy from the mass difference of reactants and products.  <br /></td></tr>
-<tr class="separator:aa1d71e38fc55ae691dbb9ec459a612a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac426457cf0a54a15b206549422083bac" id="r_ac426457cf0a54a15b206549422083bac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac426457cf0a54a15b206549422083bac">operator==</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;other) const</td></tr>
-<tr class="memdesc:ac426457cf0a54a15b206549422083bac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares this reaction with another for equality based on their IDs.  <br /></td></tr>
-<tr class="separator:ac426457cf0a54a15b206549422083bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f1c115a99bc7c477a2e858ff18b1b51" id="r_a2f1c115a99bc7c477a2e858ff18b1b51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f1c115a99bc7c477a2e858ff18b1b51">operator!=</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;other) const</td></tr>
-<tr class="memdesc:a2f1c115a99bc7c477a2e858ff18b1b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares this reaction with another for inequality.  <br /></td></tr>
-<tr class="separator:a2f1c115a99bc7c477a2e858ff18b1b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6c20e6d03a2d9f87632f71a90b88cb5" id="r_af6c20e6d03a2d9f87632f71a90b88cb5"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6c20e6d03a2d9f87632f71a90b88cb5">hash</a> (uint64_t seed=0) const</td></tr>
-<tr class="memdesc:af6c20e6d03a2d9f87632f71a90b88cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a hash for the reaction based on its ID.  <br /></td></tr>
-<tr class="separator:af6c20e6d03a2d9f87632f71a90b88cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a7044d0a1d59d85502ce554e4ec2167e4" id="r_a7044d0a1d59d85502ce554e4ec2167e4"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7044d0a1d59d85502ce554e4ec2167e4">m_logger</a> = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
-<tr class="separator:a7044d0a1d59d85502ce554e4ec2167e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c685e5a736b51799e5b9f6746c4126b" id="r_a5c685e5a736b51799e5b9f6746c4126b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c685e5a736b51799e5b9f6746c4126b">m_id</a></td></tr>
-<tr class="memdesc:a5c685e5a736b51799e5b9f6746c4126b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique identifier for the reaction (e.g., "h1+h1=&gt;h2+e+nu").  <br /></td></tr>
-<tr class="separator:a5c685e5a736b51799e5b9f6746c4126b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6124aa9fc2306349e1dd879a37923248" id="r_a6124aa9fc2306349e1dd879a37923248"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6124aa9fc2306349e1dd879a37923248">m_peName</a></td></tr>
-<tr class="memdesc:a6124aa9fc2306349e1dd879a37923248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d").  <br /></td></tr>
-<tr class="separator:a6124aa9fc2306349e1dd879a37923248"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16f9cbb6269817099d3dc07d4e63da7b" id="r_a16f9cbb6269817099d3dc07d4e63da7b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16f9cbb6269817099d3dc07d4e63da7b">m_chapter</a></td></tr>
-<tr class="memdesc:a16f9cbb6269817099d3dc07d4e63da7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chapter number from the REACLIB database, defining the reaction structure.  <br /></td></tr>
-<tr class="separator:a16f9cbb6269817099d3dc07d4e63da7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59122a2898bb9af640cc3e9aeb49028b" id="r_a59122a2898bb9af640cc3e9aeb49028b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59122a2898bb9af640cc3e9aeb49028b">m_qValue</a> = 0.0</td></tr>
-<tr class="memdesc:a59122a2898bb9af640cc3e9aeb49028b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Q-value of the reaction in MeV.  <br /></td></tr>
-<tr class="separator:a59122a2898bb9af640cc3e9aeb49028b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87a065b3c7806bcdb5eadb7de2978a11" id="r_a87a065b3c7806bcdb5eadb7de2978a11"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87a065b3c7806bcdb5eadb7de2978a11">m_reactants</a></td></tr>
-<tr class="memdesc:a87a065b3c7806bcdb5eadb7de2978a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reactants of the reaction.  <br /></td></tr>
-<tr class="separator:a87a065b3c7806bcdb5eadb7de2978a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b5607ed413acdf29539b8a57461e49e" id="r_a4b5607ed413acdf29539b8a57461e49e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b5607ed413acdf29539b8a57461e49e">m_products</a></td></tr>
-<tr class="memdesc:a4b5607ed413acdf29539b8a57461e49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Products of the reaction.  <br /></td></tr>
-<tr class="separator:a4b5607ed413acdf29539b8a57461e49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0185c6be5465d113f25e00aee1297cd6" id="r_a0185c6be5465d113f25e00aee1297cd6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0185c6be5465d113f25e00aee1297cd6">m_sourceLabel</a></td></tr>
-<tr class="memdesc:a0185c6be5465d113f25e00aee1297cd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source label for the rate data (e.g., "wc12w", "st08").  <br /></td></tr>
-<tr class="separator:a0185c6be5465d113f25e00aee1297cd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa61a9a024d7c4ff66a351ccd0277ec72" id="r_aa61a9a024d7c4ff66a351ccd0277ec72"><td class="memItemLeft" align="right" valign="top">RateCoefficientSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa61a9a024d7c4ff66a351ccd0277ec72">m_rateCoefficients</a></td></tr>
-<tr class="memdesc:aa61a9a024d7c4ff66a351ccd0277ec72"><td class="mdescLeft">&#160;</td><td class="mdescRight">The seven rate coefficients.  <br /></td></tr>
-<tr class="separator:aa61a9a024d7c4ff66a351ccd0277ec72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b0b9ac498080aae91ffd466d1ae85a9" id="r_a0b0b9ac498080aae91ffd466d1ae85a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b0b9ac498080aae91ffd466d1ae85a9">m_reverse</a> = false</td></tr>
-<tr class="memdesc:a0b0b9ac498080aae91ffd466d1ae85a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating if this is a reverse reaction rate.  <br /></td></tr>
-<tr class="separator:a0b0b9ac498080aae91ffd466d1ae85a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a648b9ed6108bed2469dc028fb7e351af" id="r_a648b9ed6108bed2469dc028fb7e351af"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:a648b9ed6108bed2469dc028fb7e351af"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a648b9ed6108bed2469dc028fb7e351af">calculate_rate</a> (const T T9) const</td></tr>
-<tr class="memdesc:a648b9ed6108bed2469dc028fb7e351af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Template implementation for calculating the reaction rate.  <br /></td></tr>
-<tr class="separator:a648b9ed6108bed2469dc028fb7e351af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb3e2b9c5404f45fc5656eeac1d06a6c" id="r_abb3e2b9c5404f45fc5656eeac1d06a6c"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb3e2b9c5404f45fc5656eeac1d06a6c">calculate_rate</a> (double T9, double rho, double Ye, double mue, const std::vector&lt; double &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const=0</td></tr>
+<tr class="memdesc:abb3e2b9c5404f45fc5656eeac1d06a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the temperature- and composition-dependent reaction rate.  <br /></td></tr>
+<tr class="separator:abb3e2b9c5404f45fc5656eeac1d06a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cbc768819bea8497a7b9fa644b8fd65" id="r_a8cbc768819bea8497a7b9fa644b8fd65"><td class="memItemLeft" align="right" valign="top">virtual CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cbc768819bea8497a7b9fa644b8fd65">calculate_rate</a> (CppAD::AD&lt; double &gt; T9, CppAD::AD&lt; double &gt; rho, CppAD::AD&lt; double &gt; Ye, CppAD::AD&lt; double &gt; mue, const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const=0</td></tr>
+<tr class="memdesc:a8cbc768819bea8497a7b9fa644b8fd65"><td class="mdescLeft">&#160;</td><td class="mdescRight">AD-enabled reaction rate for algorithmic differentiation.  <br /></td></tr>
+<tr class="separator:a8cbc768819bea8497a7b9fa644b8fd65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768329002a4f0b8604b1aa51d56b5d1b" id="r_a768329002a4f0b8604b1aa51d56b5d1b"><td class="memItemLeft" align="right" valign="top">virtual std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a768329002a4f0b8604b1aa51d56b5d1b">id</a> () const=0</td></tr>
+<tr class="memdesc:a768329002a4f0b8604b1aa51d56b5d1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A stable, unique identifier for this reaction instance.  <br /></td></tr>
+<tr class="separator:a768329002a4f0b8604b1aa51d56b5d1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c533797f18c2fe4945f1afb3fb06d5d" id="r_a0c533797f18c2fe4945f1afb3fb06d5d"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c533797f18c2fe4945f1afb3fb06d5d">reactants</a> () const=0</td></tr>
+<tr class="memdesc:a0c533797f18c2fe4945f1afb3fb06d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordered list of reactant species.  <br /></td></tr>
+<tr class="separator:a0c533797f18c2fe4945f1afb3fb06d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2918935929030e8d218dc8d107a78f9" id="r_ac2918935929030e8d218dc8d107a78f9"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2918935929030e8d218dc8d107a78f9">products</a> () const=0</td></tr>
+<tr class="memdesc:ac2918935929030e8d218dc8d107a78f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordered list of product species.  <br /></td></tr>
+<tr class="separator:ac2918935929030e8d218dc8d107a78f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaeb5d72faf7d55d4e26f6e1fcba21c1" id="r_adaeb5d72faf7d55d4e26f6e1fcba21c1"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adaeb5d72faf7d55d4e26f6e1fcba21c1">contains</a> (const fourdst::atomic::Species &amp;species) const=0</td></tr>
+<tr class="memdesc:adaeb5d72faf7d55d4e26f6e1fcba21c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the species appears as a reactant or a product.  <br /></td></tr>
+<tr class="separator:adaeb5d72faf7d55d4e26f6e1fcba21c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afca3afba45a3db79980c8fe18c87c750" id="r_afca3afba45a3db79980c8fe18c87c750"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afca3afba45a3db79980c8fe18c87c750">contains_reactant</a> (const fourdst::atomic::Species &amp;species) const=0</td></tr>
+<tr class="memdesc:afca3afba45a3db79980c8fe18c87c750"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the species appears among the reactants.  <br /></td></tr>
+<tr class="separator:afca3afba45a3db79980c8fe18c87c750"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a17ca61d069749960e5a83e58c0b8a1" id="r_a5a17ca61d069749960e5a83e58c0b8a1"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a17ca61d069749960e5a83e58c0b8a1">contains_product</a> (const fourdst::atomic::Species &amp;species) const=0</td></tr>
+<tr class="memdesc:a5a17ca61d069749960e5a83e58c0b8a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the species appears among the products.  <br /></td></tr>
+<tr class="separator:a5a17ca61d069749960e5a83e58c0b8a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a640b0bdbed9ed7c2a2e9880ddbcafc1d" id="r_a640b0bdbed9ed7c2a2e9880ddbcafc1d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a640b0bdbed9ed7c2a2e9880ddbcafc1d">is_reverse</a> () const=0</td></tr>
+<tr class="memdesc:a640b0bdbed9ed7c2a2e9880ddbcafc1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this object represents a reverse (backward) rate.  <br /></td></tr>
+<tr class="separator:a640b0bdbed9ed7c2a2e9880ddbcafc1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace0b2bee91702e0ab97b6fc74999d6f0" id="r_ace0b2bee91702e0ab97b6fc74999d6f0"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace0b2bee91702e0ab97b6fc74999d6f0">all_species</a> () const=0</td></tr>
+<tr class="memdesc:ace0b2bee91702e0ab97b6fc74999d6f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of all unique species appearing in the reaction.  <br /></td></tr>
+<tr class="separator:ace0b2bee91702e0ab97b6fc74999d6f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4be8440aa7e79eab1d44b5d83bcdab79" id="r_a4be8440aa7e79eab1d44b5d83bcdab79"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4be8440aa7e79eab1d44b5d83bcdab79">reactant_species</a> () const=0</td></tr>
+<tr class="memdesc:a4be8440aa7e79eab1d44b5d83bcdab79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of unique reactant species.  <br /></td></tr>
+<tr class="separator:a4be8440aa7e79eab1d44b5d83bcdab79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2306d841bad605b7c9ae104397cec0f" id="r_ac2306d841bad605b7c9ae104397cec0f"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2306d841bad605b7c9ae104397cec0f">product_species</a> () const=0</td></tr>
+<tr class="memdesc:ac2306d841bad605b7c9ae104397cec0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of unique product species.  <br /></td></tr>
+<tr class="separator:ac2306d841bad605b7c9ae104397cec0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a348aae35a6c82194ef5387278419e0e6" id="r_a348aae35a6c82194ef5387278419e0e6"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a348aae35a6c82194ef5387278419e0e6">num_species</a> () const=0</td></tr>
+<tr class="memdesc:a348aae35a6c82194ef5387278419e0e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of unique species involved in the reaction.  <br /></td></tr>
+<tr class="separator:a348aae35a6c82194ef5387278419e0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55b7f61d9bde45f2ca485c1b07a05950" id="r_a55b7f61d9bde45f2ca485c1b07a05950"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_map&lt; fourdst::atomic::Species, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55b7f61d9bde45f2ca485c1b07a05950">stoichiometry</a> () const=0</td></tr>
+<tr class="memdesc:a55b7f61d9bde45f2ca485c1b07a05950"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full stoichiometry map for this reaction.  <br /></td></tr>
+<tr class="separator:a55b7f61d9bde45f2ca485c1b07a05950"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0a893603aa88f7d7d205b9b969af487" id="r_af0a893603aa88f7d7d205b9b969af487"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0a893603aa88f7d7d205b9b969af487">stoichiometry</a> (const fourdst::atomic::Species &amp;species) const=0</td></tr>
+<tr class="memdesc:af0a893603aa88f7d7d205b9b969af487"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stoichiometric coefficient for a particular species.  <br /></td></tr>
+<tr class="separator:af0a893603aa88f7d7d205b9b969af487"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41b1c16f499c9255251ed43725cf698c" id="r_a41b1c16f499c9255251ed43725cf698c"><td class="memItemLeft" align="right" valign="top">virtual uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41b1c16f499c9255251ed43725cf698c">hash</a> (uint64_t seed) const=0</td></tr>
+<tr class="memdesc:a41b1c16f499c9255251ed43725cf698c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stable content-based hash for this reaction.  <br /></td></tr>
+<tr class="separator:a41b1c16f499c9255251ed43725cf698c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11c714febaf818f1d4d6c19a064d707e" id="r_a11c714febaf818f1d4d6c19a064d707e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11c714febaf818f1d4d6c19a064d707e">qValue</a> () const=0</td></tr>
+<tr class="memdesc:a11c714febaf818f1d4d6c19a064d707e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Q-value of the reaction (typically MeV), positive if exothermic.  <br /></td></tr>
+<tr class="separator:a11c714febaf818f1d4d6c19a064d707e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae66b446c98add7e00a1d960f4e7c60dd" id="r_ae66b446c98add7e00a1d960f4e7c60dd"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae66b446c98add7e00a1d960f4e7c60dd">calculate_energy_generation_rate</a> (const double T9, const double rho, const double Ye, double mue, const std::vector&lt; double &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const</td></tr>
+<tr class="memdesc:ae66b446c98add7e00a1d960f4e7c60dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience: energy generation rate from this reaction (double version).  <br /></td></tr>
+<tr class="separator:ae66b446c98add7e00a1d960f4e7c60dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4282f85c34d6db1994c07e7a40f66d80" id="r_a4282f85c34d6db1994c07e7a40f66d80"><td class="memItemLeft" align="right" valign="top">virtual CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4282f85c34d6db1994c07e7a40f66d80">calculate_energy_generation_rate</a> (const CppAD::AD&lt; double &gt; &amp;T9, const CppAD::AD&lt; double &gt; &amp;rho, const CppAD::AD&lt; double &gt; &amp;Ye, const CppAD::AD&lt; double &gt; &amp;mue, const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const</td></tr>
+<tr class="memdesc:a4282f85c34d6db1994c07e7a40f66d80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience: AD-enabled energy generation rate (AD version).  <br /></td></tr>
+<tr class="separator:a4282f85c34d6db1994c07e7a40f66d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec9859c030364e1d4a740197514731db" id="r_aec9859c030364e1d4a740197514731db"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec9859c030364e1d4a740197514731db">calculate_log_rate_partial_deriv_wrt_T9</a> (double T9, double rho, double Ye, double mue, const fourdst::composition::Composition &amp;comp) const=0</td></tr>
+<tr class="memdesc:aec9859c030364e1d4a740197514731db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logarithmic partial derivative of the rate with respect to temperature.  <br /></td></tr>
+<tr class="separator:aec9859c030364e1d4a740197514731db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a186856dc2ce85d8cc4db43c7164b6afa" id="r_a186856dc2ce85d8cc4db43c7164b6afa"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a186856dc2ce85d8cc4db43c7164b6afa">type</a> () const=0</td></tr>
+<tr class="memdesc:a186856dc2ce85d8cc4db43c7164b6afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Category of this reaction (e.g., REACLIB, WEAK, LOGICAL_REACLIB).  <br /></td></tr>
+<tr class="separator:a186856dc2ce85d8cc4db43c7164b6afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588a8c19970463d97f5aa333fcd312dc" id="r_a588a8c19970463d97f5aa333fcd312dc"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a588a8c19970463d97f5aa333fcd312dc">clone</a> () const=0</td></tr>
+<tr class="memdesc:a588a8c19970463d97f5aa333fcd312dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polymorphic deep copy.  <br /></td></tr>
+<tr class="separator:a588a8c19970463d97f5aa333fcd312dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -254,11 +204,12 @@ Friends</h2></td></tr>
 <div class="textblock"><p>Represents a single nuclear reaction from a specific data source. </p>
 <p>This class encapsulates all properties of a single nuclear reaction as defined in formats like REACLIB, including reactants, products, Q-value, and rate coefficients from a particular evaluation (source).</p>
 <p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Assuming species and rate coefficients are defined</span></div>
-<div class="line"><a class="code hl_function" href="#a7dff19d387e771d96c26e98d75ee9d5c">Reaction</a> p_gamma_d(</div>
+<div class="line"><a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> p_gamma_d(</div>
 <div class="line">    <span class="stringliteral">&quot;H_1_H_1_to_H_2&quot;</span>, <span class="stringliteral">&quot;p(p,g)d&quot;</span>, 1, {H_1, H_1}, {H_2}, 5.493, <span class="stringliteral">&quot;st08&quot;</span>, rate_coeffs</div>
 <div class="line">);</div>
-<div class="line"><span class="keywordtype">double</span> rate = p_gamma_d.calculate_rate(0.1); <span class="comment">// T9 = 0.1</span></div>
-<div class="ttc" id="aclassgridfire_1_1_reaction_html_a7dff19d387e771d96c26e98d75ee9d5c"><div class="ttname"><a href="#a7dff19d387e771d96c26e98d75ee9d5c">gridfire::Reaction::Reaction</a></div><div class="ttdeci">Reaction(const std::string_view id, const std::string_view peName, const int chapter, const std::vector&lt; fourdst::atomic::Species &gt; &amp;reactants, const std::vector&lt; fourdst::atomic::Species &gt; &amp;products, const double qValue, const std::string_view label, const RateCoefficientSet &amp;sets, const bool reverse=false)</div><div class="ttdoc">Constructs a Reaction object.</div><div class="ttdef"><b>Definition</b> reaction.cpp:19</div></div>
+<div class="line"><span class="keywordtype">double</span> rate = p_gamma_d.<a class="code hl_function" href="classgridfire_1_1reaction_1_1_reaction.html#a83c121480533593adfd68c4a67a649f1">calculate_rate</a>(0.1); <span class="comment">// T9 = 0.1</span></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> reaction.h:78</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html_a83c121480533593adfd68c4a67a649f1"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html#a83c121480533593adfd68c4a67a649f1">gridfire::reaction::Reaction::calculate_rate</a></div><div class="ttdeci">virtual double calculate_rate(double T9, double rho, double Ye, double mue, const std::vector&lt; double &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const =0</div><div class="ttdoc">Compute the temperature- and composition-dependent reaction rate.</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1860df84843be70f97469761e11ab6a" name="ab1860df84843be70f97469761e11ab6a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1860df84843be70f97469761e11ab6a">&#9670;&#160;</a></span>~Reaction()</h2>
@@ -283,85 +234,13 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Virtual destructor. </p>
-
-</div>
-</div>
-<a id="a7dff19d387e771d96c26e98d75ee9d5c" name="a7dff19d387e771d96c26e98d75ee9d5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dff19d387e771d96c26e98d75ee9d5c">&#9670;&#160;</a></span>Reaction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">gridfire::reaction::Reaction::Reaction </td>
-          <td>(</td>
-          <td class="paramtype">const std::string_view</td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string_view</td>          <td class="paramname"><span class="paramname"><em>peName</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>chapter</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactants</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>products</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>qValue</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string_view</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const RateCoefficientSet &amp;</td>          <td class="paramname"><span class="paramname"><em>sets</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>reverse</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructs a <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">id</td><td>A unique identifier for the reaction. </td></tr>
-    <tr><td class="paramname">peName</td><td>The name in (projectile, ejectile) notation (e.g., "p(p,g)d"). </td></tr>
-    <tr><td class="paramname">chapter</td><td>The REACLIB chapter number, defining reaction structure. </td></tr>
-    <tr><td class="paramname">reactants</td><td>A vector of reactant species. </td></tr>
-    <tr><td class="paramname">products</td><td>A vector of product species. </td></tr>
-    <tr><td class="paramname">qValue</td><td>The Q-value of the reaction in MeV. </td></tr>
-    <tr><td class="paramname">label</td><td>The source label for the rate data (e.g., "wc12", "st08"). </td></tr>
-    <tr><td class="paramname">sets</td><td>The set of rate coefficients. </td></tr>
-    <tr><td class="paramname">reverse</td><td>True if this is a reverse reaction rate. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Virtual destructor for correct polymorphic cleanup. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7dc8fda87e0581fde6da0a81cf4d7224" name="a7dc8fda87e0581fde6da0a81cf4d7224"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dc8fda87e0581fde6da0a81cf4d7224">&#9670;&#160;</a></span>all_species()</h2>
+<a id="ace0b2bee91702e0ab97b6fc74999d6f0" name="ace0b2bee91702e0ab97b6fc74999d6f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace0b2bee91702e0ab97b6fc74999d6f0">&#9670;&#160;</a></span>all_species()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,7 +249,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_set&lt; Species &gt; gridfire::reaction::Reaction::all_species </td>
+          <td class="memname">virtual std::unordered_set&lt; fourdst::atomic::Species &gt; gridfire::reaction::Reaction::all_species </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -378,18 +257,18 @@ Friends</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets a set of all unique species involved in the reaction. </p>
-<dl class="section return"><dt>Returns</dt><dd>An unordered_set of all reactant and product species. </dd></dl>
+<p>Set of all unique species appearing in the reaction. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unordered set of all reactants and products (no duplicates). </dd></dl>
 
 </div>
 </div>
-<a id="a3a8ba9212d76d5ce51f20df6892c6061" name="a3a8ba9212d76d5ce51f20df6892c6061"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a8ba9212d76d5ce51f20df6892c6061">&#9670;&#160;</a></span>calculate_forward_rate_log_derivative()</h2>
+<a id="a4282f85c34d6db1994c07e7a40f66d80" name="a4282f85c34d6db1994c07e7a40f66d80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4282f85c34d6db1994c07e7a40f66d80">&#9670;&#160;</a></span>calculate_energy_generation_rate() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -398,491 +277,34 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double gridfire::reaction::Reaction::calculate_forward_rate_log_derivative </td>
+          <td class="memname">virtual CppAD::AD&lt; double &gt; gridfire::reaction::Reaction::calculate_energy_generation_rate </td>
           <td>(</td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">const CppAD::AD&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a735192a42f72cd68f289493753e1a616" name="a735192a42f72cd68f289493753e1a616"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a735192a42f72cd68f289493753e1a616">&#9670;&#160;</a></span>calculate_rate() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">CppAD::AD&lt; double &gt; gridfire::reaction::Reaction::calculate_rate </td>
-          <td>(</td>
-          <td class="paramtype">const CppAD::AD&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::AD&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the reaction rate for a given temperature using CppAD types. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K, as a CppAD::AD&lt;double&gt;. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate, as a CppAD::AD&lt;double&gt;. </dd></dl>
-
-</div>
-</div>
-<a id="ad81e9b2a1773470059ca6989c60556ec" name="ad81e9b2a1773470059ca6989c60556ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad81e9b2a1773470059ca6989c60556ec">&#9670;&#160;</a></span>calculate_rate() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">double gridfire::reaction::Reaction::calculate_rate </td>
-          <td>(</td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::AD&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the reaction rate for a given temperature. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate. </dd></dl>
-
-</div>
-</div>
-<a id="a648b9ed6108bed2469dc028fb7e351af" name="a648b9ed6108bed2469dc028fb7e351af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a648b9ed6108bed2469dc028fb7e351af">&#9670;&#160;</a></span>calculate_rate() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">T gridfire::reaction::Reaction::calculate_rate </td>
-          <td>(</td>
-          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::AD&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Template implementation for calculating the reaction rate. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>The numeric type (double or CppAD::AD&lt;double&gt;). </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The calculated reaction rate.</dd></dl>
-<p>The rate is calculated using the standard REACLIB formula: <code>rate = exp(a0 + a1/T9 + a2/T9^(1/3) + a3*T9^(1/3) + a4*T9 + a5*T9^(5/3) + a6*ln(T9))</code> </p>
-
-</div>
-</div>
-<a id="a5cb438adfefb640e4bc58e09053bd629" name="a5cb438adfefb640e4bc58e09053bd629"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5cb438adfefb640e4bc58e09053bd629">&#9670;&#160;</a></span>chapter()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">int gridfire::reaction::Reaction::chapter </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the REACLIB chapter number. </p>
-<dl class="section return"><dt>Returns</dt><dd>The chapter number. </dd></dl>
-
-</div>
-</div>
-<a id="ab92785f331a446e51a0960b75d60b37b" name="ab92785f331a446e51a0960b75d60b37b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab92785f331a446e51a0960b75d60b37b">&#9670;&#160;</a></span>contains()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::contains </td>
-          <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Checks if the reaction involves a given species as a reactant or product. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">species</td><td>The species to check for. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the species is involved, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="a074d3cd2421fd5d0133e47f0522403e2" name="a074d3cd2421fd5d0133e47f0522403e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a074d3cd2421fd5d0133e47f0522403e2">&#9670;&#160;</a></span>contains_product()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::contains_product </td>
-          <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Checks if the reaction involves a given species as a product. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">species</td><td>The species to check for. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the species is a product, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="abbe243affa61ba9b2cd2a7b905cd5e45" name="abbe243affa61ba9b2cd2a7b905cd5e45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbe243affa61ba9b2cd2a7b905cd5e45">&#9670;&#160;</a></span>contains_reactant()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::contains_reactant </td>
-          <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Checks if the reaction involves a given species as a reactant. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">species</td><td>The species to check for. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the species is a reactant, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="aa1d71e38fc55ae691dbb9ec459a612a5" name="aa1d71e38fc55ae691dbb9ec459a612a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1d71e38fc55ae691dbb9ec459a612a5">&#9670;&#160;</a></span>excess_energy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::reaction::Reaction::excess_energy </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the excess energy from the mass difference of reactants and products. </p>
-<dl class="section return"><dt>Returns</dt><dd>The excess energy in MeV. </dd></dl>
-
-</div>
-</div>
-<a id="af6c20e6d03a2d9f87632f71a90b88cb5" name="af6c20e6d03a2d9f87632f71a90b88cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6c20e6d03a2d9f87632f71a90b88cb5">&#9670;&#160;</a></span>hash()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t gridfire::reaction::Reaction::hash </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes a hash for the reaction based on its ID. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">seed</td><td>The seed for the hash function. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A 64-bit hash value.</dd></dl>
-<p>Uses the XXHash64 algorithm on the reaction's ID string. </p>
-
-</div>
-</div>
-<a id="a084c38181408ed5e6fa2a2dd4d0ec905" name="a084c38181408ed5e6fa2a2dd4d0ec905"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a084c38181408ed5e6fa2a2dd4d0ec905">&#9670;&#160;</a></span>id()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string_view gridfire::reaction::Reaction::id </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the unique identifier of the reaction. </p>
-<dl class="section return"><dt>Returns</dt><dd>The reaction ID. </dd></dl>
-
-</div>
-</div>
-<a id="aa67d05dfabf007c1acad34052d9a1dba" name="aa67d05dfabf007c1acad34052d9a1dba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa67d05dfabf007c1acad34052d9a1dba">&#9670;&#160;</a></span>is_reverse()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::is_reverse </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Checks if this is a reverse reaction rate. </p>
-<dl class="section return"><dt>Returns</dt><dd>True if it is a reverse rate, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="a1d3c8ab6d55155f9a21ad80ed8b9ef97" name="a1d3c8ab6d55155f9a21ad80ed8b9ef97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d3c8ab6d55155f9a21ad80ed8b9ef97">&#9670;&#160;</a></span>num_species()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t gridfire::reaction::Reaction::num_species </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the number of unique species involved in the reaction. </p>
-<dl class="section return"><dt>Returns</dt><dd>The count of unique species. </dd></dl>
-
-</div>
-</div>
-<a id="a2f1c115a99bc7c477a2e858ff18b1b51" name="a2f1c115a99bc7c477a2e858ff18b1b51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f1c115a99bc7c477a2e858ff18b1b51">&#9670;&#160;</a></span>operator!=()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::operator!= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Compares this reaction with another for inequality. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> to compare with. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the reactions are not equal. </dd></dl>
-
-</div>
-</div>
-<a id="ac426457cf0a54a15b206549422083bac" name="ac426457cf0a54a15b206549422083bac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac426457cf0a54a15b206549422083bac">&#9670;&#160;</a></span>operator==()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::operator== </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Compares this reaction with another for equality based on their IDs. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> to compare with. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the reaction IDs are the same. </dd></dl>
-
-</div>
-</div>
-<a id="a78f42664cc957e266b6cf15fda09be97" name="a78f42664cc957e266b6cf15fda09be97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78f42664cc957e266b6cf15fda09be97">&#9670;&#160;</a></span>peName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::string_view gridfire::reaction::Reaction::peName </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>index_to_species_map</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -892,13 +314,25 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the reaction name in (projectile, ejectile) notation. </p>
-<dl class="section return"><dt>Returns</dt><dd>The reaction name (e.g., "p(p,g)d"). </dd></dl>
+<p>Convenience: AD-enabled energy generation rate (AD version). </p>
+<p>Default implementation multiplies the AD rate by the reaction Q-value. Electron quantities (Ye, mue) are ignored in this default, so override if they contribute.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T9</td><td>Temperature in GK as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">rho</td><td>Mass density as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">Ye</td><td>Electron fraction as CppAD::AD&lt;double&gt; (ignored by default). </td></tr>
+    <tr><td class="paramname">mue</td><td>Electron chemical potential as CppAD::AD&lt;double&gt; (ignored by default). </td></tr>
+    <tr><td class="paramname">Y</td><td>Composition vector as CppAD::AD&lt;double&gt; values. </td></tr>
+    <tr><td class="paramname">index_to_species_map</td><td>Mapping from state-vector index to Species. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Energy generation rate as CppAD::AD&lt;double&gt;. </dd></dl>
 
 </div>
 </div>
-<a id="a01c67726efbaa2ff8e4d6f2c965f485c" name="a01c67726efbaa2ff8e4d6f2c965f485c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01c67726efbaa2ff8e4d6f2c965f485c">&#9670;&#160;</a></span>product_species()</h2>
+<a id="ae66b446c98add7e00a1d960f4e7c60dd" name="ae66b446c98add7e00a1d960f4e7c60dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66b446c98add7e00a1d960f4e7c60dd">&#9670;&#160;</a></span>calculate_energy_generation_rate() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -907,7 +341,257 @@ template&lt;typename T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_set&lt; Species &gt; gridfire::reaction::Reaction::product_species </td>
+          <td class="memname">virtual double gridfire::reaction::Reaction::calculate_energy_generation_rate </td>
+          <td>(</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>index_to_species_map</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convenience: energy generation rate from this reaction (double version). </p>
+<p>Default implementation multiplies the scalar rate by the reaction Q-value. Electron quantities (Ye, mue) are ignored in this default, so override in derived classes if needed. Sign convention follows <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a7e06936f9e8bb74e68eaa10e708e5d3c" title="Q-value of the reaction (typically MeV), positive if exothermic.">qValue()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T9</td><td>Temperature in GK (10^9 K). </td></tr>
+    <tr><td class="paramname">rho</td><td>Mass density (g cm^-3). </td></tr>
+    <tr><td class="paramname">Ye</td><td>Electron fraction (ignored by default implementation). </td></tr>
+    <tr><td class="paramname">mue</td><td>Electron chemical potential (ignored by default implementation). </td></tr>
+    <tr><td class="paramname">Y</td><td>Composition vector. </td></tr>
+    <tr><td class="paramname">index_to_species_map</td><td>Mapping from state-vector index to Species. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Energy generation rate, typically rate * <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a7e06936f9e8bb74e68eaa10e708e5d3c" title="Q-value of the reaction (typically MeV), positive if exothermic.">qValue()</a>. </dd></dl>
+
+</div>
+</div>
+<a id="aec9859c030364e1d4a740197514731db" name="aec9859c030364e1d4a740197514731db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec9859c030364e1d4a740197514731db">&#9670;&#160;</a></span>calculate_log_rate_partial_deriv_wrt_T9()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double gridfire::reaction::Reaction::calculate_log_rate_partial_deriv_wrt_T9 </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Logarithmic partial derivative of the rate with respect to temperature. </p>
+<p>Implementations return d(ln rate)/d(ln T9) or an equivalent measure (as documented by the concrete class), evaluated at the provided state.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T9</td><td>Temperature in GK (10^9 K). </td></tr>
+    <tr><td class="paramname">rho</td><td>Mass density (g cm^-3). </td></tr>
+    <tr><td class="paramname">Ye</td><td>Electron fraction. </td></tr>
+    <tr><td class="paramname">mue</td><td>Electron chemical potential. </td></tr>
+    <tr><td class="paramname">comp</td><td>Composition object providing composition in a convenient form. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The logarithmic temperature derivative of the rate. </dd></dl>
+
+</div>
+</div>
+<a id="a8cbc768819bea8497a7b9fa644b8fd65" name="a8cbc768819bea8497a7b9fa644b8fd65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cbc768819bea8497a7b9fa644b8fd65">&#9670;&#160;</a></span>calculate_rate() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual CppAD::AD&lt; double &gt; gridfire::reaction::Reaction::calculate_rate </td>
+          <td>(</td>
+          <td class="paramtype">CppAD::AD&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CppAD::AD&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CppAD::AD&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CppAD::AD&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>index_to_species_map</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>AD-enabled reaction rate for algorithmic differentiation. </p>
+<p>This overload mirrors calculate_rate(double, ...) but operates on CppAD types to enable derivative calculations w.r.t. its inputs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T9</td><td>Temperature in GK as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">rho</td><td>Mass density as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">Ye</td><td>Electron fraction as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">mue</td><td>Electron chemical potential as CppAD::AD&lt;double&gt;. </td></tr>
+    <tr><td class="paramname">Y</td><td>Composition vector as CppAD::AD&lt;double&gt; values. </td></tr>
+    <tr><td class="paramname">index_to_species_map</td><td>Mapping from state-vector index to Species, used to interpret Y. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The reaction rate as a CppAD::AD&lt;double&gt; value. </dd></dl>
+
+</div>
+</div>
+<a id="abb3e2b9c5404f45fc5656eeac1d06a6c" name="abb3e2b9c5404f45fc5656eeac1d06a6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb3e2b9c5404f45fc5656eeac1d06a6c">&#9670;&#160;</a></span>calculate_rate() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double gridfire::reaction::Reaction::calculate_rate </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>index_to_species_map</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the temperature- and composition-dependent reaction rate. </p>
+<p>This is the primary interface used by the network to obtain the rate of a single reaction at the given thermodynamic state and composition. The exact units and normalization are defined by the concrete implementation (e.g., REACLIB typically provides NA&lt;sigma v&gt; with units depending on the reaction order). Implementations may use density/electron properties for weak processes or screening, and the composition vector for multi-body reactions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T9</td><td>Temperature in GK (10^9 K). </td></tr>
+    <tr><td class="paramname">rho</td><td>Mass density (g cm^-3). May be unused for some reaction types. </td></tr>
+    <tr><td class="paramname">Ye</td><td>Electron fraction. May be unused depending on the reaction type. </td></tr>
+    <tr><td class="paramname">mue</td><td>Electron chemical potential. May be unused depending on the reaction type. </td></tr>
+    <tr><td class="paramname">Y</td><td>Composition vector (molar abundances or number fractions) indexed consistently with index_to_species_map. </td></tr>
+    <tr><td class="paramname">index_to_species_map</td><td>Mapping from state-vector index to Species, used to interpret Y. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The reaction rate for the forward direction, with units/normalization defined by the specific model (implementation must document its convention). </dd></dl>
+
+</div>
+</div>
+<a id="a588a8c19970463d97f5aa333fcd312dc" name="a588a8c19970463d97f5aa333fcd312dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a588a8c19970463d97f5aa333fcd312dc">&#9670;&#160;</a></span>clone()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; gridfire::reaction::Reaction::clone </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -915,18 +599,18 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets a set of all unique product species. </p>
-<dl class="section return"><dt>Returns</dt><dd>An unordered_set of product species. </dd></dl>
+<p>Polymorphic deep copy. </p>
+<dl class="section return"><dt>Returns</dt><dd>A std::unique_ptr owning a new <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> equal to this one. </dd></dl>
 
 </div>
 </div>
-<a id="a6e2ff61b9e8409f2a561663628b8ce02" name="a6e2ff61b9e8409f2a561663628b8ce02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e2ff61b9e8409f2a561663628b8ce02">&#9670;&#160;</a></span>products()</h2>
+<a id="adaeb5d72faf7d55d4e26f6e1fcba21c1" name="adaeb5d72faf7d55d4e26f6e1fcba21c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaeb5d72faf7d55d4e26f6e1fcba21c1">&#9670;&#160;</a></span>contains()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -935,203 +619,7 @@ template&lt;typename T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; fourdst::atomic::Species &gt; &amp; gridfire::reaction::Reaction::products </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the vector of product species. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of products. </dd></dl>
-
-</div>
-</div>
-<a id="abda0b4e4313e6d4ba57acf37d5976fb8" name="abda0b4e4313e6d4ba57acf37d5976fb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abda0b4e4313e6d4ba57acf37d5976fb8">&#9670;&#160;</a></span>qValue()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::reaction::Reaction::qValue </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the Q-value of the reaction. </p>
-<dl class="section return"><dt>Returns</dt><dd>The Q-value in whatever units the reaction was defined in (usually MeV). </dd></dl>
-
-</div>
-</div>
-<a id="a85968076e686e67763f4fdf4f72a892e" name="a85968076e686e67763f4fdf4f72a892e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85968076e686e67763f4fdf4f72a892e">&#9670;&#160;</a></span>rateCoefficients()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const RateCoefficientSet &amp; gridfire::reaction::Reaction::rateCoefficients </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the set of rate coefficients. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html" title="Holds the seven coefficients for the REACLIB rate equation.">RateCoefficientSet</a>. </dd></dl>
-
-</div>
-</div>
-<a id="a855ea65e4b62fb0cddc550424a4bc923" name="a855ea65e4b62fb0cddc550424a4bc923"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a855ea65e4b62fb0cddc550424a4bc923">&#9670;&#160;</a></span>reactant_species()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_set&lt; Species &gt; gridfire::reaction::Reaction::reactant_species </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets a set of all unique reactant species. </p>
-<dl class="section return"><dt>Returns</dt><dd>An unordered_set of reactant species. </dd></dl>
-
-</div>
-</div>
-<a id="a0b543e9b0bb4a21efe4b29780d9bdf5b" name="a0b543e9b0bb4a21efe4b29780d9bdf5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b543e9b0bb4a21efe4b29780d9bdf5b">&#9670;&#160;</a></span>reactants()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; fourdst::atomic::Species &gt; &amp; gridfire::reaction::Reaction::reactants </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the vector of reactant species. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of reactants. </dd></dl>
-
-</div>
-</div>
-<a id="a410e2ab0784ad751f82bbe55be603db0" name="a410e2ab0784ad751f82bbe55be603db0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a410e2ab0784ad751f82bbe55be603db0">&#9670;&#160;</a></span>sourceLabel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string_view gridfire::reaction::Reaction::sourceLabel </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the source label for the rate data. </p>
-<dl class="section return"><dt>Returns</dt><dd>The source label (e.g., "wc12w", "st08"). </dd></dl>
-
-</div>
-</div>
-<a id="ad359c06d7196c1a7a955a7b66a51dbe3" name="ad359c06d7196c1a7a955a7b66a51dbe3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad359c06d7196c1a7a955a7b66a51dbe3">&#9670;&#160;</a></span>stoichiometry() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; Species, int &gt; gridfire::reaction::Reaction::stoichiometry </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets a map of all species to their stoichiometric coefficients. </p>
-<dl class="section return"><dt>Returns</dt><dd>An unordered_map from species to their integer coefficients. </dd></dl>
-
-</div>
-</div>
-<a id="aaf0c94db6536b4a9ac1ec08a5c8f01ac" name="aaf0c94db6536b4a9ac1ec08a5c8f01ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf0c94db6536b4a9ac1ec08a5c8f01ac">&#9670;&#160;</a></span>stoichiometry() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int gridfire::reaction::Reaction::stoichiometry </td>
+          <td class="memname">virtual bool gridfire::reaction::Reaction::contains </td>
           <td>(</td>
           <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
           <td> const</td>
@@ -1139,19 +627,435 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Calculates the stoichiometric coefficient for a given species. </p>
+<p>True if the species appears as a reactant or a product. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">species</td><td>The species for which to find the coefficient. </td></tr>
+    <tr><td class="paramname">species</td><td>Species to test. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The stoichiometric coefficient (negative for reactants, positive for products). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the species participates in the reaction (either side). </dd></dl>
+
+</div>
+</div>
+<a id="a5a17ca61d069749960e5a83e58c0b8a1" name="a5a17ca61d069749960e5a83e58c0b8a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a17ca61d069749960e5a83e58c0b8a1">&#9670;&#160;</a></span>contains_product()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::reaction::Reaction::contains_product </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>True if the species appears among the products. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">species</td><td>Species to test. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the species is a product. </dd></dl>
+
+</div>
+</div>
+<a id="afca3afba45a3db79980c8fe18c87c750" name="afca3afba45a3db79980c8fe18c87c750"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afca3afba45a3db79980c8fe18c87c750">&#9670;&#160;</a></span>contains_reactant()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::reaction::Reaction::contains_reactant </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>True if the species appears among the reactants. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">species</td><td>Species to test. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the species is a reactant. </dd></dl>
+
+</div>
+</div>
+<a id="a41b1c16f499c9255251ed43725cf698c" name="a41b1c16f499c9255251ed43725cf698c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41b1c16f499c9255251ed43725cf698c">&#9670;&#160;</a></span>hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint64_t gridfire::reaction::Reaction::hash </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stable content-based hash for this reaction. </p>
+<p>Intended for use in caches, sets, and order-independent hashing of <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> collections. Implementations should produce the same value across processes for the same content and seed. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seed</td><td>Seed value to initialize/mix into the hash. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit hash value. </dd></dl>
+
+</div>
+</div>
+<a id="a768329002a4f0b8604b1aa51d56b5d1b" name="a768329002a4f0b8604b1aa51d56b5d1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a768329002a4f0b8604b1aa51d56b5d1b">&#9670;&#160;</a></span>id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::string_view gridfire::reaction::Reaction::id </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A stable, unique identifier for this reaction instance. </p>
+<dl class="section return"><dt>Returns</dt><dd>String view of the reaction ID (stable across runs and suitable for lookups). </dd></dl>
+
+</div>
+</div>
+<a id="a640b0bdbed9ed7c2a2e9880ddbcafc1d" name="a640b0bdbed9ed7c2a2e9880ddbcafc1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a640b0bdbed9ed7c2a2e9880ddbcafc1d">&#9670;&#160;</a></span>is_reverse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::reaction::Reaction::is_reverse </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether this object represents a reverse (backward) rate. </p>
+<p>Implementations may pair forward/reverse rates for detailed balance. This flag indicates that the parameterization corresponds to the reverse direction. </p><dl class="section return"><dt>Returns</dt><dd>True for a reverse rate, false for a forward rate. </dd></dl>
+
+</div>
+</div>
+<a id="a348aae35a6c82194ef5387278419e0e6" name="a348aae35a6c82194ef5387278419e0e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a348aae35a6c82194ef5387278419e0e6">&#9670;&#160;</a></span>num_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual size_t gridfire::reaction::Reaction::num_species </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Number of unique species involved in the reaction. </p>
+<dl class="section return"><dt>Returns</dt><dd>Count of distinct species across reactants and products. </dd></dl>
+
+</div>
+</div>
+<a id="ac2306d841bad605b7c9ae104397cec0f" name="ac2306d841bad605b7c9ae104397cec0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2306d841bad605b7c9ae104397cec0f">&#9670;&#160;</a></span>product_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unordered_set&lt; fourdst::atomic::Species &gt; gridfire::reaction::Reaction::product_species </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set of unique product species. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unordered set of product species (no duplicates). </dd></dl>
+
+</div>
+</div>
+<a id="ac2918935929030e8d218dc8d107a78f9" name="ac2918935929030e8d218dc8d107a78f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2918935929030e8d218dc8d107a78f9">&#9670;&#160;</a></span>products()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp; gridfire::reaction::Reaction::products </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ordered list of product species. </p>
+<p>Multiplicity is represented by duplicates if applicable. </p><dl class="section return"><dt>Returns</dt><dd>Const reference to the vector of products. </dd></dl>
+
+</div>
+</div>
+<a id="a11c714febaf818f1d4d6c19a064d707e" name="a11c714febaf818f1d4d6c19a064d707e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11c714febaf818f1d4d6c19a064d707e">&#9670;&#160;</a></span>qValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double gridfire::reaction::Reaction::qValue </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Q-value of the reaction (typically MeV), positive if exothermic. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> Q-value used for energy accounting. </dd></dl>
+
+</div>
+</div>
+<a id="a4be8440aa7e79eab1d44b5d83bcdab79" name="a4be8440aa7e79eab1d44b5d83bcdab79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4be8440aa7e79eab1d44b5d83bcdab79">&#9670;&#160;</a></span>reactant_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unordered_set&lt; fourdst::atomic::Species &gt; gridfire::reaction::Reaction::reactant_species </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set of unique reactant species. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unordered set of reactant species (no duplicates). </dd></dl>
+
+</div>
+</div>
+<a id="a0c533797f18c2fe4945f1afb3fb06d5d" name="a0c533797f18c2fe4945f1afb3fb06d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c533797f18c2fe4945f1afb3fb06d5d">&#9670;&#160;</a></span>reactants()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp; gridfire::reaction::Reaction::reactants </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ordered list of reactant species. </p>
+<p>Multiplicity is represented by duplicates, e.g., (p, p) would list H1 twice. </p><dl class="section return"><dt>Returns</dt><dd>Const reference to the vector of reactants. </dd></dl>
+
+</div>
+</div>
+<a id="a55b7f61d9bde45f2ca485c1b07a05950" name="a55b7f61d9bde45f2ca485c1b07a05950"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55b7f61d9bde45f2ca485c1b07a05950">&#9670;&#160;</a></span>stoichiometry() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unordered_map&lt; fourdst::atomic::Species, int &gt; gridfire::reaction::Reaction::stoichiometry </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Full stoichiometry map for this reaction. </p>
+<p>Coefficients are negative for reactants and positive for products; multiplicity is reflected in the magnitude (e.g., 2H -&gt; He gives H: -2, He: +1). </p><dl class="section return"><dt>Returns</dt><dd>Map from Species to integer stoichiometric coefficient. </dd></dl>
+
+</div>
+</div>
+<a id="af0a893603aa88f7d7d205b9b969af487" name="af0a893603aa88f7d7d205b9b969af487"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0a893603aa88f7d7d205b9b969af487">&#9670;&#160;</a></span>stoichiometry() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int gridfire::reaction::Reaction::stoichiometry </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stoichiometric coefficient for a particular species. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">species</td><td>Species for which to query the coefficient. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Negative for reactants, positive for products, zero if absent. </dd></dl>
+
+</div>
+</div>
+<a id="a186856dc2ce85d8cc4db43c7164b6afa" name="a186856dc2ce85d8cc4db43c7164b6afa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a186856dc2ce85d8cc4db43c7164b6afa">&#9670;&#160;</a></span>type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a> gridfire::reaction::Reaction::type </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Category of this reaction (e.g., REACLIB, WEAK, LOGICAL_REACLIB). </p>
+<dl class="section return"><dt>Returns</dt><dd>Enumerated reaction type for runtime dispatch and filtering. </dd></dl>
 
 </div>
 </div>
@@ -1185,248 +1089,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a16f9cbb6269817099d3dc07d4e63da7b" name="a16f9cbb6269817099d3dc07d4e63da7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16f9cbb6269817099d3dc07d4e63da7b">&#9670;&#160;</a></span>m_chapter</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int gridfire::reaction::Reaction::m_chapter</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Chapter number from the REACLIB database, defining the reaction structure. </p>
-
-</div>
-</div>
-<a id="a5c685e5a736b51799e5b9f6746c4126b" name="a5c685e5a736b51799e5b9f6746c4126b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c685e5a736b51799e5b9f6746c4126b">&#9670;&#160;</a></span>m_id</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string gridfire::reaction::Reaction::m_id</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Unique identifier for the reaction (e.g., "h1+h1=&gt;h2+e+nu"). </p>
-
-</div>
-</div>
-<a id="a7044d0a1d59d85502ce554e4ec2167e4" name="a7044d0a1d59d85502ce554e4ec2167e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7044d0a1d59d85502ce554e4ec2167e4">&#9670;&#160;</a></span>m_logger</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">quill::Logger* gridfire::reaction::Reaction::m_logger = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6124aa9fc2306349e1dd879a37923248" name="a6124aa9fc2306349e1dd879a37923248"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6124aa9fc2306349e1dd879a37923248">&#9670;&#160;</a></span>m_peName</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string gridfire::reaction::Reaction::m_peName</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d"). </p>
-
-</div>
-</div>
-<a id="a4b5607ed413acdf29539b8a57461e49e" name="a4b5607ed413acdf29539b8a57461e49e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b5607ed413acdf29539b8a57461e49e">&#9670;&#160;</a></span>m_products</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::reaction::Reaction::m_products</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Products of the reaction. </p>
-
-</div>
-</div>
-<a id="a59122a2898bb9af640cc3e9aeb49028b" name="a59122a2898bb9af640cc3e9aeb49028b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59122a2898bb9af640cc3e9aeb49028b">&#9670;&#160;</a></span>m_qValue</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::reaction::Reaction::m_qValue = 0.0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Q-value of the reaction in MeV. </p>
-
-</div>
-</div>
-<a id="aa61a9a024d7c4ff66a351ccd0277ec72" name="aa61a9a024d7c4ff66a351ccd0277ec72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa61a9a024d7c4ff66a351ccd0277ec72">&#9670;&#160;</a></span>m_rateCoefficients</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">RateCoefficientSet gridfire::reaction::Reaction::m_rateCoefficients</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The seven rate coefficients. </p>
-
-</div>
-</div>
-<a id="a87a065b3c7806bcdb5eadb7de2978a11" name="a87a065b3c7806bcdb5eadb7de2978a11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87a065b3c7806bcdb5eadb7de2978a11">&#9670;&#160;</a></span>m_reactants</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::reaction::Reaction::m_reactants</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Reactants of the reaction. </p>
-
-</div>
-</div>
-<a id="a0b0b9ac498080aae91ffd466d1ae85a9" name="a0b0b9ac498080aae91ffd466d1ae85a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b0b9ac498080aae91ffd466d1ae85a9">&#9670;&#160;</a></span>m_reverse</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool gridfire::reaction::Reaction::m_reverse = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Flag indicating if this is a reverse reaction rate. </p>
-
-</div>
-</div>
-<a id="a0185c6be5465d113f25e00aee1297cd6" name="a0185c6be5465d113f25e00aee1297cd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0185c6be5465d113f25e00aee1297cd6">&#9670;&#160;</a></span>m_sourceLabel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string gridfire::reaction::Reaction::m_sourceLabel</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Source label for the rate data (e.g., "wc12w", "st08"). </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/include/gridfire/reaction/<a class="el" href="reaction_8h.html">reaction.h</a></li>
-<li>src/lib/reaction/<a class="el" href="reaction_8cpp.html">reaction.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

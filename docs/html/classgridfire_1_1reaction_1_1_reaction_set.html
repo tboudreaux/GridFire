@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.0.1a</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -102,43 +102,35 @@ $(function(){initNavTree('classgridfire_1_1reaction_1_1_reaction_set.html',''); 
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classgridfire_1_1reaction_1_1_reaction_set-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">gridfire::reaction::ReactionSet Class Reference</div></div>
+  <div class="headertitle"><div class="title">gridfire::reaction::ReactionSet Class Reference<span class="mlabels"><span class="mlabel final">final</span></span></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>A collection of <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="reaction_8h_source.html">reaction.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for gridfire::reaction::ReactionSet:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classgridfire_1_1reaction_1_1_reaction_set.png" usemap="#gridfire::reaction::ReactionSet_map" alt=""/>
-  <map id="gridfire::reaction::ReactionSet_map" name="gridfire::reaction::ReactionSet_map">
-<area href="classgridfire_1_1reaction_1_1_logical_reaction_set.html" title="A collection of LogicalReaction objects." alt="gridfire::reaction::LogicalReactionSet" shape="rect" coords="0,56,219,80"/>
-  </map>
-</div></div>
+<p><code>#include &lt;reaction.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afc40e3783576867229fad3115b3d39d3" id="r_afc40e3783576867229fad3115b3d39d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc40e3783576867229fad3115b3d39d3">ReactionSet</a> (std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; reactions)</td></tr>
-<tr class="memdesc:afc40e3783576867229fad3115b3d39d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> from a vector of reactions.  <br /></td></tr>
-<tr class="separator:afc40e3783576867229fad3115b3d39d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a63306b92e23e3651c955ab614084de" id="r_a9a63306b92e23e3651c955ab614084de"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a63306b92e23e3651c955ab614084de">ReactionSet</a> (std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &gt; &amp;&amp;reactions)</td></tr>
+<tr class="memdesc:a9a63306b92e23e3651c955ab614084de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> from a vector of reactions.  <br /></td></tr>
+<tr class="separator:a9a63306b92e23e3651c955ab614084de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a789dee5d93810b85062e59508fe0adea" id="r_a789dee5d93810b85062e59508fe0adea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a789dee5d93810b85062e59508fe0adea">ReactionSet</a> (const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> * &gt; &amp;reactions)</td></tr>
+<tr class="separator:a789dee5d93810b85062e59508fe0adea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9edff40316b42ce41b2f895962c1041" id="r_ab9edff40316b42ce41b2f895962c1041"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9edff40316b42ce41b2f895962c1041">ReactionSet</a> ()</td></tr>
+<tr class="separator:ab9edff40316b42ce41b2f895962c1041"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfe2341ae1f016ad82098b6f5a1efc45" id="r_acfe2341ae1f016ad82098b6f5a1efc45"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfe2341ae1f016ad82098b6f5a1efc45">ReactionSet</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;other)</td></tr>
 <tr class="memdesc:acfe2341ae1f016ad82098b6f5a1efc45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:acfe2341ae1f016ad82098b6f5a1efc45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac890bf7fdf689890d765ff67489520a" id="r_aac890bf7fdf689890d765ff67489520a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac890bf7fdf689890d765ff67489520a">operator=</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;other)</td></tr>
 <tr class="memdesc:aac890bf7fdf689890d765ff67489520a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:aac890bf7fdf689890d765ff67489520a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64ca23fc5bdc41b868c3fbeb5aef6d98" id="r_a64ca23fc5bdc41b868c3fbeb5aef6d98"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64ca23fc5bdc41b868c3fbeb5aef6d98">~ReactionSet</a> ()=default</td></tr>
-<tr class="memdesc:a64ca23fc5bdc41b868c3fbeb5aef6d98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
-<tr class="separator:a64ca23fc5bdc41b868c3fbeb5aef6d98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acea41c2ffb010e46bc5cf56f5f244fac" id="r_acea41c2ffb010e46bc5cf56f5f244fac"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acea41c2ffb010e46bc5cf56f5f244fac">add_reaction</a> (<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> reaction)</td></tr>
-<tr class="memdesc:acea41c2ffb010e46bc5cf56f5f244fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a reaction to the set.  <br /></td></tr>
-<tr class="separator:acea41c2ffb010e46bc5cf56f5f244fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1177193b1e46b4e5be630028883ab8dd" id="r_a1177193b1e46b4e5be630028883ab8dd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1177193b1e46b4e5be630028883ab8dd">remove_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
+<tr class="memitem:ad9dbc77e93467c95ebda908b53e9a9d1" id="r_ad9dbc77e93467c95ebda908b53e9a9d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9dbc77e93467c95ebda908b53e9a9d1">add_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
+<tr class="memdesc:ad9dbc77e93467c95ebda908b53e9a9d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a reaction to the set.  <br /></td></tr>
+<tr class="separator:ad9dbc77e93467c95ebda908b53e9a9d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7e95562ea0860bf492b447341f41fb5" id="r_ad7e95562ea0860bf492b447341f41fb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7e95562ea0860bf492b447341f41fb5">add_reaction</a> (std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &amp;&amp;reaction)</td></tr>
+<tr class="separator:ad7e95562ea0860bf492b447341f41fb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1177193b1e46b4e5be630028883ab8dd" id="r_a1177193b1e46b4e5be630028883ab8dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1177193b1e46b4e5be630028883ab8dd">remove_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
 <tr class="memdesc:a1177193b1e46b4e5be630028883ab8dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a reaction from the set.  <br /></td></tr>
 <tr class="separator:a1177193b1e46b4e5be630028883ab8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5f8078e77a700a8356487fbd69ba387" id="r_ae5f8078e77a700a8356487fbd69ba387"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5f8078e77a700a8356487fbd69ba387">contains</a> (const std::string_view &amp;id) const</td></tr>
@@ -147,9 +139,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2f6b165c86634a68f35032c2267255f8" id="r_a2f6b165c86634a68f35032c2267255f8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f6b165c86634a68f35032c2267255f8">contains</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction) const</td></tr>
 <tr class="memdesc:a2f6b165c86634a68f35032c2267255f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the set contains the given reaction.  <br /></td></tr>
 <tr class="separator:a2f6b165c86634a68f35032c2267255f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b07a81a3500e4e91d3bcd336b66e35d" id="r_a6b07a81a3500e4e91d3bcd336b66e35d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b07a81a3500e4e91d3bcd336b66e35d">size</a> () const</td></tr>
-<tr class="memdesc:a6b07a81a3500e4e91d3bcd336b66e35d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of reactions in the set.  <br /></td></tr>
-<tr class="separator:a6b07a81a3500e4e91d3bcd336b66e35d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af14cf34d7367cb6a6be5191724c2d4cf" id="r_af14cf34d7367cb6a6be5191724c2d4cf"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af14cf34d7367cb6a6be5191724c2d4cf">size</a> () const</td></tr>
+<tr class="memdesc:af14cf34d7367cb6a6be5191724c2d4cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of reactions in the set.  <br /></td></tr>
+<tr class="separator:af14cf34d7367cb6a6be5191724c2d4cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8e0d65aafc6e0320690b4906e1bf300" id="r_aa8e0d65aafc6e0320690b4906e1bf300"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8e0d65aafc6e0320690b4906e1bf300">clear</a> ()</td></tr>
 <tr class="memdesc:aa8e0d65aafc6e0320690b4906e1bf300"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes all reactions from the set.  <br /></td></tr>
 <tr class="separator:aa8e0d65aafc6e0320690b4906e1bf300"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,7 +154,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4bdf50219d686a6cbc0b3cc5365dc18e" id="r_a4bdf50219d686a6cbc0b3cc5365dc18e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bdf50219d686a6cbc0b3cc5365dc18e">contains_product</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
 <tr class="memdesc:a4bdf50219d686a6cbc0b3cc5365dc18e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if any reaction in the set contains the given species as a product.  <br /></td></tr>
 <tr class="separator:a4bdf50219d686a6cbc0b3cc5365dc18e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4057f74ae647b691f4f61f150553c52b" id="r_a4057f74ae647b691f4f61f150553c52b"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4057f74ae647b691f4f61f150553c52b">operator[]</a> (size_t index) const</td></tr>
+<tr class="memitem:a4057f74ae647b691f4f61f150553c52b" id="r_a4057f74ae647b691f4f61f150553c52b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4057f74ae647b691f4f61f150553c52b">operator[]</a> (size_t index) const</td></tr>
 <tr class="memdesc:a4057f74ae647b691f4f61f150553c52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses a reaction by its index.  <br /></td></tr>
 <tr class="separator:a4057f74ae647b691f4f61f150553c52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a896b4e492ef596d9174aeda4b59c46cd" id="r_a896b4e492ef596d9174aeda4b59c46cd"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a896b4e492ef596d9174aeda4b59c46cd">operator[]</a> (const std::string_view &amp;id) const</td></tr>
@@ -174,9 +166,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a529189f464aebc6b5ac5c717f70e14b8" id="r_a529189f464aebc6b5ac5c717f70e14b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a529189f464aebc6b5ac5c717f70e14b8">operator!=</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;other) const</td></tr>
 <tr class="memdesc:a529189f464aebc6b5ac5c717f70e14b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares this set with another for inequality.  <br /></td></tr>
 <tr class="separator:a529189f464aebc6b5ac5c717f70e14b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3209bb7c2a41deabaab059f6c671776f" id="r_a3209bb7c2a41deabaab059f6c671776f"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3209bb7c2a41deabaab059f6c671776f">hash</a> (uint64_t seed=0) const</td></tr>
-<tr class="memdesc:a3209bb7c2a41deabaab059f6c671776f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a hash for the entire set.  <br /></td></tr>
-<tr class="separator:a3209bb7c2a41deabaab059f6c671776f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad28907fc08de978461d68cc5b77a3a99" id="r_ad28907fc08de978461d68cc5b77a3a99"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad28907fc08de978461d68cc5b77a3a99">hash</a> (uint64_t seed) const</td></tr>
+<tr class="memdesc:ad28907fc08de978461d68cc5b77a3a99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a hash for the entire set.  <br /></td></tr>
+<tr class="separator:ad28907fc08de978461d68cc5b77a3a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a133ad8cca6a75d31ef8efe67801aef1b" id="r_a133ad8cca6a75d31ef8efe67801aef1b"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a133ad8cca6a75d31ef8efe67801aef1b">getReactionSetSpecies</a> () const</td></tr>
+<tr class="separator:a133ad8cca6a75d31ef8efe67801aef1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Iterators</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Provides iterators to loop over the reactions in the set. </p>
 </div></td></tr>
@@ -193,29 +187,22 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aff5ae284012009164d4b3033577709eb" id="r_aff5ae284012009164d4b3033577709eb"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff5ae284012009164d4b3033577709eb">m_logger</a> = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
 <tr class="separator:aff5ae284012009164d4b3033577709eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa3c40cb22b8bd056cf62b047ae4937c" id="r_aaa3c40cb22b8bd056cf62b047ae4937c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa3c40cb22b8bd056cf62b047ae4937c">m_reactions</a></td></tr>
-<tr class="separator:aaa3c40cb22b8bd056cf62b047ae4937c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd6feda1b3f65a6177904755581f6efe" id="r_abd6feda1b3f65a6177904755581f6efe"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd6feda1b3f65a6177904755581f6efe">m_reactions</a></td></tr>
+<tr class="separator:abd6feda1b3f65a6177904755581f6efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af92e3003b2a3606b48ab857cdedc3111" id="r_af92e3003b2a3606b48ab857cdedc3111"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af92e3003b2a3606b48ab857cdedc3111">m_id</a></td></tr>
 <tr class="separator:af92e3003b2a3606b48ab857cdedc3111"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3e2715e9e4d6b4f1dc54b969a1322f4" id="r_ad3e2715e9e4d6b4f1dc54b969a1322f4"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3e2715e9e4d6b4f1dc54b969a1322f4">m_reactionNameMap</a></td></tr>
-<tr class="memdesc:ad3e2715e9e4d6b4f1dc54b969a1322f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps reaction IDs to <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects for quick lookup.  <br /></td></tr>
-<tr class="separator:ad3e2715e9e4d6b4f1dc54b969a1322f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62965c04447909462bb4f2112661ef44" id="r_a62965c04447909462bb4f2112661ef44"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62965c04447909462bb4f2112661ef44">m_reactionNameMap</a></td></tr>
+<tr class="memdesc:a62965c04447909462bb4f2112661ef44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps reaction IDs to <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects for quick lookup.  <br /></td></tr>
+<tr class="separator:a62965c04447909462bb4f2112661ef44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a5a5e6ed364794f872c2c819536e24c20" id="r_a5a5e6ed364794f872c2c819536e24c20"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a5e6ed364794f872c2c819536e24c20">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;rs)</td></tr>
+<tr class="separator:a5a5e6ed364794f872c2c819536e24c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A collection of <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects. </p>
-<p>This class manages a set of individual <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects, providing efficient lookup by ID and functionality to query the entire set.</p>
-<p>Example: </p><div class="fragment"><div class="line"><a class="code hl_function" href="#afc40e3783576867229fad3115b3d39d3">ReactionSet</a> my_set({reaction1, reaction2});</div>
-<div class="line">my_set.add_reaction(reaction3);</div>
-<div class="line"><span class="keywordflow">if</span> (my_set.contains(<span class="stringliteral">&quot;h1(p,g)h2&quot;</span>)) {</div>
-<div class="line">    <span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&amp; r = my_set[<span class="stringliteral">&quot;h1(p,g)h2&quot;</span>];</div>
-<div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8h_source.html#l00071">reaction.h:71</a></div></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_afc40e3783576867229fad3115b3d39d3"><div class="ttname"><a href="#afc40e3783576867229fad3115b3d39d3">gridfire::reaction::ReactionSet::ReactionSet</a></div><div class="ttdeci">ReactionSet(std::vector&lt; Reaction &gt; reactions)</div><div class="ttdoc">Constructs a ReactionSet from a vector of reactions.</div><div class="ttdef"><b>Definition</b> <a href="reaction_8cpp_source.html#l00140">reaction.cpp:140</a></div></div>
-</div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00307">307</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="afc40e3783576867229fad3115b3d39d3" name="afc40e3783576867229fad3115b3d39d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc40e3783576867229fad3115b3d39d3">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[1/2]</span></h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a9a63306b92e23e3651c955ab614084de" name="a9a63306b92e23e3651c955ab614084de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a63306b92e23e3651c955ab614084de">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,7 +213,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">gridfire::reaction::ReactionSet::ReactionSet </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td class="paramtype">std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &gt; &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -237,7 +224,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs a <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> from a vector of reactions. </p>
+<p>Constructs a <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> from a vector of reactions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">reactions</td><td>The initial vector of <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects. </td></tr>
@@ -245,12 +232,60 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00140">140</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+</div>
+</div>
+<a id="a789dee5d93810b85062e59508fe0adea" name="a789dee5d93810b85062e59508fe0adea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a789dee5d93810b85062e59508fe0adea">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::reaction::ReactionSet::ReactionSet </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel explicit">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab9edff40316b42ce41b2f895962c1041" name="ab9edff40316b42ce41b2f895962c1041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9edff40316b42ce41b2f895962c1041">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::reaction::ReactionSet::ReactionSet </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
 <a id="acfe2341ae1f016ad82098b6f5a1efc45" name="acfe2341ae1f016ad82098b6f5a1efc45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfe2341ae1f016ad82098b6f5a1efc45">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acfe2341ae1f016ad82098b6f5a1efc45">&#9670;&#160;</a></span>ReactionSet() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,64 +302,27 @@ Private Attributes</h2></td></tr>
 <p>Copy constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>The <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> to copy. </td></tr>
+    <tr><td class="paramname">other</td><td>The <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> to copy. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00154">154</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a64ca23fc5bdc41b868c3fbeb5aef6d98" name="a64ca23fc5bdc41b868c3fbeb5aef6d98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64ca23fc5bdc41b868c3fbeb5aef6d98">&#9670;&#160;</a></span>~ReactionSet()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual gridfire::reaction::ReactionSet::~ReactionSet </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel virtual">virtual</span><span class="mlabel default">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Virtual destructor. </p>
-
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="acea41c2ffb010e46bc5cf56f5f244fac" name="acea41c2ffb010e46bc5cf56f5f244fac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acea41c2ffb010e46bc5cf56f5f244fac">&#9670;&#160;</a></span>add_reaction()</h2>
+<a id="ad9dbc77e93467c95ebda908b53e9a9d1" name="ad9dbc77e93467c95ebda908b53e9a9d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9dbc77e93467c95ebda908b53e9a9d1">&#9670;&#160;</a></span>add_reaction() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void gridfire::reaction::ReactionSet::add_reaction </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a></td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Adds a reaction to the set. </p>
@@ -335,7 +333,22 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00175">175</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+</div>
+</div>
+<a id="ad7e95562ea0860bf492b447341f41fb5" name="ad7e95562ea0860bf492b447341f41fb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7e95562ea0860bf492b447341f41fb5">&#9670;&#160;</a></span>add_reaction() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::reaction::ReactionSet::add_reaction </td>
+          <td>(</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -362,8 +375,6 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00435">435</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="adb73fe9ff0178359409e2bea46a620c2" name="adb73fe9ff0178359409e2bea46a620c2"></a>
@@ -389,8 +400,6 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00436">436</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="aa8e0d65aafc6e0320690b4906e1bf300" name="aa8e0d65aafc6e0320690b4906e1bf300"></a>
@@ -409,8 +418,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Removes all reactions from the set. </p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00211">211</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -446,8 +453,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reaction is in the set, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00202">202</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="ae5f8078e77a700a8356487fbd69ba387" name="ae5f8078e77a700a8356487fbd69ba387"></a>
@@ -481,8 +486,6 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the reaction is in the set, false otherwise. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00193">193</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -518,8 +521,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a product in any reaction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00234">234</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a256998eddf292f744d51cdc3e178d4c2" name="a256998eddf292f744d51cdc3e178d4c2"></a>
@@ -553,8 +554,6 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is a reactant in any reaction. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00225">225</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -590,8 +589,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is involved in any reaction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00216">216</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="abae9fbc4b4306479a6cd3173ac628987" name="abae9fbc4b4306479a6cd3173ac628987"></a>
@@ -616,8 +613,6 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00437">437</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
 
 </div>
 </div>
@@ -644,12 +639,35 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00438">438</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+</div>
+</div>
+<a id="a133ad8cca6a75d31ef8efe67801aef1b" name="a133ad8cca6a75d31ef8efe67801aef1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a133ad8cca6a75d31ef8efe67801aef1b">&#9670;&#160;</a></span>getReactionSetSpecies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_set&lt; Species &gt; gridfire::reaction::ReactionSet::getReactionSetSpecies </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
-<a id="a3209bb7c2a41deabaab059f6c671776f" name="a3209bb7c2a41deabaab059f6c671776f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3209bb7c2a41deabaab059f6c671776f">&#9670;&#160;</a></span>hash()</h2>
+<a id="ad28907fc08de978461d68cc5b77a3a99" name="ad28907fc08de978461d68cc5b77a3a99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad28907fc08de978461d68cc5b77a3a99">&#9670;&#160;</a></span>hash()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -660,7 +678,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">uint64_t gridfire::reaction::ReactionSet::hash </td>
           <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span></td><td>)</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -680,8 +698,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A 64-bit hash value.</dd></dl>
 <p>The algorithm computes the hash of each individual reaction, sorts the hashes, and then computes a final hash over the sorted list of hashes. This ensures the hash is order-independent. </p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00270">270</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -703,13 +719,11 @@ Private Attributes</h2></td></tr>
 <p>Compares this set with another for inequality. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> to compare with. </td></tr>
+    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> to compare with. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the sets are not equal. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00266">266</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -731,13 +745,11 @@ Private Attributes</h2></td></tr>
 <p>Copy assignment operator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>The <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> to assign from. </td></tr>
+    <tr><td class="paramname">other</td><td>The <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> to assign from. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A reference to this <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a>. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00166">166</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>. </dd></dl>
 
 </div>
 </div>
@@ -759,13 +771,11 @@ Private Attributes</h2></td></tr>
 <p>Compares this set with another for equality. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html" title="A collection of Reaction objects.">ReactionSet</a> to compare with. </td></tr>
+    <tr><td class="paramname">other</td><td>The other <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> to compare with. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the sets are equal (same size and hash). </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00259">259</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
 
 </div>
 </div>
@@ -807,8 +817,6 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00251">251</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a4057f74ae647b691f4f61f150553c52b" name="a4057f74ae647b691f4f61f150553c52b"></a>
@@ -829,7 +837,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -849,10 +857,6 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html#a00001bbc0f888b167da50ae9fc2a75af">gridfire::reaction::LogicalReactionSet</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00243">243</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
 <a id="a1177193b1e46b4e5be630028883ab8dd" name="a1177193b1e46b4e5be630028883ab8dd"></a>
@@ -860,9 +864,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void gridfire::reaction::ReactionSet::remove_reaction </td>
@@ -871,11 +872,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel virtual">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Removes a reaction from the set. </p>
@@ -886,12 +882,10 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8cpp_source.html#l00181">181</a> of file <a class="el" href="reaction_8cpp_source.html">reaction.cpp</a>.</p>
-
 </div>
 </div>
-<a id="a6b07a81a3500e4e91d3bcd336b66e35d" name="a6b07a81a3500e4e91d3bcd336b66e35d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b07a81a3500e4e91d3bcd336b66e35d">&#9670;&#160;</a></span>size()</h2>
+<a id="af14cf34d7367cb6a6be5191724c2d4cf" name="af14cf34d7367cb6a6be5191724c2d4cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af14cf34d7367cb6a6be5191724c2d4cf">&#9670;&#160;</a></span>size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -900,7 +894,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual size_t gridfire::reaction::ReactionSet::size </td>
+          <td class="memname">size_t gridfire::reaction::ReactionSet::size </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -908,7 +902,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -916,9 +910,35 @@ Private Attributes</h2></td></tr>
 <p>Gets the number of reactions in the set. </p>
 <dl class="section return"><dt>Returns</dt><dd>The size of the set. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaction_set.html#a3bcdf2f98c19e9b95e03ad62d6ff7da7">gridfire::reaction::LogicalReactionSet</a>.</p>
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a5a5e6ed364794f872c2c819536e24c20" name="a5a5e6ed364794f872c2c819536e24c20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a5e6ed364794f872c2c819536e24c20">&#9670;&#160;</a></span>operator&lt;&lt;</h2>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00363">363</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -943,8 +963,6 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00443">443</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <a id="aff5ae284012009164d4b3033577709eb" name="aff5ae284012009164d4b3033577709eb"></a>
@@ -967,12 +985,10 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00441">441</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
-<a id="ad3e2715e9e4d6b4f1dc54b969a1322f4" name="ad3e2715e9e4d6b4f1dc54b969a1322f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3e2715e9e4d6b4f1dc54b969a1322f4">&#9670;&#160;</a></span>m_reactionNameMap</h2>
+<a id="a62965c04447909462bb4f2112661ef44" name="a62965c04447909462bb4f2112661ef44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62965c04447909462bb4f2112661ef44">&#9670;&#160;</a></span>m_reactionNameMap</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -981,7 +997,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt;std::string, <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&gt; gridfire::reaction::ReactionSet::m_reactionNameMap</td>
+          <td class="memname">std::unordered_map&lt;std::string, size_t&gt; gridfire::reaction::ReactionSet::m_reactionNameMap</td>
         </tr>
       </table>
   </td>
@@ -993,12 +1009,10 @@ Private Attributes</h2></td></tr>
 
 <p>Maps reaction IDs to <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects for quick lookup. </p>
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00444">444</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
-<a id="aaa3c40cb22b8bd056cf62b047ae4937c" name="aaa3c40cb22b8bd056cf62b047ae4937c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa3c40cb22b8bd056cf62b047ae4937c">&#9670;&#160;</a></span>m_reactions</h2>
+<a id="abd6feda1b3f65a6177904755581f6efe" name="abd6feda1b3f65a6177904755581f6efe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd6feda1b3f65a6177904755581f6efe">&#9670;&#160;</a></span>m_reactions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1007,7 +1021,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&gt; gridfire::reaction::ReactionSet::m_reactions</td>
+          <td class="memname">std::vector&lt;std::unique_ptr&lt;<a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a>&gt; &gt; gridfire::reaction::ReactionSet::m_reactions</td>
         </tr>
       </table>
   </td>
@@ -1017,13 +1031,11 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="reaction_8h_source.html#l00442">442</a> of file <a class="el" href="reaction_8h_source.html">reaction.h</a>.</p>
-
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/network/include/gridfire/reaction/<a class="el" href="reaction_8h_source.html">reaction.h</a></li>
-<li>src/network/lib/reaction/<a class="el" href="reaction_8cpp_source.html">reaction.cpp</a></li>
+<li>src/include/gridfire/reaction/<a class="el" href="reaction_8h.html">reaction.h</a></li>
+<li>src/lib/reaction/<a class="el" href="reaction_8cpp.html">reaction.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

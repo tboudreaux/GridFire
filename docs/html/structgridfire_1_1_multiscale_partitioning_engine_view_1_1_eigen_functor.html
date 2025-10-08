@@ -126,15 +126,15 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1aa29df77925443796e1e59c1b7b7a60" id="r_a1aa29df77925443796e1e59c1b7b7a60"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1aa29df77925443796e1e59c1b7b7a60">EigenFunctor</a> (<a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">MultiscalePartitioningEngineView</a> &amp;view, const std::vector&lt; size_t &gt; &amp;qse_solve_indices, const std::vector&lt; double &gt; &amp;Y_full_initial, const double T9, const double rho, const Eigen::VectorXd &amp;Y_scale)</td></tr>
-<tr class="memdesc:a1aa29df77925443796e1e59c1b7b7a60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html" title="Functor for solving QSE abundances using Eigen&#39;s nonlinear optimization.">EigenFunctor</a>.  <br /></td></tr>
-<tr class="separator:a1aa29df77925443796e1e59c1b7b7a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d13bb5294f5dae7e2eb1d26720f944e" id="r_a6d13bb5294f5dae7e2eb1d26720f944e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d13bb5294f5dae7e2eb1d26720f944e">values</a> () const</td></tr>
-<tr class="memdesc:a6d13bb5294f5dae7e2eb1d26720f944e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of output values from the functor (size of the residual vector).  <br /></td></tr>
-<tr class="separator:a6d13bb5294f5dae7e2eb1d26720f944e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0adf1074b5e6ba448cedff7563c450d0" id="r_a0adf1074b5e6ba448cedff7563c450d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0adf1074b5e6ba448cedff7563c450d0">inputs</a> () const</td></tr>
-<tr class="memdesc:a0adf1074b5e6ba448cedff7563c450d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of input values to the functor (size of the variable vector).  <br /></td></tr>
-<tr class="separator:a0adf1074b5e6ba448cedff7563c450d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24463a5e83e096ef368878ad29fdafb6" id="r_a24463a5e83e096ef368878ad29fdafb6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24463a5e83e096ef368878ad29fdafb6">EigenFunctor</a> (<a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">MultiscalePartitioningEngineView</a> &amp;view, const std::set&lt; fourdst::atomic::Species &gt; &amp;qse_solve_species, const fourdst::composition::Composition &amp;initial_comp, const double T9, const double rho, const Eigen::VectorXd &amp;Y_scale, const std::unordered_map&lt; fourdst::atomic::Species, size_t &gt; &amp;qse_solve_species_index_map)</td></tr>
+<tr class="memdesc:a24463a5e83e096ef368878ad29fdafb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html" title="Functor for solving QSE abundances using Eigen&#39;s nonlinear optimization.">EigenFunctor</a>.  <br /></td></tr>
+<tr class="separator:a24463a5e83e096ef368878ad29fdafb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f5611ca669567534df1bd793e90d2e3" id="r_a6f5611ca669567534df1bd793e90d2e3"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f5611ca669567534df1bd793e90d2e3">values</a> () const</td></tr>
+<tr class="memdesc:a6f5611ca669567534df1bd793e90d2e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of output values from the functor (size of the residual vector).  <br /></td></tr>
+<tr class="separator:a6f5611ca669567534df1bd793e90d2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad19c39ced17e400af9f46478546a8fa1" id="r_ad19c39ced17e400af9f46478546a8fa1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad19c39ced17e400af9f46478546a8fa1">inputs</a> () const</td></tr>
+<tr class="memdesc:ad19c39ced17e400af9f46478546a8fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of input values to the functor (size of the variable vector).  <br /></td></tr>
+<tr class="separator:ad19c39ced17e400af9f46478546a8fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7bd060a3eaaaefab0c31e60dcdb5f28" id="r_ad7bd060a3eaaaefab0c31e60dcdb5f28"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7bd060a3eaaaefab0c31e60dcdb5f28">operator()</a> (const <a class="el" href="#a3ebf684b36e98da38d8ee6f0be4f91e2">InputType</a> &amp;v_qse, <a class="el" href="#a4d597d16bd9f982d44512d5a6beddae0">OutputType</a> &amp;f_qse) const</td></tr>
 <tr class="memdesc:ad7bd060a3eaaaefab0c31e60dcdb5f28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the functor's residual vector <code>f_qse = dY_alg/dt</code>.  <br /></td></tr>
 <tr class="separator:ad7bd060a3eaaaefab0c31e60dcdb5f28"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,12 +147,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:af2acc70592e5545f9e8f0a33e10ffdc7" id="r_af2acc70592e5545f9e8f0a33e10ffdc7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">MultiscalePartitioningEngineView</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2acc70592e5545f9e8f0a33e10ffdc7">m_view</a></td></tr>
 <tr class="memdesc:af2acc70592e5545f9e8f0a33e10ffdc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a> instance.  <br /></td></tr>
 <tr class="separator:af2acc70592e5545f9e8f0a33e10ffdc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4eb11e99dc2a7e038d815bf7c6bd0be8" id="r_a4eb11e99dc2a7e038d815bf7c6bd0be8"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4eb11e99dc2a7e038d815bf7c6bd0be8">m_qse_solve_indices</a></td></tr>
-<tr class="memdesc:a4eb11e99dc2a7e038d815bf7c6bd0be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices of the species to solve for in the QSE group.  <br /></td></tr>
-<tr class="separator:a4eb11e99dc2a7e038d815bf7c6bd0be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bc901d2d8234d1f61e94d0fe0777f7d" id="r_a3bc901d2d8234d1f61e94d0fe0777f7d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bc901d2d8234d1f61e94d0fe0777f7d">m_Y_full_initial</a></td></tr>
-<tr class="memdesc:a3bc901d2d8234d1f61e94d0fe0777f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial abundances of all species in the full network.  <br /></td></tr>
-<tr class="separator:a3bc901d2d8234d1f61e94d0fe0777f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4804c6481c2706b04f48c1bbfd9fd5f8" id="r_a4804c6481c2706b04f48c1bbfd9fd5f8"><td class="memItemLeft" align="right" valign="top">const std::set&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4804c6481c2706b04f48c1bbfd9fd5f8">m_qse_solve_species</a></td></tr>
+<tr class="memdesc:a4804c6481c2706b04f48c1bbfd9fd5f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices of the species to solve for in the QSE group.  <br /></td></tr>
+<tr class="separator:a4804c6481c2706b04f48c1bbfd9fd5f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5bf1e4b4ac8435af5739ce970b373d7" id="r_ac5bf1e4b4ac8435af5739ce970b373d7"><td class="memItemLeft" align="right" valign="top">const fourdst::composition::Composition &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5bf1e4b4ac8435af5739ce970b373d7">m_initial_comp</a></td></tr>
+<tr class="memdesc:ac5bf1e4b4ac8435af5739ce970b373d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial abundances of all species in the full network.  <br /></td></tr>
+<tr class="separator:ac5bf1e4b4ac8435af5739ce970b373d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f65ed75e9dca9b6e1160ad297e07678" id="r_a7f65ed75e9dca9b6e1160ad297e07678"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f65ed75e9dca9b6e1160ad297e07678">m_T9</a></td></tr>
 <tr class="memdesc:a7f65ed75e9dca9b6e1160ad297e07678"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature in units of 10^9 K.  <br /></td></tr>
 <tr class="separator:a7f65ed75e9dca9b6e1160ad297e07678"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,6 +162,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a8dd40205db7aef439b6f04289ca5dfd5" id="r_a8dd40205db7aef439b6f04289ca5dfd5"><td class="memItemLeft" align="right" valign="top">const Eigen::VectorXd &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8dd40205db7aef439b6f04289ca5dfd5">m_Y_scale</a></td></tr>
 <tr class="memdesc:a8dd40205db7aef439b6f04289ca5dfd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scaling factors for the species abundances, used to improve solver stability.  <br /></td></tr>
 <tr class="separator:a8dd40205db7aef439b6f04289ca5dfd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23e6ba8dfe37b7f167837296a6654684" id="r_a23e6ba8dfe37b7f167837296a6654684"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; fourdst::atomic::Species, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23e6ba8dfe37b7f167837296a6654684">m_qse_solve_species_index_map</a></td></tr>
+<tr class="memdesc:a23e6ba8dfe37b7f167837296a6654684"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mapping from species to their indices in the QSE solve vector.  <br /></td></tr>
+<tr class="separator:a23e6ba8dfe37b7f167837296a6654684"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functor for solving QSE abundances using Eigen's nonlinear optimization. </p>
@@ -234,8 +237,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1aa29df77925443796e1e59c1b7b7a60" name="a1aa29df77925443796e1e59c1b7b7a60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1aa29df77925443796e1e59c1b7b7a60">&#9670;&#160;</a></span>EigenFunctor()</h2>
+<a id="a24463a5e83e096ef368878ad29fdafb6" name="a24463a5e83e096ef368878ad29fdafb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24463a5e83e096ef368878ad29fdafb6">&#9670;&#160;</a></span>EigenFunctor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -251,12 +254,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; size_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>qse_solve_indices</em></span>, </td>
+          <td class="paramtype">const std::set&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>qse_solve_species</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full_initial</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>initial_comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -271,7 +274,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::VectorXd &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_scale</em></span>&#160;)</td>
+          <td class="paramtype">const Eigen::VectorXd &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_scale</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_map&lt; fourdst::atomic::Species, size_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>qse_solve_species_index_map</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -285,11 +293,12 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">view</td><td>The <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a> instance. </td></tr>
-    <tr><td class="paramname">qse_solve_indices</td><td>Indices of the species to solve for in the QSE group. </td></tr>
-    <tr><td class="paramname">Y_full_initial</td><td>Initial abundances of all species. </td></tr>
+    <tr><td class="paramname">qse_solve_species</td><td>Species to solve for in the QSE group. </td></tr>
+    <tr><td class="paramname">initial_comp</td><td>Initial abundances of all species in the full network. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
     <tr><td class="paramname">Y_scale</td><td>Scaling factors for the species abundances. </td></tr>
+    <tr><td class="paramname">qse_solve_species_index_map</td><td>Mapping from species to their indices in the QSE solve vector. </td></tr>
   </table>
   </dd>
 </dl>
@@ -328,8 +337,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a0adf1074b5e6ba448cedff7563c450d0" name="a0adf1074b5e6ba448cedff7563c450d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0adf1074b5e6ba448cedff7563c450d0">&#9670;&#160;</a></span>inputs()</h2>
+<a id="ad19c39ced17e400af9f46478546a8fa1" name="ad19c39ced17e400af9f46478546a8fa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad19c39ced17e400af9f46478546a8fa1">&#9670;&#160;</a></span>inputs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -338,7 +347,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int gridfire::MultiscalePartitioningEngineView::EigenFunctor::inputs </td>
+          <td class="memname">size_t gridfire::MultiscalePartitioningEngineView::EigenFunctor::inputs </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -387,8 +396,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a6d13bb5294f5dae7e2eb1d26720f944e" name="a6d13bb5294f5dae7e2eb1d26720f944e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d13bb5294f5dae7e2eb1d26720f944e">&#9670;&#160;</a></span>values()</h2>
+<a id="a6f5611ca669567534df1bd793e90d2e3" name="a6f5611ca669567534df1bd793e90d2e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f5611ca669567534df1bd793e90d2e3">&#9670;&#160;</a></span>values()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -397,7 +406,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int gridfire::MultiscalePartitioningEngineView::EigenFunctor::values </td>
+          <td class="memname">size_t gridfire::MultiscalePartitioningEngineView::EigenFunctor::values </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -416,19 +425,51 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4eb11e99dc2a7e038d815bf7c6bd0be8" name="a4eb11e99dc2a7e038d815bf7c6bd0be8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4eb11e99dc2a7e038d815bf7c6bd0be8">&#9670;&#160;</a></span>m_qse_solve_indices</h2>
+<a id="ac5bf1e4b4ac8435af5739ce970b373d7" name="ac5bf1e4b4ac8435af5739ce970b373d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5bf1e4b4ac8435af5739ce970b373d7">&#9670;&#160;</a></span>m_initial_comp</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;size_t&gt;&amp; gridfire::MultiscalePartitioningEngineView::EigenFunctor::m_qse_solve_indices</td>
+          <td class="memname">const fourdst::composition::Composition&amp; gridfire::MultiscalePartitioningEngineView::EigenFunctor::m_initial_comp</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initial abundances of all species in the full network. </p>
+
+</div>
+</div>
+<a id="a4804c6481c2706b04f48c1bbfd9fd5f8" name="a4804c6481c2706b04f48c1bbfd9fd5f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4804c6481c2706b04f48c1bbfd9fd5f8">&#9670;&#160;</a></span>m_qse_solve_species</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::set&lt;fourdst::atomic::Species&gt;&amp; gridfire::MultiscalePartitioningEngineView::EigenFunctor::m_qse_solve_species</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Indices of the species to solve for in the QSE group. </p>
+
+</div>
+</div>
+<a id="a23e6ba8dfe37b7f167837296a6654684" name="a23e6ba8dfe37b7f167837296a6654684"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23e6ba8dfe37b7f167837296a6654684">&#9670;&#160;</a></span>m_qse_solve_species_index_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::unordered_map&lt;fourdst::atomic::Species, size_t&gt; gridfire::MultiscalePartitioningEngineView::EigenFunctor::m_qse_solve_species_index_map</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mapping from species to their indices in the QSE solve vector. </p>
 
 </div>
 </div>
@@ -477,22 +518,6 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Pointer to the <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a> instance. </p>
-
-</div>
-</div>
-<a id="a3bc901d2d8234d1f61e94d0fe0777f7d" name="a3bc901d2d8234d1f61e94d0fe0777f7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bc901d2d8234d1f61e94d0fe0777f7d">&#9670;&#160;</a></span>m_Y_full_initial</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;double&gt;&amp; gridfire::MultiscalePartitioningEngineView::EigenFunctor::m_Y_full_initial</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Initial abundances of all species in the full network. </p>
 
 </div>
 </div>

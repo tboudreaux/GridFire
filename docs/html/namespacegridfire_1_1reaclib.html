@@ -114,9 +114,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a91c7971c9d0a2971b9a6fa4d841c761d" id="r_a91c7971c9d0a2971b9a6fa4d841c761d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91c7971c9d0a2971b9a6fa4d841c761d">get_all_reactions</a> ()</td></tr>
-<tr class="memdesc:a91c7971c9d0a2971b9a6fa4d841c761d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides global access to the fully initialized REACLIB reaction set.  <br /></td></tr>
-<tr class="separator:a91c7971c9d0a2971b9a6fa4d841c761d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f2326f2f76cb1895d6cf5daed9b030b" id="r_a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f2326f2f76cb1895d6cf5daed9b030b">get_all_reaclib_reactions</a> ()</td></tr>
+<tr class="memdesc:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides global access to the fully initialized REACLIB reaction set.  <br /></td></tr>
+<tr class="separator:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb94d5adc7bb9db5a67f770f7453e63" id="r_a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb94d5adc7bb9db5a67f770f7453e63">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a> &amp;r)</td></tr>
 <tr class="separator:a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0deac6cbef076e8884e66fd3ab66e0" id="r_afc0deac6cbef076e8884e66fd3ab66e0"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc0deac6cbef076e8884e66fd3ab66e0">parseSpeciesString</a> (const std::string_view str)</td></tr>
@@ -128,18 +128,18 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:af6ff0dfe7ffe34c73ba9acbab5ef8a66" id="r_af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ff0dfe7ffe34c73ba9acbab5ef8a66">s_initialized</a> = false</td></tr>
 <tr class="separator:af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dba5efc372d2a9e9e846dfd6563f3c0" id="r_a5dba5efc372d2a9e9e846dfd6563f3c0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dba5efc372d2a9e9e846dfd6563f3c0">s_all_reaclib_reactions_ptr</a> = nullptr</td></tr>
-<tr class="separator:a5dba5efc372d2a9e9e846dfd6563f3c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f75b17a44c23261a221f7558b1a63d9" id="r_a1f75b17a44c23261a221f7558b1a63d9"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f75b17a44c23261a221f7558b1a63d9">s_all_reaclib_reactions_ptr</a> = nullptr</td></tr>
+<tr class="separator:a1f75b17a44c23261a221f7558b1a63d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a91c7971c9d0a2971b9a6fa4d841c761d" name="a91c7971c9d0a2971b9a6fa4d841c761d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91c7971c9d0a2971b9a6fa4d841c761d">&#9670;&#160;</a></span>get_all_reactions()</h2>
+<a id="a5f2326f2f76cb1895d6cf5daed9b030b" name="a5f2326f2f76cb1895d6cf5daed9b030b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f2326f2f76cb1895d6cf5daed9b030b">&#9670;&#160;</a></span>get_all_reaclib_reactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp; gridfire::reaclib::get_all_reactions </td>
+          <td class="memname">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp; gridfire::reaclib::get_all_reaclib_reactions </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -225,8 +225,8 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a5dba5efc372d2a9e9e846dfd6563f3c0" name="a5dba5efc372d2a9e9e846dfd6563f3c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5dba5efc372d2a9e9e846dfd6563f3c0">&#9670;&#160;</a></span>s_all_reaclib_reactions_ptr</h2>
+<a id="a1f75b17a44c23261a221f7558b1a63d9" name="a1f75b17a44c23261a221f7558b1a63d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f75b17a44c23261a221f7558b1a63d9">&#9670;&#160;</a></span>s_all_reaclib_reactions_ptr</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,7 +235,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a>* gridfire::reaclib::s_all_reaclib_reactions_ptr = nullptr</td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&gt; gridfire::reaclib::s_all_reaclib_reactions_ptr = nullptr</td>
         </tr>
       </table>
   </td>
