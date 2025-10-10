@@ -1,6 +1,6 @@
 #pragma once
 
-#define GRIDFIRE_WEAK_REACTION_LIB_SENTINEL -60.0
+#define GRIDFIRE_WEAK_REACTION_LIB_SENTINEL (-60.0)
 
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/reaction/weak/weak_types.h"
@@ -541,21 +541,74 @@ namespace gridfire::rates::weak {
             m_atomic(ax, ay);
             rateConstant = static_cast<T>(ay[0]);
         } else { // The case where T is of type double
-            const std::expected<WeakRatePayload, InterpolationError> result = m_interpolator.get_rates(
+            std::expected<WeakRatePayload, InterpolationError> result = m_interpolator.get_rates(
                 static_cast<uint16_t>(m_reactant_a),
                 static_cast<uint8_t>(m_reactant_z),
                 T9,
-                log_rhoYe,
-                mue
+                log_rhoYe
             );
 
+            // TODO: Clean this up. When a bit of code needs this many comments to make it clear it is bad code
             if (!result.has_value()) {
-                const InterpolationErrorType type = result.error().type;
-                const std::string msg = std::format(
-                    "Failed to interpolate weak rate for (A={}, Z={}) at T9={}, log10(rho*Ye)={}, mu_e={} with error: {}",
-                    m_reactant.name(), m_reactant_a, m_reactant_z, T9, log_rhoYe, mue, InterpolationErrorTypeMap.at(type)
+                bool okayToClamp = true;
+                const auto&[errorType, boundsErrorInfo] = result.error();
+
+                // The logic here is
+                //   1. If there is any bounds error in T9 then we do not allow clamping. T9 should be a large enough grid
+                //      that the user should not be asking for values outside the grid.
+                //   2. If there is no bounds error in T9, but there is a bounds error in log_rhoYe, then we only allow
+                //      clamping if the query value is below the minimum of the grid. If it is above the maximum
+                //      of the grid, then we do not allow clamping. The reason for this is that at high density,
+                //      screening and other effects can make a significant difference to the rates, and
+                //      the user should be aware that they are asking for a value outside the grid.
+
+                // There are a couple of safety asserts in here that are only active in debug builds. These are to
+                // ensure that our assumptions about the error information are correct. These should really never
+                // be triggered, but if they are, they will help us to identify any issues.
+                if (errorType == InterpolationErrorType::BOUNDS_ERROR) {
+                    assert(boundsErrorInfo.has_value()); // must be true if type is BOUNDS_ERROR, removed in release builds
+
+                    if (boundsErrorInfo->contains(TableAxes::T9)) {
+                        okayToClamp = false;
+                    } else {
+                        assert(boundsErrorInfo->contains(TableAxes::LOG_RHOYE)); // must be true if T9 is not, removed in release builds
+                        const BoundsErrorInfo& boundsError = boundsErrorInfo->at(TableAxes::LOG_RHOYE);
+
+                        if (boundsError.queryValue > boundsError.axisMaxValue) {
+                            okayToClamp = false;
+                        }
+
+                        assert(boundsError.queryValue < boundsError.axisMinValue); // Given the above logic, this must be true, removed in release builds
+                    }
+                }
+
+                if (!okayToClamp) {
+                    const InterpolationErrorType type = result.error().type;
+                    const std::string msg = std::format(
+                        "Failed to interpolate weak rate for {} (A={}, Z={}) at T9={}, log10(rho*Ye)={}, with error: {}. Clamping disallowed due to either query value being out of bounds in T9 or being above the maximum in log10(rho*Ye).",
+                        m_reactant.name(), m_reactant_a, m_reactant_z, T9, log_rhoYe, InterpolationErrorTypeMap.at(type)
+                    );
+                    throw std::runtime_error(msg);
+                }
+
+                // In the case we get here the error was a bounds error in log_rhoYe and the query value was below the minimum of the grid
+                //   so the solution is to clamp the query value to the minimum of the grid and try again.
+                result = m_interpolator.get_rates(
+                    static_cast<uint16_t>(m_reactant_a),
+                    static_cast<uint8_t>(m_reactant_z),
+                    T9,
+                    boundsErrorInfo->at(TableAxes::LOG_RHOYE).axisMinValue
                 );
-                throw std::runtime_error(msg);
+
+                // Check the result again. If it fails this time then we have a real problem and we throw.
+                if (!result.has_value()) {
+                    const InterpolationErrorType type = result.error().type;
+                    const std::string msg = std::format(
+                        "After clamping, failed to interpolate weak rate for {} (A={}, Z={}) at T9={}, log10(rho*Ye)={}, with error: {}",
+                        m_reactant.name(), m_reactant_a, m_reactant_z, T9, log_rhoYe, InterpolationErrorTypeMap.at(type)
+                    );
+                    throw std::runtime_error(msg);
+                }
             }
             const WeakRatePayload payload = result.value();
             const double logRate = get_log_rate_from_payload(payload);

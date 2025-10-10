@@ -393,8 +393,8 @@ namespace gridfire::solver {
 
     void CVODESolverStrategy::calculate_rhs(
         const sunrealtype t,
-        const N_Vector y,
-        const N_Vector ydot,
+        N_Vector y,
+        N_Vector ydot,
         const CVODEUserData *data
     ) const {
         const size_t numSpecies = m_engine.getNetworkSpecies().size();

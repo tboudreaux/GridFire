@@ -17,7 +17,7 @@ namespace gridfire {
     const reaction::Reaction* findDominantCreationChannel (
         const DynamicEngine& engine,
         const Species& species,
-        const fourdst::composition::Composition &comp,
+        const Composition &comp,
         const double T9,
         const double rho
     ) {

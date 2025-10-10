@@ -19,7 +19,7 @@ namespace gridfire::partition {
         const int a,
         const double T9
     ) const {
-        LOG_TRACE_L2(m_logger, "Evaluating ground state partition function for Z={} A={} T9={}", z, a, T9);
+        LOG_TRACE_L3(m_logger, "Evaluating ground state partition function for Z={} A={} T9={}", z, a, T9);
         const int key = make_key(z, a);
         const double spin = m_ground_state_spin.at(key);
         return (2.0 * spin) + 1.0;
@@ -30,7 +30,7 @@ namespace gridfire::partition {
         const int a,
         const double T9
     ) const {
-        LOG_TRACE_L2(m_logger, "Evaluating derivative of ground state partition function for Z={} A={} T9={}", z, a, T9);
+        LOG_TRACE_L3(m_logger, "Evaluating derivative of ground state partition function for Z={} A={} T9={}", z, a, T9);
         return 0.0;
     }
 

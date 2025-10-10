@@ -17,7 +17,13 @@
 
 namespace {
     using namespace fourdst::atomic;
-    std::vector<double> packCompositionToVector(const fourdst::composition::Composition& composition, const gridfire::GraphEngine& engine) {
+    //TODO: Replace all calls to this function with composition.getMolarAbundanceVector() so that
+    //      we don't have to keep this function around. (Cant do this right now because there is not a
+    //      guarantee that this function will return the same ordering as the canonical vector representation)
+    std::vector<double> packCompositionToVector(
+        const fourdst::composition::Composition& composition,
+        const gridfire::GraphEngine& engine
+    ) {
         std::vector<double> Y(engine.getNetworkSpecies().size(), 0.0);
         const auto& allSpecies = engine.getNetworkSpecies();
         for (size_t i = 0; i < allSpecies.size(); ++i) {
@@ -780,6 +786,7 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Partitioning by timescale...");
         const auto result= m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         const auto netTimescale = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+
         if (!result) {
             LOG_ERROR(m_logger, "Failed to get species destruction timescales due to stale engine state");
             m_logger->flush_log();
@@ -792,6 +799,14 @@ namespace gridfire {
         }
         const std::unordered_map<Species, double>& all_timescales = result.value();
         const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
+
+        for (const auto& [species, destructionTimescale] : all_timescales) {
+            std::cout << "Species: " << species.name()
+                      << ", Destruction Timescale: " << (std::isfinite(destructionTimescale) ? std::to_string(destructionTimescale) : "inf")
+                      << " s, Net Timescale: " << (std::isfinite(net_timescales.at(species)) ? std::to_string(net_timescales.at(species)) : "inf")
+                      << " s\n";
+        }
+
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
         std::vector<std::pair<double, Species>> sorted_timescales;
@@ -1075,6 +1090,11 @@ namespace gridfire {
                     normalized_composition.setMassFraction(species, 0.0);
                 }
             }
+            bool normCompFinalizedOkay = normalized_composition.finalize(true);
+            if (!normCompFinalizedOkay) {
+                LOG_ERROR(m_logger, "Failed to finalize composition before QSE solve.");
+                throw std::runtime_error("Failed to finalize composition before QSE solve.");
+            }
 
             Eigen::VectorXd Y_scale(algebraic_species.size());
             Eigen::VectorXd v_initial(algebraic_species.size());
@@ -1330,10 +1350,18 @@ namespace gridfire {
         Eigen::VectorXd y_qse = m_Y_scale.array() * v_qse.array().sinh(); // Convert to physical abundances using asinh scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.contains(species)) {
+            if (!comp_trial.hasSymbol(std::string(species.name()))) {
                 comp_trial.registerSpecies(species);
             }
-            comp_trial.setMassFraction(species, y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))]);
+            const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
+            const double massFraction = molarAbundance * species.mass();
+            comp_trial.setMassFraction(species, massFraction);
+        }
+
+        const bool didFinalize = comp_trial.finalize(false);
+        if (!didFinalize) {
+            std::string msg = std::format("Failed to finalize composition (comp_trial) in {} at line {}", __FILE__, __LINE__);
+            throw std::runtime_error(msg);
         }
 
         const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
@@ -1357,10 +1385,18 @@ namespace gridfire {
         Eigen::VectorXd y_qse = m_Y_scale.array() * v_qse.array().sinh(); // Convert to physical abundances using asinh scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.contains(species)) {
+            if (!comp_trial.hasSymbol(std::string(species.name()))) {
                 comp_trial.registerSpecies(species);
             }
-            comp_trial.setMassFraction(species, y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))]);
+            const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
+            const double massFraction = molarAbundance * species.mass();
+            comp_trial.setMassFraction(species, massFraction);
+        }
+
+        const bool didFinalize = comp_trial.finalize(false);
+        if (!didFinalize) {
+            std::string msg = std::format("Failed to finalize composition (comp_trial) in {} at line {}", __FILE__, __LINE__);
+            throw std::runtime_error(msg);
         }
 
         m_view->getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho);
@@ -1368,14 +1404,16 @@ namespace gridfire {
         const long N = static_cast<long>(m_qse_solve_species.size());
         J_qse.resize(N, N);
         long rowID = 0;
-        long colID = 0;
         for (const auto& rowSpecies : m_qse_solve_species) {
+            long colID = 0;
             for (const auto& colSpecies: m_qse_solve_species) {
-                J_qse(rowID++, colID++) = m_view->getBaseEngine().getJacobianMatrixEntry(
+                J_qse(rowID, colID) = m_view->getBaseEngine().getJacobianMatrixEntry(
                     rowSpecies,
                     colSpecies
                 );
+                colID += 1;
             }
+            rowID += 1;
         }
 
         // Chain rule for asinh scaling:

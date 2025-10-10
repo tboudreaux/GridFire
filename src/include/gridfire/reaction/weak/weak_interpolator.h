@@ -2,6 +2,7 @@
 
 #include "gridfire/reaction/weak/weak_types.h"
 #include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/logging/logging.h"
 
 #include <unordered_map>
 #include <cstdint>
@@ -66,7 +67,6 @@ namespace gridfire::rates::weak {
          * @param Z Proton number of the isotope.
          * @param t9 Temperature in GK (10^9 K).
          * @param log_rhoYe Log10 of rho*Ye (cgs density times electron fraction).
-         * @param mu_e Electron chemical potential (MeV).
          * @return expected<WeakRatePayload, InterpolationError>: payload on success;
          *         InterpolationError::UNKNOWN_SPECIES_ERROR if (A,Z) not present; or
          *         InterpolationError::BOUNDS_ERROR if any coordinate is outside the table
@@ -84,8 +84,7 @@ namespace gridfire::rates::weak {
             uint16_t A,
             uint8_t Z,
             double t9,
-            double log_rhoYe,
-            double mu_e
+            double log_rhoYe
         ) const;
 
         /**
@@ -100,7 +99,6 @@ namespace gridfire::rates::weak {
          * @param Z Proton number of the isotope.
          * @param t9 Temperature in GK (10^9 K).
          * @param log_rhoYe Log10 of rho*Ye (cgs density times electron fraction).
-         * @param mu_e Electron chemical potential (MeV).
          * @return expected<WeakRateDerivatives, InterpolationError>: derivative payload on success;
          *         otherwise an InterpolationError as described above.
          * @par Example
@@ -114,10 +112,10 @@ namespace gridfire::rates::weak {
             uint16_t A,
             uint8_t Z,
             double t9,
-            double log_rhoYe,
-            double mu_e
+            double log_rhoYe
         ) const;
     private:
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         /**
          * @brief Pack (A,Z) into a 32-bit key used for the internal map.
          *

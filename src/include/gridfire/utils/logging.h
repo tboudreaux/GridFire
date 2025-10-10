@@ -1,10 +1,9 @@
 #pragma once
 
 #include "gridfire/engine/engine_abstract.h"
+#include "fourdst/composition/composition.h"
 
 #include <string>
-#include <vector>
-
 
 namespace gridfire::utils {
     /**
@@ -17,7 +16,7 @@ namespace gridfire::utils {
      *
      * @param engine A constant reference to a `DynamicEngine` object, used to
      *               calculate the species timescales.
-     * @param Y A vector of the molar abundances (mol/g) for each species.
+     * @param composition The current composition of the plasma
      * @param T9 The temperature in units of 10^9 K.
      * @param rho The plasma density in g/cm^3.
      * @return A std::string containing the formatted table of species and their

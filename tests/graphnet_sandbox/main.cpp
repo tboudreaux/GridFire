@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL3);
+    logger->set_log_level(quill::LogLevel::TraceL2);
     LOG_INFO(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;

@@ -6,7 +6,6 @@
 #include "fourdst/logging/logging.h"
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include <memory>
@@ -99,6 +98,6 @@ namespace gridfire::partition {
          * @return Unique pointer to a new PartitionFunction instance of the given type.
          * @throws std::runtime_error If the given type is not recognized.
 +         */
-         [[nodiscard]] std::unique_ptr<PartitionFunction> selectPartitionFunction(const BasePartitionType type) const;
+         [[nodiscard]] std::unique_ptr<PartitionFunction> selectPartitionFunction(BasePartitionType type) const;
      };
  }

@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace gridfire::exceptions {
@@ -17,41 +18,41 @@ namespace gridfire::exceptions {
             int m_total_steps;
             double m_eps_nuc;
         };
-        explicit StaleEngineTrigger(const state &s)
-            :  m_state(s) {}
+        explicit StaleEngineTrigger(state s)
+            :  m_state(std::move(s)) {}
 
-        const char* what() const noexcept override{
+        [[nodiscard]] const char* what() const noexcept override{
             return "Engine reports stale state. This means that the caller should trigger a update of the engine state before continuing with the integration. If you as an end user are seeing this error, it is likely a bug in the code that should be reported. Please provide the input parameters and the context in which this error occurred. Thank you for your help!";
         }
 
-        state getState() const {
+        [[nodiscard]] state getState() const {
             return m_state;
         }
 
-        size_t numSpecies() const {
+        [[nodiscard]] size_t numSpecies() const {
             return m_state.m_Y.size();
         }
 
-        size_t totalSteps() const {
+        [[nodiscard]] size_t totalSteps() const {
             return m_state.m_total_steps;
         }
 
-        double energy() const {
+        [[nodiscard]] double energy() const {
             return m_state.m_eps_nuc;
         }
 
-        double getMolarAbundance(const size_t index) const {
+        [[nodiscard]] double getMolarAbundance(const size_t index) const {
             if (index > m_state.m_Y.size() - 1) {
                 throw std::out_of_range("Index out of bounds for molar abundance vector.");
             }
             return m_state.m_Y[index];
         }
 
-        double temperature() const {
+        [[nodiscard]] double temperature() const {
             return m_state.m_T9 * 1e9; // Convert T9 back to Kelvin
         }
 
-        double density() const {
+        [[nodiscard]] double density() const {
             return m_state.m_rho;
         }
     private:
@@ -61,10 +62,10 @@ namespace gridfire::exceptions {
 
     class StaleEngineError final : public EngineError {
     public:
-        explicit StaleEngineError(const std::string& message)
-            : m_message(message) {}
+        explicit StaleEngineError(std::string  message)
+            : m_message(std::move(message)) {}
 
-        const char* what() const noexcept override {
+        [[nodiscard]] const char* what() const noexcept override {
             return m_message.c_str();
         }
 
@@ -74,10 +75,10 @@ namespace gridfire::exceptions {
 
     class FailedToPartitionEngineError final : public EngineError {
     public:
-        explicit FailedToPartitionEngineError(const std::string& message)
-            : m_message(message) {}
+        explicit FailedToPartitionEngineError(std::string  message)
+            : m_message(std::move(message)) {}
 
-        const char* what() const noexcept override {
+        [[nodiscard]] const char* what() const noexcept override {
             return m_message.c_str();
         }
     private:
@@ -86,10 +87,10 @@ namespace gridfire::exceptions {
 
     class NetworkResizedError final : public EngineError {
     public:
-        explicit NetworkResizedError(const std::string& message)
-            : m_message(message) {}
+        explicit NetworkResizedError(std::string  message)
+            : m_message(std::move(message)) {}
 
-        const char* what() const noexcept override {
+        [[nodiscard]] const char* what() const noexcept override {
             return m_message.c_str();
         }
     private:
@@ -98,10 +99,10 @@ namespace gridfire::exceptions {
 
     class UnableToSetNetworkReactionsError final : public EngineError {
     public:
-        explicit UnableToSetNetworkReactionsError(const std::string& message)
-            : m_message(message) {}
+        explicit UnableToSetNetworkReactionsError(std::string  message)
+            : m_message(std::move(message)) {}
 
-        const char* what() const noexcept override {
+        [[nodiscard]] const char* what() const noexcept override {
             return m_message.c_str();
         }
 

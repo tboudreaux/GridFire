@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 #include <ranges>
+#include <functional>
 
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 
@@ -707,6 +708,7 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @param Ye
          * @param mue
+         * @param speciesIDLookup
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
          *
          * This method computes the net rate at which the given reaction proceeds
@@ -716,14 +718,17 @@ namespace gridfire {
         T calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
             const std::vector<T>& Y,
-            const T T9,
-            const T rho, T Ye, T mue
+            T T9,
+            T rho,
+            T Ye,
+            T mue,
+            const std::function<std::optional<size_t>(const fourdst::atomic::Species &)>&speciesIDLookup
         ) const;
 
         template<IsArithmeticOrAD T>
         T calculateReverseMolarReactionFlow(
-            const T T9,
-            const T rho,
+            T T9,
+            T rho,
             std::vector<T> screeningFactors,
             const std::vector<T>& Y,
             size_t reactionIndex,
@@ -739,6 +744,7 @@ namespace gridfire {
          * @param rho Density in g/cm^3.
          * @param Ye
          * @param mue
+         * @param speciesLookup
          * @return StepDerivatives<T> containing dY/dt and energy generation rate.
          *
          * This method calculates the time derivatives of all species and the
@@ -748,7 +754,10 @@ namespace gridfire {
         [[nodiscard]] StepDerivatives<T> calculateAllDerivatives(
             const std::vector<T>& Y_in,
             T T9,
-            T rho, T Ye, T mue
+            T rho,
+            T Ye,
+            T mue,
+            std::function<std::optional<size_t>(const fourdst::atomic::Species &)> speciesLookup
         ) const;
 
         // /**
@@ -869,7 +878,8 @@ namespace gridfire {
         const T T9,
         const T rho,
         const T Ye,
-        const T mue
+        const T mue,
+        const std::function<std::optional<size_t>(const fourdst::atomic::Species &)> speciesLookup
     ) const {
         std::vector<T> screeningFactors = m_screeningModel->calculateScreeningFactors(
             m_reactions,
@@ -913,16 +923,21 @@ namespace gridfire {
         const T N_A = static_cast<T>(m_constants.Na); // Avogadro's number in mol^-1
         const T c = static_cast<T>(m_constants.c); // Speed of light in cm/s
 
-        // TODO: It may be prudent to introduce assertions here which validate units but will be removed in release builds (to ensure that unit inconsistencies do not creep in during future development)
-        //       libconstants already has units built in so this should be straightforward.
-
         // --- SINGLE LOOP OVER ALL REACTIONS ---
         for (size_t reactionIndex = 0; reactionIndex < m_reactions.size(); ++reactionIndex) {
             const auto& reaction = m_reactions[reactionIndex];
 
             // 1. Calculate forward reaction rate
             const T forwardMolarReactionFlow = screeningFactors[reactionIndex] *
-                calculateMolarReactionFlow<T>(reaction, Y, T9, rho, Ye, mue);
+                calculateMolarReactionFlow<T>(
+                    reaction,
+                    Y,
+                    T9,
+                    rho,
+                    Ye,
+                    mue,
+                    speciesLookup
+                );
 
             // 2. Calculate reverse reaction rate
             T reverseMolarFlow = static_cast<T>(0.0);
@@ -965,7 +980,8 @@ namespace gridfire {
         const T T9,
         const T rho,
         const T Ye,
-        const T mue
+        const T mue,
+        const std::function<std::optional<size_t>(const fourdst::atomic::Species &)>& speciesIDLookup
     ) const {
 
         // --- Pre-setup (flags to control conditionals in an AD safe / branch aware manner) ---
@@ -989,10 +1005,12 @@ namespace gridfire {
         // --- Loop through each unique reactant species and calculate the molar concentration for that species then multiply that into the accumulator ---
         for (const auto& [species_name, count] : reactant_counts) {
             // --- Resolve species to molar abundance ---
-            // PERF: Could probably optimize out this lookup
-            const auto species_it = m_speciesToIndexMap.find(m_networkSpeciesMap.at(species_name));
-            const size_t species_index = species_it->second;
-            const T Yi = Y[species_index];
+            // TODO: We need some way to handle the case when a species in the reaction is not part of the composition being tracked
+            const std::optional<size_t> species_index = speciesIDLookup(m_networkSpeciesMap.at(species_name));
+            if (!species_index.has_value()) {
+                return static_cast<T>(0.0); // If any reactant is not present, the reaction cannot proceed
+            }
+            const T Yi = Y[species_index.value()];
 
             // --- If count is > 1 , we need to raise the molar concentration to the power of count since there are really count bodies in that reaction ---
             molar_concentration_product *= CppAD::pow(Yi, static_cast<T>(count)); // ni^count

@@ -93,18 +93,18 @@ namespace gridfire::rates::weak {
     };
 
     /**
-     * @brief Partial derivatives of the log10() fields w.r.t. (T9, log10(rho*Ye), mu_e).
+     * @brief Partial derivatives of the log10() fields w.r.t. (T9, log10(rho*Ye)).
      *
-     * Array ordering is [d/dT9, d/dlogRhoYe, d/dMuE] for each corresponding field.
+     * Array ordering is [d/dT9, d/dlogRhoYe] for each corresponding field.
      */
     struct WeakRateDerivatives {
         // Each array holds [d/dT9, d/dlogRhoYe, d/dMuE]
-        std::array<double, 3> d_log_beta_plus;
-        std::array<double, 3> d_log_electron_capture;
-        std::array<double, 3> d_log_neutrino_loss_ec;
-        std::array<double, 3> d_log_beta_minus;
-        std::array<double, 3> d_log_positron_capture;
-        std::array<double, 3> d_log_antineutrino_loss_bd;
+        std::array<double, 2> d_log_beta_plus;
+        std::array<double, 2> d_log_electron_capture;
+        std::array<double, 2> d_log_neutrino_loss_ec;
+        std::array<double, 2> d_log_beta_minus;
+        std::array<double, 2> d_log_positron_capture;
+        std::array<double, 2> d_log_antineutrino_loss_bd;
     };
 
     /**
@@ -133,6 +133,19 @@ namespace gridfire::rates::weak {
         LOG_RHOYE, ///< log10(rho*Ye).
         MUE        ///< Electron chemical potential (MeV).
     };
+}
+
+// This need to be here to avoid compiler issues related to the order of specialization
+namespace std {
+    template <>
+    struct hash<gridfire::rates::weak::TableAxes> {
+        std::size_t operator()(gridfire::rates::weak::TableAxes t) const noexcept {
+            return std::hash<int>()(static_cast<int>(t));
+        }
+    };
+}
+
+namespace gridfire::rates::weak {
 
     /**
      * @brief Detailed bounds information for a BOUNDS_ERROR.
@@ -154,20 +167,20 @@ namespace gridfire::rates::weak {
         std::optional<std::unordered_map<TableAxes, BoundsErrorInfo>> boundsErrorInfo = std::nullopt;
     };
 
+
     /**
-     * @brief Regular 3D grid and payloads for a single isotope (A,Z).
+     * @brief Regular 2D grid and payloads for a single isotope (A,Z).
      *
      * Axes are monotonically increasing per dimension. Data vector is laid out in
      * row-major order with index computed as:
-     *   index = ((i_t9 * rhoYe_axis.size() + j_rhoYe) * mue_axis.size()) + k_mue
+     *
+     *   index = i_t9 * N_rhoYe + j_rhoYe
+     *
      */
     struct IsotopeGrid {
-        std::vector<double> t9_axis;   ///< Unique sorted T9 grid.
-        std::vector<double> rhoYe_axis;///< Unique sorted log10(rho*Ye) grid.
-        std::vector<double> mue_axis;  ///< Unique sorted mu_e grid.
-
-        // index = ((i_t9 * rhoYe_axis.size() + j_rhoYe) * mue_axis.size()) + k_mue
-        std::vector<WeakRatePayload> data; ///< Payloads at each grid node.
+        std::vector<double> t9_axis;    ///< Unique sorted T9 grid.
+        std::vector<double> rhoYe_axis; ///< Unique sorted log10(rho*Ye) grid.
+        std::vector<WeakRatePayload> data; ///< MuE axis for each (T9, log_rhoYe) pair (the table is ragged in mu_e). This is also where the payloads are stored.
     };
 
     /**
@@ -217,3 +230,4 @@ namespace gridfire::rates::weak {
         }
     };
 }
+

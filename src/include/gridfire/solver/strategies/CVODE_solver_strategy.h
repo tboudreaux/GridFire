@@ -21,11 +21,15 @@
 
 // Include headers for linear solvers and N_Vectors
 // We will use preprocessor directives to select the correct ones
-#include <cvode/cvode.h>      // For CVDls (serial dense linear solver)
 #include <sundials/sundials_context.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 
+// These are the possible N_Vector implementations. We use the compiler defines to select the most appropriate one for the build.
+// If none are defined, we default to serial.
+
+// For precompiled binaries we will need to ensure that we have versions built for all three types (ideally with some runtime
+// checks that will fail gracefully if the user tries to use an unsupported type).
 #ifdef SUNDIALS_HAVE_OPENMP
     #include <nvector/nvector_openmp.h>
 #endif
@@ -103,7 +107,7 @@ namespace gridfire::solver {
          *    if present after a step, it is rethrown for upstream handling.
          *  - Prints/collects diagnostics per step (step size, energy, solver iterations).
          *  - On trigger activation, rebuilds CVODE resources to reflect a changed network and
-         *    reinitializes the state using the latest engine composition, preserving energy.
+         *    reinitialized the state using the latest engine composition, preserving energy.
          *  - At the end, converts molar abundances to mass fractions and assembles NetOut,
          *    including derivatives of energy w.r.t. T and rho from the engine.
          *
@@ -250,7 +254,7 @@ namespace gridfire::solver {
          * @brief Compute and print per-component error ratios; run diagnostic helpers.
          *
          * Gathers CVODE's estimated local errors, converts the state to a Composition, and prints a
-         * sorted table of species with highest error ratios; then invokes diagnostic routines to
+         * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
         void log_step_diagnostics(const CVODEUserData& user_data) const;

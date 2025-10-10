@@ -42,7 +42,7 @@ namespace gridfire::expectations {
         }
     };
 
-    struct StaleEngineError : EngineError {
+    struct StaleEngineError final : EngineError {
         StaleEngineErrorTypes staleType;
 
         explicit StaleEngineError(const StaleEngineErrorTypes sType)

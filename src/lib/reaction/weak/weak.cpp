@@ -16,6 +16,11 @@
 
 
 namespace {
+    std::unordered_map<fourdst::atomic::SpeciesErrorType, std::string> SpeciesErrorTypeMap = {
+        {fourdst::atomic::SpeciesErrorType::ELEMENT_SYMBOL_NOT_FOUND, "Element symbol not found (Z out of range)"},
+        {fourdst::atomic::SpeciesErrorType::SPECIES_SYMBOL_NOT_FOUND, "Species symbol not found ((A,Z) out of range)"}
+    };
+
     fourdst::atomic::Species resolve_weak_product(
         const gridfire::rates::weak::WeakReactionType type,
         const fourdst::atomic::Species& reactant
@@ -23,25 +28,36 @@ namespace {
         using namespace fourdst::atomic;
         using namespace gridfire::rates::weak;
 
-        std::optional<Species> product; // Use optional so that we can start in a valid "null" state
+        int zMod = 0;
         switch (type) {
             case WeakReactionType::BETA_MINUS_DECAY:
-                product = az_to_species(reactant.a(), reactant.z() + 1);
-                return product.value();
+                zMod = 1;
+                break;
             case WeakReactionType::BETA_PLUS_DECAY:
-                product = az_to_species(reactant.a(), reactant.z() - 1);
-                return product.value();
-            case WeakReactionType::ELECTRON_CAPTURE:
-                product = az_to_species(reactant.a(), reactant.z() - 1);
-                return product.value();
+                zMod = -1;
+                break;
             case WeakReactionType::POSITRON_CAPTURE:
-                product = az_to_species(reactant.a(), reactant.z() + 1);
+                zMod = 1;
+                break;
+            case WeakReactionType::ELECTRON_CAPTURE:
+                zMod = -1;
                 break;
         }
-        if (!product.has_value()) {
-            throw std::runtime_error("Failed to resolve weak reaction product for reactant: " + std::string(reactant.name()));
+        std::expected<Species, SpeciesErrorType> product = az_to_species(reactant.a(), reactant.z() + zMod);
+
+        if (product.has_value()) {
+            return product.value();
         }
-        return product.value();
+        const std::string msg = std::format(
+            "Failed to resolve weak reaction product (A: {}, Z: {}) for reactant {} (looked up A: {}, Z: {}): {}",
+            reactant.a(),
+            reactant.z(),
+            reactant.name(),
+            reactant.a(),
+            reactant.z() + zMod,
+            SpeciesErrorTypeMap.at(product.error())
+        );
+        throw std::runtime_error(msg);
     }
 
     std::string resolve_weak_id(
@@ -77,7 +93,16 @@ namespace gridfire::rates::weak {
 
         // ReSharper disable once CppUseStructuredBinding
         for (const auto& weak_reaction_record : UNIFIED_WEAK_DATA) {
-            Species species = az_to_species(weak_reaction_record.A, weak_reaction_record.Z);
+            std::expected<Species, SpeciesErrorType> species_result = az_to_species(weak_reaction_record.A, weak_reaction_record.Z);
+            if (!species_result.has_value()) {
+                const SpeciesErrorType type = species_result.error();
+                const std::string msg = std::format(
+                    "Failed to load weak reaction data for (A={}, Z={}) with error: {}",
+                    weak_reaction_record.A, weak_reaction_record.Z, SpeciesErrorTypeMap.at(type)
+                );
+                throw std::runtime_error(msg);
+            }
+            const Species& species = species_result.value();
 
             if (weak_reaction_record.log_beta_minus > GRIDFIRE_WEAK_REACTION_LIB_SENTINEL) {
                 m_weak_network[species].push_back(
@@ -148,7 +173,7 @@ namespace gridfire::rates::weak {
 
     std::expected<std::vector<WeakReactionEntry>, WeakMapError> WeakReactionMap::get_species_reactions(
         const std::string &species_name) const {
-        const fourdst::atomic::Species species = fourdst::atomic::species.at(species_name);
+        const fourdst::atomic::Species& species = fourdst::atomic::species.at(species_name);
         if (m_weak_network.contains(species)) {
             return m_weak_network.at(species);
         }
@@ -284,9 +309,7 @@ namespace gridfire::rates::weak {
             case WeakReactionType::POSITRON_CAPTURE:
                 Q_MeV = nuclearMassDiff_MeV + 2.0 * electronMass_MeV;
                 break;
-            case WeakReactionType::BETA_MINUS_DECAY:
-                Q_MeV = nuclearMassDiff_MeV;
-                break;
+            case WeakReactionType::BETA_MINUS_DECAY: // Same as electron capture so we can simply fall through
             case WeakReactionType::ELECTRON_CAPTURE:
                 Q_MeV = nuclearMassDiff_MeV;
                 break;
@@ -306,8 +329,7 @@ namespace gridfire::rates::weak {
             static_cast<uint16_t>(m_reactant_a),
             static_cast<uint8_t>(m_reactant_z),
             T9,
-            std::log10(rho * Ye),
-            mue
+           std::log10(rho * Ye)
         );
 
         if (!rates.has_value()) {
@@ -374,8 +396,7 @@ namespace gridfire::rates::weak {
             static_cast<uint16_t>(m_reactant_a),
             static_cast<uint8_t>(m_reactant_z),
             T9,
-            log_rhoYe,
-            mue
+            log_rhoYe
         );
         if (!rates.has_value()) {
             const InterpolationErrorType type = rates.error().type;
@@ -386,9 +407,22 @@ namespace gridfire::rates::weak {
             throw std::runtime_error(msg);
         }
 
-        // TODO: Finish implementing this (just need a switch statement)
-        return 0.0;
-
+        double logRate = 0.0;
+        switch (m_type) {
+            case WeakReactionType::BETA_MINUS_DECAY:
+                logRate = rates->d_log_beta_minus[0];
+                break;
+            case WeakReactionType::BETA_PLUS_DECAY:
+                logRate = rates->d_log_beta_plus[0];
+                break;
+            case WeakReactionType::ELECTRON_CAPTURE:
+                logRate = rates->d_log_electron_capture[0];
+                break;
+            case WeakReactionType::POSITRON_CAPTURE:
+                logRate = rates->d_log_positron_capture[0];
+                break;
+        }
+        return logRate;
     }
 
     reaction::ReactionType WeakReaction::type() const {
@@ -437,9 +471,7 @@ namespace gridfire::rates::weak {
             case WeakReactionType::BETA_MINUS_DECAY:
                 logNeutrinoLoss = payload.log_antineutrino_loss_bd;
                 break;
-            case WeakReactionType::BETA_PLUS_DECAY:
-                logNeutrinoLoss = payload.log_neutrino_loss_ec;
-                break;
+            case WeakReactionType::BETA_PLUS_DECAY: // Same as electron capture so we can simply fall through
             case WeakReactionType::ELECTRON_CAPTURE:
                 logNeutrinoLoss = payload.log_neutrino_loss_ec;
                 break;
@@ -450,6 +482,7 @@ namespace gridfire::rates::weak {
         return logNeutrinoLoss;
     }
 
+    // Note that the input vector tx is of size 3: [T9, log10(rho*Ye), mu_e]
     bool WeakReaction::AtomicWeakRate::forward (
         const size_t p,
         const size_t q,
@@ -464,20 +497,18 @@ namespace gridfire::rates::weak {
         }
         const double T9 = tx[0];
         const double log10_rhoye = tx[1];
-        const double mu_e = tx[2];
 
         const std::expected<WeakRatePayload, InterpolationError> result = m_interpolator.get_rates(
             static_cast<uint16_t>(m_a),
             static_cast<uint8_t>(m_z),
             T9,
-            log10_rhoye,
-            mu_e
+            log10_rhoye
         );
         if (!result.has_value()) {
             const InterpolationErrorType type = result.error().type;
             const std::string msg = std::format(
-                "Failed to interpolate weak rate for (A={}, Z={}) at T9={}, log10(rho*Ye)={}, mu_e={} with error: {}",
-                m_a, m_z, T9, log10_rhoye, mu_e, InterpolationErrorTypeMap.at(type)
+                "Failed to interpolate weak rate for (A={}, Z={}) at T9={}, log10(ρ Ye)={}, with error: {}",
+                m_a, m_z, T9, log10_rhoye, InterpolationErrorTypeMap.at(type)
             );
             throw std::runtime_error(msg);
         }
@@ -501,7 +532,7 @@ namespace gridfire::rates::weak {
         }
 
         if (vx.size() > 0) { // Set up the sparsity pattern. This is saying that all input variables affect the output variable.
-            const bool any_input_varies = vx[0] || vx[1] || vx[2];
+            const bool any_input_varies = vx[0] || vx[1];
             vy[0] = any_input_varies;
             vy[1] = any_input_varies;
         }
@@ -517,7 +548,6 @@ namespace gridfire::rates::weak {
     ) {
         const double T9 = tx[0];
         const double log10_rhoye = tx[1];
-        const double mu_e = tx[2];
 
         const double forwardPassRate = ty[0]; // This is the rate from the forward pass.
         const double forwardPassNeutrinoLossRate = ty[1]; // This is the neutrino loss rate from the forward pass.
@@ -526,55 +556,47 @@ namespace gridfire::rates::weak {
             static_cast<uint16_t>(m_a),
             static_cast<uint8_t>(m_z),
             T9,
-            log10_rhoye,
-            mu_e
+            log10_rhoye
         );
 
         if (!result.has_value()) {
             const InterpolationErrorType type = result.error().type;
             const std::string msg = std::format(
-                "Failed to interpolate weak rate derivatives for (A={}, Z={}) at T9={}, log10(rho*Ye)={}, mu_e={} with error: {}",
-                m_a, m_z, T9, log10_rhoye, mu_e, InterpolationErrorTypeMap.at(type)
+                "Failed to interpolate weak rate derivatives for (A={}, Z={}) at T9={}, log10(ρ Ye)={}, with error: {}",
+                m_a, m_z, T9, log10_rhoye, InterpolationErrorTypeMap.at(type)
             );
             throw std::runtime_error(msg);
         }
 
+        // ReSharper disable once CppUseStructuredBinding
         const WeakRateDerivatives derivatives = result.value();
 
-        std::array<double, 3> dLogRate; // d(rate)/dT9, d(rate)/dlogRhoYe, d(rate)/dMuE
-        std::array<double, 3> dLogNuLoss; // d(nu loss)/dT9, d(nu loss)/dlogRhoYe, d(nu loss)/dMuE
+        std::array<double, 2> dLogRate{}; // d(rate)/dT9, d(rate)/dlogRhoYe
+        std::array<double, 2> dLogNuLoss{}; // d(nu loss)/dT9, d(nu loss)/dlogRhoYe
         switch (m_type) {
             case WeakReactionType::BETA_MINUS_DECAY:
                 dLogRate[0]     = derivatives.d_log_beta_minus[0];
                 dLogRate[1]     = derivatives.d_log_beta_minus[1];
-                dLogRate[2]     = derivatives.d_log_beta_minus[2];
                 dLogNuLoss[0]   = derivatives.d_log_antineutrino_loss_bd[0];
                 dLogNuLoss[1]   = derivatives.d_log_antineutrino_loss_bd[1];
-                dLogNuLoss[2]   = derivatives.d_log_antineutrino_loss_bd[2];
                 break;
             case WeakReactionType::BETA_PLUS_DECAY:
                 dLogRate[0]     = derivatives.d_log_beta_plus[0];
                 dLogRate[1]     = derivatives.d_log_beta_plus[1];
-                dLogRate[2]     = derivatives.d_log_beta_plus[2];
                 dLogNuLoss[0]   = derivatives.d_log_neutrino_loss_ec[0];
                 dLogNuLoss[1]   = derivatives.d_log_neutrino_loss_ec[1];
-                dLogNuLoss[2]   = derivatives.d_log_neutrino_loss_ec[2];
                 break;
             case WeakReactionType::ELECTRON_CAPTURE:
                 dLogRate[0]     = derivatives.d_log_electron_capture[0];
                 dLogRate[1]     = derivatives.d_log_electron_capture[1];
-                dLogRate[2]     = derivatives.d_log_electron_capture[2];
                 dLogNuLoss[0]   = derivatives.d_log_neutrino_loss_ec[0];
                 dLogNuLoss[1]   = derivatives.d_log_neutrino_loss_ec[1];
-                dLogNuLoss[2]   = derivatives.d_log_neutrino_loss_ec[2];
                 break;
             case WeakReactionType::POSITRON_CAPTURE:
                 dLogRate[0]     = derivatives.d_log_positron_capture[0];
                 dLogRate[1]     = derivatives.d_log_positron_capture[1];
-                dLogRate[2]     = derivatives.d_log_positron_capture[2];
                 dLogNuLoss[0]   = derivatives.d_log_antineutrino_loss_bd[0];
                 dLogNuLoss[1]   = derivatives.d_log_antineutrino_loss_bd[1];
-                dLogNuLoss[2]   = derivatives.d_log_antineutrino_loss_bd[2];
                 break;
         }
 
@@ -583,12 +605,10 @@ namespace gridfire::rates::weak {
         // Contributions from the reaction rate (output 0)
         px[0] = py[0] * forwardPassRate * ln10 * dLogRate[0];
         px[1] = py[0] * forwardPassRate * ln10 * dLogRate[1];
-        px[2] = py[0] * forwardPassRate * ln10 * dLogRate[2];
 
         // Contributions from the neutrino loss rate (output 1)
         px[0] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[0];
         px[1] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[1];
-        px[2] += py[1] * forwardPassNeutrinoLossRate * ln10 * dLogNuLoss[2];
 
         return true;
 
@@ -602,7 +622,6 @@ namespace gridfire::rates::weak {
         std::set<size_t> all_input_deps;
         all_input_deps.insert(r[0].begin(), r[0].end());
         all_input_deps.insert(r[1].begin(), r[1].end());
-        all_input_deps.insert(r[2].begin(), r[2].end());
 
         // What this is saying is that both output variables depend on all input variables.
         s[0] = all_input_deps;
@@ -623,7 +642,6 @@ namespace gridfire::rates::weak {
 
         st[0] = all_output_deps;
         st[1] = all_output_deps;
-        st[2] = all_output_deps;
         return true;
 
     }

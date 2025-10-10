@@ -25,10 +25,11 @@ namespace gridfire {
 
 
     ReactionSet build_nuclear_network(
-    const Composition& composition,
-    const rates::weak::WeakRateInterpolator& weak_interpolator,
-    BuildDepthType maxLayers,
-    bool reverse_reaclib) {
+        const Composition& composition,
+        const rates::weak::WeakRateInterpolator& weakInterpolator,
+        BuildDepthType maxLayers,
+        bool reverse
+    ) {
         int depth;
         if (std::holds_alternative<NetworkBuildDepth>(maxLayers)) {
             depth = static_cast<int>(std::get<NetworkBuildDepth>(maxLayers));
@@ -47,40 +48,52 @@ namespace gridfire {
         // Clone all relevant REACLIB reactions into the master pool
         const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
         for (const auto& reaction : allReaclibReactions) {
-            if (reaction->is_reverse() == reverse_reaclib) {
+            if (reaction->is_reverse() == reverse) {
                 master_reaction_pool.add_reaction(reaction->clone());
             }
         }
 
-        for (const auto& parent_species: weak_interpolator.available_isotopes()) {
-            master_reaction_pool.add_reaction(
-                std::make_unique<rates::weak::WeakReaction>(
-                    parent_species,
-                    rates::weak::WeakReactionType::BETA_PLUS_DECAY,
-                    weak_interpolator
-                )
+        for (const auto& parent_species: weakInterpolator.available_isotopes()) {
+            std::expected<Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
+                parent_species.a(),
+                parent_species.z() + 1
             );
-            master_reaction_pool.add_reaction(
-                std::make_unique<rates::weak::WeakReaction>(
-                    parent_species,
-                    rates::weak::WeakReactionType::BETA_MINUS_DECAY,
-                    weak_interpolator
-                )
+            std::expected<Species, fourdst::atomic::SpeciesErrorType> downProduct = fourdst::atomic::az_to_species(
+                parent_species.a(),
+                parent_species.z() - 1
             );
-            master_reaction_pool.add_reaction(
-                std::make_unique<rates::weak::WeakReaction>(
-                    parent_species,
-                    rates::weak::WeakReactionType::ELECTRON_CAPTURE,
-                    weak_interpolator
-                )
-            );
-            master_reaction_pool.add_reaction(
-                std::make_unique<rates::weak::WeakReaction>(
-                    parent_species,
-                    rates::weak::WeakReactionType::POSITRON_CAPTURE,
-                    weak_interpolator
-                )
-            );
+            if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
+                master_reaction_pool.add_reaction(
+                    std::make_unique<rates::weak::WeakReaction>(
+                        parent_species,
+                        rates::weak::WeakReactionType::BETA_PLUS_DECAY,
+                        weakInterpolator
+                    )
+                );
+                master_reaction_pool.add_reaction(
+                    std::make_unique<rates::weak::WeakReaction>(
+                        parent_species,
+                        rates::weak::WeakReactionType::ELECTRON_CAPTURE,
+                        weakInterpolator
+                    )
+                );
+            }
+            if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
+                master_reaction_pool.add_reaction(
+                    std::make_unique<rates::weak::WeakReaction>(
+                        parent_species,
+                        rates::weak::WeakReactionType::BETA_MINUS_DECAY,
+                        weakInterpolator
+                    )
+                );
+                master_reaction_pool.add_reaction(
+                    std::make_unique<rates::weak::WeakReaction>(
+                        parent_species,
+                        rates::weak::WeakReactionType::POSITRON_CAPTURE,
+                        weakInterpolator
+                    )
+                );
+            }
         }
 
         // --- Step 2: Use non-owning raw pointers for the fast build algorithm ---
@@ -140,7 +153,13 @@ namespace gridfire {
                 break;
             }
 
-            LOG_TRACE_L1(logger, "Layer {}: Collected {} new reactions. New products this layer: {}", collectedReactionPtrs.size() - collectedReactionPtrs.size(), newProductsThisLayer.size());
+            LOG_TRACE_L1(
+                logger,
+                "Layer {}: Collected {} new reactions. New products this layer: {}",
+                layer,
+                collectedReactionPtrs.size() - collectedReactionPtrs.size(),
+                newProductsThisLayer.size()
+            );
             availableSpecies.insert(newProductsThisLayer.begin(), newProductsThisLayer.end());
             remainingReactions = std::move(reactionsForNextPass);
         }

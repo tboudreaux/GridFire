@@ -79,7 +79,19 @@ namespace gridfire {
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
             return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho);
         } else {
-            return calculateAllDerivatives<double>(comp.getMolarAbundanceVector(), T9, rho, Ye, mue);
+            return calculateAllDerivatives<double>(
+                comp.getMolarAbundanceVector(),
+                T9,
+                rho,
+                Ye,
+                mue,
+                [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                    if (comp.contains(species)) {
+                        return comp.getSpeciesIndex(species); // Return the index of the species in the composition
+                    }
+                    return std::nullopt; // Species not found in the composition
+                }
+            );
         }
     }
 
@@ -305,11 +317,18 @@ namespace gridfire {
             return 0.0; // If reverse reactions are not used, return 0.0
         }
         const double temp = T9 * 1e9; // Convert T9 to Kelvin
-        const double Ye = comp.getElectronAbundance();
 
-        // TODO: This is a dummy value for the electron chemical potential. We eventually need to replace this with an EOS call.
-        const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
+        // Reverse reactions are only relevant for strong reactions (at least during the vast majority of stellar evolution)
+        // So here we just let these be dummy values since we know
+        // 1. The reaction should always be strong
+        // 2. The strong reaction rate is independent of Ye and mue
+        //
+        // In development builds the assert below will confirm this
+        constexpr double Ye = 0.0;
+        constexpr double mue = 0.0;
 
+        // It is a logic error to call this function on a weak reaction
+        assert(reaction.type() != gridfire::reaction::ReactionType::WEAK);
 
         // In debug builds we check the units on kB to ensure it is in erg/K. This is removed in release builds to avoid overhead. (Note assert is a no-op in release builds)
         assert(Constants::getInstance().get("kB").unit == "erg / K");
@@ -317,7 +336,8 @@ namespace gridfire {
         const double kBMeV = m_constants.kB * 624151; // Convert kB to MeV/K NOTE: This relies on the fact that m_constants.kB is in erg/K!
         const double expFactor = std::exp(-reaction.qValue() / (kBMeV * temp));
         double reverseRate = 0.0;
-        const double forwardRate = reaction.calculate_rate(T9, rho, Ye, mue, comp.getMolarAbundanceVector(), m_indexToSpeciesMap);
+        // We also let Y be an empy vector since the strong reaction rate is independent of Y
+        const double forwardRate = reaction.calculate_rate(T9, rho, Ye, mue, {}, m_indexToSpeciesMap);
 
         if (reaction.reactants().size() == 2 && reaction.products().size() == 2) {
             reverseRate = calculateReverseRateTwoBody(reaction, T9, forwardRate, expFactor);
@@ -696,10 +716,20 @@ namespace gridfire {
 
         const double Ye = comp.getElectronAbundance();
 
-        // TODO: This is a dummy placeholder which must be replaced with an EOS call
-        const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
-
-        return calculateMolarReactionFlow<double>(reaction, comp.getMolarAbundanceVector(), T9, rho, Ye, mue);
+        return calculateMolarReactionFlow<double>(
+            reaction,
+            comp.getMolarAbundanceVector(),
+            T9,
+            rho,
+            Ye,
+            0.0,
+            [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                if (comp.contains(species)) { // Species present in the composition
+                    return comp.getSpeciesIndex(species);
+                }
+                return std::nullopt; // Species not present
+            }
+        );
     }
 
     void GraphEngine::generateJacobianMatrix(
@@ -908,10 +938,20 @@ namespace gridfire {
         const double rho
     ) const {
         const double Ye = comp.getElectronAbundance();
-        // TODO: This is a dummy placeholder which must be replaced with an EOS call
-        const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
 
-        auto [dydt, _] = calculateAllDerivatives<double>(comp.getMolarAbundanceVector(), T9, rho, Ye, mue);
+        auto [dydt, _] = calculateAllDerivatives<double>(
+            comp.getMolarAbundanceVector(),
+            T9,
+            rho,
+            Ye,
+            0.0,
+            [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                if (comp.contains(species)) { // Species present in the composition
+                    return comp.getSpeciesIndex(species);
+                }
+                return std::nullopt; // Species not present
+            }
+        );
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescales;
         speciesTimescales.reserve(m_networkSpecies.size());
         for (const auto& species : m_networkSpecies) {
@@ -930,17 +970,39 @@ namespace gridfire {
         const double rho
     ) const {
         const double Ye = comp.getElectronAbundance();
-        // TODO: This is a dummy placeholder which must be replaced with an EOS call
-        const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
+        const std::vector<double>& Y = comp.getMolarAbundanceVector();
 
-        auto [dydt, _] = calculateAllDerivatives<double>(comp.getMolarAbundanceVector(), T9, rho, Ye, mue);
+        auto speciesLookup = [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+            if (comp.contains(species)) { // Species present in the composition
+                return comp.getSpeciesIndex(species);
+            }
+            return std::nullopt; // Species not present
+        };
+
+        auto [dydt, _] = calculateAllDerivatives<double>(
+            Y,
+            T9,
+            rho,
+            Ye,
+            0.0,
+            speciesLookup
+        );
+
         std::unordered_map<fourdst::atomic::Species, double> speciesDestructionTimescales;
         speciesDestructionTimescales.reserve(m_networkSpecies.size());
         for (const auto& species : m_networkSpecies) {
             double netDestructionFlow = 0.0;
             for (const auto& reaction : m_reactions) {
                 if (reaction->stoichiometry(species) < 0) {
-                    const auto flow = calculateMolarReactionFlow<double>(*reaction, comp.getMolarAbundanceVector(), T9, rho, Ye, mue);
+                    const auto flow = calculateMolarReactionFlow<double>(
+                        *reaction,
+                        Y,
+                        T9,
+                        rho,
+                        Ye,
+                        0.0,
+                        speciesLookup
+                    );
                     netDestructionFlow += flow;
                 }
             }
@@ -979,7 +1041,7 @@ namespace gridfire {
             m_logger->flush_log();
             throw std::runtime_error("Cannot record AD tape: No species in the network.");
         }
-        const size_t numADInputs = numSpecies + 2; // Note here that by not letting T9 and rho be independent variables, we are constraining the network to a constant temperature and density during each evaluation.
+        const size_t numADInputs = numSpecies + 2; // Y + T9 + rho
 
         // --- CppAD Tape Recording ---
         // 1. Declare independent variable (adY)
@@ -1004,13 +1066,22 @@ namespace gridfire {
         const CppAD::AD<double> adRho = adInput[numSpecies + 1];
 
         // Dummy values for Ye and mue to let taping happen
-        const CppAD::AD<double> adYe = 1.0;
-        const CppAD::AD<double> adMue = 1.0;
+        const CppAD::AD<double> adYe = 1e6;
+        const CppAD::AD<double> adMue = 10.0;
 
 
         // 5. Call the actual templated function
         // We let T9 and rho be constant, so we pass them as fixed values.
-        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(adY, adT9, adRho, adYe, adMue);
+        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(
+            adY,
+            adT9,
+            adRho,
+            adYe,
+            adMue,
+            [&](const fourdst::atomic::Species& querySpecies) -> size_t {
+                return m_speciesToIndexMap.at(querySpecies); // TODO: This is bad, needs to be fixed
+            }
+        );
 
         // Extract the raw vector from the associative map
         std::vector<CppAD::AD<double>> dydt_vec;
@@ -1049,10 +1120,19 @@ namespace gridfire {
         const CppAD::AD<double> adRho = adInput[numSpecies + 1];
 
         // Dummy values for Ye and mue to let taping happen
-        const CppAD::AD<double> adYe = 1.0;
+        const CppAD::AD<double> adYe = 1e6;
         const CppAD::AD<double> adMue = 1.0;
 
-        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(adY, adT9, adRho, adYe, adMue);
+        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(
+            adY,
+            adT9,
+            adRho,
+            adYe,
+            adMue,
+            [&](const fourdst::atomic::Species& querySpecies) -> size_t {
+                return m_speciesToIndexMap.at(querySpecies); // TODO: This is bad, needs to be fixed
+            }
+        );
 
         std::vector<CppAD::AD<double>> adOutput(1);
         adOutput[0] = nuclearEnergyGenerationRate;
@@ -1157,8 +1237,10 @@ namespace gridfire {
         if ( p != 0) { return false; }
         const double T9 = tx[0];
 
-        // TODO: Handle rho and Y
-        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0, {});
+        // This is an interesting problem because the reverse rate should only ever be computed for strong reactions
+        // Which do not depend on rho or Y. However, the signature requires them...
+        // For now, we just pass dummy values for rho and Y
+        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0.0, {});
         // std::cout << m_reaction.peName() << " reverseRate: " << reverseRate << " at T9: " << T9 << "\n";
         ty[0] = reverseRate; // Store the reverse rate in the output vector
 
@@ -1178,7 +1260,9 @@ namespace gridfire {
         const double T9 = tx[0];
         const double reverseRate = ty[0];
 
-        // TODO: Handle rho and Y
+        // This is an interesting problem because the reverse rate should only ever be computed for strong reactions
+        // Which do not depend on rho or Y. However, the signature requires them...
+        // For now, we just pass dummy values for rho and Y
         const double derivative = m_engine.calculateReverseRateTwoBodyDerivative(m_reaction, T9, 0, {}, reverseRate);
 
         px[0] = py[0] * derivative; // Return the derivative of the reverse rate with respect to T9
