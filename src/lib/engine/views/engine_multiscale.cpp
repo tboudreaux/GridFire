@@ -151,6 +151,21 @@ namespace {
         return reactantSample != productSample;
     }
 
+    const std::unordered_map<Eigen::LevenbergMarquardtSpace::Status, std::string> lm_status_map = {
+        {Eigen::LevenbergMarquardtSpace::Status::NotStarted, "NotStarted"},
+        {Eigen::LevenbergMarquardtSpace::Status::Running, "Running"},
+        {Eigen::LevenbergMarquardtSpace::Status::ImproperInputParameters, "ImproperInputParameters"},
+        {Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall, "RelativeReductionTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall, "RelativeErrorTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::RelativeErrorAndReductionTooSmall, "RelativeErrorAndReductionTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::CosinusTooSmall, "CosinusTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::TooManyFunctionEvaluation, "TooManyFunctionEvaluation"},
+        {Eigen::LevenbergMarquardtSpace::Status::FtolTooSmall, "FtolTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::XtolTooSmall, "XtolTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::GtolTooSmall, "GtolTooSmall"},
+        {Eigen::LevenbergMarquardtSpace::Status::UserAsked, "UserAsked"}
+    };
+
 }
 
 namespace gridfire {
@@ -1119,11 +1134,22 @@ namespace gridfire {
 
             if (status <= 0 || status >= 4) {
                 std::stringstream msg;
-                //TODO: Add a better error message here and quill logging
-                msg << "QSE solver failed with status: " << status;
+                msg << "While working on QSE group with algebraic species: ";
+                int count = 0;
+                for (const auto& species: algebraic_species) {
+                    msg << species;
+                    if (count < algebraic_species.size() - 1) {
+                        msg << ", ";
+                    }
+                    count++;
+                }
+                msg << " the QSE solver failed to converge with status: " << lm_status_map.at(status);
+                msg << ". This likely indicates that the QSE groups were not properly partitioned";
+                msg << " (for example if the algebraic set here contains species which should be dynamic like He-4 or H-1).";
+                LOG_ERROR(m_logger, "{}", msg.str());
                 throw std::runtime_error(msg.str());
             }
-            LOG_TRACE_L1(m_logger, "Minimization succeeded!");
+            LOG_TRACE_L1(m_logger, "QSE Group minimization succeeded with status: {}", lm_status_map.at(status));
             Eigen::VectorXd Y_final_qse = Y_scale.array() * v_initial.array().sinh(); // Convert back to physical abundances using asinh scaling
             i = 0;
             for (const auto& species: algebraic_species) {
