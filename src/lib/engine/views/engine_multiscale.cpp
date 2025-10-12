@@ -815,12 +815,6 @@ namespace gridfire {
         const std::unordered_map<Species, double>& all_timescales = result.value();
         const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
 
-        for (const auto& [species, destructionTimescale] : all_timescales) {
-            std::cout << "Species: " << species.name()
-                      << ", Destruction Timescale: " << (std::isfinite(destructionTimescale) ? std::to_string(destructionTimescale) : "inf")
-                      << " s, Net Timescale: " << (std::isfinite(net_timescales.at(species)) ? std::to_string(net_timescales.at(species)) : "inf")
-                      << " s\n";
-        }
 
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
