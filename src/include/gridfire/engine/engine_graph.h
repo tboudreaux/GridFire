@@ -515,6 +515,7 @@ namespace gridfire {
          */
         void rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) override;
 
+
     private:
         struct PrecomputedReaction {
             // Forward cacheing
@@ -983,7 +984,6 @@ namespace gridfire {
         const T mue,
         const std::function<std::optional<size_t>(const fourdst::atomic::Species &)>& speciesIDLookup
     ) const {
-
         // --- Pre-setup (flags to control conditionals in an AD safe / branch aware manner) ---
         // ----- Constants for AD safe calculations ---
         const T zero = static_cast<T>(0.0);
@@ -992,10 +992,10 @@ namespace gridfire {
         const T k_reaction = reaction.calculate_rate(T9, rho, Ye, mue, Y, m_indexToSpeciesMap);
 
         // --- Cound the number of each reactant species to account for species multiplicity ---
-        std::unordered_map<std::string, int> reactant_counts;
+        std::unordered_map<fourdst::atomic::Species, int> reactant_counts;
         reactant_counts.reserve(reaction.reactants().size());
         for (const auto& reactant : reaction.reactants()) {
-            reactant_counts[std::string(reactant.name())]++;
+            reactant_counts[reactant]++;
         }
         const int totalReactants = static_cast<int>(reaction.reactants().size());
 
@@ -1003,10 +1003,9 @@ namespace gridfire {
         auto molar_concentration_product = static_cast<T>(1.0);
 
         // --- Loop through each unique reactant species and calculate the molar concentration for that species then multiply that into the accumulator ---
-        for (const auto& [species_name, count] : reactant_counts) {
+        for (const auto& [species, count] : reactant_counts) {
             // --- Resolve species to molar abundance ---
-            // TODO: We need some way to handle the case when a species in the reaction is not part of the composition being tracked
-            const std::optional<size_t> species_index = speciesIDLookup(m_networkSpeciesMap.at(species_name));
+            const std::optional<size_t> species_index = speciesIDLookup(species);
             if (!species_index.has_value()) {
                 return static_cast<T>(0.0); // If any reactant is not present, the reaction cannot proceed
             }

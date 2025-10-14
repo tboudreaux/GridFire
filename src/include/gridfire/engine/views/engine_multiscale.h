@@ -193,7 +193,7 @@ namespace gridfire {
          *                   It must be a `GraphEngine` and not a more general `DynamicEngine`
          *                   because this view relies on its specific implementation details.
          */
-        explicit MultiscalePartitioningEngineView(GraphEngine& baseEngine);
+        explicit MultiscalePartitioningEngineView(DynamicEngine& baseEngine);
 
         /**
          * @brief Gets the list of species in the network.
@@ -977,7 +977,7 @@ namespace gridfire {
         /**
          * @brief The base engine to which this view delegates calculations.
          */
-        GraphEngine& m_baseEngine;
+        DynamicEngine& m_baseEngine;
         /**
          * @brief The list of identified equilibrium groups.
          */

@@ -22,7 +22,7 @@ namespace {
     //      guarantee that this function will return the same ordering as the canonical vector representation)
     std::vector<double> packCompositionToVector(
         const fourdst::composition::Composition& composition,
-        const gridfire::GraphEngine& engine
+        const gridfire::DynamicEngine& engine
     ) {
         std::vector<double> Y(engine.getNetworkSpecies().size(), 0.0);
         const auto& allSpecies = engine.getNetworkSpecies();
@@ -172,7 +172,7 @@ namespace gridfire {
     using fourdst::atomic::Species;
 
     MultiscalePartitioningEngineView::MultiscalePartitioningEngineView(
-        GraphEngine& baseEngine
+        DynamicEngine& baseEngine
     ) : m_baseEngine(baseEngine) {}
 
     const std::vector<Species> & MultiscalePartitioningEngineView::getNetworkSpecies() const {
@@ -772,7 +772,12 @@ namespace gridfire {
             }
         }
 
-        qseComposition.finalize(true);
+        bool didFinalize = qseComposition.finalize(true);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize composition after solving QSE abundances.");
+            m_logger->flush_log();
+            throw std::runtime_error("Failed to finalize composition after solving QSE abundances.");
+        }
 
         return qseComposition;
     }
@@ -799,10 +804,10 @@ namespace gridfire {
         const double rho
     ) const {
         LOG_TRACE_L1(m_logger, "Partitioning by timescale...");
-        const auto result= m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
+        const auto destructionTimescale= m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         const auto netTimescale = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
 
-        if (!result) {
+        if (!destructionTimescale) {
             LOG_ERROR(m_logger, "Failed to get species destruction timescales due to stale engine state");
             m_logger->flush_log();
             throw exceptions::StaleEngineError("Failed to get species destruction timescales due to stale engine state");
@@ -812,26 +817,30 @@ namespace gridfire {
             m_logger->flush_log();
             throw exceptions::StaleEngineError("Failed to get net species timescales due to stale engine state");
         }
-        const std::unordered_map<Species, double>& all_timescales = result.value();
+        const std::unordered_map<Species, double>& destruction_timescales = destructionTimescale.value();
         const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
 
 
+        for (const auto& [species, destruction_timescale] : destruction_timescales) {
+            LOG_TRACE_L3(m_logger, "For {} destruction timescale is {} s", species.name(), destruction_timescale);
+        }
+
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
-        std::vector<std::pair<double, Species>> sorted_timescales;
-        for (const auto & all_specie : all_species) {
-            double timescale = all_timescales.at(all_specie);
-            double net_timescale = net_timescales.at(all_specie);
-            if (std::isfinite(timescale) && timescale > 0) {
-                LOG_TRACE_L3(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", all_specie.name(), timescale, net_timescale);
-                sorted_timescales.emplace_back(timescale, all_specie);
+        std::vector<std::pair<double, Species>> sorted_destruction_timescales;
+        for (const auto & species : all_species) {
+            double destruction_timescale = destruction_timescales.at(species);
+            double net_timescale = net_timescales.at(species);
+            if (std::isfinite(destruction_timescale) && destruction_timescale > 0) {
+                LOG_TRACE_L3(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescale);
+                sorted_destruction_timescales.emplace_back(destruction_timescale, species);
             } else {
-                LOG_TRACE_L3(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", all_specie.name(), timescale, net_timescale);
+                LOG_TRACE_L3(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescale);
             }
         }
 
         std::ranges::sort(
-            sorted_timescales,
+            sorted_destruction_timescales,
             [](const auto& a, const auto& b)
             {
                 return a.first > b.first;
@@ -839,31 +848,45 @@ namespace gridfire {
         );
 
         std::vector<std::vector<Species>> final_pools;
-        if (sorted_timescales.empty()) {
+        if (sorted_destruction_timescales.empty()) {
             return final_pools;
         }
 
         constexpr double ABSOLUTE_QSE_TIMESCALE_THRESHOLD = 3.156e7; // Absolute threshold for QSE timescale (1 yr)
         constexpr double MIN_GAP_THRESHOLD = 2.0; // Require a 2 order of magnitude gap
+        constexpr double MIN_MOLAR_ABUNDANCE_THRESHOLD = 1e-10; // Minimum abundance threshold to consider a species for QSE. Any species above this will always be considered dynamic.
 
-        LOG_TRACE_L1(m_logger, "Found {} species with finite timescales.", sorted_timescales.size());
+        LOG_TRACE_L1(m_logger, "Found {} species with finite timescales.", sorted_destruction_timescales.size());
         LOG_TRACE_L1(m_logger, "Absolute QSE timescale threshold: {} seconds ({} years).",
             ABSOLUTE_QSE_TIMESCALE_THRESHOLD, ABSOLUTE_QSE_TIMESCALE_THRESHOLD / 3.156e7);
         LOG_TRACE_L1(m_logger, "Minimum gap threshold: {} orders of magnitude.", MIN_GAP_THRESHOLD);
+        LOG_TRACE_L1(m_logger, "Minimum molar abundance threshold: {}.", MIN_MOLAR_ABUNDANCE_THRESHOLD);
 
         std::vector<Species> dynamic_pool_species;
         std::vector<std::pair<double, Species>> fast_candidates;
 
         // 1. First Pass: Absolute Timescale Cutoff
-        for (const auto& [timescale, species] : sorted_timescales) {
-            if (timescale > ABSOLUTE_QSE_TIMESCALE_THRESHOLD) {
+        for (const auto& [destruction_timescale, species] : sorted_destruction_timescales) {
+            if (species == n_1) {
+                LOG_TRACE_L3(m_logger, "Skipping neutron (n) from timescale analysis. Neutrons are always considered dynamic due to their extremely high connectivity.");
+                dynamic_pool_species.push_back(species);
+                continue;
+            }
+            if (destruction_timescale > ABSOLUTE_QSE_TIMESCALE_THRESHOLD) {
                 LOG_TRACE_L3(m_logger, "Species {} with timescale {} is considered dynamic (slower than qse timescale threshold).",
-                    species.name(), timescale);
+                    species.name(), destruction_timescale);
                 dynamic_pool_species.push_back(species);
             } else {
-                LOG_TRACE_L3(m_logger, "Species {} with timescale {} is a candidate fast species (faster than qse timescale threshold).",
-                    species.name(), timescale);
-                fast_candidates.emplace_back(timescale, species);
+                const double Yi = comp.getMolarAbundance(species);
+                if (Yi > MIN_MOLAR_ABUNDANCE_THRESHOLD) {
+                    LOG_TRACE_L3(m_logger, "Species {} with abundance {} is considered dynamic (above minimum abundance threshold of {}).",
+                        species.name(), Yi, MIN_MOLAR_ABUNDANCE_THRESHOLD);
+                    dynamic_pool_species.push_back(species);
+                    continue;
+                }
+                LOG_TRACE_L3(m_logger, "Species {} with timescale {} and molar abundance {} is a candidate fast species (faster than qse timescale threshold and less than the molar abundance threshold).",
+                    species.name(), destruction_timescale, Yi);
+                fast_candidates.emplace_back(destruction_timescale, species);
             }
         }
 
@@ -939,11 +962,13 @@ namespace gridfire {
         const fourdst::composition::Composition &comp,
         const double T9, const double rho
     ) const {
-        constexpr double FLUX_RATIO_THRESHOLD = 5;
         std::vector<QSEGroup> validated_groups;
         std::vector<QSEGroup> invalidated_groups;
         validated_groups.reserve(candidate_groups.size());
         for (auto& group : candidate_groups) {
+            constexpr double FLUX_RATIO_THRESHOLD = 5;
+            constexpr double LOG_FLOW_RATIO_THRESHOLD = 2;
+
             const std::unordered_set<Species> algebraic_group_members(
                 group.algebraic_species.begin(),
                 group.algebraic_species.end()
@@ -954,8 +979,13 @@ namespace gridfire {
                 group.seed_species.end()
             );
 
+            // Values for measuring the flux coupling vs leakage
             double coupling_flux = 0.0;
             double leakage_flux = 0.0;
+
+            // Values for validating if the group could physically be in equilibrium
+            double creationFlux = 0.0;
+            double destructionFlux = 0.0;
 
             for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
                 const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
@@ -967,7 +997,11 @@ namespace gridfire {
                 for (const auto& reactant : reaction->reactants()) {
                     if (algebraic_group_members.contains(reactant)) {
                         has_internal_algebraic_reactant = true;
+                        LOG_TRACE_L3(m_logger, "Adjusting destruction flux (+= {} mol g^-1 s^-1) for QSEGroup due to reactant {} from reaction {}",
+                            flow, reactant.name(), reaction->id());
+                        destructionFlux += flow;
                     }
+
                 }
 
                 bool has_internal_algebraic_product = false;
@@ -975,6 +1009,9 @@ namespace gridfire {
                 for (const auto& product : reaction->products()) {
                     if (algebraic_group_members.contains(product)) {
                         has_internal_algebraic_product = true;
+                        LOG_TRACE_L3(m_logger, "Adjusting creation flux (+= {} mol g^-1 s^-1) for QSEGroup due to product {} from reaction {}",
+                            flow, product.name(), reaction->id());
+                        creationFlux += flow;
                     }
                 }
 
@@ -1016,12 +1053,17 @@ namespace gridfire {
 
                 leakage_flux += flow * leakage_fraction;
                 coupling_flux += flow * coupling_fraction;
+
+
             }
 
-            if ((coupling_flux / leakage_flux ) > FLUX_RATIO_THRESHOLD) {
+            bool group_is_coupled = (coupling_flux / leakage_flux) > FLUX_RATIO_THRESHOLD;
+            bool group_is_balanced = std::abs(std::log(creationFlux) - std::log(destructionFlux)) < LOG_FLOW_RATIO_THRESHOLD;
+
+            if (group_is_coupled) {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is in equilibrium due to high coupling flux threshold: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})",
+                    "Group containing {} is in equilibrium due to high coupling flux and balanced creation and destruction rate: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>, <creation: creation flux = {}, destruction flux = {}, ratio = {} order of mag (Threshold: {} order of mag)>",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1037,14 +1079,18 @@ namespace gridfire {
                     leakage_flux,
                     coupling_flux,
                     coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD
+                    FLUX_RATIO_THRESHOLD,
+                    std::log10(creationFlux),
+                    std::log10(destructionFlux),
+                    std::abs(std::log10(creationFlux) - std::log10(destructionFlux)),
+                    LOG_FLOW_RATIO_THRESHOLD
                 );
                 validated_groups.emplace_back(group);
                 validated_groups.back().is_in_equilibrium = true;
             } else {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is NOT in equilibrium: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})",
+                    "Group containing {} is NOT in equilibrium: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>, <creation: creation flux = {}, destruction flux = {}, ratio = {} order of mag (Threshold: {} order of mag)>",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1060,7 +1106,11 @@ namespace gridfire {
                     leakage_flux,
                     coupling_flux,
                     coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD
+                    FLUX_RATIO_THRESHOLD,
+                    std::log10(creationFlux),
+                    std::log10(destructionFlux),
+                    std::abs(std::log10(creationFlux) -  std::log10(destructionFlux)),
+                    LOG_FLOW_RATIO_THRESHOLD
                 );
                 invalidated_groups.emplace_back(group);
                 invalidated_groups.back().is_in_equilibrium = false;
@@ -1156,12 +1206,18 @@ namespace gridfire {
                 );
                 //TODO: Check this conversion
                 double Xi = Y_final_qse(i) * species.mass(); // Convert from molar abundance to mass fraction
-                if (!outputComposition.contains(species)) {
+                if (!outputComposition.hasSpecies(species)) {
                     outputComposition.registerSpecies(species);
                 }
                 outputComposition.setMassFraction(species, Xi);
                 i++;
             }
+        }
+        bool didFinalize = outputComposition.finalize(false);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize composition after solving QSE abundances.");
+            m_logger->flush_log();
+            throw std::runtime_error("Failed to finalize composition after solving QSE abundances.");
         }
         return outputComposition;
     }
@@ -1374,7 +1430,10 @@ namespace gridfire {
                 comp_trial.registerSpecies(species);
             }
             const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
-            const double massFraction = molarAbundance * species.mass();
+            double massFraction = molarAbundance * species.mass();
+            if (massFraction < 0 && std::abs(massFraction) < 1e-20) { // if there is a larger negative mass fraction, let the composition module throw an error
+                massFraction = 0.0; // Avoid setting minuscule negative mass fractions due to numerical noise
+            }
             comp_trial.setMassFraction(species, massFraction);
         }
 
@@ -1415,7 +1474,7 @@ namespace gridfire {
 
         const bool didFinalize = comp_trial.finalize(false);
         if (!didFinalize) {
-            std::string msg = std::format("Failed to finalize composition (comp_trial) in {} at line {}", __FILE__, __LINE__);
+            const std::string msg = std::format("Failed to finalize composition (comp_trial) in {} at line {}", __FILE__, __LINE__);
             throw std::runtime_error(msg);
         }
 
@@ -1432,6 +1491,7 @@ namespace gridfire {
                     colSpecies
                 );
                 colID += 1;
+                LOG_TRACE_L3(m_view->m_logger, "Jacobian[{}, {}] (d(dY({}))/dY({})) = {}", rowID, colID - 1, rowSpecies.name(), colSpecies.name(), J_qse(rowID, colID - 1));
             }
             rowID += 1;
         }

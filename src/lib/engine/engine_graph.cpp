@@ -192,7 +192,9 @@ namespace gridfire {
                 throw std::runtime_error("Species not found in global atomic species database: " + std::string(name));
             }
         }
-
+        std::ranges::sort(m_networkSpecies, [](const fourdst::atomic::Species& a, const fourdst::atomic::Species& b) -> bool {
+            return a.mass() < b.mass(); // Otherwise, sort by mass
+        });
     }
 
     void GraphEngine::populateReactionIDMap() {
@@ -508,12 +510,21 @@ namespace gridfire {
                 composition.setMassFraction(symbol, 0.0);
             }
         }
-        composition.finalize(true);
+        const bool didFinalize = composition.finalize(true);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize composition during priming. Check input mass fractions for validity.");
+            throw std::runtime_error("Failed to finalize composition during network priming.");
+        }
         fullNetIn.composition = composition;
         fullNetIn.temperature = netIn.temperature;
         fullNetIn.density = netIn.density;
 
-        auto primingReport = primeNetwork(fullNetIn, *this);
+        std::optional<std::vector<reaction::ReactionType>> reactionTypesToIgnore = std::nullopt;
+        if (!m_useReverseReactions) {
+            reactionTypesToIgnore = {reaction::ReactionType::WEAK};
+        }
+
+        auto primingReport = primeNetwork(fullNetIn, *this, reactionTypesToIgnore);
 
         return primingReport;
     }
@@ -737,7 +748,6 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
@@ -760,6 +770,7 @@ namespace gridfire {
                 const double value = dotY[i * (numSpecies + 2) + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
                     m_jacobianMatrix(i, j) = value;
+
                 }
             }
         }
@@ -1023,7 +1034,11 @@ namespace gridfire {
                 baseUpdatedComposition.setMassFraction(species, 0.0);
             }
         }
-        baseUpdatedComposition.finalize(false);
+        const bool didFinalize = baseUpdatedComposition.finalize(false);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize composition during update. Check input mass fractions for validity.");
+            throw std::runtime_error("Failed to finalize composition during network update.");
+        }
         return baseUpdatedComposition;
     }
 
@@ -1079,9 +1094,10 @@ namespace gridfire {
             adYe,
             adMue,
             [&](const fourdst::atomic::Species& querySpecies) -> size_t {
-                return m_speciesToIndexMap.at(querySpecies); // TODO: This is bad, needs to be fixed
+                return m_speciesToIndexMap.at(querySpecies);
             }
         );
+
 
         // Extract the raw vector from the associative map
         std::vector<CppAD::AD<double>> dydt_vec;

@@ -144,6 +144,8 @@ namespace gridfire::solver {
         const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
+        std::cout << "EXITED AT EXPECTED TESTING POINT" << std::endl;
+        exit(0);
 
         size_t numSpecies = m_engine.getNetworkSpecies().size();
         uint64_t N = numSpecies + 1;

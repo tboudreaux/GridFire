@@ -23,6 +23,7 @@
 #include <chrono>
 #include <functional>
 
+#include "gridfire/engine/views/engine_defined.h"
 #include "gridfire/partition/composite/partition_composite.h"
 
 static std::terminate_handler g_previousHandler = nullptr;
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]){
 
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL2);
+    logger->set_log_level(quill::LogLevel::TraceL3);
     LOG_INFO(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -92,7 +93,11 @@ int main(int argc, char* argv[]){
     fourdst::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
-    composition.finalize(true);
+    bool didFinalize = composition.finalize(true);
+    if (!didFinalize) {
+        std::cerr << "Failed to finalize initial composition." << std::endl;
+        return 1;
+    }
     using partition::BasePartitionType;
     const auto partitionFunction = partition::CompositePartitionFunction({
         BasePartitionType::RauscherThielemann,
@@ -109,9 +114,9 @@ int main(int argc, char* argv[]){
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-
     ReaclibEngine.setUseReverseReactions(false);
     ReaclibEngine.setPrecomputation(false);
+    // DefinedEngineView ppEngine({"p(p,e+)d", "d(p,g)he3", "he3(he3,2p)he4"}, ReaclibEngine);
 
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
     AdaptiveEngineView adaptiveView(partitioningView);

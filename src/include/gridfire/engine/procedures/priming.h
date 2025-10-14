@@ -19,6 +19,7 @@ namespace gridfire {
      *
      * @param netIn Input network data containing initial composition, temperature, and density.
      * @param engine DynamicEngine used to build and evaluate the reaction network.
+     * @param ignoredReactionTypes Types of reactions to ignore during priming (e.g., weak reactions).
      * @pre netIn.composition defines species and their mass fractions; engine is constructed with a valid network.
      * @post engine.networkReactions restored to its initial state; returned report contains primedComposition,
      *       massFractionChanges for each species, success flag, and status code.
@@ -26,7 +27,8 @@ namespace gridfire {
      */
      PrimingReport primeNetwork(
          const NetIn& netIn,
-         DynamicEngine& engine
+         DynamicEngine& engine,
+         const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
      );
 
     /**
@@ -40,6 +42,7 @@ namespace gridfire {
      * @param composition Current composition providing abundances for all species.
      * @param T9 Temperature in units of 10^9 K.
      * @param rho Density of the medium.
+     * @param reactionTypesToIgnore types of reactions to ignore during calculation.
      * @pre Y.size() matches engine.getNetworkReactions().size() mapping species order.
      * @post Returned rate constant is non-negative.
      * @return Sum of absolute stoichiometry-weighted destruction flows for the species.
@@ -49,7 +52,8 @@ namespace gridfire {
          const fourdst::atomic::Species& species,
          const fourdst::composition::Composition& composition,
          double T9,
-         double rho
+         double rho, const std::optional<std::vector<reaction::ReactionType>> &
+         reactionTypesToIgnore
      );
 
     /**
@@ -63,6 +67,7 @@ namespace gridfire {
      * @param composition Composition object containing current abundances.
      * @param T9 Temperature in units of 10^9 K.
      * @param rho Density of the medium.
+     * @param reactionTypesToIgnore types of reactions to ignore during calculation.
      * @pre Y.size() matches engine.getNetworkReactions().size() mapping species order.
      * @post Returned creation rate is non-negative.
      * @return Sum of stoichiometry-weighted creation flows for the species.
@@ -72,6 +77,6 @@ namespace gridfire {
          const fourdst::atomic::Species& species,
          const fourdst::composition::Composition& composition,
          double T9,
-         double rho
+         double rho, const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
      );
  }

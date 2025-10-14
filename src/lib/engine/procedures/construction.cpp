@@ -120,6 +120,9 @@ namespace gridfire {
         LOG_INFO(logger, "Starting network construction with {} available species.", availableSpecies.size());
 
         for (int layer = 0; layer < depth && !remainingReactions.empty(); ++layer) {
+            size_t collectedThisLayer = 0;
+            size_t collectedStrong = 0;
+            size_t collectedWeak = 0;
             LOG_TRACE_L1(logger, "Collecting reactions for layer {} with {} remaining reactions. Currently there are {} available species", layer, remainingReactions.size(), availableSpecies.size());
             std::vector<Reaction*> reactionsForNextPass;
             std::unordered_set<Species> newProductsThisLayer;
@@ -138,6 +141,12 @@ namespace gridfire {
 
                 if (allReactantsAvailable) {
                     collectedReactionPtrs.push_back(reaction);
+                    if (reaction->type() == reaction::ReactionType::WEAK) {
+                        collectedWeak++;
+                    } else {
+                        collectedStrong++;
+                    }
+                    collectedThisLayer++;
                     newReactionsAdded = true;
 
                     for (const auto& product : reaction->products()) {
@@ -153,14 +162,18 @@ namespace gridfire {
                 break;
             }
 
+            size_t oldProductCount = availableSpecies.size();
+            availableSpecies.insert(newProductsThisLayer.begin(), newProductsThisLayer.end());
+            size_t newProductCount = availableSpecies.size() - oldProductCount;
             LOG_TRACE_L1(
                 logger,
-                "Layer {}: Collected {} new reactions. New products this layer: {}",
+                "Layer {}: Collected {} new reactions ({} strong, {} weak). New products this layer: {}",
                 layer,
-                collectedReactionPtrs.size() - collectedReactionPtrs.size(),
-                newProductsThisLayer.size()
+                collectedThisLayer,
+                collectedStrong,
+                collectedWeak,
+                newProductCount
             );
-            availableSpecies.insert(newProductsThisLayer.begin(), newProductsThisLayer.end());
             remainingReactions = std::move(reactionsForNextPass);
         }
 

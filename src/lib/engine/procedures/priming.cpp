@@ -10,6 +10,46 @@
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
 
+namespace {
+    // Create a dummy wrapper Composition to measure the unrestricted flow rate of species
+    class UnrestrictedComposition final : public fourdst::composition::Composition {
+    private:
+        const fourdst::atomic::Species& m_unrestrictedSpecies;
+    public:
+        explicit UnrestrictedComposition(const Composition& baseComposition, const fourdst::atomic::Species& unrestrictedSpecies) :
+            Composition(baseComposition),
+            m_unrestrictedSpecies(unrestrictedSpecies) {}
+
+        double getMolarAbundance(const fourdst::atomic::Species &species) const override {
+            if (species == m_unrestrictedSpecies) {
+                return 1.0; // Set to a high value to simulate unrestricted abundance
+            }
+            return Composition::getMolarAbundance(species);
+        }
+
+        double getMolarAbundance(const std::string &symbol) const override {
+            if (symbol == m_unrestrictedSpecies.name()) {
+                return 1.0; // Set to a high value to simulate unrestricted abundance
+            }
+            return Composition::getMolarAbundance(symbol);
+        }
+    };
+
+    bool isReactionIgnorable(
+        const gridfire::reaction::Reaction& reaction,
+        const std::optional<std::vector<gridfire::reaction::ReactionType>>& reactionsTypesToIgnore
+    ) {
+        if (reactionsTypesToIgnore.has_value()) {
+            for (const auto& type : reactionsTypesToIgnore.value()) {
+                if (reaction.type() == type) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
 namespace gridfire {
     using fourdst::composition::Composition;
     using fourdst::atomic::Species;
@@ -19,11 +59,14 @@ namespace gridfire {
         const Species& species,
         const Composition &comp,
         const double T9,
-        const double rho
+        const double rho,
+        const std::optional<std::vector<reaction::ReactionType>> &reactionsTypesToIgnore
     ) {
         const reaction::Reaction* dominateReaction = nullptr;
         double maxFlow = -1.0;
         for (const auto& reaction : engine.getNetworkReactions()) {
+            if (isReactionIgnorable(*reaction, reactionsTypesToIgnore)) continue;
+
             if (reaction->contains(species) && reaction->stoichiometry(species) > 0) {
                 const double flow = engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
                 if (flow > maxFlow) {
@@ -63,10 +106,15 @@ namespace gridfire {
      *
      * @param netIn Input network data containing initial composition, temperature, and density.
      * @param engine DynamicEngine used to build and evaluate the reaction network.
+     * @param ignoredReactionTypes Types of reactions to ignore during priming (e.g., weak reactions).
      * @return PrimingReport encapsulating the results of the priming operation, including the new
      * robustly primed composition.
      */
-    PrimingReport primeNetwork(const NetIn& netIn, DynamicEngine& engine) {
+    PrimingReport primeNetwork(
+        const NetIn& netIn,
+        DynamicEngine& engine,
+        const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
+    ) {
         auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
         // --- Initial Setup ---
@@ -77,6 +125,12 @@ namespace gridfire {
                 speciesToPrime.push_back(entry.isotope());
             }
         }
+
+        // sort primingSpecies by mass number, lightest to heaviest. This ensures we prime in a physically sensible order.
+        std::ranges::sort(speciesToPrime, [](const Species& a, const Species& b) {
+            return a.mass() < b.mass();
+        });
+
         LOG_DEBUG(logger, "Priming {} species in the network.", speciesToPrime.size());
 
         // If no species need priming, return immediately.
@@ -125,7 +179,13 @@ namespace gridfire {
                 tempComp.registerSymbol(std::string(sp.name()));
                 tempComp.setMassFraction(sp, std::max(0.0, mf));
             }
-            tempComp.finalize(true);
+            bool didFinalize = tempComp.finalize(true);
+            if (!didFinalize) {
+                LOG_ERROR(logger, "Failed to finalize temporary composition during priming.");
+                report.success = false;
+                report.status = PrimingReportStatus::FAILED_TO_FINALIZE_COMPOSITION;
+                continue;
+            }
 
             NetworkPrimingEngineView primer(primingSpecies, engine);
             if (primer.getNetworkReactions().size() == 0) {
@@ -135,14 +195,37 @@ namespace gridfire {
                 continue;
             }
 
-            const double destructionRateConstant = calculateDestructionRateConstant(primer, primingSpecies, tempComp, T9, rho);
+            const double destructionRateConstant = calculateDestructionRateConstant(
+                primer,
+                primingSpecies,
+                tempComp,
+                T9,
+                rho,
+                ignoredReactionTypes
+            );
 
             if (destructionRateConstant > 1e-99) {
-                const double creationRate = calculateCreationRate(primer, primingSpecies, tempComp, T9, rho);
+                const double creationRate = calculateCreationRate(
+                    primer,
+                    primingSpecies,
+                    tempComp,
+                    T9,
+                    rho,
+                    ignoredReactionTypes
+                );
                 double equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
+
+                // ReSharper disable once CppDFAUnusedValue
                 if (std::isnan(equilibriumMassFraction)) equilibriumMassFraction = 0.0;
 
-                if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, tempComp, T9, rho)) {
+                if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(
+                    primer,
+                    primingSpecies,
+                    tempComp,
+                    T9,
+                    rho,
+                    ignoredReactionTypes)
+                ) {
                     // Store the request instead of applying it immediately.
                     requests.push_back({primingSpecies, equilibriumMassFraction, dominantChannel->reactants()});
                 } else {
@@ -242,174 +325,22 @@ namespace gridfire {
         return report;
     }
 
-
-
-    // PrimingReport primeNetwork(const NetIn& netIn, DynamicEngine& engine) {
-    //     auto logger = LogManager::getInstance().getLogger("log");
-    //
-    //     std::vector<Species> speciesToPrime;
-    //     for (const auto &entry: netIn.composition | std::views::values) {
-    //         std::cout << "Checking species: " << entry.isotope().name() << " with mass fraction: " << entry.mass_fraction() << std::endl;
-    //         if (entry.mass_fraction() == 0.0) {
-    //             speciesToPrime.push_back(entry.isotope());
-    //         }
-    //     }
-    //     LOG_DEBUG(logger, "Priming {} species in the network.", speciesToPrime.size());
-    //
-    //     PrimingReport report;
-    //     if (speciesToPrime.empty()) {
-    //         report.primedComposition = netIn.composition;
-    //         report.success = true;
-    //         report.status = PrimingReportStatus::NO_SPECIES_TO_PRIME;
-    //         return report;
-    //     }
-    //
-    //     const double T9 = netIn.temperature / 1e9;
-    //     const double rho = netIn.density;
-    //     const auto initialReactionSet = engine.getNetworkReactions();
-    //
-    //     report.status = PrimingReportStatus::FULL_SUCCESS;
-    //     report.success = true;
-    //
-    //     // --- 1: pack composition into internal map ---
-    //     std::unordered_map<Species, double> currentMassFractions;
-    //     for (const auto& entry : netIn.composition | std::views::values) {
-    //         currentMassFractions[entry.isotope()] = entry.mass_fraction();
-    //     }
-    //     for (const auto& entry : speciesToPrime) {
-    //         currentMassFractions[entry] = 0.0; // Initialize priming species with 0 mass fraction
-    //     }
-    //
-    //     std::unordered_map<Species, double> totalMassFractionChanges;
-    //
-    //     engine.rebuild(netIn.composition, NetworkBuildDepth::Full);
-    //
-    //     for (const auto& primingSpecies : speciesToPrime) {
-    //         LOG_TRACE_L3(logger, "Priming species: {}", primingSpecies.name());
-    //
-    //         // Create a temporary composition from the current internal state for the primer
-    //         Composition tempComp;
-    //         for(const auto& [sp, mf] : currentMassFractions) {
-    //             tempComp.registerSymbol(std::string(sp.name()));
-    //             if (mf < 0.0 && std::abs(mf) < 1e-16) {
-    //                 tempComp.setMassFraction(sp, 0.0); // Avoid negative mass fractions
-    //             } else {
-    //                 tempComp.setMassFraction(sp, mf);
-    //             }
-    //         }
-    //         tempComp.finalize(true); // Finalize with normalization
-    //
-    //         NetIn tempNetIn = netIn;
-    //         tempNetIn.composition = tempComp;
-    //
-    //         NetworkPrimingEngineView primer(primingSpecies, engine);
-    //
-    //         if (primer.getNetworkReactions().size() == 0) {
-    //             LOG_ERROR(logger, "No priming reactions found for species {}.", primingSpecies.name());
-    //             report.success = false;
-    //             report.status = PrimingReportStatus::FAILED_TO_FIND_PRIMING_REACTIONS;
-    //             continue;
-    //         }
-    //
-    //         const auto Y = primer.mapNetInToMolarAbundanceVector(tempNetIn);
-    //         const double destructionRateConstant = calculateDestructionRateConstant(primer, primingSpecies, Y, T9, rho);
-    //
-    //         if (destructionRateConstant > 1e-99) {
-    //             double equilibriumMassFraction = 0.0;
-    //             const double creationRate = calculateCreationRate(primer, primingSpecies, Y, T9, rho);
-    //             equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
-    //             if (std::isnan(equilibriumMassFraction)) {
-    //                 LOG_WARNING(logger, "Equilibrium mass fraction for {} is NaN. Setting to 0.0. This is likely not an issue. It probably originates from all reactions leading to creation and destruction being frozen out. In that case 0.0 should be a good approximation. Hint: This happens often when the network temperature is very the low. ", primingSpecies.name());
-    //                 equilibriumMassFraction = 0.0;
-    //             }
-    //             LOG_TRACE_L3(logger, "Found equilibrium for {}: X_eq = {:.4e}", primingSpecies.name(), equilibriumMassFraction);
-    //
-    //             if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(primer, primingSpecies, Y, T9, rho)) {
-    //                 LOG_TRACE_L3(logger, "Dominant creation channel for {}: {}", primingSpecies.name(), dominantChannel->id());
-    //
-    //                 double totalReactantMass = 0.0;
-    //                 for (const auto& reactant : dominantChannel->reactants()) {
-    //                     totalReactantMass += reactant.mass();
-    //                 }
-    //
-    //                 double scalingFactor = 1.0;
-    //                 for (const auto& reactant : dominantChannel->reactants()) {
-    //                     const double massToSubtract = equilibriumMassFraction * (reactant.mass() / totalReactantMass);
-    //                     double availableMass = 0.0;
-    //                     if (currentMassFractions.contains(reactant)) {
-    //                         availableMass = currentMassFractions.at(reactant);
-    //                     }
-    //                     if (massToSubtract > availableMass && availableMass > 0) {
-    //                         scalingFactor = std::min(scalingFactor, availableMass / massToSubtract);
-    //                     }
-    //                 }
-    //
-    //                 if (scalingFactor < 1.0) {
-    //                     LOG_WARNING(logger, "Priming for {} was limited by reactant availability. Scaling transfer by {:.4e}", primingSpecies.name(), scalingFactor);
-    //                     equilibriumMassFraction *= scalingFactor;
-    //                 }
-    //
-    //                 // Update the internal mass fraction map and accumulate total changes
-    //                 totalMassFractionChanges[primingSpecies] += equilibriumMassFraction;
-    //                 currentMassFractions.at(primingSpecies) += equilibriumMassFraction;
-    //
-    //                 for (const auto& reactant : dominantChannel->reactants()) {
-    //                     const double massToSubtract = equilibriumMassFraction * (reactant.mass() / totalReactantMass);
-    //                     std::cout << "[Priming: " << primingSpecies.name() << ", Channel: " << dominantChannel->id() <<  "] Subtracting " << massToSubtract << " from reactant " << reactant.name() << std::endl;
-    //                     totalMassFractionChanges[reactant] -= massToSubtract;
-    //                     currentMassFractions[reactant] -= massToSubtract;
-    //                 }
-    //             } else {
-    //                  LOG_ERROR(logger, "Failed to find dominant creation channel for {}.", primingSpecies.name());
-    //                  report.status = PrimingReportStatus::FAILED_TO_FIND_CREATION_CHANNEL;
-    //                  totalMassFractionChanges[primingSpecies] += 1e-40;
-    //                  currentMassFractions.at(primingSpecies) += 1e-40;
-    //             }
-    //         } else {
-    //             LOG_WARNING(logger, "No destruction channel found for {}. Using fallback abundance.", primingSpecies.name());
-    //             totalMassFractionChanges.at(primingSpecies) += 1e-40;
-    //             currentMassFractions.at(primingSpecies) += 1e-40;
-    //             report.status = PrimingReportStatus::BASE_NETWORK_TOO_SHALLOW;
-    //         }
-    //     }
-    //
-    //     // --- Final Composition Construction ---
-    //     std::vector<std::string> final_symbols;
-    //     std::vector<double> final_mass_fractions;
-    //     for(const auto& [species, mass_fraction] : currentMassFractions) {
-    //         final_symbols.emplace_back(species.name());
-    //         if (mass_fraction < 0.0 && std::abs(mass_fraction) < 1e-16) {
-    //             final_mass_fractions.push_back(0.0); // Avoid negative mass fractions
-    //         } else {
-    //             final_mass_fractions.push_back(mass_fraction);
-    //         }
-    //     }
-    //
-    //     // Create the final composition object from the pre-normalized mass fractions
-    //     Composition primedComposition(final_symbols, final_mass_fractions, true);
-    //
-    //     report.primedComposition = primedComposition;
-    //     for (const auto& [species, change] : totalMassFractionChanges) {
-    //         report.massFractionChanges.emplace_back(species, change);
-    //     }
-    //
-    //     engine.setNetworkReactions(initialReactionSet);
-    //     return report;
-    // }
-
   double calculateDestructionRateConstant(
-        const DynamicEngine& engine,
-        const Species& species,
-        const Composition& comp,
-        const double T9,
-        const double rho
-    ) {
-        //TODO: previously (when using raw vectors) I set y[speciesIndex] = 1.0 to let there be enough so that just the destruction rate could be found (without bottlenecks from abundance) we will need to do a similar thing here.
+      const DynamicEngine& engine,
+      const Species& species,
+      const Composition& composition,
+      const double T9,
+      const double rho,
+      const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
+  ) {
+        const UnrestrictedComposition unrestrictedComp(composition, species); // Create a composition that simulates an enormous source abundance of the target species (getMolarAbundance(species) always returns 1.0)
         double destructionRateConstant = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
-            if (reaction->contains_reactant(species)) {
-                const int stoichiometry = reaction->stoichiometry(species);
-                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
+            if (isReactionIgnorable(*reaction, reactionTypesToIgnore)) continue;
+
+            const int stoichiometry = reaction->stoichiometry(species);
+            if (stoichiometry < 0) {
+                destructionRateConstant += std::abs(stoichiometry) * engine.calculateMolarReactionFlow(*reaction, unrestrictedComp, T9, rho);
             }
         }
         return destructionRateConstant;
@@ -418,17 +349,18 @@ namespace gridfire {
     double calculateCreationRate(
         const DynamicEngine& engine,
         const Species& species,
-        const Composition& comp,
+        const Composition& composition,
         const double T9,
-        const double rho
+        const double rho,
+        const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
     ) {
         double creationRate = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
+            if (isReactionIgnorable(*reaction, reactionTypesToIgnore)) continue;
+
             const int stoichiometry = reaction->stoichiometry(species);
             if (stoichiometry > 0) {
-                if (engine.calculateMolarReactionFlow(*reaction, comp, T9, rho) > 0.0) {
-                }
-                creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
+                creationRate += stoichiometry * engine.calculateMolarReactionFlow(*reaction, composition, T9, rho);
             }
         }
         return creationRate;

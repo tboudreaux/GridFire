@@ -28,6 +28,18 @@ namespace gridfire::reaction {
         REACLIB,
         LOGICAL_REACLIB,
     };
+
+    static std::unordered_map<ReactionType, std::string> ReactionTypeNames = {
+        {ReactionType::WEAK, "weak"},
+        {ReactionType::REACLIB, "reaclib"},
+        {ReactionType::LOGICAL_REACLIB, "logical_reaclib"},
+    };
+
+    static std::unordered_map<ReactionType, std::string> ReactionPhysicalTypeNames = {
+        {ReactionType::WEAK, "Weak"},
+        {ReactionType::REACLIB, "Strong"},
+        {ReactionType::LOGICAL_REACLIB, "Strong"},
+    };
     /**
      * @struct RateCoefficientSet
      * @brief Holds the seven coefficients for the REACLIB rate equation.
