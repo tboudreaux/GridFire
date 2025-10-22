@@ -61,6 +61,15 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        return calculateRHSAndEnergy(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
         const double Ye = comp.getElectronAbundance();
         const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
         if (m_usePrecomputation) {
@@ -73,7 +82,9 @@ namespace gridfire {
 
             for (const auto& reaction: m_reactions) {
                 bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, mue, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
-                bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
+                if (reaction->type() != reaction::ReactionType::WEAK) {
+                    bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
+                }
             }
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
@@ -90,6 +101,10 @@ namespace gridfire {
                         return comp.getSpeciesIndex(species); // Return the index of the species in the composition
                     }
                     return std::nullopt; // Species not found in the composition
+                },
+                [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                    if (activeReactions.contains(reaction)) { return true; }
+                    return false;
                 }
             );
         }
@@ -99,6 +114,15 @@ namespace gridfire {
         const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
+    ) const {
+        return calculateEpsDerivatives(comp, T9, rho, m_reactions);
+    }
+
+    EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
     ) const {
         const size_t numSpecies = m_networkSpecies.size();
         const size_t numADInputs = numSpecies + 2; // +2 for T9 and rho
@@ -192,6 +216,8 @@ namespace gridfire {
                 throw std::runtime_error("Species not found in global atomic species database: " + std::string(name));
             }
         }
+        // TODO: Currently this works. We sort the vector based on mass so that for the same set of species we always get the same ordering and we get the same ordering as a composition with the same set of species
+        //       However, we need some checks so that when we get a composition we confirm that it is the same ordering / contains teh same species. This is important for the ODE integrator to work properly.
         std::ranges::sort(m_networkSpecies, [](const fourdst::atomic::Species& a, const fourdst::atomic::Species& b) -> bool {
             return a.mass() < b.mass(); // Otherwise, sort by mass
         });
@@ -434,14 +460,13 @@ namespace gridfire {
         const fourdst::composition::Composition& comp,
         const double reverseRate
     ) const {
+        assert(reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB);
+
         if (!m_useReverseReactions) {
             LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
             return 0.0; // If reverse reactions are not used, return 0.0
         }
-        double Ye = comp.getElectronAbundance();
-        // TODO: This is a dummy value for the electron chemical potential. We eventually need to replace this with an EOS call.
-        double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
-        const double d_log_kFwd = reaction.calculate_log_rate_partial_deriv_wrt_T9(T9, rho, Ye, mue, comp);
+        const double d_log_kFwd = reaction.calculate_log_rate_partial_deriv_wrt_T9(T9, rho, {}, {}, {});
 
         auto log_deriv_pf_op = [&](double acc, const auto& species) {
             const double g = m_partitionFunction->evaluate(species.z(), species.a(), T9);
@@ -948,6 +973,15 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        return getSpeciesTimescales(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
         const double Ye = comp.getElectronAbundance();
 
         auto [dydt, _] = calculateAllDerivatives<double>(
@@ -961,6 +995,9 @@ namespace gridfire {
                     return comp.getSpeciesIndex(species);
                 }
                 return std::nullopt; // Species not present
+            },
+            [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                return activeReactions.contains(reaction);
             }
         );
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescales;
@@ -980,6 +1017,15 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        return getSpeciesDestructionTimescales(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
         const double Ye = comp.getElectronAbundance();
         const std::vector<double>& Y = comp.getMolarAbundanceVector();
 
@@ -996,7 +1042,10 @@ namespace gridfire {
             rho,
             Ye,
             0.0,
-            speciesLookup
+            speciesLookup,
+            [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                return activeReactions.contains(reaction);
+            }
         );
 
         std::unordered_map<fourdst::atomic::Species, double> speciesDestructionTimescales;
@@ -1095,6 +1144,9 @@ namespace gridfire {
             adMue,
             [&](const fourdst::atomic::Species& querySpecies) -> size_t {
                 return m_speciesToIndexMap.at(querySpecies);
+            },
+            [](const reaction::Reaction& reaction) -> bool {
+                return true; // Use all reactions
             }
         );
 
@@ -1102,6 +1154,9 @@ namespace gridfire {
         // Extract the raw vector from the associative map
         std::vector<CppAD::AD<double>> dydt_vec;
         dydt_vec.reserve(dydt.size());
+        // TODO: There is a possibility for a bug here if the map ordering is not consistent with the ordering of the species in m_networkSpecies.
+        //       right now this works but that's because I am careful to build the map in the right order. This should be made less fragile
+        //       so that if map construction order changes this still works.
         std::ranges::transform(dydt, std::back_inserter(dydt_vec),[](const auto& kv) { return kv.second; });
 
         m_rhsADFun.Dependent(adInput, dydt_vec);
@@ -1147,6 +1202,9 @@ namespace gridfire {
             adMue,
             [&](const fourdst::atomic::Species& querySpecies) -> size_t {
                 return m_speciesToIndexMap.at(querySpecies); // TODO: This is bad, needs to be fixed
+            },
+            [](const reaction::Reaction& reaction) -> bool {
+                return true; // Use all reactions
             }
         );
 
@@ -1188,6 +1246,7 @@ namespace gridfire {
             const auto& reaction = m_reactions[i];
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
+            precomp.reaction_type = reaction.type();
 
             // --- Precompute forward reaction information ---
             // Count occurrences for each reactant to determine powers and symmetry
@@ -1208,7 +1267,7 @@ namespace gridfire {
             precomp.symmetry_factor = 1.0/symmetryDenominator;
 
             // --- Precompute reverse reaction information ---
-            if (reaction.qValue() != 0.0) {
+            if (reaction.qValue() != 0.0 && reaction.type() != reaction::ReactionType::WEAK) {
                 std::unordered_map<size_t, int> productCounts;
                 for (const auto& product : reaction.products()) {
                     productCounts[speciesIndexMap.at(product)]++;
@@ -1224,7 +1283,7 @@ namespace gridfire {
             } else {
                 precomp.unique_product_indices.clear();
                 precomp.product_powers.clear();
-                precomp.reverse_symmetry_factor = 0.0; // No reverse reaction for Q = 0 reactions
+                precomp.reverse_symmetry_factor = 0.0; // No reverse reaction for weak reactions
             }
 
             // --- Precompute stoichiometry information ---

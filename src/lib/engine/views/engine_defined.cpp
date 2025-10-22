@@ -1,4 +1,5 @@
 #include "gridfire/engine/views/engine_defined.h"
+#include "gridfire/engine/engine_graph.h"
 
 #include <ranges>
 
@@ -7,14 +8,33 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <set>
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
 
+namespace {
+    class MaskedComposition final : public fourdst::composition::Composition {
+    private:
+        std::set<fourdst::atomic::Species> m_activeSpecies;
+    public:
+        MaskedComposition(const Composition& baseComposition, const std::set<fourdst::atomic::Species>& activeSpecies) :
+        Composition(baseComposition),
+        m_activeSpecies(activeSpecies) {}
+
+        bool contains(const fourdst::atomic::Species& species) const override {
+            return Composition::contains(species) && m_activeSpecies.contains(species);
+        }
+    };
+}
+
 namespace gridfire {
     using fourdst::atomic::Species;
 
-    DefinedEngineView::DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine) :
+    DefinedEngineView::DefinedEngineView(
+        const std::vector<std::string>& peNames,
+        GraphEngine& baseEngine
+    ) :
     m_baseEngine(baseEngine) {
         collect(peNames);
     }
@@ -24,7 +44,11 @@ namespace gridfire {
     }
 
     const std::vector<Species> & DefinedEngineView::getNetworkSpecies() const {
-        return m_activeSpecies;
+        if (m_activeSpeciesVectorCache.has_value()) {
+            return m_activeSpeciesVectorCache.value();
+        }
+        m_activeSpeciesVectorCache = std::vector<Species>(m_activeSpecies.begin(), m_activeSpecies.end());
+        return m_activeSpeciesVectorCache.value();
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> DefinedEngineView::calculateRHSAndEnergy(
@@ -34,7 +58,8 @@ namespace gridfire {
     ) const {
         validateNetworkState();
 
-        const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
+        const MaskedComposition masked(comp, m_activeSpecies);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(masked, T9, rho, m_activeReactions);
 
         if (!result) {
             return std::unexpected{result.error()};
@@ -50,7 +75,9 @@ namespace gridfire {
     ) const {
         validateNetworkState();
 
-        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
+        const MaskedComposition masked(comp, m_activeSpecies);
+
+        return m_baseEngine.calculateEpsDerivatives(masked, T9, rho, m_activeReactions);
     }
 
     void DefinedEngineView::generateJacobianMatrix(
@@ -60,7 +87,10 @@ namespace gridfire {
     ) const {
         validateNetworkState();
 
-        m_baseEngine.generateJacobianMatrix(comp, T9, rho);
+        const MaskedComposition masked(comp, m_activeSpecies);
+
+        // TODO: We likely want to be able to think more carefully about this so that the jacobian matches the active species/reactions
+        m_baseEngine.generateJacobianMatrix(masked, T9, rho);
     }
 
     double DefinedEngineView::getJacobianMatrixEntry(
@@ -68,6 +98,17 @@ namespace gridfire {
         const Species& colSpecies
     ) const {
         validateNetworkState();
+
+        if (!m_activeSpecies.contains(rowSpecies)) {
+            LOG_ERROR(m_logger, "Row species '{}' is not part of the active species in the DefinedEngineView.", rowSpecies.name());
+            m_logger -> flush_log();
+            throw std::runtime_error("Row species not found in active species: " + std::string(rowSpecies.name()));
+        }
+        if (!m_activeSpecies.contains(colSpecies)) {
+            LOG_ERROR(m_logger, "Column species '{}' is not part of the active species in the DefinedEngineView.", colSpecies.name());
+            m_logger -> flush_log();
+            throw std::runtime_error("Column species not found in active species: " + std::string(colSpecies.name()));
+        }
 
         return m_baseEngine.getJacobianMatrixEntry(rowSpecies, colSpecies);
     }
@@ -83,6 +124,18 @@ namespace gridfire {
         const reaction::Reaction& reaction
     ) const {
         validateNetworkState();
+
+        if (!m_activeSpecies.contains(species)) {
+            LOG_ERROR(m_logger, "Species '{}' is not part of the active species in the DefinedEngineView.", species.name());
+            m_logger -> flush_log();
+            throw std::runtime_error("Species not found in active species: " + std::string(species.name()));
+        }
+
+        if (!m_activeReactions.contains(reaction)) {
+            LOG_ERROR(m_logger, "Reaction '{}' is not part of the active reactions in the DefinedEngineView.", reaction.id());
+            m_logger -> flush_log();
+            throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
+        }
 
         return m_baseEngine.getStoichiometryMatrixEntry(species, reaction);
     }
@@ -100,7 +153,9 @@ namespace gridfire {
             m_logger -> flush_log();
             throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
         }
-        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
+
+        const MaskedComposition masked(comp, m_activeSpecies);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, masked, T9, rho);
     }
 
     const reaction::ReactionSet & DefinedEngineView::getNetworkReactions() const {
@@ -115,6 +170,7 @@ namespace gridfire {
             peNames.emplace_back(reaction->id());
         }
         collect(peNames);
+        m_activeSpeciesVectorCache = std::nullopt; // Invalidate species vector cache
     }
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesTimescales(
@@ -123,8 +179,9 @@ namespace gridfire {
         const double rho
     ) const {
         validateNetworkState();
+        const MaskedComposition masked(comp, m_activeSpecies);
 
-        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(masked, T9, rho, m_activeReactions);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -139,15 +196,15 @@ namespace gridfire {
         return definedTimescales;
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
-    DefinedEngineView::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesDestructionTimescales(
         const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) const {
         validateNetworkState();
+        const MaskedComposition masked(comp, m_activeSpecies);
 
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(masked, T9, rho, m_activeReactions);
 
         if (!result) {
             return std::unexpected{result.error()};
@@ -182,6 +239,7 @@ namespace gridfire {
     }
 
     size_t DefinedEngineView::getSpeciesIndex(const Species &species) const {
+        // TODO: We are working to phase out all of these methods, its probably broken but it also should no longer be used and will be removed soon
         validateNetworkState();
 
         const auto it = std::ranges::find(m_activeSpecies, species);
@@ -328,13 +386,13 @@ namespace gridfire {
             for (const auto& reactant : reaction->reactants()) {
                 if (!seenSpecies.contains(reactant)) {
                     seenSpecies.insert(reactant);
-                    m_activeSpecies.push_back(reactant);
+                    m_activeSpecies.emplace(reactant);
                 }
             }
             for (const auto& product : reaction->products()) {
                 if (!seenSpecies.contains(product)) {
                     seenSpecies.insert(product);
-                    m_activeSpecies.push_back(product);
+                    m_activeSpecies.emplace(product);
                 }
             }
             m_activeReactions.add_reaction(*reaction);
@@ -373,7 +431,7 @@ namespace gridfire {
     /////////////////////////////////////////////
 
     FileDefinedEngineView::FileDefinedEngineView(
-        DynamicEngine &baseEngine,
+        GraphEngine &baseEngine,
         const std::string &fileName,
         const io::NetworkFileParser &parser
     ):

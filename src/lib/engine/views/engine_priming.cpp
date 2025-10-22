@@ -18,7 +18,7 @@ namespace gridfire {
 
     NetworkPrimingEngineView::NetworkPrimingEngineView(
         const std::string &primingSymbol,
-        DynamicEngine &baseEngine
+        GraphEngine &baseEngine
     ) :
     DefinedEngineView(
         constructPrimingReactionSet(
@@ -31,7 +31,7 @@ namespace gridfire {
 
     NetworkPrimingEngineView::NetworkPrimingEngineView(
         const fourdst::atomic::Species &primingSpecies,
-        DynamicEngine &baseEngine
+        GraphEngine &baseEngine
     ) :
     DefinedEngineView(
         constructPrimingReactionSet(
@@ -46,7 +46,7 @@ namespace gridfire {
 
     std::vector<std::string> NetworkPrimingEngineView::constructPrimingReactionSet(
         const fourdst::atomic::Species &primingSpecies,
-        const DynamicEngine &baseEngine
+        const GraphEngine &baseEngine
     ) const {
         std::unordered_set<std::string> primeReactions;
         for (const auto &reaction : baseEngine.getNetworkReactions()) {

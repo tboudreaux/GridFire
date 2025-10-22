@@ -268,6 +268,7 @@ namespace gridfire::reaction {
         const double T9_p23 = std::pow(T9, r_p23);
 
 
+        // ReSharper disable once CppUseStructuredBinding
         for (const auto& coeffs : m_rates) {
             const double exponent = coeffs.a0 +
                                     coeffs.a1 * T9_m1 +
@@ -318,7 +319,7 @@ namespace gridfire::reaction {
         if (m_reactions.empty()) {
             return; // Case where the reactions will be added later.
         }
-        m_reactionNameMap.reserve(reactions.size());
+        m_reactionNameMap.reserve(m_reactions.size());
         size_t i = 0;
         for (const auto& reaction : m_reactions) {
             m_id += reaction->id();
@@ -468,11 +469,11 @@ namespace gridfire::reaction {
     }
 
     const Reaction& ReactionSet::operator[](const std::string_view& id) const {
-        if (auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
+        if (const auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
             return *m_reactions[it->second];
         }
         m_logger -> flush_log();
-        throw std::out_of_range("Species " + std::string(id) + " does not exist in ReactionSet.");
+        throw std::out_of_range("Reaction " + std::string(id) + " does not exist in ReactionSet.");
     }
 
     bool ReactionSet::operator==(const ReactionSet& other) const {

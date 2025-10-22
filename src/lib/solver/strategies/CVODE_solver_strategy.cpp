@@ -144,6 +144,8 @@ namespace gridfire::solver {
         const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
+        std::cout << "Equilibrium d molar abundances: " << equilibratedComposition.getMolarAbundance(fourdst::atomic::H_2) << std::endl;
+        std::cout << "Equilibrium d mass fraction: " << equilibratedComposition.getMassFraction(fourdst::atomic::H_2) << std::endl;
         std::cout << "EXITED AT EXPECTED TESTING POINT" << std::endl;
         exit(0);
 
@@ -251,7 +253,11 @@ namespace gridfire::solver {
                     mass_fractions.push_back(y_data[i] * species.mass()); // Convert from molar abundance to mass fraction
                 }
                 temp_comp.setMassFraction(m_engine.getNetworkSpecies(), mass_fractions);
-                temp_comp.finalize(true);
+                bool didFinalize = temp_comp.finalize(true);
+                if (!didFinalize) {
+                    LOG_ERROR(m_logger, "Failed to finalize composition during engine update. Check input mass fractions for validity.");
+                    throw std::runtime_error("Failed to finalize composition during engine update.");
+                }
 
                 NetIn netInTemp = netIn;
                 netInTemp.temperature = T9 * 1e9; // Convert back to Kelvin
@@ -301,7 +307,11 @@ namespace gridfire::solver {
 
         fourdst::composition::Composition outputComposition(speciesNames);
         outputComposition.setMassFraction(speciesNames, finalMassFractions);
-        outputComposition.finalize(true);
+        bool didFinalize = outputComposition.finalize(true);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize output composition after CVODE integration. Check output mass fractions for validity.");
+            throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
+        }
 
         NetOut netOut;
         netOut.composition = outputComposition;

@@ -37,7 +37,7 @@ namespace gridfire {
          * @throws std::out_of_range If primingSymbol is not found in the species registry.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const std::string& primingSymbol, DynamicEngine& baseEngine);
+        NetworkPrimingEngineView(const std::string& primingSymbol, GraphEngine& baseEngine);
         /**
          * @brief Constructs the view using an existing Species object.
          *
@@ -47,7 +47,7 @@ namespace gridfire {
          * @post The view will contain only reactions that involve the priming species.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, DynamicEngine& baseEngine);
+        NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, GraphEngine& baseEngine);
 
 
     private:
@@ -66,7 +66,7 @@ namespace gridfire {
          */
         [[nodiscard]] std::vector<std::string> constructPrimingReactionSet(
             const fourdst::atomic::Species& primingSpecies,
-            const DynamicEngine& baseEngine
+            const GraphEngine& baseEngine
         ) const;
     };
 

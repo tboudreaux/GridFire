@@ -78,6 +78,8 @@ namespace gridfire {
         return dominateReaction;
     }
 
+
+
     /**
      * @brief Primes absent species in the network to their equilibrium abundances using a robust, two-stage approach.
      *
@@ -112,7 +114,7 @@ namespace gridfire {
      */
     PrimingReport primeNetwork(
         const NetIn& netIn,
-        DynamicEngine& engine,
+        GraphEngine& engine,
         const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
     ) {
         auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");

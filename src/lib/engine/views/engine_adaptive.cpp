@@ -91,7 +91,11 @@ namespace gridfire {
 
         updatedNetIn.composition = baseUpdatedComposition;
 
-        updatedNetIn.composition.finalize(false);
+        bool didFinalize = updatedNetIn.composition.finalize(false);
+        if (!didFinalize) {
+            LOG_ERROR(m_logger, "Failed to finalize composition during adaptive engine view update. Check input mass fractions for validity.");
+            throw std::runtime_error("Failed to finalize composition during adaptive engine view update.");
+        }
 
         LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 

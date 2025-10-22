@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
 
 #include "fourdst/composition/atomicSpecies.h"
@@ -27,7 +28,7 @@ namespace gridfire {
      */
      PrimingReport primeNetwork(
          const NetIn& netIn,
-         DynamicEngine& engine,
+         GraphEngine& engine,
          const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
      );
 

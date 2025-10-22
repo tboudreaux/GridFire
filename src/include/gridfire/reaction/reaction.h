@@ -728,6 +728,7 @@ namespace gridfire::reaction {
                        rate.a5 * T953 +
                        rate.a6 * logT9;
                 sum += CppAD::exp(exponent);
+                // return sum; // TODO: REMOVE THIS ITS FOR TESTING ONLY
             }
             return sum;
         }

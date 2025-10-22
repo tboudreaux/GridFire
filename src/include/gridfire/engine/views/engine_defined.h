@@ -2,6 +2,7 @@
 
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/engine_graph.h"
 #include "gridfire/io/network_file.h"
 #include "gridfire/network.h"
 
@@ -15,7 +16,11 @@
 namespace gridfire{
     class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {
     public:
-        DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine);
+        DefinedEngineView(const std::vector<std::string>& peNames, GraphEngine& baseEngine);
+
+        /** @brief Get the base engine associated with this defined engine view.
+         * @return A const reference to the base DynamicEngine.
+         */
         [[nodiscard]] const DynamicEngine& getBaseEngine() const override;
 
         // --- Engine Interface ---
@@ -159,7 +164,7 @@ namespace gridfire{
          */
         fourdst::composition::Composition update(const NetIn &netIn) override;
 
-        bool isStale(const NetIn& netIn) override;
+        [[deprecated]] bool isStale(const NetIn& netIn) override;
 
         /**
          * @brief Sets the screening model for the base engine.
@@ -182,11 +187,15 @@ namespace gridfire{
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
     protected:
         bool m_isStale = true;
-        DynamicEngine& m_baseEngine;
+        GraphEngine& m_baseEngine;
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
         ///< Active species in the defined engine.
-        std::vector<fourdst::atomic::Species> m_activeSpecies;
+        std::set<fourdst::atomic::Species> m_activeSpecies;
+
+        ///< Cache for the active species vector to avoid dangling references.
+        mutable std::optional<std::vector<fourdst::atomic::Species>> m_activeSpeciesVectorCache = std::nullopt;
+
         ///< Active reactions in the defined engine.
         reaction::ReactionSet m_activeReactions;
 
@@ -266,7 +275,7 @@ namespace gridfire{
     class FileDefinedEngineView final: public DefinedEngineView {
     public:
         explicit FileDefinedEngineView(
-            DynamicEngine& baseEngine,
+            GraphEngine& baseEngine,
             const std::string& fileName,
             const io::NetworkFileParser& parser
         );

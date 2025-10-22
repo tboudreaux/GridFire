@@ -735,6 +735,15 @@ namespace gridfire {
             std::set<fourdst::atomic::Species> seed_species;      ///< Dynamic species in this group.
             double mean_timescale;                                ///< Mean timescale of the group.
 
+            // DEBUG METHODS.
+            // THESE SHOULD NOT BE USED IN PRODUCTION CODE.
+            [[deprecated("Use for debug only")]] void removeSpecies(const fourdst::atomic::Species& species);
+
+            [[deprecated("Use for debug only")]] void addSpeciesToAlgebraic(const fourdst::atomic::Species& species);
+
+            [[deprecated("Use for debug only")]] void addSpeciesToSeed(const fourdst::atomic::Species& species);
+
+
             /**
              * @brief Less-than operator for QSEGroup, used for sorting.
              * @param other The other QSEGroup to compare to.
@@ -848,7 +857,7 @@ namespace gridfire {
             m_T9(T9),
             m_rho(rho),
             m_Y_scale(Y_scale),
-            m_qse_solve_species_index_map(qse_solve_species_index_map){}
+            m_qse_solve_species_index_map(qse_solve_species_index_map) {}
 
             /**
              * @brief Gets the number of output values from the functor (size of the residual vector).
