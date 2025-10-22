@@ -1,6 +1,7 @@
 #include "gridfire/reaction/weak/weak_interpolator.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/reaction/weak/weak.h"
+#include "gridfire/utils/hashing.h"
 
 #include <algorithm>
 #include <map>
@@ -19,9 +20,9 @@ namespace gridfire::rates::weak {
 
     WeakRateInterpolator::WeakRateInterpolator(const RowDataTable &raw_data) {
         // Group all raw data rows by their isotope ID.
-        std::map<uint32_t, std::vector<const RateDataRow*>> grouped_rows;
+        std::unordered_map<uint32_t, std::vector<const RateDataRow*>> grouped_rows;
         for (const auto& row : raw_data) {
-            grouped_rows[pack_isotope_id(row.A, row.Z)].push_back(&row);
+            grouped_rows[utils::hash_atomic(row.A, row.Z)].push_back(&row);
         }
 
         // Process each isotope's data to build a simple 2D grid.
@@ -48,22 +49,8 @@ namespace gridfire::rates::weak {
             for (size_t i = 0; i < nt9; i++) { t9_map[grid.t9_axis[i]] = i; }
             for (size_t j = 0; j < nrhoYe; j++) { rhoYe_map[grid.rhoYe_axis[j]] = j; }
 
-            // Use a set to detect duplicate (T9, rhoYe) pairs, which would be a data error.
-            std::set<std::pair<float, float>> seen_coords;
-
             // Populate the 2D grid.
             for (const auto* row: rows) {
-                if (auto [it, inserted] = seen_coords.insert({row->t9, row->log_rhoye}); !inserted) {
-                    auto A = static_cast<uint16_t>(isotope_id >> 8);
-                    auto Z = static_cast<uint8_t>(isotope_id & 0xFF);
-                    std::string msg = std::format(
-                        "Duplicate data point for isotope (A={}, Z={}) at (T9={}, log10(rho*Ye)={}) in weak rate table. This indicates corrupted or malformed input data and should be taken as an unrecoverable error.",
-                        A, Z, row->t9, row->log_rhoye
-                    );
-                    LOG_ERROR(m_logger, "{}", msg);
-                    throw std::runtime_error(msg);
-                }
-
                 size_t i_t9 = t9_map.at(row->t9);
                 size_t j_rhoYe = rhoYe_map.at(row->log_rhoye);
 
@@ -107,7 +94,7 @@ namespace gridfire::rates::weak {
         const double t9,
         const double log_rhoYe
     ) const {
-        const auto it = m_rate_table.find(pack_isotope_id(A, Z));
+        const auto it = m_rate_table.find(utils::hash_atomic(A, Z));
         if (it == m_rate_table.end()) {
             return std::unexpected(InterpolationError{InterpolationErrorType::UNKNOWN_SPECIES_ERROR});
         }
@@ -220,11 +207,6 @@ namespace gridfire::rates::weak {
         result.d_log_antineutrino_loss_bd[1] = (payload_plus_rhoYe->log_antineutrino_loss_bd - payload_minus_rhoYe->log_antineutrino_loss_bd) / rhoYe_denominator;
 
         return result;
-    }
-
-
-    uint32_t WeakRateInterpolator::pack_isotope_id(const uint16_t A, const uint8_t Z) {
-        return (static_cast<uint32_t>(A) << 8) | static_cast<uint32_t>(Z);
     }
 
 }

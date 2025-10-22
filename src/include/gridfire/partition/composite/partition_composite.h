@@ -90,6 +90,9 @@ namespace gridfire::partition {
      private:
          quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
          std::vector<std::unique_ptr<PartitionFunction>> m_partitionFunctions; ///< Set of partition functions to use in the composite partition function.
+
+         mutable std::unordered_map<uint_fast32_t, const PartitionFunction&> m_supportCache; ///< Cache mapping isotope keys to supporting partition functions for fast lookup.
+
      private:
         /**
          * @brief Instantiate a sub-function by its type.

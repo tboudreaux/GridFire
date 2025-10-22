@@ -116,12 +116,6 @@ namespace gridfire::rates::weak {
         ) const;
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-        /**
-         * @brief Pack (A,Z) into a 32-bit key used for the internal map.
-         *
-         * Layout: (A << 8) | Z. To unpack, use (key >> 8) for A and (key & 0xFF) for Z.
-         */
-        static uint32_t pack_isotope_id(uint16_t A, uint8_t Z);
 
         /**
          * @brief Per-isotope grids over (T9, log10(rho*Ye), mu_e) with payloads at lattice nodes.

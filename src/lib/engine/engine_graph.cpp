@@ -1312,11 +1312,9 @@ namespace gridfire {
         if ( p != 0) { return false; }
         const double T9 = tx[0];
 
-        // This is an interesting problem because the reverse rate should only ever be computed for strong reactions
-        // Which do not depend on rho or Y. However, the signature requires them...
-        // For now, we just pass dummy values for rho and Y
+        // We can pass a dummy comp and rho because reverse rates should only be calculated for strong reactions whose
+        // rates of progression do not depend on composition or density.
         const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0.0, {});
-        // std::cout << m_reaction.peName() << " reverseRate: " << reverseRate << " at T9: " << T9 << "\n";
         ty[0] = reverseRate; // Store the reverse rate in the output vector
 
         if (vx.size() > 0) {
@@ -1335,9 +1333,6 @@ namespace gridfire {
         const double T9 = tx[0];
         const double reverseRate = ty[0];
 
-        // This is an interesting problem because the reverse rate should only ever be computed for strong reactions
-        // Which do not depend on rho or Y. However, the signature requires them...
-        // For now, we just pass dummy values for rho and Y
         const double derivative = m_engine.calculateReverseRateTwoBodyDerivative(m_reaction, T9, 0, {}, reverseRate);
 
         px[0] = py[0] * derivative; // Return the derivative of the reverse rate with respect to T9
