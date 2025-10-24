@@ -231,11 +231,11 @@ namespace gridfire {
                     // Store the request instead of applying it immediately.
                     requests.push_back({primingSpecies, equilibriumMassFraction, dominantChannel->reactants()});
                 } else {
-                    LOG_ERROR(logger, "Failed to find dominant creation channel for {}.", primingSpecies.name());
+                    LOG_TRACE_L1(logger, "Failed to find dominant creation channel for {}.", primingSpecies.name());
                     report.status = PrimingReportStatus::FAILED_TO_FIND_CREATION_CHANNEL;
                 }
             } else {
-                LOG_WARNING(logger, "No destruction channel found for {}. Using fallback abundance.", primingSpecies.name());
+                LOG_TRACE_L2(logger, "No destruction channel found for {}. Using fallback abundance.", primingSpecies.name());
                 // For species with no destruction, we can't calculate an equilibrium.
                 // We add a request with a tiny fallback abundance to ensure it exists in the network.
                 requests.push_back({primingSpecies, 1e-40, {}});

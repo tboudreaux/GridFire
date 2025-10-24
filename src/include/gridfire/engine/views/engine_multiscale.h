@@ -272,6 +272,64 @@ namespace gridfire {
         ) const override;
 
         /**
+         * @brief Generates the Jacobian matrix for a subset of active species.
+         *
+         * @param comp The current composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param activeSpecies The subset of species to include in the Jacobian.
+         *
+         * @par Purpose
+         * To compute a reduced Jacobian matrix for implicit solvers that only
+         * consider a subset of species.
+         *
+         * @par How
+         * Similar to the full Jacobian generation, it first checks the QSE cache.
+         * On a hit, it calls the base engine's `generateJacobianMatrix` with
+         * the specified active species. The returned Jacobian still reflects
+         * the full network, but only for the active species subset.
+         *
+         * @pre The engine must have a valid QSE cache entry for the given state.
+         * @post The base engine's internal Jacobian is updated for the active species.
+         *
+         * @throws exceptions::StaleEngineError If the QSE cache misses.
+         */
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species> &activeSpecies
+        ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix using a sparsity pattern.
+         *
+         * @param comp The current composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian.
+         *
+         * @par Purpose
+         * To compute the Jacobian matrix while leveraging a known sparsity pattern
+         * for efficiency. This is effectively a lower level version of the active species method.
+         *
+         * @par How
+         * It first checks the QSE cache. On a hit, it delegates to the base engine's
+         * `generateJacobianMatrix` method with the provided sparsity pattern.
+         *
+         * @pre The engine must have a valid QSE cache entry for the given state.
+         * @post The base engine's internal Jacobian is updated according to the sparsity pattern.
+         *
+         * @throws exceptions::StaleEngineError If the QSE cache misses.
+         */
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
+        ) const override;
+
+        /**
          * @brief Gets an entry from the previously generated Jacobian matrix.
          *
          * @param rowSpecies Species corresponding to the row index (i_full).
@@ -720,6 +778,12 @@ namespace gridfire {
             const NetIn &netIn
         );
 
+        bool involvesSpecies(const fourdst::atomic::Species &species) const;
+
+        bool involvesSpeciesInQSE(const fourdst::atomic::Species &species) const;
+
+        bool involvesSpeciesInDynamic(const fourdst::atomic::Species &species) const;
+
 
     private:
         /**
@@ -806,7 +870,7 @@ namespace gridfire {
              */
             MultiscalePartitioningEngineView* m_view;
             /**
-             * @brief Indices of the species to solve for in the QSE group.
+             * @brief The set of species to solve for in the QSE group.
              */
             const std::set<fourdst::atomic::Species>& m_qse_solve_species;
             /**

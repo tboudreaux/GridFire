@@ -86,11 +86,39 @@ namespace gridfire {
         const double rho
     ) const {
         validateNetworkState();
-
+        if (!m_activeSpeciesVectorCache.has_value()) {
+            m_activeSpeciesVectorCache = std::vector<Species>(m_activeSpecies.begin(), m_activeSpecies.end());
+        }
         const MaskedComposition masked(comp, m_activeSpecies);
+        m_baseEngine.generateJacobianMatrix(masked, T9, rho, m_activeSpeciesVectorCache.value());
+    }
 
-        // TODO: We likely want to be able to think more carefully about this so that the jacobian matches the active species/reactions
-        m_baseEngine.generateJacobianMatrix(masked, T9, rho);
+    void DefinedEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const std::vector<fourdst::atomic::Species> &activeSpecies
+    ) const {
+        validateNetworkState();
+
+        const std::set<fourdst::atomic::Species> activeSpeciesSet(
+            activeSpecies.begin(),
+            activeSpecies.end()
+        );
+
+        const MaskedComposition masked(comp, activeSpeciesSet);
+        m_baseEngine.generateJacobianMatrix(masked, T9, rho, activeSpecies);
+    }
+
+    void DefinedEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const SparsityPattern &sparsityPattern
+    ) const {
+        validateNetworkState();
+        const MaskedComposition masked(comp, m_activeSpecies);
+        m_baseEngine.generateJacobianMatrix(masked, T9, rho, sparsityPattern);
     }
 
     double DefinedEngineView::getJacobianMatrixEntry(

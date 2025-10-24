@@ -12,7 +12,6 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
 #include "gridfire/engine/procedures/construction.h"
-#include "gridfire/utils/general_composition.h"
 
 #include <string>
 #include <unordered_map>
@@ -233,6 +232,25 @@ namespace gridfire {
             const fourdst::composition::Composition& comp,
             double T9,
             double rho
+        ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix for the current state with a specified set of active species.
+         *        generally this will be much faster than the full matrix generation. Here we use forward mode
+         *        to generate the Jacobian only for the active species.
+         * @param comp The Composition object containing current abundances.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param activeSpecies A vector of Species objects representing the active species.
+         *
+         * @see getJacobianMatrixEntry()
+         * @see generateJacobianMatrix()
+         */
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species>& activeSpecies
         ) const override;
 
         /**
@@ -717,6 +735,7 @@ namespace gridfire {
             // Forward cacheing
             size_t reaction_index;
             reaction::ReactionType reaction_type;
+            uint64_t reaction_hash;
             std::vector<size_t> unique_reactant_indices;
             std::vector<int> reactant_powers;
             double symmetry_factor;
@@ -800,6 +819,7 @@ namespace gridfire {
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
         CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
+        std::set<std::pair<size_t, size_t>> m_full_sparsity_set; ///< For quick lookups of the base sparsity pattern
 
         std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
@@ -813,6 +833,7 @@ namespace gridfire {
         BuildDepthType m_depth;
 
         std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
+        std::unordered_map<uint64_t, size_t> m_precomputedReactionIndexMap; ///< Set of hashed precomputed reactions for quick lookup.
         std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
 
     private:
@@ -890,10 +911,10 @@ namespace gridfire {
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
             const fourdst::composition::Composition &comp,
-            const std::vector<double>& bare_rates,
+            const std::vector<double> &bare_rates,
             const std::vector<double> &bare_reverse_rates,
             double T9,
-            double rho
+            double rho, const reaction::ReactionSet &activeReactions
         ) const;
 
         /**

@@ -17,8 +17,6 @@
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
-static std::ofstream debug_multiscale_log("debug_multiscale_log.txt");
-
 namespace {
     using namespace fourdst::atomic;
     //TODO: Replace all calls to this function with composition.getMolarAbundanceVector() so that
@@ -214,8 +212,41 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // TODO: Add sparsity pattern to this to prevent base engine from doing unnecessary work.
-        m_baseEngine.generateJacobianMatrix(comp, T9, rho);
+        // We do not need to generate the jacobian for QSE species since those entries are by definition 0
+        m_baseEngine.generateJacobianMatrix(comp, T9, rho, m_dynamic_species);
+    }
+
+    void MultiscalePartitioningEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const std::vector<Species> &activeSpecies
+    ) const {
+        const bool activeSpeciesIsSubset = std::ranges::any_of(activeSpecies, [&](const auto& species) -> bool {
+            return !involvesSpecies(species);
+        });
+        if (activeSpeciesIsSubset) {
+            LOG_CRITICAL(m_logger, "Active species contains species not in the network partition. Cannot generate Jacobian matrix for active species.");
+            throw std::runtime_error("Active species contains species not in the network partition. Cannot generate Jacobian matrix for active species.");
+        }
+
+        std::vector<Species> dynamicActiveSpeciesIntersection;
+        for (const auto& species : activeSpecies) {
+            if (involvesSpeciesInDynamic(species)) {
+                dynamicActiveSpeciesIntersection.push_back(species);
+            }
+        }
+
+        m_baseEngine.generateJacobianMatrix(comp, T9, rho, dynamicActiveSpeciesIntersection);
+    }
+
+    void MultiscalePartitioningEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const SparsityPattern &sparsityPattern
+    ) const {
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
     }
 
     double MultiscalePartitioningEngineView::getJacobianMatrixEntry(
@@ -811,6 +842,26 @@ namespace gridfire {
         return equilibrateNetwork(primingReport.primedComposition, T9, rho);
     }
 
+    bool MultiscalePartitioningEngineView::involvesSpecies(
+        const Species &species
+    ) const {
+        if (involvesSpeciesInQSE(species)) return true; // check this first since the vector is likely to be smaller so short circuit cost is less on average
+        if (involvesSpeciesInDynamic(species)) return true;
+        return false;
+    }
+
+    bool MultiscalePartitioningEngineView::involvesSpeciesInQSE(
+        const Species &species
+    ) const {
+        return std::ranges::find(m_algebraic_species, species) != m_algebraic_species.end();
+    }
+
+    bool MultiscalePartitioningEngineView::involvesSpeciesInDynamic(
+        const Species &species
+    ) const {
+        return std::ranges::find(m_dynamic_species, species) != m_dynamic_species.end();
+    }
+
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(const Species &species) const {
         return m_baseEngine.getSpeciesIndex(species);
     }
@@ -1083,7 +1134,7 @@ namespace gridfire {
 
             }
 
-            if (bool group_is_coupled = (coupling_flux / leakage_flux) > FLUX_RATIO_THRESHOLD) {
+            if (coupling_flux / leakage_flux > FLUX_RATIO_THRESHOLD) {
                 LOG_TRACE_L1(
                     m_logger,
                     "Group containing {} is in equilibrium due to high coupling flux and balanced creation and destruction rate: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>, <creation: creation flux = {}, destruction flux = {}, ratio = {} order of mag (Threshold: {} order of mag)>",

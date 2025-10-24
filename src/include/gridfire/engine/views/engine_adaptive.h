@@ -140,6 +140,20 @@ namespace gridfire {
             double rho
         ) const override;
 
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species> &activeSpecies
+        ) const override;
+
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
+        ) const override;
+
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
          *
@@ -409,7 +423,7 @@ namespace gridfire {
          * 5. For each reaction, it calls the base engine's `calculateMolarReactionFlow` to get the flow rate.
          * 6. Stores the reaction pointer and its flow rate in a `ReactionFlow` struct and adds it to the returned vector.
          */
-        std::pair<std::vector<ReactionFlow>, fourdst::composition::Composition> calculateAllReactionFlows(
+        [[nodiscard]] std::pair<std::vector<ReactionFlow>, fourdst::composition::Composition> calculateAllReactionFlows(
             const NetIn& netIn
         ) const;
         /**

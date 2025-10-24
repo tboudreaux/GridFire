@@ -65,9 +65,44 @@ namespace gridfire{
          */
         void generateJacobianMatrix(
             const fourdst::composition::Composition& comp,
-            const double T9,
-            const double rho
+            double T9,
+            double rho
         ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix for the active species.
+         *
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param activeSpecies The vector of active species to include in the Jacobian.
+         *
+         * @throws std::runtime_error If the view is stale.
+         */
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species> &activeSpecies
+        ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix for a given sparsity pattern
+         *
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian matrix.
+         *
+         * @throws std::runtime_error If the view is stale.
+         */
+        void generateJacobianMatrix(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
+        ) const override;
+
         /**
          * @brief Gets an entry from the Jacobian matrix for the active species.
          *

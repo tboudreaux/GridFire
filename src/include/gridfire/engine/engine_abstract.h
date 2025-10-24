@@ -161,10 +161,15 @@ namespace gridfire {
             const fourdst::composition::Composition& comp,
             double T9,
             double rho,
+            const std::vector<fourdst::atomic::Species>& activeSpecies
+        ) const = 0;
+
+        virtual void generateJacobianMatrix(
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho,
             const SparsityPattern& sparsityPattern
-        ) const {
-            throw std::logic_error("Sparsity pattern not supported by this engine.");
-        }
+        ) const = 0;
 
         /**
          * @brief Get an entry from the previously generated Jacobian matrix.

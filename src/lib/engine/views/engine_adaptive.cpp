@@ -177,8 +177,28 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        generateJacobianMatrix(comp, T9, rho, m_activeSpecies);
+    }
+
+    void AdaptiveEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const std::vector<Species> &activeSpecies
+    ) const {
         validateState();
-        m_baseEngine.generateJacobianMatrix(comp, T9, rho);
+        m_baseEngine.generateJacobianMatrix(comp, T9, rho, activeSpecies);
+
+    }
+
+    void AdaptiveEngineView::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const SparsityPattern &sparsityPattern
+    ) const {
+        validateState();
+        m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
     }
 
     double AdaptiveEngineView::getJacobianMatrixEntry(

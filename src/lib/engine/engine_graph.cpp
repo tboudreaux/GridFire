@@ -5,6 +5,7 @@
 #include "gridfire/engine/procedures/priming.h"
 #include "gridfire/partition/partition_ground.h"
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/utils/hashing.h"
 
 #include "fourdst/composition/species.h"
 #include "fourdst/composition/atomicSpecies.h"
@@ -75,12 +76,11 @@ namespace gridfire {
         if (m_usePrecomputation) {
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
-            bare_rates.reserve(m_reactions.size());
-            bare_reverse_rates.reserve(m_reactions.size());
+            bare_rates.reserve(activeReactions.size());
+            bare_reverse_rates.reserve(activeReactions.size());
 
-            // TODO: Add cache to this
-
-            for (const auto& reaction: m_reactions) {
+            for (const auto& reaction: activeReactions) {
+                assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
                 bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, mue, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
                 if (reaction->type() != reaction::ReactionType::WEAK) {
                     bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
@@ -88,7 +88,7 @@ namespace gridfire {
             }
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
-            return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho);
+            return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
         } else {
             return calculateAllDerivatives<double>(
                 comp.getMolarAbundanceVector(),
@@ -171,6 +171,8 @@ namespace gridfire {
         collectAtomicReverseRateAtomicBases();
         generateStoichiometryMatrix();
         reserveJacobianMatrix();
+
+        // PERF: These do *a lot* of the same work* can this be optimized to only do the common work once?
         recordADTape(); // Record the AD tape for the RHS function
         recordEpsADTape(); // Record the AD tape for the energy generation rate function
 
@@ -183,6 +185,17 @@ namespace gridfire {
         m_rhsADFun.subgraph_sparsity(select_domain, select_range, false, m_full_jacobian_sparsity_pattern);
         m_jac_work.clear();
 
+        m_full_sparsity_set.clear();
+        const auto& rows = m_full_jacobian_sparsity_pattern.row();
+        const auto& cols = m_full_jacobian_sparsity_pattern.col();
+        const size_t nnz = m_full_jacobian_sparsity_pattern.nnz();
+
+        for (size_t k = 0; k < nnz; ++k) {
+            if (cols[k] < m_networkSpecies.size()) {
+                m_full_sparsity_set.insert(std::make_pair(rows[k], cols[k]));
+            }
+        }
+
         precomputeNetwork();
         LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
                  m_networkSpecies.size(), m_reactions.size());
@@ -190,7 +203,6 @@ namespace gridfire {
 
     // --- Network Graph Construction Methods ---
     void GraphEngine::collectNetworkSpecies() {
-        //TODO: Ensure consistent ordering in the m_networkSpecies vector so that it is ordered by species mass.
         m_networkSpecies.clear();
         m_networkSpeciesMap.clear();
 
@@ -217,7 +229,7 @@ namespace gridfire {
             }
         }
         // TODO: Currently this works. We sort the vector based on mass so that for the same set of species we always get the same ordering and we get the same ordering as a composition with the same set of species
-        //       However, we need some checks so that when we get a composition we confirm that it is the same ordering / contains teh same species. This is important for the ODE integrator to work properly.
+        //       However, we need some checks so that when we get a composition we confirm that it is the same ordering / contains the same species. This is important for the ODE integrator to work properly.
         std::ranges::sort(m_networkSpecies, [](const fourdst::atomic::Species& a, const fourdst::atomic::Species& b) -> bool {
             return a.mass() < b.mass(); // Otherwise, sort by mass
         });
@@ -255,14 +267,10 @@ namespace gridfire {
 
     // --- Basic Accessors and Queries ---
     const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
-        // Returns a constant reference to the vector of unique species in the network.
-        // LOG_TRACE_L3(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
         return m_networkSpecies;
     }
 
     const reaction::ReactionSet& GraphEngine::getNetworkReactions() const {
-        // Returns a constant reference to the set of reactions in the network.
-        // LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
         return m_reactions;
     }
 
@@ -573,64 +581,75 @@ namespace gridfire {
         const std::vector<double> &bare_rates,
         const std::vector<double> &bare_reverse_rates,
         const double T9,
-        const double rho
+        const double rho,
+        const reaction::ReactionSet &activeReactions
     ) const {
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
-            m_reactions,
+            activeReactions,
             m_networkSpecies,
             comp.getMolarAbundanceVector(),
             T9,
             rho
         );
 
-        // TODO: Fix up the precomputation to use the new comp in interface as opposed to a raw vector of molar abundances
-        //       This will require carefully checking the way the precomputation is stashed.
-
         // --- Optimized loop ---
         std::vector<double> molarReactionFlows;
         molarReactionFlows.reserve(m_precomputedReactions.size());
 
-        for (const auto& precomp : m_precomputedReactions) {
+        size_t reactionCounter = 0;
+        for (const auto& reaction : activeReactions) {
+            // --- Efficient lookup of only the active reactions ---
+            uint64_t reactionHash = utils::hash_reaction(*reaction);
+            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
+            PrecomputedReaction precomputedReaction = m_precomputedReactions[reactionIndex];
+
+            // --- Forward abundance product ---
             double forwardAbundanceProduct = 1.0;
-            for (size_t i = 0; i < precomp.unique_reactant_indices.size(); ++i) {
-                const size_t reactantIndex = precomp.unique_reactant_indices[i];
+            for (size_t i = 0; i < precomputedReaction.unique_reactant_indices.size(); ++i) {
+                const size_t reactantIndex = precomputedReaction.unique_reactant_indices[i];
                 const fourdst::atomic::Species& reactant = m_networkSpecies[reactantIndex];
-                const int power = precomp.reactant_powers[i];
+                const int power = precomputedReaction.reactant_powers[i];
 
                 forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
             }
 
-            const double bare_rate = bare_rates[precomp.reaction_index];
-            const double screeningFactor = screeningFactors[precomp.reaction_index];
-            const size_t numReactants = m_reactions[precomp.reaction_index].reactants().size();
-            const size_t numProducts = m_reactions[precomp.reaction_index].products().size();
+            const double bare_rate = bare_rates.at(reactionCounter);
 
+            const double screeningFactor = screeningFactors[reactionCounter];
+            const size_t numReactants = m_reactions[reactionIndex].reactants().size();
+            const size_t numProducts = m_reactions[reactionIndex].products().size();
+
+            // --- Forward reaction flow ---
             const double forwardMolarReactionFlow =
                     screeningFactor *
                     bare_rate *
-                    precomp.symmetry_factor *
+                    precomputedReaction.symmetry_factor *
                     forwardAbundanceProduct *
                     std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
 
+            // --- Reverse reaction flow ---
+            // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
             double reverseMolarReactionFlow = 0.0;
-            if (precomp.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
-                const double bare_reverse_rate = bare_reverse_rates[precomp.reaction_index];
+            if (precomputedReaction.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
+                const double bare_reverse_rate = bare_reverse_rates.at(reactionCounter);
+
                 double reverseAbundanceProduct = 1.0;
-                for (size_t i = 0; i < precomp.unique_product_indices.size(); ++i) {
-                    const size_t productIndex = precomp.unique_product_indices[i];
+                for (size_t i = 0; i < precomputedReaction.unique_product_indices.size(); ++i) {
+                    const size_t productIndex = precomputedReaction.unique_product_indices[i];
                     const fourdst::atomic::Species& product = m_networkSpecies[productIndex];
-                    reverseAbundanceProduct *= std::pow(comp.getMolarAbundance(product), precomp.product_powers[i]);
+                    reverseAbundanceProduct *= std::pow(comp.getMolarAbundance(product), precomputedReaction.product_powers[i]);
                 }
+
                 reverseMolarReactionFlow = screeningFactor *
                     bare_reverse_rate *
-                    precomp.reverse_symmetry_factor *
+                    precomputedReaction.reverse_symmetry_factor *
                     reverseAbundanceProduct *
                     std::pow(rho, numProducts > 1 ? static_cast<double>(numProducts) - 1 : 0.0);
             }
 
             molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
-
+            reactionCounter++;
         }
 
         // --- Assemble molar abundance derivatives ---
@@ -638,9 +657,12 @@ namespace gridfire {
         for (const auto& species: m_networkSpecies) {
             result.dydt[species] = 0.0; // Initialize the change in abundance for each network species to 0
         }
-        for (size_t j = 0; j < m_precomputedReactions.size(); ++j) {
+
+        reactionCounter = 0;
+        for (const auto& reaction: activeReactions) {
+            size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
             const auto& precomp = m_precomputedReactions[j];
-            const double R_j = molarReactionFlows[j];
+            const double R_j = molarReactionFlows[reactionCounter];
 
             for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
                 const size_t speciesIndex = precomp.affected_species_indices[i];
@@ -651,6 +673,7 @@ namespace gridfire {
                 // Update the derivative for this species
                 result.dydt.at(species) += static_cast<double>(stoichiometricCoefficient) * R_j;
             }
+            reactionCounter++;
         }
 
         // --- Calculate the nuclear energy generation rate ---
@@ -806,8 +829,47 @@ namespace gridfire {
         const fourdst::composition::Composition &comp,
         const double T9,
         const double rho,
+        const std::vector<fourdst::atomic::Species> &activeSpecies
+    ) const {
+        // PERF: For small k it may make sense to implement a purley forward mode AD computation, some heuristic could be used to switch between the two methods based on k and total network species
+        const size_t k_active = activeSpecies.size();
+
+        // --- 1. Get the list of global indices ---
+        std::vector<size_t> active_indices;
+        active_indices.reserve(k_active);
+
+        for (const auto& species : activeSpecies) {
+            assert(involvesSpecies(species));
+            active_indices.push_back(getSpeciesIndex(species));
+        }
+
+        // --- 2. Build the k x k sparsity pattern ---
+        SparsityPattern sparsityPattern;
+        sparsityPattern.reserve(k_active * k_active);
+
+        for (const size_t i_global : active_indices) { // k rows
+            for (const size_t j_global : active_indices) { // k columns
+                sparsityPattern.emplace_back(i_global, j_global);
+            }
+        }
+
+        // --- 3. Call the sparse reverse-mode implementation ---
+        generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+    }
+
+    void GraphEngine::generateJacobianMatrix(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
+        SparsityPattern intersectionSparsityPattern;
+        for (const auto& entry : sparsityPattern) {
+            if (m_full_sparsity_set.contains(entry)) {
+                intersectionSparsityPattern.push_back(entry);
+            }
+        }
+
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
@@ -819,13 +881,13 @@ namespace gridfire {
         x[numSpecies + 1] = rho;
 
         // --- Convert into CppAD Sparsity pattern ---
-        const size_t nnz = sparsityPattern.size(); // Number of non-zero entries in the sparsity pattern
+        const size_t nnz = intersectionSparsityPattern.size(); // Number of non-zero entries in the sparsity pattern
         std::vector<size_t> row_indices(nnz);
         std::vector<size_t> col_indices(nnz);
 
         for (size_t k = 0; k < nnz; ++k) {
-            row_indices[k] = sparsityPattern[k].first;
-            col_indices[k] = sparsityPattern[k].second;
+            row_indices[k] = intersectionSparsityPattern[k].first;
+            col_indices[k] = intersectionSparsityPattern[k].second;
         }
 
         std::vector<double> values(nnz);
@@ -834,7 +896,7 @@ namespace gridfire {
 
         CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
         for (size_t k = 0; k < nnz; ++k) {
-            CppAD_sparsity_pattern.set(k, sparsityPattern[k].first, sparsityPattern[k].second);
+            CppAD_sparsity_pattern.set(k, intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
         }
 
         CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
@@ -854,7 +916,7 @@ namespace gridfire {
             const size_t col = jac_subset.col()[k];
             const double value = jac_subset.val()[k];
 
-            if (std::abs(value) > MIN_JACOBIAN_THRESHOLD) {
+            if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || row == col) { // Always keep diagonal elements to avoid pathological stiffness
                 m_jacobianMatrix(row, col) = value; // Insert into the sparse matrix
             }
         }
@@ -1241,12 +1303,18 @@ namespace gridfire {
 
         m_precomputedReactions.clear();
         m_precomputedReactions.reserve(m_reactions.size());
+        m_precomputedReactionIndexMap.clear();
+        m_precomputedReactionIndexMap.reserve(m_reactions.size());
 
         for (size_t i = 0; i < m_reactions.size(); ++i) {
             const auto& reaction = m_reactions[i];
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
             precomp.reaction_type = reaction.type();
+            uint64_t reactionHash = utils::hash_reaction(reaction);
+
+            precomp.reaction_hash = reactionHash;
+            m_precomputedReactionIndexMap[reactionHash] = i;
 
             // --- Precompute forward reaction information ---
             // Count occurrences for each reactant to determine powers and symmetry
@@ -1298,6 +1366,7 @@ namespace gridfire {
 
             m_precomputedReactions.push_back(std::move(precomp));
         }
+        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputedReactions.size());
     }
 
     bool GraphEngine::AtomicReverseRate::forward(

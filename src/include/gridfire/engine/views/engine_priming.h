@@ -1,8 +1,6 @@
 #pragma once
 
-#include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/views/engine_defined.h"
-
 
 #include "fourdst/logging/logging.h"
 #include "fourdst/composition/atomicSpecies.h"
@@ -51,7 +49,7 @@ namespace gridfire {
 
 
     private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         fourdst::atomic::Species m_primingSpecies; ///< The priming species, if specified.
     private:
         /**
