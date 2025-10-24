@@ -890,8 +890,6 @@ namespace gridfire {
          */
         void recordADTape() const;
 
-        void recordEpsADTape() const;
-
         void collectAtomicReverseRateAtomicBases();
 
         void precomputeNetwork();

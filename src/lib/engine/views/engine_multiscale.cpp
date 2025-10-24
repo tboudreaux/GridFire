@@ -1584,7 +1584,8 @@ namespace gridfire {
             return 0;
         }
 
-        m_view->getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho);
+        std::vector<Species> qse_species_vector(m_qse_solve_species.begin(), m_qse_solve_species.end());
+        m_view->getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho, qse_species_vector);
         const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
         if (!result) {
             throw exceptions::StaleEngineError("Failed to calculate RHS and energy due to stale engine state");

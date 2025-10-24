@@ -143,14 +143,14 @@ namespace gridfire {
         x[numSpecies + 1] = rho;
 
         // Use reverse mode to get the gradient. W selects which dependent variable we care about, the Eps AD tape only has eps as a dependent variable so we just select set the 0th element to 1.
-        std::vector<double> w(1);
-        w[0] = 1.0; // We want the derivative of the energy generation rate
+        std::vector<double> w(numSpecies + 1, 0.0);
+        w[numSpecies] = 1.0; // We want the derivative of the energy generation rate
 
         // Sweep the tape forward to record the function value at x
-        m_epsADFun.Forward(0, x);
+        m_rhsADFun.Forward(0, x);
 
         // Extract the gradient at the previously evaluated point x using reverse mode
-        const std::vector<double> eps_derivatives = m_epsADFun.Reverse(1, w);
+        const std::vector<double> eps_derivatives = m_rhsADFun.Reverse(1, w);
 
         const double dEps_dT9 = eps_derivatives[numSpecies];
         const double dEps_dRho = eps_derivatives[numSpecies + 1];
@@ -172,9 +172,7 @@ namespace gridfire {
         generateStoichiometryMatrix();
         reserveJacobianMatrix();
 
-        // PERF: These do *a lot* of the same work* can this be optimized to only do the common work once?
-        recordADTape(); // Record the AD tape for the RHS function
-        recordEpsADTape(); // Record the AD tape for the energy generation rate function
+        recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
 
         const size_t n = m_rhsADFun.Domain();
         const size_t m = m_rhsADFun.Range();
@@ -191,7 +189,7 @@ namespace gridfire {
         const size_t nnz = m_full_jacobian_sparsity_pattern.nnz();
 
         for (size_t k = 0; k < nnz; ++k) {
-            if (cols[k] < m_networkSpecies.size()) {
+            if (cols[k] < m_networkSpecies.size() + 1) {
                 m_full_sparsity_set.insert(std::make_pair(rows[k], cols[k]));
             }
         }
@@ -728,23 +726,6 @@ namespace gridfire {
                  m_stoichiometryMatrix.nnz()); // Assuming nnz() exists for compressed_matrix
     }
 
-    // StepDerivatives<double> GraphEngine::calculateAllDerivatives(
-    //     const std::vector<double> &Y,
-    //     const double T9,
-    //     const double rho
-    // ) const {
-    //     return calculateAllDerivatives<double>(Y, T9, rho);
-    // }
-    //
-    // StepDerivatives<ADDouble> GraphEngine::calculateAllDerivatives(
-    //     const std::vector<ADDouble> &Y,
-    //     ADDouble T9,
-    //     ADDouble rho
-    // ) const {
-    //     //TODO: Sort out why this template is not being found
-    //     return calculateAllDerivatives<ADDouble>(Y, T9, rho);
-    // }
-
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
         m_screeningModel = screening::selectScreeningModel(model);
         m_screeningType = model;
@@ -891,7 +872,7 @@ namespace gridfire {
         }
 
         std::vector<double> values(nnz);
-        const size_t num_rows_jac = numSpecies;
+        const size_t num_rows_jac = numSpecies + 1; // num species + epsilon
         const size_t num_cols_jac = numSpecies + 2; // +2 for T9 and rho
 
         CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
@@ -1184,10 +1165,7 @@ namespace gridfire {
         //    This also beings the tape recording process.
         CppAD::Independent(adInput);
 
-        std::vector<CppAD::AD<double>> adY(numSpecies);
-        for(size_t i = 0; i < numSpecies; ++i) {
-            adY[i] = adInput[i];
-        }
+        const std::vector<CppAD::AD<double>> adY(adInput.begin(), adInput.begin() + static_cast<long>(numSpecies));
         const CppAD::AD<double> adT9  = adInput[numSpecies];
         const CppAD::AD<double> adRho = adInput[numSpecies + 1];
 
@@ -1214,69 +1192,21 @@ namespace gridfire {
 
 
         // Extract the raw vector from the associative map
-        std::vector<CppAD::AD<double>> dydt_vec;
-        dydt_vec.reserve(dydt.size());
-        // TODO: There is a possibility for a bug here if the map ordering is not consistent with the ordering of the species in m_networkSpecies.
-        //       right now this works but that's because I am careful to build the map in the right order. This should be made less fragile
-        //       so that if map construction order changes this still works.
-        std::ranges::transform(dydt, std::back_inserter(dydt_vec),[](const auto& kv) { return kv.second; });
-
-        m_rhsADFun.Dependent(adInput, dydt_vec);
-
-        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS calculation. Number of independent variables: {}.",
-                 adInput.size());
-    }
-
-    void GraphEngine::recordEpsADTape() const {
-        LOG_TRACE_L1(m_logger, "Recording AD tape for the EPS calculation...");
-
-        const size_t numSpecies = m_networkSpecies.size();
-        if (numSpecies == 0) {
-            LOG_ERROR(m_logger, "Cannot record EPS tape: No species in the network.");
-            throw std::runtime_error("Cannot record EPS AD tape: No species in the network.");
-        }
-
-        const size_t numADInputs = numSpecies + 2; // Y + T9 + rho
-
-        std::vector<CppAD::AD<double>> adInput(numADInputs, 0.0);
-
-        for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = static_cast<CppAD::AD<double>>(1.0 / static_cast<double>(numSpecies)); // Uniform distribution
-        }
-        adInput[numSpecies]     = 1.0; // Dummy T9
-        adInput[numSpecies + 1] = 1.0; // Dummy rho
-
-        CppAD::Independent(adInput);
-
-        const std::vector<CppAD::AD<double>> adY(adInput.begin(), adInput.begin() + static_cast<long>(numSpecies));
-        const CppAD::AD<double> adT9  = adInput[numSpecies];
-        const CppAD::AD<double> adRho = adInput[numSpecies + 1];
-
-        // Dummy values for Ye and mue to let taping happen
-        const CppAD::AD<double> adYe = 1e6;
-        const CppAD::AD<double> adMue = 1.0;
-
-        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(
-            adY,
-            adT9,
-            adRho,
-            adYe,
-            adMue,
-            [&](const fourdst::atomic::Species& querySpecies) -> size_t {
-                return m_speciesToIndexMap.at(querySpecies); // TODO: This is bad, needs to be fixed
-            },
-            [](const reaction::Reaction& reaction) -> bool {
-                return true; // Use all reactions
+        std::vector<CppAD::AD<double>> dependentVector;
+        dependentVector.reserve(dydt.size() + 1);
+        std::ranges::transform(
+            dydt,
+            std::back_inserter(dependentVector),
+            [](const auto& kv) {
+                return kv.second;
             }
         );
+        dependentVector.push_back(nuclearEnergyGenerationRate);
 
-        std::vector<CppAD::AD<double>> adOutput(1);
-        adOutput[0] = nuclearEnergyGenerationRate;
-        m_epsADFun.Dependent(adInput, adOutput);
+        m_rhsADFun.Dependent(adInput, dependentVector);
 
-        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the EPS calculation. Number of independent variables: {}.", adInput.size());
-
-
+        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.",
+                 adInput.size());
     }
 
     void GraphEngine::collectAtomicReverseRateAtomicBases() {
