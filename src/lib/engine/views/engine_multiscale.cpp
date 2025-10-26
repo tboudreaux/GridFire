@@ -291,7 +291,7 @@ namespace gridfire {
 
         for (const auto& species : m_algebraic_species) {
             const double Yi = m_algebraic_abundances.at(species);
-            double Xi = utils::massFractionFromMolarAbundance(comp_mutable, species, Yi);
+            double Xi = utils::massFractionFromMolarAbundanceAndComposition(comp_mutable, species, Yi);
             comp_mutable.setMassFraction(species, Xi); // Convert Yi (mol/g) to Xi (mass fraction)
             if (!comp_mutable.finalize(false)) {
                 LOG_ERROR(m_logger, "Failed to finalize composition after setting algebraic species abundance for species '{}'.", species.name());
@@ -1279,7 +1279,7 @@ namespace gridfire {
                     Y_final_qse(i)
                 );
                 // double Xi = Y_final_qse(i) * species.mass(); // Convert from molar abundance to mass fraction
-                double Xi = utils::massFractionFromMolarAbundance(normalized_composition, species, Y_final_qse(i));
+                double Xi = utils::massFractionFromMolarAbundanceAndComposition(normalized_composition, species, Y_final_qse(i));
                 if (!outputComposition.hasSpecies(species)) {
                     outputComposition.registerSpecies(species);
                 }
@@ -1505,7 +1505,7 @@ namespace gridfire {
             }
             auto index = static_cast<long>(m_qse_solve_species_index_map.at(species));
             const double molarAbundance = y_qse[index];
-            double massFraction = utils::massFractionFromMolarAbundance(m_initial_comp, species, molarAbundance);
+            double massFraction = utils::massFractionFromMolarAbundanceAndComposition(m_initial_comp, species, molarAbundance);
             comp_trial.setMassFraction(species, massFraction);
         }
 
@@ -1572,7 +1572,7 @@ namespace gridfire {
                 comp_trial.registerSpecies(species);
             }
             const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
-            double massFraction = utils::massFractionFromMolarAbundance(m_initial_comp, species, molarAbundance);
+            double massFraction = utils::massFractionFromMolarAbundanceAndComposition(m_initial_comp, species, molarAbundance);
             comp_trial.setMassFraction(species, massFraction);
         }
 

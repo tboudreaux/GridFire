@@ -20,7 +20,9 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
+#include "gridfire/utils/general_composition.h"
 
+static size_t s_call_counter = 0;
 
 namespace {
     std::unordered_map<int, std::string> cvode_ret_code_map {
@@ -136,22 +138,26 @@ namespace gridfire::solver {
     }
 
     NetOut CVODESolverStrategy::evaluate(const NetIn& netIn) {
+        LOG_TRACE_L2(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
+        LOG_TRACE_L2(m_logger, "Building engine update trigger....");
         auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 1, true, 10);
+        LOG_TRACE_L2(m_logger, "Engine update trigger built!");
+
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
 
         const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
         const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
+        LOG_TRACE_L2(m_logger, "Starting engine update chain...");
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
-        std::cout << "Equilibrium d molar abundances: " << equilibratedComposition.getMolarAbundance(fourdst::atomic::H_2) << std::endl;
-        std::cout << "Equilibrium d mass fraction: " << equilibratedComposition.getMassFraction(fourdst::atomic::H_2) << std::endl;
-        std::cout << "EXITED AT EXPECTED TESTING POINT" << std::endl;
-        exit(0);
+        LOG_TRACE_L2(m_logger, "Engine updated and equilibrated composition found!");
 
         size_t numSpecies = m_engine.getNetworkSpecies().size();
         uint64_t N = numSpecies + 1;
 
+        LOG_TRACE_L2(m_logger, "Number of species: {}", N);
+        LOG_TRACE_L2(m_logger, "Initializing CVODE resources");
         m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
         check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
 
@@ -160,6 +166,7 @@ namespace gridfire::solver {
         CVODEUserData user_data;
         user_data.solver_instance = this;
         user_data.engine = &m_engine;
+        LOG_TRACE_L2(m_logger, "CVODE resources successfully initialized!");
 
         double current_time = 0;
         // ReSharper disable once CppTooWideScope
@@ -167,6 +174,7 @@ namespace gridfire::solver {
         m_num_steps = 0;
         double accumulated_energy = 0.0;
         int total_update_stages_triggered = 0;
+        LOG_TRACE_L2(m_logger, "Starting CVODE iteration");
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;
             user_data.rho = netIn.density;
@@ -286,6 +294,7 @@ namespace gridfire::solver {
             }
 
         }
+        LOG_TRACE_L2(m_logger, "CVODE iteration complete");
 
         sunrealtype* y_data = N_VGetArrayPointer(m_Y);
         accumulated_energy += y_data[numSpecies];
@@ -313,6 +322,7 @@ namespace gridfire::solver {
             throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
         }
 
+        LOG_TRACE_L2(m_logger, "Constructing output data...");
         NetOut netOut;
         netOut.composition = outputComposition;
         netOut.energy = accumulated_energy;
@@ -326,6 +336,8 @@ namespace gridfire::solver {
 
         netOut.dEps_dT = dEps_dT;
         netOut.dEps_dRho = dEps_dRho;
+        LOG_TRACE_L2(m_logger, "Output data built!");
+        LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 
         return netOut;
     }
@@ -425,15 +437,14 @@ namespace gridfire::solver {
         for (const auto& species : m_engine.getNetworkSpecies()) {
             symbols.emplace_back(species.name());
         }
-        std::vector<double> X;
-        X.reserve(numSpecies);
+        std::vector<double> M;
+        M.reserve(numSpecies);
         for (size_t i = 0; i < numSpecies; ++i) {
             const double molarMass = m_engine.getNetworkSpecies()[i].mass();
-            X.push_back(y_vec[i] * molarMass); // Convert from molar abundance to mass fraction
+            M.push_back(molarMass);
         }
+        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(y_vec, M);
         fourdst::composition::Composition composition(symbols, X);
-
-        std::ranges::replace_if(y_vec, [](const double val) { return val < 0.0; }, 0.0);
 
         const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
         if (!result) {
@@ -443,8 +454,17 @@ namespace gridfire::solver {
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
         const auto& [dydt, nuclearEnergyGenerationRate] = result.value();
 
+        std::cout << "=========================\n";
         for (size_t i = 0; i < numSpecies; ++i) {
-            ydot_data[i] = dydt.at(m_engine.getNetworkSpecies()[i]);
+            fourdst::atomic::Species species = m_engine.getNetworkSpecies()[i];
+            ydot_data[i] = dydt.at(species);
+            std::cout << "\t" << species << " dydt = " << dydt.at(species) << "\n";
+        }
+        std::cout << "\tε = " << nuclearEnergyGenerationRate << std::endl;
+        s_call_counter++;
+        std::cout << "\tMethod called " << s_call_counter << " times" << std::endl;
+        if (s_call_counter == 31) {
+            std::cout << "Last reliable step\n";
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
     }
