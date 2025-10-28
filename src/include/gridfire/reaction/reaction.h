@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ranges>
 #include <string_view>
 
 #include "fourdst/composition/atomicSpecies.h"
@@ -613,11 +614,21 @@ namespace gridfire::reaction {
     class LogicalReaclibReaction final : public ReaclibReaction {
     public:
         /**
-         * @brief Constructs a LogicalReaction from a vector of `Reaction` objects.
+         * @brief Constructs a LogicalReaction from a vector of `Reaction` objects. Implicitly assumes that the
+         * logical reaction is for a forward (i.e. not reverse) reaction.
          * @param reactions A vector of reactions that represent the same logical process.
          * @throws std::runtime_error if the provided reactions have inconsistent Q-values.
          */
         explicit LogicalReaclibReaction(const std::vector<ReaclibReaction> &reactions);
+
+        /**
+         * @breif Constructs a LogicalReaction from a vector of `Reaction` objects and allows the user
+         * to specify if the logical set is for a reverse reaction explicitly
+         * @param reactions A vector of reactions that represent the same logical process
+         * @param reverse A flag to control if this logical reaction is reverse or not
+         * @returns std::runtime_error if the provided reactions have inconsistent Q-values.
+         */
+        explicit LogicalReaclibReaction(const std::vector<ReaclibReaction> &reactions, bool reverse);
 
         /**
          * @brief Adds another `Reaction` source to this logical reaction.
@@ -719,7 +730,7 @@ namespace gridfire::reaction {
             const T T953 = CppAD::pow(T9, 5.0/3.0);
             const T logT9 = CppAD::log(T9);
             // ReSharper disable once CppUseStructuredBinding
-            for (const auto& rate : m_rates) {
+            for (const auto& [rate, source] : std::views::zip(m_rates, m_sources)) {
                 const T exponent = rate.a0 +
                        rate.a1 / T9 +
                        rate.a2 / T913 +

@@ -225,9 +225,21 @@ namespace gridfire {
         const bool activeSpeciesIsSubset = std::ranges::any_of(activeSpecies, [&](const auto& species) -> bool {
             return !involvesSpecies(species);
         });
-        if (activeSpeciesIsSubset) {
-            LOG_CRITICAL(m_logger, "Active species contains species not in the network partition. Cannot generate Jacobian matrix for active species.");
-            throw std::runtime_error("Active species contains species not in the network partition. Cannot generate Jacobian matrix for active species.");
+        if (!activeSpeciesIsSubset) {
+            std::string msg = std::format(
+                "Active species set contains species ({}) not present in network partition. Cannot generate jacobian matrix due to this.",
+                [&]() -> std::string {
+                    std::stringstream ss;
+                    for (const auto& species : activeSpecies) {
+                        if (!this->involvesSpecies(species)) {
+                            ss << species << " ";
+                        }
+                    }
+                    return ss.str();
+                }()
+            );
+            LOG_CRITICAL(m_logger, "{}", msg);
+            throw std::runtime_error(msg);
         }
 
         std::vector<Species> dynamicActiveSpeciesIntersection;

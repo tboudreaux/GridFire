@@ -22,8 +22,6 @@
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/utils/general_composition.h"
 
-static size_t s_call_counter = 0;
-
 namespace {
     std::unordered_map<int, std::string> cvode_ret_code_map {
         {0, "CV_SUCCESS: The solver succeeded."},
@@ -57,7 +55,7 @@ namespace {
         {-28, "CV_VECTOROP_ERR: A vector operation failed."},
         {-29, "CV_PROJ_MEM_NULL: The projection memory structure is NULL."},
         {-30, "CV_PROJFUNC_FAIL: The projection function failed in an unrecoverable manner."},
-        {-31, "CV_REPTD_PROJFUNC_ERR: THe projection function has repeated recoverable errors."}
+        {-31, "CV_REPTD_PROJFUNC_ERR: The projection function has repeated recoverable errors."}
     };
     void check_cvode_flag(const int flag, const std::string& func_name) {
         if (flag < 0) {
@@ -74,7 +72,7 @@ namespace {
 #elif SUNDIALS_HAVE_PTHREADS
         N_Vector vec = N_VNew_Pthreads(size, sun_ctx);
 #else
-        N_Vector vec = N_VNew_Serial(static_cast<long long>(size), sun_ctx);
+        const N_Vector vec = N_VNew_Serial(static_cast<long long>(size), sun_ctx);
 #endif
         check_cvode_flag(vec == nullptr ? -1 : 0, "N_VNew");
         return vec;
@@ -129,7 +127,7 @@ namespace gridfire::solver {
     }
 
     CVODESolverStrategy::~CVODESolverStrategy() {
-        std::cout << "Cleaning up CVODE resources..." << std::endl;
+        LOG_TRACE_L1(m_logger, "Cleaning up CVODE resources...");
         cleanup_cvode_resources(true);
 
         if (m_sun_ctx) {
@@ -138,10 +136,10 @@ namespace gridfire::solver {
     }
 
     NetOut CVODESolverStrategy::evaluate(const NetIn& netIn) {
-        LOG_TRACE_L2(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
-        LOG_TRACE_L2(m_logger, "Building engine update trigger....");
+        LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
+        LOG_TRACE_L1(m_logger, "Building engine update trigger....");
         auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 1, true, 10);
-        LOG_TRACE_L2(m_logger, "Engine update trigger built!");
+        LOG_TRACE_L1(m_logger, "Engine update trigger built!");
 
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
@@ -149,15 +147,15 @@ namespace gridfire::solver {
         const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
         const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
-        LOG_TRACE_L2(m_logger, "Starting engine update chain...");
+        LOG_TRACE_L1(m_logger, "Starting engine update chain...");
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
-        LOG_TRACE_L2(m_logger, "Engine updated and equilibrated composition found!");
+        LOG_TRACE_L1(m_logger, "Engine updated and equilibrated composition found!");
 
         size_t numSpecies = m_engine.getNetworkSpecies().size();
         uint64_t N = numSpecies + 1;
 
-        LOG_TRACE_L2(m_logger, "Number of species: {}", N);
-        LOG_TRACE_L2(m_logger, "Initializing CVODE resources");
+        LOG_TRACE_L1(m_logger, "Number of species: {}", N);
+        LOG_TRACE_L1(m_logger, "Initializing CVODE resources");
         m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
         check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
 
@@ -166,7 +164,7 @@ namespace gridfire::solver {
         CVODEUserData user_data;
         user_data.solver_instance = this;
         user_data.engine = &m_engine;
-        LOG_TRACE_L2(m_logger, "CVODE resources successfully initialized!");
+        LOG_TRACE_L1(m_logger, "CVODE resources successfully initialized!");
 
         double current_time = 0;
         // ReSharper disable once CppTooWideScope
@@ -174,7 +172,7 @@ namespace gridfire::solver {
         m_num_steps = 0;
         double accumulated_energy = 0.0;
         int total_update_stages_triggered = 0;
-        LOG_TRACE_L2(m_logger, "Starting CVODE iteration");
+        LOG_TRACE_L1(m_logger, "Starting CVODE iteration");
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;
             user_data.rho = netIn.density;
@@ -194,6 +192,7 @@ namespace gridfire::solver {
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
+            log_step_diagnostics(user_data);
             check_cvode_flag(flag, "CVode");
 
             long int n_steps;
@@ -359,9 +358,9 @@ namespace gridfire::solver {
     }
 
     int CVODESolverStrategy::cvode_rhs_wrapper(
-        sunrealtype t,
-        N_Vector y,
-        N_Vector ydot,
+        const sunrealtype t,
+        const N_Vector y,
+        const N_Vector ydot,
         void *user_data
     ) {
         auto* data = static_cast<CVODEUserData*>(user_data);
@@ -454,17 +453,9 @@ namespace gridfire::solver {
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
         const auto& [dydt, nuclearEnergyGenerationRate] = result.value();
 
-        std::cout << "=========================\n";
         for (size_t i = 0; i < numSpecies; ++i) {
             fourdst::atomic::Species species = m_engine.getNetworkSpecies()[i];
             ydot_data[i] = dydt.at(species);
-            std::cout << "\t" << species << " dydt = " << dydt.at(species) << "\n";
-        }
-        std::cout << "\tε = " << nuclearEnergyGenerationRate << std::endl;
-        s_call_counter++;
-        std::cout << "\tMethod called " << s_call_counter << " times" << std::endl;
-        if (s_call_counter == 31) {
-            std::cout << "Last reliable step\n";
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
     }
@@ -575,6 +566,8 @@ namespace gridfire::solver {
             0.0
         );
 
+        std::vector<double> M;
+        M.reserve(num_components);
         for (size_t i = 0; i < num_components - 1; i++) {
             const double weight = relTol * std::abs(y_data[i]) + absTol;
             if (weight == 0.0) continue; // Skip components with zero weight
@@ -583,8 +576,10 @@ namespace gridfire::solver {
 
             err_ratios[i] = err_ratio;
             speciesNames.emplace_back(user_data.networkSpecies->at(i).name());
+            M.push_back(user_data.networkSpecies->at(i).mass());
         }
-        fourdst::composition::Composition composition(speciesNames, Y_full);
+        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(Y_full, M);
+        fourdst::composition::Composition composition(speciesNames, X);
 
         if (err_ratios.empty()) {
             return;
@@ -620,9 +615,11 @@ namespace gridfire::solver {
         columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
 
         std::cout << utils::format_table("Species Error Ratios", columns) << std::endl;
+
         diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
-        diagnostics::inspect_species_balance(*user_data.engine, "N-14", composition, user_data.T9, user_data.rho);
-        diagnostics::inspect_species_balance(*user_data.engine, "n-1", composition, user_data.T9, user_data.rho);
+        for (const auto& species : sorted_speciesNames) {
+            diagnostics::inspect_species_balance(*user_data.engine, species, composition, user_data.T9, user_data.rho);
+        }
 
     }
 }

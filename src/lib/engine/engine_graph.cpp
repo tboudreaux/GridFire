@@ -854,9 +854,18 @@ namespace gridfire {
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
-        const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
-        for (size_t i = 0; i < numSpecies; ++i) {
-           x[i] = Y_dynamic[i];
+        // const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
+        // for (size_t i = 0; i < numSpecies; ++i) {
+        //    x[i] = Y_dynamic[i];
+        // }
+        size_t i = 0;
+        for (const auto& species: m_networkSpecies) {
+            double Yi = 0.0;
+            if (comp.contains(species)) {
+                Yi = comp.getMolarAbundance(species);
+            }
+            x[i] = Yi;
+            i++;
         }
         x[numSpecies] = T9;
         x[numSpecies + 1] = rho;

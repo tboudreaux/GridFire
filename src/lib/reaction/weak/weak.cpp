@@ -21,6 +21,13 @@ namespace {
         {fourdst::atomic::SpeciesErrorType::SPECIES_SYMBOL_NOT_FOUND, "Species symbol not found ((A,Z) out of range)"}
     };
 
+    std::string normalize_species_id(const fourdst::atomic::Species& species) {
+        auto result = std::string(species.name());
+        std::ranges::transform(result, result.begin(), ::tolower);
+        std::erase(result, '-');
+        return result;
+    }
+
     fourdst::atomic::Species resolve_weak_product(
         const gridfire::rates::weak::WeakReactionType type,
         const fourdst::atomic::Species& reactant
@@ -68,18 +75,20 @@ namespace {
         using namespace gridfire::rates::weak;
 
         std::string id;
+        std::string reactant_id = normalize_species_id(reactant);
+        std::string product_id = normalize_species_id(product);
         switch (type) {
             case WeakReactionType::BETA_MINUS_DECAY:
-                id = std::format("{}(,ν|)e-,{}", reactant.name(), product.name());
+                id = std::format("{}(,ν|)e-,{}", reactant_id, product_id);
                 break;
             case WeakReactionType::BETA_PLUS_DECAY:
-                id = std::format("{}(,ν)e+,{}", reactant.name(), product.name());
+                id = std::format("{}(,ν)e+,{}", reactant_id, product_id);
                 break;
             case WeakReactionType::ELECTRON_CAPTURE:
-                id = std::format("{}(e-,ν){}", reactant.name(), product.name());
+                id = std::format("{}(e-,ν){}", reactant_id, product_id);
                 break;
             case WeakReactionType::POSITRON_CAPTURE:
-                id = std::format("{}(e+,ν|){}", reactant.name(), product.name());
+                id = std::format("{}(e+,ν|){}", reactant_id, product_id);
                 break;
         }
         return id;

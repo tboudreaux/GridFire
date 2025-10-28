@@ -90,7 +90,6 @@ namespace gridfire::reaclib {
 
         for (size_t i = 0; i < num_reactions; ++i) {
             const auto&[chapter, qValue, coeffs, reverse, label, rpName, reactants_str, products_str] = records[i];
-
             // The char arrays from the binary are not guaranteed to be null-terminated
             // if the string fills the entire buffer. We create null-terminated string_views.
             const std::string_view label_sv(label, strnlen(label, sizeof(label)));

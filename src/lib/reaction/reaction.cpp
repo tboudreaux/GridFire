@@ -182,22 +182,29 @@ namespace gridfire::reaction {
     }
 
 
-    LogicalReaclibReaction::LogicalReaclibReaction(const std::vector<ReaclibReaction>& reactants) :
-        ReaclibReaction(
-                 safe_check_reactant_id(reactants), // Use this first to check if the reactants array is empty and safely exit if so
-                 reactants.front().peName(),
-                 reactants.front().chapter(),
-                 reactants.front().reactants(),
-                 reactants.front().products(),
-                 reactants.front().qValue(),
-                 reactants.front().sourceLabel(),
-                 reactants.front().rateCoefficients(),
-                 reactants.front().is_reverse()) {
+    LogicalReaclibReaction::LogicalReaclibReaction(
+        const std::vector<ReaclibReaction>& reactions
+    ) : LogicalReaclibReaction(reactions, false) {}
 
-        m_sources.reserve(reactants.size());
-        m_rates.reserve(reactants.size());
-        for (const auto& reaction : reactants) {
-            if (std::abs(std::abs(reaction.qValue()) - std::abs(m_qValue)) > 1e-6) {
+    LogicalReaclibReaction::LogicalReaclibReaction(
+        const std::vector<ReaclibReaction> &reactions,
+        const bool reverse
+    ) :
+    ReaclibReaction(
+        safe_check_reactant_id(reactions),
+        reactions.front().peName(),
+        reactions.front().chapter(),
+        reactions.front().reactants(),
+        reactions.front().products(),
+        reactions.front().qValue(),
+        reactions.front().sourceLabel(),
+        reactions.front().rateCoefficients(),
+        reverse)
+    {
+        m_sources.reserve(reactions.size());
+        m_rates.reserve(reactions.size());
+        for (const auto& reaction : reactions) {
+            if (std::abs(reaction.qValue() - m_qValue) > 1e-6) {
                 LOG_ERROR(
                     m_logger,
                     "LogicalReaclibReaction constructed with reactions having different Q-values. Expected {} got {}.",
@@ -211,6 +218,7 @@ namespace gridfire::reaction {
             m_rates.push_back(reaction.rateCoefficients());
         }
     }
+
 
     void LogicalReaclibReaction::add_reaction(const ReaclibReaction& reaction) {
         if (reaction.peName() != m_id) {
@@ -521,7 +529,8 @@ namespace gridfire::reaction {
             switch (reaction_ptr->type()) {
                 case ReactionType::REACLIB: {
                     const auto& reaclib_cast_reaction = static_cast<const ReaclibReaction&>(*reaction_ptr); // NOLINT(*-pro-type-static-cast-downcast)
-                    groupedReaclibReactions[std::string(reaclib_cast_reaction.peName())].push_back(reaclib_cast_reaction);
+                    std::string rid = std::format("{}{}", reaclib_cast_reaction.peName(), (reaclib_cast_reaction.is_reverse() ? "_r" : ""));
+                    groupedReaclibReactions[rid].push_back(reaclib_cast_reaction);
                     break;
                 }
                 case ReactionType::LOGICAL_REACLIB: {
