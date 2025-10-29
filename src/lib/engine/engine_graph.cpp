@@ -6,6 +6,7 @@
 #include "gridfire/partition/partition_ground.h"
 #include "gridfire/engine/procedures/construction.h"
 #include "gridfire/utils/hashing.h"
+#include "gridfire/utils/table_format.h"
 
 #include "fourdst/composition/species.h"
 #include "fourdst/composition/atomicSpecies.h"
@@ -164,6 +165,7 @@ namespace gridfire {
     }
 
     void GraphEngine::syncInternalMaps() {
+
         LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
         collectNetworkSpecies();
         populateReactionIDMap();
@@ -174,15 +176,18 @@ namespace gridfire {
 
         recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
 
-        const size_t n = m_rhsADFun.Domain();
-        const size_t m = m_rhsADFun.Range();
+        const size_t inputSize = m_rhsADFun.Domain();
+        const size_t outputSize = m_rhsADFun.Range();
 
-        const std::vector<bool> select_domain(n, true);
-        const std::vector<bool> select_range(m, true);
+        // Create a range x range identity pattern
+        CppAD::sparse_rc<std::vector<size_t>> patternIn(outputSize, outputSize, outputSize);
+        for (size_t i = 0; i < outputSize; ++i) {
+            patternIn.set(i, i, i);
+        }
 
-        m_rhsADFun.subgraph_sparsity(select_domain, select_range, false, m_full_jacobian_sparsity_pattern);
+        m_rhsADFun.rev_jac_sparsity(patternIn, false, false, false, m_full_jacobian_sparsity_pattern);
+
         m_jac_work.clear();
-
         m_full_sparsity_set.clear();
         const auto& rows = m_full_jacobian_sparsity_pattern.row();
         const auto& cols = m_full_jacobian_sparsity_pattern.col();
@@ -261,6 +266,8 @@ namespace gridfire {
         m_jacobianMatrix.resize(numSpecies, numSpecies, false); // Sparse matrix, no initial values
         LOG_TRACE_L2(m_logger, "Jacobian matrix resized to {} rows and {} columns.",
                  m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+
+        m_jacobianMatrixState = JacobianMatrixState::UNINITIALIZED;
     }
 
     // --- Basic Accessors and Queries ---
@@ -274,13 +281,12 @@ namespace gridfire {
 
     void GraphEngine::setNetworkReactions(const reaction::ReactionSet &reactions) {
         m_reactions = reactions;
+        m_jacobianMatrixState = JacobianMatrixState::STALE;
         syncInternalMaps();
     }
 
     bool GraphEngine::involvesSpecies(const fourdst::atomic::Species& species) const {
-        // Checks if a given species is present in the network's species map for efficient lookup.
         const bool found = m_networkSpeciesMap.contains(species.name());
-        LOG_DEBUG(m_logger, "Checking if species '{}' is involved in the network: {}.", species.name(), found ? "Yes" : "No");
         return found;
     }
 
@@ -509,6 +515,9 @@ namespace gridfire {
     }
 
     void GraphEngine::setUseReverseReactions(const bool useReverse) {
+        if (useReverse != m_useReverseReactions) {
+            m_jacobianMatrixState = JacobianMatrixState::STALE;
+        }
         m_useReverseReactions = useReverse;
     }
 
@@ -568,6 +577,7 @@ namespace gridfire {
         if (depth != m_depth) {
             m_depth = depth;
             m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth, false);
+            m_jacobianMatrixState = JacobianMatrixState::STALE;
             syncInternalMaps(); // Resync internal maps after changing the depth
         } else {
             LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
@@ -729,6 +739,7 @@ namespace gridfire {
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
         m_screeningModel = screening::selectScreeningModel(model);
         m_screeningType = model;
+        m_jacobianMatrixState = JacobianMatrixState::STALE; // The screening model affects the jacobian so if its changed the jacobian must be made stale
     }
 
     screening::ScreeningType GraphEngine::getScreeningModel() const {
@@ -777,12 +788,24 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        fourdst::composition::Composition mutableComp = comp;
+        for (const auto& species : m_networkSpecies) {
+            if (!comp.hasSpecies(species)) {
+                mutableComp.registerSpecies(species);
+                mutableComp.setMassFraction(species, 0.0);
+            }
+        }
+        const bool didFinalize = mutableComp.finalize(false);
+        if (!didFinalize) {
+            LOG_CRITICAL(m_logger, "Could not finalize the composition used to generate the jacobian matrix!");
+            throw std::runtime_error("Could not finalize the composition used to generate the jacobian matrix");
+        }
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
         // 1. Pack the input variables into a vector for CppAD
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
-        const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
+        const std::vector<double>& Y_dynamic = mutableComp.getMolarAbundanceVector();
         for (size_t i = 0; i < numSpecies; ++i) {
             adInput[i] = std::max(Y_dynamic[i], 1e-99); // regularize the jacobian...
         }
@@ -794,16 +817,22 @@ namespace gridfire {
 
         // 3. Pack jacobian vector into sparse matrix
         m_jacobianMatrix.clear();
+        // std::vector<std::unique_ptr<utils::ColumnBase>> columns;
         for (size_t i = 0; i < numSpecies; ++i) {
+            // std::vector<double> colData;
             for (size_t j = 0; j < numSpecies; ++j) {
                 const double value = dotY[i * (numSpecies + 2) + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
                     m_jacobianMatrix(i, j) = value;
-
                 }
+                // colData.push_back(value);
             }
+            // columns.push_back(std::make_unique<utils::Column<double>>(std::to_string(i), colData));
         }
+        // std::cout << utils::format_table("Jacobian after dense calculation", columns) << std::endl;
+        // exit(0);
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+        m_jacobianMatrixState = JacobianMatrixState::READY_DENSE;
     }
 
     void GraphEngine::generateJacobianMatrix(
@@ -844,6 +873,7 @@ namespace gridfire {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
+        //TODO: The issue now seems to be that the jacobian is returning all zeros. I need to sort out why this is
         SparsityPattern intersectionSparsityPattern;
         for (const auto& entry : sparsityPattern) {
             if (m_full_sparsity_set.contains(entry)) {
@@ -891,6 +921,12 @@ namespace gridfire {
 
         CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
 
+        // PERF: one of *the* most pressing things that needs to be done is remove the nead for this call every
+        //       time the jacobian is needed since coloring is expensive and we are throwing away the caching
+        //       power of CppAD by clearing the work vector each time. We do this since we make a new subset every
+        //       time. However, a better solution would be to make the subset stateful so it only changes if the requested
+        //       sparsity pattern changes. This way we could reuse the work vector.
+        m_jac_work.clear();
         m_rhsADFun.sparse_jac_rev(
             x,
             jac_subset, // Sparse Jacobian output
@@ -910,16 +946,35 @@ namespace gridfire {
                 m_jacobianMatrix(row, col) = value; // Insert into the sparse matrix
             }
         }
+        m_jacobianMatrixState = JacobianMatrixState::READY_SPARSE;
     }
 
     double GraphEngine::getJacobianMatrixEntry(
         const fourdst::atomic::Species& rowSpecies,
         const fourdst::atomic::Species& colSpecies
     ) const {
-        //PERF: There may be some way to make this more efficient
-        const size_t i = getSpeciesIndex(rowSpecies);
-        const size_t j = getSpeciesIndex(colSpecies);
-        return m_jacobianMatrix(i, j);
+        switch (m_jacobianMatrixState) {
+            case JacobianMatrixState::STALE: {
+                const std::string staleMsg = std::format("Cannot retrieve jacobian entry for row {}, column {} as jacobian matrix is stale (has not been regenerated since last network topology change)", rowSpecies.name(), colSpecies.name());
+                throw exceptions::StaleJacobianError(staleMsg);
+            }
+            case JacobianMatrixState::UNINITIALIZED: {
+                const std::string unInitMsg = std::format("Cannot retrieve jacobian entry for row {}, column {} as jacobian matrix is uninitialized (will return all 0s)", rowSpecies.name(), colSpecies.name());
+                throw exceptions::UninitializedJacobianError(unInitMsg);
+            }
+            case JacobianMatrixState::READY_DENSE:
+                [[fallthrough]];
+            case JacobianMatrixState::READY_SPARSE: {
+                const size_t i = getSpeciesIndex(rowSpecies);
+                const size_t j = getSpeciesIndex(colSpecies);
+                return m_jacobianMatrix(i, j);
+            }
+            default: {
+                // Code should not be able to get into this state
+                const std::string msg = std::format("An unknown error has occurred while attempting to retrieve the jacobian element at row {}, column {}. This should be taken as a catastrophic failure and reported to GridFire developers.", rowSpecies.name(), colSpecies.name());
+                throw exceptions::UnknownJacobianError(msg);
+            }
+        }
     }
 
     std::unordered_map<fourdst::atomic::Species, int> GraphEngine::getNetReactionStoichiometry(
@@ -1363,6 +1418,48 @@ namespace gridfire {
         CppAD::vector<std::set<size_t>> &st
     ) {
         st[0] = rt[0];
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::for_sparse_jac(
+        size_t q,
+        const CppAD::vector<bool> &r,
+        CppAD::vector<bool> &s,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 1;
+        constexpr size_t m = 1;
+
+        CPPAD_ASSERT_KNOWN(r.size() == n * q, "for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(s.size() == m * q, "for_sparse_jac: 's' size is incorrect.");
+
+        // S = R
+        for (size_t j = 0; j < q; j++) {
+            // s(0,j) = r(0,j)
+            s[j*m] = r[j*n];
+        }
+
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
+        size_t q,
+        const CppAD::vector<bool> &rt,
+        CppAD::vector<bool> &st,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 1;
+        constexpr size_t m = 1;
+
+        CPPAD_ASSERT_KNOWN(rt.size() == n * q, "for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(st.size() == m * q, "for_sparse_jac: 's' size is incorrect.");
+
+        // st = rt
+        for (size_t j = 0; j < q; j++) {
+            // st(j, 0) = rt(j, 0)
+            st[j * n] = rt[j * m];
+        }
+
         return true;
     }
 }

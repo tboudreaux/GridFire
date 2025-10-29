@@ -160,6 +160,7 @@ namespace gridfire::solver {
         check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
 
         initialize_cvode_integration_resources(N, numSpecies, 0.0, equilibratedComposition, absTol, relTol, 0.0);
+        m_engine.generateJacobianMatrix(equilibratedComposition, T9, netIn.density);
 
         CVODEUserData user_data;
         user_data.solver_instance = this;
@@ -192,7 +193,7 @@ namespace gridfire::solver {
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
-            log_step_diagnostics(user_data);
+            // log_step_diagnostics(user_data, false);
             check_cvode_flag(flag, "CVode");
 
             long int n_steps;
@@ -290,9 +291,17 @@ namespace gridfire::solver {
                 initialize_cvode_integration_resources(N, numSpecies, current_time, currentComposition, absTol, relTol, accumulated_energy);
 
                 check_cvode_flag(CVodeReInit(m_cvode_mem, current_time, m_Y), "CVodeReInit");
+
+                LOG_TRACE_L1(m_logger, "Regenerating jacobian matrix...");
+                m_engine.generateJacobianMatrix(currentComposition, T9, netIn.density);
+                LOG_TRACE_L1(m_logger, "Done regenerating jacobian matrix...");
             }
 
         }
+
+        // TODO: Need a more reliable way to get the final composition out, probably some methods that bubble it or something
+        //       aside from that this now seems to be working
+
         LOG_TRACE_L2(m_logger, "CVODE iteration complete");
 
         sunrealtype* y_data = N_VGetArrayPointer(m_Y);
@@ -313,6 +322,7 @@ namespace gridfire::solver {
             speciesNames.emplace_back(species.name());
         }
 
+        LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", speciesNames.size());
         fourdst::composition::Composition outputComposition(speciesNames);
         outputComposition.setMassFraction(speciesNames, finalMassFractions);
         bool didFinalize = outputComposition.finalize(true);
@@ -320,6 +330,7 @@ namespace gridfire::solver {
             LOG_ERROR(m_logger, "Failed to finalize output composition after CVODE integration. Check output mass fractions for validity.");
             throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
         }
+        LOG_TRACE_L2(m_logger, "Final composition constructed successfully!");
 
         LOG_TRACE_L2(m_logger, "Constructing output data...");
         NetOut netOut;
@@ -327,11 +338,13 @@ namespace gridfire::solver {
         netOut.energy = accumulated_energy;
         check_cvode_flag(CVodeGetNumSteps(m_cvode_mem, reinterpret_cast<long int *>(&netOut.num_steps)), "CVodeGetNumSteps");
 
+        LOG_TRACE_L2(m_logger, "generating final nuclear energy generation rate derivatives...");
         auto [dEps_dT, dEps_dRho] = m_engine.calculateEpsDerivatives(
             outputComposition,
             T9,
             netIn.density
         );
+        LOG_TRACE_L2(m_logger, "Found dEps/dT: {:0.3E} and dEps/dRho: {:0.3E}", dEps_dT, dEps_dRho);
 
         netOut.dEps_dT = dEps_dT;
         netOut.dEps_dRho = dEps_dRho;
@@ -396,16 +409,19 @@ namespace gridfire::solver {
         const long int N = SUNDenseMatrix_Columns(J);
 
         for (size_t j = 0; j < numSpecies; ++j) {
+            const fourdst::atomic::Species& species_j = engine->getNetworkSpecies()[j];
             for (size_t i = 0; i < numSpecies; ++i) {
-                const fourdst::atomic::Species& species_j = engine->getNetworkSpecies()[j];
                 const fourdst::atomic::Species& species_i = engine->getNetworkSpecies()[i];
                 // J(i,j) = d(f_i)/d(y_j)
-                // Column-major order format for SUNDenseMatrix: J_data[j*N + i]
-                J_data[j * N + i] = engine->getJacobianMatrixEntry(species_i, species_j);
+                // Column-major order format for SUNDenseMatrix: J_data[j*N + i] indexes J(i,j)
+                const double dYi_dt = engine->getJacobianMatrixEntry(species_i, species_j);
+                J_data[j * N + i] = dYi_dt;
             }
         }
 
         // For now assume that the energy derivatives wrt. abundances are zero
+        // TODO: Need a better way to build this part of the output jacobian so it properly pushes the solver
+        //       in the right direction. Currently we effectively are doing a fixed point iteration in energy space.
         for (size_t i = 0; i < N; ++i) {
             J_data[(N - 1) * N + i] = 0.0; // df(energy_dot)/df(y_i)
             J_data[i * N + (N - 1)] = 0.0; // df(f_i)/df(energy_dot)
@@ -422,6 +438,15 @@ namespace gridfire::solver {
     ) const {
         const size_t numSpecies = m_engine.getNetworkSpecies().size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
+
+        // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
+        // small negative numbers which can result in NaN's and more immediate crashes in the composition
+        // finalization stage
+        for (size_t i = 0; i < numSpecies; ++i) {
+            if (y_data[i] < 0.0) {
+                y_data[i] = 0.0;
+            }
+        }
 
         // PERF: The trade off of ensured index consistency is some performance here. If this becomes a bottleneck we can revisit.
         //       The specific trade off is that we have decided to enforce that all interfaces accept composition objects rather
@@ -539,7 +564,7 @@ namespace gridfire::solver {
         }
     }
 
-    void CVODESolverStrategy::log_step_diagnostics(const CVODEUserData &user_data) const {
+    void CVODESolverStrategy::log_step_diagnostics(const CVODEUserData &user_data, bool displayJacobianStiffness) const {
         check_cvode_flag(CVodeGetEstLocalErrors(m_cvode_mem, m_YErr), "CVodeGetEstLocalErrors");
 
         sunrealtype *y_data = N_VGetArrayPointer(m_Y);
@@ -616,9 +641,11 @@ namespace gridfire::solver {
 
         std::cout << utils::format_table("Species Error Ratios", columns) << std::endl;
 
-        diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
-        for (const auto& species : sorted_speciesNames) {
-            diagnostics::inspect_species_balance(*user_data.engine, species, composition, user_data.T9, user_data.rho);
+        if (displayJacobianStiffness) {
+            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
+            for (const auto& species : sorted_speciesNames) {
+                diagnostics::inspect_species_balance(*user_data.engine, species, composition, user_data.T9, user_data.rho);
+            }
         }
 
     }

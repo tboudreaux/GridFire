@@ -53,48 +53,49 @@ namespace gridfire {
             }
         }
 
-        for (const auto& parent_species: weakInterpolator.available_isotopes()) {
-            std::expected<Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
-                parent_species.a(),
-                parent_species.z() + 1
-            );
-            std::expected<Species, fourdst::atomic::SpeciesErrorType> downProduct = fourdst::atomic::az_to_species(
-                parent_species.a(),
-                parent_species.z() - 1
-            );
-            if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::BETA_PLUS_DECAY,
-                        weakInterpolator
-                    )
-                );
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::ELECTRON_CAPTURE,
-                        weakInterpolator
-                    )
-                );
-            }
-            if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::BETA_MINUS_DECAY,
-                        weakInterpolator
-                    )
-                );
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::POSITRON_CAPTURE,
-                        weakInterpolator
-                    )
-                );
-            }
-        }
+        // --- Clone all possible weak reactions into the master reaction pool ---
+        // for (const auto& parent_species: weakInterpolator.available_isotopes()) {
+        //     std::expected<Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
+        //         parent_species.a(),
+        //         parent_species.z() + 1
+        //     );
+        //     std::expected<Species, fourdst::atomic::SpeciesErrorType> downProduct = fourdst::atomic::az_to_species(
+        //         parent_species.a(),
+        //         parent_species.z() - 1
+        //     );
+        //     if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
+        //         master_reaction_pool.add_reaction(
+        //             std::make_unique<rates::weak::WeakReaction>(
+        //                 parent_species,
+        //                 rates::weak::WeakReactionType::BETA_PLUS_DECAY,
+        //                 weakInterpolator
+        //             )
+        //         );
+        //         master_reaction_pool.add_reaction(
+        //             std::make_unique<rates::weak::WeakReaction>(
+        //                 parent_species,
+        //                 rates::weak::WeakReactionType::ELECTRON_CAPTURE,
+        //                 weakInterpolator
+        //             )
+        //         );
+        //     }
+        //     if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
+        //         master_reaction_pool.add_reaction(
+        //             std::make_unique<rates::weak::WeakReaction>(
+        //                 parent_species,
+        //                 rates::weak::WeakReactionType::BETA_MINUS_DECAY,
+        //                 weakInterpolator
+        //             )
+        //         );
+        //         master_reaction_pool.add_reaction(
+        //             std::make_unique<rates::weak::WeakReaction>(
+        //                 parent_species,
+        //                 rates::weak::WeakReactionType::POSITRON_CAPTURE,
+        //                 weakInterpolator
+        //             )
+        //         );
+        //     }
+        // } TODO: Remove comments, weak reactions have been disabled for testing
 
         // --- Step 2: Use non-owning raw pointers for the fast build algorithm ---
         std::vector<Reaction*> remainingReactions;

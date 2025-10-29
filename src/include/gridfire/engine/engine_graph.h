@@ -25,6 +25,7 @@
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/speed/sparse_jac_fun.hpp"
+
 #include "gridfire/reaction/weak/weak_interpolator.h"
 #include "gridfire/reaction/weak/weak_rate_library.h"
 
@@ -729,6 +730,8 @@ namespace gridfire {
             BuildDepthType depth
         ) override;
 
+        void lumpReactions();
+
 
     private:
         struct PrecomputedReaction {
@@ -753,6 +756,20 @@ namespace gridfire {
             const double Na = Constants::getInstance().get("N_a").value; ///< Avogadro's number.
             const double c = Constants::getInstance().get("c").value; ///< Speed of light in cm/s.
             const double kB = Constants::getInstance().get("kB").value; ///< Boltzmann constant in erg/K.
+        };
+
+        enum class JacobianMatrixState {
+            UNINITIALIZED,
+            STALE,
+            READY_DENSE,
+            READY_SPARSE
+        };
+
+        std::unordered_map<JacobianMatrixState, std::string> m_jacobianMatrixStateNameMap = {
+            {JacobianMatrixState::UNINITIALIZED, "Uninitialized"},
+            {JacobianMatrixState::STALE, "Stale"},
+            {JacobianMatrixState::READY_DENSE, "Ready (dense)"},
+            {JacobianMatrixState::READY_SPARSE, "Ready (sparse)"},
         };
     private:
         class AtomicReverseRate final : public CppAD::atomic_base<double> {
@@ -790,6 +807,18 @@ namespace gridfire {
                 const CppAD::vector<std::set<size_t>>&rt,
                 CppAD::vector<std::set<size_t>>& st
             ) override;
+            bool for_sparse_jac(
+                size_t q,
+                const CppAD::vector<bool> &r,
+                CppAD::vector<bool> &s,
+                const CppAD::vector<double> &x
+            ) override;
+            bool rev_sparse_jac(
+                size_t q,
+                const CppAD::vector<bool> &rt,
+                CppAD::vector<bool> &st,
+                const CppAD::vector<double> &x
+            ) override;
 
         private:
             const reaction::Reaction& m_reaction;
@@ -811,10 +840,11 @@ namespace gridfire {
         std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
         std::unordered_map<size_t, fourdst::atomic::Species> m_indexToSpeciesMap; ///< Map from index to species in the stoichiometry matrix.
 
-
         boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix (species x reactions).
 
         mutable boost::numeric::ublas::compressed_matrix<double> m_jacobianMatrix; ///< Jacobian matrix (species x species).
+        mutable JacobianMatrixState m_jacobianMatrixState = JacobianMatrixState::UNINITIALIZED;
+
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
@@ -827,7 +857,6 @@ namespace gridfire {
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
-
         bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
 
         BuildDepthType m_depth;
@@ -978,45 +1007,7 @@ namespace gridfire {
             std::function<std::optional<size_t>(const fourdst::atomic::Species &)> speciesLookup, const std::function<bool(const
                 reaction::Reaction &)>& reactionLookup
         ) const;
-
-        // /**
-        //  * @brief Calculates all derivatives (dY/dt) and the energy generation rate (double precision).
-        //  *
-        //  * @param Y Vector of molar abundances for all species in the network.
-        //  * @param T9 Temperature in units of 10^9 K.
-        //  * @param rho Density in g/cm^3.
-        //  * @return StepDerivatives<double> containing dY/dt and energy generation rate.
-        //  *
-        //  * This method calculates the time derivatives of all species and the
-        //  * specific nuclear energy generation rate for the current state using
-        //  * double precision arithmetic.
-        //  */
-        // [[nodiscard]] StepDerivatives<double> calculateAllDerivatives(
-        //     const std::vector<double>& Y,
-        //     double T9,
-        //     double rho
-        // ) const;
-        //
-        // /**
-        //  * @brief Calculates all derivatives (dY/dt) and the energy generation rate (automatic differentiation).
-        //  *
-        //  * @param Y Vector of molar abundances for all species in the network.
-        //  * @param T9 Temperature in units of 10^9 K.
-        //  * @param rho Density in g/cm^3.
-        //  * @return StepDerivatives<ADDouble> containing dY/dt and energy generation rate.
-        //  *
-        //  * This method calculates the time derivatives of all species and the
-        //  * specific nuclear energy generation rate for the current state using
-        //  * automatic differentiation.
-        //  */
-        // [[nodiscard]] StepDerivatives<ADDouble> calculateAllDerivatives(
-        //     const std::vector<ADDouble> &Y,
-        //     ADDouble T9,
-        //     ADDouble rho
-        // ) const;
     };
-
-
 
     template <IsArithmeticOrAD T>
     T GraphEngine::calculateReverseMolarReactionFlow(

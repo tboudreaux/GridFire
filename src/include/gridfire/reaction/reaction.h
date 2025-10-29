@@ -1,5 +1,6 @@
 #pragma once
 
+#include <expected>
 #include <ranges>
 #include <string_view>
 
@@ -739,7 +740,7 @@ namespace gridfire::reaction {
                        rate.a5 * T953 +
                        rate.a6 * logT9;
                 sum += CppAD::exp(exponent);
-                // return sum; // TODO: REMOVE THIS ITS FOR TESTING ONLY
+                // return sum; // TODO: REMOVE OR COMMENT THIS. ITS FOR TESTING ONLY
             }
             return sum;
         }

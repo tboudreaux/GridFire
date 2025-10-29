@@ -82,7 +82,7 @@ namespace gridfire::utils {
         // --- Helper to draw horizontal border ---
         auto draw_border = [&]() {
             table_ss << "+";
-            for (size_t width : col_widths) {
+            for (const size_t width : col_widths) {
                 table_ss << std::string(width + 2, '-'); // +2 for padding
                 table_ss << "+";
             }

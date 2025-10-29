@@ -110,4 +110,37 @@ namespace gridfire::exceptions {
         std::string m_message;
     };
 
+    class JacobianError : public EngineError {};
+
+    class StaleJacobianError final : public JacobianError {
+    public:
+        explicit StaleJacobianError(std::string  message) : m_message(std::move(message)) {}
+        [[nodiscard]] const char* what() const noexcept override {
+            return m_message.c_str();
+        }
+
+    private:
+        std::string m_message;
+    };
+
+    class UninitializedJacobianError final: public JacobianError {
+    public:
+        explicit UninitializedJacobianError(std::string  message): m_message(std::move(message)) {}
+        [[nodiscard]] const char* what() const noexcept override {
+            return m_message.c_str();
+        }
+    private:
+        std::string m_message;
+    };
+
+    class UnknownJacobianError final : public JacobianError {
+    public:
+        explicit UnknownJacobianError(std::string  message): m_message(std::move(message)) {}
+        [[nodiscard]] const char* what() const noexcept override {
+            return m_message.c_str();
+        }
+    private:
+        std::string m_message;
+    };
+
 }
