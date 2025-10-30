@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <format>
 
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/engine/engine_approx8.h"
@@ -34,8 +35,7 @@ void measure_execution_time(const std::function<void()>& callback, const std::st
     callback();
     const auto endTime     = std::chrono::steady_clock::now();
     const auto duration    = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime);
-    std::cout << "Execution time for " << name << ": "
-              << duration.count()/1e9 << " s\n";
+    std::cout << "Execution time for " << name << ": " << duration.count()/1e9 << " s\n";
 }
 
 void quill_terminate_handler()
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL3);
+    logger->set_log_level(quill::LogLevel::TraceL2);
     LOG_INFO(logger, "Starting Adaptive Engine View Example...");
 
     using namespace gridfire;
@@ -109,31 +109,38 @@ int main(int argc, char* argv[]){
     netIn.temperature = 1.5e7;
     netIn.density = 1.6e2;
     netIn.energy = 0;
+
+    // TODO: There is a bug when I get to very low concentrations of hydrogen where the solver will crash. I suspect this can be resolved with triggers
     netIn.tMax = 3e16;
     // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 
     GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
-    ReaclibEngine.setUseReverseReactions(false);
-    ReaclibEngine.setPrecomputation(false);
-    // DefinedEngineView ppEngine({"p(p,e+)d", "d(p,g)he3", "he3(he3,2p)he4"}, ReaclibEngine);
 
+    ReaclibEngine.setPrecomputation(true);
+    ReaclibEngine.setUseReverseReactions(false);
+
+    DefinedEngineView subsetView({"p(p,e+)d", "d(p,g)he3", "n(p,g)d", "d(n,g)t"}, ReaclibEngine);
     MultiscalePartitioningEngineView partitioningView(ReaclibEngine);
+
     AdaptiveEngineView adaptiveView(partitioningView);
+
+
+    fourdst::composition::Composition updatedComposition = adaptiveView.update(netIn);
+
+    adaptiveView.generateJacobianMatrix(updatedComposition, netIn.temperature/1e9, netIn.density);
 
     solver::CVODESolverStrategy solver(adaptiveView);
     NetOut netOut;
-
-
     netOut = solver.evaluate(netIn);
-    // consumptionFile.close();
+
     std::cout << "Initial H-1: " << netIn.composition.getMassFraction("H-1") << std::endl;
     std::cout << "NetOut H-1: " << netOut.composition.getMassFraction("H-1") << std::endl;
-
     double initialHydrogen = netIn.composition.getMassFraction("H-1");
     double finalHydrogen = netOut.composition.getMassFraction("H-1");
     double fractionalConsumedHydrogen = (initialHydrogen - finalHydrogen) / initialHydrogen * 100.0;
     std::cout << "Fractional consumed hydrogen: " << fractionalConsumedHydrogen << "%" << std::endl;
+    std::cout << "Final D abundance " << netOut.composition.getMolarAbundance("H-2") << std::endl;
     std::cout << netOut << std::endl;
 
 }
