@@ -6,6 +6,7 @@
 #include <ranges>
 #include <stdexcept>
 #include <memory>
+#include <cmath>
 
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/reaction/reaclib.h"
@@ -16,6 +17,26 @@
 
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
+namespace {
+    bool reaclib_reaction_is_weak(const gridfire::reaction::Reaction& reaction) {
+        std::vector<fourdst::atomic::Species> reactants = reaction.reactants();
+        std::vector<fourdst::atomic::Species> products = reaction.products();
+
+        if (reactants.size() != products.size()) {
+            return false;
+        }
+
+        if (reactants.size() != 1 || products.size() != 1) {
+            return false;
+        }
+
+        if (std::floor(reactants[0].a()) != std::floor(products[0].a())) {
+            return false;
+        }
+
+        return true;
+    }
+}
 
 namespace gridfire {
     using reaction::ReactionSet;
@@ -48,7 +69,7 @@ namespace gridfire {
         // Clone all relevant REACLIB reactions into the master pool
         const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
         for (const auto& reaction : allReaclibReactions) {
-            if (reaction->is_reverse() == reverse) {
+            if (reaction->is_reverse() == reverse) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
                 master_reaction_pool.add_reaction(reaction->clone());
             }
         }
@@ -95,7 +116,7 @@ namespace gridfire {
         //             )
         //         );
         //     }
-        // } TODO: Remove comments, weak reactions have been disabled for testing
+        // } // TODO: Remove comments, weak reactions have been disabled for testing
 
         // --- Step 2: Use non-owning raw pointers for the fast build algorithm ---
         std::vector<Reaction*> remainingReactions;
