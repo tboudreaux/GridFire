@@ -136,6 +136,13 @@ namespace gridfire::solver {
     }
 
     NetOut CVODESolverStrategy::evaluate(const NetIn& netIn) {
+        return evaluate(netIn, false);
+    }
+
+    NetOut CVODESolverStrategy::evaluate(
+        const NetIn &netIn,
+        bool displayTrigger
+    ) {
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
         auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 1, true, 10);
@@ -182,12 +189,7 @@ namespace gridfire::solver {
 
             check_cvode_flag(CVodeSetUserData(m_cvode_mem, &user_data), "CVodeSetUserData");
 
-            int flag{};
-            if (m_stdout_logging_enabled) {
-                flag = CVode(m_cvode_mem, netIn.tMax, m_Y, &current_time, CV_ONE_STEP);
-            } else {
-                flag = CVode(m_cvode_mem, netIn.tMax, m_Y, &current_time, CV_NORMAL);
-            }
+            int flag = CVode(m_cvode_mem, netIn.tMax, m_Y, &current_time, CV_ONE_STEP);
 
             if (user_data.captured_exception){
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
@@ -206,14 +208,17 @@ namespace gridfire::solver {
 
             sunrealtype* y_data = N_VGetArrayPointer(m_Y);
             const double current_energy = y_data[numSpecies]; // Specific energy rate
-            std::cout << std::scientific << std::setprecision(3)
-                << "Step: " << std::setw(6) << n_steps
-                << " | Time: " << current_time << " [s]"
-                << " | Last Step Size: " << last_step_size
-                << " | Accumulated Energy: " << current_energy << " [erg/g]"
-                << " | NonLinIters: " << std::setw(2) << nliters
-                << " | ConvFails: " << std::setw(2) << nlcfails
-                << std::endl;
+            if (m_stdout_logging_enabled) {
+                std::cout << std::scientific << std::setprecision(3)
+                    << "Step: " << std::setw(6) << n_steps
+                    << " | Time: " << current_time << " [s]"
+                    << " | Last Step Size: " << last_step_size
+                    << " | Current Lightest Molar Abundance: " << y_data[0] << " [mol/g]"
+                    << " | Accumulated Energy: " << current_energy << " [erg/g]"
+                    << " | Total Non Linear Iterations: " << std::setw(2) << nliters
+                    << " | Total Convergence Failures: " << std::setw(2) << nlcfails
+                    << "\n";
+            }
 
             auto ctx = TimestepContext(
                 current_time,
@@ -227,7 +232,9 @@ namespace gridfire::solver {
                 m_engine.getNetworkSpecies());
 
             if (trigger->check(ctx)) {
-                trigger::printWhy(trigger->why(ctx));
+                if (m_stdout_logging_enabled && displayTrigger) {
+                    trigger::printWhy(trigger->why(ctx));
+                }
                 trigger->update(ctx);
                 accumulated_energy += current_energy; // Add the specific energy rate to the accumulated energy
                 LOG_INFO(
@@ -299,8 +306,9 @@ namespace gridfire::solver {
 
         }
 
-        // TODO: Need a more reliable way to get the final composition out, probably some methods that bubble it or something
-        //       aside from that this now seems to be working
+        if (m_stdout_logging_enabled) { // Flush the buffer if standard out logging is enabled
+            std::cout << std::flush;
+        }
 
         LOG_TRACE_L2(m_logger, "CVODE iteration complete");
 
@@ -323,13 +331,23 @@ namespace gridfire::solver {
         }
 
         LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", speciesNames.size());
-        fourdst::composition::Composition outputComposition(speciesNames);
-        outputComposition.setMassFraction(speciesNames, finalMassFractions);
-        bool didFinalize = outputComposition.finalize(true);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize output composition after CVODE integration. Check output mass fractions for validity.");
+        fourdst::composition::Composition topLevelComposition(speciesNames);
+        topLevelComposition.setMassFraction(speciesNames, finalMassFractions);
+        bool didFinalizeTopLevel = topLevelComposition.finalize(true);
+        if (!didFinalizeTopLevel) {
+            LOG_ERROR(m_logger, "Failed to finalize top level reconstructed composition after CVODE integration. Check output mass fractions for validity.");
             throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
         }
+        fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition);
+
+        assert(outputComposition.getRegisteredSymbols().size() == equilibratedComposition.getRegisteredSymbols().size());
+
+        bool didFinalizeOutput = outputComposition.finalize(false);
+        if (!didFinalizeOutput) {
+            LOG_ERROR(m_logger, "Failed to finalize output composition after CVODE integration.");
+            throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
+        }
+
         LOG_TRACE_L2(m_logger, "Final composition constructed successfully!");
 
         LOG_TRACE_L2(m_logger, "Constructing output data...");
@@ -351,6 +369,7 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Output data built!");
         LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 
+
         return netOut;
     }
 
@@ -362,8 +381,8 @@ namespace gridfire::solver {
         return m_stdout_logging_enabled;
     }
 
-    void CVODESolverStrategy::set_stdout_logging_enabled(const bool value) {
-        m_stdout_logging_enabled = value;
+    void CVODESolverStrategy::set_stdout_logging_enabled(const bool logging_enabled) {
+        m_stdout_logging_enabled = logging_enabled;
     }
 
     std::vector<std::tuple<std::string, std::string>> CVODESolverStrategy::describe_callback_context() const {

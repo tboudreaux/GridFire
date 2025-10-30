@@ -143,4 +143,12 @@ namespace gridfire::exceptions {
         std::string m_message;
     };
 
+    class BadCollectionError final : public EngineError {
+    public:
+        explicit BadCollectionError(std::string  message): m_message(std::move(message)) {}
+        [[nodiscard]] const char* what() const noexcept override { return m_message.c_str(); }
+    private:
+        std::string m_message;
+    };
+
 }

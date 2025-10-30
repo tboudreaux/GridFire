@@ -122,6 +122,19 @@ namespace gridfire::solver {
         NetOut evaluate(const NetIn& netIn) override;
 
         /**
+         * @brief Call to evaluate which will let the user control if the trigger reasoning is displayed
+         * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.
+         * @param displayTrigger Boolean flag to control if trigger reasoning is displayed
+         * @return NetOut containing final Composition, accumulated energy [erg/g], step count,
+         *         and dEps/dT, dEps/dRho.
+         * @throws std::runtime_error If any CVODE or SUNDIALS call fails (negative return codes),
+         *         or if internal consistency checks fail during engine updates.
+         * @throws exceptions::StaleEngineTrigger Propagated if the engine signals a stale state
+         *         during RHS evaluation (captured in the wrapper then rethrown here).
+         */
+        NetOut evaluate(const NetIn& netIn, bool displayTrigger);
+
+        /**
          * @brief Install a timestep callback.
          * @param callback std::any containing TimestepCallback (std::function<void(const TimestepContext&)>).
          * @throws std::bad_any_cast If callback is not of the expected type.
@@ -135,8 +148,9 @@ namespace gridfire::solver {
 
         /**
          * @brief Enable/disable per-step stdout logging.
+         * @param logging_enabled Flag to control if a timestep summary is written to standard output or not
          */
-        void set_stdout_logging_enabled(const bool value);
+        void set_stdout_logging_enabled(bool logging_enabled);
 
         /**
          * @brief Schema of fields exposed to the timestep callback context.

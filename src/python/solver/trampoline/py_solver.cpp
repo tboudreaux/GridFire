@@ -39,3 +39,12 @@ std::vector<std::tuple<std::string, std::string>> PyDynamicNetworkSolverStrategy
         describe_callback_context  // Method name
     );
 }
+
+std::vector<std::tuple<std::string, std::string>> PySolverContextBase::describe() const {
+    using DescriptionVector = std::vector<std::tuple<std::string, std::string>>;
+    PYBIND11_OVERRIDE_PURE(
+        DescriptionVector,
+        gridfire::solver::SolverContextBase,
+        describe
+    );
+}

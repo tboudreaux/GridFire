@@ -23,7 +23,7 @@ namespace gridfire {
      *
      * @param composition Mapping of isotopic species to their mass fractions; species with positive
      *        mass fraction seed the network.
-     * @param weakInterpolator
+     * @param weakInterpolator Interpolator to build weak rates from. Must be constructed and owned by the caller.
      * @param maxLayers Variant specifying either a predefined NetworkBuildDepth or a custom integer depth;
      *        negative depth (Full) collects all reactions, zero is invalid.
      * @param reverse If true, collects reverse reactions (decays or back-reactions); if false, uses forward reactions.
@@ -36,6 +36,7 @@ namespace gridfire {
     reaction::ReactionSet build_nuclear_network(
         const fourdst::composition::Composition &composition,
         const rates::weak::WeakRateInterpolator &weakInterpolator,
-        BuildDepthType maxLayers = NetworkBuildDepth::Full, bool reverse = false
+        BuildDepthType maxLayers = NetworkBuildDepth::Full,
+        bool reverse = false
     );
 }

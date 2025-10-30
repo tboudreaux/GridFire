@@ -2,6 +2,8 @@
 #include "fourdst/composition/composition.h"
 #include "fourdst/composition/atomicSpecies.h"
 
+#include <ranges>
+
 namespace gridfire::utils {
     inline double massFractionFromMolarAbundanceAndComposition (
         const fourdst::composition::Composition& composition,
@@ -65,10 +67,14 @@ namespace gridfire::utils {
     inline std::vector<double> molarMassVectorFromComposition(
         const fourdst::composition::Composition& composition
     ) {
-        std::vector<double> molarMassVector;
-        molarMassVector.reserve(composition.getRegisteredSymbols().size());
+        std::map<fourdst::atomic::Species, double> molarMassMap;
         for (const auto &entry: composition | std::views::values) {
-            molarMassVector.push_back(entry.isotope().mass());
+            molarMassMap.emplace(entry.isotope(), entry.isotope().mass());
+        }
+        std::vector<double> molarMassVector;
+        molarMassVector.reserve(molarMassMap.size());
+        for (const auto molarMass : molarMassMap | std::views::values) {
+            molarMassVector.push_back(molarMass);
         }
         return molarMassVector;
     }

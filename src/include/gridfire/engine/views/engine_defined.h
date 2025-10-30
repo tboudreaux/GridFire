@@ -220,6 +220,8 @@ namespace gridfire{
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+
+        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;

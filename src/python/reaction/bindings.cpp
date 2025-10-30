@@ -48,7 +48,7 @@ void register_reaction_bindings(py::module &m) {
         .def(
             "calculate_rate",
              [](const gridfire::reaction::ReaclibReaction& self, const double T9, const double rho, const std::vector<double>& Y) -> double {
-                 return self.calculate_rate(T9, rho, 0, TODO, Y, TODO);
+                 return self.calculate_rate(T9, rho, 0, {}, Y, {});
              },
              py::arg("T9"),
              py::arg("rho"),
@@ -183,9 +183,15 @@ void register_reaction_bindings(py::module &m) {
 
     py::class_<gridfire::reaction::LogicalReaclibReaction, gridfire::reaction::ReaclibReaction>(m, "LogicalReaclibReaction")
         .def(
-            py::init<const std::vector<gridfire::reaction::Reaction>>(),
+            py::init<const std::vector<gridfire::reaction::ReaclibReaction>>(),
              py::arg("reactions"),
-             "Construct a LogicalReaclibReaction from a vector of Reaction objects."
+             "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."
+        )
+        .def(
+            py::init<const std::vector<gridfire::reaction::ReaclibReaction>, bool>(),
+             py::arg("reactions"),
+             py::arg("is_reverse"),
+             "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."
         )
         .def(
             "add_reaction",
@@ -210,25 +216,55 @@ void register_reaction_bindings(py::module &m) {
         )
         .def(
             "calculate_rate",
-            [](const gridfire::reaction::LogicalReaclibReaction& self, const double T9, const double rho, const std::vector<double>& Y) -> double {
-                return self.calculate_rate(T9, rho, 0, TODO, Y, TODO);
+            [](
+                const gridfire::reaction::LogicalReaclibReaction& self,
+                const double T9,
+                const double rho,
+                const double Ye,
+                const double mue,
+                const std::vector<double>& Y,
+                const std::unordered_map<size_t, Species>& index_to_species_map
+            ) -> double {
+                return self.calculate_rate(T9, rho, Ye, mue, Y, index_to_species_map);
             },
             py::arg("T9"),
-            "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K)."
+            py::arg("rho"),
+            py::arg("Ye"),
+            py::arg("mue"),
+            py::arg("Y"),
+            py::arg("index_to_species_map"),
+            "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K). Note that for a reaclib reaction only T9 is actually used, all other parameters are there for interface compatibility."
         )
         .def(
             "calculate_forward_rate_log_derivative",
-            &gridfire::reaction::LogicalReaclibReaction::calculate_forward_rate_log_derivative,
+            &gridfire::reaction::LogicalReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9,
             py::arg("T9"),
+            py::arg("rho"),
+            py::arg("Ye"),
+            py::arg("mue"),
+            py::arg("Composition"),
             "Calculate the forward rate log derivative at a given temperature T9 (in units of 10^9 K)."
         );
 
     py::class_<gridfire::reaction::ReactionSet>(m, "ReactionSet")
-        // TODO: Fix the constructor to accept a vector of unique ptrs to Reaclib Reactions
         .def(
-            py::init<const std::vector<gridfire::reaction::Reaction>>(),
+            py::init<const std::vector<gridfire::reaction::Reaction*>>(),
             py::arg("reactions"),
+            py::keep_alive<1, 2>(), // Keep arg 2 (reactions) alive as long as arg 1 (self) is alive. This helps mitigate use-after-free errors
             "Construct a LogicalReactionSet from a vector of LogicalReaclibReaction objects."
+        )
+        .def_static(
+            "from_clones",
+            [](const std::vector<gridfire::reaction::Reaction*>& py_reactions) {
+                std::vector<std::unique_ptr<gridfire::reaction::Reaction>> cpp_reactions;
+                cpp_reactions.reserve(py_reactions.size());
+                for (const auto& reaction : py_reactions) {
+                    cpp_reactions.emplace_back(reaction->clone());
+                }
+                return std::make_unique<gridfire::reaction::ReactionSet>(std::move(cpp_reactions));
+            },
+            py::arg("reactions"),
+            "Create a ReactionSet that takes ownership of the reactions by cloning the input reactions."
         )
         .def(
             py::init<>(),

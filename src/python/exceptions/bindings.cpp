@@ -38,4 +38,21 @@ void register_exception_bindings(const py::module &m) {
            return self.what();
         });
 
+    py::register_exception<gridfire::exceptions::FailedToPartitionEngineError>(m, "FailedToPartitionEngineError", m.attr("GridFireEngineError"));
+    py::register_exception<gridfire::exceptions::NetworkResizedError>(m, "NetworkResizedError", m.attr("GridFireEngineError"));
+    py::register_exception<gridfire::exceptions::UnableToSetNetworkReactionsError>(m, "UnableToSetNetworkReactionsError", m.attr("GridFireEngineError"));
+    py::register_exception<gridfire::exceptions::BadCollectionError>(m, "BadCollectionError", m.attr("GridFireEngineError"));
+
+    py::register_exception<gridfire::exceptions::JacobianError>(m, "JacobianError", m.attr("GridFireEngineError"));
+
+    py::register_exception<gridfire::exceptions::StaleJacobianError>(m, "StaleJacobianError", m.attr("JacobianEngineError"));
+    py::register_exception<gridfire::exceptions::UninitializedJacobianError>(m, "UninitializedJacobianError", m.attr("JacobianEngineError"));
+    py::register_exception<gridfire::exceptions::UnknownJacobianError>(m, "UnknownJacobianError", m.attr("JacobianEngineError"));
+
+    py::register_exception<gridfire::exceptions::UtilityError>(m, "UtilityError");
+    py::register_exception<gridfire::exceptions::HashingError>(m, "HashingError", m.attr("UtilityError"));
+
+
+
+
 }

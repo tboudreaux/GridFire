@@ -112,7 +112,8 @@ namespace gridfire {
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
-         * @return StepDerivatives<double> containing dY/dt and energy generation rate.
+         * @return expected<StepDerivatives<double>> containing either dY/dt and energy generation rate or a stale engine
+         * error indicating that the engine must be updated
          *
          * This function must be implemented by derived classes to compute the
          * time derivatives of all species and the specific nuclear energy generation
@@ -393,6 +394,22 @@ namespace gridfire {
             throw std::logic_error("Setting network depth not supported by this engine.");
             // ReSharper disable once CppDFAUnreachableCode
         }
+
+        /**
+         * @brief Recursively collect composition from current engine and any sub engines if they exist.
+         * @details If species i is defined in comp and in any sub engine or self composition then the molar abundance of
+         * species i in the returned composition will be that defined in comp. If there are species defined in sub engine
+         * compositions which are not defined in comp then their molar abundances will be based on the reported values
+         * from each sub engine.
+         * @note It is up to each engine to decide how to handle filling in the return composition.
+         * @note These methods return an unfinalized composition which must then be finalized by the caller
+         * @param comp Input composition to "normalize".
+         * @return An updated composition which is a superset of comp. This may contain species which were culled, for
+         * example, by either QSE partitioning or reaction flow rate culling
+         */
+        virtual fourdst::composition::Composition collectComposition(
+            fourdst::composition::Composition& comp
+        ) const = 0;
 
     };
 }

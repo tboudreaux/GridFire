@@ -295,6 +295,20 @@ namespace gridfire {
         return m_baseEngine.primeEngine(netIn);
     }
 
+    fourdst::composition::Composition DefinedEngineView::collectComposition(
+        fourdst::composition::Composition &comp
+    ) const {
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp);
+
+        for (const auto& species : m_activeSpecies) {
+            if (!result.hasSpecies(species)) {
+                result.registerSpecies(species);
+                result.setMassFraction(species, 0.0);
+            }
+        }
+        return result;
+    }
+
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap() const {
         LOG_TRACE_L3(m_logger, "Constructing species index map for DefinedEngineView...");
         std::unordered_map<Species, size_t> fullSpeciesReverseMap;

@@ -730,7 +730,18 @@ namespace gridfire {
             BuildDepthType depth
         ) override;
 
-        void lumpReactions();
+        /**
+         * @brief This will return the input comp with the molar abundances of any species not registered in that but
+         * registered in the engine active species set to 0.0.
+         * @note Effectively this method does not change input composition; rather it ensures that all species which
+         * can be tracked by an instance of GraphEngine are registered in the composition object.
+         * @note If a species is in the input comp but not in the network
+         * @param comp Input Composition
+         * @return A new composition where all members of the active species set are registered. And any members not in comp
+         * have a molar abundance set to 0.
+         * @throws BadCollectionError If the input composition contains species not present in the network species set
+         */
+        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
 
 
     private:

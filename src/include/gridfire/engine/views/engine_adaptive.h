@@ -302,6 +302,8 @@ namespace gridfire {
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+
+        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
@@ -315,6 +317,7 @@ namespace gridfire {
 
         /** @brief The set of species that are currently active in the network. */
         std::vector<fourdst::atomic::Species> m_activeSpecies;
+
         /** @brief The set of reactions that are currently active in the network. */
         reaction::ReactionSet m_activeReactions;
 

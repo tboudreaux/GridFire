@@ -53,8 +53,8 @@ namespace gridfire {
          const fourdst::atomic::Species& species,
          const fourdst::composition::Composition& composition,
          double T9,
-         double rho, const std::optional<std::vector<reaction::ReactionType>> &
-         reactionTypesToIgnore
+         double rho,
+         const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
      );
 
     /**
@@ -78,6 +78,7 @@ namespace gridfire {
          const fourdst::atomic::Species& species,
          const fourdst::composition::Composition& composition,
          double T9,
-         double rho, const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
+         double rho,
+         const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
      );
  }

@@ -14,11 +14,12 @@ namespace gridfire::solver {
      * @struct SolverContextBase
      * @brief Base class for solver callback contexts.
      *
-     * This struct serves as a base class for contexts that can be passed to solver callbacks, it enforces
+     * This struct serves as a base class for contexts that can be papubl;ssed to solver callbacks, it enforces
      * that derived classes implement a `describe` method that returns a vector of tuples describing
      * the context that a callback will receive when called.
      */
-    struct SolverContextBase {
+    class SolverContextBase {
+    public:
         virtual ~SolverContextBase() = default;
 
         /**

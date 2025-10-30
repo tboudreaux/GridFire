@@ -318,6 +318,21 @@ namespace gridfire {
         return m_baseEngine.primeEngine(netIn);
     }
 
+    fourdst::composition::Composition AdaptiveEngineView::collectComposition(
+        fourdst::composition::Composition &comp
+    ) const {
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp); // Step one is to bubble the results from lower levels of the engine chain up
+
+        for (const auto& species : m_activeSpecies) {
+            if (!result.hasSpecies(species)) {
+                result.registerSpecies(species);
+                result.setMassFraction(species, 0.0);
+            }
+        }
+
+        return result;
+    }
+
     size_t AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
         const auto it = std::ranges::find(m_activeSpecies, species);
         if (it != m_activeSpecies.end()) {

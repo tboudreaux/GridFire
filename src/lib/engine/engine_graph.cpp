@@ -176,7 +176,7 @@ namespace gridfire {
 
         recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
 
-        const size_t inputSize = m_rhsADFun.Domain();
+        [[maybe_unused]] const size_t inputSize = m_rhsADFun.Domain();
         const size_t outputSize = m_rhsADFun.Range();
 
         // Create a range x range identity pattern
@@ -582,6 +582,26 @@ namespace gridfire {
         } else {
             LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
         }
+    }
+
+    fourdst::composition::Composition GraphEngine::collectComposition(
+        fourdst::composition::Composition &comp
+    ) const {
+        for (const auto &speciesName: comp | std::views::keys) {
+            if (!m_networkSpeciesMap.contains(speciesName)) {
+                throw exceptions::BadCollectionError("Cannot collect composition from GraphEngine as " + speciesName + " present in input composition does not exist in the network species map");
+            }
+        }
+        fourdst::composition::Composition result;
+        for (const auto& species : m_networkSpecies ) {
+            result.registerSpecies(species);
+            if (comp.hasSpecies(species)) {
+                result.setMassFraction(species, comp.getMassFraction(species));
+            } else {
+                result.setMassFraction(species, 0.0);
+            }
+        }
+        return result;
     }
 
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(

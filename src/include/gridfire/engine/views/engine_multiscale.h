@@ -650,7 +650,7 @@ namespace gridfire {
          * @brief Exports the network to a DOT file for visualization.
          *
          * @param filename The name of the DOT file to create.
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp Composition object
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
@@ -663,7 +663,7 @@ namespace gridfire {
          */
         void exportToDot(
             const std::string& filename,
-            const fourdst::composition::Composition &Y,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
@@ -783,6 +783,16 @@ namespace gridfire {
         bool involvesSpeciesInQSE(const fourdst::atomic::Species &species) const;
 
         bool involvesSpeciesInDynamic(const fourdst::atomic::Species &species) const;
+
+        /**
+         * @brief Collect the composition from this and sub engines.
+         * @details This method operates by injecting the current equilibrium abundances for algebraic species into
+         * the composition object so that they can be bubbled up to the caller.
+         * @param comp Input Composition
+         * @return New composition which is comp + any edits from lower levels + the equilibrium abundances of all algebraic species.
+         * @throws BadCollectionError: if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w
+         */
+        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
 
 
     private:

@@ -874,6 +874,43 @@ namespace gridfire {
         return std::ranges::find(m_dynamic_species, species) != m_dynamic_species.end();
     }
 
+    fourdst::composition::Composition MultiscalePartitioningEngineView::collectComposition(
+        fourdst::composition::Composition &comp
+    ) const {
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp);
+        bool didFinalize = result.finalize(false);
+        if (!didFinalize) {
+            std::string msg = "Failed to finalize collected composition from MultiscalePartitioningEngine view after calling base engines collectComposition method.";
+            LOG_ERROR(m_logger, "{}", msg);
+            throw exceptions::BadCollectionError(msg);
+        }
+        std::map<Species, double> Ym; // Use an ordered map here so that this is ordered by atomic mass (which is the </> comparator for Species)
+        for (const auto& [speciesName, entry] : result) {
+            Ym.emplace(entry.isotope(), result.getMolarAbundance(speciesName));
+        }
+        for (const auto& [species, Yi] : m_algebraic_abundances) {
+            if (!Ym.contains(species)) {
+                throw exceptions::BadCollectionError("MuiltiscalePartitioningEngineView failed to collect composition for species " + std::string(species.name()) + " as the base engine did not report that species present in its composition!");
+            }
+            Ym.at(species) = Yi;
+        }
+        std::vector<double> M;
+        std::vector<double> Y;
+        std::vector<std::string> speciesNames;
+        M.reserve(Ym.size());
+        Y.reserve(Ym.size());
+
+        for (const auto& [species, Yi] : Ym) {
+            M.emplace_back(species.mass());
+            Y.emplace_back(Yi);
+            speciesNames.emplace_back(species.name());
+        }
+
+        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(Y, M);
+
+        return fourdst::composition::Composition(speciesNames, X);
+    }
+
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(const Species &species) const {
         return m_baseEngine.getSpeciesIndex(species);
     }
