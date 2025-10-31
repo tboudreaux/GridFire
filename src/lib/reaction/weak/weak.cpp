@@ -382,7 +382,7 @@ namespace gridfire::rates::weak {
     ) const {
         const CppAD::AD<double> log_rhoYe = CppAD::log10(rho * Ye);
 
-        const std::vector<CppAD::AD<double>> ax = {T9, log_rhoYe, mue};
+        const std::vector<CppAD::AD<double>> ax = {T9, log_rhoYe};
         std::vector<CppAD::AD<double>> ay(2); // 2 outputs are the reaction rate (1/s) and the neutrino loss (MeV)
 
         m_atomic(ax, ay); // Note: We needed to make m_atomic mutable to allow this call in a const method.
@@ -491,7 +491,7 @@ namespace gridfire::rates::weak {
         return logNeutrinoLoss;
     }
 
-    // Note that the input vector tx is of size 3: [T9, log10(rho*Ye), mu_e]
+    // Note that the input vector tx is of size 2: [T9, log10(rho*Ye)]
     bool WeakReaction::AtomicWeakRate::forward (
         const size_t p,
         const size_t q,
@@ -549,7 +549,7 @@ namespace gridfire::rates::weak {
     }
 
     bool WeakReaction::AtomicWeakRate::reverse(
-        size_t q,
+        const size_t q,
         const CppAD::vector<double> &tx,
         const CppAD::vector<double> &ty,
         CppAD::vector<double> &px,
@@ -624,7 +624,7 @@ namespace gridfire::rates::weak {
     }
 
     bool WeakReaction::AtomicWeakRate::for_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t> > &r,
         CppAD::vector<std::set<size_t> > &s
     ) {
@@ -640,7 +640,7 @@ namespace gridfire::rates::weak {
     }
 
     bool WeakReaction::AtomicWeakRate::rev_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t> > &rt,
         CppAD::vector<std::set<size_t> > &st
     ) {
@@ -655,11 +655,53 @@ namespace gridfire::rates::weak {
 
     }
 
+    bool WeakReaction::AtomicWeakRate::for_sparse_jac(
+        const size_t q,
+        const CppAD::vector<bool> &r,
+        CppAD::vector<bool> &s,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 2; // Number of inputs
+        constexpr size_t m = 2; // Number of outputs
 
+        CPPAD_ASSERT_KNOWN(r.size() == q * n, "AtomicWeakRate::for_sparse_jac: 'r' size is incorrect!");
+        CPPAD_ASSERT_KNOWN(s.size() == q * m, "AtomicWeakRate::for_sparse_jac: 's' size is incorrect!");
 
+        // Both outputs depend on both inputs
+        //  s[i + j*m] represents s(i,j) - output i, direction j
+        //  r[k + j*n] represents r(k,j) - input k, direction j
 
+        for (size_t j = 0; j < q; j++) {
+            // s(0,j) = r(0,j) || r(1,j) --- output 0 depends on both inputs
+            s[0 + j*m] = r[0 + j*n] || r[1 + j*n];
 
+            // s(1,j) = r(0,j) || r(1,j) --- output 1 depends on both inputs
+            s[1 + j*m] = r[0 + j*n] || r[1 + j*n];
+        }
 
+        return true;
+    }
 
+    bool WeakReaction::AtomicWeakRate::rev_sparse_jac(
+        const size_t q,
+        const CppAD::vector<bool> &rt,
+        CppAD::vector<bool> &st,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 2; // Number of inputs
+        constexpr size_t m = 2; // Number of outputs
 
+        CPPAD_ASSERT_KNOWN(rt.size() == q * m, "AtomicWeakRate::rev_sparse_jac: 'rt' size is incorrect!");
+        CPPAD_ASSERT_KNOWN(st.size() == q * n, "AtomicWeakRate::rev_sparse_jac: 'st' size is incorrect!");
+
+        for (size_t j = 0; j < q; j++) {
+            //st(0,j) = rt(0,j) || rt(1,j) --- input 0 affects both outputs
+            st[0 + j*n] = rt[0 + j*m] || rt[1 + j*m];
+
+            //st(1,j) = rt(0,j) || rt(1,j) --- input 1 affects both outputs
+            st[1 + j*n] = rt[0 + j*m] || rt[1 + j*m];
+        }
+
+        return true;
+    }
 }

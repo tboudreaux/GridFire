@@ -473,6 +473,20 @@ namespace gridfire::rates::weak {
                 CppAD::vector<std::set<size_t>>& st
             ) override;
 
+            bool for_sparse_jac(
+                size_t q,
+                const CppAD::vector<bool> &r,
+                CppAD::vector<bool> &s,
+                const CppAD::vector<double> &x
+            ) override;
+
+            bool rev_sparse_jac(
+                size_t q,
+                const CppAD::vector<bool> &rt,
+                CppAD::vector<bool> &st,
+                const CppAD::vector<double> &x
+            ) override;
+
         private:
             const WeakRateInterpolator& m_interpolator;
             const size_t m_a;
@@ -536,7 +550,7 @@ namespace gridfire::rates::weak {
 
         T rateConstant = static_cast<T>(0.0);
         if constexpr (std::is_same_v<T, CppAD::AD<double>>) { // Case where T is an AD type
-            std::vector<T> ax = {T9, log_rhoYe, mue};
+            std::vector<T> ax = {T9, log_rhoYe};
             std::vector<T> ay(2);
             m_atomic(ax, ay);
             rateConstant = static_cast<T>(ay[0]);

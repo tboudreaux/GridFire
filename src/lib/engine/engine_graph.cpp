@@ -1407,7 +1407,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::reverse(
-        size_t q,
+        const size_t q,
         const CppAD::vector<double> &tx,
         const CppAD::vector<double> &ty,
         CppAD::vector<double> &px,
@@ -1424,7 +1424,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::for_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t>> &r,
         CppAD::vector<std::set<size_t>> &s
     ) {
@@ -1433,7 +1433,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t>> &rt,
         CppAD::vector<std::set<size_t>> &st
     ) {
@@ -1442,7 +1442,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::for_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<bool> &r,
         CppAD::vector<bool> &s,
         const CppAD::vector<double> &x
@@ -1450,8 +1450,8 @@ namespace gridfire {
         constexpr size_t n = 1;
         constexpr size_t m = 1;
 
-        CPPAD_ASSERT_KNOWN(r.size() == n * q, "for_sparse_jac: 'r' size is incorrect.");
-        CPPAD_ASSERT_KNOWN(s.size() == m * q, "for_sparse_jac: 's' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(r.size() == n * q, "AtomicReverseRate::for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(s.size() == m * q, "AtomicReverseRate::for_sparse_jac: 's' size is incorrect.");
 
         // S = R
         for (size_t j = 0; j < q; j++) {
@@ -1463,7 +1463,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<bool> &rt,
         CppAD::vector<bool> &st,
         const CppAD::vector<double> &x
@@ -1471,8 +1471,8 @@ namespace gridfire {
         constexpr size_t n = 1;
         constexpr size_t m = 1;
 
-        CPPAD_ASSERT_KNOWN(rt.size() == n * q, "for_sparse_jac: 'r' size is incorrect.");
-        CPPAD_ASSERT_KNOWN(st.size() == m * q, "for_sparse_jac: 's' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(rt.size() == n * q, "AtomicReverseRate::for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(st.size() == m * q, "AtomicReverseRate::for_sparse_jac: 's' size is incorrect.");
 
         // st = rt
         for (size_t j = 0; j < q; j++) {
