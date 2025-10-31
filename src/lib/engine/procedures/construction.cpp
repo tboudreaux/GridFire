@@ -18,9 +18,10 @@
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
 namespace {
+    // Simple heuristic to check if a reaclib reaction is a strong or weak reaction
     bool reaclib_reaction_is_weak(const gridfire::reaction::Reaction& reaction) {
-        std::vector<fourdst::atomic::Species> reactants = reaction.reactants();
-        std::vector<fourdst::atomic::Species> products = reaction.products();
+        const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
+        const std::vector<fourdst::atomic::Species>& products = reaction.products();
 
         if (reactants.size() != products.size()) {
             return false;
@@ -69,7 +70,7 @@ namespace gridfire {
         // Clone all relevant REACLIB reactions into the master pool
         const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
         for (const auto& reaction : allReaclibReactions) {
-            if (reaction->is_reverse() == reverse) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
+            if (reaction->is_reverse() == reverse && !reaclib_reaction_is_weak(*reaction)) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
                 master_reaction_pool.add_reaction(reaction->clone());
             }
         }
