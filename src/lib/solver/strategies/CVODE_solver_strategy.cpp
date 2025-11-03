@@ -249,7 +249,7 @@ namespace gridfire::solver {
 
                 fourdst::composition::Composition temp_comp;
                 std::vector<double> mass_fractions;
-                size_t num_species_at_stop = m_engine.getNetworkSpecies().size();
+                long int num_species_at_stop = m_engine.getNetworkSpecies().size();
 
                 if (num_species_at_stop > m_Y->ops->nvgetlength(m_Y) - 1) {
                     LOG_ERROR(
@@ -263,7 +263,7 @@ namespace gridfire::solver {
 
                 mass_fractions.reserve(num_species_at_stop);
 
-                for (size_t i = 0; i < num_species_at_stop; ++i) {
+                for (long int i = 0; i < num_species_at_stop; ++i) {
                     const auto& species = m_engine.getNetworkSpecies()[i];
                     temp_comp.registerSpecies(species);
                     mass_fractions.push_back(y_data[i] * species.mass()); // Convert from molar abundance to mass fraction
@@ -442,7 +442,7 @@ namespace gridfire::solver {
         // For now assume that the energy derivatives wrt. abundances are zero
         // TODO: Need a better way to build this part of the output jacobian so it properly pushes the solver
         //       in the right direction. Currently we effectively are doing a fixed point iteration in energy space.
-        for (size_t i = 0; i < N; ++i) {
+        for (long int i = 1; i < N; ++i) {
             J_data[(N - 1) * N + i] = 0.0; // df(energy_dot)/df(y_i)
             J_data[i * N + (N - 1)] = 0.0; // df(f_i)/df(energy_dot)
         }

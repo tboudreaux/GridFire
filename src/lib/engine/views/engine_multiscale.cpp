@@ -1293,7 +1293,7 @@ namespace gridfire {
             if (status <= 0 || status >= 4) {
                 std::stringstream msg;
                 msg << "While working on QSE group with algebraic species: ";
-                int count = 0;
+                size_t count = 0;
                 for (const auto& species: algebraic_species) {
                     msg << species;
                     if (count < algebraic_species.size() - 1) {

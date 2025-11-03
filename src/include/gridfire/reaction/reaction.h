@@ -888,12 +888,13 @@ namespace gridfire::reaction {
 
         friend std::ostream& operator<<(std::ostream& os, const ReactionSet& rs) {
             os << "(ReactionSet: {";
-            int i = 0;
+            size_t i = 0;
             for (const auto& reaction : rs.m_reactions) {
                 os << *reaction;
                 if (i < rs.m_reactions.size() - 1) {
                     os << ", ";
                 }
+                ++i;
             }
             os << "})";
             return os;
