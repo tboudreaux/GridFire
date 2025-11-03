@@ -936,24 +936,30 @@ namespace gridfire {
             throw exceptions::StaleEngineError("Failed to get net species timescales due to stale engine state");
         }
         const std::unordered_map<Species, double>& destruction_timescales = destructionTimescale.value();
-        const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
+        [[maybe_unused]] const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
 
-
-        for (const auto& [species, destruction_timescale] : destruction_timescales) {
-            LOG_TRACE_L3(m_logger, "For {} destruction timescale is {} s", species.name(), destruction_timescale);
-        }
+        LOG_TRACE_L3(
+            m_logger,
+            "{}",
+            [&]() -> std::string {
+                std::stringstream ss;
+                for (const auto& [species, destruction_timescale] : destruction_timescales) {
+                    ss << std::format("For {} destruction timescale is {}s\n", species.name(), destruction_timescale);
+                }
+                return ss.str();
+            }()
+        );
 
         const auto& all_species = m_baseEngine.getNetworkSpecies();
 
         std::vector<std::pair<double, Species>> sorted_destruction_timescales;
         for (const auto & species : all_species) {
             double destruction_timescale = destruction_timescales.at(species);
-            double net_timescale = net_timescales.at(species);
             if (std::isfinite(destruction_timescale) && destruction_timescale > 0) {
-                LOG_TRACE_L3(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescale);
+                LOG_TRACE_L3(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescales.at(species));
                 sorted_destruction_timescales.emplace_back(destruction_timescale, species);
             } else {
-                LOG_TRACE_L3(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescale);
+                LOG_TRACE_L3(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescales.at(species));
             }
         }
 
@@ -1093,7 +1099,6 @@ namespace gridfire {
         validated_groups.reserve(candidate_groups.size());
         for (auto& group : candidate_groups) {
             constexpr double FLUX_RATIO_THRESHOLD = 5;
-            constexpr double LOG_FLOW_RATIO_THRESHOLD = 2;
 
             const std::unordered_set<Species> algebraic_group_members(
                 group.algebraic_species.begin(),
@@ -1109,10 +1114,6 @@ namespace gridfire {
             double coupling_flux = 0.0;
             double leakage_flux = 0.0;
 
-            // Values for validating if the group could physically be in equilibrium
-            double creationFlux = 0.0;
-            double destructionFlux = 0.0;
-
             for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
                 const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
                 if (flow == 0.0) {
@@ -1125,7 +1126,6 @@ namespace gridfire {
                         has_internal_algebraic_reactant = true;
                         LOG_TRACE_L3(m_logger, "Adjusting destruction flux (+= {} mol g^-1 s^-1) for QSEGroup due to reactant {} from reaction {}",
                             flow, reactant.name(), reaction->id());
-                        destructionFlux += flow;
                     }
 
                 }
@@ -1137,7 +1137,6 @@ namespace gridfire {
                         has_internal_algebraic_product = true;
                         LOG_TRACE_L3(m_logger, "Adjusting creation flux (+= {} mol g^-1 s^-1) for QSEGroup due to product {} from reaction {}",
                             flow, product.name(), reaction->id());
-                        creationFlux += flow;
                     }
                 }
 
@@ -1186,7 +1185,7 @@ namespace gridfire {
             if (coupling_flux / leakage_flux > FLUX_RATIO_THRESHOLD) {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is in equilibrium due to high coupling flux and balanced creation and destruction rate: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>, <creation: creation flux = {}, destruction flux = {}, ratio = {} order of mag (Threshold: {} order of mag)>",
+                    "Group containing {} is in equilibrium due to high coupling flux and balanced creation and destruction rate: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1202,18 +1201,14 @@ namespace gridfire {
                     leakage_flux,
                     coupling_flux,
                     coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD,
-                    std::log10(creationFlux),
-                    std::log10(destructionFlux),
-                    std::abs(std::log10(creationFlux) - std::log10(destructionFlux)),
-                    LOG_FLOW_RATIO_THRESHOLD
+                    FLUX_RATIO_THRESHOLD
                 );
                 validated_groups.emplace_back(group);
                 validated_groups.back().is_in_equilibrium = true;
             } else {
                 LOG_TRACE_L1(
                     m_logger,
-                    "Group containing {} is NOT in equilibrium: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>, <creation: creation flux = {}, destruction flux = {}, ratio = {} order of mag (Threshold: {} order of mag)>",
+                    "Group containing {} is NOT in equilibrium: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>",
                     [&]() -> std::string {
                         std::stringstream ss;
                         int count = 0;
@@ -1229,11 +1224,7 @@ namespace gridfire {
                     leakage_flux,
                     coupling_flux,
                     coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD,
-                    std::log10(creationFlux),
-                    std::log10(destructionFlux),
-                    std::abs(std::log10(creationFlux) -  std::log10(destructionFlux)),
-                    LOG_FLOW_RATIO_THRESHOLD
+                    FLUX_RATIO_THRESHOLD
                 );
                 invalidated_groups.emplace_back(group);
                 invalidated_groups.back().is_in_equilibrium = false;

@@ -779,6 +779,8 @@ namespace gridfire::reaction {
 
         void add_reaction(std::unique_ptr<Reaction>&& reaction);
 
+        void extend(const ReactionSet& other);
+
         /**
          * @brief Removes a reaction from the set.
          * @param reaction The Reaction to remove.

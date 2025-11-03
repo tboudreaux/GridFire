@@ -72,7 +72,7 @@ TEST_F(approx8Test, reaclib) {
     fourdst::composition::Composition composition;
     composition.registerSymbol(symbols, true);
     composition.setMassFraction(symbols, comp);
-    composition.finalize(true);
+    [[maybe_unused]] bool didFinalize = composition.finalize(true);
 
 
     NetIn netIn;

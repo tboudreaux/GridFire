@@ -23,30 +23,30 @@ PYBIND11_MODULE(gridfire, m) {
     auto typeMod  = m.def_submodule("type", "GridFire type bindings");
     register_type_bindings(typeMod);
 
-    auto partitionMod  = m.def_submodule("partition", "GridFire partition function bindings");
-    register_partition_bindings(partitionMod);
-
-    auto expectationMod  = m.def_submodule("expectations", "GridFire expectations bindings");
-    register_expectation_bindings(expectationMod);
-
-    auto reactionMod  = m.def_submodule("reaction", "GridFire reaction bindings");
-    register_reaction_bindings(reactionMod);
-
-    auto screeningMod  = m.def_submodule("screening", "GridFire plasma screening bindings");
-    register_screening_bindings(screeningMod);
-
-    auto ioMod  = m.def_submodule("io", "GridFire io bindings");
-    register_io_bindings(ioMod);
-
-    auto exceptionMod  = m.def_submodule("exceptions", "GridFire exceptions bindings");
-    register_exception_bindings(exceptionMod);
-
-    auto engineMod  = m.def_submodule("engine", "Engine and Engine View bindings");
-    register_engine_bindings(engineMod);
-
-    auto solverMod  = m.def_submodule("solver", "GridFire numerical solver bindings");
-    register_solver_bindings(solverMod);
-
-    auto utilsMod  = m.def_submodule("utils", "GridFire utility method bindings");
-    register_utils_bindings(utilsMod);
+    // auto partitionMod  = m.def_submodule("partition", "GridFire partition function bindings");
+    // register_partition_bindings(partitionMod);
+    //
+    // auto expectationMod  = m.def_submodule("expectations", "GridFire expectations bindings");
+    // register_expectation_bindings(expectationMod);
+    //
+    // auto reactionMod  = m.def_submodule("reaction", "GridFire reaction bindings");
+    // register_reaction_bindings(reactionMod);
+    //
+    // auto screeningMod  = m.def_submodule("screening", "GridFire plasma screening bindings");
+    // register_screening_bindings(screeningMod);
+    //
+    // auto ioMod  = m.def_submodule("io", "GridFire io bindings");
+    // register_io_bindings(ioMod);
+    //
+    // auto exceptionMod  = m.def_submodule("exceptions", "GridFire exceptions bindings");
+    // register_exception_bindings(exceptionMod);
+    //
+    // auto engineMod  = m.def_submodule("engine", "Engine and Engine View bindings");
+    // register_engine_bindings(engineMod);
+    //
+    // auto solverMod  = m.def_submodule("solver", "GridFire numerical solver bindings");
+    // register_solver_bindings(solverMod);
+    //
+    // auto utilsMod  = m.def_submodule("utils", "GridFire utility method bindings");
+    // register_utils_bindings(utilsMod);
 }

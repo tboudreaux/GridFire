@@ -397,6 +397,12 @@ namespace gridfire::reaction {
         m_reactionNameMap.emplace(std::move(reaction_id), new_index);
     }
 
+    void ReactionSet::extend(const ReactionSet &other) {
+        for (const auto& reaction : other.m_reactions) {
+            add_reaction(*reaction);
+        }
+    }
+
     void ReactionSet::remove_reaction(const Reaction& reaction) {
         const auto reaction_id = std::string(reaction.id());
         if (!m_reactionNameMap.contains(reaction_id)) {

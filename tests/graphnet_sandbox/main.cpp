@@ -115,7 +115,7 @@ int main(int argc, char* argv[]){
     // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 
-    GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder);
+    GraphEngine ReaclibEngine(composition, partitionFunction, NetworkBuildDepth::SecondOrder, NetworkConstructionFlags::STRONG );
 
     ReaclibEngine.setPrecomputation(true);
     ReaclibEngine.setUseReverseReactions(false);

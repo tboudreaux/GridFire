@@ -37,6 +37,86 @@ namespace {
 
         return true;
     }
+
+
+    gridfire::reaction::ReactionSet register_weak_reactions(
+        const std::optional<gridfire::rates::weak::WeakRateInterpolator> &weakInterpolator,
+        const gridfire::NetworkConstructionFlags reactionTypes
+    ) {
+        gridfire::reaction::ReactionSet weak_reaction_pool;
+        assert(weakInterpolator.has_value());
+        if (!has_flag(reactionTypes, gridfire::NetworkConstructionFlags::WEAK)) {
+            return weak_reaction_pool;
+        }
+
+        for (const auto& parent_species: weakInterpolator->available_isotopes()) {
+            std::expected<fourdst::atomic::Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
+                parent_species.a(),
+                parent_species.z() + 1
+            );
+            std::expected<fourdst::atomic::Species, fourdst::atomic::SpeciesErrorType> downProduct = fourdst::atomic::az_to_species(
+                parent_species.a(),
+                parent_species.z() - 1
+            );
+            if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
+                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::BETA_PLUS)) {
+                    weak_reaction_pool.add_reaction(
+                        std::make_unique<gridfire::rates::weak::WeakReaction>(
+                            parent_species,
+                            gridfire::rates::weak::WeakReactionType::BETA_PLUS_DECAY,
+                            *weakInterpolator
+                        )
+                    );
+                }
+                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::ELECTRON_CAPTURE)) {
+                    weak_reaction_pool.add_reaction(
+                        std::make_unique<gridfire::rates::weak::WeakReaction>(
+                            parent_species,
+                            gridfire::rates::weak::WeakReactionType::ELECTRON_CAPTURE,
+                            *weakInterpolator
+                        )
+                    );
+                }
+            }
+            if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
+                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::BETA_MINUS)) {
+                    weak_reaction_pool.add_reaction(
+                        std::make_unique<gridfire::rates::weak::WeakReaction>(
+                            parent_species,
+                            gridfire::rates::weak::WeakReactionType::BETA_MINUS_DECAY,
+                            *weakInterpolator
+                        )
+                    );
+                }
+                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::POSITRON_CAPTURE)) {
+                    weak_reaction_pool.add_reaction(
+                        std::make_unique<gridfire::rates::weak::WeakReaction>(
+                            parent_species,
+                            gridfire::rates::weak::WeakReactionType::POSITRON_CAPTURE,
+                            *weakInterpolator
+                        )
+                    );
+                }
+            }
+        }
+
+        return weak_reaction_pool;
+    }
+
+    gridfire::reaction::ReactionSet register_strong_reactions(
+        const gridfire::NetworkConstructionFlags reaction_types
+    ) {
+        gridfire::reaction::ReactionSet strong_reaction_pool;
+        if (has_flag(reaction_types, gridfire::NetworkConstructionFlags::STRONG)) {
+            const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
+            for (const auto& reaction : allReaclibReactions) {
+                if (!reaction->is_reverse() && !reaclib_reaction_is_weak(*reaction)) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
+                    strong_reaction_pool.add_reaction(reaction->clone());
+                }
+            }
+        }
+        return strong_reaction_pool;
+    }
 }
 
 namespace gridfire {
@@ -45,20 +125,26 @@ namespace gridfire {
     using fourdst::composition::Composition;
     using fourdst::atomic::Species;
 
-
     ReactionSet build_nuclear_network(
         const Composition& composition,
-        const rates::weak::WeakRateInterpolator& weakInterpolator,
+        const std::optional<rates::weak::WeakRateInterpolator> &weakInterpolator,
         BuildDepthType maxLayers,
-        bool reverse
+        NetworkConstructionFlags ReactionTypes
     ) {
+        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        LOG_INFO(logger, "Constructing network topology from reaction types : {}", NetworkConstructionFlagsToString(ReactionTypes));
+
+        if (ReactionTypes == NetworkConstructionFlags::NONE) {
+            LOG_ERROR(logger, "Reaction types is set to NONE. No reactions will be collected");
+            throw std::logic_error("Reaction types is set to NONE. No reactions will be collected");
+        }
+
         int depth;
         if (std::holds_alternative<NetworkBuildDepth>(maxLayers)) {
             depth = static_cast<int>(std::get<NetworkBuildDepth>(maxLayers));
         } else {
             depth = std::get<int>(maxLayers);
         }
-        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         if (depth == 0) {
             LOG_ERROR(logger, "Network build depth is set to 0. No reactions will be collected.");
             throw std::logic_error("Network build depth is set to 0. No reactions will be collected.");
@@ -68,56 +154,10 @@ namespace gridfire {
         ReactionSet master_reaction_pool;
 
         // Clone all relevant REACLIB reactions into the master pool
-        const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
-        for (const auto& reaction : allReaclibReactions) {
-            if (reaction->is_reverse() == reverse && !reaclib_reaction_is_weak(*reaction)) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
-                master_reaction_pool.add_reaction(reaction->clone());
-            }
-        }
+        master_reaction_pool.extend(register_strong_reactions(ReactionTypes));
 
-        // --- Clone all possible weak reactions into the master reaction pool ---
-        for (const auto& parent_species: weakInterpolator.available_isotopes()) {
-            std::expected<Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
-                parent_species.a(),
-                parent_species.z() + 1
-            );
-            std::expected<Species, fourdst::atomic::SpeciesErrorType> downProduct = fourdst::atomic::az_to_species(
-                parent_species.a(),
-                parent_species.z() - 1
-            );
-            if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::BETA_PLUS_DECAY,
-                        weakInterpolator
-                    )
-                );
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::ELECTRON_CAPTURE,
-                        weakInterpolator
-                    )
-                );
-            }
-            if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::BETA_MINUS_DECAY,
-                        weakInterpolator
-                    )
-                );
-                master_reaction_pool.add_reaction(
-                    std::make_unique<rates::weak::WeakReaction>(
-                        parent_species,
-                        rates::weak::WeakReactionType::POSITRON_CAPTURE,
-                        weakInterpolator
-                    )
-                );
-            }
-        } // TODO: Remove comments, weak reactions have been disabled for testing
+        // --- Clone all possible weak reactions into the master reaction pool if the construction function is told to use weak reactions ---
+        master_reaction_pool.extend(register_weak_reactions(weakInterpolator, ReactionTypes));
 
         // --- Step 2: Use non-owning raw pointers for the fast build algorithm ---
         std::vector<Reaction*> remainingReactions;
@@ -143,9 +183,9 @@ namespace gridfire {
         LOG_INFO(logger, "Starting network construction with {} available species.", availableSpecies.size());
 
         for (int layer = 0; layer < depth && !remainingReactions.empty(); ++layer) {
-            size_t collectedThisLayer = 0;
-            size_t collectedStrong = 0;
-            size_t collectedWeak = 0;
+            [[maybe_unused]] size_t collectedThisLayer = 0;
+            [[maybe_unused]] size_t collectedStrong = 0;
+            [[maybe_unused]] size_t collectedWeak = 0;
             LOG_TRACE_L1(logger, "Collecting reactions for layer {} with {} remaining reactions. Currently there are {} available species", layer, remainingReactions.size(), availableSpecies.size());
             std::vector<Reaction*> reactionsForNextPass;
             std::unordered_set<Species> newProductsThisLayer;
@@ -185,9 +225,9 @@ namespace gridfire {
                 break;
             }
 
-            size_t oldProductCount = availableSpecies.size();
+            [[maybe_unused]] size_t oldProductCount = availableSpecies.size();
             availableSpecies.insert(newProductsThisLayer.begin(), newProductsThisLayer.end());
-            size_t newProductCount = availableSpecies.size() - oldProductCount;
+            [[maybe_unused]] size_t newProductCount = availableSpecies.size() - oldProductCount;
             LOG_TRACE_L1(
                 logger,
                 "Layer {}: Collected {} new reactions ({} strong, {} weak). New products this layer: {}",

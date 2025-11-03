@@ -119,6 +119,13 @@ namespace gridfire {
             BuildDepthType buildDepth = NetworkBuildDepth::Full
         );
 
+        explicit GraphEngine(
+            const fourdst::composition::Composition &composition,
+            const partition::PartitionFunction& partitionFunction,
+            BuildDepthType buildDepth,
+            NetworkConstructionFlags reactionTypes
+        );
+
         /**
          * @brief Constructs a GraphEngine from a set of reactions.
          *

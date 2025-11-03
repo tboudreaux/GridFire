@@ -195,7 +195,8 @@ namespace gridfire::solver {
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
-            // log_step_diagnostics(user_data, false);
+            // log_step_diagnostics(user_data, true);
+            // exit(0);
             check_cvode_flag(flag, "CVode");
 
             long int n_steps;

@@ -40,9 +40,16 @@ namespace gridfire {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
         const partition::PartitionFunction& partitionFunction,
-        const BuildDepthType buildDepth) :
+        const BuildDepthType buildDepth
+    ) : GraphEngine(composition, partitionFunction, buildDepth, NetworkConstructionFlags::DEFAULT){}
+
+    GraphEngine::GraphEngine(
+        const fourdst::composition::Composition &composition,
+        const partition::PartitionFunction &partitionFunction,
+        const BuildDepthType buildDepth,
+        const NetworkConstructionFlags reactionTypes ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
-    m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, false)),
+    m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
     m_depth(buildDepth),
     m_partitionFunction(partitionFunction.clone())
     {
@@ -576,7 +583,7 @@ namespace gridfire {
     void GraphEngine::rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) {
         if (depth != m_depth) {
             m_depth = depth;
-            m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth, false);
+            m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth);
             m_jacobianMatrixState = JacobianMatrixState::STALE;
             syncInternalMaps(); // Resync internal maps after changing the depth
         } else {
