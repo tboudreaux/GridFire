@@ -40,16 +40,15 @@ namespace {
 
 
     gridfire::reaction::ReactionSet register_weak_reactions(
-        const std::optional<gridfire::rates::weak::WeakRateInterpolator> &weakInterpolator,
+        const gridfire::rates::weak::WeakRateInterpolator &weakInterpolator,
         const gridfire::NetworkConstructionFlags reactionTypes
     ) {
         gridfire::reaction::ReactionSet weak_reaction_pool;
-        assert(weakInterpolator.has_value());
         if (!has_flag(reactionTypes, gridfire::NetworkConstructionFlags::WEAK)) {
             return weak_reaction_pool;
         }
 
-        for (const auto& parent_species: weakInterpolator->available_isotopes()) {
+        for (const auto& parent_species: weakInterpolator.available_isotopes()) {
             std::expected<fourdst::atomic::Species, fourdst::atomic::SpeciesErrorType> upProduct = fourdst::atomic::az_to_species(
                 parent_species.a(),
                 parent_species.z() + 1
@@ -64,7 +63,7 @@ namespace {
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
                             gridfire::rates::weak::WeakReactionType::BETA_PLUS_DECAY,
-                            *weakInterpolator
+                            weakInterpolator
                         )
                     );
                 }
@@ -73,7 +72,7 @@ namespace {
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
                             gridfire::rates::weak::WeakReactionType::ELECTRON_CAPTURE,
-                            *weakInterpolator
+                            weakInterpolator
                         )
                     );
                 }
@@ -84,7 +83,7 @@ namespace {
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
                             gridfire::rates::weak::WeakReactionType::BETA_MINUS_DECAY,
-                            *weakInterpolator
+                            weakInterpolator
                         )
                     );
                 }
@@ -93,7 +92,7 @@ namespace {
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
                             gridfire::rates::weak::WeakReactionType::POSITRON_CAPTURE,
-                            *weakInterpolator
+                            weakInterpolator
                         )
                     );
                 }
@@ -127,7 +126,7 @@ namespace gridfire {
 
     ReactionSet build_nuclear_network(
         const Composition& composition,
-        const std::optional<rates::weak::WeakRateInterpolator> &weakInterpolator,
+        const rates::weak::WeakRateInterpolator &weakInterpolator,
         BuildDepthType maxLayers,
         NetworkConstructionFlags ReactionTypes
     ) {

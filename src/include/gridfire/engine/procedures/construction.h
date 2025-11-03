@@ -105,7 +105,7 @@ namespace gridfire {
      */
     reaction::ReactionSet build_nuclear_network(
         const fourdst::composition::Composition &composition,
-        const std::optional<rates::weak::WeakRateInterpolator> &weakInterpolator,
+        const rates::weak::WeakRateInterpolator &weakInterpolator,
         BuildDepthType maxLayers = NetworkBuildDepth::Full,
         NetworkConstructionFlags ReactionTypes = NetworkConstructionFlags::DEFAULT
     );

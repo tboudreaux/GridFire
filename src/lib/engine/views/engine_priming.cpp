@@ -55,9 +55,10 @@ namespace gridfire {
             }
         }
         if (primeReactions.empty()) {
-            LOG_ERROR(m_logger, "No priming reactions found for species '{}'.", primingSpecies.name());
-            m_logger->flush_log();
-            throw std::runtime_error("No priming reactions found for species '" + std::string(primingSpecies.name()) + "'.");
+            LOG_INFO(m_logger, "No priming reactions found for species '{}', returning empty peName set.", primingSpecies.name());
+            return std::vector<std::string>{};
+            // m_logger->flush_log();
+            // throw std::runtime_error("No priming reactions found for species '" + std::string(primingSpecies.name()) + "'.");
         }
         std::vector<std::string> primingReactionSet(primeReactions.begin(), primeReactions.end());
         // LOG_INFO(m_logger, "Constructed priming reaction set with {} reactions for species '{}'.", primingReactionSet.size(), primingSpecies.name());
