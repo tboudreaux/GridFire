@@ -22,9 +22,13 @@ namespace gridfire {
         ELECTRON_CAPTURE = 1 << 3, // 8
         POSITRON_CAPTURE = 1 << 4, // 16
 
-        WEAK = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE,
-        DEFAULT = STRONG,
-        ALL = STRONG | WEAK
+        REACLIB_WEAK = 1 << 5,
+
+        WRL_WEAK = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE,
+        REACLIB = STRONG | REACLIB_WEAK,
+        DEFAULT = REACLIB,
+
+        ALL = STRONG | WRL_WEAK
     };
 
     constexpr auto to_underlying(NetworkConstructionFlags f) noexcept {
@@ -45,12 +49,13 @@ namespace gridfire {
 
     inline std::string NetworkConstructionFlagsToString(NetworkConstructionFlags flags) {
         std::stringstream ss;
-        constexpr std::array<NetworkConstructionFlags, 5> bases_flags_array = {
+        constexpr std::array<NetworkConstructionFlags, 6> bases_flags_array = {
             NetworkConstructionFlags::STRONG,
             NetworkConstructionFlags::BETA_MINUS,
             NetworkConstructionFlags::BETA_PLUS,
             NetworkConstructionFlags::ELECTRON_CAPTURE,
-            NetworkConstructionFlags::POSITRON_CAPTURE
+            NetworkConstructionFlags::POSITRON_CAPTURE,
+            NetworkConstructionFlags::REACLIB_WEAK
         };
 
         const std::unordered_map<NetworkConstructionFlags, std::string> bases_string_map = {
@@ -58,7 +63,8 @@ namespace gridfire {
             {NetworkConstructionFlags::BETA_MINUS, "BetaMinus"},
             {NetworkConstructionFlags::BETA_PLUS, "BetaPlus"},
             {NetworkConstructionFlags::ELECTRON_CAPTURE, "ElectronCapture"},
-            {NetworkConstructionFlags::POSITRON_CAPTURE, "PositronCapture"}
+            {NetworkConstructionFlags::POSITRON_CAPTURE, "PositronCapture"},
+            {NetworkConstructionFlags::REACLIB_WEAK, "ReaclibWeak"}
         };
 
         size_t i = 0;

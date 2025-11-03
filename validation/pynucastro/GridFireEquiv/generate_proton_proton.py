@@ -1,7 +1,6 @@
 import pynucastro as pyna
 
 from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import DirectNetworkSolver
 from gridfire.type import NetIn
 
 from fourdst.composition import Composition
@@ -19,7 +18,7 @@ print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
 
 netIn = NetIn()
 netIn.composition = comp
-netIn.temperature = 1.5e7
+netIn.temperature = 1e7
 netIn.density = 1.6e2
 netIn.tMax = 1e-9
 netIn.dt0 = 1e-12

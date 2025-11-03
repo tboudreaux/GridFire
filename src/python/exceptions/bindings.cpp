@@ -45,14 +45,10 @@ void register_exception_bindings(const py::module &m) {
 
     py::register_exception<gridfire::exceptions::JacobianError>(m, "JacobianError", m.attr("GridFireEngineError"));
 
-    py::register_exception<gridfire::exceptions::StaleJacobianError>(m, "StaleJacobianError", m.attr("JacobianEngineError"));
-    py::register_exception<gridfire::exceptions::UninitializedJacobianError>(m, "UninitializedJacobianError", m.attr("JacobianEngineError"));
-    py::register_exception<gridfire::exceptions::UnknownJacobianError>(m, "UnknownJacobianError", m.attr("JacobianEngineError"));
+    py::register_exception<gridfire::exceptions::StaleJacobianError>(m, "StaleJacobianError", m.attr("JacobianError"));
+    py::register_exception<gridfire::exceptions::UninitializedJacobianError>(m, "UninitializedJacobianError", m.attr("JacobianError"));
+    py::register_exception<gridfire::exceptions::UnknownJacobianError>(m, "UnknownJacobianError", m.attr("JacobianError"));
 
     py::register_exception<gridfire::exceptions::UtilityError>(m, "UtilityError");
     py::register_exception<gridfire::exceptions::HashingError>(m, "HashingError", m.attr("UtilityError"));
-
-
-
-
 }

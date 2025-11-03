@@ -197,11 +197,11 @@ namespace {
 }
 
 void register_engine_bindings(py::module &m) {
+    register_engine_type_bindings(m);
+    register_engine_procedural_bindings(m);
     register_base_engine_bindings(m);
     register_engine_view_bindings(m);
     register_engine_diagnostic_bindings(m);
-    register_engine_procedural_bindings(m);
-    register_engine_type_bindings(m);
 }
 
 void register_base_engine_bindings(const pybind11::module &m) {

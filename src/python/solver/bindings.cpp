@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h> // needed for std::function
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
 #include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 #include <pybind11/numpy.h>

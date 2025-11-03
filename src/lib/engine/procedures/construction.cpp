@@ -44,7 +44,7 @@ namespace {
         const gridfire::NetworkConstructionFlags reactionTypes
     ) {
         gridfire::reaction::ReactionSet weak_reaction_pool;
-        if (!has_flag(reactionTypes, gridfire::NetworkConstructionFlags::WEAK)) {
+        if (!has_flag(reactionTypes, gridfire::NetworkConstructionFlags::WRL_WEAK)) {
             return weak_reaction_pool;
         }
 
@@ -109,12 +109,37 @@ namespace {
         if (has_flag(reaction_types, gridfire::NetworkConstructionFlags::STRONG)) {
             const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
             for (const auto& reaction : allReaclibReactions) {
-                if (!reaction->is_reverse() && !reaclib_reaction_is_weak(*reaction)) { // Only add reactions of the correct direction and which are not weak. Weak reactions are handled from the WRL separately which provides much higher quality weak reactions than reaclib does
+                const bool isWeakReaction = reaclib_reaction_is_weak(*reaction);
+                const bool okayToUseReaclibWeakReaction = has_flag(reaction_types, gridfire::NetworkConstructionFlags::REACLIB_WEAK);
+
+                const bool reaclibWeakOkay = !isWeakReaction || okayToUseReaclibWeakReaction;
+                if (!reaction->is_reverse() && reaclibWeakOkay) {
                     strong_reaction_pool.add_reaction(reaction->clone());
                 }
             }
         }
         return strong_reaction_pool;
+    }
+
+    bool validate_unique_weak_set(gridfire::NetworkConstructionFlags flag) {
+        // This method ensures that weak reactions will only be fetched from either reaclib or the weak reaction library (WRL)
+        // but not both
+        std::array<gridfire::NetworkConstructionFlags, 4> WRL_Flags = {
+            gridfire::NetworkConstructionFlags::BETA_PLUS,
+            gridfire::NetworkConstructionFlags::ELECTRON_CAPTURE,
+            gridfire::NetworkConstructionFlags::POSITRON_CAPTURE,
+            gridfire::NetworkConstructionFlags::BETA_MINUS
+        };
+
+        if (!has_flag(flag, gridfire::NetworkConstructionFlags::REACLIB_WEAK)) {
+            return true;
+        }
+        for (const auto& WRLReactionType : WRL_Flags) {
+            if (has_flag(flag, WRLReactionType)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -131,6 +156,11 @@ namespace gridfire {
         NetworkConstructionFlags ReactionTypes
     ) {
         auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        if (!validate_unique_weak_set(ReactionTypes)) {
+            std::string msg = "Cannot construct network since weak reactions from both reaclib and WRL were requested. Only one weak rate source may be used. In network construction this likely means that the flag NetworkConstructionFlags::REACLIB_WEAK was used along with one of the weak flags (BETA_PLUS, BETA_MINUS, ELECTRON_CAPTURE, POSITRON_CAPTURE). These flags are for WRL rates and may not be used in conjunction with reaclib weak rates.";
+            LOG_ERROR(logger, "{}", msg);
+            throw std::logic_error(msg);
+        }
         LOG_INFO(logger, "Constructing network topology from reaction types : {}", NetworkConstructionFlagsToString(ReactionTypes));
 
         if (ReactionTypes == NetworkConstructionFlags::NONE) {
