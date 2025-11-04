@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
     netIn.energy = 0;
 
     // TODO: There is a bug when I get to very low concentrations of hydrogen where the solver will crash. I suspect this can be resolved with triggers
-    netIn.tMax = 3e16;
+    netIn.tMax = 3e17;
     // netIn.tMax = 1e-14;
     netIn.dt0 = 1e-12;
 
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]){
 
     solver::CVODESolverStrategy solver(adaptiveView);
     NetOut netOut;
-    netOut = solver.evaluate(netIn);
+    netOut = solver.evaluate(netIn, true);
 
     std::cout << "Initial H-1: " << netIn.composition.getMassFraction("H-1") << std::endl;
     std::cout << "NetOut H-1: " << netOut.composition.getMassFraction("H-1") << std::endl;
