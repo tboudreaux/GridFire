@@ -46,6 +46,12 @@ namespace gridfire::trigger::solver::CVODE {
         }
     }
 
+    void SimulationTimeTrigger::step(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) {
+        // --- SimulationTimeTrigger::step does nothing and is intentionally left blank --- //
+    }
+
     void SimulationTimeTrigger::reset() {
         m_misses = 0;
         m_hits = 0;
@@ -111,6 +117,12 @@ namespace gridfire::trigger::solver::CVODE {
 
     void OffDiagonalTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
         m_updates++;
+    }
+
+    void OffDiagonalTrigger::step(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) {
+        // --- OffDiagonalTrigger::step does nothing and is intentionally left blank --- //
     }
 
     void OffDiagonalTrigger::reset() {
@@ -199,6 +211,12 @@ namespace gridfire::trigger::solver::CVODE {
         m_updates++;
     }
 
+    void TimestepCollapseTrigger::step(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) {
+        // --- TimestepCollapseTrigger::step does nothing and is intentionally left blank --- //
+    }
+
     void TimestepCollapseTrigger::reset() {
         m_misses = 0;
         m_hits = 0;
@@ -239,6 +257,119 @@ namespace gridfire::trigger::solver::CVODE {
         return m_misses;
     }
 
+    ConvergenceFailureTrigger::ConvergenceFailureTrigger(
+        const size_t totalFailures,
+        const float relativeFailureRate,
+        const size_t windowSize
+    ) :
+    m_totalFailures(totalFailures),
+    m_relativeFailureRate(relativeFailureRate),
+    m_windowSize(windowSize) {}
+
+    bool ConvergenceFailureTrigger::check(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) const {
+        if (m_window.size() != m_windowSize) {
+            m_misses++;
+            return false; // Short circuit if not enough data has been seen yet.
+        }
+        if (abs_failure(ctx) || rel_failure(ctx)) {
+            m_hits++;
+            return true;
+        }
+        m_misses++;
+        return false;
+    }
+
+    void ConvergenceFailureTrigger::update(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) {
+        // --- ConvergenceFailureTrigger::update does nothing and is intentionally left blank --- //
+    }
+
+    void ConvergenceFailureTrigger::step(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) {
+        push_to_fixed_deque(m_window, ctx.currentConvergenceFailures, m_windowSize);
+        m_updates++;
+    }
+
+    void ConvergenceFailureTrigger::reset() {
+        m_window.clear();
+        m_hits = 0;
+        m_misses = 0;
+        m_updates = 0;
+        m_resets++;
+    }
+
+    std::string ConvergenceFailureTrigger::name() const {
+        return "ConvergenceFailureTrigger";
+    }
+
+    std::string ConvergenceFailureTrigger::describe() const {
+        return "ConvergenceFailureTrigger(abs_failure_threshold=" + std::to_string(m_totalFailures) + ", rel_failure_threshold=" + std::to_string(m_relativeFailureRate) + ", windowSize=" + std::to_string(m_windowSize) + ")";
+    }
+
+    TriggerResult ConvergenceFailureTrigger::why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+        TriggerResult result;
+        result.name = name();
+
+        if (m_window.size() != m_windowSize) {
+            result.value = false;
+            result.description = "Not triggered because trigger has not seen sufficient data to build up window of size " + std::to_string(m_windowSize);
+            return result;
+        }
+        if (abs_failure(ctx)) {
+            result.value = true;
+            result.description = std::format("Triggered because number of convergence failures ({}) exceeded absolute tolerances", ctx.currentConvergenceFailures);
+            return result;
+        }
+        if (rel_failure(ctx)) {
+            result.value = true;
+            result.description = std::format("Triggered because number of convergence failures - the mean ({} - {}) exceeded tolerances relative to mean ({} * {})", ctx.currentConvergenceFailures, current_mean(), current_mean(), m_relativeFailureRate);
+            return result;
+        }
+
+        result.value = false;
+        result.description = "Not triggered because total number of convergence failures and relative number of convergence triggers did not grow sufficiently";
+        return result;
+    }
+
+    size_t ConvergenceFailureTrigger::numTriggers() const {
+        return m_hits;
+    }
+
+    size_t ConvergenceFailureTrigger::numMisses() const {
+        return m_misses;
+    }
+
+    float ConvergenceFailureTrigger::current_mean() const {
+        float acc = 0;
+        for (const auto nlcfails: m_window) {
+            acc += nlcfails;
+        }
+        return acc / m_windowSize;
+    }
+
+    bool ConvergenceFailureTrigger::abs_failure(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) const {
+        if (ctx.currentConvergenceFailures > m_totalFailures) {
+            return true;
+        }
+        return false;
+    }
+
+    bool ConvergenceFailureTrigger::rel_failure(
+        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+    ) const {
+        const float mean = current_mean();
+        if (ctx.currentConvergenceFailures - mean  > m_relativeFailureRate * mean) {
+            return true;
+        }
+        return false;
+    }
+
     std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
         const double simulationTimeInterval,
         const double offDiagonalThreshold,
@@ -253,16 +384,19 @@ namespace gridfire::trigger::solver::CVODE {
         // 1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
         // 2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
         // 3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
+        // 4. OR if the number of convergence failures begins to grow
 
         // TODO: This logic likely needs to be revisited; however, for now it is easy enough to change and test and it works reasonably well
         auto simulationTimeTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<SimulationTimeTrigger>(simulationTimeInterval), 1000);
         auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(offDiagonalThreshold);
         auto timestepGrowthTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<TimestepCollapseTrigger>(timestepGrowthThreshold, timestepGrowthRelative, timestepGrowthWindowSize), 10);
+        auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(5, 1.0f, 10);
 
         // Combine the triggers using logical OR
         auto orTriggerA = std::make_unique<OrTrigger<ctx_t>>(std::move(simulationTimeTrigger), std::move(offDiagTrigger));
         auto orTriggerB = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerA), std::move(timestepGrowthTrigger));
+        auto orTriggerC = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerB), std::move(convergenceFailureTrigger));
 
-        return orTriggerB;
+        return orTriggerC;
     }
 }

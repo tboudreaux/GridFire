@@ -52,6 +52,8 @@ namespace gridfire::trigger {
          * @brief Update both sub-triggers and increment update counter.
          */
         void update(const TriggerContextStruct& ctx) override;
+
+        void step(const TriggerContextStruct& ctx) override;
         /**
          * @brief Reset both sub-triggers and local counters.
          */
@@ -84,6 +86,7 @@ namespace gridfire::trigger {
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
         mutable size_t m_resets = 0;
+        mutable size_t m_steps = 0;
     };
 
     /**
@@ -101,6 +104,7 @@ namespace gridfire::trigger {
 
         bool check(const TriggerContextStruct& ctx) const override;
         void update(const TriggerContextStruct& ctx) override;
+        void step(const TriggerContextStruct& ctx) override;
         void reset() override;
         std::string name() const override;
         TriggerResult why(const TriggerContextStruct& ctx) const override;
@@ -116,6 +120,7 @@ namespace gridfire::trigger {
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
         mutable size_t m_resets = 0;
+        mutable size_t m_steps = 0;
     };
 
     /**
@@ -133,6 +138,7 @@ namespace gridfire::trigger {
 
         bool check(const TriggerContextStruct& ctx) const override;
         void update(const TriggerContextStruct& ctx) override;
+        void step(const TriggerContextStruct& ctx) override;
         void reset() override;
 
         std::string name() const override;
@@ -148,7 +154,7 @@ namespace gridfire::trigger {
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
         mutable size_t m_resets = 0;
-
+        mutable size_t m_steps = 0;
     };
 
     /**
@@ -168,6 +174,7 @@ namespace gridfire::trigger {
 
         bool check(const TriggerContextStruct& ctx) const override;
         void update(const TriggerContextStruct& ctx) override;
+        void step(const TriggerContextStruct& ctx) override;
         void reset() override;
 
         std::string name() const override;
@@ -185,6 +192,7 @@ namespace gridfire::trigger {
         mutable size_t m_misses = 0;
         mutable size_t m_updates = 0;
         mutable size_t m_resets = 0;
+        mutable size_t m_steps = 0;
     };
 
     ///////////////////////////////
@@ -214,6 +222,13 @@ namespace gridfire::trigger {
         m_A->update(ctx);
         m_B->update(ctx);
         m_updates++;
+    }
+
+    template <typename TriggerContextStruct>
+    void AndTrigger<TriggerContextStruct>::step(const TriggerContextStruct &ctx) {
+        m_A->step(ctx);
+        m_B->step(ctx);
+        m_steps++;
     }
 
     template <typename TriggerContextStruct>
@@ -302,6 +317,13 @@ namespace gridfire::trigger {
     }
 
     template <typename TriggerContextStruct>
+    void OrTrigger<TriggerContextStruct>::step(const TriggerContextStruct &ctx) {
+        m_A->step(ctx);
+        m_B->step(ctx);
+        m_steps++;
+    }
+
+    template <typename TriggerContextStruct>
     void OrTrigger<TriggerContextStruct>::reset() {
         m_A->reset();
         m_B->reset();
@@ -384,6 +406,12 @@ namespace gridfire::trigger {
     }
 
     template <typename TriggerContextStruct>
+    void NotTrigger<TriggerContextStruct>::step(const TriggerContextStruct &ctx) {
+        m_A->step(ctx);
+        m_steps++;
+    }
+
+    template <typename TriggerContextStruct>
     void NotTrigger<TriggerContextStruct>::reset() {
         m_A->reset();
         m_resets++;
@@ -458,6 +486,12 @@ namespace gridfire::trigger {
     }
 
     template <typename TriggerContextStruct>
+    void EveryNthTrigger<TriggerContextStruct>::step(const TriggerContextStruct &ctx) {
+        m_A->step(ctx);
+        m_steps++;
+    }
+
+    template <typename TriggerContextStruct>
     void EveryNthTrigger<TriggerContextStruct>::reset() {
         m_A->reset();
         m_resets++;
@@ -508,7 +542,4 @@ namespace gridfire::trigger {
     size_t EveryNthTrigger<TriggerContextStruct>::numMisses() const {
         return m_misses;
     }
-
-
-
 }

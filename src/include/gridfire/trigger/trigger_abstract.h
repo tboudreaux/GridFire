@@ -42,6 +42,12 @@ namespace gridfire::trigger {
          * @param ctx Context snapshot used to update state.
          */
         virtual void update(const TriggerContextStruct& ctx) = 0;
+
+        /**
+         * @brief similar to update but intended to be run on every step not just those where the trigger triggered
+         * @param ctx Context snapshot used to update state.
+         */
+        virtual void step(const TriggerContextStruct& ctx) = 0;
         /**
          * @brief Reset internal state and diagnostics counters.
          */

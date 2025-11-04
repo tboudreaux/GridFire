@@ -175,14 +175,24 @@ namespace gridfire::solver {
             const size_t num_steps;         ///< Number of CVODE steps taken so far.
             const DynamicEngine& engine;    ///< Reference to the engine.
             const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
+            const size_t currentConvergenceFailures; ///< Total number of convergence failures
+            const size_t currentNonlinearIterations; ///< Total number of non linear iterations
 
             /**
              * @brief Construct a context snapshot.
              */
             TimestepContext(
-                double t, const N_Vector& state, double dt, double last_step_time,
-                double t9, double rho, size_t num_steps, const DynamicEngine& engine,
-                const std::vector<fourdst::atomic::Species>& networkSpecies
+                double t,
+                const N_Vector& state,
+                double dt,
+                double last_step_time,
+                double t9,
+                double rho,
+                size_t num_steps,
+                const DynamicEngine& engine,
+                const std::vector<fourdst::atomic::Species>& networkSpecies,
+                size_t currentConvergenceFailure,
+                size_t currentNonlinearIterations
             );
 
             /**
@@ -281,7 +291,7 @@ namespace gridfire::solver {
         SUNLinearSolver m_LS = nullptr;   ///< Dense linear solver.
 
 
-        TimestepCallback m_callback;      ///< Optional per-step callback.
+        std::optional<TimestepCallback> m_callback;      ///< Optional per-step callback.
         int m_num_steps = 0;              ///< CVODE step counter (used for diagnostics and triggers).
 
         bool m_stdout_logging_enabled = true; ///< If true, print per-step logs and use CV_ONE_STEP.

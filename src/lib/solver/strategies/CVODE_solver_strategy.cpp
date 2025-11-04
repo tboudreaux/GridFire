@@ -90,7 +90,9 @@ namespace gridfire::solver {
         const double rho,
         const size_t num_steps,
         const DynamicEngine &engine,
-        const std::vector<fourdst::atomic::Species> &networkSpecies
+        const std::vector<fourdst::atomic::Species> &networkSpecies,
+        const size_t currentConvergenceFailure,
+        const size_t currentNonlinearIterations
     ) :
     t(t),
     state(state),
@@ -100,7 +102,9 @@ namespace gridfire::solver {
     rho(rho),
     num_steps(num_steps),
     engine(engine),
-    networkSpecies(networkSpecies)
+    networkSpecies(networkSpecies),
+    currentConvergenceFailures(currentConvergenceFailure),
+    currentNonlinearIterations(currentNonlinearIterations)
     {}
 
     std::vector<std::tuple<std::string, std::string>> CVODESolverStrategy::TimestepContext::describe() const {
@@ -114,6 +118,8 @@ namespace gridfire::solver {
         description.emplace_back("num_steps", "Number of Steps Taken So Far");
         description.emplace_back("engine", "Reference to the DynamicEngine");
         description.emplace_back("networkSpecies", "Reference to the list of network species");
+        description.emplace_back("currentConvergenceFailures", "Number of convergence failures for the current step");
+        description.emplace_back("currentNonLinearIterations", "Number of nonlinear iterations for the current step");
         return description;
     }
 
@@ -179,7 +185,16 @@ namespace gridfire::solver {
         [[maybe_unused]] double last_callback_time = 0;
         m_num_steps = 0;
         double accumulated_energy = 0.0;
-        int total_update_stages_triggered = 0;
+
+        size_t total_convergence_failures = 0;
+        size_t total_nonlinear_iterations = 0;
+        size_t total_update_stages_triggered = 0;
+
+        size_t prev_nonlinear_iterations = 0;
+        size_t prev_convergence_failures = 0;
+
+        size_t total_steps = 0;
+
         LOG_TRACE_L1(m_logger, "Starting CVODE iteration");
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;
@@ -209,28 +224,44 @@ namespace gridfire::solver {
 
             sunrealtype* y_data = N_VGetArrayPointer(m_Y);
             const double current_energy = y_data[numSpecies]; // Specific energy rate
+            size_t iter_diff = (total_nonlinear_iterations + nliters) - prev_nonlinear_iterations;
+            size_t convFail_diff = (total_convergence_failures + nlcfails) - prev_convergence_failures;
             if (m_stdout_logging_enabled) {
                 std::cout << std::scientific << std::setprecision(3)
-                    << "Step: " << std::setw(6) << n_steps
-                    << " | Time: " << current_time << " [s]"
-                    << " | Last Step Size: " << last_step_size
-                    << " | Current Lightest Molar Abundance: " << y_data[0] << " [mol/g]"
-                    << " | Accumulated Energy: " << current_energy << " [erg/g]"
-                    << " | Total Non Linear Iterations: " << std::setw(2) << nliters
-                    << " | Total Convergence Failures: " << std::setw(2) << nlcfails
+                    << "Step: " << std::setw(6) << total_steps + n_steps
+                    << " | Updates: " << std::setw(3) << total_update_stages_triggered
+                    << " | Epoch Steps: " << std::setw(4) << n_steps
+                    << " | t: " << current_time << " [s]"
+                    << " | dt: " << last_step_size << " [s]"
+                    // << " | Molar Abundance (min a): " << y_data[0] << " [mol/g]"
+                    // << " | Accumulated Energy: " << current_energy << " [erg/g]"
+                    << " | Iterations: " << std::setw(6) << total_nonlinear_iterations + nliters
+                    << " (+" << std::setw(2) << iter_diff << ")"
+                    << " | Total Convergence Failures: " << std::setw(2) << total_convergence_failures + nlcfails
+                    << " (+" << std::setw(2) << convFail_diff << ")"
                     << "\n";
             }
 
             auto ctx = TimestepContext(
                 current_time,
-                reinterpret_cast<N_Vector>(y_data),
+                m_Y,
                 last_step_size,
                 last_callback_time,
                 T9,
                 netIn.density,
                 n_steps,
                 m_engine,
-                m_engine.getNetworkSpecies());
+                m_engine.getNetworkSpecies(),
+                convFail_diff,
+                iter_diff);
+
+            prev_nonlinear_iterations = nliters + total_nonlinear_iterations;
+            prev_convergence_failures = nlcfails + total_convergence_failures;
+
+            if (m_callback.has_value()) {
+                m_callback.value()(ctx);
+            }
+            trigger->step(ctx);
 
             if (trigger->check(ctx)) {
                 if (m_stdout_logging_enabled && displayTrigger) {
@@ -238,6 +269,10 @@ namespace gridfire::solver {
                 }
                 trigger->update(ctx);
                 accumulated_energy += current_energy; // Add the specific energy rate to the accumulated energy
+                total_nonlinear_iterations += nliters;
+                total_convergence_failures += nlcfails;
+                total_steps += n_steps;
+
                 LOG_INFO(
                     m_logger,
                     "Engine Update Triggered at time {} ({} update{} triggered). Current total specific energy {} [erg/g]",

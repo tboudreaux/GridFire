@@ -71,6 +71,8 @@ namespace gridfire::trigger::solver::CVODE {
          * (ctx.t - last_trigger_time) - interval for diagnostics.
          */
         void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+
+        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
         /**
          * @brief Reset counters and last trigger bookkeeping (time and delta) to zero.
          */
@@ -149,6 +151,7 @@ namespace gridfire::trigger::solver::CVODE {
          * @param ctx CVODE timestep context (unused except for symmetry with interface).
          */
         void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
         /** @brief Reset counters to zero. */
         void reset() override;
 
@@ -233,6 +236,7 @@ namespace gridfire::trigger::solver::CVODE {
          * @param ctx CVODE timestep context.
          */
         void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
         /** @brief Reset counters and clear the dt window. */
         void reset() override;
 
@@ -266,6 +270,50 @@ namespace gridfire::trigger::solver::CVODE {
 
         /** @brief Sliding window of recent timesteps (most recent at back). */
         std::deque<double> m_timestep_window;
+    };
+
+    class ConvergenceFailureTrigger final : public Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext> {
+    public:
+        explicit ConvergenceFailureTrigger(size_t totalFailures, float relativeFailureRate, size_t windowSize);
+
+        bool check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+
+        void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+
+        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+
+        void reset() override;
+
+        [[nodiscard]] std::string name() const override;
+
+        [[nodiscard]] std::string describe() const override;
+
+        [[nodiscard]] TriggerResult why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+
+        [[nodiscard]] size_t numTriggers() const override;
+
+        [[nodiscard]] size_t numMisses() const override;
+
+    private:
+        /** @brief Logger used for trace/error diagnostics. */
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        /** @name Diagnostics counters */
+        ///@{
+        mutable size_t m_hits = 0;
+        mutable size_t m_misses = 0;
+        mutable size_t m_updates = 0;
+        mutable size_t m_resets = 0;
+
+        size_t m_totalFailures;
+        float m_relativeFailureRate;
+        size_t m_windowSize;
+
+        std::deque<size_t> m_window;
+
+    private:
+        float current_mean() const;
+        bool abs_failure(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) const;
+        bool rel_failure(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) const;
     };
 
     /**
