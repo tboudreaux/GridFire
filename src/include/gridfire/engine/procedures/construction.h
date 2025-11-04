@@ -25,7 +25,10 @@ namespace gridfire {
         REACLIB_WEAK = 1 << 5,
 
         WRL_WEAK = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE,
+
         REACLIB = STRONG | REACLIB_WEAK,
+
+        // Currently we default to just reaclib reactions but include both their strong and weak set
         DEFAULT = REACLIB,
 
         ALL = STRONG | WRL_WEAK
