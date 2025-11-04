@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -112,6 +112,12 @@ $(function(){initNavTree('structgridfire_1_1_multiscale_partitioning_engine_view
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aa47f2a4d1f1cdb599382d4a43f92fe7c" id="r_aa47f2a4d1f1cdb599382d4a43f92fe7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa47f2a4d1f1cdb599382d4a43f92fe7c">removeSpecies</a> (const fourdst::atomic::Species &amp;species)</td></tr>
+<tr class="separator:aa47f2a4d1f1cdb599382d4a43f92fe7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae44fee7c866646095a6eda15b01adb21" id="r_ae44fee7c866646095a6eda15b01adb21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae44fee7c866646095a6eda15b01adb21">addSpeciesToAlgebraic</a> (const fourdst::atomic::Species &amp;species)</td></tr>
+<tr class="separator:ae44fee7c866646095a6eda15b01adb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3e62337397d603302305ca6412db02c" id="r_af3e62337397d603302305ca6412db02c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3e62337397d603302305ca6412db02c">addSpeciesToSeed</a> (const fourdst::atomic::Species &amp;species)</td></tr>
+<tr class="separator:af3e62337397d603302305ca6412db02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d09ce96d0d7cfe8f0aeb01f22f07a06" id="r_a2d09ce96d0d7cfe8f0aeb01f22f07a06"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d09ce96d0d7cfe8f0aeb01f22f07a06">operator&lt;</a> (const <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &amp;other) const</td></tr>
 <tr class="memdesc:a2d09ce96d0d7cfe8f0aeb01f22f07a06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Less-than operator for <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html" title="Struct representing a QSE group.">QSEGroup</a>, used for sorting.  <br /></td></tr>
 <tr class="separator:a2d09ce96d0d7cfe8f0aeb01f22f07a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,6 +152,40 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p>Struct representing a QSE group. </p>
 <dl class="section user"><dt>Purpose</dt><dd>A container to hold all information about a set of species that are potentially in quasi-steady-state equilibrium with each other. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae44fee7c866646095a6eda15b01adb21" name="ae44fee7c866646095a6eda15b01adb21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae44fee7c866646095a6eda15b01adb21">&#9670;&#160;</a></span>addSpeciesToAlgebraic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::QSEGroup::addSpeciesToAlgebraic </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af3e62337397d603302305ca6412db02c" name="af3e62337397d603302305ca6412db02c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3e62337397d603302305ca6412db02c">&#9670;&#160;</a></span>addSpeciesToSeed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::QSEGroup::addSpeciesToSeed </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac81f994476d580a92686e7f84b726c2a" name="ac81f994476d580a92686e7f84b726c2a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac81f994476d580a92686e7f84b726c2a">&#9670;&#160;</a></span>operator!=()</h2>
 
@@ -247,6 +287,23 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if this group's mean timescale is greater than the other's. </dd></dl>
+
+</div>
+</div>
+<a id="aa47f2a4d1f1cdb599382d4a43f92fe7c" name="aa47f2a4d1f1cdb599382d4a43f92fe7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa47f2a4d1f1cdb599382d4a43f92fe7c">&#9670;&#160;</a></span>removeSpecies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::QSEGroup::removeSpecies </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

@@ -16,6 +16,7 @@ var classgridfire_1_1_reaction_set =
     [ "contains_species", "classgridfire_1_1_reaction_set.html#a5b872a8519740a6d06cfaed03784826a", null ],
     [ "end", "classgridfire_1_1_reaction_set.html#abae9fbc4b4306479a6cd3173ac628987", null ],
     [ "end", "classgridfire_1_1_reaction_set.html#a436f9c4b8f8a4e115b19728d57d8e105", null ],
+    [ "extend", "classgridfire_1_1_reaction_set.html#a6a4836776f5dd00158d2336e5bcc3222", null ],
     [ "getReactionSetSpecies", "classgridfire_1_1_reaction_set.html#a133ad8cca6a75d31ef8efe67801aef1b", null ],
     [ "hash", "classgridfire_1_1_reaction_set.html#ad28907fc08de978461d68cc5b77a3a99", null ],
     [ "operator!=", "classgridfire_1_1_reaction_set.html#a529189f464aebc6b5ac5c717f70e14b8", null ],

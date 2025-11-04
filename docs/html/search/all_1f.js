@@ -16,7 +16,7 @@ var searchData=
   ['_7ereaclibreaction_13',['~ReaclibReaction',['../classgridfire_1_1reaction_1_1_reaclib_reaction.html#ae2b9b41a598c5f0dcd050b32985ea44e',1,'gridfire::reaction::ReaclibReaction']]],
   ['_7ereaction_14',['~Reaction',['../classgridfire_1_1reaction_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::reaction::Reaction::~Reaction()'],['../classgridfire_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a',1,'gridfire::Reaction::~Reaction()']]],
   ['_7escreeningmodel_15',['~ScreeningModel',['../classgridfire_1_1screening_1_1_screening_model.html#adef175acdbd911527f56a1f1592579a7',1,'gridfire::screening::ScreeningModel']]],
-  ['_7esolvercontextbase_16',['~SolverContextBase',['../structgridfire_1_1solver_1_1_solver_context_base.html#ab1abf9e5ff7f53a6cebe5e00ea5fc0c8',1,'gridfire::solver::SolverContextBase']]],
+  ['_7esolvercontextbase_16',['~SolverContextBase',['../classgridfire_1_1solver_1_1_solver_context_base.html#ab1abf9e5ff7f53a6cebe5e00ea5fc0c8',1,'gridfire::solver::SolverContextBase']]],
   ['_7esolverplugininterface_17',['~SolverPluginInterface',['../class_solver_plugin_interface.html#a5611d046cd2fd4d4200785725854e39b',1,'SolverPluginInterface']]],
   ['_7etrigger_18',['~Trigger',['../classgridfire_1_1trigger_1_1_trigger.html#a2c077ccbaf4de9f7068e50144391edda',1,'gridfire::trigger::Trigger']]],
   ['_7eweakreactionmap_19',['~WeakReactionMap',['../classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html#a73cc5a9d4a236091bbb40f22ed66b2f1',1,'gridfire::rates::weak::WeakReactionMap']]]

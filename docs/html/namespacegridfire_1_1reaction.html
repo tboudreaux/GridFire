@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -102,7 +102,8 @@ $(function(){initNavTree('namespacegridfire_1_1reaction.html',''); initResizable
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">gridfire::reaction Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -135,6 +136,13 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:af34403cccdb4a091e979f0f895be2f8c" id="r_af34403cccdb4a091e979f0f895be2f8c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af34403cccdb4a091e979f0f895be2f8c">packReactionSet</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;reactionSet)</td></tr>
 <tr class="separator:af34403cccdb4a091e979f0f895be2f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:ac06a7c50ac58fb2f901d778fc30cd1cf" id="r_ac06a7c50ac58fb2f901d778fc30cd1cf"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; <a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac06a7c50ac58fb2f901d778fc30cd1cf">ReactionTypeNames</a></td></tr>
+<tr class="separator:ac06a7c50ac58fb2f901d778fc30cd1cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a773ef58975dc959e4ae03e2e677ab54f" id="r_a773ef58975dc959e4ae03e2e677ab54f"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; <a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a773ef58975dc959e4ae03e2e677ab54f">ReactionPhysicalTypeNames</a></td></tr>
+<tr class="separator:a773ef58975dc959e4ae03e2e677ab54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a026997f11e811fa7754ac9121c4ba74e" name="a026997f11e811fa7754ac9121c4ba74e"></a>
@@ -180,6 +188,64 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a773ef58975dc959e4ae03e2e677ab54f" name="a773ef58975dc959e4ae03e2e677ab54f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a773ef58975dc959e4ae03e2e677ab54f">&#9670;&#160;</a></span>ReactionPhysicalTypeNames</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;<a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a>, std::string&gt; gridfire::reaction::ReactionPhysicalTypeNames</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">ReactionType::WEAK</a>, <span class="stringliteral">&quot;Weak&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">ReactionType::REACLIB</a>, <span class="stringliteral">&quot;Strong&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">ReactionType::LOGICAL_REACLIB</a>, <span class="stringliteral">&quot;Strong&quot;</span>},</div>
+<div class="line">    }</div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">gridfire::reaction::ReactionType::LOGICAL_REACLIB</a></div><div class="ttdeci">@ LOGICAL_REACLIB</div><div class="ttdef"><b>Definition</b> reaction.h:31</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">gridfire::reaction::ReactionType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdef"><b>Definition</b> reaction.h:29</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">gridfire::reaction::ReactionType::REACLIB</a></div><div class="ttdeci">@ REACLIB</div><div class="ttdef"><b>Definition</b> reaction.h:30</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="ac06a7c50ac58fb2f901d778fc30cd1cf" name="ac06a7c50ac58fb2f901d778fc30cd1cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac06a7c50ac58fb2f901d778fc30cd1cf">&#9670;&#160;</a></span>ReactionTypeNames</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;<a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a>, std::string&gt; gridfire::reaction::ReactionTypeNames</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">ReactionType::WEAK</a>, <span class="stringliteral">&quot;weak&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">ReactionType::REACLIB</a>, <span class="stringliteral">&quot;reaclib&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">ReactionType::LOGICAL_REACLIB</a>, <span class="stringliteral">&quot;logical_reaclib&quot;</span>},</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->

@@ -1,8 +1,10 @@
 var classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate =
 [
     [ "AtomicWeakRate", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#a46d76ca50ee00198a9f4a873c6ceb874", null ],
+    [ "for_sparse_jac", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#ae4c3bb00eafddb923be7ba4c3b6a25ff", null ],
     [ "for_sparse_jac", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#a976a2ef2e58439429c1a6e94c27f4662", null ],
     [ "forward", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#ab4f12e8da29d4d158fb0adf2db31b4bb", null ],
+    [ "rev_sparse_jac", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#a9f2681d58e10b6b740b4588efbce5ae5", null ],
     [ "rev_sparse_jac", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#ae9d61bdda761da89733408c232d7220e", null ],
     [ "reverse", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#aad13654ea15547c2c95035c3b7937d58", null ],
     [ "m_a", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#a0beb567afdecd85e336b493ff85326bd", null ],

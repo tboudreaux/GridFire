@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -132,6 +132,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a468bf58f66417493501c59d7a8aabc98" id="r_a468bf58f66417493501c59d7a8aabc98"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a468bf58f66417493501c59d7a8aabc98">update</a> (const <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &amp;ctx) override</td></tr>
 <tr class="memdesc:a468bf58f66417493501c59d7a8aabc98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update internal state; if check(ctx) is true, advance last_trigger_time.  <br /></td></tr>
 <tr class="separator:a468bf58f66417493501c59d7a8aabc98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafc7f40bde2c78f4d100b6f9da771831" id="r_aafc7f40bde2c78f4d100b6f9da771831"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafc7f40bde2c78f4d100b6f9da771831">step</a> (const <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &amp;ctx) override</td></tr>
+<tr class="memdesc:aafc7f40bde2c78f4d100b6f9da771831"><td class="mdescLeft">&#160;</td><td class="mdescRight">similar to update but intended to be run on every step not just those where the trigger triggered  <br /></td></tr>
+<tr class="separator:aafc7f40bde2c78f4d100b6f9da771831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4034fa431e6c88fd05c50cce31b2fa0" id="r_af4034fa431e6c88fd05c50cce31b2fa0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4034fa431e6c88fd05c50cce31b2fa0">reset</a> () override</td></tr>
 <tr class="memdesc:af4034fa431e6c88fd05c50cce31b2fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset counters and last trigger bookkeeping (time and delta) to zero.  <br /></td></tr>
 <tr class="separator:af4034fa431e6c88fd05c50cce31b2fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -412,6 +415,41 @@ Private Attributes</h2></td></tr>
 <p>Reset counters and last trigger bookkeeping (time and delta) to zero. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html#af652af761675736419b961b6946c728d">gridfire::trigger::Trigger&lt; gridfire::solver::CVODESolverStrategy::TimestepContext &gt;</a>.</p>
+
+</div>
+</div>
+<a id="aafc7f40bde2c78f4d100b6f9da771831" name="aafc7f40bde2c78f4d100b6f9da771831"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafc7f40bde2c78f4d100b6f9da771831">&#9670;&#160;</a></span>step()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::trigger::solver::CVODE::SimulationTimeTrigger::step </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>similar to update but intended to be run on every step not just those where the trigger triggered </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context snapshot used to update state. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html#a4b7ffa4d8d31e2118a8e86172be51041">gridfire::trigger::Trigger&lt; gridfire::solver::CVODESolverStrategy::TimestepContext &gt;</a>.</p>
 
 </div>
 </div>

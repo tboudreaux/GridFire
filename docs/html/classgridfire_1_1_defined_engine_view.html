@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -126,10 +126,10 @@ Inheritance diagram for gridfire::DefinedEngineView:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9b319b4a1bd5a08381ebb183daf72c92" id="r_a9b319b4a1bd5a08381ebb183daf72c92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b319b4a1bd5a08381ebb183daf72c92">DefinedEngineView</a> (const std::vector&lt; std::string &gt; &amp;peNames, <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine)</td></tr>
-<tr class="separator:a9b319b4a1bd5a08381ebb183daf72c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a365d3bf2da974c937267bddb07cf2bef" id="r_a365d3bf2da974c937267bddb07cf2bef"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a365d3bf2da974c937267bddb07cf2bef">DefinedEngineView</a> (const std::vector&lt; std::string &gt; &amp;peNames, <a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;baseEngine)</td></tr>
+<tr class="separator:a365d3bf2da974c937267bddb07cf2bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69b9a5812ad8bda13f956acd0da24484" id="r_a69b9a5812ad8bda13f956acd0da24484"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69b9a5812ad8bda13f956acd0da24484">getBaseEngine</a> () const override</td></tr>
-<tr class="memdesc:a69b9a5812ad8bda13f956acd0da24484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlying engine instance.  <br /></td></tr>
+<tr class="memdesc:a69b9a5812ad8bda13f956acd0da24484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the base engine associated with this defined engine view.  <br /></td></tr>
 <tr class="separator:a69b9a5812ad8bda13f956acd0da24484"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a55f9748c45af6f13e16a6b6ceaa211" id="r_a1a55f9748c45af6f13e16a6b6ceaa211"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a55f9748c45af6f13e16a6b6ceaa211">getNetworkSpecies</a> () const override</td></tr>
 <tr class="memdesc:a1a55f9748c45af6f13e16a6b6ceaa211"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of active species in the network defined by the file.  <br /></td></tr>
@@ -140,9 +140,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a06aca977aafb4784fd167acb8c02dda2" id="r_a06aca977aafb4784fd167acb8c02dda2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06aca977aafb4784fd167acb8c02dda2">calculateEpsDerivatives</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
 <tr class="memdesc:a06aca977aafb4784fd167acb8c02dda2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the derivatives of the energy generation rate with respect to T and rho.  <br /></td></tr>
 <tr class="separator:a06aca977aafb4784fd167acb8c02dda2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab80eadd713a40e9263e5231737e956d0" id="r_ab80eadd713a40e9263e5231737e956d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab80eadd713a40e9263e5231737e956d0">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, const double T9, const double rho) const override</td></tr>
-<tr class="memdesc:ab80eadd713a40e9263e5231737e956d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
-<tr class="separator:ab80eadd713a40e9263e5231737e956d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b38e584912f9df9cee5a77752e85492" id="r_a0b38e584912f9df9cee5a77752e85492"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b38e584912f9df9cee5a77752e85492">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a0b38e584912f9df9cee5a77752e85492"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
+<tr class="separator:a0b38e584912f9df9cee5a77752e85492"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09613471ccc5169ce8525c2bef88a59b" id="r_a09613471ccc5169ce8525c2bef88a59b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09613471ccc5169ce8525c2bef88a59b">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const override</td></tr>
+<tr class="memdesc:a09613471ccc5169ce8525c2bef88a59b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the active species.  <br /></td></tr>
+<tr class="separator:a09613471ccc5169ce8525c2bef88a59b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c502d447134260086558ce83336cda9" id="r_a2c502d447134260086558ce83336cda9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c502d447134260086558ce83336cda9">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const override</td></tr>
+<tr class="memdesc:a2c502d447134260086558ce83336cda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for a given sparsity pattern.  <br /></td></tr>
+<tr class="separator:a2c502d447134260086558ce83336cda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa49532266ff959ac66f501336f102ce8" id="r_aa49532266ff959ac66f501336f102ce8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa49532266ff959ac66f501336f102ce8">getJacobianMatrixEntry</a> (const fourdst::atomic::Species &amp;rowSpecies, const fourdst::atomic::Species &amp;colSpecies) const override</td></tr>
 <tr class="memdesc:aa49532266ff959ac66f501336f102ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the Jacobian matrix for the active species.  <br /></td></tr>
 <tr class="separator:aa49532266ff959ac66f501336f102ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -163,8 +169,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a18f46d92ea7e04068ad9e7af4ed605a8" id="r_a18f46d92ea7e04068ad9e7af4ed605a8"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18f46d92ea7e04068ad9e7af4ed605a8">getSpeciesTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
 <tr class="memdesc:a18f46d92ea7e04068ad9e7af4ed605a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all active species in the network.  <br /></td></tr>
 <tr class="separator:a18f46d92ea7e04068ad9e7af4ed605a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bcf169ba1e12e3356d4bcc27c3fc554" id="r_a7bcf169ba1e12e3356d4bcc27c3fc554"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bcf169ba1e12e3356d4bcc27c3fc554">getSpeciesDestructionTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
-<tr class="separator:a7bcf169ba1e12e3356d4bcc27c3fc554"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad51ef1984f92856b6d4c522e56e8d6a6" id="r_ad51ef1984f92856b6d4c522e56e8d6a6"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad51ef1984f92856b6d4c522e56e8d6a6">getSpeciesDestructionTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="separator:ad51ef1984f92856b6d4c522e56e8d6a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5762f395caea5381ec177507816b5ae" id="r_ae5762f395caea5381ec177507816b5ae"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5762f395caea5381ec177507816b5ae">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
 <tr class="memdesc:ae5762f395caea5381ec177507816b5ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the engine view if it is marked as stale.  <br /></td></tr>
 <tr class="separator:ae5762f395caea5381ec177507816b5ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,9 +191,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a13033abd3b44904f98b58c93e22da460" id="r_a13033abd3b44904f98b58c93e22da460"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13033abd3b44904f98b58c93e22da460">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
 <tr class="memdesc:a13033abd3b44904f98b58c93e22da460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prime the engine with initial conditions.  <br /></td></tr>
 <tr class="separator:a13033abd3b44904f98b58c93e22da460"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefd36cae5c263cba12a0c177e70b409a" id="r_aefd36cae5c263cba12a0c177e70b409a"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefd36cae5c263cba12a0c177e70b409a">collectComposition</a> (fourdst::composition::Composition &amp;comp) const override</td></tr>
+<tr class="memdesc:aefd36cae5c263cba12a0c177e70b409a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively collect composition from current engine and any sub engines if they exist.  <br /></td></tr>
+<tr class="separator:aefd36cae5c263cba12a0c177e70b409a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></td></tr>
-<tr class="memitem:a11d602a708af4629f51873b17f7b8dbd inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a11d602a708af4629f51873b17f7b8dbd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a11d602a708af4629f51873b17f7b8dbd">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const</td></tr>
-<tr class="separator:a11d602a708af4629f51873b17f7b8dbd inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a04317b66ef14d519264bc30ee69f5bf9"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">getDepth</a> () const</td></tr>
 <tr class="memdesc:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the network.  <br /></td></tr>
 <tr class="separator:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,8 +214,8 @@ Public Member Functions</h2></td></tr>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a217d541f3fa777b1552f652fbb520382" id="r_a217d541f3fa777b1552f652fbb520382"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a217d541f3fa777b1552f652fbb520382">m_isStale</a> = true</td></tr>
 <tr class="separator:a217d541f3fa777b1552f652fbb520382"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e3243a8a8bcdce3282a8f82c5f98195" id="r_a6e3243a8a8bcdce3282a8f82c5f98195"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e3243a8a8bcdce3282a8f82c5f98195">m_baseEngine</a></td></tr>
-<tr class="separator:a6e3243a8a8bcdce3282a8f82c5f98195"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a754ef6a1fb9259d533f1eefa823d5758" id="r_a754ef6a1fb9259d533f1eefa823d5758"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a754ef6a1fb9259d533f1eefa823d5758">m_baseEngine</a></td></tr>
+<tr class="separator:a754ef6a1fb9259d533f1eefa823d5758"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -240,9 +247,12 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a4f4aa847ee80ad430de9b1cfdda6b4e3" id="r_a4f4aa847ee80ad430de9b1cfdda6b4e3"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f4aa847ee80ad430de9b1cfdda6b4e3">m_logger</a> = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
 <tr class="memdesc:a4f4aa847ee80ad430de9b1cfdda6b4e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active species in the defined engine.  <br /></td></tr>
 <tr class="separator:a4f4aa847ee80ad430de9b1cfdda6b4e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64e9c79a36d529e1b296fe5786e57aae" id="r_a64e9c79a36d529e1b296fe5786e57aae"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64e9c79a36d529e1b296fe5786e57aae">m_activeSpecies</a></td></tr>
-<tr class="memdesc:a64e9c79a36d529e1b296fe5786e57aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active reactions in the defined engine.  <br /></td></tr>
-<tr class="separator:a64e9c79a36d529e1b296fe5786e57aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9a80586c9428eeb3e3d1dc7f67267d6" id="r_af9a80586c9428eeb3e3d1dc7f67267d6"><td class="memItemLeft" align="right" valign="top">std::set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9a80586c9428eeb3e3d1dc7f67267d6">m_activeSpecies</a></td></tr>
+<tr class="memdesc:af9a80586c9428eeb3e3d1dc7f67267d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cache for the active species vector to avoid dangling references.  <br /></td></tr>
+<tr class="separator:af9a80586c9428eeb3e3d1dc7f67267d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a380e7a98cc782c9becd191d8de17c31d" id="r_a380e7a98cc782c9becd191d8de17c31d"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a380e7a98cc782c9becd191d8de17c31d">m_activeSpeciesVectorCache</a> = std::nullopt</td></tr>
+<tr class="memdesc:a380e7a98cc782c9becd191d8de17c31d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active reactions in the defined engine.  <br /></td></tr>
+<tr class="separator:a380e7a98cc782c9becd191d8de17c31d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a824fe65ae22fa856051f2652764a0bb6" id="r_a824fe65ae22fa856051f2652764a0bb6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a824fe65ae22fa856051f2652764a0bb6">m_activeReactions</a></td></tr>
 <tr class="memdesc:a824fe65ae22fa856051f2652764a0bb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps indices of active species to indices in the full network.  <br /></td></tr>
 <tr class="separator:a824fe65ae22fa856051f2652764a0bb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -253,8 +263,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:affda6d60651c53ee02532806104671bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9b319b4a1bd5a08381ebb183daf72c92" name="a9b319b4a1bd5a08381ebb183daf72c92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b319b4a1bd5a08381ebb183daf72c92">&#9670;&#160;</a></span>DefinedEngineView()</h2>
+<a id="a365d3bf2da974c937267bddb07cf2bef" name="a365d3bf2da974c937267bddb07cf2bef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a365d3bf2da974c937267bddb07cf2bef">&#9670;&#160;</a></span>DefinedEngineView()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,7 +277,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>baseEngine</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>baseEngine</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -460,6 +470,45 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aefd36cae5c263cba12a0c177e70b409a" name="aefd36cae5c263cba12a0c177e70b409a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefd36cae5c263cba12a0c177e70b409a">&#9670;&#160;</a></span>collectComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">fourdst::composition::Composition gridfire::DefinedEngineView::collectComposition </td>
+          <td>(</td>
+          <td class="paramtype">fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Recursively collect composition from current engine and any sub engines if they exist. </p>
+<p>If species i is defined in comp and in any sub engine or self composition then the molar abundance of species i in the returned composition will be that defined in comp. If there are species defined in sub engine compositions which are not defined in comp then their molar abundances will be based on the reported values from each sub engine. </p><dl class="section note"><dt>Note</dt><dd>It is up to each engine to decide how to handle filling in the return composition. </dd>
+<dd>
+These methods return an unfinalized composition which must then be finalized by the caller </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Input composition to "normalize". </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An updated composition which is a superset of comp. This may contain species which were culled, for example, by either QSE partitioning or reaction flow rate culling </dd></dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a827c7e6fa7f2c5baf13a564fb4911388">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
 <a id="ab2514984afaaf8590c28ab71943fbe68" name="ab2514984afaaf8590c28ab71943fbe68"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab2514984afaaf8590c28ab71943fbe68">&#9670;&#160;</a></span>constructReactionIndexMap()</h2>
 
@@ -530,8 +579,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ab80eadd713a40e9263e5231737e956d0" name="ab80eadd713a40e9263e5231737e956d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab80eadd713a40e9263e5231737e956d0">&#9670;&#160;</a></span>generateJacobianMatrix()</h2>
+<a id="a0b38e584912f9df9cee5a77752e85492" name="a0b38e584912f9df9cee5a77752e85492"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b38e584912f9df9cee5a77752e85492">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -547,12 +596,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -579,6 +628,122 @@ Private Attributes</h2></td></tr>
 </dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21d15531309456ee83f7675251e7a1bf">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a2c502d447134260086558ce83336cda9" name="a2c502d447134260086558ce83336cda9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c502d447134260086558ce83336cda9">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::DefinedEngineView::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>sparsityPattern</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Jacobian matrix for a given sparsity pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>A Composition object containing the current composition of the system </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>The density in g/cm^3. </td></tr>
+    <tr><td class="paramname">sparsityPattern</td><td>The sparsity pattern to use for the Jacobian matrix.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a495bdb1e0c6f9911deb844b22c33644e">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a09613471ccc5169ce8525c2bef88a59b" name="a09613471ccc5169ce8525c2bef88a59b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09613471ccc5169ce8525c2bef88a59b">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::DefinedEngineView::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>activeSpecies</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Jacobian matrix for the active species. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>A Composition object containing the current composition of the system </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>The density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeSpecies</td><td>The vector of active species to include in the Jacobian.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>If the view is stale. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a8538fd9285a192f879a45e3dd3f26362">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -640,12 +805,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Access the underlying engine instance. </p>
-<dl class="section return"><dt>Returns</dt><dd>Const reference to the underlying engine.</dd></dl>
-<p>This method must be implemented by derived classes to provide access to the base engine. The returned reference should remain valid for the lifetime of the <a class="el" href="classgridfire_1_1_engine_view.html" title="Abstract base class for a &quot;view&quot; of a reaction network engine.">EngineView</a>.</p>
-<p>Example: </p><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&amp; engine = myView.getBaseEngine();</div>
-<div class="ttc" id="aclassgridfire_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:142</div></div>
-</div><!-- fragment --> 
+<p>Get the base engine associated with this defined engine view. </p>
+<dl class="section return"><dt>Returns</dt><dd>A const reference to the base <a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a>. </dd></dl>
+
 <p>Implements <a class="el" href="classgridfire_1_1_engine_view.html#ad294227f8b5cf6d970c349eabf5447a6">gridfire::EngineView&lt; DynamicEngine &gt;</a>.</p>
 
 </div>
@@ -794,8 +956,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a7bcf169ba1e12e3356d4bcc27c3fc554" name="a7bcf169ba1e12e3356d4bcc27c3fc554"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7bcf169ba1e12e3356d4bcc27c3fc554">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
+<a id="ad51ef1984f92856b6d4c522e56e8d6a6" name="ad51ef1984f92856b6d4c522e56e8d6a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad51ef1984f92856b6d4c522e56e8d6a6">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -804,7 +966,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::DefinedEngineView::getSpeciesDestructionTimescales </td>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::DefinedEngineView::getSpeciesDestructionTimescales </td>
           <td>(</td>
           <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
@@ -1365,8 +1527,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a64e9c79a36d529e1b296fe5786e57aae" name="a64e9c79a36d529e1b296fe5786e57aae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64e9c79a36d529e1b296fe5786e57aae">&#9670;&#160;</a></span>m_activeSpecies</h2>
+<a id="af9a80586c9428eeb3e3d1dc7f67267d6" name="af9a80586c9428eeb3e3d1dc7f67267d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9a80586c9428eeb3e3d1dc7f67267d6">&#9670;&#160;</a></span>m_activeSpecies</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1375,7 +1537,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::DefinedEngineView::m_activeSpecies</td>
+          <td class="memname">std::set&lt;fourdst::atomic::Species&gt; gridfire::DefinedEngineView::m_activeSpecies</td>
         </tr>
       </table>
   </td>
@@ -1385,12 +1547,12 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Active reactions in the defined engine. </p>
+<p>Cache for the active species vector to avoid dangling references. </p>
 
 </div>
 </div>
-<a id="a6e3243a8a8bcdce3282a8f82c5f98195" name="a6e3243a8a8bcdce3282a8f82c5f98195"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e3243a8a8bcdce3282a8f82c5f98195">&#9670;&#160;</a></span>m_baseEngine</h2>
+<a id="a380e7a98cc782c9becd191d8de17c31d" name="a380e7a98cc782c9becd191d8de17c31d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a380e7a98cc782c9becd191d8de17c31d">&#9670;&#160;</a></span>m_activeSpeciesVectorCache</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1399,7 +1561,31 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&amp; gridfire::DefinedEngineView::m_baseEngine</td>
+          <td class="memname">std::optional&lt;std::vector&lt;fourdst::atomic::Species&gt; &gt; gridfire::DefinedEngineView::m_activeSpeciesVectorCache = std::nullopt</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Active reactions in the defined engine. </p>
+
+</div>
+</div>
+<a id="a754ef6a1fb9259d533f1eefa823d5758" name="a754ef6a1fb9259d533f1eefa823d5758"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a754ef6a1fb9259d533f1eefa823d5758">&#9670;&#160;</a></span>m_baseEngine</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a>&amp; gridfire::DefinedEngineView::m_baseEngine</td>
         </tr>
       </table>
   </td>

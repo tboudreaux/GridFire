@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -106,7 +106,7 @@ $(function(){initNavTree('structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html'
 </div><!--header-->
 <div class="contents">
 
-<p>Regular 3D grid and payloads for a single isotope (A,Z).  
+<p>Regular 2D grid and payloads for a single isotope (A,Z).  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;weak_types.h&gt;</code></p>
@@ -119,16 +119,14 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a30362f5bb497ae74cf6a10fd701273a0" id="r_a30362f5bb497ae74cf6a10fd701273a0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30362f5bb497ae74cf6a10fd701273a0">rhoYe_axis</a></td></tr>
 <tr class="memdesc:a30362f5bb497ae74cf6a10fd701273a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique sorted log10(rho*Ye) grid.  <br /></td></tr>
 <tr class="separator:a30362f5bb497ae74cf6a10fd701273a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82cc218ce48dcb835d07422dad927a5a" id="r_a82cc218ce48dcb835d07422dad927a5a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82cc218ce48dcb835d07422dad927a5a">mue_axis</a></td></tr>
-<tr class="memdesc:a82cc218ce48dcb835d07422dad927a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique sorted mu_e grid.  <br /></td></tr>
-<tr class="separator:a82cc218ce48dcb835d07422dad927a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0df5ef84e3a78d881838a3bb014db83" id="r_ad0df5ef84e3a78d881838a3bb014db83"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html">WeakRatePayload</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0df5ef84e3a78d881838a3bb014db83">data</a></td></tr>
-<tr class="memdesc:ad0df5ef84e3a78d881838a3bb014db83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Payloads at each grid node.  <br /></td></tr>
+<tr class="memdesc:ad0df5ef84e3a78d881838a3bb014db83"><td class="mdescLeft">&#160;</td><td class="mdescRight">MuE axis for each (T9, log_rhoYe) pair (the table is ragged in mu_e). This is also where the payloads are stored.  <br /></td></tr>
 <tr class="separator:ad0df5ef84e3a78d881838a3bb014db83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Regular 3D grid and payloads for a single isotope (A,Z). </p>
-<p>Axes are monotonically increasing per dimension. Data vector is laid out in row-major order with index computed as: index = ((i_t9 * rhoYe_axis.size() + j_rhoYe) * mue_axis.size()) + k_mue </p>
+<div class="textblock"><p>Regular 2D grid and payloads for a single isotope (A,Z). </p>
+<p>Axes are monotonically increasing per dimension. Data vector is laid out in row-major order with index computed as:</p>
+<p>index = i_t9 * N_rhoYe + j_rhoYe </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="ad0df5ef84e3a78d881838a3bb014db83" name="ad0df5ef84e3a78d881838a3bb014db83"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad0df5ef84e3a78d881838a3bb014db83">&#9670;&#160;</a></span>data</h2>
@@ -142,23 +140,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Payloads at each grid node. </p>
-
-</div>
-</div>
-<a id="a82cc218ce48dcb835d07422dad927a5a" name="a82cc218ce48dcb835d07422dad927a5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82cc218ce48dcb835d07422dad927a5a">&#9670;&#160;</a></span>mue_axis</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; gridfire::rates::weak::IsotopeGrid::mue_axis</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Unique sorted mu_e grid. </p>
+<p>MuE axis for each (T9, log_rhoYe) pair (the table is ragged in mu_e). This is also where the payloads are stored. </p>
 
 </div>
 </div>

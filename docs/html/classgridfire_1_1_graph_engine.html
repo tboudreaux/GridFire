@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -103,6 +103,7 @@ $(function(){initNavTree('classgridfire_1_1_graph_engine.html',''); initResizabl
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classgridfire_1_1_graph_engine-members.html">List of all members</a>  </div>
@@ -141,19 +142,31 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a38aaafb1d9a6548bc8e8cb672417bbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a03fbd767f495ca667f23789b07c293" id="r_a3a03fbd767f495ca667f23789b07c293"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a03fbd767f495ca667f23789b07c293">GraphEngine</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &amp;partitionFunction, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> buildDepth=<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>)</td></tr>
 <tr class="separator:a3a03fbd767f495ca667f23789b07c293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35552299e1b774386f1e603a702fc7c2" id="r_a35552299e1b774386f1e603a702fc7c2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35552299e1b774386f1e603a702fc7c2">GraphEngine</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &amp;partitionFunction, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> buildDepth, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> reactionTypes)</td></tr>
+<tr class="separator:a35552299e1b774386f1e603a702fc7c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a514cc6b5482d6a27902975da17b5e39e" id="r_a514cc6b5482d6a27902975da17b5e39e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514cc6b5482d6a27902975da17b5e39e">GraphEngine</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions)</td></tr>
 <tr class="memdesc:a514cc6b5482d6a27902975da17b5e39e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">GraphEngine</a> from a set of reactions.  <br /></td></tr>
 <tr class="separator:a514cc6b5482d6a27902975da17b5e39e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7acc98647427981a9602d251c9288012" id="r_a7acc98647427981a9602d251c9288012"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7acc98647427981a9602d251c9288012">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
 <tr class="memdesc:a7acc98647427981a9602d251c9288012"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation rate.  <br /></td></tr>
 <tr class="separator:a7acc98647427981a9602d251c9288012"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a8c5234f68e9c1806795e7a4e10922c" id="r_a2a8c5234f68e9c1806795e7a4e10922c"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a8c5234f68e9c1806795e7a4e10922c">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="memdesc:a2a8c5234f68e9c1806795e7a4e10922c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation rate for a subset of reactions.  <br /></td></tr>
+<tr class="separator:a2a8c5234f68e9c1806795e7a4e10922c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0c9159cc3467fd85d1a5895f1786c47" id="r_ae0c9159cc3467fd85d1a5895f1786c47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0c9159cc3467fd85d1a5895f1786c47">calculateEpsDerivatives</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
-<tr class="memdesc:ae0c9159cc3467fd85d1a5895f1786c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the derivatives of the energy generation rate with respect to T and rho.  <br /></td></tr>
+<tr class="memdesc:ae0c9159cc3467fd85d1a5895f1786c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivatives of the energy generation rate with respect to temperature and density.  <br /></td></tr>
 <tr class="separator:ae0c9159cc3467fd85d1a5895f1786c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27defac90fa7582455d168aec8bd036c" id="r_a27defac90fa7582455d168aec8bd036c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27defac90fa7582455d168aec8bd036c">calculateEpsDerivatives</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="memdesc:a27defac90fa7582455d168aec8bd036c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivatives of the energy generation rate with respect to temperature and density for a subset of reactions.  <br /></td></tr>
+<tr class="separator:a27defac90fa7582455d168aec8bd036c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae11f6267077025ca342e2e263ad87e5e" id="r_ae11f6267077025ca342e2e263ad87e5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae11f6267077025ca342e2e263ad87e5e">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
 <tr class="memdesc:ae11f6267077025ca342e2e263ad87e5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the current state.  <br /></td></tr>
 <tr class="separator:ae11f6267077025ca342e2e263ad87e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd59415d74e3d1da0bc059fa64af1689" id="r_abd59415d74e3d1da0bc059fa64af1689"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd59415d74e3d1da0bc059fa64af1689">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const override</td></tr>
+<tr class="memdesc:abd59415d74e3d1da0bc059fa64af1689"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the current state with a specified set of active species. generally this will be much faster than the full matrix generation. Here we use forward mode to generate the Jacobian only for the active species.  <br /></td></tr>
+<tr class="separator:abd59415d74e3d1da0bc059fa64af1689"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e0bbc6448999e2ef06879270b7d3dec" id="r_a4e0bbc6448999e2ef06879270b7d3dec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e0bbc6448999e2ef06879270b7d3dec">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const override</td></tr>
+<tr class="memdesc:a4e0bbc6448999e2ef06879270b7d3dec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the current state with a specified sparsity pattern.  <br /></td></tr>
 <tr class="separator:a4e0bbc6448999e2ef06879270b7d3dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed726d36ee2b3796beff6067a1e4db38" id="r_aed726d36ee2b3796beff6067a1e4db38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed726d36ee2b3796beff6067a1e4db38">generateStoichiometryMatrix</a> () override</td></tr>
 <tr class="memdesc:aed726d36ee2b3796beff6067a1e4db38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the stoichiometry matrix for the network.  <br /></td></tr>
@@ -168,6 +181,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a3b7f3ba85821165f58f168bc68f86b2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of logical reactions in the network.  <br /></td></tr>
 <tr class="separator:a3b7f3ba85821165f58f168bc68f86b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52288e2629609c8438a3c9bc3f910016" id="r_a52288e2629609c8438a3c9bc3f910016"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52288e2629609c8438a3c9bc3f910016">setNetworkReactions</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions) override</td></tr>
+<tr class="memdesc:a52288e2629609c8438a3c9bc3f910016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the reactions for the network.  <br /></td></tr>
 <tr class="separator:a52288e2629609c8438a3c9bc3f910016"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ab5308629b8707922e5954776254aa6" id="r_a8ab5308629b8707922e5954776254aa6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ab5308629b8707922e5954776254aa6">getJacobianMatrixEntry</a> (const fourdst::atomic::Species &amp;rowSpecies, const fourdst::atomic::Species &amp;colSpecies) const override</td></tr>
 <tr class="memdesc:a8ab5308629b8707922e5954776254aa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the previously generated Jacobian matrix.  <br /></td></tr>
@@ -178,12 +192,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7dde968244f3c4934c7738445c709232" id="r_a7dde968244f3c4934c7738445c709232"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dde968244f3c4934c7738445c709232">getSpeciesTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
 <tr class="memdesc:a7dde968244f3c4934c7738445c709232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all species in the network.  <br /></td></tr>
 <tr class="separator:a7dde968244f3c4934c7738445c709232"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a578ecf0e3b0e5197ed6b33c7abf8f770" id="r_a578ecf0e3b0e5197ed6b33c7abf8f770"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a578ecf0e3b0e5197ed6b33c7abf8f770">getSpeciesTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="memdesc:a578ecf0e3b0e5197ed6b33c7abf8f770"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all species in the network considering a subset of reactions.  <br /></td></tr>
+<tr class="separator:a578ecf0e3b0e5197ed6b33c7abf8f770"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47df5a9c448dd1ce8654df819a6cc8ff" id="r_a47df5a9c448dd1ce8654df819a6cc8ff"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47df5a9c448dd1ce8654df819a6cc8ff">getSpeciesDestructionTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a47df5a9c448dd1ce8654df819a6cc8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes destruction timescales for all species in the network.  <br /></td></tr>
 <tr class="separator:a47df5a9c448dd1ce8654df819a6cc8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a496bfc97e8db72faa147d2dab94fa5f1" id="r_a496bfc97e8db72faa147d2dab94fa5f1"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a496bfc97e8db72faa147d2dab94fa5f1">getSpeciesDestructionTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="memdesc:a496bfc97e8db72faa147d2dab94fa5f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes destruction timescales for all species in the network considering a subset of reactions.  <br /></td></tr>
+<tr class="separator:a496bfc97e8db72faa147d2dab94fa5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ac7cff23e70bd07ba7e510b753e2ab6" id="r_a5ac7cff23e70bd07ba7e510b753e2ab6"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ac7cff23e70bd07ba7e510b753e2ab6">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
-<tr class="memdesc:a5ac7cff23e70bd07ba7e510b753e2ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the internal state of the engine.  <br /></td></tr>
+<tr class="memdesc:a5ac7cff23e70bd07ba7e510b753e2ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the state of the network and the composition to be usable for the current network.  <br /></td></tr>
 <tr class="separator:a5ac7cff23e70bd07ba7e510b753e2ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af04a9f8a629d6f6c58c477af0f1ab9e5" id="r_af04a9f8a629d6f6c58c477af0f1ab9e5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af04a9f8a629d6f6c58c477af0f1ab9e5">isStale</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
+<tr class="memdesc:af04a9f8a629d6f6c58c477af0f1ab9e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the engine view is stale and needs to be updated.  <br /></td></tr>
 <tr class="separator:af04a9f8a629d6f6c58c477af0f1ab9e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6202cee0c3c481eda77cc9a91bc126b" id="r_aa6202cee0c3c481eda77cc9a91bc126b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6202cee0c3c481eda77cc9a91bc126b">involvesSpecies</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
 <tr class="memdesc:aa6202cee0c3c481eda77cc9a91bc126b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given species is involved in the network.  <br /></td></tr>
@@ -212,10 +234,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:accf01734524a706ad03c9b9898af54b3" id="r_accf01734524a706ad03c9b9898af54b3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accf01734524a706ad03c9b9898af54b3">calculateReverseRate</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, double T9, double rho, const fourdst::composition::Composition &amp;comp) const</td></tr>
 <tr class="memdesc:accf01734524a706ad03c9b9898af54b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reverse rate for a given reaction.  <br /></td></tr>
 <tr class="separator:accf01734524a706ad03c9b9898af54b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01fc9fd5d576b66d07360d05e821c755" id="r_a01fc9fd5d576b66d07360d05e821c755"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01fc9fd5d576b66d07360d05e821c755">calculateReverseRateTwoBody</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const double T9, const double forwardRate, const double expFactor) const</td></tr>
-<tr class="memdesc:a01fc9fd5d576b66d07360d05e821c755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reverse rate for a two-body reaction.  <br /></td></tr>
-<tr class="separator:a01fc9fd5d576b66d07360d05e821c755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af18853273cbd53317ee4389c2241281c" id="r_af18853273cbd53317ee4389c2241281c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af18853273cbd53317ee4389c2241281c">calculateReverseRateTwoBody</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, double T9, double forwardRate, double expFactor) const</td></tr>
+<tr class="memdesc:af18853273cbd53317ee4389c2241281c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the reverse rate for a two-body reaction.  <br /></td></tr>
+<tr class="separator:af18853273cbd53317ee4389c2241281c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9340db538a507b96e186b60ba0450205" id="r_a9340db538a507b96e186b60ba0450205"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9340db538a507b96e186b60ba0450205">calculateReverseRateTwoBodyDerivative</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, double T9, double rho, const fourdst::composition::Composition &amp;comp, double reverseRate) const</td></tr>
+<tr class="memdesc:a9340db538a507b96e186b60ba0450205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivative of the reverse rate for a two-body reaction with respect to temperature.  <br /></td></tr>
 <tr class="separator:a9340db538a507b96e186b60ba0450205"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7a210d9ab13ad5fb0c612f027acabd0" id="r_ae7a210d9ab13ad5fb0c612f027acabd0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7a210d9ab13ad5fb0c612f027acabd0">isUsingReverseReactions</a> () const</td></tr>
 <tr class="memdesc:ae7a210d9ab13ad5fb0c612f027acabd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if reverse reactions are enabled.  <br /></td></tr>
@@ -235,9 +258,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a166a5f4349580f9aa0b930afec73fcc4" id="r_a166a5f4349580f9aa0b930afec73fcc4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a166a5f4349580f9aa0b930afec73fcc4">getDepth</a> () const override</td></tr>
 <tr class="memdesc:a166a5f4349580f9aa0b930afec73fcc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the depth of the network.  <br /></td></tr>
 <tr class="separator:a166a5f4349580f9aa0b930afec73fcc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9d6c70ace5cbbf7f3aa7b31fce39490" id="r_ad9d6c70ace5cbbf7f3aa7b31fce39490"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9d6c70ace5cbbf7f3aa7b31fce39490">rebuild</a> (const fourdst::composition::Composition &amp;comp, const <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth) override</td></tr>
-<tr class="memdesc:ad9d6c70ace5cbbf7f3aa7b31fce39490"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuilds the reaction network based on a new composition.  <br /></td></tr>
-<tr class="separator:ad9d6c70ace5cbbf7f3aa7b31fce39490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad593a2d1b8fbbc01b63b0133357364ac" id="r_ad593a2d1b8fbbc01b63b0133357364ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad593a2d1b8fbbc01b63b0133357364ac">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth) override</td></tr>
+<tr class="memdesc:ad593a2d1b8fbbc01b63b0133357364ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuilds the reaction network based on a new composition.  <br /></td></tr>
+<tr class="separator:ad593a2d1b8fbbc01b63b0133357364ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a746ba3f5f61701cfd4f15578c1a4914a" id="r_a746ba3f5f61701cfd4f15578c1a4914a"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a746ba3f5f61701cfd4f15578c1a4914a">collectComposition</a> (fourdst::composition::Composition &amp;comp) const override</td></tr>
+<tr class="memdesc:a746ba3f5f61701cfd4f15578c1a4914a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This will return the input comp with the molar abundances of any species not registered in that but registered in the engine active species set to 0.0.  <br /></td></tr>
+<tr class="separator:a746ba3f5f61701cfd4f15578c1a4914a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a4b3ab5955b2d89f1201b81f19a6103" id="r_a0a4b3ab5955b2d89f1201b81f19a6103"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
+<tr class="memitem:a0a4b3ab5955b2d89f1201b81f19a6103"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0a4b3ab5955b2d89f1201b81f19a6103">calculateAllDerivatives</a> (const std::vector&lt; T &gt; &amp;Y_in, const T T9, const T rho, const T Ye, const T mue, const std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt; speciesLookup, const std::function&lt; bool(const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;)&gt; &amp;reactionLookup) const</td></tr>
+<tr class="separator:a0a4b3ab5955b2d89f1201b81f19a6103"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
@@ -248,6 +277,15 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a8c29d8bbde407e913be5eb77efb2c0c9" id="r_a8c29d8bbde407e913be5eb77efb2c0c9"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; fourdst::atomic::Species, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c29d8bbde407e913be5eb77efb2c0c9">getNetReactionStoichiometry</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction)</td></tr>
 <tr class="memdesc:a8c29d8bbde407e913be5eb77efb2c0c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the net stoichiometry for a given reaction.  <br /></td></tr>
 <tr class="separator:a8c29d8bbde407e913be5eb77efb2c0c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
+Private Types</h2></td></tr>
+<tr class="memitem:ac94adcb6d39f7633f326f038dca15ec6" id="r_ac94adcb6d39f7633f326f038dca15ec6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">JacobianMatrixState</a> { <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268">UNINITIALIZED</a>
+, <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456">STALE</a>
+, <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb">READY_DENSE</a>
+, <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3">READY_SPARSE</a>
+ }</td></tr>
+<tr class="separator:ac94adcb6d39f7633f326f038dca15ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -269,8 +307,6 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:ab29ef3225c8fcda012b10765df064b63" id="r_ab29ef3225c8fcda012b10765df064b63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab29ef3225c8fcda012b10765df064b63">recordADTape</a> () const</td></tr>
 <tr class="memdesc:ab29ef3225c8fcda012b10765df064b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records the AD tape for the right-hand side of the ODE.  <br /></td></tr>
 <tr class="separator:ab29ef3225c8fcda012b10765df064b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16b8cd1b0e19b4d4519596a4e22eaf5c" id="r_a16b8cd1b0e19b4d4519596a4e22eaf5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16b8cd1b0e19b4d4519596a4e22eaf5c">recordEpsADTape</a> () const</td></tr>
-<tr class="separator:a16b8cd1b0e19b4d4519596a4e22eaf5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29b338630c959449c15881935ac30746" id="r_a29b338630c959449c15881935ac30746"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29b338630c959449c15881935ac30746">collectAtomicReverseRateAtomicBases</a> ()</td></tr>
 <tr class="separator:a29b338630c959449c15881935ac30746"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92644bc333bff69c5685be4552ca12fd" id="r_a92644bc333bff69c5685be4552ca12fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92644bc333bff69c5685be4552ca12fd">precomputeNetwork</a> ()</td></tr>
@@ -278,22 +314,24 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:acf4cfccea20f5cb31c9886bf233a28be" id="r_acf4cfccea20f5cb31c9886bf233a28be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf4cfccea20f5cb31c9886bf233a28be">validateConservation</a> () const</td></tr>
 <tr class="memdesc:acf4cfccea20f5cb31c9886bf233a28be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates mass and charge conservation across all reactions.  <br /></td></tr>
 <tr class="separator:acf4cfccea20f5cb31c9886bf233a28be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef12443d7980301d8bb89f4ba4890450" id="r_aef12443d7980301d8bb89f4ba4890450"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef12443d7980301d8bb89f4ba4890450">calculateAllDerivativesUsingPrecomputation</a> (const fourdst::composition::Composition &amp;comp, const std::vector&lt; double &gt; &amp;bare_rates, const std::vector&lt; double &gt; &amp;bare_reverse_rates, double T9, double rho) const</td></tr>
-<tr class="separator:aef12443d7980301d8bb89f4ba4890450"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bea809d2efb3a5e7cc065ec80baebce" id="r_a2bea809d2efb3a5e7cc065ec80baebce"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
-<tr class="memitem:a2bea809d2efb3a5e7cc065ec80baebce"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2bea809d2efb3a5e7cc065ec80baebce">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; T &gt; &amp;Y, const T T9, const T rho, T Ye, T mue) const</td></tr>
-<tr class="memdesc:a2bea809d2efb3a5e7cc065ec80baebce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction.  <br /></td></tr>
-<tr class="separator:a2bea809d2efb3a5e7cc065ec80baebce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a972d0705351167dc889a2f6c442e7a93" id="r_a972d0705351167dc889a2f6c442e7a93"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
-<tr class="memitem:a972d0705351167dc889a2f6c442e7a93"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a972d0705351167dc889a2f6c442e7a93">calculateReverseMolarReactionFlow</a> (const T T9, const T rho, std::vector&lt; T &gt; screeningFactors, const std::vector&lt; T &gt; &amp;Y, size_t reactionIndex, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) const</td></tr>
-<tr class="separator:a972d0705351167dc889a2f6c442e7a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8873331f5ae40a3f640dedbbed685ed9" id="r_a8873331f5ae40a3f640dedbbed685ed9"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
-<tr class="memitem:a8873331f5ae40a3f640dedbbed685ed9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8873331f5ae40a3f640dedbbed685ed9">calculateAllDerivatives</a> (const std::vector&lt; T &gt; &amp;Y_in, T T9, T rho, T Ye, T mue) const</td></tr>
-<tr class="memdesc:a8873331f5ae40a3f640dedbbed685ed9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates all derivatives (dY/dt) and the energy generation rate.  <br /></td></tr>
-<tr class="separator:a8873331f5ae40a3f640dedbbed685ed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd6211ca7dd762e8a7bc9729ccb81917" id="r_abd6211ca7dd762e8a7bc9729ccb81917"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd6211ca7dd762e8a7bc9729ccb81917">calculateAllDerivativesUsingPrecomputation</a> (const fourdst::composition::Composition &amp;comp, const std::vector&lt; double &gt; &amp;bare_rates, const std::vector&lt; double &gt; &amp;bare_reverse_rates, double T9, double rho, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;activeReactions) const</td></tr>
+<tr class="separator:abd6211ca7dd762e8a7bc9729ccb81917"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a43655ee34869126636f4fe9d687694" id="r_a2a43655ee34869126636f4fe9d687694"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
+<tr class="memitem:a2a43655ee34869126636f4fe9d687694"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2a43655ee34869126636f4fe9d687694">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; T &gt; &amp;Y, T T9, T rho, T Ye, T mue, const std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt; &amp;speciesIDLookup) const</td></tr>
+<tr class="memdesc:a2a43655ee34869126636f4fe9d687694"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction.  <br /></td></tr>
+<tr class="separator:a2a43655ee34869126636f4fe9d687694"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cd8c6f34ab262e5ad30631ee4afb0b2" id="r_a1cd8c6f34ab262e5ad30631ee4afb0b2"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
+<tr class="memitem:a1cd8c6f34ab262e5ad30631ee4afb0b2"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1cd8c6f34ab262e5ad30631ee4afb0b2">calculateReverseMolarReactionFlow</a> (T T9, T rho, std::vector&lt; T &gt; screeningFactors, const std::vector&lt; T &gt; &amp;Y, size_t reactionIndex, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) const</td></tr>
+<tr class="separator:a1cd8c6f34ab262e5ad30631ee4afb0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2da85a22894d8a2138f2e0741fe9475" id="r_ac2da85a22894d8a2138f2e0741fe9475"><td class="memTemplParams" colspan="2">template&lt;IsArithmeticOrAD T&gt; </td></tr>
+<tr class="memitem:ac2da85a22894d8a2138f2e0741fe9475"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac2da85a22894d8a2138f2e0741fe9475">calculateAllDerivatives</a> (const std::vector&lt; T &gt; &amp;Y_in, T T9, T rho, T Ye, T mue, std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt; speciesLookup, const std::function&lt; bool(const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;)&gt; &amp;reactionLookup) const</td></tr>
+<tr class="memdesc:ac2da85a22894d8a2138f2e0741fe9475"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates all derivatives (dY/dt) and the energy generation rate.  <br /></td></tr>
+<tr class="separator:ac2da85a22894d8a2138f2e0741fe9475"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:adc3758335b680d41edfdf0c64eeb27c6" id="r_adc3758335b680d41edfdf0c64eeb27c6"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">JacobianMatrixState</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc3758335b680d41edfdf0c64eeb27c6">m_jacobianMatrixStateNameMap</a></td></tr>
+<tr class="separator:adc3758335b680d41edfdf0c64eeb27c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b17102b143435ddfdc015d7a50c4b18" id="r_a3b17102b143435ddfdc015d7a50c4b18"><td class="memItemLeft" align="right" valign="top">Config &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b17102b143435ddfdc015d7a50c4b18">m_config</a> = Config::getInstance()</td></tr>
 <tr class="separator:a3b17102b143435ddfdc015d7a50c4b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a483979fc154adc88d029b3b672066d53" id="r_a483979fc154adc88d029b3b672066d53"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a483979fc154adc88d029b3b672066d53">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
@@ -327,6 +365,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a2f1718c89d4aaad028102724d18fa910" id="r_a2f1718c89d4aaad028102724d18fa910"><td class="memItemLeft" align="right" valign="top">boost::numeric::ublas::compressed_matrix&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f1718c89d4aaad028102724d18fa910">m_jacobianMatrix</a></td></tr>
 <tr class="memdesc:a2f1718c89d4aaad028102724d18fa910"><td class="mdescLeft">&#160;</td><td class="mdescRight">Jacobian matrix (species x species).  <br /></td></tr>
 <tr class="separator:a2f1718c89d4aaad028102724d18fa910"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad730251f4cd877006f2520be84ac85e9" id="r_ad730251f4cd877006f2520be84ac85e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">JacobianMatrixState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad730251f4cd877006f2520be84ac85e9">m_jacobianMatrixState</a> = <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268">JacobianMatrixState::UNINITIALIZED</a></td></tr>
+<tr class="separator:ad730251f4cd877006f2520be84ac85e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e22b111f6d00ecc9e3804a71f1ce876" id="r_a2e22b111f6d00ecc9e3804a71f1ce876"><td class="memItemLeft" align="right" valign="top">CppAD::ADFun&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e22b111f6d00ecc9e3804a71f1ce876">m_rhsADFun</a></td></tr>
 <tr class="memdesc:a2e22b111f6d00ecc9e3804a71f1ce876"><td class="mdescLeft">&#160;</td><td class="mdescRight">CppAD function for the right-hand side of the ODE.  <br /></td></tr>
 <tr class="separator:a2e22b111f6d00ecc9e3804a71f1ce876"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -339,6 +379,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a19b2eea0e8d05ac90f9fd7120bdc6e06" id="r_a19b2eea0e8d05ac90f9fd7120bdc6e06"><td class="memItemLeft" align="right" valign="top">CppAD::sparse_rc&lt; std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19b2eea0e8d05ac90f9fd7120bdc6e06">m_full_jacobian_sparsity_pattern</a></td></tr>
 <tr class="memdesc:a19b2eea0e8d05ac90f9fd7120bdc6e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full sparsity pattern for the Jacobian matrix.  <br /></td></tr>
 <tr class="separator:a19b2eea0e8d05ac90f9fd7120bdc6e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af147a6953dcbb70ba3cc93039ac21c35" id="r_af147a6953dcbb70ba3cc93039ac21c35"><td class="memItemLeft" align="right" valign="top">std::set&lt; std::pair&lt; size_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af147a6953dcbb70ba3cc93039ac21c35">m_full_sparsity_set</a></td></tr>
+<tr class="memdesc:af147a6953dcbb70ba3cc93039ac21c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">For quick lookups of the base sparsity pattern.  <br /></td></tr>
+<tr class="separator:af147a6953dcbb70ba3cc93039ac21c35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a816797b1d656d416844489692af44cf6" id="r_a816797b1d656d416844489692af44cf6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1_graph_engine_1_1_atomic_reverse_rate.html">AtomicReverseRate</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a816797b1d656d416844489692af44cf6">m_atomicReverseRates</a></td></tr>
 <tr class="separator:a816797b1d656d416844489692af44cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52edc3e88f1e8fc497e1e63972d63c80" id="r_a52edc3e88f1e8fc497e1e63972d63c80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52edc3e88f1e8fc497e1e63972d63c80">m_screeningType</a> = <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71">screening::ScreeningType::BARE</a></td></tr>
@@ -357,6 +400,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a5d431d5385b1219ba29689eb29601ea3" id="r_a5d431d5385b1219ba29689eb29601ea3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html">PrecomputedReaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d431d5385b1219ba29689eb29601ea3">m_precomputedReactions</a></td></tr>
 <tr class="memdesc:a5d431d5385b1219ba29689eb29601ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Precomputed reactions for efficiency.  <br /></td></tr>
 <tr class="separator:a5d431d5385b1219ba29689eb29601ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a183cbef618742d97b2b6edb60522eb6c" id="r_a183cbef618742d97b2b6edb60522eb6c"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint64_t, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a183cbef618742d97b2b6edb60522eb6c">m_precomputedReactionIndexMap</a></td></tr>
+<tr class="memdesc:a183cbef618742d97b2b6edb60522eb6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of hashed precomputed reactions for quick lookup.  <br /></td></tr>
+<tr class="separator:a183cbef618742d97b2b6edb60522eb6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3621f36d77ea8c738ad7de6e5b35ca3e" id="r_a3621f36d77ea8c738ad7de6e5b35ca3e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3621f36d77ea8c738ad7de6e5b35ca3e">m_partitionFunction</a></td></tr>
 <tr class="memdesc:a3621f36d77ea8c738ad7de6e5b35ca3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition function for the network.  <br /></td></tr>
 <tr class="separator:a3621f36d77ea8c738ad7de6e5b35ca3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -374,9 +420,38 @@ Private Attributes</h2></td></tr>
 <li>Exporting the network to DOT and CSV formats for visualization and analysis.</li>
 </ul>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="engine__abstract_8h.html" title="Abstract interfaces for reaction network engines in GridFire.">engine_abstract.h</a> </dd></dl>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="ac94adcb6d39f7633f326f038dca15ec6" name="ac94adcb6d39f7633f326f038dca15ec6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac94adcb6d39f7633f326f038dca15ec6">&#9670;&#160;</a></span>JacobianMatrixState</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">gridfire::GraphEngine::JacobianMatrixState</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268" name="ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268"></a>UNINITIALIZED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456" name="ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456"></a>STALE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb" name="ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb"></a>READY_DENSE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3" name="ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3"></a>READY_SPARSE&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a38aaafb1d9a6548bc8e8cb672417bbbe" name="a38aaafb1d9a6548bc8e8cb672417bbbe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38aaafb1d9a6548bc8e8cb672417bbbe">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a38aaafb1d9a6548bc8e8cb672417bbbe">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -410,12 +485,12 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <p>This constructor builds the reaction network from the given composition using the <code>build_reaclib_nuclear_network</code> function.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacegridfire.html#a384323338f13166d87c7ac047434bd38" title="Builds a nuclear reaction network from the Reaclib library based on an initial composition.">build_reaclib_nuclear_network</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd>build_reaclib_nuclear_network </dd></dl>
 
 </div>
 </div>
 <a id="a3a03fbd767f495ca667f23789b07c293" name="a3a03fbd767f495ca667f23789b07c293"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a03fbd767f495ca667f23789b07c293">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a03fbd767f495ca667f23789b07c293">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -448,8 +523,47 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a35552299e1b774386f1e603a702fc7c2" name="a35552299e1b774386f1e603a702fc7c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35552299e1b774386f1e603a702fc7c2">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::GraphEngine::GraphEngine </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>partitionFunction</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a></td>          <td class="paramname"><span class="paramname"><em>buildDepth</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>reactionTypes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel explicit">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a514cc6b5482d6a27902975da17b5e39e" name="a514cc6b5482d6a27902975da17b5e39e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a514cc6b5482d6a27902975da17b5e39e">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a514cc6b5482d6a27902975da17b5e39e">&#9670;&#160;</a></span>GraphEngine() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -483,8 +597,56 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8873331f5ae40a3f640dedbbed685ed9" name="a8873331f5ae40a3f640dedbbed685ed9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8873331f5ae40a3f640dedbbed685ed9">&#9670;&#160;</a></span>calculateAllDerivatives()</h2>
+<a id="a0a4b3ab5955b2d89f1201b81f19a6103" name="a0a4b3ab5955b2d89f1201b81f19a6103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a4b3ab5955b2d89f1201b81f19a6103">&#9670;&#160;</a></span>calculateAllDerivatives() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;IsArithmeticOrAD T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; T &gt; gridfire::GraphEngine::calculateAllDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_in</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt;</td>          <td class="paramname"><span class="paramname"><em>speciesLookup</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; bool(const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionLookup</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac2da85a22894d8a2138f2e0741fe9475" name="ac2da85a22894d8a2138f2e0741fe9475"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2da85a22894d8a2138f2e0741fe9475">&#9670;&#160;</a></span>calculateAllDerivatives() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -517,7 +679,17 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>&#160;) const</td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt;</td>          <td class="paramname"><span class="paramname"><em>speciesLookup</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; bool(const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionLookup</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -541,6 +713,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
     <tr><td class="paramname">Ye</td><td></td></tr>
     <tr><td class="paramname">mue</td><td></td></tr>
+    <tr><td class="paramname">speciesLookup</td><td></td></tr>
+    <tr><td class="paramname">reactionLookup</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -549,8 +723,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="aef12443d7980301d8bb89f4ba4890450" name="aef12443d7980301d8bb89f4ba4890450"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef12443d7980301d8bb89f4ba4890450">&#9670;&#160;</a></span>calculateAllDerivativesUsingPrecomputation()</h2>
+<a id="abd6211ca7dd762e8a7bc9729ccb81917" name="abd6211ca7dd762e8a7bc9729ccb81917"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd6211ca7dd762e8a7bc9729ccb81917">&#9670;&#160;</a></span>calculateAllDerivativesUsingPrecomputation()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -581,7 +755,12 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -594,7 +773,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div>
 </div>
 <a id="ae0c9159cc3467fd85d1a5895f1786c47" name="ae0c9159cc3467fd85d1a5895f1786c47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0c9159cc3467fd85d1a5895f1786c47">&#9670;&#160;</a></span>calculateEpsDerivatives()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0c9159cc3467fd85d1a5895f1786c47">&#9670;&#160;</a></span>calculateEpsDerivatives() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -625,7 +804,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the derivatives of the energy generation rate with respect to T and rho. </p>
+<p>Calculates the derivatives of the energy generation rate with respect to temperature and density. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
@@ -634,10 +813,64 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
-<p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> struct containing the derivatives.</dd></dl>
+<p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature (∂ε/∂T) and density (∂ε/∂ρ)</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a264bd5a8891c8c5f0dff32867effe547">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a27defac90fa7582455d168aec8bd036c" name="a27defac90fa7582455d168aec8bd036c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27defac90fa7582455d168aec8bd036c">&#9670;&#160;</a></span>calculateEpsDerivatives() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> gridfire::GraphEngine::calculateEpsDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculates the derivatives of the energy generation rate with respect to temperature and density for a subset of reactions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeReactions</td><td>The set of reactions to include in the calculation. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> struct containing the derivatives.</dd></dl>
+<p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature (∂ε/∂T) and density (∂ε/∂ρ) considering only the specified subset of reactions. This allows for flexible calculations with different reaction sets without modifying the engine's internal state.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> </dd></dl>
 
 </div>
 </div>
@@ -695,8 +928,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="a2bea809d2efb3a5e7cc065ec80baebce" name="a2bea809d2efb3a5e7cc065ec80baebce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2bea809d2efb3a5e7cc065ec80baebce">&#9670;&#160;</a></span>calculateMolarReactionFlow() <span class="overload">[2/2]</span></h2>
+<a id="a2a43655ee34869126636f4fe9d687694" name="a2a43655ee34869126636f4fe9d687694"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a43655ee34869126636f4fe9d687694">&#9670;&#160;</a></span>calculateMolarReactionFlow() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -719,12 +952,12 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -734,7 +967,12 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>&#160;) const</td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>mue</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; std::optional&lt; size_t &gt;(const fourdst::atomic::Species &amp;)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>speciesIDLookup</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -759,6 +997,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
     <tr><td class="paramname">Ye</td><td></td></tr>
     <tr><td class="paramname">mue</td><td></td></tr>
+    <tr><td class="paramname">speciesIDLookup</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -767,8 +1006,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="a972d0705351167dc889a2f6c442e7a93" name="a972d0705351167dc889a2f6c442e7a93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a972d0705351167dc889a2f6c442e7a93">&#9670;&#160;</a></span>calculateReverseMolarReactionFlow()</h2>
+<a id="a1cd8c6f34ab262e5ad30631ee4afb0b2" name="a1cd8c6f34ab262e5ad30631ee4afb0b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd8c6f34ab262e5ad30631ee4afb0b2">&#9670;&#160;</a></span>calculateReverseMolarReactionFlow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -781,12 +1020,12 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="memname">T gridfire::GraphEngine::calculateReverseMolarReactionFlow </td>
           <td>(</td>
-          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+          <td class="paramtype">T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -870,8 +1109,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="a01fc9fd5d576b66d07360d05e821c755" name="a01fc9fd5d576b66d07360d05e821c755"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01fc9fd5d576b66d07360d05e821c755">&#9670;&#160;</a></span>calculateReverseRateTwoBody()</h2>
+<a id="af18853273cbd53317ee4389c2241281c" name="af18853273cbd53317ee4389c2241281c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af18853273cbd53317ee4389c2241281c">&#9670;&#160;</a></span>calculateReverseRateTwoBody()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -887,17 +1126,17 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>forwardRate</em></span>, </td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>forwardRate</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>expFactor</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>expFactor</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -964,10 +1203,24 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates the derivative of the reverse rate for a two-body reaction with respect to temperature. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reaction</td><td>The reaction for which to calculate the derivative. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">reverseRate</td><td>The reverse rate of the reaction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Derivative of the reverse rate with respect to temperature.</dd></dl>
+<p>This method computes the derivative of the reverse rate using automatic differentiation. </p>
+
 </div>
 </div>
 <a id="a7acc98647427981a9602d251c9288012" name="a7acc98647427981a9602d251c9288012"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7acc98647427981a9602d251c9288012">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7acc98647427981a9602d251c9288012">&#9670;&#160;</a></span>calculateRHSAndEnergy() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1015,6 +1268,59 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
+<a id="a2a8c5234f68e9c1806795e7a4e10922c" name="a2a8c5234f68e9c1806795e7a4e10922c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a8c5234f68e9c1806795e7a4e10922c">&#9670;&#160;</a></span>calculateRHSAndEnergy() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::GraphEngine::calculateRHSAndEnergy </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculates the right-hand side (dY/dt) and energy generation rate for a subset of reactions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeReactions</td><td>The set of reactions to include in the calculation. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;double&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
+<p>This method calculates the time derivatives of all species and the specific nuclear energy generation rate considering only the specified subset of reactions. This allows for flexible calculations with different reaction sets without modifying the engine's internal state.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives</a> </dd></dl>
+
+</div>
+</div>
 <a id="a29b338630c959449c15881935ac30746" name="a29b338630c959449c15881935ac30746"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a29b338630c959449c15881935ac30746">&#9670;&#160;</a></span>collectAtomicReverseRateAtomicBases()</h2>
 
@@ -1037,6 +1343,51 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a746ba3f5f61701cfd4f15578c1a4914a" name="a746ba3f5f61701cfd4f15578c1a4914a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a746ba3f5f61701cfd4f15578c1a4914a">&#9670;&#160;</a></span>collectComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">fourdst::composition::Composition gridfire::GraphEngine::collectComposition </td>
+          <td>(</td>
+          <td class="paramtype">fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>This will return the input comp with the molar abundances of any species not registered in that but registered in the engine active species set to 0.0. </p>
+<dl class="section note"><dt>Note</dt><dd>Effectively this method does not change input composition; rather it ensures that all species which can be tracked by an instance of <a class="el" href="classgridfire_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">GraphEngine</a> are registered in the composition object. </dd>
+<dd>
+If a species is in the input comp but not in the network </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Input Composition </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new composition where all members of the active species set are registered. And any members not in comp have a molar abundance set to 0. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">BadCollectionError</td><td>If the input composition contains species not present in the network species set </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a827c7e6fa7f2c5baf13a564fb4911388">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1135,7 +1486,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div>
 </div>
 <a id="ae11f6267077025ca342e2e263ad87e5e" name="ae11f6267077025ca342e2e263ad87e5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae11f6267077025ca342e2e263ad87e5e">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae11f6267077025ca342e2e263ad87e5e">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1183,7 +1534,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div>
 </div>
 <a id="a4e0bbc6448999e2ef06879270b7d3dec" name="a4e0bbc6448999e2ef06879270b7d3dec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e0bbc6448999e2ef06879270b7d3dec">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e0bbc6448999e2ef06879270b7d3dec">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1219,7 +1570,75 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented from <a class="el" href="classgridfire_1_1_dynamic_engine.html#a11d602a708af4629f51873b17f7b8dbd">gridfire::DynamicEngine</a>.</p>
+<p>Generates the Jacobian matrix for the current state with a specified sparsity pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">sparsityPattern</td><td>The sparsity pattern to use for the Jacobian matrix.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method computes and stores the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state using automatic differentiation, taking into account the provided sparsity pattern. The matrix can then be accessed via <code><a class="el" href="#a8ab5308629b8707922e5954776254aa6" title="Gets an entry from the previously generated Jacobian matrix.">getJacobianMatrixEntry()</a></code>.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ab5308629b8707922e5954776254aa6" title="Gets an entry from the previously generated Jacobian matrix.">getJacobianMatrixEntry()</a> </dd></dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a495bdb1e0c6f9911deb844b22c33644e">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="abd59415d74e3d1da0bc059fa64af1689" name="abd59415d74e3d1da0bc059fa64af1689"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd59415d74e3d1da0bc059fa64af1689">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::GraphEngine::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>activeSpecies</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Jacobian matrix for the current state with a specified set of active species. generally this will be much faster than the full matrix generation. Here we use forward mode to generate the Jacobian only for the active species. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>The Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>The density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeSpecies</td><td>A vector of Species objects representing the active species.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8ab5308629b8707922e5954776254aa6" title="Gets an entry from the previously generated Jacobian matrix.">getJacobianMatrixEntry()</a> </dd>
+<dd>
+<a class="el" href="#ae11f6267077025ca342e2e263ad87e5e" title="Generates the Jacobian matrix for the current state.">generateJacobianMatrix()</a> </dd></dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a8538fd9285a192f879a45e3dd3f26362">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1483,7 +1902,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div>
 </div>
 <a id="a47df5a9c448dd1ce8654df819a6cc8ff" name="a47df5a9c448dd1ce8654df819a6cc8ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47df5a9c448dd1ce8654df819a6cc8ff">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a47df5a9c448dd1ce8654df819a6cc8ff">&#9670;&#160;</a></span>getSpeciesDestructionTimescales() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1514,7 +1933,71 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Computes destruction timescales for all species in the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Map from Species to their destruction timescales (s).</dd></dl>
+<p>This method estimates the destruction timescale for each species, which can be useful for understanding reaction flows and equilibrium states. </p>
+
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a25c040d3078f6ff2ef38f733eb68f1fa">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a496bfc97e8db72faa147d2dab94fa5f1" name="a496bfc97e8db72faa147d2dab94fa5f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a496bfc97e8db72faa147d2dab94fa5f1">&#9670;&#160;</a></span>getSpeciesDestructionTimescales() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::GraphEngine::getSpeciesDestructionTimescales </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes destruction timescales for all species in the network considering a subset of reactions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeReactions</td><td>The set of reactions to include in the calculation. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Map from Species to their destruction timescales (s).</dd></dl>
+<p>This method estimates the destruction timescale for each species, considering only the specified subset of reactions. This allows for flexible calculations with different reaction sets without modifying the engine's internal state. </p>
 
 </div>
 </div>
@@ -1556,7 +2039,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div>
 </div>
 <a id="a7dde968244f3c4934c7738445c709232" name="a7dde968244f3c4934c7738445c709232"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dde968244f3c4934c7738445c709232">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dde968244f3c4934c7738445c709232">&#9670;&#160;</a></span>getSpeciesTimescales() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1600,6 +2083,58 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>This method estimates the timescale for abundance change of each species, which can be used for timestep control or diagnostics. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ae7114f5ebc6667b5e5971c0450ed03d9">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a578ecf0e3b0e5197ed6b33c7abf8f770" name="a578ecf0e3b0e5197ed6b33c7abf8f770"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a578ecf0e3b0e5197ed6b33c7abf8f770">&#9670;&#160;</a></span>getSpeciesTimescales() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::GraphEngine::getSpeciesTimescales </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>activeReactions</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes timescales for all species in the network considering a subset of reactions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeReactions</td><td>The set of reactions to include in the calculation. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Map from Species to their characteristic timescales (s).</dd></dl>
+<p>This method estimates the timescale for abundance change of each species, considering only the specified subset of reactions. This allows for flexible calculations with different reaction sets without modifying the engine's internal state. </p>
 
 </div>
 </div>
@@ -1731,6 +2266,16 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Checks if the engine view is stale and needs to be updated. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">netIn</td><td>The current network input (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the view is stale, false otherwise.</dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated</a></b></dt><dd>This method is deprecated and will be removed in future versions. Stale states are returned as part of the results of methods that require the ability to report them. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a942e65ced17ca602482cc42e469d6398">gridfire::DynamicEngine</a>.</p>
 
@@ -1920,8 +2465,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="ad9d6c70ace5cbbf7f3aa7b31fce39490" name="ad9d6c70ace5cbbf7f3aa7b31fce39490"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9d6c70ace5cbbf7f3aa7b31fce39490">&#9670;&#160;</a></span>rebuild()</h2>
+<a id="ad593a2d1b8fbbc01b63b0133357364ac" name="ad593a2d1b8fbbc01b63b0133357364ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad593a2d1b8fbbc01b63b0133357364ac">&#9670;&#160;</a></span>rebuild()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1937,7 +2482,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a></td>          <td class="paramname"><span class="paramname"><em>depth</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a></td>          <td class="paramname"><span class="paramname"><em>depth</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1995,31 +2540,6 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
-<a id="a16b8cd1b0e19b4d4519596a4e22eaf5c" name="a16b8cd1b0e19b4d4519596a4e22eaf5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16b8cd1b0e19b4d4519596a4e22eaf5c">&#9670;&#160;</a></span>recordEpsADTape()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::GraphEngine::recordEpsADTape </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a8d0c0bd54a2908cff62dae7af0c149b5" name="a8d0c0bd54a2908cff62dae7af0c149b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d0c0bd54a2908cff62dae7af0c149b5">&#9670;&#160;</a></span>reserveJacobianMatrix()</h2>
 
@@ -2071,6 +2591,15 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the reactions for the network. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reactions</td><td>The set of reactions to use in the network.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This method replaces the current set of reactions in the network with the provided set. It marks the engine as stale, requiring regeneration of matrices and recalculation of rates. </p>
+
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a49025489901e22a20cdf99b455ff2ff0">gridfire::DynamicEngine</a>.</p>
 
 </div>
@@ -2097,7 +2626,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This method allows enabling or disabling precomputation of reaction rates for performance optimization. When enabled, reaction rates are computed once and stored for later use. </p>
+<p>This method allows enabling or disabling precomputation of reaction rates for performance optimization. When enabled, reaction rates are computed once and stored for later use.</p>
+<dl class="section post"><dt>Postcondition</dt><dd>If precomputation is enabled, reaction rates will be precomputed and cached. If disabled, reaction rates will be computed on-the-fly as needed. </dd></dl>
 
 </div>
 </div>
@@ -2159,7 +2689,8 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This method allows enabling or disabling reverse reactions in the engine. If disabled, only forward reactions will be considered in calculations. </p>
+<p>This method allows enabling or disabling reverse reactions in the engine. If disabled, only forward reactions will be considered in calculations.</p>
+<dl class="section post"><dt>Postcondition</dt><dd>If reverse reactions are enabled, the engine will consider both forward and reverse reactions in its calculations. If disabled, only forward reactions will be considered. </dd></dl>
 
 </div>
 </div>
@@ -2214,19 +2745,15 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Update the internal state of the engine. </p>
+<p>Updates the state of the network and the composition to be usable for the current network. </p>
+<p>For graph engine all this does is ensure that the returned composition has all the species in the network registered. if a species was already in the composition is will keep its abundance, otherwise it will be added with zero abundance.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">netIn</td><td>A struct containing the current network input, such as temperature, density, and composition.</td></tr>
+    <tr><td class="paramname">netIn</td><td>The input netIn to use, this includes the composition, temperature, and density</td></tr>
   </table>
   </dd>
 </dl>
-<p>This method is intended to be implemented by derived classes to update their internal state based on the provided network conditions. For example, an adaptive engine might use this to re-evaluate which reactions and species are active. For other engines that do not support manually updating, this method might do nothing.</p>
-<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input = { ... };</div>
-<div class="line">myEngine.update(input);</div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> network.h:51</div></div>
-</div><!-- fragment --></dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The internal state of the engine is updated to reflect the new conditions. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The updated composition that includes all species in the network. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a">gridfire::DynamicEngine</a>.</p>
 
@@ -2398,6 +2925,30 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
+<a id="af147a6953dcbb70ba3cc93039ac21c35" name="af147a6953dcbb70ba3cc93039ac21c35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af147a6953dcbb70ba3cc93039ac21c35">&#9670;&#160;</a></span>m_full_sparsity_set</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::set&lt;std::pair&lt;size_t, size_t&gt; &gt; gridfire::GraphEngine::m_full_sparsity_set</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For quick lookups of the base sparsity pattern. </p>
+
+</div>
+</div>
 <a id="a8ff064c9996772281984f88ee492d04a" name="a8ff064c9996772281984f88ee492d04a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ff064c9996772281984f88ee492d04a">&#9670;&#160;</a></span>m_indexToSpeciesMap</h2>
 
@@ -2468,6 +3019,60 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 <p>Jacobian matrix (species x species). </p>
 
+</div>
+</div>
+<a id="ad730251f4cd877006f2520be84ac85e9" name="ad730251f4cd877006f2520be84ac85e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad730251f4cd877006f2520be84ac85e9">&#9670;&#160;</a></span>m_jacobianMatrixState</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">JacobianMatrixState</a> gridfire::GraphEngine::m_jacobianMatrixState = <a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268">JacobianMatrixState::UNINITIALIZED</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adc3758335b680d41edfdf0c64eeb27c6" name="adc3758335b680d41edfdf0c64eeb27c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc3758335b680d41edfdf0c64eeb27c6">&#9670;&#160;</a></span>m_jacobianMatrixStateNameMap</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;<a class="el" href="#ac94adcb6d39f7633f326f038dca15ec6">JacobianMatrixState</a>, std::string&gt; gridfire::GraphEngine::m_jacobianMatrixStateNameMap</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">            {<a class="code hl_enumvalue" href="#ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268">JacobianMatrixState::UNINITIALIZED</a>, <span class="stringliteral">&quot;Uninitialized&quot;</span>},</div>
+<div class="line">            {<a class="code hl_enumvalue" href="#ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456">JacobianMatrixState::STALE</a>, <span class="stringliteral">&quot;Stale&quot;</span>},</div>
+<div class="line">            {<a class="code hl_enumvalue" href="#ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb">JacobianMatrixState::READY_DENSE</a>, <span class="stringliteral">&quot;Ready (dense)&quot;</span>},</div>
+<div class="line">            {<a class="code hl_enumvalue" href="#ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3">JacobianMatrixState::READY_SPARSE</a>, <span class="stringliteral">&quot;Ready (sparse)&quot;</span>},</div>
+<div class="line">        }</div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html_ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb"><div class="ttname"><a href="#ac94adcb6d39f7633f326f038dca15ec6a162cb379760275c9685281ee27025cdb">gridfire::GraphEngine::JacobianMatrixState::READY_DENSE</a></div><div class="ttdeci">@ READY_DENSE</div><div class="ttdef"><b>Definition</b> engine_graph.h:782</div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html_ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456"><div class="ttname"><a href="#ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456">gridfire::GraphEngine::JacobianMatrixState::STALE</a></div><div class="ttdeci">@ STALE</div><div class="ttdef"><b>Definition</b> engine_graph.h:781</div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html_ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3"><div class="ttname"><a href="#ac94adcb6d39f7633f326f038dca15ec6abf43af1b1ac8bc6cb42296815a429ae3">gridfire::GraphEngine::JacobianMatrixState::READY_SPARSE</a></div><div class="ttdeci">@ READY_SPARSE</div><div class="ttdef"><b>Definition</b> engine_graph.h:783</div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html_ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268"><div class="ttname"><a href="#ac94adcb6d39f7633f326f038dca15ec6add652546039b18970b8dcf2cff824268">gridfire::GraphEngine::JacobianMatrixState::UNINITIALIZED</a></div><div class="ttdeci">@ UNINITIALIZED</div><div class="ttdef"><b>Definition</b> engine_graph.h:780</div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a483979fc154adc88d029b3b672066d53" name="a483979fc154adc88d029b3b672066d53"></a>
@@ -2561,6 +3166,30 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </div><div class="memdoc">
 
 <p>Partition function for the network. </p>
+
+</div>
+</div>
+<a id="a183cbef618742d97b2b6edb60522eb6c" name="a183cbef618742d97b2b6edb60522eb6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a183cbef618742d97b2b6edb60522eb6c">&#9670;&#160;</a></span>m_precomputedReactionIndexMap</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;uint64_t, size_t&gt; gridfire::GraphEngine::m_precomputedReactionIndexMap</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set of hashed precomputed reactions for quick lookup. </p>
 
 </div>
 </div>

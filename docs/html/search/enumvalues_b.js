@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['positron_5fcapture_0',['POSITRON_CAPTURE',['../namespacegridfire_1_1rates_1_1weak.html#ae834fb6f8cd1ac922967d5296a25bec7ae0be5539e1cf1c424806baa62540aa9d',1,'gridfire::rates::weak']]]
+  ['other_0',['Other',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac558e59f790508a5e8522c412be5b505a6311ae17c1ee52b36e68aaf4ad066387',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]]
 ];

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -215,6 +215,23 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:ad7f0577c2f88caaf0cec6cf80c04892b" id="r_ad7f0577c2f88caaf0cec6cf80c04892b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> : uint32_t { <br />
+&#160;&#160;<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892bab50339a10e1de285ac99d4c3990b8693">NONE</a> = 0
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba3dfb3ae3cdaa322f0388f1a531c39520">STRONG</a> = 1 &lt;&lt; 0
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba079cbe546b094a3228f3d2308de42371">BETA_MINUS</a> = 1 &lt;&lt; 1
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892baec3e428817690ce788dd410655d44ac7">BETA_PLUS</a> = 1 &lt;&lt; 2
+, <br />
+&#160;&#160;<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba26b6967eb578cb1b08373b342bf72ef7">ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892bae0be5539e1cf1c424806baa62540aa9d">POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892bab736eb13fff62c962f63232ec57f2692">REACLIB_WEAK</a> = 1 &lt;&lt; 5
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892bafc9a7c10ff86192133ca7a280783bfe4">WRL_WEAK</a> = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE
+, <br />
+&#160;&#160;<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892baf9885ed04411bef7b70f78b643c6a220">REACLIB</a> = STRONG | REACLIB_WEAK
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee">DEFAULT</a> = REACLIB
+, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba5fb1f955b45e38e31789286a1790398d">ALL</a> = STRONG | WRL_WEAK
+<br />
+ }</td></tr>
+<tr class="separator:ad7f0577c2f88caaf0cec6cf80c04892b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0210bd2e07538932135a56b62b8ddb57" id="r_a0210bd2e07538932135a56b62b8ddb57"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0210bd2e07538932135a56b62b8ddb57">NetworkBuildDepth</a> { <br />
 &#160;&#160;<a class="el" href="#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">Full</a> = -1
 , <a class="el" href="#a0210bd2e07538932135a56b62b8ddb57a928d0f1285ee7d36c1c2fa1b1b7a164c">Shallow</a> = 1
@@ -248,26 +265,36 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a384323338f13166d87c7ac047434bd38" id="r_a384323338f13166d87c7ac047434bd38"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a384323338f13166d87c7ac047434bd38">build_reaclib_nuclear_network</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers=<a class="el" href="#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>, bool reverse=false)</td></tr>
-<tr class="memdesc:a384323338f13166d87c7ac047434bd38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a nuclear reaction network from the Reaclib library based on an initial composition.  <br /></td></tr>
-<tr class="separator:a384323338f13166d87c7ac047434bd38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cd451f4b7a7bc7c2d7007ebb343e9ac" id="r_a3cd451f4b7a7bc7c2d7007ebb343e9ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3cd451f4b7a7bc7c2d7007ebb343e9ac">primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine)</td></tr>
-<tr class="memdesc:a3cd451f4b7a7bc7c2d7007ebb343e9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
-<tr class="separator:a3cd451f4b7a7bc7c2d7007ebb343e9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6e14208fad69f4031411a9346c12397" id="r_ab6e14208fad69f4031411a9346c12397"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6e14208fad69f4031411a9346c12397">calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho)</td></tr>
-<tr class="memdesc:ab6e14208fad69f4031411a9346c12397"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the destruction rate constant for a specific species.  <br /></td></tr>
-<tr class="separator:ab6e14208fad69f4031411a9346c12397"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8995b949592d59850e45a3fd27306369" id="r_a8995b949592d59850e45a3fd27306369"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8995b949592d59850e45a3fd27306369">calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho)</td></tr>
-<tr class="memdesc:a8995b949592d59850e45a3fd27306369"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the creation rate for a specific species.  <br /></td></tr>
-<tr class="separator:a8995b949592d59850e45a3fd27306369"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58a036e8883e75a8abd3e18798563f71" id="r_a58a036e8883e75a8abd3e18798563f71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58a036e8883e75a8abd3e18798563f71">build_nuclear_network</a> (const Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weak_interpolator, <a class="el" href="#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers, bool reverse_reaclib)</td></tr>
-<tr class="separator:a58a036e8883e75a8abd3e18798563f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f" id="r_a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f">findDominantCreationChannel</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const fourdst::composition::Composition &amp;comp, const double T9, const double rho)</td></tr>
-<tr class="separator:a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a023dc09e48b62e3f93f9a8b70cb2c63f" id="r_a023dc09e48b62e3f93f9a8b70cb2c63f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a023dc09e48b62e3f93f9a8b70cb2c63f">calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;comp, const double T9, const double rho)</td></tr>
-<tr class="separator:a023dc09e48b62e3f93f9a8b70cb2c63f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a553717597efebcea94232a4a1d80e31d" id="r_a553717597efebcea94232a4a1d80e31d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a553717597efebcea94232a4a1d80e31d">calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;comp, const double T9, const double rho)</td></tr>
-<tr class="separator:a553717597efebcea94232a4a1d80e31d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c42ac7834a0ecb0e36c1e673a403349" id="r_a0c42ac7834a0ecb0e36c1e673a403349"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c42ac7834a0ecb0e36c1e673a403349">to_underlying</a> (<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> f) noexcept</td></tr>
+<tr class="separator:a0c42ac7834a0ecb0e36c1e673a403349"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1504ccf93263bae031d95d4d3880999e" id="r_a1504ccf93263bae031d95d4d3880999e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1504ccf93263bae031d95d4d3880999e">operator|</a> (const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> lhs, const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> rhs)</td></tr>
+<tr class="separator:a1504ccf93263bae031d95d4d3880999e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6de955e2cf2f0e0241bceabdee69f3f6" id="r_a6de955e2cf2f0e0241bceabdee69f3f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6de955e2cf2f0e0241bceabdee69f3f6">operator&amp;</a> (const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> lhs, const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> rhs)</td></tr>
+<tr class="separator:a6de955e2cf2f0e0241bceabdee69f3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ad8e76156fd708fe6f3bb0f2ad8650b" id="r_a5ad8e76156fd708fe6f3bb0f2ad8650b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ad8e76156fd708fe6f3bb0f2ad8650b">has_flag</a> (const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flags, const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flag_to_check)</td></tr>
+<tr class="separator:a5ad8e76156fd708fe6f3bb0f2ad8650b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c96c92c72485f364466c6b979959ef7" id="r_a7c96c92c72485f364466c6b979959ef7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c96c92c72485f364466c6b979959ef7">NetworkConstructionFlagsToString</a> (<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flags)</td></tr>
+<tr class="separator:a7c96c92c72485f364466c6b979959ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bc156f634a447f88a19de3be961c00b" id="r_a0bc156f634a447f88a19de3be961c00b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0bc156f634a447f88a19de3be961c00b">build_nuclear_network</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers=<a class="el" href="#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> ReactionTypes=<a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee">NetworkConstructionFlags::DEFAULT</a>)</td></tr>
+<tr class="memdesc:a0bc156f634a447f88a19de3be961c00b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a nuclear reaction network from the Reaclib library based on an initial composition.  <br /></td></tr>
+<tr class="separator:a0bc156f634a447f88a19de3be961c00b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66905e14e8bb9a353889d9d014c61d12" id="r_a66905e14e8bb9a353889d9d014c61d12"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66905e14e8bb9a353889d9d014c61d12">primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
+<tr class="memdesc:a66905e14e8bb9a353889d9d014c61d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
+<tr class="separator:a66905e14e8bb9a353889d9d014c61d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a5cebf9768d6401c1f0e7f50e9f4d5d" id="r_a4a5cebf9768d6401c1f0e7f50e9f4d5d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a5cebf9768d6401c1f0e7f50e9f4d5d">calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="memdesc:a4a5cebf9768d6401c1f0e7f50e9f4d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the destruction rate constant for a specific species.  <br /></td></tr>
+<tr class="separator:a4a5cebf9768d6401c1f0e7f50e9f4d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe8beb35efa1d8708187c8eb2d4a37b3" id="r_afe8beb35efa1d8708187c8eb2d4a37b3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe8beb35efa1d8708187c8eb2d4a37b3">calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="memdesc:afe8beb35efa1d8708187c8eb2d4a37b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the creation rate for a specific species.  <br /></td></tr>
+<tr class="separator:afe8beb35efa1d8708187c8eb2d4a37b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0e3ec7cfe044c50929f378289f5fab9" id="r_ad0e3ec7cfe044c50929f378289f5fab9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0e3ec7cfe044c50929f378289f5fab9">build_nuclear_network</a> (const Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers, <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> ReactionTypes)</td></tr>
+<tr class="separator:ad0e3ec7cfe044c50929f378289f5fab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a831f081d9eb1db7129677c50c5590d57" id="r_a831f081d9eb1db7129677c50c5590d57"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a831f081d9eb1db7129677c50c5590d57">findDominantCreationChannel</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;comp, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionsTypesToIgnore)</td></tr>
+<tr class="separator:a831f081d9eb1db7129677c50c5590d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac73e0b3ba4d1a411197979672e6e70ef" id="r_ac73e0b3ba4d1a411197979672e6e70ef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac73e0b3ba4d1a411197979672e6e70ef">calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;composition, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="separator:ac73e0b3ba4d1a411197979672e6e70ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41733bdcb8f8027e48855f9b493401a6" id="r_a41733bdcb8f8027e48855f9b493401a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41733bdcb8f8027e48855f9b493401a6">calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;composition, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="separator:a41733bdcb8f8027e48855f9b493401a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b245f261cd8d1711ae8d593b054cf98" id="r_a8b245f261cd8d1711ae8d593b054cf98"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b245f261cd8d1711ae8d593b054cf98">trim_whitespace</a> (const std::string &amp;str)</td></tr>
 <tr class="separator:a8b245f261cd8d1711ae8d593b054cf98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -380,6 +407,41 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ad7f0577c2f88caaf0cec6cf80c04892b" name="ad7f0577c2f88caaf0cec6cf80c04892b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7f0577c2f88caaf0cec6cf80c04892b">&#9670;&#160;</a></span>NetworkConstructionFlags</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">gridfire::NetworkConstructionFlags</a> : uint32_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892bab50339a10e1de285ac99d4c3990b8693" name="ad7f0577c2f88caaf0cec6cf80c04892bab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892ba3dfb3ae3cdaa322f0388f1a531c39520" name="ad7f0577c2f88caaf0cec6cf80c04892ba3dfb3ae3cdaa322f0388f1a531c39520"></a>STRONG&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892ba079cbe546b094a3228f3d2308de42371" name="ad7f0577c2f88caaf0cec6cf80c04892ba079cbe546b094a3228f3d2308de42371"></a>BETA_MINUS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892baec3e428817690ce788dd410655d44ac7" name="ad7f0577c2f88caaf0cec6cf80c04892baec3e428817690ce788dd410655d44ac7"></a>BETA_PLUS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892ba26b6967eb578cb1b08373b342bf72ef7" name="ad7f0577c2f88caaf0cec6cf80c04892ba26b6967eb578cb1b08373b342bf72ef7"></a>ELECTRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892bae0be5539e1cf1c424806baa62540aa9d" name="ad7f0577c2f88caaf0cec6cf80c04892bae0be5539e1cf1c424806baa62540aa9d"></a>POSITRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892bab736eb13fff62c962f63232ec57f2692" name="ad7f0577c2f88caaf0cec6cf80c04892bab736eb13fff62c962f63232ec57f2692"></a>REACLIB_WEAK&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892bafc9a7c10ff86192133ca7a280783bfe4" name="ad7f0577c2f88caaf0cec6cf80c04892bafc9a7c10ff86192133ca7a280783bfe4"></a>WRL_WEAK&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892baf9885ed04411bef7b70f78b643c6a220" name="ad7f0577c2f88caaf0cec6cf80c04892baf9885ed04411bef7b70f78b643c6a220"></a>REACLIB&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee" name="ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee"></a>DEFAULT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad7f0577c2f88caaf0cec6cf80c04892ba5fb1f955b45e38e31789286a1790398d" name="ad7f0577c2f88caaf0cec6cf80c04892ba5fb1f955b45e38e31789286a1790398d"></a>ALL&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
 <a id="a3f3d6b3f9742b70e62049ccefbb60f37" name="a3f3d6b3f9742b70e62049ccefbb60f37"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3f3d6b3f9742b70e62049ccefbb60f37">&#9670;&#160;</a></span>NetworkFormat</h2>
 
@@ -445,8 +507,8 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a58a036e8883e75a8abd3e18798563f71" name="a58a036e8883e75a8abd3e18798563f71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58a036e8883e75a8abd3e18798563f71">&#9670;&#160;</a></span>build_nuclear_network()</h2>
+<a id="ad0e3ec7cfe044c50929f378289f5fab9" name="ad0e3ec7cfe044c50929f378289f5fab9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0e3ec7cfe044c50929f378289f5fab9">&#9670;&#160;</a></span>build_nuclear_network() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -459,7 +521,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>weak_interpolator</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>weakInterpolator</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -469,21 +531,21 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reverse_reaclib</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>ReactionTypes</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a384323338f13166d87c7ac047434bd38" name="a384323338f13166d87c7ac047434bd38"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a384323338f13166d87c7ac047434bd38">&#9670;&#160;</a></span>build_reaclib_nuclear_network()</h2>
+<a id="a0bc156f634a447f88a19de3be961c00b" name="a0bc156f634a447f88a19de3be961c00b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bc156f634a447f88a19de3be961c00b">&#9670;&#160;</a></span>build_nuclear_network() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> gridfire::build_reaclib_nuclear_network </td>
+          <td class="memname"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> gridfire::build_nuclear_network </td>
           <td>(</td>
           <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
         </tr>
@@ -500,7 +562,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reverse</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>ReactionTypes</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee">NetworkConstructionFlags::DEFAULT</a></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -511,9 +573,9 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">composition</td><td>Mapping of isotopic species to their mass fractions; species with positive mass fraction seed the network. </td></tr>
-    <tr><td class="paramname">weakInterpolator</td><td></td></tr>
+    <tr><td class="paramname">weakInterpolator</td><td>Interpolator to build weak rates from. Must be constructed and owned by the caller. </td></tr>
     <tr><td class="paramname">maxLayers</td><td>Variant specifying either a predefined <a class="el" href="#a0210bd2e07538932135a56b62b8ddb57" title="Specifies supported depths for building the reaction network.">NetworkBuildDepth</a> or a custom integer depth; negative depth (Full) collects all reactions, zero is invalid. </td></tr>
-    <tr><td class="paramname">reverse</td><td>If true, collects reverse reactions (decays or back-reactions); if false, uses forward reactions. </td></tr>
+    <tr><td class="paramname">ReactionTypes</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -531,8 +593,8 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
 
 </div>
 </div>
-<a id="a8995b949592d59850e45a3fd27306369" name="a8995b949592d59850e45a3fd27306369"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8995b949592d59850e45a3fd27306369">&#9670;&#160;</a></span>calculateCreationRate() <span class="overload">[1/2]</span></h2>
+<a id="afe8beb35efa1d8708187c8eb2d4a37b3" name="afe8beb35efa1d8708187c8eb2d4a37b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe8beb35efa1d8708187c8eb2d4a37b3">&#9670;&#160;</a></span>calculateCreationRate() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -560,7 +622,12 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -574,6 +641,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
     <tr><td class="paramname">composition</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density of the medium. </td></tr>
+    <tr><td class="paramname">reactionTypesToIgnore</td><td>types of reactions to ignore during calculation. </td></tr>
   </table>
   </dd>
 </dl>
@@ -583,8 +651,8 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
 
 </div>
 </div>
-<a id="a553717597efebcea94232a4a1d80e31d" name="a553717597efebcea94232a4a1d80e31d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a553717597efebcea94232a4a1d80e31d">&#9670;&#160;</a></span>calculateCreationRate() <span class="overload">[2/2]</span></h2>
+<a id="a41733bdcb8f8027e48855f9b493401a6" name="a41733bdcb8f8027e48855f9b493401a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41733bdcb8f8027e48855f9b493401a6">&#9670;&#160;</a></span>calculateCreationRate() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -602,7 +670,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+          <td class="paramtype">const Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -612,15 +680,20 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ab6e14208fad69f4031411a9346c12397" name="ab6e14208fad69f4031411a9346c12397"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6e14208fad69f4031411a9346c12397">&#9670;&#160;</a></span>calculateDestructionRateConstant() <span class="overload">[1/2]</span></h2>
+<a id="a4a5cebf9768d6401c1f0e7f50e9f4d5d" name="a4a5cebf9768d6401c1f0e7f50e9f4d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a5cebf9768d6401c1f0e7f50e9f4d5d">&#9670;&#160;</a></span>calculateDestructionRateConstant() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -648,7 +721,12 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -662,6 +740,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
     <tr><td class="paramname">composition</td><td>Current composition providing abundances for all species. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density of the medium. </td></tr>
+    <tr><td class="paramname">reactionTypesToIgnore</td><td>types of reactions to ignore during calculation. </td></tr>
   </table>
   </dd>
 </dl>
@@ -671,8 +750,8 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
 
 </div>
 </div>
-<a id="a023dc09e48b62e3f93f9a8b70cb2c63f" name="a023dc09e48b62e3f93f9a8b70cb2c63f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a023dc09e48b62e3f93f9a8b70cb2c63f">&#9670;&#160;</a></span>calculateDestructionRateConstant() <span class="overload">[2/2]</span></h2>
+<a id="ac73e0b3ba4d1a411197979672e6e70ef" name="ac73e0b3ba4d1a411197979672e6e70ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac73e0b3ba4d1a411197979672e6e70ef">&#9670;&#160;</a></span>calculateDestructionRateConstant() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -690,7 +769,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+          <td class="paramtype">const Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -700,15 +779,20 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f" name="a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fe2e0bd4b2d4b9e0c70cc4eb9d7c48f">&#9670;&#160;</a></span>findDominantCreationChannel()</h2>
+<a id="a831f081d9eb1db7129677c50c5590d57" name="a831f081d9eb1db7129677c50c5590d57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a831f081d9eb1db7129677c50c5590d57">&#9670;&#160;</a></span>findDominantCreationChannel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -726,7 +810,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+          <td class="paramtype">const Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -736,15 +820,132 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionsTypesToIgnore</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a3cd451f4b7a7bc7c2d7007ebb343e9ac" name="a3cd451f4b7a7bc7c2d7007ebb343e9ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cd451f4b7a7bc7c2d7007ebb343e9ac">&#9670;&#160;</a></span>primeNetwork()</h2>
+<a id="a5ad8e76156fd708fe6f3bb0f2ad8650b" name="a5ad8e76156fd708fe6f3bb0f2ad8650b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ad8e76156fd708fe6f3bb0f2ad8650b">&#9670;&#160;</a></span>has_flag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::has_flag </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>flag_to_check</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7c96c92c72485f364466c6b979959ef7" name="a7c96c92c72485f364466c6b979959ef7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c96c92c72485f364466c6b979959ef7">&#9670;&#160;</a></span>NetworkConstructionFlagsToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string gridfire::NetworkConstructionFlagsToString </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6de955e2cf2f0e0241bceabdee69f3f6" name="a6de955e2cf2f0e0241bceabdee69f3f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6de955e2cf2f0e0241bceabdee69f3f6">&#9670;&#160;</a></span>operator&amp;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> gridfire::operator&amp; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1504ccf93263bae031d95d4d3880999e" name="a1504ccf93263bae031d95d4d3880999e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1504ccf93263bae031d95d4d3880999e">&#9670;&#160;</a></span>operator|()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> gridfire::operator| </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a66905e14e8bb9a353889d9d014c61d12" name="a66905e14e8bb9a353889d9d014c61d12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66905e14e8bb9a353889d9d014c61d12">&#9670;&#160;</a></span>primeNetwork()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -757,7 +958,12 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>ignoredReactionTypes</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -770,6 +976,7 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
   <table class="params">
     <tr><td class="paramname">netIn</td><td>Input network data containing initial composition, temperature, and density. </td></tr>
     <tr><td class="paramname">engine</td><td><a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a> used to build and evaluate the reaction network. </td></tr>
+    <tr><td class="paramname">ignoredReactionTypes</td><td>Types of reactions to ignore during priming (e.g., weak reactions). </td></tr>
   </table>
   </dd>
 </dl>
@@ -786,10 +993,36 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
   <table class="params">
     <tr><td class="paramname">netIn</td><td>Input network data containing initial composition, temperature, and density. </td></tr>
     <tr><td class="paramname">engine</td><td><a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a> used to build and evaluate the reaction network. </td></tr>
+    <tr><td class="paramname">ignoredReactionTypes</td><td>Types of reactions to ignore during priming (e.g., weak reactions). </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_priming_report.html" title="Captures the result of a network priming operation.">PrimingReport</a> encapsulating the results of the priming operation, including the new robustly primed composition. </dd></dl>
+
+</div>
+</div>
+<a id="a0c42ac7834a0ecb0e36c1e673a403349" name="a0c42ac7834a0ecb0e36c1e673a403349"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c42ac7834a0ecb0e36c1e673a403349">&#9670;&#160;</a></span>to_underlying()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto gridfire::to_underlying </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a></td>          <td class="paramname"><span class="paramname"><em>f</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel constexpr">constexpr</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

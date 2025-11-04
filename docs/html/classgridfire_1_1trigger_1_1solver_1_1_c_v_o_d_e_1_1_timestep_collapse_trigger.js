@@ -8,6 +8,7 @@ var classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigg
     [ "numMisses", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#a94bb1de08a5ff55e1874f595f8c8965c", null ],
     [ "numTriggers", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#ad2a7c2567b100f97a024f65818ecefed", null ],
     [ "reset", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#a0fe6af73b11b820561bd4e5552890d4e", null ],
+    [ "step", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#a9723e389aeba05fdb3d4fd1dcc1ba07d", null ],
     [ "update", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#af6bff6a484e8729445c26620b489665d", null ],
     [ "why", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#a22d8bc7aacbc388108225c26158e918c", null ],
     [ "m_hits", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html#aff23db33140aa6a5a2ad36eda77b833d", null ],

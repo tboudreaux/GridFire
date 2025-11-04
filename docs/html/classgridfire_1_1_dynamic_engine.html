@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -132,8 +132,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a21d15531309456ee83f7675251e7a1bf" id="r_a21d15531309456ee83f7675251e7a1bf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21d15531309456ee83f7675251e7a1bf">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const =0</td></tr>
 <tr class="memdesc:a21d15531309456ee83f7675251e7a1bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state.  <br /></td></tr>
 <tr class="separator:a21d15531309456ee83f7675251e7a1bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11d602a708af4629f51873b17f7b8dbd" id="r_a11d602a708af4629f51873b17f7b8dbd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11d602a708af4629f51873b17f7b8dbd">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const</td></tr>
-<tr class="separator:a11d602a708af4629f51873b17f7b8dbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8538fd9285a192f879a45e3dd3f26362" id="r_a8538fd9285a192f879a45e3dd3f26362"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8538fd9285a192f879a45e3dd3f26362">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const =0</td></tr>
+<tr class="separator:a8538fd9285a192f879a45e3dd3f26362"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a495bdb1e0c6f9911deb844b22c33644e" id="r_a495bdb1e0c6f9911deb844b22c33644e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a495bdb1e0c6f9911deb844b22c33644e">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const =0</td></tr>
+<tr class="separator:a495bdb1e0c6f9911deb844b22c33644e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88dbf350dc0ea3e2b64d825f489e0d60" id="r_a88dbf350dc0ea3e2b64d825f489e0d60"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88dbf350dc0ea3e2b64d825f489e0d60">getJacobianMatrixEntry</a> (const fourdst::atomic::Species &amp;rowSpecies, const fourdst::atomic::Species &amp;colSpecies) const =0</td></tr>
 <tr class="memdesc:a88dbf350dc0ea3e2b64d825f489e0d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an entry from the previously generated Jacobian matrix.  <br /></td></tr>
 <tr class="separator:a88dbf350dc0ea3e2b64d825f489e0d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,6 +187,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4e2c8b896661b7a89beffe0066cb21cf" id="r_a4e2c8b896661b7a89beffe0066cb21cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e2c8b896661b7a89beffe0066cb21cf">rebuild</a> (const fourdst::composition::Composition &amp;comp, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> depth)</td></tr>
 <tr class="memdesc:a4e2c8b896661b7a89beffe0066cb21cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the network with a specified depth.  <br /></td></tr>
 <tr class="separator:a4e2c8b896661b7a89beffe0066cb21cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a827c7e6fa7f2c5baf13a564fb4911388" id="r_a827c7e6fa7f2c5baf13a564fb4911388"><td class="memItemLeft" align="right" valign="top">virtual fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a827c7e6fa7f2c5baf13a564fb4911388">collectComposition</a> (fourdst::composition::Composition &amp;comp) const =0</td></tr>
+<tr class="memdesc:a827c7e6fa7f2c5baf13a564fb4911388"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively collect composition from current engine and any sub engines if they exist.  <br /></td></tr>
+<tr class="separator:a827c7e6fa7f2c5baf13a564fb4911388"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
@@ -251,7 +256,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
 <p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a5d1b50afd2fba6af75e976a4f9c9dcbc">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a06aca977aafb4784fd167acb8c02dda2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ae0c9159cc3467fd85d1a5895f1786c47">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a99f9116d5a18afcbf0e808ef111d1be8">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a5d1b50afd2fba6af75e976a4f9c9dcbc">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a06aca977aafb4784fd167acb8c02dda2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ae0c9159cc3467fd85d1a5895f1786c47">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a99f9116d5a18afcbf0e808ef111d1be8">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a09eb8874b0c687aacc84a7bc7a5e2330">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -305,12 +310,51 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
 <p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a3c1e27b45051c4ba481a2b87513982ed">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a74298377d0432ae3d577be0e9e6052b3">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a1675859971f0bd2db0650f8da54ed7eb">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a87687a960f263a4e1bc035e4d0a345db">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a3c1e27b45051c4ba481a2b87513982ed">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a74298377d0432ae3d577be0e9e6052b3">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a1675859971f0bd2db0650f8da54ed7eb">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a87687a960f263a4e1bc035e4d0a345db">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a1b7f2e7c92b4702efcabe7c2a1faa153">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a827c7e6fa7f2c5baf13a564fb4911388" name="a827c7e6fa7f2c5baf13a564fb4911388"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a827c7e6fa7f2c5baf13a564fb4911388">&#9670;&#160;</a></span>collectComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual fourdst::composition::Composition gridfire::DynamicEngine::collectComposition </td>
+          <td>(</td>
+          <td class="paramtype">fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Recursively collect composition from current engine and any sub engines if they exist. </p>
+<p>If species i is defined in comp and in any sub engine or self composition then the molar abundance of species i in the returned composition will be that defined in comp. If there are species defined in sub engine compositions which are not defined in comp then their molar abundances will be based on the reported values from each sub engine. </p><dl class="section note"><dt>Note</dt><dd>It is up to each engine to decide how to handle filling in the return composition. </dd>
+<dd>
+These methods return an unfinalized composition which must then be finalized by the caller </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Input composition to "normalize". </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An updated composition which is a superset of comp. This may contain species which were culled, for example, by either QSE partitioning or reaction flow rate culling </dd></dl>
+
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#ab2f975b860ad4f42ed1ba45e41c8e959">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#aefd36cae5c263cba12a0c177e70b409a">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a746ba3f5f61701cfd4f15578c1a4914a">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a7056e235c56be39e2a672988962b3948">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6c5397f57fb9e115495188a1d2296147">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
 <a id="a21d15531309456ee83f7675251e7a1bf" name="a21d15531309456ee83f7675251e7a1bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21d15531309456ee83f7675251e7a1bf">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a21d15531309456ee83f7675251e7a1bf">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,12 +396,12 @@ Public Member Functions</h2></td></tr>
 </dl>
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state. The matrix can then be accessed via <a class="el" href="#a88dbf350dc0ea3e2b64d825f489e0d60" title="Get an entry from the previously generated Jacobian matrix.">getJacobianMatrixEntry()</a>. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a8da7664cf483cba7f979f855a74c3559">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#ab80eadd713a40e9263e5231737e956d0">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ae11f6267077025ca342e2e263ad87e5e">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#ab9f71bc9a1c0f98ec9cc1c7da00fd975">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a8da7664cf483cba7f979f855a74c3559">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a0b38e584912f9df9cee5a77752e85492">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ae11f6267077025ca342e2e263ad87e5e">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#ab9f71bc9a1c0f98ec9cc1c7da00fd975">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2a63d0132254983a2143f31e863a5c18">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a11d602a708af4629f51873b17f7b8dbd" name="a11d602a708af4629f51873b17f7b8dbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11d602a708af4629f51873b17f7b8dbd">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/2]</span></h2>
+<a id="a495bdb1e0c6f9911deb844b22c33644e" name="a495bdb1e0c6f9911deb844b22c33644e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a495bdb1e0c6f9911deb844b22c33644e">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -388,12 +432,53 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1_graph_engine.html#a4e0bbc6448999e2ef06879270b7d3dec">gridfire::GraphEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#acba9f89a48d38b1c7f7dcb2a39c6816d">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a2c502d447134260086558ce83336cda9">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a4e0bbc6448999e2ef06879270b7d3dec">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#ac683ef0ba25356bc587749b69a582286">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a36f2dbd2278608fe8a4ef7f08d7e4963">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a8538fd9285a192f879a45e3dd3f26362" name="a8538fd9285a192f879a45e3dd3f26362"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8538fd9285a192f879a45e3dd3f26362">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void gridfire::DynamicEngine::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>activeSpecies</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a7b8951ebe897f1ab72149068db13dbb6">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a09613471ccc5169ce8525c2bef88a59b">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#abd59415d74e3d1da0bc059fa64af1689">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a31e636745b8c427cee0319e6c61039be">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#aae45b9260d0ec645213541c96b48a468">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -496,7 +581,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Value of the Jacobian matrix at (i, j).</dd></dl>
 <p>The Jacobian must have been generated by <a class="el" href="#a21d15531309456ee83f7675251e7a1bf" title="Generate the Jacobian matrix for the current state.">generateJacobianMatrix()</a> before calling this. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#adf3b8a5734983509ca02b7a1a480119f">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#aa49532266ff959ac66f501336f102ce8">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a8ab5308629b8707922e5954776254aa6">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a586da5402750151fee5db2666785b6e4">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#adf3b8a5734983509ca02b7a1a480119f">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#aa49532266ff959ac66f501336f102ce8">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a8ab5308629b8707922e5954776254aa6">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a586da5402750151fee5db2666785b6e4">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a63bbe8f6d3849e99dd41b6d9613ff1f0">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -595,7 +680,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aa861db5f6fc4e85fb51f524e4e1367c6">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a7bcf169ba1e12e3356d4bcc27c3fc554">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a47df5a9c448dd1ce8654df819a6cc8ff">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a1a14b0c7ec882b2ad2370f7aa729b9f9">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#aa861db5f6fc4e85fb51f524e4e1367c6">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#ad51ef1984f92856b6d4c522e56e8d6a6">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a47df5a9c448dd1ce8654df819a6cc8ff">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#accbbe1bd96672e74919d00387673f180">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a16c27e5af29ddf187e5ab82a6e6db57b">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -679,7 +764,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Map from Species to their characteristic timescales (s).</dd></dl>
 <p>This method estimates the timescale for abundance change of each species, which can be used for timestep control, diagnostics, and reaction network culling. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a57a218c5a145f589531777c8615b7408">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a18f46d92ea7e04068ad9e7af4ed605a8">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a7dde968244f3c4934c7738445c709232">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#aea2c3d2ae6ddf77bd4a9b07b86f3306b">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#a57a218c5a145f589531777c8615b7408">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a18f46d92ea7e04068ad9e7af4ed605a8">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a7dde968244f3c4934c7738445c709232">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#aea2c3d2ae6ddf77bd4a9b07b86f3306b">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a598eb1575937d165b4b383959cf8c417">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -721,7 +806,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Stoichiometric coefficient for the species in the reaction.</dd></dl>
 <p>The stoichiometry matrix must have been generated by <a class="el" href="#aeae6d84ef74d88fd2cdf07b82e98a16f" title="Generate the stoichiometry matrix for the network.">generateStoichiometryMatrix()</a>. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#abe2ca6426e10cc6a10090eecf7098dbe">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#af1843cfd2a95bfa46ab40d4c4de11ef9">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ad90a2d770ebf098f0d6d5f5339961e95">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a7140384baaaa0bd05ca448a0d8fec471">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#abe2ca6426e10cc6a10090eecf7098dbe">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#af1843cfd2a95bfa46ab40d4c4de11ef9">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#ad90a2d770ebf098f0d6d5f5339961e95">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a7140384baaaa0bd05ca448a0d8fec471">gridfire::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a3dd5cf419f25e76e144af35df15a2067">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -863,7 +948,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <p>This method is intended to allow dynamic adjustment of the network's depth, which may involve adding or removing species and reactions based on the specified depth. However, not all engines support this operation. </p>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1_graph_engine.html#ad9d6c70ace5cbbf7f3aa7b31fce39490">gridfire::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a3d30a9116825ab2c5c209bc2712126bc">PyDynamicEngine</a>.</p>
+<p>Reimplemented in <a class="el" href="classgridfire_1_1_graph_engine.html#ad593a2d1b8fbbc01b63b0133357364ac">gridfire::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a3d30a9116825ab2c5c209bc2712126bc">PyDynamicEngine</a>.</p>
 
 </div>
 </div>

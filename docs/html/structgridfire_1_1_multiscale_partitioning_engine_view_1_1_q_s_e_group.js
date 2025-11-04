@@ -1,9 +1,12 @@
 var structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group =
 [
+    [ "addSpeciesToAlgebraic", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#ae44fee7c866646095a6eda15b01adb21", null ],
+    [ "addSpeciesToSeed", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#af3e62337397d603302305ca6412db02c", null ],
     [ "operator!=", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#ac81f994476d580a92686e7f84b726c2a", null ],
     [ "operator<", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a2d09ce96d0d7cfe8f0aeb01f22f07a06", null ],
     [ "operator==", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a82c2256254ca88e141672891e5228f88", null ],
     [ "operator>", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a77d5ebb3b85649bddab09e5ee7fac50a", null ],
+    [ "removeSpecies", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#aa47f2a4d1f1cdb599382d4a43f92fe7c", null ],
     [ "toString", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a165b68f0ebb30cda5ffaafa7c0f27617", null ],
     [ "algebraic_species", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#aff54b71dd17051bc991f747a328c7d8e", null ],
     [ "is_in_equilibrium", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#af8dc75a5e022510ec13da0be8c53aa06", null ],

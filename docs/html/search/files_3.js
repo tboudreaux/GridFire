@@ -21,7 +21,8 @@ var searchData=
   ['engine_5fview_5fabstract_2eh_18',['engine_view_abstract.h',['../engine__view__abstract_8h.html',1,'']]],
   ['engine_5fviews_2eh_19',['engine_views.h',['../engine__views_8h.html',1,'']]],
   ['error_5fengine_2eh_20',['error_engine.h',['../error__engine_8h.html',1,'']]],
-  ['exceptions_2eh_21',['exceptions.h',['../exceptions_8h.html',1,'']]],
-  ['expectations_2eh_22',['expectations.h',['../expectations_8h.html',1,'']]],
-  ['expected_5fengine_2eh_23',['expected_engine.h',['../expected__engine_8h.html',1,'']]]
+  ['error_5futils_2eh_21',['error_utils.h',['../error__utils_8h.html',1,'']]],
+  ['exceptions_2eh_22',['exceptions.h',['../exceptions_8h.html',1,'']]],
+  ['expectations_2eh_23',['expectations.h',['../expectations_8h.html',1,'']]],
+  ['expected_5fengine_2eh_24',['expected_engine.h',['../expected__engine_8h.html',1,'']]]
 ];

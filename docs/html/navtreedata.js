@@ -111,6 +111,7 @@ var NAVTREE =
       [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md68", null ],
       [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md70", null ]
     ] ],
+    [ "Deprecated List", "deprecated.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -154,16 +155,18 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
-"classgridfire_1_1_dynamic_engine.html#a8f66fb76c9f983ee93bf8b95cdc85596",
-"classgridfire_1_1_multiscale_partitioning_engine_view.html#a40ce2c18063cd56cffd58419b9ae96bf",
-"classgridfire_1_1exceptions_1_1_stale_engine_error.html",
-"classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aefc75b3149bee2da878177279ad375da",
-"classgridfire_1_1reaction_1_1_reaction_set.html#abae9fbc4b4306479a6cd3173ac628987",
-"classgridfire_1_1trigger_1_1_or_trigger.html#a6da04b5b15371f7087be03bb337dbdd6",
-"engine_2bindings_8h.html#a73a2ec4150b3954550f16b97102ec993",
-"namespacegridfire_1_1approx8.html#aa04f907d4ef6a1b6b2a9a28d4bb53882",
-"structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#afc5299ebf09f9b208f65619012902b77",
-"structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record.html#acf5c38826050594aee98d746d0ba40b2"
+"classgridfire_1_1_dynamic_engine.html#a25c040d3078f6ff2ef38f733eb68f1fa",
+"classgridfire_1_1_graph_engine.html#af147a6953dcbb70ba3cc93039ac21c35",
+"classgridfire_1_1_reaction_set.html#a6a4836776f5dd00158d2336e5bcc3222",
+"classgridfire_1_1partition_1_1_partition_function.html#ab0c67985a972707eac0ebc64417dfb97",
+"classgridfire_1_1reaction_1_1_reaclib_reaction.html#a8ca86e0f8f95ffb6d87ca295e44f14c5",
+"classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html#af4a2f003a4c4c06b4b72840f2d445f81",
+"classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger.html",
+"engine__view__abstract_8h.html",
+"namespacegridfire_1_1approx8.html#acdbb3ee2ef22bfd9c836324285d0da98",
+"structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac558e59f790508a5e8522c412be5b505a9e720102de6020a01552bc0e8935c566",
+"structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_interpolation_points.html#a750aa8cd8aa8b8da6d1f0db1cc66233d",
+"trigger__logical_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

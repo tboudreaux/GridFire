@@ -2,8 +2,10 @@ var classgridfire_1_1_dynamic_engine =
 [
     [ "calculateEpsDerivatives", "classgridfire_1_1_dynamic_engine.html#a264bd5a8891c8c5f0dff32867effe547", null ],
     [ "calculateMolarReactionFlow", "classgridfire_1_1_dynamic_engine.html#a39cf5b738eea0a275bf8c0eb5789fab3", null ],
+    [ "collectComposition", "classgridfire_1_1_dynamic_engine.html#a827c7e6fa7f2c5baf13a564fb4911388", null ],
     [ "generateJacobianMatrix", "classgridfire_1_1_dynamic_engine.html#a21d15531309456ee83f7675251e7a1bf", null ],
-    [ "generateJacobianMatrix", "classgridfire_1_1_dynamic_engine.html#a11d602a708af4629f51873b17f7b8dbd", null ],
+    [ "generateJacobianMatrix", "classgridfire_1_1_dynamic_engine.html#a495bdb1e0c6f9911deb844b22c33644e", null ],
+    [ "generateJacobianMatrix", "classgridfire_1_1_dynamic_engine.html#a8538fd9285a192f879a45e3dd3f26362", null ],
     [ "generateStoichiometryMatrix", "classgridfire_1_1_dynamic_engine.html#aeae6d84ef74d88fd2cdf07b82e98a16f", null ],
     [ "getDepth", "classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9", null ],
     [ "getJacobianMatrixEntry", "classgridfire_1_1_dynamic_engine.html#a88dbf350dc0ea3e2b64d825f489e0d60", null ],

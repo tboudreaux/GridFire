@@ -1,6 +1,7 @@
 var classgridfire_1_1reaction_1_1_logical_reaclib_reaction =
 [
     [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a0ff112dca1f88070effb6700429b42b4", null ],
+    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a7e6d50f866be9239ac620607741280cc", null ],
     [ "add_reaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a69508797ca0793f6d3f58de4e0b97667", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a1353d7d2208497b38799bf69f574c275", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a211b1332dc12a1fee942523dbc688272", null ],

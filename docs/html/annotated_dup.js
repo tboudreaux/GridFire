@@ -8,12 +8,19 @@ var annotated_dup =
         [ "ODE", "structgridfire_1_1approx8_1_1_o_d_e.html", "structgridfire_1_1approx8_1_1_o_d_e" ]
       ] ],
       [ "exceptions", "namespacegridfire_1_1exceptions.html", [
+        [ "BadCollectionError", "classgridfire_1_1exceptions_1_1_bad_collection_error.html", "classgridfire_1_1exceptions_1_1_bad_collection_error" ],
         [ "EngineError", "classgridfire_1_1exceptions_1_1_engine_error.html", null ],
         [ "FailedToPartitionEngineError", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error" ],
+        [ "HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", "classgridfire_1_1exceptions_1_1_hashing_error" ],
+        [ "JacobianError", "classgridfire_1_1exceptions_1_1_jacobian_error.html", null ],
         [ "NetworkResizedError", "classgridfire_1_1exceptions_1_1_network_resized_error.html", "classgridfire_1_1exceptions_1_1_network_resized_error" ],
         [ "StaleEngineError", "classgridfire_1_1exceptions_1_1_stale_engine_error.html", "classgridfire_1_1exceptions_1_1_stale_engine_error" ],
         [ "StaleEngineTrigger", "classgridfire_1_1exceptions_1_1_stale_engine_trigger.html", "classgridfire_1_1exceptions_1_1_stale_engine_trigger" ],
-        [ "UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error" ]
+        [ "StaleJacobianError", "classgridfire_1_1exceptions_1_1_stale_jacobian_error.html", "classgridfire_1_1exceptions_1_1_stale_jacobian_error" ],
+        [ "UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error" ],
+        [ "UninitializedJacobianError", "classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html", "classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error" ],
+        [ "UnknownJacobianError", "classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html", "classgridfire_1_1exceptions_1_1_unknown_jacobian_error" ],
+        [ "UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", null ]
       ] ],
       [ "expectations", "namespacegridfire_1_1expectations.html", [
         [ "EngineError", "structgridfire_1_1expectations_1_1_engine_error.html", "structgridfire_1_1expectations_1_1_engine_error" ],
@@ -67,11 +74,12 @@ var annotated_dup =
       [ "solver", "namespacegridfire_1_1solver.html", [
         [ "CVODESolverStrategy", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy" ],
         [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1_network_solver_strategy.html", "classgridfire_1_1solver_1_1_network_solver_strategy" ],
-        [ "SolverContextBase", "structgridfire_1_1solver_1_1_solver_context_base.html", "structgridfire_1_1solver_1_1_solver_context_base" ]
+        [ "SolverContextBase", "classgridfire_1_1solver_1_1_solver_context_base.html", "classgridfire_1_1solver_1_1_solver_context_base" ]
       ] ],
       [ "trigger", "namespacegridfire_1_1trigger.html", [
         [ "solver", "namespacegridfire_1_1trigger_1_1solver.html", [
           [ "CVODE", "namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html", [
+            [ "ConvergenceFailureTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger" ],
             [ "OffDiagonalTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger" ],
             [ "SimulationTimeTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger" ],
             [ "TimestepCollapseTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger" ]
@@ -111,6 +119,7 @@ var annotated_dup =
     ] ],
     [ "std", "namespacestd.html", [
       [ "hash< gridfire::QSECacheKey >", "structstd_1_1hash_3_01gridfire_1_1_q_s_e_cache_key_01_4.html", "structstd_1_1hash_3_01gridfire_1_1_q_s_e_cache_key_01_4" ],
+      [ "hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4" ],
       [ "hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4" ],
       [ "hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4" ]
     ] ],
@@ -122,5 +131,6 @@ var annotated_dup =
     [ "PyNetworkFileParser", "class_py_network_file_parser.html", "class_py_network_file_parser" ],
     [ "PyPartitionFunction", "class_py_partition_function.html", "class_py_partition_function" ],
     [ "PyScreening", "class_py_screening.html", "class_py_screening" ],
+    [ "PySolverContextBase", "class_py_solver_context_base.html", "class_py_solver_context_base" ],
     [ "SolverPluginInterface", "class_solver_plugin_interface.html", "class_solver_plugin_interface" ]
 ];

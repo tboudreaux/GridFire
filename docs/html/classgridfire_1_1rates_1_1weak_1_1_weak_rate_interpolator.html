@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -102,7 +102,6 @@ $(function(){initNavTree('classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpola
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">gridfire::rates::weak::WeakRateInterpolator Class Reference</div></div>
@@ -128,21 +127,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a976f84b6f6e33b5f3dd733a771afd7ba" id="r_a976f84b6f6e33b5f3dd733a771afd7ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a976f84b6f6e33b5f3dd733a771afd7ba">available_isotopes</a> () const</td></tr>
 <tr class="memdesc:a976f84b6f6e33b5f3dd733a771afd7ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">List isotopes for which tables are available.  <br /></td></tr>
 <tr class="separator:a976f84b6f6e33b5f3dd733a771afd7ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae36a65c29c34b004111d266dc668107b" id="r_ae36a65c29c34b004111d266dc668107b"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html">WeakRatePayload</a>, <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html">InterpolationError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae36a65c29c34b004111d266dc668107b">get_rates</a> (uint16_t A, uint8_t Z, double t9, double log_rhoYe, double mu_e) const</td></tr>
-<tr class="memdesc:ae36a65c29c34b004111d266dc668107b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trilinear interpolation of weak-rate payload at a state.  <br /></td></tr>
-<tr class="separator:ae36a65c29c34b004111d266dc668107b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48cec4c8f1e117f73d7e88c3597b4d16" id="r_a48cec4c8f1e117f73d7e88c3597b4d16"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_derivatives.html">WeakRateDerivatives</a>, <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html">InterpolationError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48cec4c8f1e117f73d7e88c3597b4d16">get_rate_derivatives</a> (uint16_t A, uint8_t Z, double t9, double log_rhoYe, double mu_e) const</td></tr>
-<tr class="memdesc:a48cec4c8f1e117f73d7e88c3597b4d16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite-difference partial derivatives of the log10() fields.  <br /></td></tr>
-<tr class="separator:a48cec4c8f1e117f73d7e88c3597b4d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
-Static Private Member Functions</h2></td></tr>
-<tr class="memitem:ac73e9476c89ec7066999b0986bc0d9c1" id="r_ac73e9476c89ec7066999b0986bc0d9c1"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac73e9476c89ec7066999b0986bc0d9c1">pack_isotope_id</a> (uint16_t A, uint8_t Z)</td></tr>
-<tr class="memdesc:ac73e9476c89ec7066999b0986bc0d9c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pack (A,Z) into a 32-bit key used for the internal map.  <br /></td></tr>
-<tr class="separator:ac73e9476c89ec7066999b0986bc0d9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a730c8e7fe5218c5ce077531bc7924d79" id="r_a730c8e7fe5218c5ce077531bc7924d79"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html">WeakRatePayload</a>, <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html">InterpolationError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a730c8e7fe5218c5ce077531bc7924d79">get_rates</a> (uint16_t A, uint8_t Z, double t9, double log_rhoYe) const</td></tr>
+<tr class="memdesc:a730c8e7fe5218c5ce077531bc7924d79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trilinear interpolation of weak-rate payload at a state.  <br /></td></tr>
+<tr class="separator:a730c8e7fe5218c5ce077531bc7924d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac04ae382defc51645c632db6ad3830d7" id="r_ac04ae382defc51645c632db6ad3830d7"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_derivatives.html">WeakRateDerivatives</a>, <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html">InterpolationError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac04ae382defc51645c632db6ad3830d7">get_rate_derivatives</a> (uint16_t A, uint8_t Z, double t9, double log_rhoYe) const</td></tr>
+<tr class="memdesc:ac04ae382defc51645c632db6ad3830d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finite-difference partial derivatives of the log10() fields.  <br /></td></tr>
+<tr class="separator:ac04ae382defc51645c632db6ad3830d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a2962864d8a6f8760a4228729838b6edb" id="r_a2962864d8a6f8760a4228729838b6edb"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2962864d8a6f8760a4228729838b6edb">m_logger</a> = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
+<tr class="separator:a2962864d8a6f8760a4228729838b6edb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a01f956eccd3a0a90dd08984ca3f009" id="r_a7a01f956eccd3a0a90dd08984ca3f009"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint32_t, <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html">IsotopeGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a01f956eccd3a0a90dd08984ca3f009">m_rate_table</a></td></tr>
 <tr class="memdesc:a7a01f956eccd3a0a90dd08984ca3f009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-isotope grids over (T9, log10(rho*Ye), mu_e) with payloads at lattice nodes.  <br /></td></tr>
 <tr class="separator:a7a01f956eccd3a0a90dd08984ca3f009"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,8 +145,8 @@ Private Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>3D table interpolator for tabulated weak reaction data by isotope. </p>
 <p>Builds per-isotope 3D grids over (T9, log10(rho*Ye), mu_e) and provides:</p><ul>
-<li>Trilinear interpolation of the tabulated log10(rate) and neutrino-loss fields into a <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html" title="Interpolated weak-rate payload at a single state.">WeakRatePayload</a> via <a class="el" href="#ae36a65c29c34b004111d266dc668107b" title="Trilinear interpolation of weak-rate payload at a state.">get_rates()</a>.</li>
-<li>Finite-difference estimates of partial derivatives via <a class="el" href="#a48cec4c8f1e117f73d7e88c3597b4d16" title="Finite-difference partial derivatives of the log10() fields.">get_rate_derivatives()</a>.</li>
+<li>Trilinear interpolation of the tabulated log10(rate) and neutrino-loss fields into a <a class="el" href="structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html" title="Interpolated weak-rate payload at a single state.">WeakRatePayload</a> via <a class="el" href="#a730c8e7fe5218c5ce077531bc7924d79" title="Trilinear interpolation of weak-rate payload at a state.">get_rates()</a>.</li>
+<li>Finite-difference estimates of partial derivatives via <a class="el" href="#ac04ae382defc51645c632db6ad3830d7" title="Finite-difference partial derivatives of the log10() fields.">get_rate_derivatives()</a>.</li>
 </ul>
 <p>Implementation summary (constructor): rows are grouped by (A,Z), then each group's unique axis values are collected and sorted to form the three axes; the 3D payload array is populated at each lattice point with the 6 log10() fields from the raw table. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
@@ -235,13 +230,13 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a1efafe82d25d36b93a60a6fccbd5ca3d">WeakRateInterpolator</a> interp(rows);</div>
 <div class="line"><span class="keyword">auto</span> isotopes = interp.available_isotopes();</div>
-<div class="ttc" id="aclassgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator_html_a1efafe82d25d36b93a60a6fccbd5ca3d"><div class="ttname"><a href="#a1efafe82d25d36b93a60a6fccbd5ca3d">gridfire::rates::weak::WeakRateInterpolator::WeakRateInterpolator</a></div><div class="ttdeci">WeakRateInterpolator(const RowDataTable &amp;raw_data)</div><div class="ttdoc">Construct the interpolator from raw weak-rate rows.</div><div class="ttdef"><b>Definition</b> weak_interpolator.cpp:18</div></div>
+<div class="ttc" id="aclassgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator_html_a1efafe82d25d36b93a60a6fccbd5ca3d"><div class="ttname"><a href="#a1efafe82d25d36b93a60a6fccbd5ca3d">gridfire::rates::weak::WeakRateInterpolator::WeakRateInterpolator</a></div><div class="ttdeci">WeakRateInterpolator(const RowDataTable &amp;raw_data)</div><div class="ttdoc">Construct the interpolator from raw weak-rate rows.</div><div class="ttdef"><b>Definition</b> weak_interpolator.cpp:21</div></div>
 </div><!-- fragment --> </dd></dl>
 
 </div>
 </div>
-<a id="a48cec4c8f1e117f73d7e88c3597b4d16" name="a48cec4c8f1e117f73d7e88c3597b4d16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48cec4c8f1e117f73d7e88c3597b4d16">&#9670;&#160;</a></span>get_rate_derivatives()</h2>
+<a id="ac04ae382defc51645c632db6ad3830d7" name="ac04ae382defc51645c632db6ad3830d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac04ae382defc51645c632db6ad3830d7">&#9670;&#160;</a></span>get_rate_derivatives()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,12 +262,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>log_rhoYe</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mu_e</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>log_rhoYe</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -290,7 +280,6 @@ Private Attributes</h2></td></tr>
     <tr><td class="paramname">Z</td><td>Proton number of the isotope. </td></tr>
     <tr><td class="paramname">t9</td><td>Temperature in GK (10^9 K). </td></tr>
     <tr><td class="paramname">log_rhoYe</td><td>Log10 of rho*Ye (cgs density times electron fraction). </td></tr>
-    <tr><td class="paramname">mu_e</td><td>Electron chemical potential (MeV). </td></tr>
   </table>
   </dd>
 </dl>
@@ -302,8 +291,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae36a65c29c34b004111d266dc668107b" name="ae36a65c29c34b004111d266dc668107b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae36a65c29c34b004111d266dc668107b">&#9670;&#160;</a></span>get_rates()</h2>
+<a id="a730c8e7fe5218c5ce077531bc7924d79" name="a730c8e7fe5218c5ce077531bc7924d79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a730c8e7fe5218c5ce077531bc7924d79">&#9670;&#160;</a></span>get_rates()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,12 +318,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>log_rhoYe</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mu_e</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>log_rhoYe</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -352,7 +336,6 @@ Private Attributes</h2></td></tr>
     <tr><td class="paramname">Z</td><td>Proton number of the isotope. </td></tr>
     <tr><td class="paramname">t9</td><td>Temperature in GK (10^9 K). </td></tr>
     <tr><td class="paramname">log_rhoYe</td><td>Log10 of rho*Ye (cgs density times electron fraction). </td></tr>
-    <tr><td class="paramname">mu_e</td><td>Electron chemical potential (MeV). </td></tr>
   </table>
   </dd>
 </dl>
@@ -367,8 +350,9 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ac73e9476c89ec7066999b0986bc0d9c1" name="ac73e9476c89ec7066999b0986bc0d9c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac73e9476c89ec7066999b0986bc0d9c1">&#9670;&#160;</a></span>pack_isotope_id()</h2>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a2962864d8a6f8760a4228729838b6edb" name="a2962864d8a6f8760a4228729838b6edb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2962864d8a6f8760a4228729838b6edb">&#9670;&#160;</a></span>m_logger</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -377,29 +361,18 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint32_t gridfire::rates::weak::WeakRateInterpolator::pack_isotope_id </td>
-          <td>(</td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>A</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>Z</em></span>&#160;)</td>
+          <td class="memname">quill::Logger* gridfire::rates::weak::WeakRateInterpolator::m_logger = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Pack (A,Z) into a 32-bit key used for the internal map. </p>
-<p>Layout: (A &lt;&lt; 8) | Z. To unpack, use (key &gt;&gt; 8) for A and (key &amp; 0xFF) for Z. </p>
-
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
 <a id="a7a01f956eccd3a0a90dd08984ca3f009" name="a7a01f956eccd3a0a90dd08984ca3f009"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a01f956eccd3a0a90dd08984ca3f009">&#9670;&#160;</a></span>m_rate_table</h2>
 

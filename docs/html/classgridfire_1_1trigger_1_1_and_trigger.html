@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -135,6 +135,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a62f7dbbcf0554caa68e3d778580b3c1d" id="r_a62f7dbbcf0554caa68e3d778580b3c1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62f7dbbcf0554caa68e3d778580b3c1d">update</a> (const TriggerContextStruct &amp;ctx) override</td></tr>
 <tr class="memdesc:a62f7dbbcf0554caa68e3d778580b3c1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update both sub-triggers and increment update counter.  <br /></td></tr>
 <tr class="separator:a62f7dbbcf0554caa68e3d778580b3c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e743e8ebe71f9ded835177db6fad908" id="r_a8e743e8ebe71f9ded835177db6fad908"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e743e8ebe71f9ded835177db6fad908">step</a> (const TriggerContextStruct &amp;ctx) override</td></tr>
+<tr class="memdesc:a8e743e8ebe71f9ded835177db6fad908"><td class="mdescLeft">&#160;</td><td class="mdescRight">similar to update but intended to be run on every step not just those where the trigger triggered  <br /></td></tr>
+<tr class="separator:a8e743e8ebe71f9ded835177db6fad908"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2436d8643911ade907e03fb29531ceaa" id="r_a2436d8643911ade907e03fb29531ceaa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2436d8643911ade907e03fb29531ceaa">reset</a> () override</td></tr>
 <tr class="memdesc:a2436d8643911ade907e03fb29531ceaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset both sub-triggers and local counters.  <br /></td></tr>
 <tr class="separator:a2436d8643911ade907e03fb29531ceaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,6 +175,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a7f88c1139e1b05baed44614104d601b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3ff88ddb15d04e798fc03c6c941e312" id="r_ae3ff88ddb15d04e798fc03c6c941e312"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3ff88ddb15d04e798fc03c6c941e312">m_resets</a> = 0</td></tr>
 <tr class="separator:ae3ff88ddb15d04e798fc03c6c941e312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd8d79e83f83473f0df64e96b63aa1f1" id="r_afd8d79e83f83473f0df64e96b63aa1f1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd8d79e83f83473f0df64e96b63aa1f1">m_steps</a> = 0</td></tr>
+<tr class="separator:afd8d79e83f83473f0df64e96b63aa1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename TriggerContextStruct&gt;<br />
@@ -180,7 +185,7 @@ class gridfire::trigger::AndTrigger&lt; TriggerContextStruct &gt;</div><p>Logica
 <p>Counters (mutable) are incremented inside const <a class="el" href="#aaefdfa86856f9f7839b6a7fdffa4a579" title="Evaluate A &amp;&amp; B; increments hit/miss counters.">check()</a>: m_hits on true; m_misses on false; m_updates on each <a class="el" href="#a62f7dbbcf0554caa68e3d778580b3c1d" title="Update both sub-triggers and increment update counter.">update()</a>; m_resets on <a class="el" href="#a2436d8643911ade907e03fb29531ceaa" title="Reset both sub-triggers and local counters.">reset()</a>.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">auto</span> t = <a class="code hl_function" href="#a969738baf0bda97664715937d4bc403e">AndTrigger</a>(ctxA, ctxB);</div>
 <div class="line"><span class="keywordflow">if</span> (t.check(ctx)) { (void)ctx; }</div>
-<div class="ttc" id="aclassgridfire_1_1trigger_1_1_and_trigger_html_a969738baf0bda97664715937d4bc403e"><div class="ttname"><a href="#a969738baf0bda97664715937d4bc403e">gridfire::trigger::AndTrigger::AndTrigger</a></div><div class="ttdeci">AndTrigger(std::unique_ptr&lt; Trigger&lt; TriggerContextStruct &gt; &gt; A, std::unique_ptr&lt; Trigger&lt; TriggerContextStruct &gt; &gt; B)</div><div class="ttdoc">Construct AND from two triggers (ownership transferred).</div><div class="ttdef"><b>Definition</b> trigger_logical.h:196</div></div>
+<div class="ttc" id="aclassgridfire_1_1trigger_1_1_and_trigger_html_a969738baf0bda97664715937d4bc403e"><div class="ttname"><a href="#a969738baf0bda97664715937d4bc403e">gridfire::trigger::AndTrigger::AndTrigger</a></div><div class="ttdeci">AndTrigger(std::unique_ptr&lt; Trigger&lt; TriggerContextStruct &gt; &gt; A, std::unique_ptr&lt; Trigger&lt; TriggerContextStruct &gt; &gt; B)</div><div class="ttdoc">Construct AND from two triggers (ownership transferred).</div><div class="ttdef"><b>Definition</b> trigger_logical.h:204</div></div>
 </div><!-- fragment --> </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a969738baf0bda97664715937d4bc403e" name="a969738baf0bda97664715937d4bc403e"></a>
@@ -422,6 +427,43 @@ template&lt;typename TriggerContextStruct&gt; </div>
 
 </div>
 </div>
+<a id="a8e743e8ebe71f9ded835177db6fad908" name="a8e743e8ebe71f9ded835177db6fad908"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e743e8ebe71f9ded835177db6fad908">&#9670;&#160;</a></span>step()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TriggerContextStruct&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classgridfire_1_1trigger_1_1_and_trigger.html">gridfire::trigger::AndTrigger</a>&lt; TriggerContextStruct &gt;::step </td>
+          <td>(</td>
+          <td class="paramtype">const TriggerContextStruct &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>similar to update but intended to be run on every step not just those where the trigger triggered </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context snapshot used to update state. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html#a4b7ffa4d8d31e2118a8e86172be51041">gridfire::trigger::Trigger&lt; TriggerContextStruct &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a62f7dbbcf0554caa68e3d778580b3c1d" name="a62f7dbbcf0554caa68e3d778580b3c1d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a62f7dbbcf0554caa68e3d778580b3c1d">&#9670;&#160;</a></span>update()</h2>
 
@@ -594,6 +636,30 @@ template&lt;typename TriggerContextStruct&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">size_t <a class="el" href="classgridfire_1_1trigger_1_1_and_trigger.html">gridfire::trigger::AndTrigger</a>&lt; TriggerContextStruct &gt;::m_resets = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afd8d79e83f83473f0df64e96b63aa1f1" name="afd8d79e83f83473f0df64e96b63aa1f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd8d79e83f83473f0df64e96b63aa1f1">&#9670;&#160;</a></span>m_steps</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TriggerContextStruct&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classgridfire_1_1trigger_1_1_and_trigger.html">gridfire::trigger::AndTrigger</a>&lt; TriggerContextStruct &gt;::m_steps = 0</td>
         </tr>
       </table>
   </td>

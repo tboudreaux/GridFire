@@ -7,6 +7,7 @@ var classgridfire_1_1trigger_1_1_trigger =
     [ "numMisses", "classgridfire_1_1trigger_1_1_trigger.html#a81848e5af844795d879b6d885a2701d7", null ],
     [ "numTriggers", "classgridfire_1_1trigger_1_1_trigger.html#a4ea3abfb76a09c4f55ad05d73a2cf12d", null ],
     [ "reset", "classgridfire_1_1trigger_1_1_trigger.html#af652af761675736419b961b6946c728d", null ],
+    [ "step", "classgridfire_1_1trigger_1_1_trigger.html#a4b7ffa4d8d31e2118a8e86172be51041", null ],
     [ "update", "classgridfire_1_1trigger_1_1_trigger.html#a048899795704f68668960454d118a6fc", null ],
     [ "why", "classgridfire_1_1trigger_1_1_trigger.html#a9f020d828ca36a601b780566cc3377ea", null ]
 ];

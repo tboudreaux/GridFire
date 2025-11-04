@@ -1,0 +1,25 @@
+var classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger =
+[
+    [ "ConvergenceFailureTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a63010d8ba73689dda0c2228a1462aae2", null ],
+    [ "abs_failure", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a5ae9ce66d4bbafd83145f8545a32d33a", null ],
+    [ "check", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#ae8765656a45319335c2bb90c3fb3d308", null ],
+    [ "current_mean", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a3d8d9eafff17ea6a283afbc7e8b450bb", null ],
+    [ "describe", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#aa2bb19e4a1e24f6fd7f86d0c80ebbec3", null ],
+    [ "name", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a92a57cea3b58bd7948c3c3fb4f75619b", null ],
+    [ "numMisses", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#aa26bf911c73b7f2ec343d473caf13718", null ],
+    [ "numTriggers", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#aa7cc311316539b2d348422ba907dc64e", null ],
+    [ "rel_failure", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a4180dc6761c073acd82583a834ca09fd", null ],
+    [ "reset", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a0bcab0247b3db618b76bd6769cf9a2ea", null ],
+    [ "step", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#aaef2090ed67a7c27967821f75a61e524", null ],
+    [ "update", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#ae47bbdf6edae798f30866c1ac4104cc1", null ],
+    [ "why", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#aedd397b71cd5b1ad26a0b21a34cf5631", null ],
+    [ "m_hits", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#afd5c9867790fc5ef453bc6a5e5494766", null ],
+    [ "m_logger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#abb65f2fb74ea74a7f078b4e14f8bc949", null ],
+    [ "m_misses", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a1b28f79b7d5d4b6a947bdf75c049739f", null ],
+    [ "m_relativeFailureRate", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a19795b0ebf01df3e70fe858cfb527d08", null ],
+    [ "m_resets", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a270dae9d1f4e3ee410389e113d7f0857", null ],
+    [ "m_totalFailures", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a9e116ac645ba31906dae26234c47c3f4", null ],
+    [ "m_updates", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#acf63dd6e786231ac6c16e590d01bc6eb", null ],
+    [ "m_window", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#a8df9f55e0af1a16ee56678a109f08920", null ],
+    [ "m_windowSize", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#abf4814a4423cfbe816b07d5eea4efea4", null ]
+];

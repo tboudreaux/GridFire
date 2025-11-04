@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -120,6 +120,20 @@ Functions</h2></td></tr>
 <tr class="separator:a7ba5eb780fc02dab2b7be388ffa084f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73d427751e6a64952d52e7c2cc84d065" id="r_a73d427751e6a64952d52e7c2cc84d065"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73d427751e6a64952d52e7c2cc84d065">con_stype_register_graph_engine_bindings</a> (const pybind11::module &amp;m)</td></tr>
 <tr class="separator:a73d427751e6a64952d52e7c2cc84d065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f595355667895199f3c3c39383fad33" id="r_a1f595355667895199f3c3c39383fad33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f595355667895199f3c3c39383fad33">register_engine_diagnostic_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:a1f595355667895199f3c3c39383fad33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3c140c5303eeaa6e02b3a3c4d4d4c36" id="r_ae3c140c5303eeaa6e02b3a3c4d4d4c36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3c140c5303eeaa6e02b3a3c4d4d4c36">register_engine_procedural_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:ae3c140c5303eeaa6e02b3a3c4d4d4c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad8d3f0fef8c740df9a98c53800190c9" id="r_aad8d3f0fef8c740df9a98c53800190c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad8d3f0fef8c740df9a98c53800190c9">register_engine_construction_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:aad8d3f0fef8c740df9a98c53800190c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3974cc99c2970c71b9a5fca0217f5b6e" id="r_a3974cc99c2970c71b9a5fca0217f5b6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3974cc99c2970c71b9a5fca0217f5b6e">register_engine_priming_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:a3974cc99c2970c71b9a5fca0217f5b6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fe8fd1a44f7b623fdf51e453e5149b9" id="r_a2fe8fd1a44f7b623fdf51e453e5149b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fe8fd1a44f7b623fdf51e453e5149b9">register_engine_type_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:a2fe8fd1a44f7b623fdf51e453e5149b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ec1c283d60332e61affc063d0e1639f" id="r_a3ec1c283d60332e61affc063d0e1639f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ec1c283d60332e61affc063d0e1639f">register_engine_building_type_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:a3ec1c283d60332e61affc063d0e1639f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66ce33948e3d9d5837b244298c8ca2b6" id="r_a66ce33948e3d9d5837b244298c8ca2b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66ce33948e3d9d5837b244298c8ca2b6">register_engine_reporting_type_bindings</a> (pybind11::module &amp;m)</td></tr>
+<tr class="separator:a66ce33948e3d9d5837b244298c8ca2b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a7ba5eb780fc02dab2b7be388ffa084f8" name="a7ba5eb780fc02dab2b7be388ffa084f8"></a>
@@ -198,6 +212,125 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void register_engine_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3ec1c283d60332e61affc063d0e1639f" name="a3ec1c283d60332e61affc063d0e1639f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ec1c283d60332e61affc063d0e1639f">&#9670;&#160;</a></span>register_engine_building_type_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_building_type_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aad8d3f0fef8c740df9a98c53800190c9" name="aad8d3f0fef8c740df9a98c53800190c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad8d3f0fef8c740df9a98c53800190c9">&#9670;&#160;</a></span>register_engine_construction_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_construction_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1f595355667895199f3c3c39383fad33" name="a1f595355667895199f3c3c39383fad33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f595355667895199f3c3c39383fad33">&#9670;&#160;</a></span>register_engine_diagnostic_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_diagnostic_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3974cc99c2970c71b9a5fca0217f5b6e" name="a3974cc99c2970c71b9a5fca0217f5b6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3974cc99c2970c71b9a5fca0217f5b6e">&#9670;&#160;</a></span>register_engine_priming_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_priming_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae3c140c5303eeaa6e02b3a3c4d4d4c36" name="ae3c140c5303eeaa6e02b3a3c4d4d4c36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3c140c5303eeaa6e02b3a3c4d4d4c36">&#9670;&#160;</a></span>register_engine_procedural_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_procedural_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a66ce33948e3d9d5837b244298c8ca2b6" name="a66ce33948e3d9d5837b244298c8ca2b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66ce33948e3d9d5837b244298c8ca2b6">&#9670;&#160;</a></span>register_engine_reporting_type_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_reporting_type_bindings </td>
+          <td>(</td>
+          <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2fe8fd1a44f7b623fdf51e453e5149b9" name="a2fe8fd1a44f7b623fdf51e453e5149b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fe8fd1a44f7b623fdf51e453e5149b9">&#9670;&#160;</a></span>register_engine_type_bindings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void register_engine_type_bindings </td>
           <td>(</td>
           <td class="paramtype">pybind11::module &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
           <td></td>

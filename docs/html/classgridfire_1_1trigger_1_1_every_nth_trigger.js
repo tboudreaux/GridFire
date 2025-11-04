@@ -8,6 +8,7 @@ var classgridfire_1_1trigger_1_1_every_nth_trigger =
     [ "numMisses", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#ae7776f4a526db3245e64a74a3b0172d3", null ],
     [ "numTriggers", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a7e5568c9d7799b7f80ad0d3efe2cd143", null ],
     [ "reset", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#abf218d255bde157540b51cd6a54f6eb1", null ],
+    [ "step", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a26d0aca39087a1f69e96e0701ca83f81", null ],
     [ "update", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a0dd783afab7ef6005f0241f9de7b31f6", null ],
     [ "why", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a3bf0d69122f801deca4b62db47262d9b", null ],
     [ "m_A", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a27f1fd8c8a93576f83a4f3320469c83a", null ],
@@ -16,5 +17,6 @@ var classgridfire_1_1trigger_1_1_every_nth_trigger =
     [ "m_misses", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a0a5c2c5aedc779c1535d3839c6a6596e", null ],
     [ "m_N", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a652ba8d1ac36b9713f426eedf2b1ead0", null ],
     [ "m_resets", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#a87b6e54f3a0536d20709d7e746ec575d", null ],
+    [ "m_steps", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#acefe02899ade9aa595e04f3ec34f251a", null ],
     [ "m_updates", "classgridfire_1_1trigger_1_1_every_nth_trigger.html#ab0a33f49be02d34b27f75edf75dbc06d", null ]
 ];

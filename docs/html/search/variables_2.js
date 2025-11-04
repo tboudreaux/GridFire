@@ -6,5 +6,7 @@ var searchData=
   ['chapter_3',['chapter',['../structgridfire_1_1reaclib_1_1_reaction_record.html#a5c853b69a23b0a8c39ab4b55ac3fe3cc',1,'gridfire::reaclib::ReactionRecord']]],
   ['coeffs_4',['coeffs',['../structgridfire_1_1reaclib_1_1_reaction_record.html#a80803f612e574859fde0a163bca84bc0',1,'gridfire::reaclib::ReactionRecord']]],
   ['composition_5',['composition',['../structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1',1,'gridfire::NetIn::composition'],['../structgridfire_1_1_net_out.html#a073529511ae0e52f868b47cce0e8ac0a',1,'gridfire::NetOut::composition']]],
-  ['culling_6',['culling',['../structgridfire_1_1_net_in.html#a6a5e909b46094ffa20da9a3da906e43f',1,'gridfire::NetIn']]]
+  ['culling_6',['culling',['../structgridfire_1_1_net_in.html#a6a5e909b46094ffa20da9a3da906e43f',1,'gridfire::NetIn']]],
+  ['currentconvergencefailures_7',['currentConvergenceFailures',['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#adef40af49e162d2429db1030f6341d96',1,'gridfire::solver::CVODESolverStrategy::TimestepContext']]],
+  ['currentnonlineariterations_8',['currentNonlinearIterations',['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#aefa6b183bf963f6e01c5157b7c0f158a',1,'gridfire::solver::CVODESolverStrategy::TimestepContext']]]
 ];

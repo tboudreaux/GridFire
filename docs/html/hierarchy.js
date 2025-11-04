@@ -46,14 +46,24 @@ var hierarchy =
     ] ],
     [ "std::exception", null, [
       [ "gridfire::exceptions::EngineError", "classgridfire_1_1exceptions_1_1_engine_error.html", [
+        [ "gridfire::exceptions::BadCollectionError", "classgridfire_1_1exceptions_1_1_bad_collection_error.html", null ],
         [ "gridfire::exceptions::FailedToPartitionEngineError", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html", null ],
+        [ "gridfire::exceptions::JacobianError", "classgridfire_1_1exceptions_1_1_jacobian_error.html", [
+          [ "gridfire::exceptions::StaleJacobianError", "classgridfire_1_1exceptions_1_1_stale_jacobian_error.html", null ],
+          [ "gridfire::exceptions::UninitializedJacobianError", "classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html", null ],
+          [ "gridfire::exceptions::UnknownJacobianError", "classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html", null ]
+        ] ],
         [ "gridfire::exceptions::NetworkResizedError", "classgridfire_1_1exceptions_1_1_network_resized_error.html", null ],
         [ "gridfire::exceptions::StaleEngineError", "classgridfire_1_1exceptions_1_1_stale_engine_error.html", null ],
         [ "gridfire::exceptions::StaleEngineTrigger", "classgridfire_1_1exceptions_1_1_stale_engine_trigger.html", null ],
         [ "gridfire::exceptions::UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", null ]
+      ] ],
+      [ "gridfire::exceptions::UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", [
+        [ "gridfire::exceptions::HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", null ]
       ] ]
     ] ],
     [ "std::hash< gridfire::QSECacheKey >", "structstd_1_1hash_3_01gridfire_1_1_q_s_e_cache_key_01_4.html", null ],
+    [ "std::hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", null ],
     [ "std::hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", null ],
     [ "std::hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", null ],
     [ "gridfire::partition::RauscherThielemannPartitionFunction::IdentifiedIsotope", "structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html", null ],
@@ -115,7 +125,8 @@ var hierarchy =
       [ "gridfire::screening::IntermediateScreeningModel", "classgridfire_1_1screening_1_1_intermediate_screening_model.html", null ],
       [ "gridfire::screening::WeakScreeningModel", "classgridfire_1_1screening_1_1_weak_screening_model.html", null ]
     ] ],
-    [ "gridfire::solver::SolverContextBase", "structgridfire_1_1solver_1_1_solver_context_base.html", [
+    [ "gridfire::solver::SolverContextBase", "classgridfire_1_1solver_1_1_solver_context_base.html", [
+      [ "PySolverContextBase", "class_py_solver_context_base.html", null ],
       [ "gridfire::solver::CVODESolverStrategy::TimestepContext", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html", null ]
     ] ],
     [ "gridfire::exceptions::StaleEngineTrigger::state", "structgridfire_1_1exceptions_1_1_stale_engine_trigger_1_1state.html", null ],
@@ -129,6 +140,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "gridfire::trigger::Trigger< gridfire::solver::CVODESolverStrategy::TimestepContext >", "classgridfire_1_1trigger_1_1_trigger.html", [
+      [ "gridfire::trigger::solver::CVODE::ConvergenceFailureTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html", null ],
       [ "gridfire::trigger::solver::CVODE::OffDiagonalTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger.html", null ],
       [ "gridfire::trigger::solver::CVODE::SimulationTimeTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger.html", null ],
       [ "gridfire::trigger::solver::CVODE::TimestepCollapseTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html", null ]

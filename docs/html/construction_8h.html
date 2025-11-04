@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -101,6 +101,7 @@ $(function(){initNavTree('construction_8h.html',''); initResizable(true); });
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">construction.h File Reference</div></div>
 </div><!--header-->
@@ -116,11 +117,41 @@ Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ad7f0577c2f88caaf0cec6cf80c04892b" id="r_ad7f0577c2f88caaf0cec6cf80c04892b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">gridfire::NetworkConstructionFlags</a> : uint32_t { <br />
+&#160;&#160;<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892bab50339a10e1de285ac99d4c3990b8693">gridfire::NONE</a> = 0
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba3dfb3ae3cdaa322f0388f1a531c39520">gridfire::STRONG</a> = 1 &lt;&lt; 0
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba079cbe546b094a3228f3d2308de42371">gridfire::BETA_MINUS</a> = 1 &lt;&lt; 1
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892baec3e428817690ce788dd410655d44ac7">gridfire::BETA_PLUS</a> = 1 &lt;&lt; 2
+, <br />
+&#160;&#160;<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba26b6967eb578cb1b08373b342bf72ef7">gridfire::ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892bae0be5539e1cf1c424806baa62540aa9d">gridfire::POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892bab736eb13fff62c962f63232ec57f2692">gridfire::REACLIB_WEAK</a> = 1 &lt;&lt; 5
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892bafc9a7c10ff86192133ca7a280783bfe4">gridfire::WRL_WEAK</a> = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE
+, <br />
+&#160;&#160;<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892baf9885ed04411bef7b70f78b643c6a220">gridfire::REACLIB</a> = STRONG | REACLIB_WEAK
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee">gridfire::DEFAULT</a> = REACLIB
+, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba5fb1f955b45e38e31789286a1790398d">gridfire::ALL</a> = STRONG | WRL_WEAK
+<br />
+ }</td></tr>
+<tr class="separator:ad7f0577c2f88caaf0cec6cf80c04892b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a384323338f13166d87c7ac047434bd38" id="r_a384323338f13166d87c7ac047434bd38"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a384323338f13166d87c7ac047434bd38">gridfire::build_reaclib_nuclear_network</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers=<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>, bool reverse=false)</td></tr>
-<tr class="memdesc:a384323338f13166d87c7ac047434bd38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a nuclear reaction network from the Reaclib library based on an initial composition.  <br /></td></tr>
-<tr class="separator:a384323338f13166d87c7ac047434bd38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c42ac7834a0ecb0e36c1e673a403349" id="r_a0c42ac7834a0ecb0e36c1e673a403349"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a0c42ac7834a0ecb0e36c1e673a403349">gridfire::to_underlying</a> (<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> f) noexcept</td></tr>
+<tr class="separator:a0c42ac7834a0ecb0e36c1e673a403349"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1504ccf93263bae031d95d4d3880999e" id="r_a1504ccf93263bae031d95d4d3880999e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a1504ccf93263bae031d95d4d3880999e">gridfire::operator|</a> (const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> lhs, const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> rhs)</td></tr>
+<tr class="separator:a1504ccf93263bae031d95d4d3880999e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6de955e2cf2f0e0241bceabdee69f3f6" id="r_a6de955e2cf2f0e0241bceabdee69f3f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a6de955e2cf2f0e0241bceabdee69f3f6">gridfire::operator&amp;</a> (const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> lhs, const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> rhs)</td></tr>
+<tr class="separator:a6de955e2cf2f0e0241bceabdee69f3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ad8e76156fd708fe6f3bb0f2ad8650b" id="r_a5ad8e76156fd708fe6f3bb0f2ad8650b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a5ad8e76156fd708fe6f3bb0f2ad8650b">gridfire::has_flag</a> (const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flags, const <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flag_to_check)</td></tr>
+<tr class="separator:a5ad8e76156fd708fe6f3bb0f2ad8650b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c96c92c72485f364466c6b979959ef7" id="r_a7c96c92c72485f364466c6b979959ef7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a7c96c92c72485f364466c6b979959ef7">gridfire::NetworkConstructionFlagsToString</a> (<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> flags)</td></tr>
+<tr class="separator:a7c96c92c72485f364466c6b979959ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bc156f634a447f88a19de3be961c00b" id="r_a0bc156f634a447f88a19de3be961c00b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a0bc156f634a447f88a19de3be961c00b">gridfire::build_nuclear_network</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a> maxLayers=<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>, <a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892b">NetworkConstructionFlags</a> ReactionTypes=<a class="el" href="namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba5b39c8b553c821e7cddc6da64b5bd2ee">NetworkConstructionFlags::DEFAULT</a>)</td></tr>
+<tr class="memdesc:a0bc156f634a447f88a19de3be961c00b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a nuclear reaction network from the Reaclib library based on an initial composition.  <br /></td></tr>
+<tr class="separator:a0bc156f634a447f88a19de3be961c00b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -134,6 +134,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a775dac97d109c5fcd5c0287ca98f308c" id="r_a775dac97d109c5fcd5c0287ca98f308c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a775dac97d109c5fcd5c0287ca98f308c">update</a> (const TriggerContextStruct &amp;ctx) override</td></tr>
 <tr class="memdesc:a775dac97d109c5fcd5c0287ca98f308c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update any internal state with the given context (e.g., counters, windows).  <br /></td></tr>
 <tr class="separator:a775dac97d109c5fcd5c0287ca98f308c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95a801aafb5aaa9a22566ebf722a1150" id="r_a95a801aafb5aaa9a22566ebf722a1150"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95a801aafb5aaa9a22566ebf722a1150">step</a> (const TriggerContextStruct &amp;ctx) override</td></tr>
+<tr class="memdesc:a95a801aafb5aaa9a22566ebf722a1150"><td class="mdescLeft">&#160;</td><td class="mdescRight">similar to update but intended to be run on every step not just those where the trigger triggered  <br /></td></tr>
+<tr class="separator:a95a801aafb5aaa9a22566ebf722a1150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab42043e55c81bac5d3f981bc139579de" id="r_ab42043e55c81bac5d3f981bc139579de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab42043e55c81bac5d3f981bc139579de">reset</a> () override</td></tr>
 <tr class="memdesc:ab42043e55c81bac5d3f981bc139579de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset internal state and diagnostics counters.  <br /></td></tr>
 <tr class="separator:ab42043e55c81bac5d3f981bc139579de"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,6 +174,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:af595a5daab0f5b3ffc450c6de6737517"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc6f560d9199455ba98d85eadfe02847" id="r_adc6f560d9199455ba98d85eadfe02847"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc6f560d9199455ba98d85eadfe02847">m_resets</a> = 0</td></tr>
 <tr class="separator:adc6f560d9199455ba98d85eadfe02847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a596db4a92ebf789cea1c431d3d2220c7" id="r_a596db4a92ebf789cea1c431d3d2220c7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a596db4a92ebf789cea1c431d3d2220c7">m_steps</a> = 0</td></tr>
+<tr class="separator:a596db4a92ebf789cea1c431d3d2220c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename TriggerContextStruct&gt;<br />
@@ -421,6 +426,43 @@ template&lt;typename TriggerContextStruct&gt; </div>
 
 </div>
 </div>
+<a id="a95a801aafb5aaa9a22566ebf722a1150" name="a95a801aafb5aaa9a22566ebf722a1150"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95a801aafb5aaa9a22566ebf722a1150">&#9670;&#160;</a></span>step()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TriggerContextStruct&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classgridfire_1_1trigger_1_1_or_trigger.html">gridfire::trigger::OrTrigger</a>&lt; TriggerContextStruct &gt;::step </td>
+          <td>(</td>
+          <td class="paramtype">const TriggerContextStruct &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>similar to update but intended to be run on every step not just those where the trigger triggered </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context snapshot used to update state. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html#a4b7ffa4d8d31e2118a8e86172be51041">gridfire::trigger::Trigger&lt; TriggerContextStruct &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a775dac97d109c5fcd5c0287ca98f308c" name="a775dac97d109c5fcd5c0287ca98f308c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a775dac97d109c5fcd5c0287ca98f308c">&#9670;&#160;</a></span>update()</h2>
 
@@ -606,6 +648,30 @@ template&lt;typename TriggerContextStruct&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">size_t <a class="el" href="classgridfire_1_1trigger_1_1_or_trigger.html">gridfire::trigger::OrTrigger</a>&lt; TriggerContextStruct &gt;::m_resets = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a596db4a92ebf789cea1c431d3d2220c7" name="a596db4a92ebf789cea1c431d3d2220c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a596db4a92ebf789cea1c431d3d2220c7">&#9670;&#160;</a></span>m_steps</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TriggerContextStruct&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classgridfire_1_1trigger_1_1_or_trigger.html">gridfire::trigger::OrTrigger</a>&lt; TriggerContextStruct &gt;::m_steps = 0</td>
         </tr>
       </table>
   </td>

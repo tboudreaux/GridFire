@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rauscherthielemann_0',['RauscherThielemann',['../namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728ca4ca5b5dcd7343b06b860f05f3bc454b1',1,'gridfire::partition']]],
-  ['reaclib_1',['REACLIB',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37a9b8db7b445ae4f1bd114caa42a583182',1,'gridfire::REACLIB'],['../namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220',1,'gridfire::reaction::REACLIB']]]
+  ['positron_5fcapture_0',['POSITRON_CAPTURE',['../namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892bae0be5539e1cf1c424806baa62540aa9d',1,'gridfire::POSITRON_CAPTURE'],['../namespacegridfire_1_1rates_1_1weak.html#ae834fb6f8cd1ac922967d5296a25bec7ae0be5539e1cf1c424806baa62540aa9d',1,'gridfire::rates::weak::POSITRON_CAPTURE']]]
 ];

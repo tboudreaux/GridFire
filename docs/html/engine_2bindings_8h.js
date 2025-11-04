@@ -5,5 +5,12 @@ var engine_2bindings_8h =
     [ "con_stype_register_graph_engine_bindings", "engine_2bindings_8h.html#a73d427751e6a64952d52e7c2cc84d065", null ],
     [ "register_base_engine_bindings", "engine_2bindings_8h.html#a766b8bf2c08f2e81486752261ec89642", null ],
     [ "register_engine_bindings", "engine_2bindings_8h.html#a73a2ec4150b3954550f16b97102ec993", null ],
+    [ "register_engine_building_type_bindings", "engine_2bindings_8h.html#a3ec1c283d60332e61affc063d0e1639f", null ],
+    [ "register_engine_construction_bindings", "engine_2bindings_8h.html#aad8d3f0fef8c740df9a98c53800190c9", null ],
+    [ "register_engine_diagnostic_bindings", "engine_2bindings_8h.html#a1f595355667895199f3c3c39383fad33", null ],
+    [ "register_engine_priming_bindings", "engine_2bindings_8h.html#a3974cc99c2970c71b9a5fca0217f5b6e", null ],
+    [ "register_engine_procedural_bindings", "engine_2bindings_8h.html#ae3c140c5303eeaa6e02b3a3c4d4d4c36", null ],
+    [ "register_engine_reporting_type_bindings", "engine_2bindings_8h.html#a66ce33948e3d9d5837b244298c8ca2b6", null ],
+    [ "register_engine_type_bindings", "engine_2bindings_8h.html#a2fe8fd1a44f7b623fdf51e453e5149b9", null ],
     [ "register_engine_view_bindings", "engine_2bindings_8h.html#ac12de48f4164b679dd7afb03c83ec4bf", null ]
 ];

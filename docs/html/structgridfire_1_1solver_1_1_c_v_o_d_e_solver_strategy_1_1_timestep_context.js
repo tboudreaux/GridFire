@@ -1,7 +1,9 @@
 var structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context =
 [
-    [ "TimestepContext", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a406b36ce5f192c855eb3c8dcf0fde0bd", null ],
+    [ "TimestepContext", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a1637965300527d09bfc9f690272d7264", null ],
     [ "describe", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#ae3c6320ce7a8f41c9ae36c42d62b4204", null ],
+    [ "currentConvergenceFailures", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#adef40af49e162d2429db1030f6341d96", null ],
+    [ "currentNonlinearIterations", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#aefa6b183bf963f6e01c5157b7c0f158a", null ],
     [ "dt", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a6442d15673e6385bb6fdd11e1179c487", null ],
     [ "engine", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#af8c233f893bf740e81c5254d84534067", null ],
     [ "last_step_time", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a4a92187c15b7bcb90adebecc87e1436a", null ],

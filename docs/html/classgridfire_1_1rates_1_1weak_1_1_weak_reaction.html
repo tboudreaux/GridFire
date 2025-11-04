@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -231,6 +231,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:aeaceef054714e2a9667986406107ba3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee395d13ed3a515d5c1d69bedffca5de" id="r_aee395d13ed3a515d5c1d69bedffca5de"><td class="memItemLeft" align="right" valign="top">fourdst::atomic::Species&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee395d13ed3a515d5c1d69bedffca5de">m_product</a></td></tr>
 <tr class="separator:aee395d13ed3a515d5c1d69bedffca5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46c36a6e517fb00a2ac3cbb0f546a341" id="r_a46c36a6e517fb00a2ac3cbb0f546a341"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46c36a6e517fb00a2ac3cbb0f546a341">m_reactants</a></td></tr>
+<tr class="separator:a46c36a6e517fb00a2ac3cbb0f546a341"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ca233a081c7aed54ace061ea362231" id="r_a71ca233a081c7aed54ace061ea362231"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71ca233a081c7aed54ace061ea362231">m_products</a></td></tr>
+<tr class="separator:a71ca233a081c7aed54ace061ea362231"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37dfb1d460e78e81a6def62e7217e6f8" id="r_a37dfb1d460e78e81a6def62e7217e6f8"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37dfb1d460e78e81a6def62e7217e6f8">m_reactant_a</a></td></tr>
 <tr class="separator:a37dfb1d460e78e81a6def62e7217e6f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d1b52076e102d07acb7200a7ee99165" id="r_a3d1b52076e102d07acb7200a7ee99165"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d1b52076e102d07acb7200a7ee99165">m_reactant_z</a></td></tr>
@@ -946,7 +950,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1002,7 +1006,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1032,7 +1036,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1061,7 +1065,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1119,7 +1123,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1208,7 +1212,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1296,7 +1300,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1462,6 +1466,28 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 
 </div>
 </div>
+<a id="a71ca233a081c7aed54ace061ea362231" name="a71ca233a081c7aed54ace061ea362231"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71ca233a081c7aed54ace061ea362231">&#9670;&#160;</a></span>m_products</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::rates::weak::WeakReaction::m_products</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeaceef054714e2a9667986406107ba3a" name="aeaceef054714e2a9667986406107ba3a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeaceef054714e2a9667986406107ba3a">&#9670;&#160;</a></span>m_reactant</h2>
 
@@ -1517,6 +1543,28 @@ template&lt;IsArithmeticOrAD T&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">size_t gridfire::rates::weak::WeakReaction::m_reactant_z</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a46c36a6e517fb00a2ac3cbb0f546a341" name="a46c36a6e517fb00a2ac3cbb0f546a341"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46c36a6e517fb00a2ac3cbb0f546a341">&#9670;&#160;</a></span>m_reactants</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; gridfire::rates::weak::WeakReaction::m_reactants</td>
         </tr>
       </table>
   </td>

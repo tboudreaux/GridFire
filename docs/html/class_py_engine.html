@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -123,15 +123,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2d240423899e039c2ca688e96f8af1f2" id="r_a2d240423899e039c2ca688e96f8af1f2"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d240423899e039c2ca688e96f8af1f2">getNetworkSpecies</a> () const override</td></tr>
 <tr class="memdesc:a2d240423899e039c2ca688e96f8af1f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
 <tr class="separator:a2d240423899e039c2ca688e96f8af1f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f92602ecf210414b46838fc0a9ae26d" id="r_a2f92602ecf210414b46838fc0a9ae26d"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">gridfire::expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f92602ecf210414b46838fc0a9ae26d">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const override</td></tr>
-<tr class="separator:a2f92602ecf210414b46838fc0a9ae26d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a298603e9d94ca58dc0db53e5b07add" id="r_a7a298603e9d94ca58dc0db53e5b07add"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">gridfire::expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a298603e9d94ca58dc0db53e5b07add">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a7a298603e9d94ca58dc0db53e5b07add"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
+<tr class="separator:a7a298603e9d94ca58dc0db53e5b07add"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_engine.html">gridfire::Engine</a></td></tr>
 <tr class="memitem:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine" id="r_a2e7970bed2100699f226f4141d5db037"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#a2e7970bed2100699f226f4141d5db037">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
 <tr class="separator:a2e7970bed2100699f226f4141d5db037 inherit pub_methods_classgridfire_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add48d3af9ebde17717e42e220e349740 inherit pub_methods_classgridfire_1_1_engine" id="r_add48d3af9ebde17717e42e220e349740"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_engine.html#add48d3af9ebde17717e42e220e349740">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:add48d3af9ebde17717e42e220e349740 inherit pub_methods_classgridfire_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
-<tr class="separator:add48d3af9ebde17717e42e220e349740 inherit pub_methods_classgridfire_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -139,8 +137,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a73caaa7606e2cdfd1aa82729a78ebb73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2f92602ecf210414b46838fc0a9ae26d" name="a2f92602ecf210414b46838fc0a9ae26d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f92602ecf210414b46838fc0a9ae26d">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<a id="a7a298603e9d94ca58dc0db53e5b07add" name="a7a298603e9d94ca58dc0db53e5b07add"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a298603e9d94ca58dc0db53e5b07add">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,7 +149,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">gridfire::expectations::StaleEngineError</a> &gt; PyEngine::calculateRHSAndEnergy </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -166,10 +164,24 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel override">override</span></span>  </td>
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Calculate the right-hand side (dY/dt) and energy generation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>expected&lt;StepDerivatives&lt;double&gt;&gt; containing either dY/dt and energy generation rate or a stale engine error indicating that the engine must be updated</dd></dl>
+<p>This function must be implemented by derived classes to compute the time derivatives of all species and the specific nuclear energy generation rate for the current state. </p>
+
+<p>Implements <a class="el" href="classgridfire_1_1_engine.html#add48d3af9ebde17717e42e220e349740">gridfire::Engine</a>.</p>
 
 </div>
 </div>

@@ -36,8 +36,10 @@ var classgridfire_1_1rates_1_1weak_1_1_weak_reaction =
     [ "m_product", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aee395d13ed3a515d5c1d69bedffca5de", null ],
     [ "m_product_a", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a2567545c89eb847a15909b02fa0f383e", null ],
     [ "m_product_z", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#ab1be1d3010ff539b8a911506734fd9cf", null ],
+    [ "m_products", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a71ca233a081c7aed54ace061ea362231", null ],
     [ "m_reactant", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aeaceef054714e2a9667986406107ba3a", null ],
     [ "m_reactant_a", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a37dfb1d460e78e81a6def62e7217e6f8", null ],
     [ "m_reactant_z", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a3d1b52076e102d07acb7200a7ee99165", null ],
+    [ "m_reactants", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a46c36a6e517fb00a2ac3cbb0f546a341", null ],
     [ "m_type", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a92c3590161c63c6ed4e7650d2b7beee3", null ]
 ];

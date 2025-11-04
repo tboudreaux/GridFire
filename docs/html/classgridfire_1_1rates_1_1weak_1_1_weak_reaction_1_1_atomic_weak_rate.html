@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -133,6 +133,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae9d61bdda761da89733408c232d7220e" id="r_ae9d61bdda761da89733408c232d7220e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9d61bdda761da89733408c232d7220e">rev_sparse_jac</a> (size_t q, const CppAD::vector&lt; std::set&lt; size_t &gt; &gt; &amp;rt, CppAD::vector&lt; std::set&lt; size_t &gt; &gt; &amp;st) override</td></tr>
 <tr class="memdesc:ae9d61bdda761da89733408c232d7220e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverse-mode sparsity for Jacobian.  <br /></td></tr>
 <tr class="separator:ae9d61bdda761da89733408c232d7220e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4c3bb00eafddb923be7ba4c3b6a25ff" id="r_ae4c3bb00eafddb923be7ba4c3b6a25ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4c3bb00eafddb923be7ba4c3b6a25ff">for_sparse_jac</a> (size_t q, const CppAD::vector&lt; bool &gt; &amp;r, CppAD::vector&lt; bool &gt; &amp;s, const CppAD::vector&lt; double &gt; &amp;x) override</td></tr>
+<tr class="separator:ae4c3bb00eafddb923be7ba4c3b6a25ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2681d58e10b6b740b4588efbce5ae5" id="r_a9f2681d58e10b6b740b4588efbce5ae5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f2681d58e10b6b740b4588efbce5ae5">rev_sparse_jac</a> (size_t q, const CppAD::vector&lt; bool &gt; &amp;rt, CppAD::vector&lt; bool &gt; &amp;st, const CppAD::vector&lt; double &gt; &amp;x) override</td></tr>
+<tr class="separator:a9f2681d58e10b6b740b4588efbce5ae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -200,8 +204,47 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae4c3bb00eafddb923be7ba4c3b6a25ff" name="ae4c3bb00eafddb923be7ba4c3b6a25ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4c3bb00eafddb923be7ba4c3b6a25ff">&#9670;&#160;</a></span>for_sparse_jac() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::rates::weak::WeakReaction::AtomicWeakRate::for_sparse_jac </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>q</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::vector&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>r</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CppAD::vector&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>s</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a976a2ef2e58439429c1a6e94c27f4662" name="a976a2ef2e58439429c1a6e94c27f4662"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a976a2ef2e58439429c1a6e94c27f4662">&#9670;&#160;</a></span>for_sparse_jac()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a976a2ef2e58439429c1a6e94c27f4662">&#9670;&#160;</a></span>for_sparse_jac() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,8 +330,47 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a9f2681d58e10b6b740b4588efbce5ae5" name="a9f2681d58e10b6b740b4588efbce5ae5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f2681d58e10b6b740b4588efbce5ae5">&#9670;&#160;</a></span>rev_sparse_jac() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::rates::weak::WeakReaction::AtomicWeakRate::rev_sparse_jac </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>q</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::vector&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>rt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CppAD::vector&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>st</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CppAD::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae9d61bdda761da89733408c232d7220e" name="ae9d61bdda761da89733408c232d7220e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9d61bdda761da89733408c232d7220e">&#9670;&#160;</a></span>rev_sparse_jac()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9d61bdda761da89733408c232d7220e">&#9670;&#160;</a></span>rev_sparse_jac() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

@@ -10,5 +10,6 @@ var searchData=
   ['pyengineview_7',['PyEngineView',['../class_py_engine_view.html',1,'']]],
   ['pynetworkfileparser_8',['PyNetworkFileParser',['../class_py_network_file_parser.html',1,'']]],
   ['pypartitionfunction_9',['PyPartitionFunction',['../class_py_partition_function.html',1,'']]],
-  ['pyscreening_10',['PyScreening',['../class_py_screening.html',1,'']]]
+  ['pyscreening_10',['PyScreening',['../class_py_screening.html',1,'']]],
+  ['pysolvercontextbase_11',['PySolverContextBase',['../class_py_solver_context_base.html',1,'']]]
 ];

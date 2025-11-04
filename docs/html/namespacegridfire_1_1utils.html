@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -100,12 +100,18 @@ $(function(){initNavTree('namespacegridfire_1_1utils.html',''); initResizable(tr
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">gridfire::utils Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1utils_1_1hashing.html">hashing</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1utils_1_1_column.html">Column</a></td></tr>
@@ -115,6 +121,18 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a30bc2aa491806a4ac2a9039e267db282" id="r_a30bc2aa491806a4ac2a9039e267db282"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30bc2aa491806a4ac2a9039e267db282">massFractionFromMolarAbundanceAndComposition</a> (const fourdst::composition::Composition &amp;composition, const fourdst::atomic::Species &amp;species, const double Yi)</td></tr>
+<tr class="separator:a30bc2aa491806a4ac2a9039e267db282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e0dbd737724f2ead65046b07639c931" id="r_a3e0dbd737724f2ead65046b07639c931"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e0dbd737724f2ead65046b07639c931">massFractionFromMolarAbundanceAndMolarMass</a> (const std::vector&lt; double &gt; &amp;molarAbundances, const std::vector&lt; double &gt; &amp;molarMasses) noexcept</td></tr>
+<tr class="memdesc:a3e0dbd737724f2ead65046b07639c931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a vector of molar abundances into a vector of mass fractions.  <br /></td></tr>
+<tr class="separator:a3e0dbd737724f2ead65046b07639c931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1772aeeec2509ca45bc733b7615a7778" id="r_a1772aeeec2509ca45bc733b7615a7778"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1772aeeec2509ca45bc733b7615a7778">molarMassVectorFromComposition</a> (const fourdst::composition::Composition &amp;composition)</td></tr>
+<tr class="separator:a1772aeeec2509ca45bc733b7615a7778"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dc0b71ddae108a47887458c2f3f780e" id="r_a0dc0b71ddae108a47887458c2f3f780e"><td class="memItemLeft" align="right" valign="top">uint_fast32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dc0b71ddae108a47887458c2f3f780e">hash_atomic</a> (const uint16_t a, const uint8_t z) noexcept</td></tr>
+<tr class="memdesc:a0dc0b71ddae108a47887458c2f3f780e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a unique hash for an isotope given its mass number (A) and atomic number (Z).  <br /></td></tr>
+<tr class="separator:a0dc0b71ddae108a47887458c2f3f780e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a011ac3184b4fcf21322868b1aaa4d2d1" id="r_a011ac3184b4fcf21322868b1aaa4d2d1"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a011ac3184b4fcf21322868b1aaa4d2d1">hash_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) noexcept</td></tr>
+<tr class="separator:a011ac3184b4fcf21322868b1aaa4d2d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05fda32d3fc4ab10060b8c4c251c2f3d" id="r_a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05fda32d3fc4ab10060b8c4c251c2f3d">formatNuclearTimescaleLogString</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::composition::Composition &amp;composition, double T9, double rho)</td></tr>
 <tr class="memdesc:a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats a map of nuclear species timescales into a human-readable string.  <br /></td></tr>
 <tr class="separator:a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,7 +203,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>A constant reference to a <code><a class="el" href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations.">DynamicEngine</a></code> object, used to calculate the species timescales. </td></tr>
-    <tr><td class="paramname">Y</td><td>A vector of the molar abundances (mol/g) for each species. </td></tr>
+    <tr><td class="paramname">composition</td><td>The current composition of the plasma </td></tr>
     <tr><td class="paramname">T9</td><td>The temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>The plasma density in g/cm^3. </td></tr>
   </table>
@@ -220,6 +238,169 @@ Functions</h2></td></tr>
 <div class="line"><span class="comment">// ==========================</span></div>
 <div class="ttc" id="anamespacegridfire_1_1utils_html_a05fda32d3fc4ab10060b8c4c251c2f3d"><div class="ttname"><a href="#a05fda32d3fc4ab10060b8c4c251c2f3d">gridfire::utils::formatNuclearTimescaleLogString</a></div><div class="ttdeci">std::string formatNuclearTimescaleLogString(const DynamicEngine &amp;engine, const fourdst::composition::Composition &amp;composition, double T9, double rho)</div><div class="ttdoc">Formats a map of nuclear species timescales into a human-readable string.</div><div class="ttdef"><b>Definition</b> logging.cpp:12</div></div>
 </div><!-- fragment --> 
+</div>
+</div>
+<a id="a0dc0b71ddae108a47887458c2f3f780e" name="a0dc0b71ddae108a47887458c2f3f780e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dc0b71ddae108a47887458c2f3f780e">&#9670;&#160;</a></span>hash_atomic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint_fast32_t gridfire::utils::hash_atomic </td>
+          <td>(</td>
+          <td class="paramtype">const uint16_t</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>z</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generate a unique hash for an isotope given its mass number (A) and atomic number (Z). </p>
+<p>This function combines the mass number and atomic number into a single 32-bit integer by shifting the mass number 8 bits to the left and OR'ing it with the atomic number. This ensures a unique representation for each isotope within physically possible ranges. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The mass number (A) of the isotope. </td></tr>
+    <tr><td class="paramname">z</td><td>The atomic number (Z) of the isotope. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A unique 32-bit hash representing the isotope. This is computed as (A &lt;&lt; 8) | Z into an uint32_t. </dd></dl>
+
+</div>
+</div>
+<a id="a011ac3184b4fcf21322868b1aaa4d2d1" name="a011ac3184b4fcf21322868b1aaa4d2d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a011ac3184b4fcf21322868b1aaa4d2d1">&#9670;&#160;</a></span>hash_reaction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::uint64_t gridfire::utils::hash_reaction </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a30bc2aa491806a4ac2a9039e267db282" name="a30bc2aa491806a4ac2a9039e267db282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30bc2aa491806a4ac2a9039e267db282">&#9670;&#160;</a></span>massFractionFromMolarAbundanceAndComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double gridfire::utils::massFractionFromMolarAbundanceAndComposition </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>Yi</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3e0dbd737724f2ead65046b07639c931" name="a3e0dbd737724f2ead65046b07639c931"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e0dbd737724f2ead65046b07639c931">&#9670;&#160;</a></span>massFractionFromMolarAbundanceAndMolarMass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; double &gt; gridfire::utils::massFractionFromMolarAbundanceAndMolarMass </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>molarAbundances</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>molarMasses</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert a vector of molar abundances into a vector of mass fractions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">molarAbundances</td><td>Vector of molar abundances </td></tr>
+    <tr><td class="paramname">molarMasses</td><td>Vector of molar masses</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>The vectors molarAbundances and molarMasses must be parallel. This function does not provide any checks to ensure that the correct molar mass is being used with the correct molar abundance. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of molar masses such that each molar mass &lt; 1 and the sum of all is = 1 </dd></dl>
+
+</div>
+</div>
+<a id="a1772aeeec2509ca45bc733b7615a7778" name="a1772aeeec2509ca45bc733b7615a7778"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1772aeeec2509ca45bc733b7615a7778">&#9670;&#160;</a></span>molarMassVectorFromComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; double &gt; gridfire::utils::molarMassVectorFromComposition </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 </div>
 </div>
 </div><!-- contents -->

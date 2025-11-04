@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -218,10 +218,10 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;double&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>expected&lt;StepDerivatives&lt;double&gt;&gt; containing either dY/dt and energy generation rate or a stale engine error indicating that the engine must be updated</dd></dl>
 <p>This function must be implemented by derived classes to compute the time derivatives of all species and the specific nuclear energy generation rate for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#ac5545d546166de94514871d7ad7b8669">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#af273b29d7700cdc34da6e2712fffc5c2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a7acc98647427981a9602d251c9288012">gridfire::GraphEngine</a>, and <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a5c1ab19bc3394a5d29241ef02073c4cb">gridfire::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#ac5545d546166de94514871d7ad7b8669">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#af273b29d7700cdc34da6e2712fffc5c2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a7acc98647427981a9602d251c9288012">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a5c1ab19bc3394a5d29241ef02073c4cb">gridfire::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#a6bd76ef1df93d361bf5791270390c914">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a7a298603e9d94ca58dc0db53e5b07add">PyEngine</a>.</p>
 
 </div>
 </div>

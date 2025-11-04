@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -127,8 +127,10 @@ Inheritance diagram for gridfire::reaction::LogicalReaclibReaction:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0ff112dca1f88070effb6700429b42b4" id="r_a0ff112dca1f88070effb6700429b42b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ff112dca1f88070effb6700429b42b4">LogicalReaclibReaction</a> (const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;reactions)</td></tr>
-<tr class="memdesc:a0ff112dca1f88070effb6700429b42b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects.  <br /></td></tr>
+<tr class="memdesc:a0ff112dca1f88070effb6700429b42b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects. Implicitly assumes that the logical reaction is for a forward (i.e. not reverse) reaction.  <br /></td></tr>
 <tr class="separator:a0ff112dca1f88070effb6700429b42b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e6d50f866be9239ac620607741280cc" id="r_a7e6d50f866be9239ac620607741280cc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e6d50f866be9239ac620607741280cc">LogicalReaclibReaction</a> (const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;reactions, bool reverse)</td></tr>
+<tr class="separator:a7e6d50f866be9239ac620607741280cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69508797ca0793f6d3f58de4e0b97667" id="r_a69508797ca0793f6d3f58de4e0b97667"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69508797ca0793f6d3f58de4e0b97667">add_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &amp;reaction)</td></tr>
 <tr class="memdesc:a69508797ca0793f6d3f58de4e0b97667"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds another <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> source to this logical reaction.  <br /></td></tr>
 <tr class="separator:a69508797ca0793f6d3f58de4e0b97667"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -321,7 +323,7 @@ Additional Inherited Members</h2></td></tr>
 <p>A <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">LogicalReaclibReaction</a> shares the same reactants and products but combines rates from different evaluations (e.g., "wc12" and "st08" for the same physical reaction). The total rate is the sum of the individual rates. It inherits from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a>, using the properties of the first provided reaction as its base properties (reactants, products, Q-value, etc.). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0ff112dca1f88070effb6700429b42b4" name="a0ff112dca1f88070effb6700429b42b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ff112dca1f88070effb6700429b42b4">&#9670;&#160;</a></span>LogicalReaclibReaction()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ff112dca1f88070effb6700429b42b4">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +345,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects. </p>
+<p>Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects. Implicitly assumes that the logical reaction is for a forward (i.e. not reverse) reaction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">reactions</td><td>A vector of reactions that represent the same logical process. </td></tr>
@@ -356,6 +358,43 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a7e6d50f866be9239ac620607741280cc" name="a7e6d50f866be9239ac620607741280cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e6d50f866be9239ac620607741280cc">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::reaction::LogicalReaclibReaction::LogicalReaclibReaction </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reverse</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel explicit">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>@breif Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects and allows the user to specify if the logical set is for a reverse reaction explicitly </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reactions</td><td>A vector of reactions that represent the same logical process </td></tr>
+    <tr><td class="paramname">reverse</td><td>A flag to control if this logical reaction is reverse or not </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::runtime_error if the provided reactions have inconsistent Q-values. </dd></dl>
 
 </div>
 </div>
