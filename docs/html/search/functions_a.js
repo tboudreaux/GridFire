@@ -16,9 +16,12 @@ var searchData=
   ['mesanetworkfileparser_13',['MESANetworkFileParser',['../classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ac5963d0da6780de753df996b490f8d2c',1,'gridfire::io::MESANetworkFileParser']]],
   ['miss_14',['miss',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac55fb580dd4b9763cefe4612555b03f3',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]],
   ['misses_15',['misses',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#a5df4f2c27e9eaa781c972a8c9b595787',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]],
-  ['mix_5fspecies_16',['mix_species',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#a464d24a4cacff96a2be567ce461c8404',1,'gridfire::utils::hashing::reaction']]],
-  ['molarabundance_17',['MolarAbundance',['../structgridfire_1_1_net_in.html#a47781e8d5503e3b4f12d669e2cbcfb65',1,'gridfire::NetIn']]],
-  ['molarmassvectorfromcomposition_18',['molarMassVectorFromComposition',['../namespacegridfire_1_1utils.html#a1772aeeec2509ca45bc733b7615a7778',1,'gridfire::utils']]],
-  ['multiscalepartitioningengineview_19',['MultiscalePartitioningEngineView',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a1b3720628b22f038391949fffe6fc962',1,'gridfire::MultiscalePartitioningEngineView']]],
-  ['multiset_5fcombine_20',['multiset_combine',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#abd97bcaba4cc049e7f6974a4df5d824a',1,'gridfire::utils::hashing::reaction']]]
+  ['missingbasereactionerror_16',['MissingBaseReactionError',['../classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html#ad6bfd78cd760c4632a5d2a508d206fb9',1,'gridfire::exceptions::MissingBaseReactionError']]],
+  ['missingkeyreactionerror_17',['MissingKeyReactionError',['../classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html#ab7487832a8f530586a159df774c3ad5d',1,'gridfire::exceptions::MissingKeyReactionError']]],
+  ['missingseedspecieserror_18',['MissingSeedSpeciesError',['../classgridfire_1_1exceptions_1_1_missing_seed_species_error.html#abb0f1caca063a502d9e00167ea5901b0',1,'gridfire::exceptions::MissingSeedSpeciesError']]],
+  ['mix_5fspecies_19',['mix_species',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#a464d24a4cacff96a2be567ce461c8404',1,'gridfire::utils::hashing::reaction']]],
+  ['molarabundance_20',['MolarAbundance',['../structgridfire_1_1_net_in.html#a47781e8d5503e3b4f12d669e2cbcfb65',1,'gridfire::NetIn']]],
+  ['molarmassvectorfromcomposition_21',['molarMassVectorFromComposition',['../namespacegridfire_1_1utils.html#a1772aeeec2509ca45bc733b7615a7778',1,'gridfire::utils']]],
+  ['multiscalepartitioningengineview_22',['MultiscalePartitioningEngineView',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a1b3720628b22f038391949fffe6fc962',1,'gridfire::MultiscalePartitioningEngineView']]],
+  ['multiset_5fcombine_23',['multiset_combine',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#abd97bcaba4cc049e7f6974a4df5d824a',1,'gridfire::utils::hashing::reaction']]]
 ];

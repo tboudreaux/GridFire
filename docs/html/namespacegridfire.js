@@ -10,6 +10,7 @@ var namespacegridfire =
     [ "expectations", "namespacegridfire_1_1expectations.html", "namespacegridfire_1_1expectations" ],
     [ "io", "namespacegridfire_1_1io.html", "namespacegridfire_1_1io" ],
     [ "partition", "namespacegridfire_1_1partition.html", "namespacegridfire_1_1partition" ],
+    [ "policy", "namespacegridfire_1_1policy.html", "namespacegridfire_1_1policy" ],
     [ "rates", "namespacegridfire_1_1rates.html", "namespacegridfire_1_1rates" ],
     [ "reaclib", "namespacegridfire_1_1reaclib.html", "namespacegridfire_1_1reaclib" ],
     [ "reaction", "namespacegridfire_1_1reaction.html", "namespacegridfire_1_1reaction" ],

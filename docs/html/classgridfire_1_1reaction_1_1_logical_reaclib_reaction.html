@@ -155,6 +155,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab5bdbe13239f1180f32fb0a14a60d0a9" id="r_ab5bdbe13239f1180f32fb0a14a60d0a9"><td class="memItemLeft" align="right" valign="top">CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5bdbe13239f1180f32fb0a14a60d0a9">calculate_rate</a> (CppAD::AD&lt; double &gt; T9, CppAD::AD&lt; double &gt; rho, CppAD::AD&lt; double &gt; Ye, CppAD::AD&lt; double &gt; mue, const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const override</td></tr>
 <tr class="memdesc:ab5bdbe13239f1180f32fb0a14a60d0a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the total reaction rate using CppAD types.  <br /></td></tr>
 <tr class="separator:ab5bdbe13239f1180f32fb0a14a60d0a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfef828853172ca573395160e2ce9c49" id="r_adfef828853172ca573395160e2ce9c49"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfef828853172ca573395160e2ce9c49">getRateCoefficients</a> () const override</td></tr>
+<tr class="separator:adfef828853172ca573395160e2ce9c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Iterators</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Provides iterators to loop over the rate coefficient sets. </p>
 </div></td></tr>
@@ -196,6 +198,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adfed51cf788a7ed4770cbd5945ddab2f inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_adfed51cf788a7ed4770cbd5945ddab2f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#adfed51cf788a7ed4770cbd5945ddab2f">rateCoefficients</a> () const</td></tr>
 <tr class="memdesc:adfed51cf788a7ed4770cbd5945ddab2f inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of rate coefficients.  <br /></td></tr>
 <tr class="separator:adfed51cf788a7ed4770cbd5945ddab2f inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefd0436ae72880358214d5b79c9c79eb inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_aefd0436ae72880358214d5b79c9c79eb"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#aefd0436ae72880358214d5b79c9c79eb">getRateCoefficients</a> () const override</td></tr>
+<tr class="separator:aefd0436ae72880358214d5b79c9c79eb inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a171b690e1abaf23f11a94c39e9f8c944 inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_a171b690e1abaf23f11a94c39e9f8c944"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a171b690e1abaf23f11a94c39e9f8c944">contains</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
 <tr class="memdesc:a171b690e1abaf23f11a94c39e9f8c944 inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the reaction involves a given species as a reactant or product.  <br /></td></tr>
 <tr class="separator:a171b690e1abaf23f11a94c39e9f8c944 inherit pub_methods_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -790,6 +794,33 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="adfef828853172ca573395160e2ce9c49" name="adfef828853172ca573395160e2ce9c49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfef828853172ca573395160e2ce9c49">&#9670;&#160;</a></span>getRateCoefficients()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a> &gt; &gt; gridfire::reaction::LogicalReaclibReaction::getRateCoefficients </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a6c51c30a0eec2f00c7d1f1c0be44cb0b">gridfire::reaction::Reaction</a>.</p>
 
 </div>
 </div>

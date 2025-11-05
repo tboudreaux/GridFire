@@ -12,6 +12,7 @@ var classgridfire_1_1reaction_1_1_logical_reaclib_reaction =
     [ "clone", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ad113b9cb64c449f9449c4cce4fa64076", null ],
     [ "end", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#aefaf6c4c32ae54a2882da0e031632a74", null ],
     [ "end", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ae0b38d499bf0c9ca58461ea2862a7d5a", null ],
+    [ "getRateCoefficients", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#adfef828853172ca573395160e2ce9c49", null ],
     [ "size", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a4c58951d9f7ab252717c226b0da80a9d", null ],
     [ "sources", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ad4979f437dc787a5475c3a029804ed99", null ],
     [ "type", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#acbfa2d4e23dff6641be21cc1e754be15", null ],

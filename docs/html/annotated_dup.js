@@ -13,7 +13,11 @@ var annotated_dup =
         [ "FailedToPartitionEngineError", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error" ],
         [ "HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", "classgridfire_1_1exceptions_1_1_hashing_error" ],
         [ "JacobianError", "classgridfire_1_1exceptions_1_1_jacobian_error.html", null ],
+        [ "MissingBaseReactionError", "classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html", "classgridfire_1_1exceptions_1_1_missing_base_reaction_error" ],
+        [ "MissingKeyReactionError", "classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html", "classgridfire_1_1exceptions_1_1_missing_key_reaction_error" ],
+        [ "MissingSeedSpeciesError", "classgridfire_1_1exceptions_1_1_missing_seed_species_error.html", "classgridfire_1_1exceptions_1_1_missing_seed_species_error" ],
         [ "NetworkResizedError", "classgridfire_1_1exceptions_1_1_network_resized_error.html", "classgridfire_1_1exceptions_1_1_network_resized_error" ],
+        [ "PolicyError", "classgridfire_1_1exceptions_1_1_policy_error.html", "classgridfire_1_1exceptions_1_1_policy_error" ],
         [ "StaleEngineError", "classgridfire_1_1exceptions_1_1_stale_engine_error.html", "classgridfire_1_1exceptions_1_1_stale_engine_error" ],
         [ "StaleEngineTrigger", "classgridfire_1_1exceptions_1_1_stale_engine_trigger.html", "classgridfire_1_1exceptions_1_1_stale_engine_trigger" ],
         [ "StaleJacobianError", "classgridfire_1_1exceptions_1_1_stale_jacobian_error.html", "classgridfire_1_1exceptions_1_1_stale_jacobian_error" ],
@@ -28,6 +32,9 @@ var annotated_dup =
         [ "StaleEngineError", "structgridfire_1_1expectations_1_1_stale_engine_error.html", "structgridfire_1_1expectations_1_1_stale_engine_error" ]
       ] ],
       [ "io", "namespacegridfire_1_1io.html", [
+        [ "gen", "namespacegridfire_1_1io_1_1gen.html", [
+          [ "PyFunctionDef", "structgridfire_1_1io_1_1gen_1_1_py_function_def.html", "structgridfire_1_1io_1_1gen_1_1_py_function_def" ]
+        ] ],
         [ "MESANetworkFileParser", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser" ],
         [ "NetworkFileParser", "classgridfire_1_1io_1_1_network_file_parser.html", "classgridfire_1_1io_1_1_network_file_parser" ],
         [ "SimpleReactionListFileParser", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser" ]
@@ -40,6 +47,16 @@ var annotated_dup =
         [ "GroundStatePartitionFunction", "classgridfire_1_1partition_1_1_ground_state_partition_function.html", "classgridfire_1_1partition_1_1_ground_state_partition_function" ],
         [ "PartitionFunction", "classgridfire_1_1partition_1_1_partition_function.html", "classgridfire_1_1partition_1_1_partition_function" ],
         [ "RauscherThielemannPartitionFunction", "classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html", "classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function" ]
+      ] ],
+      [ "policy", "namespacegridfire_1_1policy.html", [
+        [ "CNOChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_chain_policy" ],
+        [ "HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy" ],
+        [ "LowMassMainSequencePolicy", "classgridfire_1_1policy_1_1_low_mass_main_sequence_policy.html", "classgridfire_1_1policy_1_1_low_mass_main_sequence_policy" ],
+        [ "LowMassMainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy" ],
+        [ "MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy" ],
+        [ "NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", "classgridfire_1_1policy_1_1_network_policy" ],
+        [ "ProtonProtonChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_chain_policy.html", "classgridfire_1_1policy_1_1_proton_proton_chain_policy" ],
+        [ "ReactionChainPolicy", "classgridfire_1_1policy_1_1_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_reaction_chain_policy" ]
       ] ],
       [ "rates", "namespacegridfire_1_1rates.html", [
         [ "weak", "namespacegridfire_1_1rates_1_1weak.html", [

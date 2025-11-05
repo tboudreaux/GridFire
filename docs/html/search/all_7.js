@@ -27,9 +27,10 @@ var searchData=
   ['build_20and_20installation_20instructions_24',['Script Build and Installation Instructions',['../index.html#autotoc_md9',1,'']]],
   ['build_20instructions_25',['Manual Build Instructions',['../index.html#autotoc_md11',1,'']]],
   ['build_5fnuclear_5fnetwork_26',['build_nuclear_network',['../namespacegridfire.html#a0bc156f634a447f88a19de3be961c00b',1,'gridfire::build_nuclear_network(const fourdst::composition::Composition &amp;composition, const rates::weak::WeakRateInterpolator &amp;weakInterpolator, BuildDepthType maxLayers=NetworkBuildDepth::Full, NetworkConstructionFlags ReactionTypes=NetworkConstructionFlags::DEFAULT)'],['../namespacegridfire.html#ad0e3ec7cfe044c50929f378289f5fab9',1,'gridfire::build_nuclear_network(const Composition &amp;composition, const rates::weak::WeakRateInterpolator &amp;weakInterpolator, BuildDepthType maxLayers, NetworkConstructionFlags ReactionTypes)']]],
-  ['buildconnectivitygraph_27',['buildConnectivityGraph',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a5d1c11f3c0883385833462dd088f6f89',1,'gridfire::MultiscalePartitioningEngineView']]],
-  ['builddepthtype_28',['BuildDepthType',['../namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6',1,'gridfire']]],
-  ['building_20the_20c_20library_29',['Building the C++ Library',['../index.html#autotoc_md23',1,'']]],
-  ['building_2eh_30',['building.h',['../building_8h.html',1,'']]],
-  ['by_20step_20example_31',['3. Step-by-Step Example',['../md_docs_2static_2usage.html#autotoc_md66',1,'']]]
+  ['build_5fpartition_5ffunction_27',['build_partition_function',['../classgridfire_1_1policy_1_1_low_mass_main_sequence_policy.html#a1be0b6a5f6c41651d15538cdaffdda6c',1,'gridfire::policy::LowMassMainSequencePolicy']]],
+  ['buildconnectivitygraph_28',['buildConnectivityGraph',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a5d1c11f3c0883385833462dd088f6f89',1,'gridfire::MultiscalePartitioningEngineView']]],
+  ['builddepthtype_29',['BuildDepthType',['../namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6',1,'gridfire']]],
+  ['building_20the_20c_20library_30',['Building the C++ Library',['../index.html#autotoc_md23',1,'']]],
+  ['building_2eh_31',['building.h',['../building_8h.html',1,'']]],
+  ['by_20step_20example_32',['3. Step-by-Step Example',['../md_docs_2static_2usage.html#autotoc_md66',1,'']]]
 ];

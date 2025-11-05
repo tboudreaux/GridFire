@@ -11,6 +11,7 @@ var classgridfire_1_1_reaction =
     [ "contains", "classgridfire_1_1_reaction.html#adaeb5d72faf7d55d4e26f6e1fcba21c1", null ],
     [ "contains_product", "classgridfire_1_1_reaction.html#a5a17ca61d069749960e5a83e58c0b8a1", null ],
     [ "contains_reactant", "classgridfire_1_1_reaction.html#afca3afba45a3db79980c8fe18c87c750", null ],
+    [ "getRateCoefficients", "classgridfire_1_1_reaction.html#a5580701c64abce60b0253e79ffac3d88", null ],
     [ "hash", "classgridfire_1_1_reaction.html#a41b1c16f499c9255251ed43725cf698c", null ],
     [ "id", "classgridfire_1_1_reaction.html#a768329002a4f0b8604b1aa51d56b5d1b", null ],
     [ "is_reverse", "classgridfire_1_1_reaction.html#a640b0bdbed9ed7c2a2e9880ddbcafc1d", null ],

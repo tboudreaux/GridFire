@@ -16,6 +16,7 @@ var classgridfire_1_1rates_1_1weak_1_1_weak_reaction =
     [ "contains_reactant", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a98095e6536d9a6434c5955f4c169d505", null ],
     [ "get_log_neutrino_loss_from_payload", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a7f0d21c80fbbf94ead613e678d44b835", null ],
     [ "get_log_rate_from_payload", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a14555633289fc3822e927afca7401e49", null ],
+    [ "getRateCoefficients", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#a768eed406cc08057ed09e5daf5494650", null ],
     [ "getWeakRateInterpolator", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aefc75b3149bee2da878177279ad375da", null ],
     [ "hash", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#ad2ba6b584cb2df7c15633fca81ce6af1", null ],
     [ "id", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#ad01a15d95878c9edbf57cd9045c4413b", null ],

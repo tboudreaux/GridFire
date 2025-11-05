@@ -6,7 +6,8 @@ var searchData=
   ['rauscherthielemannpartitionfunction_3',['RauscherThielemannPartitionFunction',['../classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html',1,'gridfire::partition']]],
   ['reaclibreaction_4',['ReaclibReaction',['../classgridfire_1_1reaction_1_1_reaclib_reaction.html',1,'gridfire::reaction']]],
   ['reaction_5',['Reaction',['../classgridfire_1_1_reaction.html',1,'gridfire::Reaction'],['../classgridfire_1_1reaction_1_1_reaction.html',1,'gridfire::reaction::Reaction']]],
-  ['reactionflow_6',['ReactionFlow',['../structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html',1,'gridfire::AdaptiveEngineView']]],
-  ['reactionrecord_7',['ReactionRecord',['../structgridfire_1_1reaclib_1_1_reaction_record.html',1,'gridfire::reaclib']]],
-  ['reactionset_8',['ReactionSet',['../classgridfire_1_1reaction_1_1_reaction_set.html',1,'gridfire::reaction::ReactionSet'],['../classgridfire_1_1_reaction_set.html',1,'gridfire::ReactionSet']]]
+  ['reactionchainpolicy_6',['ReactionChainPolicy',['../classgridfire_1_1policy_1_1_reaction_chain_policy.html',1,'gridfire::policy']]],
+  ['reactionflow_7',['ReactionFlow',['../structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html',1,'gridfire::AdaptiveEngineView']]],
+  ['reactionrecord_8',['ReactionRecord',['../structgridfire_1_1reaclib_1_1_reaction_record.html',1,'gridfire::reaclib']]],
+  ['reactionset_9',['ReactionSet',['../classgridfire_1_1reaction_1_1_reaction_set.html',1,'gridfire::reaction::ReactionSet'],['../classgridfire_1_1_reaction_set.html',1,'gridfire::ReactionSet']]]
 ];

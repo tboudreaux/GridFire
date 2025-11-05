@@ -10,5 +10,6 @@ var searchData=
   ['screening_5fweak_2ecpp_7',['screening_weak.cpp',['../screening__weak_8cpp.html',1,'']]],
   ['screening_5fweak_2eh_8',['screening_weak.h',['../screening__weak_8h.html',1,'']]],
   ['solver_2eh_9',['solver.h',['../solver_8h.html',1,'']]],
-  ['solver_5finterfaces_2eh_10',['solver_interfaces.h',['../solver__interfaces_8h.html',1,'']]]
+  ['solver_5finterfaces_2eh_10',['solver_interfaces.h',['../solver__interfaces_8h.html',1,'']]],
+  ['stellar_5fpolicy_2eh_11',['stellar_policy.h',['../stellar__policy_8h.html',1,'']]]
 ];

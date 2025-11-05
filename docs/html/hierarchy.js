@@ -58,6 +58,11 @@ var hierarchy =
         [ "gridfire::exceptions::StaleEngineTrigger", "classgridfire_1_1exceptions_1_1_stale_engine_trigger.html", null ],
         [ "gridfire::exceptions::UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", null ]
       ] ],
+      [ "gridfire::exceptions::PolicyError", "classgridfire_1_1exceptions_1_1_policy_error.html", [
+        [ "gridfire::exceptions::MissingBaseReactionError", "classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html", null ],
+        [ "gridfire::exceptions::MissingKeyReactionError", "classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html", null ],
+        [ "gridfire::exceptions::MissingSeedSpeciesError", "classgridfire_1_1exceptions_1_1_missing_seed_species_error.html", null ]
+      ] ],
       [ "gridfire::exceptions::UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", [
         [ "gridfire::exceptions::HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", null ]
       ] ]
@@ -82,6 +87,9 @@ var hierarchy =
       [ "gridfire::io::MESANetworkFileParser", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html", null ],
       [ "gridfire::io::SimpleReactionListFileParser", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html", null ]
     ] ],
+    [ "gridfire::policy::NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", [
+      [ "gridfire::policy::LowMassMainSequencePolicy", "classgridfire_1_1policy_1_1_low_mass_main_sequence_policy.html", null ]
+    ] ],
     [ "gridfire::solver::NetworkSolverStrategy< EngineT >", "classgridfire_1_1solver_1_1_network_solver_strategy.html", null ],
     [ "gridfire::solver::NetworkSolverStrategy< DynamicEngine >", "classgridfire_1_1solver_1_1_network_solver_strategy.html", [
       [ "PyDynamicNetworkSolverStrategy", "class_py_dynamic_network_solver_strategy.html", null ],
@@ -99,6 +107,7 @@ var hierarchy =
     ] ],
     [ "gridfire::GraphEngine::PrecomputedReaction", "structgridfire_1_1_graph_engine_1_1_precomputed_reaction.html", null ],
     [ "gridfire::PrimingReport", "structgridfire_1_1_priming_report.html", null ],
+    [ "gridfire::io::gen::PyFunctionDef", "structgridfire_1_1io_1_1gen_1_1_py_function_def.html", null ],
     [ "gridfire::QSECacheConfig", "structgridfire_1_1_q_s_e_cache_config.html", null ],
     [ "gridfire::QSECacheKey", "structgridfire_1_1_q_s_e_cache_key.html", null ],
     [ "gridfire::MultiscalePartitioningEngineView::QSEGroup", "structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html", null ],
@@ -114,6 +123,14 @@ var hierarchy =
     [ "gridfire::reaction::Reaction", "classgridfire_1_1reaction_1_1_reaction.html", [
       [ "gridfire::rates::weak::WeakReaction", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html", null ],
       [ "gridfire::reaction::ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", null ]
+    ] ],
+    [ "gridfire::policy::ReactionChainPolicy", "classgridfire_1_1policy_1_1_reaction_chain_policy.html", [
+      [ "gridfire::policy::CNOChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_chain_policy.html", null ],
+      [ "gridfire::policy::HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", null ],
+      [ "gridfire::policy::MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", [
+        [ "gridfire::policy::LowMassMainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy.html", null ]
+      ] ],
+      [ "gridfire::policy::ProtonProtonChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_chain_policy.html", null ]
     ] ],
     [ "gridfire::AdaptiveEngineView::ReactionFlow", "structgridfire_1_1_adaptive_engine_view_1_1_reaction_flow.html", null ],
     [ "gridfire::reaclib::ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", null ],

@@ -13,6 +13,7 @@ var classgridfire_1_1reaction_1_1_reaclib_reaction =
     [ "contains_product", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a4e4811436d09afaa4a14c51d9af71f88", null ],
     [ "contains_reactant", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a65a12e5f6180873866cfaaf130fd1156", null ],
     [ "excess_energy", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a0b30c49925823c87980b4fca17c8282e", null ],
+    [ "getRateCoefficients", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#aefd0436ae72880358214d5b79c9c79eb", null ],
     [ "hash", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a661dd461e51c37133f7f9931389fd3cc", null ],
     [ "id", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a06312f834439ccf93012dea53cab47ce", null ],
     [ "is_reverse", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a181b2c75af1f2701c43594c5bb2bac2d", null ],
