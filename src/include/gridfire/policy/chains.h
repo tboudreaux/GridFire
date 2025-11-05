@@ -1,3 +1,19 @@
+/**
+ * @file chains.h
+ * @brief Concrete implementations of ReactionChainPolicy for key stellar reaction chains.
+ *
+ * This file provides concrete policies for fundamental nuclear reaction chains, such as the
+ * Proton-Proton chain and the CNO cycle. These policies inherit from ReactionChainPolicy (see
+ * `policy_abstract.h`) and provide a pre-defined set of reactions.
+ *
+ * They are typically used by higher-level NetworkPolicy implementations (e.g., `LowMassMainSequencePolicy`
+ * in `stellar_policy.h`) to compose a complete set of required reactions for a particular
+ * stellar environment.
+ *
+ * @note Constructors for these policies may throw `gridfire::exceptions::MissingBaseReactionError`
+ *       if a required reaction is not found in the underlying REACLIB database. This usually
+ *       indicates an issue with the GridFire installation or the bundled reaction data.
+ */
 #pragma once
 
 #include "gridfire/policy/policy_abstract.h"
@@ -11,11 +27,35 @@
 
 namespace gridfire::policy {
 
+    /**
+     * @class ProtonProtonChainPolicy
+     * @brief A ReactionChainPolicy for the Proton-Proton (PP) chain.
+     *
+     * Encapsulates the set of reactions that constitute the three branches of the PP chain,
+     * which is the primary energy generation mechanism in stars like the Sun.
+     *
+     * @throws gridfire::exceptions::MissingBaseReactionError if a required reaction for the PP chain
+     *         is not found in the REACLIB database during construction.
+     */
     class ProtonProtonChainPolicy final: public ReactionChainPolicy {
     public:
+        /**
+         * @brief Constructs the policy and initializes its reaction set from REACLIB.
+         */
         ProtonProtonChainPolicy();
 
-        const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
+        /**
+         * @brief Returns the set of reactions in the PP chain.
+         * @return const reaction::ReactionSet&
+         *
+         * @par Example
+         * @code
+         * ProtonProtonChainPolicy pp_policy;
+         * const auto& reactions = pp_policy.get_reactions();
+         * std::cout << "PP chain has " << reactions.size() << " reactions." << std::endl;
+         * @endcode
+         */
+        [[nodiscard]] const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
     private:
         std::vector<std::string> m_reactionIDs = {
             "p(p,e+)d",
@@ -31,10 +71,34 @@ namespace gridfire::policy {
         reaction::ReactionSet m_reactions;
     };
 
+    /**
+     * @class CNOChainPolicy
+     * @brief A ReactionChainPolicy for the Carbon-Nitrogen-Oxygen (CNO) cycle.
+     *
+     * Encapsulates the reactions of the CNO cycle, a catalytic cycle that is the dominant
+     * source of energy in massive stars.
+     *
+     * @throws gridfire::exceptions::MissingBaseReactionError if a required reaction for the CNO cycle
+     *         is not found in the REACLIB database during construction.
+     */
     class CNOChainPolicy final: public ReactionChainPolicy {
     public:
+        /**
+         * @brief Constructs the policy and initializes its reaction set from REACLIB.
+         */
         CNOChainPolicy();
-        const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
+        /**
+         * @brief Returns the set of reactions in the CNO cycle.
+         * @return const reaction::ReactionSet&
+         *
+         * @par Example
+         * @code
+         * CNOChainPolicy cno_policy;
+         * const auto& reactions = cno_policy.get_reactions();
+         * assert(reactions.contains("c12(p,g)n13"));
+         * @endcode
+         */
+        [[nodiscard]] const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
     private:
         std::set<std::string> m_reactionIDs = {
             "c12(p,g)n13",
@@ -68,10 +132,27 @@ namespace gridfire::policy {
         reaction::ReactionSet m_reactions;
     };
 
+    /**
+     * @class HotCNOChainPolicy
+     * @brief A ReactionChainPolicy for the Hot CNO (HCNO) cycle.
+     *
+     * Encapsulates the reactions of the HCNO cycle, which becomes significant at higher
+     * temperatures and densities than the standard CNO cycle, often in explosive scenarios.
+     *
+     * @throws gridfire::exceptions::MissingBaseReactionError if a required reaction for the HCNO cycle
+     *         is not found in the REACLIB database during construction.
+     */
     class HotCNOChainPolicy final : public ReactionChainPolicy {
     public:
+        /**
+         * @brief Constructs the policy and initializes its reaction set from REACLIB.
+         */
         HotCNOChainPolicy();
-        const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
+        /**
+         * @brief Returns the set of reactions in the HCNO cycle.
+         * @return const reaction::ReactionSet&
+         */
+        [[nodiscard]] const reaction::ReactionSet& get_reactions() const override { return m_reactions; }
     private:
         std::set<std::string> m_reactionIDs = {
             "c12(p,g)n13",
@@ -99,13 +180,38 @@ namespace gridfire::policy {
         reaction::ReactionSet m_reactions;
     };
 
+    /**
+     * @class LowMassMainSequenceReactionChainPolicy
+     * @brief A MultiReactionChainPolicy for low-mass main-sequence stars.
+     *
+     * This policy composes the `ProtonProtonChainPolicy` and `CNOChainPolicy` to represent the
+     * key energy-generating reaction chains active in low-mass stars like the Sun.
+     */
     class LowMassMainSequenceReactionChainPolicy final : public MultiReactionChainPolicy {
     public:
+        /**
+         * @brief Constructs the policy and initializes its child policies.
+         */
         LowMassMainSequenceReactionChainPolicy();
 
-        const reaction::ReactionSet & get_reactions() const override;
+        /**
+         * @brief Returns the combined set of reactions from all child policies (PP and CNO).
+         * @return const reaction::ReactionSet&
+         */
+        [[nodiscard]] const reaction::ReactionSet & get_reactions() const override;
 
-        const std::vector<std::unique_ptr<ReactionChainPolicy>>& get_chain_policies() const override;
+        /**
+         * @brief Returns the vector of child policies.
+         * @return const std::vector<std::unique_ptr<ReactionChainPolicy>>&
+         *
+         * @par Example
+         * @code
+         * LowMassMainSequenceReactionChainPolicy lmms_policy;
+         * const auto& child_policies = lmms_policy.get_chain_policies();
+         * std::cout << "Low-mass policy has " << child_policies.size() << " child policies." << std::endl;
+         * @endcode
+         */
+        [[nodiscard]] const std::vector<std::unique_ptr<ReactionChainPolicy>>& get_chain_policies() const override;
 
     private:
         std::vector<std::unique_ptr<ReactionChainPolicy>> m_chain_policies;
@@ -166,4 +272,3 @@ namespace gridfire::policy {
 
 
 }
-
