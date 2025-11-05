@@ -788,6 +788,8 @@ namespace gridfire::reaction {
 
         void extend(const ReactionSet& other);
 
+        [[nodiscard]] std::optional<std::unique_ptr<Reaction>> get(const std::string_view& id) const;
+
         /**
          * @brief Removes a reaction from the set.
          * @param reaction The Reaction to remove.

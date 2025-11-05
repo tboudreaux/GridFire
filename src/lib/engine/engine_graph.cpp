@@ -900,7 +900,6 @@ namespace gridfire {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        //TODO: The issue now seems to be that the jacobian is returning all zeros. I need to sort out why this is
         SparsityPattern intersectionSparsityPattern;
         for (const auto& entry : sparsityPattern) {
             if (m_full_sparsity_set.contains(entry)) {

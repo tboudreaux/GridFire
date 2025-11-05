@@ -417,6 +417,13 @@ namespace gridfire::reaction {
         }
     }
 
+    std::optional<std::unique_ptr<Reaction>> ReactionSet::get(const std::string_view &id) const {
+        if (!contains(id)) {
+            return std::nullopt;
+        }
+        return std::make_optional(m_reactions[m_reactionNameMap.at(std::string(id))]->clone());
+    }
+
     void ReactionSet::remove_reaction(const Reaction& reaction) {
         const auto reaction_id = std::string(reaction.id());
         if (!m_reactionNameMap.contains(reaction_id)) {
