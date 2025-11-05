@@ -344,6 +344,9 @@ namespace gridfire::reaction {
             os << "Reaction(ID: " << r.id() << ")";
             return os;
         }
+
+        virtual std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const = 0;
+
     };
     class ReaclibReaction : public Reaction {
     public:
@@ -442,6 +445,8 @@ namespace gridfire::reaction {
          * @return A const reference to the RateCoefficientSet.
          */
         [[nodiscard]] const RateCoefficientSet& rateCoefficients() const { return m_rateCoefficients; }
+
+        [[nodiscard]] std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const override;
 
         /**
          * @brief Checks if the reaction involves a given species as a reactant or product.
@@ -694,6 +699,8 @@ namespace gridfire::reaction {
             CppAD::AD<double> Ye,
             CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t,fourdst::atomic::Species>& index_to_species_map
         ) const override;
+
+        [[nodiscard]] std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const override;
 
         /** @name Iterators
          *  Provides iterators to loop over the rate coefficient sets.

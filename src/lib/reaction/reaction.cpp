@@ -95,6 +95,12 @@ namespace gridfire::reaction {
         return d_log_k_fwd_dT9; // Return the derivative of the log rate with respect to T9
     }
 
+    std::optional<std::vector<RateCoefficientSet>> ReaclibReaction::getRateCoefficients() const {
+        std::vector<RateCoefficientSet> rateCoefficients;
+        rateCoefficients.push_back(m_rateCoefficients);
+        return rateCoefficients;
+    }
+
     bool ReaclibReaction::contains(const Species &species) const {
         return contains_reactant(species) || contains_product(species);
     }
@@ -319,6 +325,14 @@ namespace gridfire::reaction {
         CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
         return calculate_rate<CppAD::AD<double>>(T9);
+    }
+
+    std::optional<std::vector<RateCoefficientSet>> LogicalReaclibReaction::getRateCoefficients() const {
+        std::vector<RateCoefficientSet> rates;
+        for (const auto& rate : m_rates) {
+            rates.push_back(rate);
+        }
+        return rates;
     }
 
     ReactionSet::ReactionSet(

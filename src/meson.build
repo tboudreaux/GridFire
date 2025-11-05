@@ -15,6 +15,7 @@ gridfire_sources = files(
     'lib/reaction/weak/weak.cpp',
     'lib/reaction/weak/weak_interpolator.cpp',
     'lib/io/network_file.cpp',
+    'lib/io/generative/python.cpp',
     'lib/solver/strategies/CVODE_solver_strategy.cpp',
     'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',

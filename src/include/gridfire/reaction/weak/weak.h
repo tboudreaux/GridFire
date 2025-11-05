@@ -361,6 +361,8 @@ namespace gridfire::rates::weak {
          */
         [[nodiscard]] const WeakRateInterpolator& getWeakRateInterpolator() const;
 
+        [[nodiscard]] std::optional<std::vector<reaction::RateCoefficientSet>> getRateCoefficients() const override { return std::nullopt; }
+
     private:
         /**
          * @brief Internal unified implementation for scalar/AD rate evaluation.
