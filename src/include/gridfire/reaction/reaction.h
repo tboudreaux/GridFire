@@ -1,6 +1,5 @@
 #pragma once
 
-#include <expected>
 #include <ranges>
 #include <string_view>
 
@@ -345,7 +344,7 @@ namespace gridfire::reaction {
             return os;
         }
 
-        virtual std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const = 0;
+        [[nodiscard]] virtual std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const = 0;
 
     };
     class ReaclibReaction : public Reaction {

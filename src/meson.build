@@ -24,6 +24,9 @@ gridfire_sources = files(
     'lib/partition/partition_rauscher_thielemann.cpp',
     'lib/partition/partition_ground.cpp',
     'lib/partition/composite/partition_composite.cpp',
+    'lib/policy/chains.cpp',
+    'lib/policy/policy_logical.cpp',
+    'lib/policy/stellar_policy.cpp',
     'lib/utils/logging.cpp',
 )
 

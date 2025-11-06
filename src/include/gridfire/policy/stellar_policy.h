@@ -2,7 +2,7 @@
  * @file stellar_policy.h
  * @brief High-level concrete NetworkPolicy for specific stellar environments.
  *
- * This file defines the `LowMassMainSequencePolicy`, a concrete implementation of the `NetworkPolicy`
+ * This file defines the `MainSequencePolicy`, a concrete implementation of the `NetworkPolicy`
  * interface. This policy is designed to construct a reaction network suitable for simulating
  * nucleosynthesis in low-mass main-sequence stars (like the Sun).
  *
@@ -23,21 +23,16 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/reaction/reaction.h"
 
-#include "gridfire/exceptions/error_policy.h"
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/exceptions/exceptions_composition.h"
-#include "gridfire/engine/engine_graph.h"
-#include "gridfire/engine/views/engine_adaptive.h"
-#include "gridfire/engine/views/engine_multiscale.h"
 #include "gridfire/partition/composite/partition_composite.h"
 
 #include "gridfire/policy/chains.h"
 
 namespace gridfire::policy {
     /**
-     * @class LowMassMainSequencePolicy
+     * @class MainSequencePolicy
      * @brief A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.
      *
      * This policy ensures that a constructed network contains all necessary species and reactions
@@ -62,7 +57,7 @@ namespace gridfire::policy {
      * This policy composes the `ProtonProtonChainPolicy` and `CNOChainPolicy` to define
      * the required reactions.
      */
-    class LowMassMainSequencePolicy final: public NetworkPolicy {
+    class MainSequencePolicy final: public NetworkPolicy {
     public:
         /**
          * @brief Constructs the policy from an existing composition object.
@@ -78,7 +73,7 @@ namespace gridfire::policy {
          * LowMassMainSequencePolicy policy(comp);
          * @endcode
          */
-        explicit LowMassMainSequencePolicy(const fourdst::composition::Composition& composition);
+        explicit MainSequencePolicy(const fourdst::composition::Composition& composition);
         /**
          * @brief Constructs the policy from a list of species and their mass fractions.
          *
@@ -96,19 +91,19 @@ namespace gridfire::policy {
          * LowMassMainSequencePolicy policy(species, mass_fractions);
          * @endcode
          */
-        explicit LowMassMainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, std::vector<double> mass_fractions);
+        explicit MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, std::vector<double> mass_fractions);
 
         /**
          * @brief Returns the name of the policy.
-         * @return "LowMassMainSequencePolicy"
+         * @return "MainSequencePolicy"
          */
-        [[nodiscard]] std::string name() const override { return "LowMassMainSequencePolicy"; }
+        [[nodiscard]] std::string name() const override { return "MainSequencePolicy"; }
 
         /**
          * @brief Returns the set of seed species required by this policy.
          * @return const std::set<fourdst::atomic::Species>&
          */
-        [[nodiscard]] const std::set<fourdst::atomic::Species> get_seed_species() const override { return m_seed_species; }
+        [[nodiscard]] const std::set<fourdst::atomic::Species>& get_seed_species() const override { return m_seed_species; }
         /**
          * @brief Returns the set of seed reactions required by this policy (from the PP and CNO chains).
          * @return const reaction::ReactionSet&
@@ -159,7 +154,7 @@ namespace gridfire::policy {
             fourdst::atomic::Mg_24
         };
 
-        std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<LowMassMainSequenceReactionChainPolicy>();
+        std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<MainSequenceReactionChainPolicy>();
         fourdst::composition::Composition m_initializing_composition;
         std::unique_ptr<partition::PartitionFunction> m_partition_function;
         std::vector<std::unique_ptr<DynamicEngine>> m_network_stack;
@@ -171,95 +166,6 @@ namespace gridfire::policy {
 
     };
 
-    inline LowMassMainSequencePolicy::LowMassMainSequencePolicy(const fourdst::composition::Composition& composition) {
-        for (const auto& species : m_seed_species) {
-            if (!composition.hasSpecies(species)) {
-                throw exceptions::MissingSeedSpeciesError("Cannot initialize LowMassMainSequencePolicy: Required Seed species " + std::string(species.name()) + " is missing from the provided composition.");
-            }
-        }
-        m_initializing_composition = composition;
-        m_partition_function = build_partition_function();
-    }
-
-    inline LowMassMainSequencePolicy::LowMassMainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, std::vector<double> mass_fractions) {
-        for (const auto& species : m_seed_species) {
-            if (std::ranges::find(seed_species, species) == seed_species.end()) {
-                throw exceptions::MissingSeedSpeciesError("Cannot initialize LowMassMainSequencePolicy: Required Seed species " + std::string(species.name()) + " is missing from the provided composition.");
-            }
-        }
-
-        for (const auto& [species, x] : std::views::zip(seed_species, mass_fractions)) {
-            m_initializing_composition.registerSpecies(species);
-            m_initializing_composition.setMassFraction(species, x);
-        }
-
-        const bool didFinalize = m_initializing_composition.finalize(true);
-        if (!didFinalize) {
-            throw fourdst::composition::exceptions::CompositionNotFinalizedError("Failed to finalize initial composition for LowMassMainSequencePolicy.");
-        }
-
-        m_partition_function = build_partition_function();
-    }
-
-    inline DynamicEngine& LowMassMainSequencePolicy::construct() {
-        m_network_stack.clear();
-
-        m_network_stack.emplace_back(
-            std::make_unique<GraphEngine>(m_initializing_composition, *m_partition_function, NetworkBuildDepth::ThirdOrder, NetworkConstructionFlags::DEFAULT)
-        );
-        m_network_stack.emplace_back(
-            std::make_unique<MultiscalePartitioningEngineView>(*m_network_stack.back().get())
-        );
-        m_network_stack.emplace_back(
-            std::make_unique<AdaptiveEngineView>(*m_network_stack.back().get())
-        );
-
-        m_status = NetworkPolicyStatus::INITIALIZED_UNVERIFIED;
-        m_status = check_status();
-
-        switch (m_status) {
-            case NetworkPolicyStatus::MISSING_KEY_REACTION:
-                throw exceptions::MissingKeyReactionError("LowMassMainSequencePolicy construction failed: The constructed network is missing key reactions required by the policy.");
-            case NetworkPolicyStatus::MISSING_KEY_SPECIES:
-                throw exceptions::MissingSeedSpeciesError("LowMassMainSequencePolicy construction failed: The constructed network is missing key seed species required by the policy.");
-            case NetworkPolicyStatus::UNINITIALIZED:
-                throw exceptions::PolicyError("LowMassMainSequencePolicy construction failed: The network policy is uninitialized.");
-            case NetworkPolicyStatus::INITIALIZED_UNVERIFIED:
-                throw exceptions::PolicyError("LowMassMainSequencePolicy construction failed: The network policy status could not be verified.");
-            case NetworkPolicyStatus::INITIALIZED_VERIFIED:
-                break;
-        }
-        return *m_network_stack.back();
-    }
-
-    inline std::unique_ptr<partition::PartitionFunction> LowMassMainSequencePolicy::build_partition_function() {
-        using partition::BasePartitionType;
-        const auto partitionFunction = partition::CompositePartitionFunction({
-            BasePartitionType::RauscherThielemann,
-            BasePartitionType::GroundState
-        });
-        return std::make_unique<partition::CompositePartitionFunction>(partitionFunction);
-    }
-
-    inline NetworkPolicyStatus LowMassMainSequencePolicy::getStatus() const {
-        return m_status;
-    }
-
-    inline NetworkPolicyStatus LowMassMainSequencePolicy::check_status() const {
-        for (const auto& species : m_seed_species) {
-            if (!m_initializing_composition.hasSpecies(species)) {
-                return NetworkPolicyStatus::MISSING_KEY_SPECIES;
-            }
-        }
-        const reaction::ReactionSet& baseReactions = m_network_stack.front()->getNetworkReactions();
-        for (const auto& reaction : m_reaction_policy->get_reactions()) {
-            const bool result = baseReactions.contains(*reaction);
-            if (!result) {
-                return NetworkPolicyStatus::MISSING_KEY_REACTION;
-            }
-        }
-        return NetworkPolicyStatus::INITIALIZED_VERIFIED;
-    }
 
 
 }

@@ -22,7 +22,6 @@
 #pragma once
 
 #include "fourdst/composition/atomicSpecies.h"
-#include "gridfire/engine/types/building.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
 
@@ -57,7 +56,7 @@ namespace gridfire::policy {
      *  - A constructor method that returns a fully constructed DynamicEngine (or view stack) built
      *    to satisfy the policy.
      *
-     * Concrete implementations include `LowMassMainSequencePolicy` (see `stellar_policy.h`) and may
+     * Concrete implementations include `MainSequencePolicy` (see `stellar_policy.h`) and may
      * throw policy-specific exceptions during construction (for example when required reactions or
      * species are missing).
      *
@@ -78,7 +77,7 @@ namespace gridfire::policy {
         /**
          * @brief Human-readable name for the policy.
          *
-         * @return a std::string identifying the policy implementation (e.g. "LowMassMainSequencePolicy").
+         * @return a std::string identifying the policy implementation (e.g. "MainSequencePolicy").
          *
          * @par Example
          * @code
@@ -103,7 +102,7 @@ namespace gridfire::policy {
          * for (const auto &s : seeds) { std::cout << s.name() << std::endl; }
          * @endcode
          */
-        [[nodiscard]] virtual const std::set<fourdst::atomic::Species> get_seed_species() const = 0;
+        [[nodiscard]] virtual const std::set<fourdst::atomic::Species>& get_seed_species() const = 0;
 
         /**
          * @brief Returns the set of seed reactions the policy requires.
@@ -114,9 +113,9 @@ namespace gridfire::policy {
          *
          * @par Example
          * @code
-         * const reaction::ReactionSet &reacs = policy.get_seed_reactions();
+         * const reaction::ReactionSet &reactions = policy.get_seed_reactions();
          * // inspect reaction IDs or count
-         * std::cout << "Policy requires " << reacs.size() << " reactions" << std::endl;
+         * std::cout << "Policy requires " << reactions.size() << " reactions" << std::endl;
          * @endcode
          */
         [[nodiscard]] virtual const reaction::ReactionSet& get_seed_reactions() const = 0;
@@ -170,7 +169,7 @@ namespace gridfire::policy {
      * @par Example
      * @code
      * ProtonProtonChainPolicy pp;
-     * const auto &reacs = pp.get_reactions();
+     * const gridfire::reaction::ReactionSet& reactions = pp.get_reactions();
      * @endcode
      *
      * @note Concrete implementations may throw exceptions on construction if the underlying reaction
@@ -195,28 +194,23 @@ namespace gridfire::policy {
          *         at construction time if the required reactions cannot be found in the base reaction set.
          */
         [[nodiscard]] virtual const reaction::ReactionSet& get_reactions() const = 0;
+
+        [[nodiscard]] virtual bool contains(const std::string& id) const = 0;
+        [[nodiscard]] virtual bool contains(const reaction::Reaction& reaction) const = 0;
+
+        [[nodiscard]] virtual std::unique_ptr<ReactionChainPolicy> clone() const = 0;
+
+        [[nodiscard]] virtual std::string name() const = 0;
+
+        [[nodiscard]] virtual uint64_t hash(uint64_t seed) const = 0;
+
+        [[nodiscard]] virtual bool operator==(const ReactionChainPolicy& other) const = 0;
+        [[nodiscard]] virtual bool operator!=(const ReactionChainPolicy& other) const = 0;
+
+        friend std::ostream& operator<<(std::ostream& os, const ReactionChainPolicy& rcp) {
+            os << "(ReactionChainPolicy: " << rcp.name() << ")";
+            return os;
+        }
     };
 
-    /**
-     * @class MultiReactionChainPolicy
-     * @brief A ReactionChainPolicy composed of multiple child ReactionChainPolicy instances.
-     *
-     * Useful for policies that represent a union of several reaction chains (for example the
-     * `LowMassMainSequenceReactionChainPolicy` composes the proton-proton and CNO chains).
-     *
-     * @par Example
-     * @code
-     * LowMassMainSequenceReactionChainPolicy multi;
-     * const auto &chains = multi.get_chain_policies();
-     * for (const auto &ch : chains) { std::cout << ch->get_reactions().size() << " reactions\n"; }
-     * @endcode
-     */
-    class MultiReactionChainPolicy : public ReactionChainPolicy {
-    public:
-        /**
-         * @brief Returns the vector of child ReactionChainPolicy instances.
-         * @return const std::vector<std::unique_ptr<ReactionChainPolicy>>&
-         */
-        [[nodiscard]] virtual const std::vector<std::unique_ptr<ReactionChainPolicy>>& get_chain_policies() const = 0;
-    };
 }
