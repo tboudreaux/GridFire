@@ -1,0 +1,30 @@
+<map id="gridfire::rates::weak::WeakReaction" name="gridfire::rates::weak::WeakReaction">
+<area shape="rect" id="Node000001" title="Concrete Reaction representing a single weak process (beta±, e−/e+ capture)." alt="" coords="1782,160,1919,201"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source." alt="" coords="1486,5,1600,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1616,36,1688,56,1725,71,1760,89,1803,122,1835,158,1831,161,1799,126,1757,93,1722,75,1686,61,1615,41"/>
+<area shape="rect" id="Node000003" href="$structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html" title=" " alt="" coords="1454,71,1633,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1649,102,1704,114,1759,130,1816,157,1814,162,1757,135,1703,119,1648,107"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="1476,136,1611,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1626,160,1782,172,1782,178,1626,165"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="1504,201,1583,226"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1598,206,1758,190,1781,187,1782,192,1759,195,1598,212"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="1157,176,1282,217"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1298,198,1503,209,1503,214,1298,203"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html" title="3D table interpolator for tabulated weak reaction data by isotope." alt="" coords="1142,313,1297,354"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1313,342,1388,346,1475,345,1566,336,1654,315,1707,292,1755,261,1796,228,1827,199,1831,203,1800,232,1758,265,1710,297,1656,321,1567,342,1475,351,1388,352,1312,347"/>
+<area shape="rect" id="Node000013" href="$classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html" title="CppAD atomic that wraps weak&#45;rate interpolation for AD evaluation." alt="" coords="1431,251,1655,291"/>
+<area shape="poly" id="edge14_Node000013_Node000007" title=" " alt="" coords="1312,313,1434,289,1435,295,1313,318"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="830,306,1015,362"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1030,331,1141,331,1141,336,1030,336"/>
+<area shape="rect" id="Node000009" href="$structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html" title="Regular 2D grid and payloads for a single isotope (A,Z)." alt="" coords="589,313,725,354"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="741,331,830,331,830,336,741,336"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="288,293,433,318"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="449,311,589,325,588,330,448,317"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="248,343,473,383"/>
+<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="488,349,565,342,588,339,589,345,565,347,489,355"/>
+<area shape="rect" id="Node000012" href="$structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html" title="Interpolated weak&#45;rate payload at a single state." alt="" coords="5,343,143,383"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="158,360,247,360,247,366,158,366"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1665,244,1757,218,1805,199,1807,204,1759,223,1667,249"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1146,241,1292,282"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="1308,262,1431,265,1430,270,1308,267"/>
+</map>

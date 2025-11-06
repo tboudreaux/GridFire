@@ -1,0 +1,25 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="5,105,114,131"/>
+<area shape="rect" id="Node000001" href="$class_py_engine.html" title=" " alt="" coords="203,129,280,155"/>
+<area shape="poly" id="edge4_Node000000_Node000001" title=" " alt="" coords="130,125,203,135,203,140,129,130"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="162,80,322,106"/>
+<area shape="poly" id="edge5_Node000000_Node000002" title=" " alt="" coords="129,106,161,101,161,107,130,111"/>
+<area shape="rect" id="Node000003" href="$class_py_dynamic_engine.html" title=" " alt="" coords="402,55,531,80"/>
+<area shape="poly" id="edge6_Node000002_Node000003" title=" " alt="" coords="337,79,401,72,401,77,338,85"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions." alt="" coords="372,104,560,130"/>
+<area shape="poly" id="edge7_Node000002_Node000004" title=" " alt="" coords="338,100,372,104,371,109,337,106"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1_defined_engine_view.html" title=" " alt="" coords="375,153,557,179"/>
+<area shape="poly" id="edge8_Node000002_Node000006" title=" " alt="" coords="308,109,323,114,347,127,371,140,404,150,402,155,369,145,345,132,321,119,306,114"/>
+<area shape="rect" id="Node000010" href="$classgridfire_1_1_graph_engine.html" title="A reaction network engine that uses a graph&#45;based representation." alt="" coords="394,5,538,31"/>
+<area shape="poly" id="edge11_Node000002_Node000010" title=" " alt="" coords="287,71,369,40,406,29,408,34,371,45,289,76"/>
+<area shape="rect" id="Node000009" href="$classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales." alt="" coords="370,203,562,244"/>
+<area shape="poly" id="edge12_Node000002_Node000009" title=" " alt="" coords="318,111,324,115,341,134,349,153,356,172,372,189,389,200,387,205,368,194,352,174,344,155,336,137,320,119,315,115"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1_file_defined_engine_view.html" title=" " alt="" coords="610,125,814,151"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="572,151,610,147,610,152,573,157"/>
+<area shape="rect" id="Node000008" href="$classgridfire_1_1_network_priming_engine_view.html" title="Provides a view of a DynamicEngine filtered to reactions involving a specified priming species." alt="" coords="631,175,793,216"/>
+<area shape="poly" id="edge10_Node000006_Node000008" title=" " alt="" coords="573,176,631,183,631,189,572,181"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1_engine_view.html" title=" " alt="" coords="173,179,310,220"/>
+<area shape="poly" id="edge13_Node000005_Node000004" title=" " alt="" coords="310,170,321,165,344,151,369,138,401,128,403,133,371,143,347,156,323,170,312,175"/>
+<area shape="poly" id="edge14_Node000005_Node000006" title=" " alt="" coords="326,184,375,177,375,182,326,190"/>
+<area shape="poly" id="edge15_Node000005_Node000009" title=" " alt="" coords="326,206,370,211,369,216,326,211"/>
+</map>
