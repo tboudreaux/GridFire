@@ -231,13 +231,13 @@ namespace gridfire {
          *         (T9, rho, Y_full). This indicates `update()` was not called recently enough.
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -266,7 +266,7 @@ namespace gridfire {
          *         without a valid partition.
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -295,7 +295,7 @@ namespace gridfire {
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const std::vector<fourdst::atomic::Species> &activeSpecies
@@ -323,7 +323,7 @@ namespace gridfire {
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
@@ -407,7 +407,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -461,7 +461,7 @@ namespace gridfire {
          * @throws StaleEngineError If the QSE cache misses.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -487,7 +487,7 @@ namespace gridfire {
          * @throws StaleEngineError If the QSE cache misses.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -792,7 +792,7 @@ namespace gridfire {
          * @return New composition which is comp + any edits from lower levels + the equilibrium abundances of all algebraic species.
          * @throws BadCollectionError: if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w
          */
-        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
+        fourdst::composition::Composition collectComposition(fourdst::composition::CompositionAbstract &comp) const override;
 
 
     private:

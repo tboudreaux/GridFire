@@ -1,6 +1,7 @@
 #include "gridfire/engine/diagnostics/dynamic_engine_diagnostics.h"
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/utils/table_format.h"
+#include "fourdst/atomic/species.h"
 
 #include <vector>
 #include <string>

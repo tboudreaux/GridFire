@@ -2,7 +2,7 @@
 
 #include "gridfire/reaction/reaction.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "cppad/cppad.hpp"
 

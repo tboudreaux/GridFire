@@ -9,9 +9,50 @@
 #include <algorithm>
 #include <numeric>
 #include <memory>
+#include <format>
+#include <print>
+#include <cstdlib>
+#include <cwchar>
+#include <clocale>
+
 
 
 namespace gridfire::utils {
+    inline size_t visual_width(const std::string& s) {
+        // IMPORTANT: std::setlocale(LC_ALL, "") must be called once in main()
+        // for mbtowc and wcwidth to function correctly with the system's locale.
+
+        size_t width = 0;
+        std::mbtowc(nullptr, 0, 0); // Reset multi-byte state
+
+        const char* p = s.c_str();
+        const char* end = s.c_str() + s.length();
+
+        while (p < end) {
+            wchar_t wc;
+            // Convert the next multi-byte char to a wide char
+            int byte_len = std::mbtowc(&wc, p, end - p);
+
+            if (byte_len <= 0) {
+                // Invalid byte sequence or null char.
+                // Treat as a 1-width '?' and advance by 1 byte to avoid infinite loop.
+                width++;
+                p++;
+                continue;
+            }
+
+            // Get the visual width of the wide char
+            int char_width = wcwidth(wc);
+            if (char_width != -1) {
+                width += char_width;
+            }
+            // else: char_width == -1 means non-printable/control char; treat as 0 width
+
+            p += byte_len; // Advance by the number of bytes consumed
+        }
+        return width;
+    }
+
     class ColumnBase {
     public:
         virtual ~ColumnBase() = default;
@@ -116,6 +157,87 @@ namespace gridfire::utils {
 
         return table_ss.str();
     }
+
+    inline void print_table(const std::string& tableName, const std::vector<std::unique_ptr<ColumnBase>>& columns) {
+        // --- 1. Handle Empty Table ---
+        if (columns.empty()) {
+            std::println("{} \n(Table has no columns)\n", tableName);
+            return;
+        }
+
+        // --- 2. Determine dimensions and calculate column widths (using visual_width) ---
+        size_t num_cols = columns.size();
+        size_t num_rows = 0;
+        for (const auto& col : columns) {
+            num_rows = std::max(num_rows, col->getRowCount());
+        }
+
+        std::vector<size_t> col_widths(num_cols);
+        for (size_t j = 0; j < num_cols; ++j) {
+            // Start with header width
+            col_widths[j] = visual_width(columns[j]->getHeader());
+            // Find max width in all data cells
+            for (size_t i = 0; i < num_rows; ++i) {
+                col_widths[j] = std::max(col_widths[j], visual_width(columns[j]->getCellData(i)));
+            }
+        }
+
+        // --- 3. Print the table using std::print / std::println ---
+
+        // --- Table Title ---
+        // NOLINTNEXTLINE(*-fold-init-type)
+        const size_t total_width = std::accumulate(col_widths.begin(), col_widths.end(), 0UL) + (num_cols * 3) + 1;
+        const size_t title_padding_len = (total_width > visual_width(tableName)) ? (total_width - visual_width(tableName)) / 2 : 0;
+
+        // Print padding, then title
+        std::print("{: <{}}", "", title_padding_len); // Left-aligned empty string "" of width title_padding_len
+        std::println("{}", tableName);
+
+
+        // --- Helper to draw horizontal border ---
+        auto draw_border = [&]() {
+            std::print("+");
+            for (const size_t width : col_widths) {
+                // std::string(width + 2, '-') is still the easiest way to repeat a char
+                std::print("{:-<{}}+", "", width + 2); // Prints '-' repeated (width + 2) times
+            }
+            std::println("");
+        };
+
+        // --- Draw Top Border ---
+        draw_border();
+
+        // --- Helper to print a cell with correct padding ---
+        auto print_cell = [&](const std::string& text, size_t width) {
+            size_t text_width = visual_width(text);
+            size_t padding = (width >= text_width) ? (width - text_width) : 0;
+            // Print text and then the manual padding
+            std::print(" {}{: <{}} |", text, "", padding);
+        };
+
+        // --- Draw Header Row ---
+        std::print("|");
+        for (size_t j = 0; j < num_cols; ++j) {
+            print_cell(columns[j]->getHeader(), col_widths[j]);
+        }
+        std::println("");
+
+        // --- Draw Separator ---
+        draw_border();
+
+        // --- Draw Data Rows ---
+        for (size_t i = 0; i < num_rows; ++i) {
+            std::print("|");
+            for (size_t j = 0; j < num_cols; ++j) {
+                print_cell(columns[j]->getCellData(i), col_widths[j]);
+            }
+            std::println("");
+        }
+
+        // --- Draw Bottom Border ---
+        draw_border();
+    }
+
 
 
 

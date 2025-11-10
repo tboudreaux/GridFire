@@ -1,7 +1,7 @@
 #include "gridfire/engine/views/engine_priming.h"
 #include "gridfire/solver/solver.h"
 
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/species.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
@@ -9,7 +9,6 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
-#include <stdexcept>
 #include <unordered_map>
 
 

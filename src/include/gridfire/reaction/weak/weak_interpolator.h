@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gridfire/reaction/weak/weak_types.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/logging/logging.h"
 
 #include <unordered_map>

@@ -1,8 +1,6 @@
 #include "gridfire/reaction/weak/weak_rate_library.h"
 #include "gridfire/reaction/weak/weak.h"
 
-#include "fourdst/composition/species.h"
-
 #include <array>
 #include <ranges>
 #include <unordered_map>
@@ -13,6 +11,7 @@
 #include "gridfire/reaction/weak/weak_interpolator.h"
 
 #include "xxhash64.h"
+#include "fourdst/atomic/species.h"
 
 
 namespace {

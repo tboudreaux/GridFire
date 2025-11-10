@@ -3,7 +3,7 @@
 #include "gridfire/engine/views/engine_defined.h"
 
 #include "fourdst/logging/logging.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "quill/Logger.h"
 

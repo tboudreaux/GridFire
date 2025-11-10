@@ -1,4 +1,7 @@
 #include "gridfire/engine/procedures/priming.h"
+
+#include "fourdst/atomic/species.h"
+#include "fourdst/composition/utils.h"
 #include "gridfire/engine/views/engine_priming.h"
 #include "gridfire/engine/procedures/construction.h"
 #include "gridfire/solver/solver.h"
@@ -11,30 +14,6 @@
 #include "quill/LogMacros.h"
 
 namespace {
-    // Create a dummy wrapper Composition to measure the unrestricted flow rate of species
-    class UnrestrictedComposition final : public fourdst::composition::Composition {
-    private:
-        const fourdst::atomic::Species& m_unrestrictedSpecies;
-    public:
-        explicit UnrestrictedComposition(const Composition& baseComposition, const fourdst::atomic::Species& unrestrictedSpecies) :
-            Composition(baseComposition),
-            m_unrestrictedSpecies(unrestrictedSpecies) {}
-
-        double getMolarAbundance(const fourdst::atomic::Species &species) const override {
-            if (species == m_unrestrictedSpecies) {
-                return 1.0; // Set to a high value to simulate unrestricted abundance
-            }
-            return Composition::getMolarAbundance(species);
-        }
-
-        double getMolarAbundance(const std::string &symbol) const override {
-            if (symbol == m_unrestrictedSpecies.name()) {
-                return 1.0; // Set to a high value to simulate unrestricted abundance
-            }
-            return Composition::getMolarAbundance(symbol);
-        }
-    };
-
     bool isReactionIgnorable(
         const gridfire::reaction::Reaction& reaction,
         const std::optional<std::vector<gridfire::reaction::ReactionType>>& reactionsTypesToIgnore
@@ -117,18 +96,18 @@ namespace gridfire {
         GraphEngine& engine,
         const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
     ) {
-        auto logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        auto logger = LogManager::getInstance().getLogger("log");
 
         // --- Initial Setup ---
-        // Identify all species with zero initial mass fraction that need to be primed.
+        // Identify all species with zero initial abundance that need to be primed.
         std::vector<Species> speciesToPrime;
-        for (const auto &entry: netIn.composition | std::views::values) {
-            if (entry.mass_fraction() == 0.0) {
-                speciesToPrime.push_back(entry.isotope());
+        for (const auto &[sp, y]: netIn.composition) {
+            if (y == 0.0) {
+                speciesToPrime.push_back(sp);
             }
         }
 
-        // sort primingSpecies by mass number, lightest to heaviest. This ensures we prime in a physically sensible order.
+        // Sort priming species by mass number, lightest to heaviest.
         std::ranges::sort(speciesToPrime, [](const Species& a, const Species& b) {
             return a.mass() < b.mass();
         });
@@ -147,46 +126,37 @@ namespace gridfire {
         const double T9 = netIn.temperature / 1e9;
         const double rho = netIn.density;
         const auto initialReactionSet = engine.getNetworkReactions();
+
         report.status = PrimingReportStatus::FULL_SUCCESS;
         report.success = true;
 
-        // Create a mutable map of the mass fractions that we will modify.
-        std::unordered_map<Species, double> currentMassFractions;
-        for (const auto& entry : netIn.composition | std::views::values) {
-            currentMassFractions[entry.isotope()] = entry.mass_fraction();
+        // Build full set of species
+        std::set<Species> allSpecies;
+        for (const auto &sp: netIn.composition | std::views::keys) {
+            allSpecies.insert(sp);
         }
-        // Ensure all species to be primed exist in the map, initialized to zero.
-        for (const auto& entry : speciesToPrime) {
-            currentMassFractions[entry] = 0.0;
+        for (const auto& sp : speciesToPrime) {
+            allSpecies.insert(sp);
         }
 
         // Rebuild the engine with the full network to ensure all possible creation channels are available.
         engine.rebuild(netIn.composition, NetworkBuildDepth::Full);
 
-        // --- STAGE 1: Calculation and Bookkeeping (No Modifications) ---
-        // In this stage, we calculate all required mass transfers but do not apply them yet.
+        // Initialize mutable molar abundances for all species
+        std::map<Species, double> molarAbundances;
+        for (const auto& sp : allSpecies) {
+            molarAbundances[sp] = netIn.composition.contains(sp) ? netIn.composition.getMolarAbundance(sp) : 0.0;
+        }
 
-        // A struct to hold the result of each individual priming calculation.
-        struct MassTransferRequest {
-            Species species_to_prime;
-            double equilibrium_mass_fraction;
-            std::vector<Species> reactants;
-        };
-        std::vector<MassTransferRequest> requests;
+        // --- Prime Each Species ---
+        // Since molar abundances are independent, we can directly calculate and apply changes
+        std::unordered_map<Species, double> totalMolarAbundanceChanges;
 
         for (const auto& primingSpecies : speciesToPrime) {
             // Create a temporary composition reflecting the current state for rate calculations.
-            Composition tempComp;
-            for(const auto& [sp, mf] : currentMassFractions) {
-                tempComp.registerSymbol(std::string(sp.name()));
-                tempComp.setMassFraction(sp, std::max(0.0, mf));
-            }
-            bool didFinalize = tempComp.finalize(true);
-            if (!didFinalize) {
-                LOG_ERROR(logger, "Failed to finalize temporary composition during priming.");
-                report.success = false;
-                report.status = PrimingReportStatus::FAILED_TO_FINALIZE_COMPOSITION;
-                continue;
+            Composition tempComp(allSpecies);
+            for (const auto& [sp, abundance] : molarAbundances) {
+                tempComp.setMolarAbundance(sp, abundance);
             }
 
             NetworkPrimingEngineView primer(primingSpecies, engine);
@@ -206,6 +176,9 @@ namespace gridfire {
                 ignoredReactionTypes
             );
 
+            double equilibriumMolarAbundance = 0.0;
+            std::vector<Species> reactants;
+
             if (destructionRateConstant > 1e-99) {
                 const double creationRate = calculateCreationRate(
                     primer,
@@ -215,10 +188,13 @@ namespace gridfire {
                     rho,
                     ignoredReactionTypes
                 );
-                double equilibriumMassFraction = (creationRate / destructionRateConstant) * primingSpecies.mass();
 
-                // ReSharper disable once CppDFAUnusedValue
-                if (std::isnan(equilibriumMassFraction)) equilibriumMassFraction = 0.0;
+                // Equilibrium: creation rate = destruction rate constant * molar abundance
+                equilibriumMolarAbundance = creationRate / destructionRateConstant;
+
+                if (std::isnan(equilibriumMolarAbundance)) {
+                    equilibriumMolarAbundance = 0.0;
+                }
 
                 if (const reaction::Reaction* dominantChannel = findDominantCreationChannel(
                     primer,
@@ -228,102 +204,74 @@ namespace gridfire {
                     rho,
                     ignoredReactionTypes)
                 ) {
-                    // Store the request instead of applying it immediately.
-                    requests.push_back({primingSpecies, equilibriumMassFraction, dominantChannel->reactants()});
+                    reactants = dominantChannel->reactants();
                 } else {
                     LOG_TRACE_L1(logger, "Failed to find dominant creation channel for {}.", primingSpecies.name());
                     report.status = PrimingReportStatus::FAILED_TO_FIND_CREATION_CHANNEL;
+                    reactants.clear(); // Use fallback
                 }
             } else {
                 LOG_TRACE_L2(logger, "No destruction channel found for {}. Using fallback abundance.", primingSpecies.name());
-                // For species with no destruction, we can't calculate an equilibrium.
-                // We add a request with a tiny fallback abundance to ensure it exists in the network.
-                requests.push_back({primingSpecies, 1e-40, {}});
+                // For species with no destruction, use a tiny fallback abundance
+                equilibriumMolarAbundance = 1e-40;
             }
-        }
 
-        // --- STAGE 2: Collective Scaling Based on Reactant Availability ---
-        // Now, we determine the total demand for each reactant and find a global scaling factor.
+            // Add the equilibrium molar abundance to the primed species
+            molarAbundances.at(primingSpecies) += equilibriumMolarAbundance;
+            totalMolarAbundanceChanges[primingSpecies] += equilibriumMolarAbundance;
 
-        std::unordered_map<Species, double> total_mass_debits;
-        for (const auto& req : requests) {
-            if (req.reactants.empty()) continue; // Skip fallbacks which don't consume reactants.
-
-            double totalReactantMass = 0.0;
-            for (const auto& reactant : req.reactants) {
-                totalReactantMass += reactant.mass();
-            }
-            if (totalReactantMass == 0.0) continue;
-
-            for (const auto& reactant : req.reactants) {
-                const double massToSubtract = req.equilibrium_mass_fraction * (reactant.mass() / totalReactantMass);
-                total_mass_debits[reactant] += massToSubtract;
-            }
-        }
-
-        double globalScalingFactor = 1.0;
-        for (const auto& [reactant, total_debit] : total_mass_debits) {
-            double availableMass;
-            if (currentMassFractions.contains(reactant)) {
-                availableMass = currentMassFractions.at(reactant);
-            } else {
-                availableMass = 0.0;
-            }
-            if (total_debit > availableMass && availableMass > 0) {
-                globalScalingFactor = std::min(globalScalingFactor, availableMass / total_debit);
-            }
-        }
-
-        if (globalScalingFactor < 1.0) {
-            LOG_WARNING(logger, "Priming was limited by reactant availability. All transfers will be scaled by {:.4e}", globalScalingFactor);
-        }
-
-        // --- STAGE 3: Application of Scaled Mass Transfers ---
-        // Finally, apply all the transfers, scaled by our global factor.
-
-        std::unordered_map<Species, double> totalMassFractionChanges;
-        for (const auto&[species_to_prime, equilibrium_mass_fraction, reactants] : requests) {
-            const double scaled_equilibrium_mf = equilibrium_mass_fraction * globalScalingFactor;
-
-            // Add the scaled mass to the primed species.
-            currentMassFractions.at(species_to_prime) += scaled_equilibrium_mf;
-            totalMassFractionChanges[species_to_prime] += scaled_equilibrium_mf;
-
-            // Subtract the scaled mass from the reactants.
+            // Subtract from reactants proportionally to their stoichiometry
             if (!reactants.empty()) {
-                double totalReactantMass = 0.0;
-                for (const auto& reactant : reactants) {
-                    totalReactantMass += reactant.mass();
-                }
-                if (totalReactantMass == 0.0) continue;
+                const double totalStoichiometry = static_cast<double>(reactants.size());
+                const double abundancePerReactant = equilibriumMolarAbundance / totalStoichiometry;
 
                 for (const auto& reactant : reactants) {
-                    const double massToSubtract = scaled_equilibrium_mf * (reactant.mass() / totalReactantMass);
-                    if (massToSubtract != 0) {
-                        currentMassFractions.at(reactant) -= massToSubtract;
-                        totalMassFractionChanges[reactant] -= massToSubtract;
+                    LOG_TRACE_L1(logger, "Transferring {:.4e} molar abundance from {} to {} during priming.",
+                        abundancePerReactant, reactant.name(), primingSpecies.name());
+
+                    if (!molarAbundances.contains(reactant)) {
+                        continue;
+                    }
+                    molarAbundances.at(reactant) -= abundancePerReactant;
+                    totalMolarAbundanceChanges[reactant] -= abundancePerReactant;
+
+                    // Ensure non-negative abundances
+                    if (molarAbundances.at(reactant) < 0.0) {
+                        LOG_WARNING(logger, "Species {} went negative during priming. Clamping to zero.", reactant.name());
+                        totalMolarAbundanceChanges[reactant] += molarAbundances.at(reactant); // Adjust change to reflect clamp
+                        molarAbundances.at(reactant) = 0.0;
                     }
                 }
             }
         }
 
         // --- Final Composition Construction ---
-        std::vector<std::string> final_symbols;
-        std::vector<double> final_mass_fractions;
-        for(const auto& [species, mass_fraction] : currentMassFractions) {
-            final_symbols.emplace_back(species.name());
-            final_mass_fractions.push_back(std::max(0.0, mass_fraction)); // Ensure no negative mass fractions.
+        std::vector<Species> final_species;
+        std::vector<double> final_molar_abundances;
+
+        for (const auto& [species, abundance] : molarAbundances) {
+            final_species.emplace_back(species);
+            final_molar_abundances.push_back(std::max(0.0, abundance));
+
+            LOG_TRACE_L1(logger, "After priming, species {} has molar abundance {:.4e} (had {:0.4e} prior to priming).",
+                species.name(),
+                std::max(0.0, abundance),
+                netIn.composition.getMolarAbundance(species));
         }
 
-        Composition primedComposition(final_symbols, final_mass_fractions, true);
+        Composition primedComposition(final_species, final_molar_abundances);
 
         report.primedComposition = primedComposition;
-        for (const auto& [species, change] : totalMassFractionChanges) {
-            report.massFractionChanges.emplace_back(species, change);
+
+        // Convert molar abundance changes to mass fraction changes for reporting
+        for (const auto& [species, molarChange] : totalMolarAbundanceChanges) {
+            double massFractionChange = molarChange * species.mass();
+            report.massFractionChanges.emplace_back(species, massFractionChange);
         }
 
         // Restore the engine to its original, smaller network state.
         engine.setNetworkReactions(initialReactionSet);
+
         return report;
     }
 
@@ -335,7 +283,8 @@ namespace gridfire {
       const double rho,
       const std::optional<std::vector<reaction::ReactionType>> &reactionTypesToIgnore
   ) {
-        const UnrestrictedComposition unrestrictedComp(composition, species); // Create a composition that simulates an enormous source abundance of the target species (getMolarAbundance(species) always returns 1.0)
+        Composition unrestrictedComp(composition);
+        unrestrictedComp.setMolarAbundance(species, 1.0);
         double destructionRateConstant = 0.0;
         for (const auto& reaction: engine.getNetworkReactions()) {
             if (isReactionIgnorable(*reaction, reactionTypesToIgnore)) continue;

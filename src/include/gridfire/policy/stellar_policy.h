@@ -25,7 +25,7 @@
 
 
 #include "fourdst/composition/composition.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "gridfire/partition/composite/partition_composite.h"
 
 #include "gridfire/policy/chains.h"
@@ -91,7 +91,7 @@ namespace gridfire::policy {
          * LowMassMainSequencePolicy policy(species, mass_fractions);
          * @endcode
          */
-        explicit MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, std::vector<double> mass_fractions);
+        explicit MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, const std::vector<double> &mass_fractions);
 
         /**
          * @brief Returns the name of the policy.
@@ -143,16 +143,7 @@ namespace gridfire::policy {
          */
         [[nodiscard]] NetworkPolicyStatus getStatus() const override;
     private:
-        std::set<fourdst::atomic::Species> m_seed_species = {
-            fourdst::atomic::H_1,
-            fourdst::atomic::He_3,
-            fourdst::atomic::He_4,
-            fourdst::atomic::C_12,
-            fourdst::atomic::N_14,
-            fourdst::atomic::O_16,
-            fourdst::atomic::Ne_20,
-            fourdst::atomic::Mg_24
-        };
+        std::set<fourdst::atomic::Species> m_seed_species;
 
         std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<MainSequenceReactionChainPolicy>();
         fourdst::composition::Composition m_initializing_composition;
@@ -162,7 +153,7 @@ namespace gridfire::policy {
         NetworkPolicyStatus m_status = NetworkPolicyStatus::UNINITIALIZED;
     private:
         static std::unique_ptr<partition::PartitionFunction> build_partition_function();
-        NetworkPolicyStatus check_status() const;
+        [[nodiscard]] NetworkPolicyStatus check_status() const;
 
     };
 

@@ -22,13 +22,7 @@
 
 #include <vector>
 
-#include "fourdst/logging/logging.h"
-#include "fourdst/config/config.h"
-#include "fourdst/composition/species.h"
 #include "fourdst/composition/composition.h"
-#include "fourdst/constants/const.h"
-
-#include "quill/Logger.h"
 
 #include <unordered_map>
 
@@ -56,8 +50,6 @@ namespace gridfire {
         double density; ///< Density in g/cm^3
         double energy; ///< Energy in ergs
         double culling = 0.0; ///< Culling threshold for reactions (default is 0.0, meaning no culling)
-
-        [[nodiscard]] std::vector<double> MolarAbundance() const;
     };
 
     struct NetOut {
@@ -72,37 +64,5 @@ namespace gridfire {
             return os;
         }
     };
-
-    class Network {
-        public:
-            explicit Network(const NetworkFormat format = NetworkFormat::APPROX8);
-            virtual ~Network() = default;
-
-            [[nodiscard]] NetworkFormat getFormat() const;
-            NetworkFormat setFormat(const NetworkFormat format);
-
-            /**
-             * @brief Evaluate the network based on the input parameters.
-             * 
-             * @param netIn Input parameters for the network evaluation.
-             * @return NetOut Output results from the network evaluation.
-             */
-            virtual NetOut evaluate(const NetIn &netIn) = 0;
-
-            [[nodiscard]] virtual bool isStiff() const { return m_stiff; }
-            virtual void setStiff(const bool stiff) { m_stiff = stiff; }
-
-        protected:
-            fourdst::config::Config& m_config; ///< Configuration instance
-            fourdst::logging::LogManager& m_logManager; ///< Log manager instance
-            quill::Logger* m_logger; ///< Logger instance
-
-            NetworkFormat m_format; ///< Format of the network
-            fourdst::constant::Constants& m_constants;
-
-            bool m_stiff = false; ///< Flag indicating if the network is stiff
-    };
-
-
 
 } // namespace nuclearNetwork

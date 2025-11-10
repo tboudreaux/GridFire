@@ -8,8 +8,8 @@
 #include "gridfire/utils/hashing.h"
 #include "gridfire/utils/table_format.h"
 
-#include "fourdst/composition/species.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "quill/LogMacros.h"
 
@@ -66,7 +66,7 @@ namespace gridfire {
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -74,7 +74,7 @@ namespace gridfire {
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
@@ -119,7 +119,7 @@ namespace gridfire {
     }
 
     EnergyDerivatives GraphEngine::calculateEpsDerivatives(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -127,7 +127,7 @@ namespace gridfire {
     }
 
     EnergyDerivatives GraphEngine::calculateEpsDerivatives(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
@@ -357,7 +357,7 @@ namespace gridfire {
         const reaction::Reaction &reaction,
         const double T9,
         const double rho,
-        const fourdst::composition::Composition &comp
+        const fourdst::composition::CompositionAbstract &comp
     ) const {
         if (!m_useReverseReactions) {
             LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
@@ -534,8 +534,8 @@ namespace gridfire {
 
     std::vector<double> GraphEngine::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
         std::vector<double> Y(m_networkSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [symbol, entry] : netIn.composition) {
-            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        for (const auto& [sp, y] : netIn.composition) {
+            Y[getSpeciesIndex(sp)] = y; // Map species to their molar abundance
         }
         return Y; // Return the vector of molar abundances
     }
@@ -544,24 +544,13 @@ namespace gridfire {
         NetIn fullNetIn;
         fourdst::composition::Composition composition;
 
-        std::vector<std::string> symbols;
-        symbols.reserve(m_networkSpecies.size());
-        for (const auto &symbol: m_networkSpecies) {
-            symbols.emplace_back(symbol.name());
-        }
-        composition.registerSymbol(symbols);
-        for (const auto& [symbol, entry] : netIn.composition) {
-            if (m_networkSpeciesMap.contains(symbol)) {
-                composition.setMassFraction(symbol, entry.mass_fraction());
-            } else {
-                composition.setMassFraction(symbol, 0.0);
+        for (const auto& sp : m_networkSpecies) {
+            composition.registerSpecies(sp);
+            if (netIn.composition.contains(sp)) {
+                composition.setMolarAbundance(sp, netIn.composition.getMolarAbundance(sp));
             }
         }
-        const bool didFinalize = composition.finalize(true);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition during priming. Check input mass fractions for validity.");
-            throw std::runtime_error("Failed to finalize composition during network priming.");
-        }
+
         fullNetIn.composition = composition;
         fullNetIn.temperature = netIn.temperature;
         fullNetIn.density = netIn.density;
@@ -580,7 +569,7 @@ namespace gridfire {
         return m_depth;
     }
 
-    void GraphEngine::rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) {
+    void GraphEngine::rebuild(const fourdst::composition::CompositionAbstract &comp, const BuildDepthType depth) {
         if (depth != m_depth) {
             m_depth = depth;
             m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth);
@@ -592,27 +581,25 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition GraphEngine::collectComposition(
-        fourdst::composition::Composition &comp
+        fourdst::composition::CompositionAbstract &comp
     ) const {
-        for (const auto &speciesName: comp | std::views::keys) {
-            if (!m_networkSpeciesMap.contains(speciesName)) {
-                throw exceptions::BadCollectionError("Cannot collect composition from GraphEngine as " + speciesName + " present in input composition does not exist in the network species map");
+        for (const auto &species: comp.getRegisteredSpecies()) {
+            if (!m_networkSpeciesMap.contains(species.name())) {
+                throw exceptions::BadCollectionError("Cannot collect composition from GraphEngine as " + std::string(species.name()) + " present in input composition does not exist in the network species map");
             }
         }
         fourdst::composition::Composition result;
         for (const auto& species : m_networkSpecies ) {
             result.registerSpecies(species);
-            if (comp.hasSpecies(species)) {
-                result.setMassFraction(species, comp.getMassFraction(species));
-            } else {
-                result.setMassFraction(species, 0.0);
+            if (comp.contains(species)) {
+                result.setMolarAbundance(species, comp.getMolarAbundance(species));
             }
         }
         return result;
     }
 
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const std::vector<double> &bare_rates,
         const std::vector<double> &bare_reverse_rates,
         const double T9,
@@ -646,6 +633,10 @@ namespace gridfire {
                 const fourdst::atomic::Species& reactant = m_networkSpecies[reactantIndex];
                 const int power = precomputedReaction.reactant_powers[i];
 
+                if (!comp.contains(reactant)) {
+                    forwardAbundanceProduct = 0.0;
+                    break; // No need to continue if one of the reactants has zero abundance
+                }
                 forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
             }
 
@@ -787,7 +778,7 @@ namespace gridfire {
 
     double GraphEngine::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -811,21 +802,16 @@ namespace gridfire {
     }
 
     void GraphEngine::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        fourdst::composition::Composition mutableComp = comp;
+        fourdst::composition::Composition mutableComp;
         for (const auto& species : m_networkSpecies) {
-            if (!comp.hasSpecies(species)) {
-                mutableComp.registerSpecies(species);
-                mutableComp.setMassFraction(species, 0.0);
+            mutableComp.registerSpecies(species);
+            if (comp.contains(species)) {
+                mutableComp.setMolarAbundance(species, comp.getMolarAbundance(species));
             }
-        }
-        const bool didFinalize = mutableComp.finalize(false);
-        if (!didFinalize) {
-            LOG_CRITICAL(m_logger, "Could not finalize the composition used to generate the jacobian matrix!");
-            throw std::runtime_error("Could not finalize the composition used to generate the jacobian matrix");
         }
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
@@ -863,7 +849,7 @@ namespace gridfire {
     }
 
     void GraphEngine::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<fourdst::atomic::Species> &activeSpecies
@@ -895,7 +881,7 @@ namespace gridfire {
     }
 
     void GraphEngine::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
@@ -1102,7 +1088,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -1110,7 +1096,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
@@ -1146,7 +1132,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -1154,7 +1140,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
@@ -1213,13 +1199,7 @@ namespace gridfire {
         for (const auto& species : m_networkSpecies) {
             if (!netIn.composition.contains(species)) {
                 baseUpdatedComposition.registerSpecies(species);
-                baseUpdatedComposition.setMassFraction(species, 0.0);
             }
-        }
-        const bool didFinalize = baseUpdatedComposition.finalize(false);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition during update. Check input mass fractions for validity.");
-            throw std::runtime_error("Failed to finalize composition during network update.");
         }
         return baseUpdatedComposition;
     }
@@ -1403,7 +1383,8 @@ namespace gridfire {
 
         // We can pass a dummy comp and rho because reverse rates should only be calculated for strong reactions whose
         // rates of progression do not depend on composition or density.
-        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0.0, {});
+        const fourdst::composition::Composition dummyComp;
+        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0.0, dummyComp);
         ty[0] = reverseRate; // Store the reverse rate in the output vector
 
         if (vx.size() > 0) {

@@ -14,7 +14,7 @@ public:
     const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
 
     std::expected<gridfire::StepDerivatives<double>,gridfire::expectations::StaleEngineError> calculateRHSAndEnergy(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho
     ) const override;
@@ -27,7 +27,7 @@ public:
     const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
 
     std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> calculateRHSAndEnergy(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho
     ) const override;
@@ -39,7 +39,7 @@ public:
     ) const override;
 
     void generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho,
         const std::vector<fourdst::atomic::Species> &activeSpecies
@@ -66,7 +66,7 @@ public:
 
     double calculateMolarReactionFlow(
         const gridfire::reaction::Reaction &reaction,
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho
     ) const override;
@@ -78,7 +78,7 @@ public:
     ) override;
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> getSpeciesTimescales(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho
     ) const override;
@@ -119,7 +119,7 @@ public:
         throw std::logic_error("Network depth not supported by this engine.");
     }
     void rebuild(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         gridfire::BuildDepthType depth
     ) override {
         throw std::logic_error("Setting network depth not supported by this engine.");

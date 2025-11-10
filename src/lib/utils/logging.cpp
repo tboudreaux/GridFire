@@ -7,7 +7,6 @@
 #include <ranges>
 #include <string_view>
 #include <string>
-#include <vector>
 
 std::string gridfire::utils::formatNuclearTimescaleLogString(
     const DynamicEngine& engine,

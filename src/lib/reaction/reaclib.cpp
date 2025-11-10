@@ -1,5 +1,5 @@
-#include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
+#include "fourdst/atomic/species.h"
 
 #include "gridfire/reaction/reaclib.h"
 #include "gridfire/reaction/reactions_data.h"

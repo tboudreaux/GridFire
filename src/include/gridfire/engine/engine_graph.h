@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/composition/composition.h"
 #include "fourdst/logging/logging.h"
 #include "fourdst/config/config.h"
@@ -150,7 +150,7 @@ namespace gridfire {
          * @see StepDerivatives
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -172,7 +172,7 @@ namespace gridfire {
          * @see StepDerivatives
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract& comp,
             double T9,
             double rho,
             const reaction::ReactionSet &activeReactions
@@ -193,7 +193,7 @@ namespace gridfire {
          * @see EnergyDerivatives
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -217,7 +217,7 @@ namespace gridfire {
          * @see EnergyDerivatives
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const reaction::ReactionSet &activeReactions
@@ -237,7 +237,7 @@ namespace gridfire {
          * @see getJacobianMatrixEntry()
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -255,7 +255,7 @@ namespace gridfire {
          * @see generateJacobianMatrix()
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const std::vector<fourdst::atomic::Species>& activeSpecies
@@ -277,7 +277,7 @@ namespace gridfire {
          * @see getJacobianMatrixEntry()
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
@@ -306,7 +306,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -388,7 +388,7 @@ namespace gridfire {
          * which can be used for timestep control or diagnostics.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -407,7 +407,7 @@ namespace gridfire {
          * calculations with different reaction sets without modifying the engine's internal state.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const reaction::ReactionSet &activeReactions
@@ -426,7 +426,7 @@ namespace gridfire {
          * which can be useful for understanding reaction flows and equilibrium states.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -445,7 +445,7 @@ namespace gridfire {
          * calculations with different reaction sets without modifying the engine's internal state.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const reaction::ReactionSet &activeReactions
@@ -606,7 +606,7 @@ namespace gridfire {
             const reaction::Reaction &reaction,
             double T9,
             double rho,
-            const fourdst::composition::Composition& comp
+            const fourdst::composition::CompositionAbstract &comp
         ) const;
 
         /**
@@ -733,7 +733,7 @@ namespace gridfire {
          * and build depth. It updates all internal data structures accordingly.
          */
         void rebuild(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             BuildDepthType depth
         ) override;
 
@@ -748,25 +748,25 @@ namespace gridfire {
          * have a molar abundance set to 0.
          * @throws BadCollectionError If the input composition contains species not present in the network species set
          */
-        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
+        fourdst::composition::Composition collectComposition(fourdst::composition::CompositionAbstract &comp) const override;
 
 
     private:
         struct PrecomputedReaction {
             // Forward cacheing
-            size_t reaction_index;
-            reaction::ReactionType reaction_type;
-            uint64_t reaction_hash;
-            std::vector<size_t> unique_reactant_indices;
-            std::vector<int> reactant_powers;
-            double symmetry_factor;
-            std::vector<size_t> affected_species_indices;
-            std::vector<int> stoichiometric_coefficients;
+            size_t reaction_index{};
+            reaction::ReactionType reaction_type{};
+            uint64_t reaction_hash{};
+            std::vector<size_t> unique_reactant_indices{};
+            std::vector<int> reactant_powers{};
+            double symmetry_factor{};
+            std::vector<size_t> affected_species_indices{};
+            std::vector<int> stoichiometric_coefficients{};
 
             // Reverse cacheing
-            std::vector<size_t> unique_product_indices; ///< Unique product indices for reverse reactions.
-            std::vector<int> product_powers; ///< Powers of each unique product in the reverse reaction.
-            double reverse_symmetry_factor; ///< Symmetry factor for reverse reactions.
+            std::vector<size_t> unique_product_indices{}; ///< Unique product indices for reverse reactions.
+            std::vector<int> product_powers{}; ///< Powers of each unique product in the reverse reaction.
+            double reverse_symmetry_factor{}; ///< Symmetry factor for reverse reactions.
         };
 
         struct constants {
@@ -955,7 +955,7 @@ namespace gridfire {
 
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             const std::vector<double> &bare_rates,
             const std::vector<double> &bare_reverse_rates,
             double T9,

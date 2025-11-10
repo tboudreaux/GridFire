@@ -4,7 +4,6 @@
 #include "gridfire/utils/hashing.h"
 
 #include <algorithm>
-#include <map>
 #include <set>
 #include <unordered_map>
 #include <vector>
@@ -12,7 +11,7 @@
 #include <expected>
 #include <ranges>
 
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/species.h"
 
 #include "quill/LogMacros.h"
 

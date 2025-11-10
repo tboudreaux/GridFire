@@ -6,12 +6,12 @@
 #include <ranges>
 #include <stdexcept>
 #include <memory>
-#include <cmath>
 
+#include "fourdst/atomic/species.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/reaction/reaclib.h"
 
-#include "fourdst/composition/composition.h"
+#include "fourdst/composition/composition_abstract.h"
 
 #include "fourdst/logging/logging.h"
 
@@ -146,11 +146,10 @@ namespace {
 namespace gridfire {
     using reaction::ReactionSet;
     using reaction::Reaction;
-    using fourdst::composition::Composition;
     using fourdst::atomic::Species;
 
     ReactionSet build_nuclear_network(
-        const Composition& composition,
+        const fourdst::composition::CompositionAbstract &composition,
         const rates::weak::WeakRateInterpolator &weakInterpolator,
         BuildDepthType maxLayers,
         NetworkConstructionFlags ReactionTypes
@@ -202,9 +201,9 @@ namespace gridfire {
 
         // --- Step 3: Execute the layered network build using observing pointers ---
         std::unordered_set<Species> availableSpecies;
-        for (const auto& entry : composition | std::views::values) {
-            if (entry.mass_fraction() > 0.0) {
-                availableSpecies.insert(entry.isotope());
+        for (const auto& sp : composition.getRegisteredSpecies()) {
+            if (composition.getMolarAbundance(sp) > 0.0) {
+                availableSpecies.insert(sp);
             }
         }
 

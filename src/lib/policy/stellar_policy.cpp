@@ -6,12 +6,28 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/engine/views/engine_views.h"
 
-#include "fourdst/composition/exceptions/exceptions_composition.h"
+#include "fourdst/atomic/species.h"
+#include "fourdst/composition/utils.h"
+
+namespace {
+    std::set<fourdst::atomic::Species> initialize_seed_species() {
+        return {
+            fourdst::atomic::H_1,
+            fourdst::atomic::He_3,
+            fourdst::atomic::He_4,
+            fourdst::atomic::C_12,
+            fourdst::atomic::N_14,
+            fourdst::atomic::O_16,
+            fourdst::atomic::Ne_20,
+            fourdst::atomic::Mg_24
+        };
+    }
+}
 
 namespace gridfire::policy {
-    MainSequencePolicy::MainSequencePolicy(const fourdst::composition::Composition& composition) {
+    MainSequencePolicy::MainSequencePolicy(const fourdst::composition::Composition& composition) : m_seed_species(initialize_seed_species()) {
         for (const auto& species : m_seed_species) {
-            if (!composition.hasSpecies(species)) {
+            if (!composition.contains(species)) {
                 throw exceptions::MissingSeedSpeciesError("Cannot initialize MainSequencePolicy: Required Seed species " + std::string(species.name()) + " is missing from the provided composition.");
             }
         }
@@ -19,22 +35,14 @@ namespace gridfire::policy {
         m_partition_function = build_partition_function();
     }
 
-    MainSequencePolicy::MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, std::vector<double> mass_fractions) {
+    MainSequencePolicy::MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, const std::vector<double> &mass_fractions) {
         for (const auto& species : m_seed_species) {
             if (std::ranges::find(seed_species, species) == seed_species.end()) {
                 throw exceptions::MissingSeedSpeciesError("Cannot initialize MainSequencePolicy: Required Seed species " + std::string(species.name()) + " is missing from the provided composition.");
             }
         }
 
-        for (const auto& [species, x] : std::views::zip(seed_species, mass_fractions)) {
-            m_initializing_composition.registerSpecies(species);
-            m_initializing_composition.setMassFraction(species, x);
-        }
-
-        const bool didFinalize = m_initializing_composition.finalize(true);
-        if (!didFinalize) {
-            throw fourdst::composition::exceptions::CompositionNotFinalizedError("Failed to finalize initial composition for MainSequencePolicy.");
-        }
+        m_initializing_composition = fourdst::composition::buildCompositionFromMassFractions(seed_species, mass_fractions);
 
         m_partition_function = build_partition_function();
     }
@@ -45,6 +53,11 @@ namespace gridfire::policy {
         m_network_stack.emplace_back(
             std::make_unique<GraphEngine>(m_initializing_composition, *m_partition_function, NetworkBuildDepth::ThirdOrder, NetworkConstructionFlags::DEFAULT)
         );
+
+        auto& graphRepr = dynamic_cast<GraphEngine&>(*m_network_stack.back().get());
+        graphRepr.setUseReverseReactions(false);
+
+
         m_network_stack.emplace_back(
             std::make_unique<MultiscalePartitioningEngineView>(*m_network_stack.back().get())
         );
@@ -85,7 +98,7 @@ namespace gridfire::policy {
 
     inline NetworkPolicyStatus MainSequencePolicy::check_status() const {
         for (const auto& species : m_seed_species) {
-            if (!m_initializing_composition.hasSpecies(species)) {
+            if (!m_initializing_composition.contains(species)) {
                 return NetworkPolicyStatus::MISSING_KEY_SPECIES;
             }
         }

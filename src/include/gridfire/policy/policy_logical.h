@@ -45,7 +45,7 @@ namespace gridfire::policy {
         auto end() { return m_chain_policies.end(); }
         [[nodiscard]] auto end() const { return m_chain_policies.cend(); }
     protected:
-        std::vector<std::unique_ptr<ReactionChainPolicy>> m_chain_policies;
+        std::vector<std::unique_ptr<ReactionChainPolicy>> m_chain_policies{};
         reaction::ReactionSet m_reactions;
     };
 }

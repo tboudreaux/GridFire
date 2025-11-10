@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
 

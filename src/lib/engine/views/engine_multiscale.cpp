@@ -1,7 +1,6 @@
 #include "gridfire/engine/views/engine_multiscale.h"
 #include "gridfire/exceptions/error_engine.h"
 #include "gridfire/engine/procedures/priming.h"
-#include "gridfire/utils/general_composition.h"
 
 #include <stdexcept>
 #include <vector>
@@ -14,6 +13,7 @@
 
 #include <algorithm>
 
+#include "fourdst/atomic/species.h"
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
@@ -182,7 +182,7 @@ namespace gridfire {
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -200,7 +200,7 @@ namespace gridfire {
     }
 
     EnergyDerivatives MultiscalePartitioningEngineView::calculateEpsDerivatives(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -208,7 +208,7 @@ namespace gridfire {
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition& comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -217,7 +217,7 @@ namespace gridfire {
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies
@@ -253,7 +253,7 @@ namespace gridfire {
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
@@ -288,34 +288,20 @@ namespace gridfire {
 
     double MultiscalePartitioningEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
         // Fix the algebraic species to the equilibrium abundances we calculate.
-        fourdst::composition::Composition comp_mutable = comp;
-        const bool didFinalize = comp_mutable.finalize(false);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition before setting algebraic species abundances.");
-            m_logger->flush_log();
-            throw std::runtime_error("Failed to finalize composition before setting algebraic species abundances.");
+        fourdst::composition::Composition comp_mutable;
+        for (const auto& species : comp.getRegisteredSpecies()) {
+            comp_mutable.registerSpecies(species);
+            comp_mutable.setMolarAbundance(species, comp.getMolarAbundance(species));
         }
 
         for (const auto& species : m_algebraic_species) {
             const double Yi = m_algebraic_abundances.at(species);
-            double Xi = utils::massFractionFromMolarAbundanceAndComposition(comp_mutable, species, Yi);
-            comp_mutable.setMassFraction(species, Xi); // Convert Yi (mol/g) to Xi (mass fraction)
-            if (!comp_mutable.finalize(false)) {
-                LOG_ERROR(m_logger, "Failed to finalize composition after setting algebraic species abundance for species '{}'.", species.name());
-                m_logger->flush_log();
-                throw std::runtime_error("Failed to finalize composition after setting algebraic species abundance for species: " + std::string(species.name()));
-            }
-        }
-
-        if (!comp_mutable.finalize()) {
-            LOG_ERROR(m_logger, "Failed to finalize composition after setting algebraic species abundances.");
-            m_logger->flush_log();
-            throw std::runtime_error("Failed to finalize composition after setting algebraic species abundances.");
+            comp_mutable.setMolarAbundance(species, Yi);
         }
 
         return m_baseEngine.calculateMolarReactionFlow(reaction, comp_mutable, T9, rho);
@@ -331,7 +317,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::getSpeciesTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -348,7 +334,7 @@ namespace gridfire {
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError>
     MultiscalePartitioningEngineView::getSpeciesDestructionTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -371,7 +357,7 @@ namespace gridfire {
         const fourdst::composition::Composition equilibratedComposition = equilibrateNetwork(baseUpdatedNetIn);
         std::unordered_map<Species, double> algebraicAbundances;
         for (const auto& species : m_algebraic_species) {
-            algebraicAbundances[species] = equilibratedComposition.getMolarAbundance(species);
+            algebraicAbundances.emplace(species, equilibratedComposition.getMolarAbundance(species));
         }
 
         m_algebraic_abundances = std::move(algebraicAbundances);
@@ -791,8 +777,8 @@ namespace gridfire {
 
     std::vector<double> MultiscalePartitioningEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
         std::vector<double> Y(m_dynamic_species.size(), 0.0); // Initialize with zeros
-        for (const auto& [symbol, entry] : netIn.composition) {
-            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        for (const auto& [sp, y] : netIn.composition) {
+            Y[getSpeciesIndex(sp)] = y; // Map species to their molar abundance
         }
         return Y; // Return the vector of molar abundances
     }
@@ -826,18 +812,10 @@ namespace gridfire {
         partitionNetwork(comp, T9, rho);
         fourdst::composition::Composition qseComposition = solveQSEAbundances(comp, T9, rho);
 
-        for (const auto &symbol: qseComposition | std::views::keys) {
-            const double speciesMassFraction = qseComposition.getMassFraction(symbol);
-            if (speciesMassFraction < 0.0 && std::abs(speciesMassFraction) < 1e-20) {
-                qseComposition.setMassFraction(symbol, 0.0); // Avoid negative mass fractions
+        for (const auto &[sp, y]: qseComposition) {
+            if (y < 0.0 && std::abs(y) < 1e-20) {
+                qseComposition.setMolarAbundance(sp, 0.0); // Avoid negative mass fractions
             }
-        }
-
-        bool didFinalize = qseComposition.finalize(true);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition after solving QSE abundances.");
-            m_logger->flush_log();
-            throw std::runtime_error("Failed to finalize composition after solving QSE abundances.");
         }
 
         return qseComposition;
@@ -875,18 +853,12 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition MultiscalePartitioningEngineView::collectComposition(
-        fourdst::composition::Composition &comp
+        fourdst::composition::CompositionAbstract &comp
     ) const {
         fourdst::composition::Composition result = m_baseEngine.collectComposition(comp);
-        bool didFinalize = result.finalize(false);
-        if (!didFinalize) {
-            std::string msg = "Failed to finalize collected composition from MultiscalePartitioningEngine view after calling base engines collectComposition method.";
-            LOG_ERROR(m_logger, "{}", msg);
-            throw exceptions::BadCollectionError(msg);
-        }
         std::map<Species, double> Ym; // Use an ordered map here so that this is ordered by atomic mass (which is the </> comparator for Species)
-        for (const auto& [speciesName, entry] : result) {
-            Ym.emplace(entry.isotope(), result.getMolarAbundance(speciesName));
+        for (const auto& [sp, y] : result) {
+            Ym.emplace(sp, y);
         }
         for (const auto& [species, Yi] : m_algebraic_abundances) {
             if (!Ym.contains(species)) {
@@ -894,21 +866,16 @@ namespace gridfire {
             }
             Ym.at(species) = Yi;
         }
-        std::vector<double> M;
         std::vector<double> Y;
         std::vector<std::string> speciesNames;
-        M.reserve(Ym.size());
         Y.reserve(Ym.size());
 
         for (const auto& [species, Yi] : Ym) {
-            M.emplace_back(species.mass());
             Y.emplace_back(Yi);
             speciesNames.emplace_back(species.name());
         }
 
-        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(Y, M);
-
-        return fourdst::composition::Composition(speciesNames, X);
+        return {speciesNames, Y};
     }
 
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(const Species &species) const {
@@ -1254,19 +1221,12 @@ namespace gridfire {
             for (const auto& species: algebraic_species) {
                 if (!normalized_composition.contains(species)) {
                     normalized_composition.registerSpecies(species);
-                    normalized_composition.setMassFraction(species, 0.0);
                 }
             }
             for (const auto& species: seed_species) {
                 if (!normalized_composition.contains(species)) {
                     normalized_composition.registerSpecies(species);
-                    normalized_composition.setMassFraction(species, 0.0);
                 }
-            }
-            bool normCompFinalizedOkay = normalized_composition.finalize(true);
-            if (!normCompFinalizedOkay) {
-                LOG_ERROR(m_logger, "Failed to finalize composition before QSE solve.");
-                throw std::runtime_error("Failed to finalize composition before QSE solve.");
             }
 
             Eigen::VectorXd Y_scale(algebraic_species.size());
@@ -1319,19 +1279,12 @@ namespace gridfire {
                     Y_final_qse(i)
                 );
                 // double Xi = Y_final_qse(i) * species.mass(); // Convert from molar abundance to mass fraction
-                double Xi = utils::massFractionFromMolarAbundanceAndComposition(normalized_composition, species, Y_final_qse(i));
-                if (!outputComposition.hasSpecies(species)) {
+                if (!outputComposition.contains (species)) {
                     outputComposition.registerSpecies(species);
                 }
-                outputComposition.setMassFraction(species, Xi);
+                outputComposition.setMolarAbundance(species, Y_final_qse(i));
                 i++;
             }
-        }
-        bool didFinalize = outputComposition.finalize(false);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition after solving QSE abundances.");
-            m_logger->flush_log();
-            throw std::runtime_error("Failed to finalize composition after solving QSE abundances.");
         }
         return outputComposition;
     }
@@ -1540,22 +1493,11 @@ namespace gridfire {
         Eigen::VectorXd y_qse = v_qse.array().exp(); // Convert to physical abundances using exponential scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.hasSymbol(std::string(species.name()))) {
+            if (!comp_trial.contains(std::string(species.name()))) {
                 comp_trial.registerSpecies(species);
             }
             auto index = static_cast<long>(m_qse_solve_species_index_map.at(species));
-            const double molarAbundance = y_qse[index];
-            double massFraction = utils::massFractionFromMolarAbundanceAndComposition(m_initial_comp, species, molarAbundance);
-            comp_trial.setMassFraction(species, massFraction);
-        }
-
-
-        const bool didFinalize = comp_trial.finalize(false);
-        if (!didFinalize) {
-            LOG_TRACE_L1(m_view->m_logger, "While evaluating the functor, failed to finalize composition. This is likely because the solver took a step outside of physical abundances. This is not an error; rather, the solver will be told to take a different step.");
-            f_qse.resize(static_cast<long>(m_qse_solve_species.size()));
-            f_qse.setConstant(1.0e20); // Return a large residual to indicate failure
-            return 0;
+            comp_trial.setMolarAbundance(species, y_qse[index]);
         }
 
         const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
@@ -1608,20 +1550,11 @@ namespace gridfire {
         Eigen::VectorXd y_qse = v_qse.array().exp(); // Convert to physical abundances using exponential scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.hasSymbol(std::string(species.name()))) {
+            if (!comp_trial.contains(std::string(species.name()))) {
                 comp_trial.registerSpecies(species);
             }
             const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
-            double massFraction = utils::massFractionFromMolarAbundanceAndComposition(m_initial_comp, species, molarAbundance);
-            comp_trial.setMassFraction(species, massFraction);
-        }
-
-        const bool didFinalize = comp_trial.finalize(false);
-        if (!didFinalize) {
-            LOG_TRACE_L1(m_view->m_logger, "While evaluating the Jacobian, failed to finalize composition. This is likely because the solver took a step outside of physical abundances. This is not an error; rather, the solver will be told to take a different step. Returning Identity");
-            J_qse.resize(static_cast<long>(m_qse_solve_species.size()), static_cast<long>(m_qse_solve_species.size()));
-            J_qse.setIdentity();
-            return 0;
+            comp_trial.setMolarAbundance(species, molarAbundance);
         }
 
         std::vector<Species> qse_species_vector(m_qse_solve_species.begin(), m_qse_solve_species.end());

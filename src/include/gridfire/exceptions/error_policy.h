@@ -13,6 +13,7 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 namespace gridfire::exceptions {
     /**
@@ -28,7 +29,7 @@ namespace gridfire::exceptions {
          * @brief Constructs a PolicyError with a descriptive message.
          * @param msg The error message.
          */
-        explicit PolicyError(const std::string& msg) : m_message(msg) {};
+        explicit PolicyError(std::string  msg) : m_message(std::move(msg)) {};
 
         /**
          * @brief Returns the explanatory string.

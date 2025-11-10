@@ -1,7 +1,6 @@
 # Define the library
 gridfire_sources = files(
     'lib/network.cpp',
-    'lib/engine/engine_approx8.cpp',
     'lib/engine/engine_graph.cpp',
     'lib/engine/views/engine_adaptive.cpp',
     'lib/engine/views/engine_defined.cpp',

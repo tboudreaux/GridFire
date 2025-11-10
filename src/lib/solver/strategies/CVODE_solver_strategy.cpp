@@ -20,7 +20,6 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
-#include "gridfire/utils/general_composition.h"
 
 namespace {
     std::unordered_map<int, std::string> cvode_ret_code_map {
@@ -68,9 +67,9 @@ namespace {
 
     N_Vector init_sun_vector(uint64_t size, SUNContext sun_ctx) {
 #ifdef SUNDIALS_HAVE_OPENMP
-        N_Vector vec = N_VNew_OpenMP(size, 0, sun_ctx);
+        const N_Vector vec = N_VNew_OpenMP(size, 0, sun_ctx);
 #elif SUNDIALS_HAVE_PTHREADS
-        N_Vector vec = N_VNew_Pthreads(size, sun_ctx);
+        const N_Vector vec = N_VNew_Pthreads(size, sun_ctx);
 #else
         const N_Vector vec = N_VNew_Serial(static_cast<long long>(size), sun_ctx);
 #endif
@@ -273,6 +272,8 @@ namespace gridfire::solver {
                 total_convergence_failures += nlcfails;
                 total_steps += n_steps;
 
+                sunrealtype* end_of_step_abundances = N_VGetArrayPointer(ctx.state);
+
                 LOG_INFO(
                     m_logger,
                     "Engine Update Triggered at time {} ({} update{} triggered). Current total specific energy {} [erg/g]",
@@ -284,7 +285,7 @@ namespace gridfire::solver {
 
                 fourdst::composition::Composition temp_comp;
                 std::vector<double> mass_fractions;
-                long int num_species_at_stop = m_engine.getNetworkSpecies().size();
+                auto num_species_at_stop = static_cast<long int>(m_engine.getNetworkSpecies().size());
 
                 if (num_species_at_stop > m_Y->ops->nvgetlength(m_Y) - 1) {
                     LOG_ERROR(
@@ -296,29 +297,126 @@ namespace gridfire::solver {
                     throw std::runtime_error("Number of species at engine update exceeds the number of species in the CVODE solver. This should never happen.");
                 }
 
-                mass_fractions.reserve(num_species_at_stop);
+                for (const auto& species: m_engine.getNetworkSpecies()) {
+                    const size_t sid = m_engine.getSpeciesIndex(species);
+                    temp_comp.registerSpecies(species);
+                    double y = end_of_step_abundances[sid];
+                    if (y > 0.0) {
+                        temp_comp.setMolarAbundance(species, y);
+                    }
+                }
 
+#ifndef NDEBUG
                 for (long int i = 0; i < num_species_at_stop; ++i) {
                     const auto& species = m_engine.getNetworkSpecies()[i];
-                    temp_comp.registerSpecies(species);
-                    mass_fractions.push_back(y_data[i] * species.mass()); // Convert from molar abundance to mass fraction
+                    if (std::abs(temp_comp.getMolarAbundance(species) - y_data[i]) > 1e-12) {
+                        throw exceptions::UtilityError("Conversion from solver state to composition molar abundance failed verification.");
+                    }
                 }
-                temp_comp.setMassFraction(m_engine.getNetworkSpecies(), mass_fractions);
-                bool didFinalize = temp_comp.finalize(true);
-                if (!didFinalize) {
-                    LOG_ERROR(m_logger, "Failed to finalize composition during engine update. Check input mass fractions for validity.");
-                    throw std::runtime_error("Failed to finalize composition during engine update.");
-                }
+#endif
 
-                NetIn netInTemp = netIn;
+                NetIn netInTemp;
                 netInTemp.temperature = T9 * 1e9; // Convert back to Kelvin
                 netInTemp.density = netIn.density;
                 netInTemp.composition = temp_comp;
 
+                LOG_DEBUG(
+                    m_logger,
+                    "Prior to Engine update composition is (molar abundance) {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        const size_t ns = temp_comp.size();
+                        size_t count = 0;
+                        for (const auto &symbol : temp_comp | std::views::keys) {
+                            ss << symbol << ": " << temp_comp.getMolarAbundance(symbol);
+                            if (count < ns - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }()
+                );
+
+                LOG_DEBUG(
+                    m_logger,
+                    "Prior to Engine Update active reactions are: {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions();
+                        size_t count = 0;
+                        for (const auto& reaction : reactions) {
+                            ss << reaction -> id();
+                            if (count < reactions.size() - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }()
+                );
                 fourdst::composition::Composition currentComposition = m_engine.update(netInTemp);
+                LOG_DEBUG(
+                    m_logger,
+                    "After to Engine update composition is (molar abundance) {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        const size_t ns = currentComposition.size();
+                        size_t count = 0;
+                        for (const auto &symbol : currentComposition | std::views::keys) {
+                            ss << symbol << ": " << currentComposition.getMolarAbundance(symbol);
+                            if (count < ns - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }()
+                );
+                LOG_DEBUG(
+                    m_logger,
+                    "Fractional Abundance Changes: {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        const size_t ns = currentComposition.size();
+                        size_t count = 0;
+                        for (const auto &symbol : currentComposition | std::views::keys) {
+                            if (!temp_comp.contains(symbol)) {
+                                ss << symbol << ": New Species";
+                            } else {
+                                const double old_X = temp_comp.getMolarAbundance(symbol);
+                                const double new_X = currentComposition.getMolarAbundance(symbol);
+                                const double frac_change = (new_X - old_X) / (old_X + std::numeric_limits<double>::epsilon());
+                                ss << symbol << ": " << frac_change;
+                            }
+                            if (count < ns - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }()
+                );
+                LOG_DEBUG(
+                    m_logger,
+                    "After Engine Update active reactions are: {}",
+                    [&]() -> std::string {
+                        std::stringstream ss;
+                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions();
+                        size_t count = 0;
+                        for (const auto& reaction : reactions) {
+                            ss << reaction -> id();
+                            if (count < reactions.size() - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }()
+                );
                 LOG_INFO(
                     m_logger,
-                    "Due to a triggered stale engine the composition was updated from size {} to {} species.",
+                    "Due to a triggered engine update the composition was updated from size {} to {} species.",
                     num_species_at_stop,
                     m_engine.getNetworkSpecies().size()
                 );
@@ -350,39 +448,20 @@ namespace gridfire::solver {
 
         sunrealtype* y_data = N_VGetArrayPointer(m_Y);
         accumulated_energy += y_data[numSpecies];
+        std::vector<double> y_vec(y_data, y_data + numSpecies);
 
-        std::vector<double> finalMassFractions(numSpecies);
-        for (size_t i = 0; i < numSpecies; ++i) {
-            const double molarMass = m_engine.getNetworkSpecies()[i].mass();
-            finalMassFractions[i] = y_data[i] * molarMass; // Convert from molar abundance to mass fraction
-            if (finalMassFractions[i] < MIN_ABUNDANCE_THRESHOLD) {
-                finalMassFractions[i] = 0.0;
+        for (size_t i = 0; i < y_vec.size(); ++i) {
+            if (y_vec[i] < 0 && std::abs(y_vec[i]) < 1e-16) {
+                y_vec[i] = 0.0; // Regularize tiny negative abundances to zero
             }
         }
 
-        std::vector<std::string> speciesNames;
-        speciesNames.reserve(numSpecies);
-        for (const auto& species : m_engine.getNetworkSpecies()) {
-            speciesNames.emplace_back(species.name());
-        }
+        LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", numSpecies);
 
-        LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", speciesNames.size());
-        fourdst::composition::Composition topLevelComposition(speciesNames);
-        topLevelComposition.setMassFraction(speciesNames, finalMassFractions);
-        bool didFinalizeTopLevel = topLevelComposition.finalize(true);
-        if (!didFinalizeTopLevel) {
-            LOG_ERROR(m_logger, "Failed to finalize top level reconstructed composition after CVODE integration. Check output mass fractions for validity.");
-            throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
-        }
+        fourdst::composition::Composition topLevelComposition(m_engine.getNetworkSpecies(), y_vec);
         fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition);
 
         assert(outputComposition.getRegisteredSymbols().size() == equilibratedComposition.getRegisteredSymbols().size());
-
-        bool didFinalizeOutput = outputComposition.finalize(false);
-        if (!didFinalizeOutput) {
-            LOG_ERROR(m_logger, "Failed to finalize output composition after CVODE integration.");
-            throw std::runtime_error("Failed to finalize output composition after CVODE integration.");
-        }
 
         LOG_TRACE_L2(m_logger, "Final composition constructed successfully!");
 
@@ -511,19 +590,7 @@ namespace gridfire::solver {
         //       some consistent memory layout for the composition object to make this cheeper. That optimization would need to be
         //       done in the libcomposition library though...
         std::vector<double> y_vec(y_data, y_data + numSpecies);
-        std::vector<std::string> symbols;
-        symbols.reserve(numSpecies);
-        for (const auto& species : m_engine.getNetworkSpecies()) {
-            symbols.emplace_back(species.name());
-        }
-        std::vector<double> M;
-        M.reserve(numSpecies);
-        for (size_t i = 0; i < numSpecies; ++i) {
-            const double molarMass = m_engine.getNetworkSpecies()[i].mass();
-            M.push_back(molarMass);
-        }
-        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(y_vec, M);
-        fourdst::composition::Composition composition(symbols, X);
+        fourdst::composition::Composition composition(m_engine.getNetworkSpecies(), y_vec);
 
         const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
         if (!result) {
@@ -623,14 +690,9 @@ namespace gridfire::solver {
         check_cvode_flag(CVodeGetEstLocalErrors(m_cvode_mem, m_YErr), "CVodeGetEstLocalErrors");
 
         sunrealtype *y_data = N_VGetArrayPointer(m_Y);
-        sunrealtype *y_err_data = N_VGetArrayPointer(m_YErr);
 
 
         std::vector<double> err_ratios;
-        std::vector<std::string> speciesNames;
-
-        const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
-        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
         const size_t num_components = N_VGetLength(m_Y);
         err_ratios.resize(num_components - 1);
@@ -646,26 +708,13 @@ namespace gridfire::solver {
             0.0
         );
 
-        std::vector<double> M;
-        M.reserve(num_components);
-        for (size_t i = 0; i < num_components - 1; i++) {
-            const double weight = relTol * std::abs(y_data[i]) + absTol;
-            if (weight == 0.0) continue; // Skip components with zero weight
-
-            const double err_ratio = std::abs(y_err_data[i]) / weight;
-
-            err_ratios[i] = err_ratio;
-            speciesNames.emplace_back(user_data.networkSpecies->at(i).name());
-            M.push_back(user_data.networkSpecies->at(i).mass());
-        }
-        std::vector<double> X = utils::massFractionFromMolarAbundanceAndMolarMass(Y_full, M);
-        fourdst::composition::Composition composition(speciesNames, X);
+        fourdst::composition::Composition composition(user_data.engine->getNetworkSpecies(), Y_full);
 
         if (err_ratios.empty()) {
             return;
         }
 
-        std::vector<size_t> indices(speciesNames.size());
+        std::vector<size_t> indices(composition.size());
         for (size_t i = 0; i < indices.size(); ++i) {
             indices[i] = i;
         }
@@ -677,29 +726,29 @@ namespace gridfire::solver {
             }
         );
 
-        std::vector<std::string> sorted_speciesNames;
+        std::vector<fourdst::atomic::Species> sorted_species;
         std::vector<double> sorted_err_ratios;
 
-        sorted_speciesNames.reserve(indices.size());
+        sorted_species.reserve(indices.size());
         sorted_err_ratios.reserve(indices.size());
 
         for (const auto idx: indices) {
-            sorted_speciesNames.push_back(speciesNames[idx]);
+            sorted_species.push_back(composition.getSpeciesAtIndex(idx));
             sorted_err_ratios.push_back(err_ratios[idx]);
         }
 
 
 
         std::vector<std::unique_ptr<utils::ColumnBase>> columns;
-        columns.push_back(std::make_unique<utils::Column<std::string>>("Species", sorted_speciesNames));
+        columns.push_back(std::make_unique<utils::Column<fourdst::atomic::Species>>("Species", sorted_species));
         columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
 
         std::cout << utils::format_table("Species Error Ratios", columns) << std::endl;
 
         if (displayJacobianStiffness) {
             diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
-            for (const auto& species : sorted_speciesNames) {
-                diagnostics::inspect_species_balance(*user_data.engine, species, composition, user_data.T9, user_data.rho);
+            for (const auto& species : sorted_species) {
+                diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho);
             }
         }
 

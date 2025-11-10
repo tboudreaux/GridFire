@@ -3,7 +3,7 @@
 #include <ranges>
 #include <string_view>
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/logging/logging.h"
 #include "quill/Logger.h"
 #include <unordered_map>

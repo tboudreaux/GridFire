@@ -10,7 +10,7 @@
 
 #include "quill/LogMacros.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "xxhash64.h"
 

@@ -33,6 +33,7 @@ namespace gridfire::policy {
         return std::make_unique<MultiReactionChainPolicy>(
             [this]() {
                 std::vector<std::unique_ptr<ReactionChainPolicy>> chain_policies;
+                chain_policies.reserve(m_chain_policies.size());
                 for (const auto &ch : m_chain_policies) {
                     chain_policies.push_back(ch->clone());
                 }

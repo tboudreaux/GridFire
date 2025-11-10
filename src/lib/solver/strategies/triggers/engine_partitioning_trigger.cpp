@@ -344,11 +344,11 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     float ConvergenceFailureTrigger::current_mean() const {
-        float acc = 0;
+        size_t acc = 0;
         for (const auto nlcfails: m_window) {
             acc += nlcfails;
         }
-        return acc / m_windowSize;
+        return static_cast<float>(acc) / static_cast<float>(m_windowSize);
     }
 
     bool ConvergenceFailureTrigger::abs_failure(
@@ -364,7 +364,7 @@ namespace gridfire::trigger::solver::CVODE {
         const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
     ) const {
         const float mean = current_mean();
-        if (ctx.currentConvergenceFailures - mean  > m_relativeFailureRate * mean) {
+        if (static_cast<float>(ctx.currentConvergenceFailures) - mean  > m_relativeFailureRate * mean) {
             return true;
         }
         return false;
@@ -395,8 +395,8 @@ namespace gridfire::trigger::solver::CVODE {
         // Combine the triggers using logical OR
         auto orTriggerA = std::make_unique<OrTrigger<ctx_t>>(std::move(simulationTimeTrigger), std::move(offDiagTrigger));
         auto orTriggerB = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerA), std::move(timestepGrowthTrigger));
-        auto orTriggerC = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerB), std::move(convergenceFailureTrigger));
+        // auto orTriggerC = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerB), std::move(convergenceFailureTrigger));
 
-        return orTriggerC;
+        return convergenceFailureTrigger;
     }
 }

@@ -2,14 +2,12 @@
 
 #include <map>
 #include <string>
-#include <ranges>
-// Required for PrimingReport fields and streaming
 #include <vector>
 #include <utility>
 #include <ostream>
 #include <sstream>
 #include "fourdst/composition/composition.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 namespace gridfire {
 

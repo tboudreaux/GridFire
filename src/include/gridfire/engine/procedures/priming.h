@@ -4,7 +4,7 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/network.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 
 namespace gridfire {

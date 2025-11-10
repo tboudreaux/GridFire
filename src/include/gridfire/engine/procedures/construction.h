@@ -3,7 +3,7 @@
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/types/building.h"
 
-#include "fourdst/composition/composition.h"
+#include "fourdst/composition/composition_abstract.h"
 
 #include <variant>
 
@@ -113,7 +113,7 @@ namespace gridfire {
      * @throws std::logic_error If the resolved network depth is zero (no reactions can be collected).
      */
     reaction::ReactionSet build_nuclear_network(
-        const fourdst::composition::Composition &composition,
+        const fourdst::composition::CompositionAbstract &composition,
         const rates::weak::WeakRateInterpolator &weakInterpolator,
         BuildDepthType maxLayers = NetworkBuildDepth::Full,
         NetworkConstructionFlags ReactionTypes = NetworkConstructionFlags::DEFAULT

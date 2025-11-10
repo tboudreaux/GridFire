@@ -2,8 +2,8 @@
 
 #include <ranges>
 
-#include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
+#include "fourdst/atomic/species.h"
 
 #include "quill/LogMacros.h"
 

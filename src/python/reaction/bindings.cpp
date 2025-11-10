@@ -333,12 +333,14 @@ void register_reaction_bindings(py::module &m) {
         .def(
             "__getitem__",
             py::overload_cast<size_t>(&gridfire::reaction::ReactionSet::operator[], py::const_),
+            py::return_value_policy::reference,
             py::arg("index"),
             "Get a LogicalReaclibReaction by index."
         )
         .def(
             "__getitem___",
             py::overload_cast<const std::string_view&>(&gridfire::reaction::ReactionSet::operator[], py::const_),
+            py::return_value_policy::reference,
             py::arg("id"),
             "Get a LogicalReaclibReaction by its ID."
         )

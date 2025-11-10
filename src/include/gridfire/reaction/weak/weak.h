@@ -8,7 +8,7 @@
 
 #include "gridfire/engine/engine_abstract.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/constants/const.h"
 
 #include "cppad/cppad.hpp"

@@ -23,43 +23,7 @@
 
 #include <ranges>
 
-#include "quill/LogMacros.h"
-
 namespace gridfire {
-    std::vector<double> NetIn::MolarAbundance() const {
-        std::vector <double> y;
-        y.reserve(composition.getRegisteredSymbols().size());
-        const auto [fst, snd] = composition.getComposition();
-        for (const auto &name: fst | std::views::keys) {
-            y.push_back(composition.getMolarAbundance(name));
-        }
-        return y;
-    }
-
-
-    Network::Network(const NetworkFormat format) :
-        m_config(fourdst::config::Config::getInstance()),
-        m_logManager(fourdst::logging::LogManager::getInstance()),
-        m_logger(m_logManager.getLogger("log")),
-        m_format(format),
-        m_constants(fourdst::constant::Constants::getInstance()){
-        if (format == NetworkFormat::UNKNOWN) {
-            LOG_ERROR(m_logger, "nuclearNetwork::Network::Network() called with UNKNOWN format");
-            m_logger->flush_log();
-            throw std::runtime_error("nuclearNetwork::Network::Network() called with UNKNOWN format");
-        }
-    }
-
-    NetworkFormat Network::getFormat() const {
-        return m_format;
-    }
-
-    NetworkFormat Network::setFormat(const NetworkFormat format) {
-        const NetworkFormat oldFormat = m_format;
-        m_format = format;
-        return oldFormat;
-    }
-
     // Trim whitespace from both ends of a string
     std::string trim_whitespace(const std::string& str) {
         auto startIt = str.begin();

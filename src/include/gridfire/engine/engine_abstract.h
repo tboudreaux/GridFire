@@ -10,6 +10,8 @@
 
 #include "gridfire/expectations/expected_engine.h"
 
+#include "fourdst/composition/composition_abstract.h"
+
 #include <vector>
 #include <unordered_map>
 #include <utility>
@@ -58,7 +60,7 @@ namespace gridfire {
      */
     template <IsArithmeticOrAD T>
     struct StepDerivatives {
-        std::map<fourdst::atomic::Species, T> dydt; ///< Derivatives of abundances (dY/dt for each species).
+        std::map<fourdst::atomic::Species, T> dydt{}; ///< Derivatives of abundances (dY/dt for each species).
         T nuclearEnergyGenerationRate = T(0.0); ///< Specific energy generation rate (e.g., erg/g/s).
 
         StepDerivatives() : dydt(), nuclearEnergyGenerationRate(T(0.0)) {}
@@ -120,7 +122,7 @@ namespace gridfire {
          * rate for the current state.
          */
         [[nodiscard]] virtual std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
@@ -153,20 +155,20 @@ namespace gridfire {
          * for the current state. The matrix can then be accessed via getJacobianMatrixEntry().
          */
         virtual void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
 
         virtual void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const std::vector<fourdst::atomic::Species>& activeSpecies
         ) const = 0;
 
         virtual void generateJacobianMatrix(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern& sparsityPattern
@@ -223,7 +225,7 @@ namespace gridfire {
          */
         [[nodiscard]] virtual double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
@@ -240,7 +242,7 @@ namespace gridfire {
          * generation rate with respect to temperature and density for the current state.
          */
         [[nodiscard]] virtual EnergyDerivatives calculateEpsDerivatives(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
@@ -266,13 +268,13 @@ namespace gridfire {
          * which can be used for timestep control, diagnostics, and reaction network culling.
          */
         [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
 
         [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
@@ -390,7 +392,7 @@ namespace gridfire {
          * which may involve adding or removing species and reactions based on the
          * specified depth. However, not all engines support this operation.
          */
-        virtual void rebuild(const fourdst::composition::Composition& comp, BuildDepthType depth) {
+        virtual void rebuild(const fourdst::composition::CompositionAbstract &comp, BuildDepthType depth) {
             throw std::logic_error("Setting network depth not supported by this engine.");
             // ReSharper disable once CppDFAUnreachableCode
         }
@@ -408,7 +410,7 @@ namespace gridfire {
          * example, by either QSE partitioning or reaction flow rate culling
          */
         virtual fourdst::composition::Composition collectComposition(
-            fourdst::composition::Composition& comp
+            fourdst::composition::CompositionAbstract &comp
         ) const = 0;
 
     };

@@ -5,7 +5,7 @@
 #include "gridfire/network.h"
 #include "gridfire/exceptions/exceptions.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/config/config.h"
 
 
@@ -176,7 +176,7 @@ namespace gridfire::solver {
             const DynamicEngine& engine;    ///< Reference to the engine.
             const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
             const size_t currentConvergenceFailures; ///< Total number of convergence failures
-            const size_t currentNonlinearIterations; ///< Total number of non linear iterations
+            const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
 
             /**
              * @brief Construct a context snapshot.
@@ -216,12 +216,12 @@ namespace gridfire::solver {
          * to CVODE, then the driver loop inspects and rethrows.
          */
         struct CVODEUserData {
-            CVODESolverStrategy* solver_instance; // Pointer back to the class instance
-            DynamicEngine* engine;
-            double T9;
-            double rho;
-            double energy;
-            const std::vector<fourdst::atomic::Species>* networkSpecies;
+            CVODESolverStrategy* solver_instance{}; // Pointer back to the class instance
+            DynamicEngine* engine{};
+            double T9{};
+            double rho{};
+            double energy{};
+            const std::vector<fourdst::atomic::Species>* networkSpecies{};
             std::unique_ptr<exceptions::StaleEngineTrigger> captured_exception = nullptr;
         };
 

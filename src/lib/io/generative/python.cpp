@@ -1,11 +1,9 @@
 #include "gridfire/io/generative/python.h"
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include <string>
 #include <vector>
 #include <format>
-#include <algorithm>
-#include <ranges>
 #include <fstream>
 
 #include <optional>
@@ -14,7 +12,7 @@
 
 namespace {
     template <typename T>
-    std::string join(std::vector<T> arr, std::string delim) {
+    std::string join(std::vector<T> arr, const std::string& delim) {
         if (arr.empty()) return {};
 
         size_t total = delim.size() * (arr.size() - 1);
@@ -142,7 +140,7 @@ namespace gridfire::io::gen {
     std::string exportEngineToPy(const gridfire::DynamicEngine& engine) {
         auto reactions = engine.getNetworkReactions();
         std::vector<std::string> functions;
-        functions.push_back(R"(import numpy as np
+        functions.emplace_back(R"(import numpy as np
 from typing import Dict, List, Tuple, Callable)");
         functions.push_back(tfFunc);
         for (const auto& reaction : reactions) {

@@ -101,8 +101,7 @@ namespace gridfire::policy {
         "d(p,g)he3",
         "he4(he3,g)be7",
         "be7(p,g)b8",
-        "b8(,e+)be8",
-        "be8(,a)he4"
+        "b8(,e+ a)he4"
         }, 0.001) {}
 
     std::unique_ptr<ReactionChainPolicy> ProtonProtonIChainPolicy::clone() const {

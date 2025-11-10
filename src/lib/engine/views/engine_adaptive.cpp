@@ -91,12 +91,6 @@ namespace gridfire {
 
         updatedNetIn.composition = baseUpdatedComposition;
 
-        bool didFinalize = updatedNetIn.composition.finalize(false);
-        if (!didFinalize) {
-            LOG_ERROR(m_logger, "Failed to finalize composition during adaptive engine view update. Check input mass fractions for validity.");
-            throw std::runtime_error("Failed to finalize composition during adaptive engine view update.");
-        }
-
         LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 
         auto [allFlows, composition] = calculateAllReactionFlows(updatedNetIn);
@@ -148,7 +142,7 @@ namespace gridfire {
     }
 
     std::expected<StepDerivatives<double>, expectations::StaleEngineError> AdaptiveEngineView::calculateRHSAndEnergy(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -164,7 +158,7 @@ namespace gridfire {
     }
 
     EnergyDerivatives AdaptiveEngineView::calculateEpsDerivatives(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -173,7 +167,7 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -181,7 +175,7 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies
@@ -192,7 +186,7 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::generateJacobianMatrix(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
@@ -225,7 +219,7 @@ namespace gridfire {
 
     double AdaptiveEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -249,7 +243,7 @@ namespace gridfire {
     }
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> AdaptiveEngineView::getSpeciesTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -276,7 +270,7 @@ namespace gridfire {
 
     std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError>
     AdaptiveEngineView::getSpeciesDestructionTimescales(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -308,8 +302,8 @@ namespace gridfire {
 
     std::vector<double> AdaptiveEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
         std::vector<double> Y(m_activeSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [symbol, entry] : netIn.composition) {
-            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        for (const auto& [species, y] : netIn.composition) {
+            Y[getSpeciesIndex(species)] = y; // Map species to their molar abundance
         }
         return Y; // Return the vector of molar abundances
     }
@@ -319,14 +313,13 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition AdaptiveEngineView::collectComposition(
-        fourdst::composition::Composition &comp
+        fourdst::composition::CompositionAbstract &comp
     ) const {
         fourdst::composition::Composition result = m_baseEngine.collectComposition(comp); // Step one is to bubble the results from lower levels of the engine chain up
 
         for (const auto& species : m_activeSpecies) {
-            if (!result.hasSpecies(species)) {
+            if (!result.contains(species)) {
                 result.registerSpecies(species);
-                result.setMassFraction(species, 0.0);
             }
         }
 
@@ -396,9 +389,8 @@ namespace gridfire {
 
         for (const auto& species: fullSpeciesList) {
             if (!netIn.composition.contains(species)) {
-                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Setting abundance to 0.0.", species.name());
+                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Registering", species.name());
                 composition.registerSpecies(species);
-                composition.setMassFraction(species, 0.0);
             }
         }
 
@@ -411,7 +403,7 @@ namespace gridfire {
         for (const auto& reaction : fullReactionSet) {
             const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, composition, T9, rho);
             reactionFlows.push_back({reaction.get(), flow});
-            LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction->id(), flow);
+            LOG_TRACE_L3(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction->id(), flow);
         }
         return {reactionFlows, composition};
     }
@@ -586,13 +578,13 @@ namespace gridfire {
                     const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
 
                     std::unordered_map<Species, double> speciesMassMap;
-                    for (const auto &entry: comp | std::views::values) {
-                        speciesMassMap[entry.isotope()] = entry.isotope().mass();
+                    for (const auto &sp: comp | std::views::keys) {
+                        speciesMassMap[sp] = sp.mass();
                     }
                     std::unordered_map<size_t, Species> speciesIndexMap;
-                    for (const auto& entry: comp | std::views::values) {
-                        size_t distance = std::distance(speciesMassMap.begin(), speciesMassMap.find(entry.isotope()));
-                        speciesIndexMap.emplace(distance, entry.isotope());
+                    for (const auto& sp: comp | std::views::keys) {
+                        size_t distance = std::distance(speciesMassMap.begin(), speciesMassMap.find(sp));
+                        speciesIndexMap.emplace(distance, sp);
                     }
                     double rate = reaction->calculate_rate(T9, rho, Ye, mue, Y, speciesIndexMap);
                     if (rate > maxSpeciesConsumptionRate) {

@@ -5,7 +5,7 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/network.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
@@ -102,7 +102,7 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -116,7 +116,7 @@ namespace gridfire {
          * @return A struct containing the derivatives of the energy generation rate with respect to temperature and density.
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
-            const fourdst::composition::Composition& comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -135,20 +135,20 @@ namespace gridfire {
          * @see AdaptiveEngineView::update()
          */
         void generateJacobianMatrix(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
         void generateJacobianMatrix(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const std::vector<fourdst::atomic::Species> &activeSpecies
         ) const override;
 
         void generateJacobianMatrix(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
@@ -220,7 +220,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -248,13 +248,13 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const fourdst::composition::Composition &comp,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -303,7 +303,7 @@ namespace gridfire {
 
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
-        fourdst::composition::Composition collectComposition(fourdst::composition::Composition &comp) const override;
+        fourdst::composition::Composition collectComposition(fourdst::composition::CompositionAbstract &comp) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
