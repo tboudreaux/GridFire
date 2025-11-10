@@ -184,7 +184,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool TimestepCollapseTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
-        if (m_timestep_window.empty()) {
+        if (m_timestep_window.size() < m_windowSize) {
             m_misses++;
             return false;
         }
@@ -193,11 +193,16 @@ namespace gridfire::trigger::solver::CVODE {
             averageTimestep += dt;
         }
         averageTimestep /= static_cast<double>(m_timestep_window.size());
-        if (m_relative && (std::abs(ctx.dt - averageTimestep) / averageTimestep) >= m_threshold) {
+        if (ctx.dt > averageTimestep) {
+            m_misses++;
+            return false; // Only trigger on timestep collapse (i.e., decrease in dt)
+        }
+        const double diff = std::abs(ctx.dt - averageTimestep);
+        if (m_relative &&  1-(diff / averageTimestep) <= m_threshold) {
             m_hits++;
             LOG_TRACE_L2(m_logger, "TimestepCollapseTrigger triggered at t = {} due to relative growth: dt = {}, average dt = {}, threshold = {}", ctx.t, ctx.dt, averageTimestep, m_threshold);
             return true;
-        } else if (!m_relative && std::abs(ctx.dt - averageTimestep) >= m_threshold) {
+        } else if (!m_relative && diff >= m_threshold) {
             m_hits++;
             LOG_TRACE_L2(m_logger, "TimestepCollapseTrigger triggered at t = {} due to absolute growth: dt = {}, average dt = {}, threshold = {}", ctx.t, ctx.dt, averageTimestep, m_threshold);
             return true;
@@ -207,13 +212,13 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     void TimestepCollapseTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
-        push_to_fixed_deque(m_timestep_window, ctx.dt, m_windowSize);
         m_updates++;
     }
 
     void TimestepCollapseTrigger::step(
         const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
     ) {
+        push_to_fixed_deque(m_timestep_window, ctx.dt, m_windowSize);
         // --- TimestepCollapseTrigger::step does nothing and is intentionally left blank --- //
     }
 
@@ -373,8 +378,7 @@ namespace gridfire::trigger::solver::CVODE {
     std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
         const double simulationTimeInterval,
         const double offDiagonalThreshold,
-        const double timestepGrowthThreshold,
-        const bool timestepGrowthRelative,
+        const double relativeTimestepCollapseThreshold,
         const size_t timestepGrowthWindowSize
     ) {
         using ctx_t = gridfire::solver::CVODESolverStrategy::TimestepContext;
@@ -389,14 +393,12 @@ namespace gridfire::trigger::solver::CVODE {
         // TODO: This logic likely needs to be revisited; however, for now it is easy enough to change and test and it works reasonably well
         auto simulationTimeTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<SimulationTimeTrigger>(simulationTimeInterval), 1000);
         auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(offDiagonalThreshold);
-        auto timestepGrowthTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<TimestepCollapseTrigger>(timestepGrowthThreshold, timestepGrowthRelative, timestepGrowthWindowSize), 10);
+        auto timestepGrowthTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<TimestepCollapseTrigger>(relativeTimestepCollapseThreshold, true, timestepGrowthWindowSize), 10);
         auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(5, 1.0f, 10);
 
-        // Combine the triggers using logical OR
-        auto orTriggerA = std::make_unique<OrTrigger<ctx_t>>(std::move(simulationTimeTrigger), std::move(offDiagTrigger));
-        auto orTriggerB = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerA), std::move(timestepGrowthTrigger));
-        // auto orTriggerC = std::make_unique<OrTrigger<ctx_t>>(std::move(orTriggerB), std::move(convergenceFailureTrigger));
 
-        return convergenceFailureTrigger;
+        auto convergenceOrTimestepTrigger = std::make_unique<OrTrigger<ctx_t>>(std::move(timestepGrowthTrigger), std::move(convergenceFailureTrigger));
+
+        return convergenceOrTimestepTrigger;
     }
 }
