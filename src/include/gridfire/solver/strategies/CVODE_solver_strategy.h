@@ -177,6 +177,7 @@ namespace gridfire::solver {
             const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
             const size_t currentConvergenceFailures; ///< Total number of convergence failures
             const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
+            const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>& reactionContributionMap; ///< Map of reaction contributions for the current step
 
             /**
              * @brief Construct a context snapshot.
@@ -192,7 +193,8 @@ namespace gridfire::solver {
                 const DynamicEngine& engine,
                 const std::vector<fourdst::atomic::Species>& networkSpecies,
                 size_t currentConvergenceFailure,
-                size_t currentNonlinearIterations
+                size_t currentNonlinearIterations,
+                const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap
             );
 
             /**
@@ -223,6 +225,11 @@ namespace gridfire::solver {
             double energy{};
             const std::vector<fourdst::atomic::Species>* networkSpecies{};
             std::unique_ptr<exceptions::StaleEngineTrigger> captured_exception = nullptr;
+            std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
+        };
+
+        struct CVODERHSOutputData {
+            std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> reaction_contribution_map;
         };
 
     private:
@@ -248,7 +255,7 @@ namespace gridfire::solver {
          * engine.calculateRHSAndEnergy(T9, rho). Negative small abundances are clamped to zero
          * before constructing Composition. On stale engine, throws exceptions::StaleEngineTrigger.
          */
-        void calculate_rhs(sunrealtype t, N_Vector y, N_Vector ydot, const CVODEUserData* data) const;
+        CVODERHSOutputData calculate_rhs(sunrealtype t, N_Vector y, N_Vector ydot, const CVODEUserData *data) const;
 
         /**
          * @brief Allocate and initialize CVODE vectors, linear algebra, tolerances, and constraints.

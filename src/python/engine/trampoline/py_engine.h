@@ -3,7 +3,7 @@
 #include "gridfire/engine/engine.h"
 #include "gridfire/expectations/expected_engine.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include <vector>
 #include <expected>

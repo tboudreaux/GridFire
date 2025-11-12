@@ -284,9 +284,11 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition DefinedEngineView::collectComposition(
-        fourdst::composition::CompositionAbstract &comp
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
     ) const {
-        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp);
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
 
         for (const auto& species : m_activeSpecies) {
             if (!result.contains(species)) {

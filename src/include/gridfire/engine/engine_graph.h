@@ -744,11 +744,15 @@ namespace gridfire {
          * can be tracked by an instance of GraphEngine are registered in the composition object.
          * @note If a species is in the input comp but not in the network
          * @param comp Input Composition
+         * @param T9
+         * @param rho
+         * @param T9
+         * @param rho
          * @return A new composition where all members of the active species set are registered. And any members not in comp
          * have a molar abundance set to 0.
          * @throws BadCollectionError If the input composition contains species not present in the network species set
          */
-        fourdst::composition::Composition collectComposition(fourdst::composition::CompositionAbstract &comp) const override;
+        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
 
 
     private:
@@ -1159,9 +1163,11 @@ namespace gridfire {
         const T c = static_cast<T>(m_constants.c); // Speed of light in cm/s
 
         // --- SINGLE LOOP OVER ALL REACTIONS ---
+        StepDerivatives<T> result{};
         for (size_t reactionIndex = 0; reactionIndex < m_reactions.size(); ++reactionIndex) {
             bool skipReaction = false;
             const auto& reaction = m_reactions[reactionIndex];
+
             if (!reactionLookup(reaction)) {
                 continue; // Skip this reaction if not in the "active" reaction set
             }
@@ -1173,9 +1179,6 @@ namespace gridfire {
             }
             if (skipReaction) {
                 continue; // Skip this reaction if any reactant is not present
-            }
-            if (reaction.type() == reaction::ReactionType::WEAK && !m_useReverseReactions) {
-                continue; // Skip weak reactions if reverse reactions are disabled
             }
 
             // 1. Calculate forward reaction rate
@@ -1193,7 +1196,7 @@ namespace gridfire {
             // 2. Calculate reverse reaction rate
             T reverseMolarFlow = static_cast<T>(0.0);
             // Do not calculate reverse flow for weak reactions since photodisintegration does not apply
-            if (reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB) {
+            if ((reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB) && m_useReverseReactions) {
                 reverseMolarFlow = calculateReverseMolarReactionFlow<T>(
                     T9,
                     rho,
@@ -1204,19 +1207,21 @@ namespace gridfire {
                 );
             }
 
+
             const T molarReactionFlow = forwardMolarReactionFlow - reverseMolarFlow; // Net molar reaction flow
 
             // 3. Use the rate to update all relevant species derivatives (dY/dt)
             for (size_t speciesIdx = 0; speciesIdx < m_networkSpecies.size(); ++speciesIdx) {
                 const auto& species = m_networkSpecies[speciesIdx];
                 const T nu_ij = static_cast<T>(reaction.stoichiometry(species));
-                dydt_vec[speciesIdx] += threshold_flag * molarReactionFlow * nu_ij;
+                const T dydt_increment = threshold_flag * molarReactionFlow * nu_ij;
+                dydt_vec[speciesIdx] += dydt_increment;
+                result.reactionContributions[species][std::string(reaction.id())] = dydt_increment;
             }
 
         }
 
         T massProductionRate = static_cast<T>(0.0); // [mol][s^-1]
-        StepDerivatives<T> result{};
         for (const auto& [species, deriv] : std::views::zip(m_networkSpecies, dydt_vec)) {
             massProductionRate += deriv * species.mass() * u;
             result.dydt[species] = deriv; // [mol][s^-1][g^-1]
@@ -1272,6 +1277,7 @@ namespace gridfire {
             if (count > 1) {
                 molar_concentration_product /= static_cast<T>(std::tgamma(static_cast<double>(count + 1))); // Gamma function for factorial
             }
+
         }
         // --- Final reaction flow calculation [mol][s^-1][g^-1] ---
         // Note: If the threshold flag ever gets set to zero this will return zero.

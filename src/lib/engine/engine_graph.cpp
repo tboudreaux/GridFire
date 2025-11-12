@@ -98,7 +98,7 @@ namespace gridfire {
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
             return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
         } else {
-            return calculateAllDerivatives<double>(
+            StepDerivatives<double> result = calculateAllDerivatives<double>(
                 comp.getMolarAbundanceVector(),
                 T9,
                 rho,
@@ -115,6 +115,7 @@ namespace gridfire {
                     return false;
                 }
             );
+            return result;
         }
     }
 
@@ -238,8 +239,6 @@ namespace gridfire {
                 throw std::runtime_error("Species not found in global atomic species database: " + std::string(name));
             }
         }
-        // TODO: Currently this works. We sort the vector based on mass so that for the same set of species we always get the same ordering and we get the same ordering as a composition with the same set of species
-        //       However, we need some checks so that when we get a composition we confirm that it is the same ordering / contains the same species. This is important for the ODE integrator to work properly.
         std::ranges::sort(m_networkSpecies, [](const fourdst::atomic::Species& a, const fourdst::atomic::Species& b) -> bool {
             return a.mass() < b.mass(); // Otherwise, sort by mass
         });
@@ -581,7 +580,9 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition GraphEngine::collectComposition(
-        fourdst::composition::CompositionAbstract &comp
+        const fourdst::composition::CompositionAbstract &comp,
+        double T9,
+        double rho
     ) const {
         for (const auto &species: comp.getRegisteredSpecies()) {
             if (!m_networkSpeciesMap.contains(species.name())) {
@@ -614,6 +615,7 @@ namespace gridfire {
             T9,
             rho
         );
+
 
         // --- Optimized loop ---
         std::vector<double> molarReactionFlows;
@@ -653,6 +655,7 @@ namespace gridfire {
                     precomputedReaction.symmetry_factor *
                     forwardAbundanceProduct *
                     std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
+
 
             // --- Reverse reaction flow ---
             // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
@@ -697,10 +700,34 @@ namespace gridfire {
                 const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
 
                 // Update the derivative for this species
-                result.dydt.at(species) += static_cast<double>(stoichiometricCoefficient) * R_j;
+                double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
+                result.dydt.at(species) += dydt_increment;
+                result.reactionContributions[species][std::string(reaction->id())] = dydt_increment;
             }
             reactionCounter++;
         }
+
+        // std::vector<std::string> reactionIDs;
+        // for (const auto& reaction: activeReactions) {
+        //     reactionIDs.push_back(std::string(reaction->id()));
+        // }
+        //
+        // std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+        // columns.push_back(std::make_unique<utils::Column<std::string>>("Reaction", reactionIDs));
+        // for (const auto& [species, contributions] : reactionContributions) {
+        //     std::vector<double> speciesData;
+        //     for (const auto& reactionID : reactionIDs) {
+        //         if (contributions.contains(reactionID)) {
+        //             speciesData.push_back(contributions.at(reactionID));
+        //         } else {
+        //             speciesData.push_back(0.0);
+        //         }
+        //     }
+        //     columns.push_back(std::make_unique<utils::Column<double>>(std::string(species.name()), speciesData));
+        // }
+
+        // utils::print_table("Contributions", columns);
+        // exit(0);
 
         // --- Calculate the nuclear energy generation rate ---
         double massProductionRate = 0.0; // [mol][s^-1]
@@ -1103,7 +1130,7 @@ namespace gridfire {
     ) const {
         const double Ye = comp.getElectronAbundance();
 
-        auto [dydt, _] = calculateAllDerivatives<double>(
+        auto [dydt, _, __] = calculateAllDerivatives<double>(
             comp.getMolarAbundanceVector(),
             T9,
             rho,
@@ -1155,7 +1182,7 @@ namespace gridfire {
             return std::nullopt; // Species not present
         };
 
-        auto [dydt, _] = calculateAllDerivatives<double>(
+        auto [dydt, _, __] = calculateAllDerivatives<double>(
             Y,
             T9,
             rho,
@@ -1246,7 +1273,7 @@ namespace gridfire {
 
         // 5. Call the actual templated function
         // We let T9 and rho be constant, so we pass them as fixed values.
-        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(
+        auto [dydt, nuclearEnergyGenerationRate, _] = calculateAllDerivatives<CppAD::AD<double>>(
             adY,
             adT9,
             adRho,

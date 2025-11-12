@@ -62,6 +62,7 @@ namespace gridfire {
     struct StepDerivatives {
         std::map<fourdst::atomic::Species, T> dydt{}; ///< Derivatives of abundances (dY/dt for each species).
         T nuclearEnergyGenerationRate = T(0.0); ///< Specific energy generation rate (e.g., erg/g/s).
+        std::map<fourdst::atomic::Species, std::unordered_map<std::string, T>> reactionContributions{};
 
         StepDerivatives() : dydt(), nuclearEnergyGenerationRate(T(0.0)) {}
     };
@@ -406,11 +407,15 @@ namespace gridfire {
          * @note It is up to each engine to decide how to handle filling in the return composition.
          * @note These methods return an unfinalized composition which must then be finalized by the caller
          * @param comp Input composition to "normalize".
+         * @param T9
+         * @param rho
          * @return An updated composition which is a superset of comp. This may contain species which were culled, for
          * example, by either QSE partitioning or reaction flow rate culling
          */
         virtual fourdst::composition::Composition collectComposition(
-            fourdst::composition::CompositionAbstract &comp
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const = 0;
 
     };

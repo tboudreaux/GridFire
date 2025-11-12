@@ -221,7 +221,7 @@ namespace gridfire{
 
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
-        fourdst::composition::Composition collectComposition(fourdst::composition::CompositionAbstract &comp) const override;
+        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;

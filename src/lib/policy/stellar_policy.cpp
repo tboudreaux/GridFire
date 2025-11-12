@@ -55,6 +55,7 @@ namespace gridfire::policy {
         );
 
         auto& graphRepr = dynamic_cast<GraphEngine&>(*m_network_stack.back().get());
+        // graphRepr.setPrecomputation(false);
         graphRepr.setUseReverseReactions(false);
 
 

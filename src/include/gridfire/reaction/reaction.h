@@ -521,13 +521,31 @@ namespace gridfire::reaction {
          * @brief Gets the vector of reactant species.
          * @return A const reference to the vector of reactants.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& reactants() const override { return m_reactants; }
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& reactants() const override {
+            if (!m_reactantsVec) {
+                m_reactantsVec.emplace(std::vector<fourdst::atomic::Species>());
+                m_reactantsVec->reserve(m_reactants.size());
+                for (const auto& reactant : m_reactants) {
+                    m_reactantsVec->push_back(reactant);
+                }
+            }
+            return m_reactantsVec.value();
+        }
 
         /**
          * @brief Gets the vector of product species.
          * @return A const reference to the vector of products.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& products() const override { return m_products; }
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& products() const override {
+            if (!m_productsVec) {
+                m_productsVec.emplace(std::vector<fourdst::atomic::Species>());
+                m_productsVec->reserve(m_products.size());
+                for (const auto& product : m_products) {
+                    m_productsVec->push_back(product);
+                }
+            }
+            return m_productsVec.value();
+        }
 
         /**
          * @brief Checks if this is a reverse reaction rate.
@@ -575,8 +593,12 @@ namespace gridfire::reaction {
         std::string m_peName; ///< Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d").
         int m_chapter;    ///< Chapter number from the REACLIB database, defining the reaction structure.
         double m_qValue = 0.0; ///< Q-value of the reaction in MeV.
-        std::vector<fourdst::atomic::Species> m_reactants; ///< Reactants of the reaction.
-        std::vector<fourdst::atomic::Species> m_products; ///< Products of the reaction.
+        std::set<fourdst::atomic::Species> m_reactants; ///< Reactants of the reaction.
+        std::set<fourdst::atomic::Species> m_products; ///< Products of the reaction.
+
+        mutable std::optional<std::vector<fourdst::atomic::Species>> m_reactantsVec;
+        mutable std::optional<std::vector<fourdst::atomic::Species>> m_productsVec;
+
         std::string m_sourceLabel; ///< Source label for the rate data (e.g., "wc12w", "st08").
         RateCoefficientSet m_rateCoefficients; ///< The seven rate coefficients.
         bool m_reverse = false; ///< Flag indicating if this is a reverse reaction rate.
@@ -746,7 +768,6 @@ namespace gridfire::reaction {
                        rate.a5 * T953 +
                        rate.a6 * logT9;
                 sum += CppAD::exp(exponent);
-                // return sum; // TODO: REMOVE OR COMMENT THIS. ITS FOR TESTING ONLY
             }
             return sum;
         }
@@ -912,6 +933,7 @@ namespace gridfire::reaction {
         std::vector<std::unique_ptr<Reaction>> m_reactions;
         std::string m_id;
         std::unordered_map<std::string, size_t> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
+        std::unordered_set<size_t> m_reactionHashes;
 
     };
 

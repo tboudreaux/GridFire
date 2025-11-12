@@ -147,8 +147,8 @@ namespace gridfire {
         const double rho
     ) const {
         validateState();
-        // TODO: Think about if I need to reach in and adjust the composition to zero out inactive species.
-        auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
+        fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
+        auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
@@ -313,9 +313,11 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition AdaptiveEngineView::collectComposition(
-        fourdst::composition::CompositionAbstract &comp
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
     ) const {
-        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp); // Step one is to bubble the results from lower levels of the engine chain up
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
 
         for (const auto& species : m_activeSpecies) {
             if (!result.contains(species)) {

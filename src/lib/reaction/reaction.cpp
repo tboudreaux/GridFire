@@ -40,8 +40,8 @@ namespace gridfire::reaction {
     m_peName(peName),
     m_chapter(chapter),
     m_qValue(qValue),
-    m_reactants(reactants),
-    m_products(products),
+    m_reactants(reactants.begin(), reactants.end()),
+    m_products(products.begin(), products.end()),
     m_sourceLabel(label),
     m_rateCoefficients(sets),
     m_reverse(reverse) {}
@@ -343,10 +343,12 @@ namespace gridfire::reaction {
             return; // Case where the reactions will be added later.
         }
         m_reactionNameMap.reserve(m_reactions.size());
+        m_reactionHashes.reserve(m_reactions.size());
         size_t i = 0;
         for (const auto& reaction : m_reactions) {
             m_id += reaction->id();
             m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
             i++;
         }
     }
@@ -354,11 +356,13 @@ namespace gridfire::reaction {
     ReactionSet::ReactionSet(const std::vector<Reaction *> &reactions) {
         m_reactions.reserve(reactions.size());
         m_reactionNameMap.reserve(reactions.size());
+        m_reactionHashes.reserve(reactions.size());
         size_t i = 0;
         for (const auto& reaction : reactions) {
             m_reactions.push_back(reaction->clone());
             m_id += reaction->id();
             m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
             i++;
         }
     }
@@ -367,14 +371,13 @@ namespace gridfire::reaction {
 
     ReactionSet::ReactionSet(const ReactionSet &other) {
         m_reactions.reserve(other.m_reactions.size());
-        for (const auto& reaction: other.m_reactions) {
-            m_reactions.push_back(reaction->clone());
-        }
-
+        m_reactionHashes.reserve(other.m_reactions.size());
         m_reactionNameMap.reserve(other.m_reactionNameMap.size());
         size_t i = 0;
-        for (const auto& reaction : m_reactions) {
+        for (const auto& reaction: other.m_reactions) {
+            m_reactions.push_back(reaction->clone());
             m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
             i++;
         }
     }
@@ -397,18 +400,23 @@ namespace gridfire::reaction {
         m_id += reaction_id;
 
         m_reactionNameMap.emplace(std::move(reaction_id), new_index);
+
+        m_reactionHashes.insert(reaction.hash(0));
     }
 
     void ReactionSet::add_reaction(std::unique_ptr<Reaction>&& reaction) {
         const std::size_t new_index = m_reactionNameMap.size();
 
         auto reaction_id = std::string(reaction->id());
+        size_t reaction_hash = reaction->hash(0);
 
         m_reactions.emplace_back(std::move(reaction));
 
         m_id += reaction_id;
 
         m_reactionNameMap.emplace(std::move(reaction_id), new_index);
+
+        m_reactionHashes.insert(reaction_hash);
     }
 
     void ReactionSet::extend(const ReactionSet &other) {
@@ -425,43 +433,32 @@ namespace gridfire::reaction {
     }
 
     void ReactionSet::remove_reaction(const Reaction& reaction) {
-        const auto reaction_id = std::string(reaction.id());
-        if (!m_reactionNameMap.contains(reaction_id)) {
+        const size_t rh = reaction.hash(0);
+        if (!m_reactionHashes.contains(rh)) {
             return;
         }
 
-        std::erase_if(m_reactions, [&reaction_id](const auto& r_ptr) {
-            return r_ptr->id() == reaction_id;
+        std::erase_if(m_reactions, [&rh](const auto& r_ptr) {
+            return r_ptr->hash(0) == rh;
         });
 
-        m_reactionNameMap.clear();
-        m_reactionNameMap.reserve(m_reactions.size());
-        for (size_t i = 0; i < m_reactions.size(); ++i) {
-            m_reactionNameMap.emplace(std::string(m_reactions[i]->id()), i);
-        }
+        m_reactionNameMap.erase(std::string(reaction.id()));
 
         m_id.clear();
         for (const auto& r_ptr : m_reactions) {
             m_id += r_ptr->id();
         }
+
+        m_reactionHashes.erase(rh);
     }
 
     bool ReactionSet::contains(const std::string_view& id) const {
-        for (const auto& reaction : m_reactions) {
-            if (reaction->id() == id) {
-                return true;
-            }
-        }
-        return false;
+        return m_reactionNameMap.contains(std::string(id));
     }
 
     bool ReactionSet::contains(const Reaction& reaction) const {
-        for (const auto& r : m_reactions) {
-            if (r->id() == reaction.id()) {
-                return true;
-            }
-        }
-        return false;
+        const size_t rh = reaction.hash(0);
+        return m_reactionHashes.contains(rh);
     }
 
     void ReactionSet::clear() {
@@ -505,11 +502,12 @@ namespace gridfire::reaction {
     }
 
     const Reaction& ReactionSet::operator[](const std::string_view& id) const {
-        if (const auto it = m_reactionNameMap.find(std::string(id)); it != m_reactionNameMap.end()) {
-            return *m_reactions[it->second];
+        if (!contains(id)) {
+            m_logger -> flush_log();
+            throw std::out_of_range("Reaction " + std::string(id) + " does not exist in ReactionSet.");
         }
-        m_logger -> flush_log();
-        throw std::out_of_range("Reaction " + std::string(id) + " does not exist in ReactionSet.");
+        const size_t idx = m_reactionNameMap.at(std::string(id));
+        return *m_reactions[idx];
     }
 
     bool ReactionSet::operator==(const ReactionSet& other) const {
@@ -523,7 +521,7 @@ namespace gridfire::reaction {
         return !(*this == other);
     }
 
-    uint64_t ReactionSet::hash(uint64_t seed) const {
+    uint64_t ReactionSet::hash(const uint64_t seed) const {
         if (m_reactions.empty()) {
             return XXHash64::hash(nullptr, 0, seed);
         }

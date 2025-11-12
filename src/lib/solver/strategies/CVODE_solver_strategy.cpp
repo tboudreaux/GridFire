@@ -16,10 +16,12 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include "fourdst/atomic/species.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
+#include "gridfire/exceptions/error_solver.h"
 
 namespace {
     std::unordered_map<int, std::string> cvode_ret_code_map {
@@ -59,9 +61,9 @@ namespace {
     void check_cvode_flag(const int flag, const std::string& func_name) {
         if (flag < 0) {
             if (!cvode_ret_code_map.contains(flag)) {
-                throw std::runtime_error("CVODE error in " + func_name + ": Unknown error code: " + std::to_string(flag));
+                throw gridfire::exceptions::CVODESolverFailureError("CVODE error in " + func_name + ": Unknown error code: " + std::to_string(flag));
             }
-            throw std::runtime_error("CVODE error in " + func_name + ": " + cvode_ret_code_map.at(flag));
+            throw gridfire::exceptions::CVODESolverFailureError("CVODE error in " + func_name + ": " + cvode_ret_code_map.at(flag));
         }
     }
 
@@ -91,7 +93,8 @@ namespace gridfire::solver {
         const DynamicEngine &engine,
         const std::vector<fourdst::atomic::Species> &networkSpecies,
         const size_t currentConvergenceFailure,
-        const size_t currentNonlinearIterations
+        const size_t currentNonlinearIterations,
+        const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap
     ) :
     t(t),
     state(state),
@@ -103,7 +106,8 @@ namespace gridfire::solver {
     engine(engine),
     networkSpecies(networkSpecies),
     currentConvergenceFailures(currentConvergenceFailure),
-    currentNonlinearIterations(currentNonlinearIterations)
+    currentNonlinearIterations(currentNonlinearIterations),
+    reactionContributionMap(reactionContributionMap)
     {}
 
     std::vector<std::tuple<std::string, std::string>> CVODESolverStrategy::TimestepContext::describe() const {
@@ -241,6 +245,13 @@ namespace gridfire::solver {
                     << "\n";
             }
 
+            static const std::map<fourdst::atomic::Species,
+                      std::unordered_map<std::string,double>> kEmptyMap{};
+
+            const auto& rcMap = user_data.reaction_contribution_map.has_value()
+                                  ? user_data.reaction_contribution_map.value()
+                                  : kEmptyMap;
+
             auto ctx = TimestepContext(
                 current_time,
                 m_Y,
@@ -252,7 +263,9 @@ namespace gridfire::solver {
                 m_engine,
                 m_engine.getNetworkSpecies(),
                 convFail_diff,
-                iter_diff);
+                iter_diff,
+                rcMap
+            );
 
             prev_nonlinear_iterations = nliters + total_nonlinear_iterations;
             prev_convergence_failures = nlcfails + total_convergence_failures;
@@ -459,7 +472,7 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", numSpecies);
 
         fourdst::composition::Composition topLevelComposition(m_engine.getNetworkSpecies(), y_vec);
-        fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition);
+        fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition, netIn.temperature/1e9, netIn.density);
 
         assert(outputComposition.getRegisteredSymbols().size() == equilibratedComposition.getRegisteredSymbols().size());
 
@@ -514,7 +527,8 @@ namespace gridfire::solver {
         const auto* instance = data->solver_instance;
 
         try {
-            instance->calculate_rhs(t, y, ydot, data);
+            const CVODERHSOutputData out = instance->calculate_rhs(t, y, ydot, data);
+            data->reaction_contribution_map = out.reaction_contribution_map;
             return 0;
         } catch (const exceptions::StaleEngineTrigger& e) {
             data->captured_exception = std::make_unique<exceptions::StaleEngineTrigger>(e);
@@ -564,7 +578,7 @@ namespace gridfire::solver {
         return 0;
     }
 
-    void CVODESolverStrategy::calculate_rhs(
+    CVODESolverStrategy::CVODERHSOutputData CVODESolverStrategy::calculate_rhs(
         const sunrealtype t,
         N_Vector y,
         N_Vector ydot,
@@ -581,14 +595,6 @@ namespace gridfire::solver {
                 y_data[i] = 0.0;
             }
         }
-
-        // PERF: The trade off of ensured index consistency is some performance here. If this becomes a bottleneck we can revisit.
-        //       The specific trade off is that we have decided to enforce that all interfaces accept composition objects rather
-        //       than raw vectors of molar abundances. This then lets any method lookup the species by name rather than relying on
-        //       the index in the vector being consistent. The trade off is that sometimes we need to construct a composition object
-        //       which, at the moment, requires a somewhat expensive set of operations. Perhaps in the future we could enforce
-        //       some consistent memory layout for the composition object to make this cheeper. That optimization would need to be
-        //       done in the libcomposition library though...
         std::vector<double> y_vec(y_data, y_data + numSpecies);
         fourdst::composition::Composition composition(m_engine.getNetworkSpecies(), y_vec);
 
@@ -598,13 +604,15 @@ namespace gridfire::solver {
         }
 
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-        const auto& [dydt, nuclearEnergyGenerationRate] = result.value();
+        const auto& [dydt, nuclearEnergyGenerationRate, reactionContributions] = result.value();
 
         for (size_t i = 0; i < numSpecies; ++i) {
             fourdst::atomic::Species species = m_engine.getNetworkSpecies()[i];
             ydot_data[i] = dydt.at(species);
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
+
+        return {reactionContributions};
     }
 
     void CVODESolverStrategy::initialize_cvode_integration_resources(

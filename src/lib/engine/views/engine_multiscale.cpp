@@ -17,34 +17,11 @@
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
+#include  "xxhash64.h"
+#include "fourdst/composition/utils/composition_hash.h"
+
 namespace {
     using namespace fourdst::atomic;
-    //TODO: Replace all calls to this function with composition.getMolarAbundanceVector() so that
-    //      we don't have to keep this function around. (Cant do this right now because there is not a
-    //      guarantee that this function will return the same ordering as the canonical vector representation)
-    std::vector<double> packCompositionToVector(
-        const fourdst::composition::Composition& composition,
-        const gridfire::DynamicEngine& engine
-    ) {
-        std::vector<double> Y(engine.getNetworkSpecies().size(), 0.0);
-        const auto& allSpecies = engine.getNetworkSpecies();
-        for (size_t i = 0; i < allSpecies.size(); ++i) {
-            const auto& species = allSpecies[i];
-            if (!composition.contains(species)) {
-                Y[i] = 0.0; // Species not in the composition, set to zero
-            } else {
-                Y[i] = composition.getMolarAbundance(species);
-            }
-        }
-        return Y;
-    }
-
-    template <class T>
-    void hash_combine(std::size_t& seed, const T& v) {
-        std::hash<T> hashed;
-        seed ^= hashed(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
-
     std::vector<std::vector<Species>> findConnectedComponentsBFS(
         const std::unordered_map<Species, std::vector<Species>>& graph,
         const std::vector<Species>& nodes
@@ -186,11 +163,14 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // Check the cache to see if the network needs to be repartitioned. Note that the QSECacheKey manages binning of T9, rho, and Y_full to ensure that small changes (which would likely not result in a repartitioning) do not trigger a cache miss.
-        const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+
+        const auto result = m_baseEngine.calculateRHSAndEnergy(qseComposition, T9, rho);
+
         if (!result) {
             return std::unexpected{result.error()};
         }
+
         auto deriv = result.value();
 
         for (const auto& species : m_algebraic_species) {
@@ -204,7 +184,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(qseComposition, T9, rho);
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -212,8 +193,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // We do not need to generate the jacobian for QSE species since those entries are by definition 0
-        m_baseEngine.generateJacobianMatrix(comp, T9, rho, m_dynamic_species);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, m_dynamic_species);
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -249,7 +230,9 @@ namespace gridfire {
             }
         }
 
-        m_baseEngine.generateJacobianMatrix(comp, T9, rho, dynamicActiveSpeciesIntersection);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+
+        m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, dynamicActiveSpeciesIntersection);
     }
 
     void MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -258,7 +241,8 @@ namespace gridfire {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, sparsityPattern);
     }
 
     double MultiscalePartitioningEngineView::getJacobianMatrixEntry(
@@ -292,19 +276,9 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // Fix the algebraic species to the equilibrium abundances we calculate.
-        fourdst::composition::Composition comp_mutable;
-        for (const auto& species : comp.getRegisteredSpecies()) {
-            comp_mutable.registerSpecies(species);
-            comp_mutable.setMolarAbundance(species, comp.getMolarAbundance(species));
-        }
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        for (const auto& species : m_algebraic_species) {
-            const double Yi = m_algebraic_abundances.at(species);
-            comp_mutable.setMolarAbundance(species, Yi);
-        }
-
-        return m_baseEngine.calculateMolarReactionFlow(reaction, comp_mutable, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, qseComposition, T9, rho);
     }
 
     const reaction::ReactionSet & MultiscalePartitioningEngineView::getNetworkReactions() const {
@@ -321,7 +295,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const auto result  = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result  = m_baseEngine.getSpeciesTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -338,7 +313,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -354,27 +330,13 @@ namespace gridfire {
 
         NetIn baseUpdatedNetIn = netIn;
         baseUpdatedNetIn.composition = baseUpdatedComposition;
-        const fourdst::composition::Composition equilibratedComposition = equilibrateNetwork(baseUpdatedNetIn);
-        std::unordered_map<Species, double> algebraicAbundances;
-        for (const auto& species : m_algebraic_species) {
-            algebraicAbundances.emplace(species, equilibratedComposition.getMolarAbundance(species));
-        }
-
-        m_algebraic_abundances = std::move(algebraicAbundances);
+        fourdst::composition::Composition equilibratedComposition = partitionNetwork(baseUpdatedNetIn);
 
         return equilibratedComposition;
     }
 
     bool MultiscalePartitioningEngineView::isStale(const NetIn &netIn) {
-        const auto key = QSECacheKey(
-            netIn.temperature,
-            netIn.density,
-            packCompositionToVector(netIn.composition, m_baseEngine)
-        );
-        if (m_qse_abundance_cache.contains(key)) {
-            return m_baseEngine.isStale(netIn); // The cache hit indicates the engine is not stale for the given conditions.
-        }
-        return true;
+        return m_baseEngine.isStale(netIn);
     }
 
     void MultiscalePartitioningEngineView::setScreeningModel(
@@ -392,10 +354,7 @@ namespace gridfire {
     }
 
     std::vector<std::vector<Species>> MultiscalePartitioningEngineView::analyzeTimescalePoolConnectivity(
-        const std::vector<std::vector<Species>> &timescale_pools,
-        const fourdst::composition::Composition &comp,
-        double T9,
-        double rho
+        const std::vector<std::vector<Species>> &timescale_pools
     ) const {
         std::vector<std::vector<Species>> final_connected_pools;
 
@@ -413,17 +372,22 @@ namespace gridfire {
 
     }
 
-    void MultiscalePartitioningEngineView::partitionNetwork(
-        const fourdst::composition::Composition &comp,
-        const double T9,
-        const double rho
+    fourdst::composition::Composition MultiscalePartitioningEngineView::partitionNetwork(
+        const NetIn &netIn
     ) {
-        // --- Step 0. Clear previous state ---
+        // --- Step 0. Prime the network ---
+        const PrimingReport primingReport = m_baseEngine.primeEngine(netIn);
+        const fourdst::composition::Composition& comp = primingReport.primedComposition;
+        const double T9 = netIn.temperature / 1e9;
+        const double rho = netIn.density;
+
+        // --- Step 0.5 Clear previous state ---
         LOG_TRACE_L1(m_logger, "Partitioning network...");
         LOG_TRACE_L1(m_logger, "Clearing previous state...");
         m_qse_groups.clear();
         m_dynamic_species.clear();
         m_algebraic_species.clear();
+        m_composition_cache.clear(); // We need to clear the cache now cause the same comp, temp, and density may result in a different value
 
         // --- Step 1. Identify distinct timescale regions ---
         LOG_TRACE_L1(m_logger, "Identifying fast reactions...");
@@ -449,7 +413,7 @@ namespace gridfire {
         }
 
         LOG_TRACE_L1(m_logger, "Preforming connectivity analysis on timescale pools...");
-        const std::vector<std::vector<Species>> connected_pools = analyzeTimescalePoolConnectivity(candidate_pools, comp, T9, rho);
+        const std::vector<std::vector<Species>> connected_pools = analyzeTimescalePoolConnectivity(candidate_pools);
         LOG_TRACE_L1(m_logger, "Found {} connected pools (compared to {} timescale pools) for QSE analysis.", connected_pools.size(), timescale_pools.size());
 
 
@@ -555,15 +519,12 @@ namespace gridfire {
             m_qse_groups.size(),
             m_qse_groups.size() == 1 ? "" : "s"
         );
-    }
 
-    void MultiscalePartitioningEngineView::partitionNetwork(
-        const NetIn &netIn
-    ) {
-        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
-        const double rho = netIn.density; // Density in g/cm^3
-
-        partitionNetwork(netIn.composition, T9, rho);
+        // Sort the QSE groups by mean timescale so that fastest groups get equilibrated first (as these may feed slower groups)
+        std::ranges::sort(m_qse_groups, [](const QSEGroup& a, const QSEGroup& b) {
+            return a.mean_timescale < b.mean_timescale;
+        });
+        return getNormalizedEquilibratedComposition(comp, T9, rho);
     }
 
     void MultiscalePartitioningEngineView::exportToDot(
@@ -593,6 +554,7 @@ namespace gridfire {
             }
         }
 
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
         // Calculate reaction flows and find min/max for logarithmic scaling of transparency
         std::vector<double> reaction_flows;
         reaction_flows.reserve(all_reactions.size());
@@ -600,7 +562,7 @@ namespace gridfire {
         double max_log_flow = std::numeric_limits<double>::lowest();
 
         for (const auto& reaction : all_reactions) {
-            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
+            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, qseComposition, T9, rho));
             reaction_flows.push_back(flow);
             if (flow > 1e-99) { // Avoid log(0)
                 double log_flow = std::log10(flow);
@@ -776,7 +738,7 @@ namespace gridfire {
 
 
     std::vector<double> MultiscalePartitioningEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
-        std::vector<double> Y(m_dynamic_species.size(), 0.0); // Initialize with zeros
+        std::vector<double> Y(netIn.composition.size(), 0.0); // Initialize with zeros
         for (const auto& [sp, y] : netIn.composition) {
             Y[getSpeciesIndex(sp)] = y; // Map species to their molar abundance
         }
@@ -804,33 +766,6 @@ namespace gridfire {
         return m_baseEngine.primeEngine(netIn);
     }
 
-    fourdst::composition::Composition MultiscalePartitioningEngineView::equilibrateNetwork(
-        const fourdst::composition::Composition &comp,
-        const double T9,
-        const double rho
-    ) {
-        partitionNetwork(comp, T9, rho);
-        fourdst::composition::Composition qseComposition = solveQSEAbundances(comp, T9, rho);
-
-        for (const auto &[sp, y]: qseComposition) {
-            if (y < 0.0 && std::abs(y) < 1e-20) {
-                qseComposition.setMolarAbundance(sp, 0.0); // Avoid negative mass fractions
-            }
-        }
-
-        return qseComposition;
-    }
-
-    fourdst::composition::Composition MultiscalePartitioningEngineView::equilibrateNetwork(
-        const NetIn &netIn
-    ) {
-        const PrimingReport primingReport = m_baseEngine.primeEngine(netIn);
-
-        const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
-        const double rho = netIn.density; // Density in g/cm^3
-
-        return equilibrateNetwork(primingReport.primedComposition, T9, rho);
-    }
 
     bool MultiscalePartitioningEngineView::involvesSpecies(
         const Species &species
@@ -852,30 +787,43 @@ namespace gridfire {
         return std::ranges::find(m_dynamic_species, species) != m_dynamic_species.end();
     }
 
-    fourdst::composition::Composition MultiscalePartitioningEngineView::collectComposition(
-        fourdst::composition::CompositionAbstract &comp
+    fourdst::composition::Composition MultiscalePartitioningEngineView::getNormalizedEquilibratedComposition(
+        const fourdst::composition::CompositionAbstract& comp,
+        const double T9,
+        const double rho
     ) const {
-        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp);
-        std::map<Species, double> Ym; // Use an ordered map here so that this is ordered by atomic mass (which is the </> comparator for Species)
-        for (const auto& [sp, y] : result) {
-            Ym.emplace(sp, y);
+        const std::array<uint64_t, 3> hashes = {
+            fourdst::composition::utils::CompositionHash::hash_exact(comp),
+            std::hash<double>()(T9),
+            std::hash<double>()(rho)
+        };
+
+        const uint64_t composite_hash = XXHash64::hash(hashes.begin(), sizeof(uint64_t) * 3, 0);
+        if (m_composition_cache.contains(composite_hash)) {
+            LOG_TRACE_L1(m_logger, "Cache Hit in Multiscale Partitioning Engine View for composition at T9 = {}, rho = {}.", T9, rho);
+            return m_composition_cache.at(composite_hash);
         }
-        for (const auto& [species, Yi] : m_algebraic_abundances) {
-            if (!Ym.contains(species)) {
-                throw exceptions::BadCollectionError("MuiltiscalePartitioningEngineView failed to collect composition for species " + std::string(species.name()) + " as the base engine did not report that species present in its composition!");
+        fourdst::composition::Composition qseComposition = solveQSEAbundances(comp, T9, rho);
+
+        for (const auto &[sp, y]: qseComposition) {
+            if (y < 0.0 && std::abs(y) < 1e-20) {
+                qseComposition.setMolarAbundance(sp, 0.0); // normalize small negative abundances to zero
             }
-            Ym.at(species) = Yi;
         }
-        std::vector<double> Y;
-        std::vector<std::string> speciesNames;
-        Y.reserve(Ym.size());
+        m_composition_cache[composite_hash] = qseComposition;
 
-        for (const auto& [species, Yi] : Ym) {
-            Y.emplace_back(Yi);
-            speciesNames.emplace_back(species.name());
-        }
+        return qseComposition;
+    }
 
-        return {speciesNames, Y};
+    fourdst::composition::Composition MultiscalePartitioningEngineView::collectComposition(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        const fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
+        fourdst::composition::Composition qseComposition = solveQSEAbundances(result, T9, rho);
+
+        return qseComposition;
     }
 
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(const Species &species) const {
@@ -1201,32 +1149,20 @@ namespace gridfire {
     }
 
     fourdst::composition::Composition MultiscalePartitioningEngineView::solveQSEAbundances(
-        const fourdst::composition::Composition &comp,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
-    ) {
+    ) const {
         LOG_TRACE_L1(m_logger, "Solving for QSE abundances...");
 
-        // Sort by timescale to solve fastest QSE groups first (these can seed slower groups)
-        std::ranges::sort(m_qse_groups, [](const QSEGroup& a, const QSEGroup& b) {
-            return a.mean_timescale < b.mean_timescale;
-        });
-        fourdst::composition::Composition outputComposition = comp;
+        fourdst::composition::Composition outputComposition(comp.getRegisteredSpecies());
+        for (const auto& [sp, y]: comp) {
+            outputComposition.setMolarAbundance(sp, y);
+        }
 
         for (const auto&[is_in_equilibrium, algebraic_species, seed_species, mean_timescale] : m_qse_groups) {
             if (!is_in_equilibrium || (algebraic_species.empty() && seed_species.empty())) {
                 continue;
-            }
-            fourdst::composition::Composition normalized_composition = comp;
-            for (const auto& species: algebraic_species) {
-                if (!normalized_composition.contains(species)) {
-                    normalized_composition.registerSpecies(species);
-                }
-            }
-            for (const auto& species: seed_species) {
-                if (!normalized_composition.contains(species)) {
-                    normalized_composition.registerSpecies(species);
-                }
             }
 
             Eigen::VectorXd Y_scale(algebraic_species.size());
@@ -1235,14 +1171,14 @@ namespace gridfire {
             std::unordered_map<Species, size_t> species_to_index_map;
             for (const auto& species : algebraic_species) {
                 constexpr double abundance_floor = 1.0e-100;
-                const double initial_abundance = normalized_composition.getMolarAbundance(species);
+                const double initial_abundance = comp.getMolarAbundance(species);
                 const double Y = std::max(initial_abundance, abundance_floor);
                 v_initial(i) = std::log(Y);
                 species_to_index_map.emplace(species, i);
                 i++;
             }
 
-            EigenFunctor functor(*this, algebraic_species, normalized_composition, T9, rho, Y_scale, species_to_index_map);
+            EigenFunctor functor(*this, algebraic_species, comp, T9, rho, Y_scale, species_to_index_map);
             Eigen::LevenbergMarquardt lm(functor);
             lm.parameters.ftol = 1.0e-10;
             lm.parameters.xtol = 1.0e-10;
@@ -1275,7 +1211,7 @@ namespace gridfire {
                     m_logger,
                     "During QSE solving species {} started with a molar abundance of {} and ended with an abundance of {}.",
                     species.name(),
-                    normalized_composition.getMolarAbundance(species),
+                    comp.getMolarAbundance(species),
                     Y_final_qse(i)
                 );
                 // double Xi = Y_final_qse(i) * species.mass(); // Convert from molar abundance to mass fraction
@@ -1488,23 +1424,28 @@ namespace gridfire {
     }
 
 
+     //////////////////////////////////////
+    /// Eigen Functor Member Functions ///
+   /////////////////////////////////////
+
+
     int MultiscalePartitioningEngineView::EigenFunctor::operator()(const InputType &v_qse, OutputType &f_qse) const {
-        fourdst::composition::Composition comp_trial = m_initial_comp;
+        fourdst::composition::Composition comp_trial(m_initial_comp.getRegisteredSpecies());
+        for (const auto& [sp, y] : m_initial_comp) {
+            comp_trial.setMolarAbundance(sp, y);
+        }
         Eigen::VectorXd y_qse = v_qse.array().exp(); // Convert to physical abundances using exponential scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.contains(std::string(species.name()))) {
-                comp_trial.registerSpecies(species);
-            }
             auto index = static_cast<long>(m_qse_solve_species_index_map.at(species));
             comp_trial.setMolarAbundance(species, y_qse[index]);
         }
 
-        const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
+        const auto result = m_view.getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
         if (!result) {
             throw exceptions::StaleEngineError("Failed to calculate RHS and energy due to stale engine state");
         }
-        const auto&[dydt, nuclearEnergyGenerationRate] = result.value();
+        const auto&[dydt, nuclearEnergyGenerationRate, _] = result.value();
         f_qse.resize(static_cast<long>(m_qse_solve_species.size()));
         long i = 0;
         // TODO: make sure that just counting up i is a valid approach, this is a possible place an indexing bug may have crept in
@@ -1514,7 +1455,7 @@ namespace gridfire {
             i++;
         }
         LOG_TRACE_L2(
-            m_view->m_logger,
+            m_view.m_logger,
             "Functor evaluation at T9 = {}, rho = {}, y_qse = <{}> complete. ||f|| = {}",
             m_T9,
             m_rho,
@@ -1531,7 +1472,7 @@ namespace gridfire {
             f_qse.norm()
         );
         LOG_TRACE_L3(
-            m_view->m_logger,
+            m_view.m_logger,
             "{}",
             [&]() -> std::string {
                 std::stringstream ss;
@@ -1546,24 +1487,24 @@ namespace gridfire {
     }
 
     int MultiscalePartitioningEngineView::EigenFunctor::df(const InputType &v_qse, JacobianType &J_qse) const {
-        fourdst::composition::Composition comp_trial = m_initial_comp;
+        fourdst::composition::Composition comp_trial(m_initial_comp.getRegisteredSpecies());
+        for (const auto& [sp, y] : m_initial_comp) {
+            comp_trial.setMolarAbundance(sp, y);
+        }
         Eigen::VectorXd y_qse = v_qse.array().exp(); // Convert to physical abundances using exponential scaling
 
         for (const auto& species: m_qse_solve_species) {
-            if (!comp_trial.contains(std::string(species.name()))) {
-                comp_trial.registerSpecies(species);
-            }
             const double molarAbundance = y_qse[static_cast<long>(m_qse_solve_species_index_map.at(species))];
             comp_trial.setMolarAbundance(species, molarAbundance);
         }
 
         std::vector<Species> qse_species_vector(m_qse_solve_species.begin(), m_qse_solve_species.end());
-        m_view->getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho, qse_species_vector);
-        const auto result = m_view->getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
+        m_view.getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho, qse_species_vector);
+        const auto result = m_view.getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
         if (!result) {
             throw exceptions::StaleEngineError("Failed to calculate RHS and energy due to stale engine state");
         }
-        const auto&[dydt, nuclearEnergyGenerationRate] = result.value();
+        const auto&[dydt, nuclearEnergyGenerationRate, _] = result.value();
 
         const long N = static_cast<long>(m_qse_solve_species.size());
         J_qse.resize(N, N);
@@ -1571,12 +1512,12 @@ namespace gridfire {
         for (const auto& rowSpecies : m_qse_solve_species) {
             long colID = 0;
             for (const auto& colSpecies: m_qse_solve_species) {
-                J_qse(rowID, colID) = m_view->getBaseEngine().getJacobianMatrixEntry(
+                J_qse(rowID, colID) = m_view.getBaseEngine().getJacobianMatrixEntry(
                     rowSpecies,
                     colSpecies
                 );
                 colID += 1;
-                LOG_TRACE_L3(m_view->m_logger, "Jacobian[{}, {}] (d(dY({}))/dY({})) = {}", rowID, colID - 1, rowSpecies.name(), colSpecies.name(), J_qse(rowID, colID - 1));
+                LOG_TRACE_L3(m_view.m_logger, "Jacobian[{}, {}] (d(dY({}))/dY({})) = {}", rowID, colID - 1, rowSpecies.name(), colSpecies.name(), J_qse(rowID, colID - 1));
             }
             rowID += 1;
         }
@@ -1597,46 +1538,12 @@ namespace gridfire {
     }
 
 
-    QSECacheKey::QSECacheKey(
-        const double T9,
-        const double rho,
-        const std::vector<double> &Y
-    ) :
-    m_T9(T9),
-    m_rho(rho),
-    m_Y(Y) {
-        m_hash = hash();
-    }
 
-    size_t QSECacheKey::hash() const {
-        std::size_t seed = 0;
+      /////////////////////////////////
+     /// QSEGroup Member Functions ///
+    ////////////////////////////////
 
-        hash_combine(seed, m_Y.size());
 
-        hash_combine(seed, bin(m_T9, m_cacheConfig.T9_tol));
-        hash_combine(seed, bin(m_rho, m_cacheConfig.rho_tol));
-
-        double negThresh = 1e-10; // Threshold for considering a value as negative.
-        for (double Yi : m_Y) {
-            if (Yi < 0.0 && std::abs(Yi) < negThresh) {
-                Yi = 0.0; // Avoid negative abundances
-            } else if (Yi < 0.0 && std::abs(Yi) >= negThresh) {
-                throw std::invalid_argument("Yi should be positive for valid hashing (expected Yi > 0, received " + std::to_string(Yi) + ")");
-            }
-            hash_combine(seed, bin(Yi, m_cacheConfig.Yi_tol));
-        }
-
-        return seed;
-
-    }
-
-    long QSECacheKey::bin(const double value, const double tol) {
-        return static_cast<long>(std::floor(value / tol));
-    }
-
-    bool QSECacheKey::operator==(const QSECacheKey &other) const {
-        return m_hash == other.m_hash;
-    }
 
     bool MultiscalePartitioningEngineView::QSEGroup::operator==(const QSEGroup &other) const {
        return mean_timescale == other.mean_timescale;
@@ -1707,36 +1614,4 @@ namespace gridfire {
         return ss.str();
 
     }
-
-    void MultiscalePartitioningEngineView::CacheStats::hit(const operators op) {
-        if (op == operators::All) {
-            throw std::invalid_argument("Cannot use 'ALL' as an operator for a hit");
-        }
-
-        m_hit ++;
-        m_operatorHits[op]++;
-    }
-    void MultiscalePartitioningEngineView::CacheStats::miss(const operators op) {
-        if (op == operators::All) {
-            throw std::invalid_argument("Cannot use 'ALL' as an operator for a miss");
-        }
-
-        m_miss ++;
-        m_operatorMisses[op]++;
-    }
-
-    size_t MultiscalePartitioningEngineView::CacheStats::hits(const operators op) const {
-        if (op == operators::All) {
-            return m_hit;
-        }
-        return m_operatorHits.at(op);
-    }
-
-    size_t MultiscalePartitioningEngineView::CacheStats::misses(const operators op) const {
-        if (op == operators::All) {
-            return m_miss;
-        }
-        return m_operatorMisses.at(op);
-    }
-
 }
