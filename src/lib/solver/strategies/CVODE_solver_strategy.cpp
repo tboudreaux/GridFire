@@ -24,6 +24,8 @@
 #include "gridfire/exceptions/error_solver.h"
 
 namespace {
+    constexpr double MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN = 1e-100;
+
     std::unordered_map<int, std::string> cvode_ret_code_map {
         {0, "CV_SUCCESS: The solver succeeded."},
         {1, "CV_TSTOP_RETURN: The solver reached the specified stopping time."},
@@ -77,6 +79,34 @@ namespace {
 #endif
         check_cvode_flag(vec == nullptr ? -1 : 0, "N_VNew");
         return vec;
+    }
+
+    gridfire::NetworkJacobian regularize_jacobian(const gridfire::NetworkJacobian& jacobian, const fourdst::composition::CompositionAbstract& comp, std::optional<quill::Logger*> logger = std::nullopt) {
+        const std::vector<gridfire::JacobianEntry> infs = jacobian.infs();
+        const std::vector<gridfire::JacobianEntry> nans = jacobian.nans();
+        if (infs.size() == 0 && nans.size() == 0) {
+            return jacobian;
+        }
+
+        gridfire::NetworkJacobian newJacobian = jacobian;
+        for (const auto& [iSp, dSp] : infs | std::views::keys) {
+            if (comp.getMolarAbundance(iSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN || comp.getMolarAbundance(dSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN) {
+                newJacobian.set(iSp, dSp, 0.0);
+                if (logger) {
+                    LOG_TRACE_L1(logger.value(), "Regularized Jacobian entry ({}, {}) from inf to 0.0 due to low abundance.", iSp.name(), dSp.name());
+                }
+            }
+        }
+        for (const auto& [iSp, dSp] : nans | std::views::keys) {
+            if (comp.getMolarAbundance(iSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN || comp.getMolarAbundance(dSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN) {
+                newJacobian.set(iSp, dSp, 0.0);
+                if (logger) {
+                    LOG_TRACE_L1(logger.value(), "Regularized Jacobian entry ({}, {}) from inf to 0.0 due to low abundance.", iSp.name(), dSp.name());
+                }
+            }
+        }
+
+        return newJacobian;
     }
 }
 
@@ -206,7 +236,9 @@ namespace gridfire::solver {
 
             check_cvode_flag(CVodeSetUserData(m_cvode_mem, &user_data), "CVodeSetUserData");
 
+            LOG_TRACE_L2(m_logger, "Taking one CVODE step...");
             int flag = CVode(m_cvode_mem, netIn.tMax, m_Y, &current_time, CV_ONE_STEP);
+            LOG_TRACE_L2(m_logger, "CVODE step complete. Current time: {}, step status: {}", current_time, cvode_ret_code_map.at(flag));
 
             if (user_data.captured_exception){
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
@@ -539,13 +571,17 @@ namespace gridfire::solver {
         const auto* instance = data->solver_instance;
 
         try {
+            LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper called at time {}", t);
             const CVODERHSOutputData out = instance->calculate_rhs(t, y, ydot, data);
             data->reaction_contribution_map = out.reaction_contribution_map;
+            LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper completed successfully at time {}", t);
             return 0;
         } catch (const exceptions::StaleEngineTrigger& e) {
+            LOG_ERROR(instance->m_logger, "StaleEngineTrigger caught in CVODE RHS wrapper at time {}: {}", t, e.what());
             data->captured_exception = std::make_unique<exceptions::StaleEngineTrigger>(e);
             return 1; // 1 Indicates a recoverable error, CVODE will retry the step
         } catch (...) {
+            LOG_CRITICAL(instance->m_logger, "Unrecoverable and Unknown exception caught in CVODE RHS wrapper at time {}", t);
             return -1; // Some unrecoverable error
         }
     }
@@ -562,9 +598,12 @@ namespace gridfire::solver {
     ) {
         const auto* data = static_cast<CVODEUserData*>(user_data);
         const auto* engine = data->engine;
+        const auto* solver_instance = data->solver_instance;
 
+        LOG_TRACE_L2(solver_instance->m_logger, "CVODE Jacobian wrapper starting");
         const size_t numSpecies = engine->getNetworkSpecies().size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
+
 
         // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
         // small negative numbers which can result in NaN's and more immediate crashes in the composition
@@ -576,12 +615,75 @@ namespace gridfire::solver {
         }
         std::vector<double> y_vec(y_data, y_data + numSpecies);
         fourdst::composition::Composition composition(engine->getNetworkSpecies(), y_vec);
+        LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {} with {} species in composition (mean molecular mass: {})", t, composition.size(), composition.getMeanParticleMass());
+        LOG_TRACE_L2(solver_instance->m_logger, "Composition is {}", [&composition]() -> std::string {
+            std::stringstream ss;
+            size_t i = 0;
+            for (const auto& [species, abundance] : composition) {
+                ss << species.name() << ": " << abundance;
+                if (i < composition.size() - 1) {
+                    ss << ", ";
+                }
+                i++;
+            }
+            return ss.str();
+        }());
 
+        LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {}", t);
         NetworkJacobian jac = engine->generateJacobianMatrix(composition, data->T9, data->rho);
+        LOG_TRACE_L2(solver_instance->m_logger, "Regularizing Jacobian matrix at time {}", t);
+        jac = regularize_jacobian(jac, composition, solver_instance->m_logger);
+        LOG_TRACE_L2(solver_instance->m_logger, "Done regularizing Jacobian matrix at time {}", t);
+        if (jac.infs().size() != 0 || jac.nans().size() != 0) {
+            auto infString = [&jac]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                std::vector<JacobianEntry> entries = jac.infs();
+                for (const auto &[fst, snd]: entries | std::views::keys) {
+                    ss << "J(" << fst.name() << ", " << snd.name() << ")";
+                    if (i < entries.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                if (entries.size() == 0) {
+                    ss << "None";
+                }
+                return ss.str();
+            };
+            auto nanString = [&jac]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                std::vector<JacobianEntry> entries = jac.nans();
+                for (const auto &[fst, snd]: entries | std::views::keys) {
+                    ss << "J(" << fst.name() << ", " << snd.name() << ")";
+                    if (i < entries.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                if (entries.size() == 0) {
+                    ss << "None";
+                }
+                return ss.str();
+            };
+            LOG_ERROR(
+                solver_instance->m_logger,
+                "Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. GridFire will now halt.",
+                t,
+                jac.infs().size(),
+                infString(),
+                jac.nans().size(),
+                nanString()
+            );
+            throw exceptions::IllConditionedJacobianError(std::format("Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers.", t, jac.infs().size(), infString(), jac.nans().size(), nanString()));
+        }
+        LOG_TRACE_L2(solver_instance->m_logger, "Jacobian matrix created at time {} of shape ({} x {}) and rank {}", t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), jac.rank());
 
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const long int N = SUNDenseMatrix_Columns(J);
 
+        LOG_TRACE_L2(solver_instance->m_logger, "Transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
         for (size_t j = 0; j < numSpecies; ++j) {
             const fourdst::atomic::Species& species_j = engine->getNetworkSpecies()[j];
             for (size_t i = 0; i < numSpecies; ++i) {
@@ -589,16 +691,10 @@ namespace gridfire::solver {
                 // J(i,j) = d(f_i)/d(y_j)
                 // Column-major order format for SUNDenseMatrix: J_data[j*N + i] indexes J(i,j)
                 const double dYi_dt = jac(species_i, species_j);
-                // if (i == j && dYi_dt == 0 && engine->getSpeciesStatus(species_i) == SpeciesStatus::ACTIVE) {
-                //     std::cerr << "Warning: Jacobian matrix has a zero on the diagonal for species " << species_i.name() << ". This may lead to solver failure or pathological stiffness.\n";
-                //     // throw exceptions::SingularJacobianError(
-                //     //     "Jacobian matrix has a zero on the diagonal for species " + std::string(species_i.name()) +
-                //     //     ". This will either lead to solver failure or pathological stiffness. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers."
-                //     // );
-                // }
                 J_data[j * N + i] = dYi_dt;
             }
         }
+        LOG_TRACE_L2(solver_instance->m_logger, "Done transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
 
         // For now assume that the energy derivatives wrt. abundances are zero
         // TODO: Need a better way to build this part of the output jacobian so it properly pushes the solver
@@ -631,13 +727,28 @@ namespace gridfire::solver {
         std::vector<double> y_vec(y_data, y_data + numSpecies);
         fourdst::composition::Composition composition(m_engine.getNetworkSpecies(), y_vec);
 
+        LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition (mean molecular mass: {})", t, composition.size(), composition.getMeanParticleMass());
         const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
         if (!result) {
+            LOG_WARNING(m_logger, "StaleEngineTrigger thrown during RHS calculation at time {}", t);
             throw exceptions::StaleEngineTrigger({data->T9, data->rho, y_vec, t, m_num_steps, y_data[numSpecies]});
         }
 
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
         const auto& [dydt, nuclearEnergyGenerationRate, reactionContributions] = result.value();
+        LOG_TRACE_L2(m_logger, "Done calculating RHS at time {}, specific nuclear energy generation rate: {}", t, nuclearEnergyGenerationRate);
+        LOG_TRACE_L2(m_logger, "RHS at time {} is {}", t, [&dydt]() -> std::string {
+            std::stringstream ss;
+            size_t i = 0;
+            for (const auto& [species, rate] : dydt) {
+                ss << "dY(" << species.name() << ")/dt" << ": " << rate;
+                if (i < dydt.size() - 1) {
+                    ss << ", ";
+                }
+                i++;
+            }
+            return ss.str();
+        }());
 
         for (size_t i = 0; i < numSpecies; ++i) {
             fourdst::atomic::Species species = m_engine.getNetworkSpecies()[i];
@@ -657,6 +768,7 @@ namespace gridfire::solver {
         const double relTol,
         const double accumulatedEnergy
     ) {
+        LOG_TRACE_L2(m_logger, "Initializing CVODE integration resources with N: {}, current_time: {}, absTol: {}, relTol: {}", N, current_time, absTol, relTol);
         cleanup_cvode_resources(false); // Cleanup any existing resources before initializing new ones
 
         m_Y = init_sun_vector(N, m_sun_ctx);
@@ -706,9 +818,11 @@ namespace gridfire::solver {
 
         check_cvode_flag(CVodeSetLinearSolver(m_cvode_mem, m_LS, m_J), "CVodeSetLinearSolver");
         check_cvode_flag(CVodeSetJacFn(m_cvode_mem, cvode_jac_wrapper), "CVodeSetJacFn");
+        LOG_TRACE_L2(m_logger, "CVODE solver initialized");
     }
 
     void CVODESolverStrategy::cleanup_cvode_resources(const bool memFree) {
+        LOG_TRACE_L2(m_logger, "Cleaning up cvode resources");
         if (m_LS) SUNLinSolFree(m_LS);
         if (m_J) SUNMatDestroy(m_J);
         if (m_Y) N_VDestroy(m_Y);
@@ -725,6 +839,7 @@ namespace gridfire::solver {
             if (m_cvode_mem) CVodeFree(&m_cvode_mem);
             m_cvode_mem = nullptr;
         }
+        LOG_TRACE_L2(m_logger, "Done Cleaning up cvode resources");
     }
 
     void CVODESolverStrategy::log_step_diagnostics(const CVODEUserData &user_data, bool displayJacobianStiffness) const {

@@ -21,6 +21,31 @@ namespace gridfire {
         }
     }
 
+    NetworkJacobian::NetworkJacobian(
+        const NetworkJacobian &jacobian
+    ) : m_jacobianMatrix(jacobian.m_jacobianMatrix),
+        m_speciesToIndexMap(jacobian.m_speciesToIndexMap),
+        m_rank(jacobian.m_rank)
+    {}
+
+    NetworkJacobian::NetworkJacobian(
+        NetworkJacobian &&jacobian
+    ) noexcept : m_jacobianMatrix(std::move(jacobian.m_jacobianMatrix)),
+                 m_speciesToIndexMap(std::move(jacobian.m_speciesToIndexMap)),
+                 m_rank(jacobian.m_rank)
+    {}
+
+    NetworkJacobian & NetworkJacobian::operator=(
+        NetworkJacobian &&jacobian
+    ) noexcept {
+        if (this != &jacobian) {
+            m_jacobianMatrix = std::move(jacobian.m_jacobianMatrix);
+            m_speciesToIndexMap = std::move(jacobian.m_speciesToIndexMap);
+            m_rank = jacobian.m_rank;
+        }
+        return *this;
+    }
+
     double NetworkJacobian::operator()(const fourdst::atomic::Species &row, const fourdst::atomic::Species &col) const {
         if (!m_speciesToIndexMap.contains(row) || !m_speciesToIndexMap.contains(col)) {
             throw std::out_of_range("Species not found in NetworkJacobian operator().");
@@ -35,6 +60,26 @@ namespace gridfire {
             throw std::out_of_range("Index out of bounds in NetworkJacobian operator().");
         }
         return m_jacobianMatrix.coeff(i, j);
+    }
+
+    void NetworkJacobian::set(const fourdst::atomic::Species &row, const fourdst::atomic::Species &col, const double value) {
+        if (!m_speciesToIndexMap.contains(row) || !m_speciesToIndexMap.contains(col)) {
+            throw std::out_of_range("Species not found in NetworkJacobian set().");
+        }
+        const size_t i = m_speciesToIndexMap.at(row);
+        const size_t j = m_speciesToIndexMap.at(col);
+        set(i, j, value);
+    }
+
+    void NetworkJacobian::set(const size_t i, const size_t j, const double value) {
+        if (i >= m_jacobianMatrix.rows() || j >= m_jacobianMatrix.cols()) {
+            throw std::out_of_range("Index out of bounds in NetworkJacobian set().");
+        }
+        m_jacobianMatrix.coeffRef(i, j) = value;
+    }
+
+    void NetworkJacobian::set(const JacobianEntry &entry) {
+        set(entry.first.first, entry.first.second, entry.second);
     }
 
     std::tuple<size_t, size_t> NetworkJacobian::shape() const {
@@ -56,5 +101,60 @@ namespace gridfire {
         return m_rank < minDim;
     }
 
+    std::vector<JacobianEntry> NetworkJacobian::infs() const {
+        std::vector<JacobianEntry> infs;
+        for (int k=0; k<m_jacobianMatrix.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_jacobianMatrix,k); it; ++it) {
+                if (std::isinf(it.value())) {
+                    fourdst::atomic::Species rowSpecies = std::ranges::find_if(
+                        m_speciesToIndexMap,
+                        [it](const auto& pair) {
+                            return pair.second == static_cast<size_t>(it.row());
+                        })->first;
 
+                    fourdst::atomic::Species colSpecies = std::ranges::find_if(
+                        m_speciesToIndexMap,
+                        [it](const auto& pair) {
+                            return pair.second == static_cast<size_t>(it.col());
+                        })->first;
+
+                    infs.emplace_back(std::make_pair(rowSpecies, colSpecies), it.value());
+                }
+            }
+        }
+        return infs;
+    }
+
+    std::vector<JacobianEntry> NetworkJacobian::nans() const {
+        std::vector<JacobianEntry> nans;
+        for (int k=0; k<m_jacobianMatrix.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_jacobianMatrix,k); it; ++it) {
+                if (std::isnan(it.value())) {
+                    fourdst::atomic::Species rowSpecies = std::ranges::find_if(
+                        m_speciesToIndexMap,
+                        [it](const auto& pair) {
+                            return pair.second == static_cast<size_t>(it.row());
+                        })->first;
+
+                    fourdst::atomic::Species colSpecies = std::ranges::find_if(
+                        m_speciesToIndexMap,
+                        [it](const auto& pair) {
+                            return pair.second == static_cast<size_t>(it.col());
+                        })->first;
+
+                    nans.emplace_back(std::make_pair(rowSpecies, colSpecies), it.value());
+                }
+            }
+        }
+        return nans;
+
+    }
+
+    Eigen::SparseMatrix<double> NetworkJacobian::data() const {
+        return m_jacobianMatrix;
+    }
+
+    const std::unordered_map<fourdst::atomic::Species, size_t> & NetworkJacobian::mapping() const {
+        return m_speciesToIndexMap;
+    }
 }

@@ -163,19 +163,51 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in MultiscalePartitioningEngineView at T9 = {}, rho = {}.", T9, rho);
+        LOG_TRACE_L2(m_logger, "Input composition is {}", [&comp]() -> std::string {
+            std::stringstream ss;
+            size_t i = 0;
+            for (const auto& [species, abundance] : comp) {
+                ss << species.name() << ": " << abundance;
+                if (i < comp.size() - 1) {
+                    ss << ", ";
+                }
+                i++;
+            }
+            return ss.str();
+        }());
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        LOG_TRACE_L2(m_logger, "Equilibrated composition prior to calling base engine is {}", [&qseComposition, &comp]() -> std::string {
+            std::stringstream ss;
+            size_t i = 0;
+            for (const auto& [species, abundance] : qseComposition) {
+                ss << species.name() << ": " << abundance;
+                if (comp.contains(species)) {
+                    ss << " (input: " << comp.getMolarAbundance(species) << ")";
+                }
+                if (i < qseComposition.size() - 1) {
+                    ss << ", ";
+                }
+                i++;
+            }
+            return ss.str();
+        }());
 
         const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
+        LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
+            LOG_TRACE_L2(m_logger, "Base engine returned stale error during RHS and Energy calculation.");
             return std::unexpected{result.error()};
         }
 
         auto deriv = result.value();
 
+        LOG_TRACE_L2(m_logger, "Zeroing out algebraic species derivatives.");
         for (const auto& species : m_algebraic_species) {
             deriv.dydt[species] = 0.0; // Fix the algebraic species to the equilibrium abundances we calculate.
         }
+        LOG_TRACE_L2(m_logger, "Done Zeroing out algebraic species derivatives.");
         return deriv;
     }
 
@@ -1157,13 +1189,35 @@ namespace gridfire {
         const double rho
     ) const {
         LOG_TRACE_L1(m_logger, "Solving for QSE abundances...");
+        LOG_TRACE_L2(m_logger, "Composition before QSE solving: {}", [&comp]() -> std::string {
+            std::stringstream ss;
+            size_t i = 0;
+            for (const auto& [sp, y] : comp) {
+                ss << std::format("{}: {}", sp.name(), y);
+                if (i < comp.size() - 1) {
+                    ss << ", ";
+                }
+                i++;
+            }
+            return ss.str();
+        }());
 
-        fourdst::composition::Composition outputComposition(comp.getRegisteredSpecies());
-        for (const auto& [sp, y]: comp) {
-            outputComposition.setMolarAbundance(sp, y);
-        }
+        fourdst::composition::Composition outputComposition(comp);
 
         for (const auto&[is_in_equilibrium, algebraic_species, seed_species, mean_timescale] : m_qse_groups) {
+            LOG_TRACE_L2(m_logger, "Working on QSE group with algebraic species: {}",
+                [&]() -> std::string {
+                    std::stringstream ss;
+                    size_t count = 0;
+                    for (const auto& species: algebraic_species) {
+                        ss << species.name();
+                        if (count < algebraic_species.size() - 1) {
+                            ss << ", ";
+                        }
+                        count++;
+                    }
+                    return ss.str();
+                }());
             if (!is_in_equilibrium || (algebraic_species.empty() && seed_species.empty())) {
                 continue;
             }
@@ -1178,16 +1232,19 @@ namespace gridfire {
                 const double Y = std::max(initial_abundance, abundance_floor);
                 v_initial(i) = std::log(Y);
                 species_to_index_map.emplace(species, i);
+                LOG_TRACE_L2(m_logger, "For species {} initial molar abundance is {}, log scaled to {}. Species placed at index {}.", species.name(), Y, v_initial(i), i);
                 i++;
             }
 
+            LOG_TRACE_L2(m_logger, "Setting up Eigen Levenberg-Marquardt solver for QSE group...");
             EigenFunctor functor(*this, algebraic_species, comp, T9, rho, Y_scale, species_to_index_map);
             Eigen::LevenbergMarquardt lm(functor);
             lm.parameters.ftol = 1.0e-10;
             lm.parameters.xtol = 1.0e-10;
 
-            LOG_TRACE_L1(m_logger, "Minimizing functor...");
+            LOG_TRACE_L2(m_logger, "Minimizing functor...");
             Eigen::LevenbergMarquardtSpace::Status status = lm.minimize(v_initial);
+            LOG_TRACE_L2(m_logger, "Minimizing functor status: {}", lm_status_map.at(status));
 
             if (status <= 0 || status >= 4) {
                 std::stringstream msg;
@@ -1459,13 +1516,14 @@ namespace gridfire {
         }
         LOG_TRACE_L2(
             m_view.m_logger,
-            "Functor evaluation at T9 = {}, rho = {}, y_qse = <{}> complete. ||f|| = {}",
+            "Functor evaluation at T9 = {}, rho = {}, y_qse (v_qse) = <{}> complete. ||f|| = {}",
             m_T9,
             m_rho,
             [&]() -> std::string {
                 std::stringstream ss;
                 for (long j = 0; j < y_qse.size(); ++j) {
                     ss << y_qse(j);
+                    ss << "(" << v_qse(j) << ")";
                     if (j < y_qse.size() - 1) {
                         ss << ", ";
                     }

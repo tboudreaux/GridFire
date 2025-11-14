@@ -82,11 +82,47 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in AdaptiveEngineView at T9 = {}, rho = {}.", T9, rho);
         validateState();
+        LOG_TRACE_L2(
+            m_logger,
+            "Adaptive engine view state validated prior to composition collection. Input Composition: {}",
+            [&comp]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                for (const auto& [species, abundance] : comp) {
+                    ss << species.name() << ": " << abundance;
+                    if (i < comp.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                return ss.str();
+            }());
         fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
+        LOG_TRACE_L2(
+            m_logger,
+            "Composition Collected prior to passing to base engine. Collected Composition: {}",
+            [&comp, &collectedComp]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                for (const auto& [species, abundance] : collectedComp) {
+                    ss << species.name() << ": " << abundance;
+                    if (comp.contains(species)) {
+                        ss << " (input: " << comp.getMolarAbundance(species) << ")";
+                    }
+                    if (i < collectedComp.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                return ss.str();
+            }());
         auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho);
+        LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
+            LOG_TRACE_L2(m_logger, "Base engine returned stale error during RHS and Energy calculation.");
             return std::unexpected{result.error()};
         }
 

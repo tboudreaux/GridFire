@@ -80,9 +80,11 @@ namespace gridfire {
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
-        const double mue = 5.0e-3 * std::pow(rho * Ye, 1.0 / 3.0) + 0.5 * T9;
+        const double mue = 0.0; // TODO: Remove
         if (m_usePrecomputation) {
+            LOG_TRACE_L2(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
             bare_rates.reserve(activeReactions.size());
@@ -96,9 +98,12 @@ namespace gridfire {
                 }
             }
 
+            LOG_TRACE_L2(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
+
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
             return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
         } else {
+            LOG_TRACE_L2(m_logger, "Not using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             StepDerivatives<double> result = calculateAllDerivatives<double>(
                 comp.getMolarAbundanceVector(),
                 T9,
@@ -598,6 +603,7 @@ namespace gridfire {
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        LOG_TRACE_L2(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
             activeReactions,
@@ -671,6 +677,8 @@ namespace gridfire {
             molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
             reactionCounter++;
         }
+
+        LOG_TRACE_L2(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         // --- Assemble molar abundance derivatives ---
         StepDerivatives<double> result;

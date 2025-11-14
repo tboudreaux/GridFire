@@ -22,4 +22,8 @@ namespace gridfire::exceptions {
     class SingularJacobianError final : public SolverError {
         using SolverError::SolverError;
     };
+
+    class IllConditionedJacobianError final : public SolverError {
+        using SolverError::SolverError;
+    };
 }
