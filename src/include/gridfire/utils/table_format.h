@@ -91,6 +91,114 @@ namespace gridfire::utils {
 
     };
 
+    class TableBase {
+    public:
+        virtual ~TableBase() = default;
+        virtual size_t ncols() const = 0;
+        virtual size_t nrows() const = 0;
+        virtual const ColumnBase& operator[](size_t i) const = 0;
+        virtual const std::vector<std::unique_ptr<ColumnBase>> getColumns() const;
+        virtual std::string getName() const = 0;
+        virtual void toCSV(const std::string& filename) const = 0;
+    };
+
+    template <typename T>
+    class Table final : public TableBase {
+    public:
+        Table(const std::string& name, const std::vector<Column<T>>& columns)
+            : m_name(name) {
+            for (const auto& col : columns) {
+                m_columns.push_back(std::make_unique<Column<T>>(col));
+            }
+        }
+
+        Table(const std::string& name, const std::unordered_map<std::string, std::vector<T>>& columnData)
+            : m_name(name) {
+            for (const auto& [header, data] : columnData) {
+                m_columns.push_back(std::make_unique<Column<T>>(header, data));
+            }
+        }
+
+        Table(const std::string& name, const std::map<std::string, std::vector<T>>& columnData)
+            : m_name(name) {
+            for (const auto& [header, data] : columnData) {
+                m_columns.push_back(std::make_unique<Column<T>>(header, data));
+            }
+        }
+
+        Table(const std::string& name, const std::unordered_map<fourdst::atomic::Species, std::vector<T>>& columnData)
+            : m_name(name) {
+            for (const auto& [species, data] : columnData) {
+                m_columns.push_back(std::make_unique<Column<T>>(std::string(species.name()), data));
+            }
+        }
+
+        Table(const std::string& name, const std::map<fourdst::atomic::Species, std::vector<T>>& columnData)
+            : m_name(name) {
+            for (const auto& [species, data] : columnData) {
+                m_columns.push_back(std::make_unique<Column<T>>(std::string(species.name()), data));
+            }
+        }
+
+        size_t ncols() const override {
+            return m_columns.size();
+        }
+
+        size_t nrows() const override {
+            return m_columns.empty() ? 0 : m_columns[0]->getRowCount();
+        }
+
+        const ColumnBase& operator[](size_t i) const override {
+            return *(m_columns[i]);
+        }
+
+        const std::vector<std::unique_ptr<ColumnBase>> getColumns() const override {
+            std::vector<std::unique_ptr<ColumnBase>> cols;
+            for (const auto& col : m_columns) {
+                cols.push_back(std::make_unique<Column<T>>(*col));
+            }
+            return cols;
+        }
+
+        std::string getName() const override {
+            return m_name;
+        }
+
+        void toCSV(const std::string& filename) const override {
+            std::ofstream csvFile(filename);
+            if (!csvFile.is_open()) {
+                throw std::runtime_error("Failed to open file for writing: " + filename);
+            }
+
+            // Write header
+            for (size_t j = 0; j < m_columns.size(); ++j) {
+                csvFile << m_columns[j]->getHeader();
+                if (j < m_columns.size() - 1) {
+                    csvFile << ",";
+                }
+            }
+            csvFile << "\n";
+
+            // Write data rows
+            size_t num_rows = nrows();
+            for (size_t i = 0; i < num_rows; ++i) {
+                for (size_t j = 0; j < m_columns.size(); ++j) {
+                    csvFile << m_columns[j]->getCellData(i);
+                    if (j < m_columns.size() - 1) {
+                        csvFile << ",";
+                    }
+                }
+                csvFile << "\n";
+            }
+
+            csvFile.close();
+        }
+    private:
+        std::string m_name;
+        std::vector<std::unique_ptr<Column<T>>> m_columns;
+    };
+
+
     inline std::string format_table(const std::string& tableName, const std::vector<std::unique_ptr<ColumnBase>>& columns) {
         // --- 1. Handle Empty Table ---
         if (columns.empty()) {
@@ -156,6 +264,10 @@ namespace gridfire::utils {
         draw_border();
 
         return table_ss.str();
+    }
+
+    inline std::string format_table(const TableBase& table) {
+        return format_table(table.getName(), table.getColumns());
     }
 
     inline void print_table(const std::string& tableName, const std::vector<std::unique_ptr<ColumnBase>>& columns) {
@@ -238,7 +350,41 @@ namespace gridfire::utils {
         draw_border();
     }
 
+    inline void print_table(const TableBase& table) {
+        print_table(table.getName(), table.getColumns());
+    }
 
+
+    inline void to_csv(const std::string& filename, const std::vector<std::unique_ptr<ColumnBase>>& columns) {
+        std::ofstream output(filename);
+        if (!output.is_open()) {
+            throw std::runtime_error("Failed to open file for writing: " + filename);
+        }
+        // Write header
+        for (size_t j = 0; j < columns.size(); ++j) {
+            output << columns[j]->getHeader();
+            if (j < columns.size() - 1) {
+                output << ",";
+            }
+        }
+        output << "\n";
+        // Write data rows
+        size_t num_rows = 0;
+        for (const auto& col : columns) {
+            num_rows = std::max(num_rows, col->getRowCount());
+        }
+
+        for (size_t i = 0; i < num_rows; ++i) {
+            for (size_t j = 0; j < columns.size(); ++j) {
+                output << columns[j]->getCellData(i);
+                if (j < columns.size() - 1) {
+                    output << ",";
+                }
+            }
+            output << "\n";
+        }
+        output.close();
+    }
 
 
 }
