@@ -9,6 +9,7 @@ gridfire_sources = files(
     'lib/engine/procedures/priming.cpp',
     'lib/engine/procedures/construction.cpp',
     'lib/engine/diagnostics/dynamic_engine_diagnostics.cpp',
+    'lib/engine/types/jacobian.cpp',
     'lib/reaction/reaction.cpp',
     'lib/reaction/reaclib.cpp',
     'lib/reaction/weak/weak.cpp',

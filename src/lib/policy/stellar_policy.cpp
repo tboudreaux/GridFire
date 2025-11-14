@@ -55,7 +55,6 @@ namespace gridfire::policy {
         );
 
         auto& graphRepr = dynamic_cast<GraphEngine&>(*m_network_stack.back().get());
-        // graphRepr.setPrecomputation(false);
         graphRepr.setUseReverseReactions(false);
 
 
@@ -95,6 +94,25 @@ namespace gridfire::policy {
 
     inline NetworkPolicyStatus MainSequencePolicy::getStatus() const {
         return m_status;
+    }
+
+    const std::vector<std::unique_ptr<DynamicEngine>> &MainSequencePolicy::get_engine_stack() const {
+        if (m_status != NetworkPolicyStatus::INITIALIZED_VERIFIED) {
+            throw exceptions::PolicyError("Cannot get engine stack from MainSequencePolicy: Policy is not initialized and verified. Call construct() first.");
+        }
+        return m_network_stack;
+    }
+
+    std::vector<EngineTypes> MainSequencePolicy::get_engine_types_stack() const {
+        return {
+            EngineTypes::GRAPH_ENGINE,
+            EngineTypes::MULTISCALE_PARTITIONING_ENGINE_VIEW,
+            EngineTypes::ADAPTIVE_ENGINE_VIEW
+        };
+    }
+
+    const std::unique_ptr<partition::PartitionFunction>& MainSequencePolicy::get_partition_function() const {
+        return m_partition_function;
     }
 
     inline NetworkPolicyStatus MainSequencePolicy::check_status() const {

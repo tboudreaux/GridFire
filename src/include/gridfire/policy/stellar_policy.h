@@ -142,6 +142,12 @@ namespace gridfire::policy {
          * @return NetworkPolicyStatus The construction and verification status.
          */
         [[nodiscard]] NetworkPolicyStatus getStatus() const override;
+
+        [[nodiscard]] const std::vector<std::unique_ptr<DynamicEngine>> &get_engine_stack() const override;
+
+        [[nodiscard]] std::vector<EngineTypes> get_engine_types_stack() const override;
+        [[nodiscard]] const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const override;
+
     private:
         std::set<fourdst::atomic::Species> m_seed_species;
 
@@ -154,6 +160,8 @@ namespace gridfire::policy {
     private:
         static std::unique_ptr<partition::PartitionFunction> build_partition_function();
         [[nodiscard]] NetworkPolicyStatus check_status() const;
+
+    public:
 
     };
 

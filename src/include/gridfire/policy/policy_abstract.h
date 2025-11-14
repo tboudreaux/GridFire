@@ -24,9 +24,12 @@
 #include "fourdst/atomic/atomicSpecies.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/partition/partition.h"
 
 #include <string>
 #include <set>
+
+#include "gridfire/engine/types/engine_types.h"
 
 
 namespace gridfire::policy {
@@ -157,6 +160,12 @@ namespace gridfire::policy {
          * @endcode
          */
         [[nodiscard]] virtual NetworkPolicyStatus getStatus() const = 0;
+
+        [[nodiscard]] virtual const std::vector<std::unique_ptr<DynamicEngine>> &get_engine_stack() const = 0;
+
+        [[nodiscard]] virtual std::vector<EngineTypes> get_engine_types_stack() const = 0;
+
+        [[nodiscard]] virtual const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const = 0;
     };
 
     /**
