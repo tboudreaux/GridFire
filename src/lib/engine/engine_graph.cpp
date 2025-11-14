@@ -25,6 +25,7 @@
 #include <ranges>
 
 #include <boost/numeric/odeint.hpp>
+#include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
@@ -180,7 +181,6 @@ namespace gridfire {
         populateSpeciesToIndexMap();
         collectAtomicReverseRateAtomicBases();
         generateStoichiometryMatrix();
-        reserveJacobianMatrix();
 
         recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
 
@@ -264,18 +264,6 @@ namespace gridfire {
         }
     }
 
-    void GraphEngine::reserveJacobianMatrix() const {
-        // The implementation of this function (and others) constrains this nuclear network to a constant temperature and density during
-        // each evaluation.
-        const size_t numSpecies = m_networkSpecies.size();
-        m_jacobianMatrix.clear();
-        m_jacobianMatrix.resize(numSpecies, numSpecies, false); // Sparse matrix, no initial values
-        LOG_TRACE_L2(m_logger, "Jacobian matrix resized to {} rows and {} columns.",
-                 m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
-
-        m_jacobianMatrixState = JacobianMatrixState::UNINITIALIZED;
-    }
-
     // --- Basic Accessors and Queries ---
     const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
         return m_networkSpecies;
@@ -287,7 +275,6 @@ namespace gridfire {
 
     void GraphEngine::setNetworkReactions(const reaction::ReactionSet &reactions) {
         m_reactions = reactions;
-        m_jacobianMatrixState = JacobianMatrixState::STALE;
         syncInternalMaps();
     }
 
@@ -521,9 +508,6 @@ namespace gridfire {
     }
 
     void GraphEngine::setUseReverseReactions(const bool useReverse) {
-        if (useReverse != m_useReverseReactions) {
-            m_jacobianMatrixState = JacobianMatrixState::STALE;
-        }
         m_useReverseReactions = useReverse;
     }
 
@@ -572,7 +556,6 @@ namespace gridfire {
         if (depth != m_depth) {
             m_depth = depth;
             m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth);
-            m_jacobianMatrixState = JacobianMatrixState::STALE;
             syncInternalMaps(); // Resync internal maps after changing the depth
         } else {
             LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
@@ -597,6 +580,14 @@ namespace gridfire {
             }
         }
         return result;
+    }
+
+    SpeciesStatus GraphEngine::getSpeciesStatus(const fourdst::atomic::Species &species) const {
+        if (m_networkSpeciesMap.contains(species.name())) {
+            return SpeciesStatus::ACTIVE;
+        }
+        return SpeciesStatus::NOT_PRESENT;
+
     }
 
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
@@ -784,7 +775,6 @@ namespace gridfire {
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
         m_screeningModel = screening::selectScreeningModel(model);
         m_screeningType = model;
-        m_jacobianMatrixState = JacobianMatrixState::STALE; // The screening model affects the jacobian so if its changed the jacobian must be made stale
     }
 
     screening::ScreeningType GraphEngine::getScreeningModel() const {
@@ -828,7 +818,7 @@ namespace gridfire {
         );
     }
 
-    void GraphEngine::generateJacobianMatrix(
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -847,7 +837,7 @@ namespace gridfire {
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
         const std::vector<double>& Y_dynamic = mutableComp.getMolarAbundanceVector();
         for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = std::max(Y_dynamic[i], 1e-99); // regularize the jacobian...
+            adInput[i] = Y_dynamic[i];
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
@@ -856,26 +846,34 @@ namespace gridfire {
         const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
 
         // 3. Pack jacobian vector into sparse matrix
-        m_jacobianMatrix.clear();
-        // std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        std::vector<Eigen::Triplet<double> > triplets;
         for (size_t i = 0; i < numSpecies; ++i) {
-            // std::vector<double> colData;
             for (size_t j = 0; j < numSpecies; ++j) {
-                const double value = dotY[i * (numSpecies + 2) + j];
+                double value = dotY[i * (numSpecies + 2) + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
-                    m_jacobianMatrix(i, j) = value;
+                    if (i == j && value == 0) {
+                        LOG_WARNING(m_logger, "While generating the Jacobian matrix, a zero diagonal element was encountered at index ({}, {}) (species: {}, abundance: {}). This may lead to numerical instability. Setting to -1 to avoid singularity", i, j, m_networkSpecies[i].name(), adInput[i]);
+                        // value = -1.0;
+                    }
+                    triplets.emplace_back(i, j, value);
                 }
-                // colData.push_back(value);
             }
-            // columns.push_back(std::make_unique<utils::Column<double>>(std::to_string(i), colData));
         }
-        // std::cout << utils::format_table("Jacobian after dense calculation", columns) << std::endl;
-        // exit(0);
-        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
-        m_jacobianMatrixState = JacobianMatrixState::READY_DENSE;
+        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", jacobianMatrix.rows(), jacobianMatrix.cols());
+
+        auto index_to_species = [this](const size_t index) -> fourdst::atomic::Species {
+            if (index < m_networkSpecies.size()) {
+                return m_networkSpecies[index];
+            }
+            throw std::out_of_range("Index out of range in index_to_species mapping.");
+        };
+        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
+        NetworkJacobian jac(jacobianMatrix, index_to_species);
+        return jac;
     }
 
-    void GraphEngine::generateJacobianMatrix(
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -904,10 +902,10 @@ namespace gridfire {
         }
 
         // --- 3. Call the sparse reverse-mode implementation ---
-        generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+        return generateJacobianMatrix(comp, T9, rho, sparsityPattern);
     }
 
-    void GraphEngine::generateJacobianMatrix(
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -929,7 +927,7 @@ namespace gridfire {
         // }
         size_t i = 0;
         for (const auto& species: m_networkSpecies) {
-            double Yi = 0.0;
+            double Yi = 0.0; // Small floor to avoid issues with zero abundances
             if (comp.contains(species)) {
                 Yi = comp.getMolarAbundance(species);
             }
@@ -974,46 +972,26 @@ namespace gridfire {
             m_jac_work // Work vector for CppAD
         );
 
-        // --- Convert the sparse Jacobian back to the Boost uBLAS format ---
-        m_jacobianMatrix.clear();
+        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        std::vector<Eigen::Triplet<double> > triplets;
         for (size_t k = 0; k < nnz; ++k) {
             const size_t row = jac_subset.row()[k];
             const size_t col = jac_subset.col()[k];
             const double value = jac_subset.val()[k];
 
             if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || row == col) { // Always keep diagonal elements to avoid pathological stiffness
-                m_jacobianMatrix(row, col) = value; // Insert into the sparse matrix
+                triplets.emplace_back(row, col, value);
             }
         }
-        m_jacobianMatrixState = JacobianMatrixState::READY_SPARSE;
-    }
-
-    double GraphEngine::getJacobianMatrixEntry(
-        const fourdst::atomic::Species& rowSpecies,
-        const fourdst::atomic::Species& colSpecies
-    ) const {
-        switch (m_jacobianMatrixState) {
-            case JacobianMatrixState::STALE: {
-                const std::string staleMsg = std::format("Cannot retrieve jacobian entry for row {}, column {} as jacobian matrix is stale (has not been regenerated since last network topology change)", rowSpecies.name(), colSpecies.name());
-                throw exceptions::StaleJacobianError(staleMsg);
+        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
+        auto index_to_species = [this](const size_t index) -> fourdst::atomic::Species {
+            if (index < m_networkSpecies.size()) {
+                return m_networkSpecies[index];
             }
-            case JacobianMatrixState::UNINITIALIZED: {
-                const std::string unInitMsg = std::format("Cannot retrieve jacobian entry for row {}, column {} as jacobian matrix is uninitialized (will return all 0s)", rowSpecies.name(), colSpecies.name());
-                throw exceptions::UninitializedJacobianError(unInitMsg);
-            }
-            case JacobianMatrixState::READY_DENSE:
-                [[fallthrough]];
-            case JacobianMatrixState::READY_SPARSE: {
-                const size_t i = getSpeciesIndex(rowSpecies);
-                const size_t j = getSpeciesIndex(colSpecies);
-                return m_jacobianMatrix(i, j);
-            }
-            default: {
-                // Code should not be able to get into this state
-                const std::string msg = std::format("An unknown error has occurred while attempting to retrieve the jacobian element at row {}, column {}. This should be taken as a catastrophic failure and reported to GridFire developers.", rowSpecies.name(), colSpecies.name());
-                throw exceptions::UnknownJacobianError(msg);
-            }
-        }
+            throw std::out_of_range("Index out of range in index_to_species mapping.");
+        };
+        NetworkJacobian jac(jacobianMatrix, index_to_species);
+        return jac;
     }
 
     std::unordered_map<fourdst::atomic::Species, int> GraphEngine::getNetReactionStoichiometry(
@@ -1287,7 +1265,6 @@ namespace gridfire {
             }
         );
 
-
         // Extract the raw vector from the associative map
         std::vector<CppAD::AD<double>> dependentVector;
         dependentVector.reserve(dydt.size() + 1);
@@ -1302,8 +1279,7 @@ namespace gridfire {
 
         m_rhsADFun.Dependent(adInput, dependentVector);
 
-        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.",
-                 adInput.size());
+        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.", adInput.size());
     }
 
     void GraphEngine::collectAtomicReverseRateAtomicBases() {
