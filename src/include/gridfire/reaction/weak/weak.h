@@ -400,6 +400,11 @@ namespace gridfire::rates::weak {
          */
         double get_log_neutrino_loss_from_payload(const WeakRatePayload& payload) const;
 
+    public:
+        [[nodiscard]] size_t countReactantOccurrences(const fourdst::atomic::Species &species) const override;
+
+        [[nodiscard]] size_t countProductOccurrences(const fourdst::atomic::Species &species) const override;
+
     private:
         /**
          * @brief CppAD atomic that wraps weak-rate interpolation for AD evaluation.

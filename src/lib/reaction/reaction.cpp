@@ -40,11 +40,16 @@ namespace gridfire::reaction {
     m_peName(peName),
     m_chapter(chapter),
     m_qValue(qValue),
-    m_reactants(reactants.begin(), reactants.end()),
-    m_products(products.begin(), products.end()),
     m_sourceLabel(label),
     m_rateCoefficients(sets),
-    m_reverse(reverse) {}
+    m_reverse(reverse) {
+        for (const auto& reactant : reactants) {
+            m_reactants[reactant]++;
+        }
+        for (const auto& product : products) {
+            m_products[product]++;
+        }
+    }
 
     double ReaclibReaction::calculate_rate(
         const double T9,
@@ -107,11 +112,11 @@ namespace gridfire::reaction {
 
 
     bool ReaclibReaction::contains_reactant(const Species& species) const {
-        return std::ranges::any_of(m_reactants, [&](const Species& r) { return r == species; });
+        return m_reactants.contains(species);
     }
 
     bool ReaclibReaction::contains_product(const Species& species) const {
-        return std::ranges::any_of(m_products, [&](const Species& p) { return p == species; });
+        return m_products.contains(species);
     }
 
     std::unordered_set<Species> ReaclibReaction::all_species() const {
@@ -123,7 +128,7 @@ namespace gridfire::reaction {
 
     std::unordered_set<Species> ReaclibReaction::reactant_species() const {
         std::unordered_set<Species> reactantsSet;
-        for (const auto& reactant : m_reactants) {
+        for (const auto& reactant : m_reactants | std::views::keys) {
             reactantsSet.insert(reactant);
         }
         return reactantsSet;
@@ -131,7 +136,7 @@ namespace gridfire::reaction {
 
     std::unordered_set<Species> ReaclibReaction::product_species() const {
         std::unordered_set<Species> productsSet;
-        for (const auto& product : m_products) {
+        for (const auto& product : m_products | std::views::keys) {
             productsSet.insert(product);
         }
         return productsSet;
@@ -139,14 +144,14 @@ namespace gridfire::reaction {
 
     int ReaclibReaction::stoichiometry(const Species& species) const {
         int s = 0;
-        for (const auto& reactant : m_reactants) {
+        for (const auto& [reactant, count] : m_reactants) {
             if (reactant == species) {
-                s--;
+                s -= count;
             }
         }
-        for (const auto& product : m_products) {
+        for (const auto& [product, count] : m_products) {
             if (product == species) {
-                s++;
+                s += count;
             }
         }
         return s;
@@ -158,11 +163,8 @@ namespace gridfire::reaction {
 
     std::unordered_map<Species, int> ReaclibReaction::stoichiometry() const {
         std::unordered_map<Species, int> stoichiometryMap;
-        for (const auto& reactant : m_reactants) {
-            stoichiometryMap[reactant]--;
-        }
-        for (const auto& product : m_products) {
-            stoichiometryMap[product]++;
+        for (const auto& sp : all_species()) {
+            stoichiometryMap[sp] = stoichiometry(sp);
         }
         return stoichiometryMap;
     }
@@ -171,10 +173,10 @@ namespace gridfire::reaction {
         double reactantMass = 0.0;
         double productMass = 0.0;
         constexpr double AMU2MeV = 931.494893; // Conversion factor from atomic mass unit to MeV
-        for (const auto& reactant : m_reactants) {
+        for (const auto& reactant : m_reactants | std::views::keys) {
             reactantMass += reactant.mass();
         }
-        for (const auto& product : m_products) {
+        for (const auto& product : m_products | std::views::keys) {
             productMass += product.mass();
         }
         return (reactantMass - productMass) * AMU2MeV;

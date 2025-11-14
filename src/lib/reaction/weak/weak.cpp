@@ -490,6 +490,26 @@ namespace gridfire::rates::weak {
         return logNeutrinoLoss;
     }
 
+    size_t WeakReaction::countReactantOccurrences(const fourdst::atomic::Species &species) const {
+        size_t count = 0;
+        for (const auto& reactant : m_reactants) {
+            if (reactant == species) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    size_t WeakReaction::countProductOccurrences(const fourdst::atomic::Species &species) const {
+        size_t count = 0;
+        for (const auto& product : m_products) {
+            if (product == species) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // Note that the input vector tx is of size 2: [T9, log10(rho*Ye)]
     bool WeakReaction::AtomicWeakRate::forward (
         const size_t p,

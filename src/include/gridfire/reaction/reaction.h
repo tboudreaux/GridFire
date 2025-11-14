@@ -217,6 +217,10 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] virtual std::unordered_set<fourdst::atomic::Species> product_species() const = 0;
 
+        [[nodiscard]] virtual size_t countReactantOccurrences(const fourdst::atomic::Species& species) const = 0;
+
+        [[nodiscard]] virtual size_t countProductOccurrences(const fourdst::atomic::Species& species) const = 0;
+
         /**
          * @brief Number of unique species involved in the reaction.
          * @return Count of distinct species across reactants and products.
@@ -525,8 +529,10 @@ namespace gridfire::reaction {
             if (!m_reactantsVec) {
                 m_reactantsVec.emplace(std::vector<fourdst::atomic::Species>());
                 m_reactantsVec->reserve(m_reactants.size());
-                for (const auto& reactant : m_reactants) {
-                    m_reactantsVec->push_back(reactant);
+                for (const auto& [reactant, count] : m_reactants) {
+                    for (size_t i = 0; i < count; ++i) {
+                        m_reactantsVec->push_back(reactant);
+                    }
                 }
             }
             return m_reactantsVec.value();
@@ -540,8 +546,10 @@ namespace gridfire::reaction {
             if (!m_productsVec) {
                 m_productsVec.emplace(std::vector<fourdst::atomic::Species>());
                 m_productsVec->reserve(m_products.size());
-                for (const auto& product : m_products) {
-                    m_productsVec->push_back(product);
+                for (const auto& [product, count] : m_products) {
+                    for (size_t i = 0; i < count; ++i) {
+                        m_productsVec->push_back(product);
+                    }
                 }
             }
             return m_productsVec.value();
@@ -587,14 +595,24 @@ namespace gridfire::reaction {
             return os << "(ReaclibReaction:" << r.m_id << ")";
         }
 
+        size_t countReactantOccurrences(const fourdst::atomic::Species& species) const override {
+            if (!m_reactants.contains(species)) return 0;
+            return m_reactants.at(species);
+        }
+
+        size_t countProductOccurrences(const fourdst::atomic::Species& species) const override {
+            if (!m_products.contains(species)) return 0;
+            return m_products.at(species);
+        }
+
     protected:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         std::string m_id; ///< Unique identifier for the reaction (e.g., "h1+h1=>h2+e+nu").
         std::string m_peName; ///< Name of the reaction in (projectile, ejectile) notation (e.g. "p(p,g)d").
         int m_chapter;    ///< Chapter number from the REACLIB database, defining the reaction structure.
         double m_qValue = 0.0; ///< Q-value of the reaction in MeV.
-        std::set<fourdst::atomic::Species> m_reactants; ///< Reactants of the reaction.
-        std::set<fourdst::atomic::Species> m_products; ///< Products of the reaction.
+        std::unordered_map<fourdst::atomic::Species, size_t> m_reactants; ///< Reactants of the reaction.
+        std::unordered_map<fourdst::atomic::Species, size_t> m_products; ///< Products of the reaction.
 
         mutable std::optional<std::vector<fourdst::atomic::Species>> m_reactantsVec;
         mutable std::optional<std::vector<fourdst::atomic::Species>> m_productsVec;
@@ -835,6 +853,8 @@ namespace gridfire::reaction {
          * @return The size of the set.
          */
         [[nodiscard]] size_t size() const { return m_reactions.size(); }
+
+        [[nodiscard]] bool empty() const {return m_reactions.empty(); }
 
         /**
          * @brief Removes all reactions from the set.
