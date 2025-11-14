@@ -148,7 +148,7 @@ namespace gridfire {
          * @throws exceptions::StaleEngineError If the QSE cache misses, as it cannot proceed
          *         without a valid partition.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -177,7 +177,7 @@ namespace gridfire {
          *
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -205,33 +205,11 @@ namespace gridfire {
          *
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
-        ) const override;
-
-        /**
-         * @brief Gets an entry from the previously generated Jacobian matrix.
-         *
-         * @param rowSpecies Species corresponding to the row index (i_full).
-         * @param colSpecies Species corresponding to the column index (j_full).
-         * @return Value of the Jacobian matrix at (i_full, j_full).
-         *
-         * @par Purpose
-         * To provide Jacobian entries to an implicit solver.
-         *
-         * @par How
-         * This method directly delegates to the base engine's `getJacobianMatrixEntry`.
-         *      It does not currently modify the Jacobian to reflect the QSE algebraic constraints,
-         *      as these are handled by setting `dY/dt = 0` in `calculateRHSAndEnergy`.
-         *
-         * @pre `generateJacobianMatrix()` must have been called for the current state.
-         */
-        [[nodiscard]] double getJacobianMatrixEntry(
-            const fourdst::atomic::Species& rowSpecies,
-            const fourdst::atomic::Species& colSpecies
         ) const override;
 
         /**
@@ -577,6 +555,8 @@ namespace gridfire {
          * @throws BadCollectionError: if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w
          */
         fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+
+        SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
 
 
     private:

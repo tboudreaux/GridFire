@@ -100,17 +100,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool OffDiagonalTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
-        for (const auto& rowSpecies : ctx.engine.getNetworkSpecies()) {
-            for (const auto& colSpecies : ctx.engine.getNetworkSpecies()) {
-                double DRowDCol = std::abs(ctx.engine.getJacobianMatrixEntry(rowSpecies, colSpecies));
-                if (rowSpecies != colSpecies && DRowDCol > m_threshold) {
-                    m_hits++;
-                    LOG_TRACE_L2(m_logger, "OffDiagonalTrigger triggered at t = {} due to entry ({}, {}) = {}", ctx.t, rowSpecies.name(), colSpecies.name(), DRowDCol);
-                    return true;
-                }
-            }
-        }
-        m_misses++;
+        //TODO : This currently does nothing
         return false;
     }
 

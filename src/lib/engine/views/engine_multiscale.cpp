@@ -163,9 +163,9 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        const auto result = m_baseEngine.calculateRHSAndEnergy(qseComposition, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
@@ -184,28 +184,29 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        return m_baseEngine.calculateEpsDerivatives(qseComposition, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
     }
 
-    void MultiscalePartitioningEngineView::generateJacobianMatrix(
+    NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, m_dynamic_species);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, m_dynamic_species);
     }
 
-    void MultiscalePartitioningEngineView::generateJacobianMatrix(
+    NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies
     ) const {
-        const bool activeSpeciesIsSubset = std::ranges::any_of(activeSpecies, [&](const auto& species) -> bool {
-            return !involvesSpecies(species);
-        });
+        bool activeSpeciesIsSubset = true;
+        for (const auto& species : activeSpecies) {
+            if (!involvesSpecies(species)) activeSpeciesIsSubset = false;
+        }
         if (!activeSpeciesIsSubset) {
             std::string msg = std::format(
                 "Active species set contains species ({}) not present in network partition. Cannot generate jacobian matrix due to this.",
@@ -230,33 +231,19 @@ namespace gridfire {
             }
         }
 
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, dynamicActiveSpeciesIntersection);
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, dynamicActiveSpeciesIntersection);
     }
 
-    void MultiscalePartitioningEngineView::generateJacobianMatrix(
+    NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, sparsityPattern);
-    }
-
-    double MultiscalePartitioningEngineView::getJacobianMatrixEntry(
-        const Species& rowSpecies,
-        const Species& colSpecies
-    ) const {
-        // Check if the species we are differentiating with respect to is algebraic or dynamic. If it is algebraic we can reduce the work significantly...
-        if (std::ranges::contains(m_algebraic_species, colSpecies)) {
-            return 0.0;
-        }
-        if (std::ranges::contains(m_algebraic_species, rowSpecies)) {
-            return 0.0;
-        }
-        return m_baseEngine.getJacobianMatrixEntry(rowSpecies, colSpecies);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
     }
 
     void MultiscalePartitioningEngineView::generateStoichiometryMatrix() {
@@ -276,9 +263,9 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        return m_baseEngine.calculateMolarReactionFlow(reaction, qseComposition, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
     }
 
     const reaction::ReactionSet & MultiscalePartitioningEngineView::getNetworkReactions() const {
@@ -295,8 +282,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        const auto result  = m_baseEngine.getSpeciesTimescales(qseComposition, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result  = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -313,8 +300,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(qseComposition, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -524,6 +511,14 @@ namespace gridfire {
         std::ranges::sort(m_qse_groups, [](const QSEGroup& a, const QSEGroup& b) {
             return a.mean_timescale < b.mean_timescale;
         });
+
+        for (const auto& species : m_baseEngine.getNetworkSpecies()) {
+            bool involvesAlgebraic = involvesSpeciesInQSE(species);
+            if (std::ranges::find(m_dynamic_species, species) == m_dynamic_species.end() && !involvesAlgebraic) {
+                // Species is classed as neither dynamic nor algebraic at end of partitioning → add to dynamic set
+                m_dynamic_species.push_back(species);
+            }
+        }
         return getNormalizedEquilibratedComposition(comp, T9, rho);
     }
 
@@ -554,7 +549,7 @@ namespace gridfire {
             }
         }
 
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
         // Calculate reaction flows and find min/max for logarithmic scaling of transparency
         std::vector<double> reaction_flows;
         reaction_flows.reserve(all_reactions.size());
@@ -562,7 +557,7 @@ namespace gridfire {
         double max_log_flow = std::numeric_limits<double>::lowest();
 
         for (const auto& reaction : all_reactions) {
-            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, qseComposition, T9, rho));
+            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
             reaction_flows.push_back(flow);
             if (flow > 1e-99) { // Avoid log(0)
                 double log_flow = std::log10(flow);
@@ -824,6 +819,14 @@ namespace gridfire {
         fourdst::composition::Composition qseComposition = solveQSEAbundances(result, T9, rho);
 
         return qseComposition;
+    }
+
+    SpeciesStatus MultiscalePartitioningEngineView::getSpeciesStatus(const Species &species) const {
+        const SpeciesStatus status = m_baseEngine.getSpeciesStatus(species);
+        if (status == SpeciesStatus::ACTIVE && involvesSpeciesInQSE(species)) {
+            return SpeciesStatus::EQUILIBRIUM;
+        }
+        return status;
     }
 
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(const Species &species) const {
@@ -1499,7 +1502,7 @@ namespace gridfire {
         }
 
         std::vector<Species> qse_species_vector(m_qse_solve_species.begin(), m_qse_solve_species.end());
-        m_view.getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho, qse_species_vector);
+        NetworkJacobian jac = m_view.getBaseEngine().generateJacobianMatrix(comp_trial, m_T9, m_rho, qse_species_vector);
         const auto result = m_view.getBaseEngine().calculateRHSAndEnergy(comp_trial, m_T9, m_rho);
         if (!result) {
             throw exceptions::StaleEngineError("Failed to calculate RHS and energy due to stale engine state");
@@ -1512,10 +1515,7 @@ namespace gridfire {
         for (const auto& rowSpecies : m_qse_solve_species) {
             long colID = 0;
             for (const auto& colSpecies: m_qse_solve_species) {
-                J_qse(rowID, colID) = m_view.getBaseEngine().getJacobianMatrixEntry(
-                    rowSpecies,
-                    colSpecies
-                );
+                J_qse(rowID, colID) = jac(rowSpecies, colSpecies);
                 colID += 1;
                 LOG_TRACE_L3(m_view.m_logger, "Jacobian[{}, {}] (d(dY({}))/dY({})) = {}", rowID, colID - 1, rowSpecies.name(), colSpecies.name(), J_qse(rowID, colID - 1));
             }

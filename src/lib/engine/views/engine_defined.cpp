@@ -69,7 +69,7 @@ namespace gridfire {
         return m_baseEngine.calculateEpsDerivatives(masked, T9, rho, m_activeReactions);
     }
 
-    void DefinedEngineView::generateJacobianMatrix(
+    NetworkJacobian DefinedEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -79,10 +79,10 @@ namespace gridfire {
             m_activeSpeciesVectorCache = std::vector<Species>(m_activeSpecies.begin(), m_activeSpecies.end());
         }
         const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
-        m_baseEngine.generateJacobianMatrix(masked, T9, rho, m_activeSpeciesVectorCache.value());
+        return m_baseEngine.generateJacobianMatrix(masked, T9, rho, m_activeSpeciesVectorCache.value());
     }
 
-    void DefinedEngineView::generateJacobianMatrix(
+    NetworkJacobian DefinedEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -96,10 +96,10 @@ namespace gridfire {
         );
 
         const fourdst::composition::MaskedComposition masked(comp, activeSpeciesSet);
-        m_baseEngine.generateJacobianMatrix(masked, T9, rho, activeSpecies);
+        return m_baseEngine.generateJacobianMatrix(masked, T9, rho, activeSpecies);
     }
 
-    void DefinedEngineView::generateJacobianMatrix(
+    NetworkJacobian DefinedEngineView::generateJacobianMatrix(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -107,27 +107,7 @@ namespace gridfire {
     ) const {
         validateNetworkState();
         const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
-        m_baseEngine.generateJacobianMatrix(masked, T9, rho, sparsityPattern);
-    }
-
-    double DefinedEngineView::getJacobianMatrixEntry(
-        const Species& rowSpecies,
-        const Species& colSpecies
-    ) const {
-        validateNetworkState();
-
-        if (!m_activeSpecies.contains(rowSpecies)) {
-            LOG_ERROR(m_logger, "Row species '{}' is not part of the active species in the DefinedEngineView.", rowSpecies.name());
-            m_logger -> flush_log();
-            throw std::runtime_error("Row species not found in active species: " + std::string(rowSpecies.name()));
-        }
-        if (!m_activeSpecies.contains(colSpecies)) {
-            LOG_ERROR(m_logger, "Column species '{}' is not part of the active species in the DefinedEngineView.", colSpecies.name());
-            m_logger -> flush_log();
-            throw std::runtime_error("Column species not found in active species: " + std::string(colSpecies.name()));
-        }
-
-        return m_baseEngine.getJacobianMatrixEntry(rowSpecies, colSpecies);
+        return m_baseEngine.generateJacobianMatrix(masked, T9, rho, sparsityPattern);
     }
 
     void DefinedEngineView::generateStoichiometryMatrix() {
@@ -296,6 +276,14 @@ namespace gridfire {
             }
         }
         return result;
+    }
+
+    SpeciesStatus DefinedEngineView::getSpeciesStatus(const Species &species) const {
+        const SpeciesStatus status = m_baseEngine.getSpeciesStatus(species);
+        if (status == SpeciesStatus::ACTIVE && !m_activeSpecies.contains(species)) {
+            return SpeciesStatus::INACTIVE_FLOW;
+        }
+        return status;
     }
 
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap() const {

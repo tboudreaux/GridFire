@@ -63,7 +63,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -79,7 +79,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -96,7 +96,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -104,25 +104,12 @@ namespace gridfire{
         ) const override;
 
         /**
-         * @brief Gets an entry from the Jacobian matrix for the active species.
-         *
-         * @param rowSpecies The species corresponding to the row index.
-         * @param colSpecies The species corresponding to the column index.
-         * @return The value of the Jacobian matrix at (row species index, col species index).
-         *
-         * @throws std::runtime_error If the view is stale.
-         * @throws std::out_of_range If an index is out of bounds.
-         */
-        [[nodiscard]] double getJacobianMatrixEntry(
-            const fourdst::atomic::Species& rowSpecies,
-            const fourdst::atomic::Species& colSpecies
-        ) const override;
-        /**
          * @brief Generates the stoichiometry matrix for the active reactions and species.
          *
          * @throws std::runtime_error If the view is stale.
          */
         void generateStoichiometryMatrix() override;
+
         /**
          * @brief Gets an entry from the stoichiometry matrix for the active species and reactions.
          *
@@ -222,6 +209,8 @@ namespace gridfire{
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
         fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+
+        [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;

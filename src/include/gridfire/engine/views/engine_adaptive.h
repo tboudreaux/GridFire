@@ -134,43 +134,24 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          * @see AdaptiveEngineView::update()
          */
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const std::vector<fourdst::atomic::Species> &activeSpecies
         ) const override;
 
-        void generateJacobianMatrix(
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
-        ) const override;
-
-        /**
-         * @brief Gets an entry from the Jacobian matrix for the active species.
-         *
-         * @param rowSpecies The species corresponding to the row index in the culled species list.
-         * @param colSpecies The species corresponding to the column index in the culled species list
-         * @return The value of the Jacobian matrix at (i_culled, j_culled).
-         *
-         * This method maps the culled indices to the full network indices and calls the base engine
-         * to get the Jacobian matrix entry.
-         *
-         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
-         * @throws std::out_of_range If the culled index is out of bounds for the species index map.
-         * @see AdaptiveEngineView::update()
-         */
-        [[nodiscard]] double getJacobianMatrixEntry(
-            const fourdst::atomic::Species& rowSpecies,
-            const fourdst::atomic::Species& colSpecies
         ) const override;
 
         /**
@@ -304,6 +285,8 @@ namespace gridfire {
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
         fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+
+        [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
@@ -321,11 +304,6 @@ namespace gridfire {
         /** @brief The set of reactions that are currently active in the network. */
         reaction::ReactionSet m_activeReactions;
 
-        /** @brief A map from the indices of the active species to the indices of the corresponding species in the full network. */
-        std::vector<size_t> m_speciesIndexMap;
-        /** @brief A map from the indices of the active reactions to the indices of the corresponding reactions in the full network. */
-        std::vector<size_t> m_reactionIndexMap;
-
         /** @brief A flag indicating whether the view is stale and needs to be updated. */
         bool m_isStale = true;
 
@@ -338,67 +316,6 @@ namespace gridfire {
             double flowRate;
         };
     private:
-        /**
-         * @brief Constructs the species index map.
-         *
-         * @return A vector mapping culled species indices to full species indices.
-         *
-         * This method creates a map from the indices of the active species to the indices of the
-         * corresponding species in the full network.
-         *
-         * @see AdaptiveEngineView::update()
-         */
-        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap() const;
-
-        /**
-         * @brief Constructs the reaction index map.
-         *
-         * @return A vector mapping culled reaction indices to full reaction indices.
-         *
-         * This method creates a map from the indices of the active reactions to the indices of the
-         * corresponding reactions in the full network.
-         *
-         * @see AdaptiveEngineView::update()
-         */
-        [[nodiscard]] std::vector<size_t> constructReactionIndexMap() const;
-
-        /**
-         * @brief Maps a vector of culled abundances to a vector of full abundances.
-         *
-         * @param culled A vector of abundances for the active species.
-         * @return A vector of abundances for the full network, with the abundances of the active
-         *         species copied from the culled vector.
-         */
-        [[nodiscard]] std::vector<double> mapCulledToFull(const std::vector<double>& culled) const;
-
-        /**
-         * @brief Maps a vector of full abundances to a vector of culled abundances.
-         *
-         * @param full A vector of abundances for the full network.
-         * @return A vector of abundances for the active species, with the abundances of the active
-         *         species copied from the full vector.
-         */
-        [[nodiscard]] std::vector<double> mapFullToCulled(const std::vector<double>& full) const;
-
-        /**
-         * @brief Maps a culled species index to a full species index.
-         *
-         * @param culledSpeciesIndex The index of the species in the culled species list.
-         * @return The index of the corresponding species in the full network.
-         *
-         * @throws std::out_of_range If the culled index is out of bounds for the species index map.
-         */
-        [[nodiscard]] size_t mapCulledToFullSpeciesIndex(size_t culledSpeciesIndex) const;
-
-        /**
-         * @brief Maps a culled reaction index to a full reaction index.
-         *
-         * @param culledReactionIndex The index of the reaction in the culled reaction list.
-         * @return The index of the corresponding reaction in the full network.
-         *
-         * @throws std::out_of_range If the culled index is out of bounds for the reaction index map.
-         */
-        [[nodiscard]] size_t mapCulledToFullReactionIndex(size_t culledReactionIndex) const;
 
         /**
          * @brief Validates that the AdaptiveEngineView is not stale.

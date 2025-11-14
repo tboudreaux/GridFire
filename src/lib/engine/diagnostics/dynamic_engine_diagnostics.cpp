@@ -133,7 +133,7 @@ namespace gridfire::diagnostics {
         const double T9,
         const double rho
     ) {
-        engine.generateJacobianMatrix(comp, T9, rho);
+        const NetworkJacobian jac = engine.generateJacobianMatrix(comp, T9, rho);
         const auto& species_list = engine.getNetworkSpecies();
 
         double max_diag = 0.0;
@@ -143,7 +143,7 @@ namespace gridfire::diagnostics {
 
         for (const auto& rowSpecies : species_list) {
             for (const auto& colSpecies : species_list) {
-                const double val = std::abs(engine.getJacobianMatrixEntry(rowSpecies, colSpecies));
+                const double val = std::abs(jac(rowSpecies, colSpecies));
                 if (rowSpecies == colSpecies) {
                     if (val > max_diag) { max_diag = val; max_diag_species = colSpecies; }
                 } else {

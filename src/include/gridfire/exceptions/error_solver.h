@@ -18,4 +18,8 @@ namespace gridfire::exceptions {
     class CVODESolverFailureError final : public SolverError {
         using SolverError::SolverError;
     };
+
+    class SingularJacobianError final : public SolverError {
+        using SolverError::SolverError;
+    };
 }

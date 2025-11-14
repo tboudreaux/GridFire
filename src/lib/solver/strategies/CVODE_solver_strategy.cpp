@@ -170,13 +170,12 @@ namespace gridfire::solver {
         size_t numSpecies = m_engine.getNetworkSpecies().size();
         uint64_t N = numSpecies + 1;
 
-        LOG_TRACE_L1(m_logger, "Number of species: {}", N);
+        LOG_TRACE_L1(m_logger, "Number of species: {} ({} independent variables)", numSpecies, N);
         LOG_TRACE_L1(m_logger, "Initializing CVODE resources");
         m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
         check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
 
         initialize_cvode_integration_resources(N, numSpecies, 0.0, equilibratedComposition, absTol, relTol, 0.0);
-        m_engine.generateJacobianMatrix(equilibratedComposition, T9, netIn.density);
 
         CVODEUserData user_data;
         user_data.solver_instance = this;
@@ -274,6 +273,22 @@ namespace gridfire::solver {
                 m_callback.value()(ctx);
             }
             trigger->step(ctx);
+
+            // log_step_diagnostics(user_data, true);
+
+            // std::ofstream jout("Jacobian.dat");
+            // for (const auto& row: m_engine.getNetworkSpecies()) {
+            //     size_t i = 0;
+            //     for (const auto& col : m_engine.getNetworkSpecies()) {
+            //         jout << m_engine.getJacobianMatrixEntry(row, col);
+            //         if (i < m_engine.getNetworkSpecies().size() - 1) {
+            //             jout << ", ";
+            //         }
+            //         i++;
+            //     }
+            //     jout << "\n";
+            // }
+            // jout.close();
 
             if (trigger->check(ctx)) {
                 if (m_stdout_logging_enabled && displayTrigger) {
@@ -446,9 +461,6 @@ namespace gridfire::solver {
 
                 check_cvode_flag(CVodeReInit(m_cvode_mem, current_time, m_Y), "CVodeReInit");
 
-                LOG_TRACE_L1(m_logger, "Regenerating jacobian matrix...");
-                m_engine.generateJacobianMatrix(currentComposition, T9, netIn.density);
-                LOG_TRACE_L1(m_logger, "Done regenerating jacobian matrix...");
             }
 
         }
@@ -552,6 +564,20 @@ namespace gridfire::solver {
         const auto* engine = data->engine;
 
         const size_t numSpecies = engine->getNetworkSpecies().size();
+        sunrealtype* y_data = N_VGetArrayPointer(y);
+
+        // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
+        // small negative numbers which can result in NaN's and more immediate crashes in the composition
+        // finalization stage
+        for (size_t i = 0; i < numSpecies; ++i) {
+            if (y_data[i] < 0.0) {
+                y_data[i] = 0.0;
+            }
+        }
+        std::vector<double> y_vec(y_data, y_data + numSpecies);
+        fourdst::composition::Composition composition(engine->getNetworkSpecies(), y_vec);
+
+        NetworkJacobian jac = engine->generateJacobianMatrix(composition, data->T9, data->rho);
 
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const long int N = SUNDenseMatrix_Columns(J);
@@ -562,7 +588,14 @@ namespace gridfire::solver {
                 const fourdst::atomic::Species& species_i = engine->getNetworkSpecies()[i];
                 // J(i,j) = d(f_i)/d(y_j)
                 // Column-major order format for SUNDenseMatrix: J_data[j*N + i] indexes J(i,j)
-                const double dYi_dt = engine->getJacobianMatrixEntry(species_i, species_j);
+                const double dYi_dt = jac(species_i, species_j);
+                // if (i == j && dYi_dt == 0 && engine->getSpeciesStatus(species_i) == SpeciesStatus::ACTIVE) {
+                //     std::cerr << "Warning: Jacobian matrix has a zero on the diagonal for species " << species_i.name() << ". This may lead to solver failure or pathological stiffness.\n";
+                //     // throw exceptions::SingularJacobianError(
+                //     //     "Jacobian matrix has a zero on the diagonal for species " + std::string(species_i.name()) +
+                //     //     ". This will either lead to solver failure or pathological stiffness. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers."
+                //     // );
+                // }
                 J_data[j * N + i] = dYi_dt;
             }
         }
@@ -695,18 +728,74 @@ namespace gridfire::solver {
     }
 
     void CVODESolverStrategy::log_step_diagnostics(const CVODEUserData &user_data, bool displayJacobianStiffness) const {
+
+        // --- 1. Get CVODE Step Statistics ---
+        sunrealtype hlast, hcur, tcur;
+        int qlast;
+
+        check_cvode_flag(CVodeGetLastStep(m_cvode_mem, &hlast), "CVodeGetLastStep");
+        check_cvode_flag(CVodeGetCurrentStep(m_cvode_mem, &hcur), "CVodeGetCurrentStep");
+        check_cvode_flag(CVodeGetLastOrder(m_cvode_mem, &qlast), "CVodeGetLastOrder");
+        check_cvode_flag(CVodeGetCurrentTime(m_cvode_mem, &tcur), "CVodeGetCurrentTime");
+
+        {
+            std::vector<std::string> labels = {"Current Time (tcur)", "Last Step (hlast)", "Current Step (hcur)", "Last Order (qlast)"};
+            std::vector<double> values = {static_cast<double>(tcur), static_cast<double>(hlast), static_cast<double>(hcur), static_cast<double>(qlast)};
+
+            std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+            columns.push_back(std::make_unique<utils::Column<std::string>>("Statistic", labels));
+            columns.push_back(std::make_unique<utils::Column<double>>("Value", values));
+
+            std::cout << utils::format_table("CVODE Step Stats", columns) << std::endl;
+        }
+
+        // --- 2. Get CVODE Cumulative Solver Statistics ---
+        // These are the CRITICAL counters for diagnosing your problem
+        long int nsteps, nfevals, nlinsetups, netfails, nniters, nconvfails, nsetfails;
+
+        check_cvode_flag(CVodeGetNumSteps(m_cvode_mem, &nsteps), "CVodeGetNumSteps");
+        check_cvode_flag(CVodeGetNumRhsEvals(m_cvode_mem, &nfevals), "CVodeGetNumRhsEvals");
+        check_cvode_flag(CVodeGetNumLinSolvSetups(m_cvode_mem, &nlinsetups), "CVodeGetNumLinSolvSetups");
+        check_cvode_flag(CVodeGetNumErrTestFails(m_cvode_mem, &netfails), "CVodeGetNumErrTestFails");
+        check_cvode_flag(CVodeGetNumNonlinSolvIters(m_cvode_mem, &nniters), "CVodeGetNumNonlinSolvIters");
+        check_cvode_flag(CVodeGetNumNonlinSolvConvFails(m_cvode_mem, &nconvfails), "CVodeGetNumNonlinSolvConvFails");
+        check_cvode_flag(CVodeGetNumLinConvFails(m_cvode_mem, &nsetfails), "CVodeGetNumLinConvFails");
+
+
+        {
+            std::vector<std::string> labels = {
+                "Total Steps",
+                "RHS Evals",
+                "Linear Solver Setups (Jacobians)",
+                "Total Newton Iters",
+                "Error Test Fails",
+                "Convergence Fails",
+                "Linear Convergence Failures"
+            };
+            // --- ADDED nsetfails TO THIS LIST ---
+            std::vector<long int> values = {nsteps, nfevals, nlinsetups, nniters, netfails, nconvfails, nsetfails};
+
+            std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+            columns.push_back(std::make_unique<utils::Column<std::string>>("Counter", labels));
+            columns.push_back(std::make_unique<utils::Column<long int>>("Count", values));
+
+            std::cout << utils::format_table("CVODE Cumulative Stats", columns) << std::endl;
+        }
+
+        // --- 3. Get Estimated Local Errors (Your Original Logic) ---
         check_cvode_flag(CVodeGetEstLocalErrors(m_cvode_mem, m_YErr), "CVodeGetEstLocalErrors");
 
         sunrealtype *y_data = N_VGetArrayPointer(m_Y);
+        sunrealtype *y_err_data = N_VGetArrayPointer(m_YErr);
 
+        const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
+        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
 
         std::vector<double> err_ratios;
-
         const size_t num_components = N_VGetLength(m_Y);
-        err_ratios.resize(num_components - 1);
+        err_ratios.resize(num_components - 1); // Assuming -1 is for Energy or similar
 
         std::vector<double> Y_full(y_data, y_data + num_components - 1);
-
 
         std::ranges::replace_if(
             Y_full,
@@ -716,9 +805,20 @@ namespace gridfire::solver {
             0.0
         );
 
+        for (size_t i = 0; i < num_components - 1; i++) {
+            const double weight = relTol * std::abs(y_data[i]) + absTol;
+            if (weight == 0.0) {
+                err_ratios[i] = 0.0; // Avoid division by zero
+                continue;
+            }
+            const double err_ratio = std::abs(y_err_data[i]) / weight;
+            err_ratios[i] = err_ratio;
+        }
+
         fourdst::composition::Composition composition(user_data.engine->getNetworkSpecies(), Y_full);
 
         if (err_ratios.empty()) {
+            std::cout << "Error ratios vector is empty." << std::endl;
             return;
         }
 
@@ -745,20 +845,29 @@ namespace gridfire::solver {
             sorted_err_ratios.push_back(err_ratios[idx]);
         }
 
+        {
+            std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+            columns.push_back(std::make_unique<utils::Column<fourdst::atomic::Species>>("Species", sorted_species));
+            columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
 
-
-        std::vector<std::unique_ptr<utils::ColumnBase>> columns;
-        columns.push_back(std::make_unique<utils::Column<fourdst::atomic::Species>>("Species", sorted_species));
-        columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
-
-        std::cout << utils::format_table("Species Error Ratios", columns) << std::endl;
-
-        if (displayJacobianStiffness) {
-            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
-            for (const auto& species : sorted_species) {
-                diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho);
-            }
+            std::cout << utils::format_table("Species Error Ratios (Log)", columns) << std::endl;
         }
 
+        // --- 4. Call Your Jacobian and Balance Diagnostics ---
+        if (displayJacobianStiffness) {
+            std::cout << "--- Starting Jacobian and Species Balance Diagnostics ---" << std::endl;
+            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
+
+            // Limit this to the top N species to avoid spamming
+            const size_t num_species_to_inspect = std::min(sorted_species.size(), (size_t)5);
+            std::cout << "Inspecting balance for top " << num_species_to_inspect << " species with highest error ratio:" << std::endl;
+            for (size_t i = 0; i < num_species_to_inspect; ++i) {
+                const auto& species = sorted_species[i];
+                diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho);
+            }
+            std::cout << "--- Finished Jacobian and Species Balance Diagnostics ---" << std::endl;
+        }
     }
+
+
 }
