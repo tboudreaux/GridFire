@@ -288,7 +288,8 @@ namespace gridfire::solver {
          * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
-        void log_step_diagnostics(const CVODEUserData& user_data, bool displayJacobianStiffness) const;
+        void log_step_diagnostics(const CVODEUserData& user_data, bool displayJacobianStiffness, bool saveIntermediateJacobians, bool
+                                  displaySpeciesBalance) const;
     private:
         SUNContext m_sun_ctx = nullptr;   ///< SUNDIALS context (lifetime of the solver).
         void* m_cvode_mem = nullptr;      ///< CVODE memory block.

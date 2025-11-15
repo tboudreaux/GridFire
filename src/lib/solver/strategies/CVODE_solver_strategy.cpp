@@ -24,7 +24,6 @@
 #include "gridfire/exceptions/error_solver.h"
 
 namespace {
-    constexpr double MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN = 1e-100;
 
     std::unordered_map<int, std::string> cvode_ret_code_map {
         {0, "CV_SUCCESS: The solver succeeded."},
@@ -79,34 +78,6 @@ namespace {
 #endif
         check_cvode_flag(vec == nullptr ? -1 : 0, "N_VNew");
         return vec;
-    }
-
-    gridfire::NetworkJacobian regularize_jacobian(const gridfire::NetworkJacobian& jacobian, const fourdst::composition::CompositionAbstract& comp, std::optional<quill::Logger*> logger = std::nullopt) {
-        const std::vector<gridfire::JacobianEntry> infs = jacobian.infs();
-        const std::vector<gridfire::JacobianEntry> nans = jacobian.nans();
-        if (infs.size() == 0 && nans.size() == 0) {
-            return jacobian;
-        }
-
-        gridfire::NetworkJacobian newJacobian = jacobian;
-        for (const auto& [iSp, dSp] : infs | std::views::keys) {
-            if (comp.getMolarAbundance(iSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN || comp.getMolarAbundance(dSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN) {
-                newJacobian.set(iSp, dSp, 0.0);
-                if (logger) {
-                    LOG_TRACE_L1(logger.value(), "Regularized Jacobian entry ({}, {}) from inf to 0.0 due to low abundance.", iSp.name(), dSp.name());
-                }
-            }
-        }
-        for (const auto& [iSp, dSp] : nans | std::views::keys) {
-            if (comp.getMolarAbundance(iSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN || comp.getMolarAbundance(dSp) < MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN) {
-                newJacobian.set(iSp, dSp, 0.0);
-                if (logger) {
-                    LOG_TRACE_L1(logger.value(), "Regularized Jacobian entry ({}, {}) from inf to 0.0 due to low abundance.", iSp.name(), dSp.name());
-                }
-            }
-        }
-
-        return newJacobian;
     }
 }
 
@@ -191,7 +162,7 @@ namespace gridfire::solver {
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
 
         const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
-        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
+        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-5);
 
         LOG_TRACE_L1(m_logger, "Starting engine update chain...");
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
@@ -306,21 +277,8 @@ namespace gridfire::solver {
             }
             trigger->step(ctx);
 
-            // log_step_diagnostics(user_data, true);
-
-            // std::ofstream jout("Jacobian.dat");
-            // for (const auto& row: m_engine.getNetworkSpecies()) {
-            //     size_t i = 0;
-            //     for (const auto& col : m_engine.getNetworkSpecies()) {
-            //         jout << m_engine.getJacobianMatrixEntry(row, col);
-            //         if (i < m_engine.getNetworkSpecies().size() - 1) {
-            //             jout << ", ";
-            //         }
-            //         i++;
-            //     }
-            //     jout << "\n";
-            // }
-            // jout.close();
+            // log_step_diagnostics(user_data, true, true, false);
+            // exit(0);
 
             if (trigger->check(ctx)) {
                 if (m_stdout_logging_enabled && displayTrigger) {
@@ -678,7 +636,7 @@ namespace gridfire::solver {
             );
             throw exceptions::IllConditionedJacobianError(std::format("Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers.", t, jac.infs().size(), infString(), jac.nans().size(), nanString()));
         }
-        LOG_TRACE_L2(solver_instance->m_logger, "Jacobian matrix created at time {} of shape ({} x {}) and rank {}", t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), jac.rank());
+        LOG_TRACE_L2(solver_instance->m_logger, "Jacobian matrix created at time {} of shape ({} x {})", t, std::get<0>(jac.shape()), std::get<1>(jac.shape()));
 
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const long int N = SUNDenseMatrix_Columns(J);
@@ -842,7 +800,12 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Done Cleaning up cvode resources");
     }
 
-    void CVODESolverStrategy::log_step_diagnostics(const CVODEUserData &user_data, bool displayJacobianStiffness) const {
+    void CVODESolverStrategy::log_step_diagnostics(
+        const CVODEUserData &user_data,
+        bool displayJacobianStiffness,
+        bool saveIntermediateJacobians,
+        bool displaySpeciesBalance
+    ) const {
 
         // --- 1. Get CVODE Step Statistics ---
         sunrealtype hlast, hcur, tcur;
@@ -911,6 +874,9 @@ namespace gridfire::solver {
         err_ratios.resize(num_components - 1); // Assuming -1 is for Energy or similar
 
         std::vector<double> Y_full(y_data, y_data + num_components - 1);
+        std::vector<double> E_full(y_err_data, y_err_data + num_components - 1);
+
+        diagnostics::report_limiting_species(*user_data.engine, Y_full, E_full, relTol, absTol);
 
         std::ranges::replace_if(
             Y_full,
@@ -970,17 +936,24 @@ namespace gridfire::solver {
 
         // --- 4. Call Your Jacobian and Balance Diagnostics ---
         if (displayJacobianStiffness) {
-            std::cout << "--- Starting Jacobian and Species Balance Diagnostics ---" << std::endl;
-            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho);
-
+            std::cout << "--- Starting Jacobian Diagnostics ---" << std::endl;
+            std::optional<std::string> filename;
+            if (saveIntermediateJacobians) {
+                filename = std::format("jacobian_s{}.csv", nsteps);
+            }
+            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho, saveIntermediateJacobians, filename);
+            std::cout << "--- Finished Jacobian Diagnostics ---" << std::endl;
+        }
+        if (displaySpeciesBalance) {
+            std::cout << "--- Starting Species Balance Diagnostics ---" << std::endl;
             // Limit this to the top N species to avoid spamming
-            const size_t num_species_to_inspect = std::min(sorted_species.size(), (size_t)5);
-            std::cout << "Inspecting balance for top " << num_species_to_inspect << " species with highest error ratio:" << std::endl;
+            const size_t num_species_to_inspect = std::min(sorted_species.size(), static_cast<size_t>(5));
+            std::cout << " > Inspecting balance for top " << num_species_to_inspect << " species with highest error ratio:" << std::endl;
             for (size_t i = 0; i < num_species_to_inspect; ++i) {
                 const auto& species = sorted_species[i];
                 diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho);
             }
-            std::cout << "--- Finished Jacobian and Species Balance Diagnostics ---" << std::endl;
+            std::cout << "--- Finished Species Balance Diagnostics ---" << std::endl;
         }
     }
 
