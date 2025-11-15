@@ -21,6 +21,8 @@
 #include "fourdst/composition/utils/composition_hash.h"
 
 namespace {
+    constexpr double MIN_ABS_NORM_ALWAYS_CONVERGED = 1e-30;
+
     using namespace fourdst::atomic;
     std::vector<std::vector<Species>> findConnectedComponentsBFS(
         const std::unordered_map<Species, std::vector<Species>>& graph,
@@ -144,7 +146,6 @@ namespace {
         {Eigen::LevenbergMarquardtSpace::Status::GtolTooSmall, "GtolTooSmall"},
         {Eigen::LevenbergMarquardtSpace::Status::UserAsked, "UserAsked"}
     };
-
 }
 
 namespace gridfire {
@@ -193,7 +194,7 @@ namespace gridfire {
             return ss.str();
         }());
 
-        const auto result = m_baseEngine.calculateRHSAndEnergy(comp, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(qseComposition, T9, rho);
         LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
@@ -216,8 +217,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(qseComposition, T9, rho);
     }
 
     NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -225,8 +226,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, m_dynamic_species);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, m_dynamic_species);
     }
 
     NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -263,9 +264,9 @@ namespace gridfire {
             }
         }
 
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, dynamicActiveSpeciesIntersection);
+        return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, dynamicActiveSpeciesIntersection);
     }
 
     NetworkJacobian MultiscalePartitioningEngineView::generateJacobianMatrix(
@@ -274,8 +275,8 @@ namespace gridfire {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, sparsityPattern);
     }
 
     void MultiscalePartitioningEngineView::generateStoichiometryMatrix() {
@@ -295,9 +296,9 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
 
-        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, qseComposition, T9, rho);
     }
 
     const reaction::ReactionSet & MultiscalePartitioningEngineView::getNetworkReactions() const {
@@ -314,8 +315,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        const auto result  = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result  = m_baseEngine.getSpeciesTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -332,8 +333,8 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
@@ -545,9 +546,9 @@ namespace gridfire {
         });
 
         for (const auto& species : m_baseEngine.getNetworkSpecies()) {
-            bool involvesAlgebraic = involvesSpeciesInQSE(species);
+            const bool involvesAlgebraic = involvesSpeciesInQSE(species);
             if (std::ranges::find(m_dynamic_species, species) == m_dynamic_species.end() && !involvesAlgebraic) {
-                // Species is classed as neither dynamic nor algebraic at end of partitioning → add to dynamic set
+                // Species is classed as neither dynamic nor algebraic at end of partitioning → add to dynamic set. This ensures that all species are classified.
                 m_dynamic_species.push_back(species);
             }
         }
@@ -581,7 +582,7 @@ namespace gridfire {
             }
         }
 
-        // const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
         // Calculate reaction flows and find min/max for logarithmic scaling of transparency
         std::vector<double> reaction_flows;
         reaction_flows.reserve(all_reactions.size());
@@ -589,7 +590,7 @@ namespace gridfire {
         double max_log_flow = std::numeric_limits<double>::lowest();
 
         for (const auto& reaction : all_reactions) {
-            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
+            double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, qseComposition, T9, rho));
             reaction_flows.push_back(flow);
             if (flow > 1e-99) { // Avoid log(0)
                 double log_flow = std::log10(flow);
@@ -819,6 +820,7 @@ namespace gridfire {
         const double T9,
         const double rho
     ) const {
+        // Caching mechanism to avoid redundant QSE solves
         const std::array<uint64_t, 3> hashes = {
             fourdst::composition::utils::CompositionHash::hash_exact(comp),
             std::hash<double>()(T9),
@@ -827,9 +829,12 @@ namespace gridfire {
 
         const uint64_t composite_hash = XXHash64::hash(hashes.begin(), sizeof(uint64_t) * 3, 0);
         if (m_composition_cache.contains(composite_hash)) {
-            LOG_TRACE_L1(m_logger, "Cache Hit in Multiscale Partitioning Engine View for composition at T9 = {}, rho = {}.", T9, rho);
+            LOG_TRACE_L3(m_logger, "Cache Hit in Multiscale Partitioning Engine View for composition at T9 = {}, rho = {}.", T9, rho);
             return m_composition_cache.at(composite_hash);
         }
+        LOG_TRACE_L3(m_logger, "Cache Miss in Multiscale Partitioning Engine View for composition at T9 = {}, rho = {}. Solving QSE abundances...", T9, rho);
+
+        // Only solve if the composition and thermodynamic conditions have not been cached yet
         fourdst::composition::Composition qseComposition = solveQSEAbundances(comp, T9, rho);
 
         for (const auto &[sp, y]: qseComposition) {
@@ -931,12 +936,12 @@ namespace gridfire {
         constexpr double MAX_MOLAR_ABUNDANCE_THRESHOLD = 1e-10; // Maximum molar abundance which a fast species is allowed to have (anything more abundant is always considered dynamic)
         constexpr double MIN_MOLAR_ABUNDANCE_THRESHOLD = 1e-50; // Minimum molar abundance to consider a species at all (anything less abundance will be classed as dynamic but with the intent that some latter view will deal with it)
 
-        LOG_TRACE_L1(m_logger, "Found {} species with finite timescales.", sorted_destruction_timescales.size());
-        LOG_TRACE_L1(m_logger, "Absolute QSE timescale threshold: {} seconds ({} years).",
+        LOG_TRACE_L2(m_logger, "Found {} species with finite timescales.", sorted_destruction_timescales.size());
+        LOG_TRACE_L2(m_logger, "Absolute QSE timescale threshold: {} seconds ({} years).",
             ABSOLUTE_QSE_TIMESCALE_THRESHOLD, ABSOLUTE_QSE_TIMESCALE_THRESHOLD / 3.156e7);
-        LOG_TRACE_L1(m_logger, "Minimum gap threshold: {} orders of magnitude.", MIN_GAP_THRESHOLD);
-        LOG_TRACE_L1(m_logger, "Maximum molar abundance threshold for fast species consideration : {}.", MAX_MOLAR_ABUNDANCE_THRESHOLD);
-        LOG_TRACE_L1(m_logger, "Minimum molar abundance threshold for species consideration : {}.", MIN_MOLAR_ABUNDANCE_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Minimum gap threshold: {} orders of magnitude.", MIN_GAP_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Maximum molar abundance threshold for fast species consideration : {}.", MAX_MOLAR_ABUNDANCE_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Minimum molar abundance threshold for species consideration : {}.", MIN_MOLAR_ABUNDANCE_THRESHOLD);
 
         std::vector<Species> dynamic_pool_species;
         std::vector<std::pair<double, Species>> fast_candidates;
@@ -973,12 +978,12 @@ namespace gridfire {
         }
 
         if (!dynamic_pool_species.empty()) {
-            LOG_TRACE_L1(m_logger, "Found {} dynamic species (slower than QSE timescale threshold).", dynamic_pool_species.size());
+            LOG_TRACE_L2(m_logger, "Found {} dynamic species (slower than QSE timescale threshold).", dynamic_pool_species.size());
             final_pools.push_back(dynamic_pool_species);
         }
 
         if (fast_candidates.empty()) {
-            LOG_TRACE_L1(m_logger, "No fast candidates found.");
+            LOG_TRACE_L2(m_logger, "No fast candidates found.");
             return final_pools;
         }
 
@@ -1011,7 +1016,7 @@ namespace gridfire {
         }
         final_pools.push_back(final_fast_pool);
 
-        LOG_TRACE_L1(m_logger, "Final partitioned pools: {}",
+        LOG_TRACE_L2(m_logger, "Final partitioned pools: {}",
             [&]() -> std::string {
                 std::stringstream ss;
                 int oc = 0;
@@ -1246,7 +1251,7 @@ namespace gridfire {
             Eigen::LevenbergMarquardtSpace::Status status = lm.minimize(v_initial);
             LOG_TRACE_L2(m_logger, "Minimizing functor status: {}", lm_status_map.at(status));
 
-            if (status <= 0 || status >= 4) {
+            if (status <= 0 || status > 4) {
                 std::stringstream msg;
                 msg << "While working on QSE group with algebraic species: ";
                 size_t count = 0;
@@ -1257,9 +1262,7 @@ namespace gridfire {
                     }
                     count++;
                 }
-                msg << " the QSE solver failed to converge with status: " << lm_status_map.at(status);
-                msg << ". This likely indicates that the QSE groups were not properly partitioned";
-                msg << " (for example if the algebraic set here contains species which should be dynamic like He-4 or H-1).";
+                msg << " the QSE solver failed to converge with status: " << lm_status_map.at(status) << " (No. " << status << ").";
                 LOG_ERROR(m_logger, "{}", msg.str());
                 throw std::runtime_error(msg.str());
             }
