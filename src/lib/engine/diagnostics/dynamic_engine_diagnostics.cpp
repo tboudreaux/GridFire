@@ -13,16 +13,15 @@ namespace gridfire::diagnostics {
         const DynamicEngine& engine,
         const std::vector<double>& Y_full,
         const std::vector<double>& E_full,
-        const std::vector<double>& dydt_full,
         const double relTol,
         const double absTol,
         const size_t top_n
     ) {
         struct SpeciesError {
             std::string name;
+            double error;
             double ratio;
             double abundance;
-            double dydt;
         };
 
         const auto& species_list = engine.getNetworkSpecies();
@@ -34,9 +33,9 @@ namespace gridfire::diagnostics {
                 const double ratio = std::abs(E_full[i]) / weight;
                 errors.push_back({
                     std::string(species_list[i].name()),
+                    E_full[i],
                     ratio,
                     Y_full[i],
-                    dydt_full[i]
                 });
             }
         }
@@ -52,20 +51,20 @@ namespace gridfire::diagnostics {
         std::vector<std::string> sorted_speciesNames;
         std::vector<double> sorted_err_ratios;
         std::vector<double> sorted_abundances;
-        std::vector<double> sorted_dydt;
+        std::vector<double> sorted_errors;
 
         for (size_t i = 0; i < std::min(top_n, errors.size()); ++i) {
             sorted_speciesNames.push_back(errors[i].name);
             sorted_err_ratios.push_back(errors[i].ratio);
             sorted_abundances.push_back(errors[i].abundance);
-            sorted_dydt.push_back(errors[i].dydt);
+            sorted_errors.push_back(errors[i].error);
         }
 
         std::vector<std::unique_ptr<utils::ColumnBase>> columns;
         columns.push_back(std::make_unique<utils::Column<std::string>>("Species", sorted_speciesNames));
         columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
         columns.push_back(std::make_unique<utils::Column<double>>("Abundance", sorted_abundances));
-        columns.push_back(std::make_unique<utils::Column<double>>("dY/dt", sorted_dydt));
+        columns.push_back(std::make_unique<utils::Column<double>>("Error", sorted_errors));
 
         std::cout << utils::format_table("Timestep Limiting Species", columns) << std::endl;
     }
@@ -128,12 +127,33 @@ namespace gridfire::diagnostics {
     }
 
     void inspect_jacobian_stiffness(
-        const DynamicEngine& engine,
+        const DynamicEngine &engine,
         const fourdst::composition::Composition &comp,
         const double T9,
         const double rho
     ) {
-        const NetworkJacobian jac = engine.generateJacobianMatrix(comp, T9, rho);
+        inspect_jacobian_stiffness(engine, comp, T9, rho, false, std::nullopt);
+    }
+
+
+    void inspect_jacobian_stiffness(
+        const DynamicEngine& engine,
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const bool save,
+        const std::optional<std::string> &filename
+    ) {
+        NetworkJacobian jac = engine.generateJacobianMatrix(comp, T9, rho);
+
+        jac = regularize_jacobian(jac, comp);
+        if (save) {
+            if (!filename.has_value()) {
+                throw std::invalid_argument("Filename must be provided when save is true.");
+            }
+            jac.to_csv(filename.value());
+        }
+
         const auto& species_list = engine.getNetworkSpecies();
 
         double max_diag = 0.0;
@@ -164,5 +184,4 @@ namespace gridfire::diagnostics {
         }
         std::cout << "---------------------------------" << std::endl;
     }
-
 }

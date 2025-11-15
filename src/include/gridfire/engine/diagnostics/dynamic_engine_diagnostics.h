@@ -10,7 +10,6 @@ namespace gridfire::diagnostics {
         const DynamicEngine& engine,
         const std::vector<double>& Y_full,
         const std::vector<double>& E_full,
-        const std::vector<double>& dydt_full,
         double relTol,
         double absTol,
         size_t top_n = 10
@@ -29,6 +28,20 @@ namespace gridfire::diagnostics {
         const fourdst::composition::Composition &comp,
         double T9,
         double rho
+    );
+
+    void inspect_jacobian_stiffness(
+        const DynamicEngine& engine,
+        const fourdst::composition::Composition &comp,
+        double T9,
+        double rho,
+        bool save,
+        const std::optional<std::string>& filename
+    );
+
+    void save_jacobian_to_file(
+        const NetworkJacobian& jacobian,
+        const std::string& filename
     );
 
 }
