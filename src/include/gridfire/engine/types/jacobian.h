@@ -1,14 +1,18 @@
 #pragma once
 
 #include "fourdst/atomic/atomicSpecies.h"
+#include "fourdst/composition/composition_abstract.h"
+#include "quill/Logger.h"
 #include <Eigen/SparseCore>
 #include <Eigen/SparseQR>
 
 #include <tuple>
 #include <functional>
 #include <unordered_map>
+#include <optional>
 
 namespace gridfire {
+    constexpr double MIN_ABUNDANCE_TO_CONTRIBUTE_TO_JACOBIAN = 1e-100;
     using JacobianEntry = std::pair<std::pair<fourdst::atomic::Species, fourdst::atomic::Species>, double>;
 
     class NetworkJacobian {
@@ -60,9 +64,18 @@ namespace gridfire {
         [[nodiscard]] Eigen::SparseMatrix<double> data() const;
         [[nodiscard]] const std::unordered_map<fourdst::atomic::Species, size_t>& mapping() const;
 
+        void to_csv(const std::string& filename) const;
+
     private:
         Eigen::SparseMatrix<double> m_jacobianMatrix;
         std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap;
-        size_t m_rank;
+
+        mutable std::optional<size_t> m_rank = std::nullopt;
     };
+
+    NetworkJacobian regularize_jacobian(
+        const NetworkJacobian& jacobian,
+        const fourdst::composition::CompositionAbstract& comp,
+        std::optional<quill::Logger*> logger = std::nullopt
+    );
 }
