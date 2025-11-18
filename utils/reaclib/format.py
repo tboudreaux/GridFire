@@ -361,28 +361,11 @@ def determine_reaction_type(reactants: List[str],
     ejectiles:   List[str] = []
 
 
-    debug = False
-    if reactants == ['b8'] and products == ['be8']:
-        debug = True
-
     BETA_PLUS_THRESHOLD_ENERGY = 1.022 # MeV
 
     # -----------------------------------------------------------------------
     # 1.  Charged-lepton bookkeeping (|ΔZ| = 1) ------------------------------
     # -----------------------------------------------------------------------
-    if debug:
-        print("============")
-        print("Reactant Species: ", reactantSpecies)
-        print("Product Species: ", productSpecies)
-        print("Target Species: ", targetSpecies)
-        print("Residual Species: ", residualSpecies)
-        print("Nuclear Projectiles: ", nuclearProjectiles)
-        print("Nuclear Ejectiles: ", nuclearEjectiles)
-        print("aReact, aProd: ", aReact, aProd)
-        print("zReact, zProd: ", zReact, zProd)
-        print("nReact, nProd: ", nReact, nProd)
-        print("dA, dZ, dN: ", dA, dZ, dN)
-        print("qValue: ", qValue)
 
     if dZ == -1 and chapter == 1:
         ejectiles.append("e-") # β- decay

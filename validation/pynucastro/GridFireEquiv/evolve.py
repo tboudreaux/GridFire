@@ -50,8 +50,8 @@ from fourdst.atomic import species, Species
 from datetime import datetime
 from typing import List, Dict, Set, Tuple
 
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
 X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
 
 
 comp = Composition()
