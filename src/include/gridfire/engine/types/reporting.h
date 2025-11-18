@@ -85,4 +85,19 @@ namespace gridfire {
         NOT_PRESENT
     };
 
+    inline std::string SpeciesStatus_to_string(const SpeciesStatus status) {
+        switch (status) {
+            case SpeciesStatus::ACTIVE:
+                return "ACTIVE";
+            case SpeciesStatus::EQUILIBRIUM:
+                return "EQUILIBRIUM";
+            case SpeciesStatus::INACTIVE_FLOW:
+                return "INACTIVE_FLOW";
+            case SpeciesStatus::NOT_PRESENT:
+                return "NOT_PRESENT";
+            default:
+                return "UNKNOWN_STATUS";
+        }
+    }
+
 }

@@ -431,6 +431,7 @@ namespace gridfire {
         const DynamicEngine & getBaseEngine() const override;
 
 
+
         /**
          * @brief Partitions the network based on timescales from a `NetIn` struct.
          *
@@ -724,6 +725,12 @@ namespace gridfire {
             int df(const InputType& v_qse, JacobianType& J_qse) const;
         };
 
+        struct FluxValidationResult {
+            std::vector<QSEGroup> valid_groups;
+            std::vector<QSEGroup> invalid_groups;
+            std::vector<reaction::ReactionSet> validatedGroupReactions;
+        };
+
     private:
         /**
          * @brief Logger instance for logging messages.
@@ -807,7 +814,7 @@ namespace gridfire {
          *      flux exceeds a configurable threshold, the group is considered valid and is added
          *      to the returned vector.
          */
-        std::pair<std::vector<QSEGroup>, std::vector<QSEGroup>> validateGroupsWithFluxAnalysis(
+        FluxValidationResult validateGroupsWithFluxAnalysis(
             const std::vector<QSEGroup> &candidate_groups,
             const fourdst::composition::Composition &comp,
             double T9,
@@ -928,6 +935,14 @@ namespace gridfire {
          */
         std::vector<std::vector<fourdst::atomic::Species>> analyzeTimescalePoolConnectivity(
             const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools
+        ) const;
+
+        std::vector<QSEGroup> pruneValidatedGroups(
+            const std::vector<QSEGroup> &groups,
+            const std::vector<reaction::ReactionSet> &groupReactions,
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
         ) const;
     };
 }
