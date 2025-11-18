@@ -22,6 +22,7 @@
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/exceptions/error_solver.h"
+#include "gridfire/utils/logging.h"
 
 namespace {
 
@@ -215,7 +216,9 @@ namespace gridfire::solver {
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
-            // log_step_diagnostics(user_data, true);
+
+            // TODO: Come up with some way to save these to a file rather than spamming stdout. JSON maybe? OPAT?
+            // log_step_diagnostics(user_data, true, false, false);
             // exit(0);
             check_cvode_flag(flag, "CVode");
 
@@ -246,6 +249,7 @@ namespace gridfire::solver {
                     << " (+" << std::setw(2) << convFail_diff << ")"
                     << "\n";
             }
+            LOG_INFO(m_logger, "Completed {} steps to time {} [s] (dt = {} [s]). Current specific energy: {} [erg/g]", n_steps, current_time, last_step_size, current_energy);
 
             static const std::map<fourdst::atomic::Species,
                       std::unordered_map<std::string,double>> kEmptyMap{};
@@ -450,6 +454,9 @@ namespace gridfire::solver {
                 initialize_cvode_integration_resources(N, numSpecies, current_time, currentComposition, absTol, relTol, accumulated_energy);
 
                 check_cvode_flag(CVodeReInit(m_cvode_mem, current_time, m_Y), "CVodeReInit");
+
+                std::cerr << "Aborting for debug purposes\n";
+                exit(0);
 
             }
 
@@ -897,6 +904,46 @@ namespace gridfire::solver {
         }
 
         fourdst::composition::Composition composition(user_data.engine->getNetworkSpecies(), Y_full);
+        fourdst::composition::Composition collectedComposition = user_data.engine->collectComposition(composition, user_data.T9, user_data.rho);
+
+        auto destructionTimescales = user_data.engine->getSpeciesDestructionTimescales(collectedComposition, user_data.T9, user_data.rho);
+        auto netTimescales = user_data.engine->getSpeciesTimescales(collectedComposition, user_data.T9, user_data.rho);
+
+        bool timescaleOkay = false;
+        if (destructionTimescales && netTimescales) timescaleOkay = true;
+
+        if (timescaleOkay) {
+            std::vector<std::unique_ptr<utils::ColumnBase>> timescaleColumns;
+            std::vector<fourdst::atomic::Species> species_list;
+            std::vector<double> netTimescales_list;
+            std::vector<double> destructionTimescales_list;
+            std::vector<std::string> speciesStatus_list;
+
+            for (const auto &sp: collectedComposition | std::views::keys) {
+                species_list.emplace_back(sp);
+                if (netTimescales.value().contains(sp)) netTimescales_list.emplace_back(netTimescales.value().at(sp));
+                else netTimescales_list.emplace_back(std::numeric_limits<double>::infinity());
+
+                if (destructionTimescales.value().contains(sp)) destructionTimescales_list.emplace_back(destructionTimescales.value().at(sp));
+                else destructionTimescales_list.emplace_back(std::numeric_limits<double>::infinity());
+
+                speciesStatus_list.push_back(SpeciesStatus_to_string(user_data.engine->getSpeciesStatus(sp)));
+            }
+
+            utils::Column<fourdst::atomic::Species> speciesColumn("Species", species_list);
+            utils::Column<double> netTimescaleColumn("Net Timescale (s)", netTimescales_list);
+            utils::Column<double> destructionTimescaleColumn("Destruction Timescale (s)", destructionTimescales_list);
+            utils::Column<std::string> speciesStatusColumn("Species Status", speciesStatus_list);
+
+            std::vector<std::unique_ptr<utils::ColumnBase>> table;
+            table.push_back(std::make_unique<utils::Column<fourdst::atomic::Species>>(speciesColumn));
+            table.push_back(std::make_unique<utils::Column<double>>(netTimescaleColumn));
+            table.push_back(std::make_unique<utils::Column<double>>(destructionTimescaleColumn));
+            table.push_back(std::make_unique<utils::Column<std::string>>(speciesStatusColumn));
+
+            utils::print_table("Species Timescales", table);
+        }
+
 
         if (err_ratios.empty()) {
             std::cout << "Error ratios vector is empty." << std::endl;
