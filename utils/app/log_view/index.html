@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Static Log Viewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace']
+          },
+          colors: {
+            surface: {
+              light: '#f9fafb',
+              dark: '#020617'
+            },
+            panel: {
+              light: '#ffffff',
+              dark: '#020617'
+            },
+            accent: {
+              light: '#2563eb',
+              dark: '#60a5fa'
+            }
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="h-full bg-surface-light text-slate-900 dark:bg-surface-dark dark:text-slate-100">
+  <div class="min-h-screen flex flex-col">
+    <header class="border-b border-slate-200/70 dark:border-slate-800 bg-panel-light/80 dark:bg-panel-dark/80 backdrop-blur sticky top-0 z-20">
+      <div class="max-w-[98vw] mx-auto px-1 sm:px-2 lg:px-3 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-cyan-500 flex items-center justify-center text-xs font-semibold text-white shadow">
+            LV
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-semibold tracking-tight">GridFire Log Viewer</h1>
+            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Client-side log explorer</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+          <span class="hidden sm:inline">Drop or select log files &middot; </span>
+          <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Client-side only
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main layout -->
+    <main class="flex-1 max-w-[98vw] mx-auto w-full px-1 sm:px-2 lg:px-3 py-3 sm:py-4 flex flex-col gap-3">
+      <!-- Global controls -->
+      <section class="bg-panel-light dark:bg-panel-dark border border-slate-200/70 dark:border-slate-800 rounded-2xl p-3 sm:p-4 shadow-sm flex flex-col gap-3">
+        <div class="flex flex-col md:flex-row md:items-end gap-3">
+          <div class="flex-1 flex flex-col gap-1">
+            <label class="text-[11px] uppercase tracking-wide font-medium text-slate-500 dark:text-slate-400">Search / Fuzzy match</label>
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-2 flex items-center pointer-events-none text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                    <circle cx="11" cy="11" r="6" /><line x1="16" y1="16" x2="21" y2="21" />
+                  </svg>
+                </span>
+                <input id="search-input" type="text" placeholder="Search message, file, level, thread..." class="w-full pl-7 pr-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-xs focus:outline-none focus:ring-1 focus:ring-accent-light/70 dark:focus:ring-accent-dark/70" />
+              </div>
+              <button id="clear-search" class="px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40" disabled>
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex flex-col gap-1">
+              <span class="text-[11px] uppercase tracking-wide font-medium text-slate-500 dark:text-slate-400">Log Level</span>
+              <div class="flex flex-wrap gap-1.5 text-[11px]">
+                <button data-level="ALL" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900/80 font-medium">All</button>
+                <button data-level="LOG_TRACE_L3" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-indigo-100/80 text-indigo-900 dark:bg-indigo-900/40 dark:text-indigo-100">TRACE L3</button>
+                <button data-level="LOG_TRACE_L2" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-violet-100/80 text-violet-900 dark:bg-violet-900/40 dark:text-violet-100">TRACE L2</button>
+                <button data-level="LOG_TRACE_L1" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-purple-100/80 text-purple-900 dark:bg-purple-900/40 dark:text-purple-100">TRACE L1</button>
+                <button data-level="LOG_DEBUG" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-sky-100/80 text-sky-900 dark:bg-sky-900/40 dark:text-sky-100">DEBUG</button>
+                <button data-level="LOG_INFO" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-emerald-100/90 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-100">INFO</button>
+                <button data-level="LOG_WARNING" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-amber-100/90 text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">WARNING</button>
+                <button data-level="LOG_ERROR" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-rose-100/90 text-rose-900 dark:bg-rose-900/40 dark:text-rose-100">ERROR</button>
+                <button data-level="LOG_CRITICAL" class="level-chip px-2 py-1 rounded-full border border-slate-300 dark:border-slate-700 bg-rose-200/90 text-rose-950 dark:bg-rose-900/60 dark:text-rose-50">CRITICAL</button>
+              </div>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] uppercase tracking-wide font-medium text-slate-500 dark:text-slate-400">Location filter</label>
+              <input id="location-filter" type="text" placeholder="partition_composite.cpp or :163" class="w-40 sm:w-48 px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-xs focus:outline-none focus:ring-1 focus:ring-accent-light/70 dark:focus:ring-accent-dark/70" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200/80 dark:border-slate-800 pt-2 mt-1">
+          <div class="flex items-center gap-2">
+            <label class="inline-flex items-center gap-1">
+              <input id="link-scroll" type="checkbox" class="rounded border-slate-300 dark:border-slate-600 text-accent-light dark:text-accent-dark focus:ring-accent-light/80 dark:focus:ring-accent-dark/80" />
+              <span>Link scroll between panels</span>
+            </label>
+            <span class="hidden sm:inline">&bull;</span>
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Matching both panels with global filters
+            </span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="global-stats" class="tabular-nums">0 lines loaded</span>
+            <button id="reset-view" class="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800">Reset view</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="flex-1 flex flex-col lg:flex-row gap-3">
+        <div id="panel-a" class="flex-1 min-h-[260px] bg-panel-light dark:bg-panel-dark border border-slate-200/70 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col overflow-hidden">
+          <div class="px-3 sm:px-4 py-2.5 border-b border-slate-200/70 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-blue-100/80 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100 border border-blue-200/80 dark:border-blue-900/60">LOG A</span>
+                <span id="panel-a-title" class="text-xs font-medium truncate max-w-[12rem]">Drop a file here</span>
+              </div>
+              <p id="panel-a-subtitle" class="text-[11px] text-slate-500 dark:text-slate-400">No file loaded</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] px-2 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/40 hover:border-accent-light/70 dark:hover:border-accent-dark/70">
+                <input id="file-input-a" type="file" class="hidden" accept=".log,.txt,.out,.err,.log.*" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /><polyline points="7 9 12 4 17 9" /><line x1="12" y1="4" x2="12" y2="16" />
+                </svg>
+                <span>Load file</span>
+              </label>
+              <button id="panel-a-clear" class="text-[11px] px-2 py-1.5 rounded-lg border border-transparent text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40" disabled>Clear</button>
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <div id="dropzone-a" class="relative border-b border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 text-[11px] px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-900/5 dark:bg-slate-50/5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /><polyline points="7 9 12 4 17 9" /><line x1="12" y1="4" x2="12" y2="16" />
+                </svg>
+              </span>
+              <span>Drop a log file here or use the button above.</span>
+            </div>
+            <span id="panel-a-stats" class="tabular-nums text-slate-400 dark:text-slate-500">0 lines</span>
+          </div>
+
+          <!-- Timeline meta & marker info -->
+          <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2 text-[11px] border-b border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="panel-a-visible" class="tabular-nums">0 visible</span>
+              </span>
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                <span id="panel-a-time-range" class="tabular-nums">&ndash;</span>
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px]">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>A</span>
+                <span class="mx-1 text-slate-400">/</span>
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>B</span>
+              </div>
+              <span id="panel-a-delta" class="tabular-nums text-slate-500 dark:text-slate-400">Δt: &ndash;</span>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-auto bg-slate-950/90 dark:bg-black/95" id="scroll-container-a">
+            <table class="min-w-full text-[11px] font-mono text-slate-200">
+              <thead class="sticky top-0 bg-slate-900 border-b border-slate-800 text-[10px] uppercase tracking-wide">
+                <tr>
+                  <th class="px-2 py-1 text-left w-8">#</th>
+                  <th class="px-2 py-1 text-left w-6">&nbsp;</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Time</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Thread</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">File:Line</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Level</th>
+                  <th class="px-2 py-1 text-left">Message</th>
+                </tr>
+              </thead>
+              <tbody id="log-body-a"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="panel-b" class="hidden" class="flex-1 min-h-[260px] bg-panel-light dark:bg-panel-dark border border-slate-200/70 dark:border-slate-800 rounded-2xl shadow-sm flex flex-col overflow-hidden">
+          <div class="px-3 sm:px-4 py-2.5 border-b border-slate-200/70 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-100/80 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-100 border border-emerald-200/80 dark:border-emerald-900/60">LOG B</span>
+                <span id="panel-b-title" class="text-xs font-medium truncate max-w-[12rem]">Drop a file here</span>
+              </div>
+              <p id="panel-b-subtitle" class="text-[11px] text-slate-500 dark:text-slate-400">No file loaded</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] px-2 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/40 hover:border-accent-light/70 dark:hover:border-accent-dark/70">
+                <input id="file-input-b" type="file" class="hidden" accept=".log,.txt,.out,.err,.log.*" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /><polyline points="7 9 12 4 17 9" /><line x1="12" y1="4" x2="12" y2="16" />
+                </svg>
+                <span>Load file</span>
+              </label>
+              <button id="panel-b-clear" class="text-[11px] px-2 py-1.5 rounded-lg border border-transparent text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40" disabled>Clear</button>
+            </div>
+          </div>
+
+          <div id="dropzone-b" class="relative border-b border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 text-[11px] px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+              <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-900/5 dark:bg-slate-50/5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /><polyline points="7 9 12 4 17 9" /><line x1="12" y1="4" x2="12" y2="16" />
+                </svg>
+              </span>
+              <span>Drop a second log here to compare.</span>
+            </div>
+            <span id="panel-b-stats" class="tabular-nums text-slate-400 dark:text-slate-500">0 lines</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2 text-[11px] border-b border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="panel-b-visible" class="tabular-nums">0 visible</span>
+              </span>
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                <span id="panel-b-time-range" class="tabular-nums">&ndash;</span>
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px]">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>A</span>
+                <span class="mx-1 text-slate-400">/</span>
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>B</span>
+              </div>
+              <span id="panel-b-delta" class="tabular-nums text-slate-500 dark:text-slate-400">Δt: &ndash;</span>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-auto bg-slate-950/90 dark:bg-black/95" id="scroll-container-b">
+            <table class="min-w-full text-[11px] font-mono text-slate-200">
+              <thead class="sticky top-0 bg-slate-900 border-b border-slate-800 text-[10px] uppercase tracking-wide">
+                <tr>
+                  <th class="px-2 py-1 text-left w-8">#</th>
+                  <th class="px-2 py-1 text-left w-6">&nbsp;</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Time</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Thread</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">File:Line</th>
+                  <th class="px-2 py-1 text-left whitespace-nowrap">Level</th>
+                  <th class="px-2 py-1 text-left">Message</th>
+                </tr>
+              </thead>
+              <tbody id="log-body-b"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer helpers -->
+      <section class="mt-1 mb-2 text-[10px] text-slate-500 dark:text-slate-500 flex flex-wrap gap-4 justify-between items-center">
+        <div class="flex flex-wrap gap-3 items-center">
+          <span class="inline-flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Click gutter to set marker A</span>
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span>Shift+Click gutter to set marker B</span>
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <span class="w-2 h-2 rounded-sm bg-slate-700"></span>
+            <span>Click row to highlight</span>
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5">
+              <polyline points="4 7 4 4 20 4 20 7" /><line x1="9" y1="20" x2="15" y2="20" /><line x1="12" y1="4" x2="12" y2="20" />
+            </svg>
+            <span>Columns are responsive & virtualized by filter, not by scroll</span>
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // --- Parsing and model helpers ---
+    const logLineRegex = /^(\d{2}:\d{2}:\d{2}\.\d+)\s+\[(\d+)]\s+(\S+):(\d+)\s+(LOG_\S+)\s+(\S+)\s+(.*)$/;
+
+    function parseTimeToNs(timeStr) {
+      // HH:MM:SS.xxxxxxxxx
+      const [h, m, rest] = timeStr.split(':');
+      const [sStr, fracStr = '0'] = rest.split('.');
+      const hours = Number(h) || 0;
+      const minutes = Number(m) || 0;
+      const seconds = Number(sStr) || 0;
+      const frac = fracStr.padEnd(9, '0').slice(0, 9); // to nanoseconds
+      const ns = BigInt(hours) * 3600n * 1_000_000_000n + BigInt(minutes) * 60n * 1_000_000_000n + BigInt(seconds) * 1_000_000_000n + BigInt(frac);
+      return ns;
+    }
+
+    function formatDurationNs(deltaNs) {
+      const sign = deltaNs < 0n ? '-' : '';
+      let ns = deltaNs < 0n ? -deltaNs : deltaNs;
+      const nsPerMs = 1_000_000n;
+      const nsPerSec = 1_000_000_000n;
+      const nsPerMin = 60n * nsPerSec;
+      const nsPerHr  = 60n * nsPerMin;
+
+      const hours = ns / nsPerHr; ns %= nsPerHr;
+      const minutes = ns / nsPerMin; ns %= nsPerMin;
+      const seconds = ns / nsPerSec; ns %= nsPerSec;
+      const ms = ns / nsPerMs;
+
+      const pad = (v, n = 2) => v.toString().padStart(n, '0');
+      if (hours > 0n) {
+        return `${sign}${hours}h ${pad(minutes)}m ${pad(seconds)}.${pad(ms, 3)}s`;
+      }
+      if (minutes > 0n) {
+        return `${sign}${minutes}m ${pad(seconds)}.${pad(ms, 3)}s`;
+      }
+      if (seconds > 0n) {
+        return `${sign}${seconds}.${pad(ms, 3)}s`;
+      }
+      return `${sign}0.${pad(ms, 3)}s`;
+    }
+
+    function parseLogText(text) {
+      const lines = text.split(/\r?\n/);
+      const parsed = [];
+      for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i];
+        if (!raw.trim()) continue;
+        const match = raw.match(logLineRegex);
+        if (!match) {
+          parsed.push({
+            index: parsed.length,
+            raw,
+            time: null,
+            timeNs: null,
+            threadId: null,
+            file: null,
+            line: null,
+            level: 'UNPARSED',
+            logger: null,
+            message: raw,
+            isParsed: false
+          });
+          continue;
+        }
+        const [, time, threadId, file, line, level, logger, message] = match;
+        let timeNs = null;
+        try {
+          timeNs = parseTimeToNs(time);
+        } catch {
+          timeNs = null;
+        }
+        parsed.push({
+          index: parsed.length,
+          raw,
+          time,
+          timeNs,
+          threadId,
+          file,
+          line,
+          level,
+          logger,
+          message,
+          isParsed: true
+        });
+      }
+      return parsed;
+    }
+
+    function tokensMatch(text, query) {
+      if (!query) return true;
+      const q = query.trim().toLowerCase();
+      if (!q) return true;
+      const tokens = q.split(/\s+/);
+      const haystack = text.toLowerCase();
+      return tokens.every(t => haystack.includes(t));
+    }
+
+    function buildIndexForLine(line) {
+      const parts = [];
+      if (line.raw) parts.push(line.raw);
+      if (line.file) parts.push(line.file);
+      if (line.level) parts.push(line.level);
+      if (line.message) parts.push(line.message);
+      if (line.threadId) parts.push(String(line.threadId));
+      if (line.logger) parts.push(line.logger);
+      return parts.join(' ').toLowerCase();
+    }
+
+    // --- View model ---
+    class LogPanel {
+      constructor(panelId) {
+        this.id = panelId;
+        this.lines = [];
+        this.indexedText = [];
+        this.filtered = [];
+        this.markerA = null;
+        this.markerB = null;
+        this.currentHighlight = null;
+
+        this.elements = {
+          title: document.getElementById(`panel-${panelId}-title`),
+          subtitle: document.getElementById(`panel-${panelId}-subtitle`),
+          stats: document.getElementById(`panel-${panelId}-stats`),
+          visible: document.getElementById(`panel-${panelId}-visible`),
+          timeRange: document.getElementById(`panel-${panelId}-time-range`),
+          delta: document.getElementById(`panel-${panelId}-delta`),
+          tbody: document.getElementById(`log-body-${panelId}`),
+          dropzone: document.getElementById(`dropzone-${panelId}`),
+          scrollContainer: document.getElementById(`scroll-container-${panelId}`),
+          clearButton: document.getElementById(`panel-${panelId}-clear`),
+          fileInput: document.getElementById(`file-input-${panelId}`)
+        };
+
+        this.wireDragAndDrop();
+        this.wireFileInput();
+        this.wireClearButton();
+      }
+
+      wireDragAndDrop() {
+        const dz = this.elements.dropzone;
+        ['dragenter', 'dragover'].forEach(evt => {
+          dz.addEventListener(evt, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dz.classList.add('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-100/90', 'dark:bg-slate-900');
+          });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+          dz.addEventListener(evt, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dz.classList.remove('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-100/90', 'dark:bg-slate-900');
+          });
+        });
+        dz.addEventListener('drop', e => {
+          const files = e.dataTransfer.files;
+          if (!files || !files.length) return;
+          this.loadFile(files[0]);
+        });
+      }
+
+      wireFileInput() {
+        this.elements.fileInput.addEventListener('change', e => {
+          const file = e.target.files[0];
+          if (file) this.loadFile(file);
+        });
+      }
+
+      wireClearButton() {
+        this.elements.clearButton.addEventListener('click', () => {
+          this.clear();
+          if (this.id === 'b') {
+            document.getElementById('panel-b').classList.add('hidden');
+          }
+          applyGlobalFilters();
+          updateGlobalStats();
+        });
+      }
+
+      loadFile(file) {
+        const reader = new FileReader();
+        this.elements.subtitle.textContent = 'Loading...';
+        reader.onload = () => {
+          // Show panel-b if loading into B
+          if (this.id === 'b') {
+            document.getElementById('panel-b').classList.remove('hidden');
+          }
+          const text = reader.result;
+          this.lines = parseLogText(text);
+          this.indexedText = this.lines.map(buildIndexForLine);
+          this.filtered = [...this.lines];
+          this.markerA = null;
+          this.markerB = null;
+          this.currentHighlight = null;
+          this.elements.title.textContent = file.name;
+          this.elements.subtitle.textContent = `${this.lines.length} lines`;
+          this.elements.stats.textContent = `${this.lines.length} lines`;
+          this.elements.clearButton.disabled = false;
+          renderPanel(this);
+          applyGlobalFilters();
+          updateGlobalStats();
+        };
+        reader.readAsText(file);
+      }
+
+      clear() {
+        this.lines = [];
+        this.indexedText = [];
+        this.filtered = [];
+        this.markerA = null;
+        this.markerB = null;
+        this.currentHighlight = null;
+        this.elements.title.textContent = 'Drop a file here';
+        this.elements.subtitle.textContent = 'No file loaded';
+        this.elements.stats.textContent = '0 lines';
+        this.elements.visible.textContent = '0 visible';
+        this.elements.timeRange.textContent = '–';
+        this.elements.delta.textContent = 'Δt: –';
+        this.elements.tbody.innerHTML = '';
+        this.elements.clearButton.disabled = true;
+      }
+    }
+
+    const panelA = new LogPanel('a');
+    const panelB = new LogPanel('b');
+
+    // --- Rendering ---
+    function levelClass(level) {
+      switch (level) {
+        case 'LOG_TRACE_L2':
+          return 'text-violet-300';
+        case 'LOG_TRACE_L1':
+          return 'text-purple-300';
+        case 'LOG_INFO':
+          return 'text-emerald-300';
+        case 'LOG_WARN':
+          return 'text-amber-300';
+        case 'LOG_ERROR':
+        case 'LOG_CRITICAL':
+          return 'text-rose-300';
+        case 'UNPARSED':
+          return 'text-slate-400 italic';
+        default:
+          return 'text-slate-300';
+      }
+    }
+
+    function renderPanel(panel) {
+      const tbody = panel.elements.tbody;
+      tbody.innerHTML = '';
+
+      if (!panel.filtered.length) {
+        panel.elements.visible.textContent = '0 visible';
+        panel.elements.timeRange.textContent = '–';
+        panel.elements.delta.textContent = 'Δt: –';
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < panel.filtered.length; i++) {
+        const line = panel.filtered[i];
+        const tr = document.createElement('tr');
+        tr.dataset.index = String(line.index);
+        tr.className = 'border-b border-slate-900/60 hover:bg-slate-900/70 transition-colors cursor-default';
+
+        if (!line.isParsed) {
+          const tdIndex = document.createElement('td');
+          tdIndex.className = 'px-2 py-0.5 align-top text-right text-slate-500';
+          tdIndex.textContent = line.index + 1;
+          const tdGutter = document.createElement('td');
+          tdGutter.className = 'px-2 py-0.5 align-top';
+          const tdRaw = document.createElement('td');
+          tdRaw.className = 'px-2 py-0.5 align-top text-[11px] whitespace-pre text-slate-300';
+          tdRaw.colSpan = 5;
+          tdRaw.textContent = line.raw;
+          tr.append(tdIndex, tdGutter, tdRaw);
+          frag.appendChild(tr);
+          continue;
+        }
+
+        const tdIndex = document.createElement('td');
+        tdIndex.className = 'px-2 py-0.5 align-top text-right text-slate-500';
+        tdIndex.textContent = line.index + 1;
+
+        const tdGutter = document.createElement('td');
+        tdGutter.className = 'px-2 py-0.5 align-top';
+        tdGutter.innerHTML = '<div class="relative w-3 h-3 mx-auto rounded-full border border-slate-600/80 hover:border-slate-200/90 bg-slate-900/80 hover:bg-slate-800/90"></div>';
+        tdGutter.dataset.gutter = 'true';
+
+        const tdTime = document.createElement('td');
+        tdTime.className = 'px-2 py-0.5 align-top whitespace-nowrap text-slate-100 tabular-nums';
+        tdTime.textContent = line.time || '—';
+
+        const tdThread = document.createElement('td');
+        tdThread.className = 'px-2 py-0.5 align-top whitespace-nowrap text-slate-400 tabular-nums';
+        tdThread.textContent = line.threadId || '—';
+
+        const tdFile = document.createElement('td');
+        tdFile.className = 'px-2 py-0.5 align-top whitespace-nowrap text-slate-300';
+        tdFile.textContent = `${line.file}:${line.line}`;
+
+        const tdLevel = document.createElement('td');
+        tdLevel.className = 'px-2 py-0.5 align-top whitespace-nowrap font-semibold ' + levelClass(line.level);
+        tdLevel.textContent = line.level.replace('LOG_', '');
+
+        const tdMessage = document.createElement('td');
+        tdMessage.className = 'px-2 py-0.5 align-top text-slate-100 break-words';
+        tdMessage.textContent = line.message;
+
+        tr.append(tdIndex, tdGutter, tdTime, tdThread, tdFile, tdLevel, tdMessage);
+        frag.appendChild(tr);
+      }
+      tbody.appendChild(frag);
+
+      // Time range
+      const parsedWithTime = panel.filtered.filter(l => l.timeNs !== null);
+      if (parsedWithTime.length) {
+        let minNs = parsedWithTime[0].timeNs;
+        let maxNs = parsedWithTime[0].timeNs;
+        let tMin = parsedWithTime[0].time;
+        let tMax = parsedWithTime[0].time;
+        for (const l of parsedWithTime) {
+          if (l.timeNs < minNs) { minNs = l.timeNs; tMin = l.time; }
+          if (l.timeNs > maxNs) { maxNs = l.timeNs; tMax = l.time; }
+        }
+        const rangeStr = `${tMin} → ${tMax} (Δ ${formatDurationNs(maxNs - minNs)})`;
+        panel.elements.timeRange.textContent = rangeStr;
+      } else {
+        panel.elements.timeRange.textContent = '–';
+      }
+
+      panel.elements.visible.textContent = `${panel.filtered.length} visible`;
+
+      // Attach event listeners after render
+      tbody.querySelectorAll('tr').forEach(tr => {
+        tr.addEventListener('click', e => {
+          const isGutter = e.target.closest('td')?.dataset.gutter === 'true';
+          if (isGutter) return; // separator: gutter click handled separately
+          const idx = Number(tr.dataset.index);
+          handleRowClick(panel, idx, tr, e);
+        });
+
+        const gutterTd = tr.querySelector('td[data-gutter="true"]');
+        if (gutterTd) {
+          gutterTd.addEventListener('click', e => {
+            e.stopPropagation();
+            const idx = Number(tr.dataset.index);
+            handleGutterClick(panel, idx, tr, e);
+          });
+        }
+      });
+
+      updateMarkers(panel);
+    }
+
+    function handleRowClick(panel, index, rowEl, event) {
+      // Simple highlight behaviour
+      if (panel.currentHighlight) {
+        panel.currentHighlight.classList.remove('bg-slate-900', 'bg-slate-800/90');
+      }
+      rowEl.classList.add('bg-slate-900');
+      panel.currentHighlight = rowEl;
+    }
+
+    function handleGutterClick(panel, index, rowEl, event) {
+      const line = panel.lines[index];
+      const useB = event.shiftKey;
+      if (useB) {
+        if (panel.markerB === index) {
+          panel.markerB = null;
+        } else {
+          panel.markerB = index;
+        }
+      } else {
+        if (panel.markerA === index) {
+          panel.markerA = null;
+        } else {
+          panel.markerA = index;
+        }
+      }
+      updateMarkers(panel);
+    }
+
+    function updateMarkers(panel) {
+      // Clear previous marker visuals
+      panel.elements.tbody.querySelectorAll('tr').forEach(tr => {
+        tr.classList.remove('bg-slate-900/80');
+        const markerDot = tr.querySelector('td[data-gutter="true"] div');
+        if (markerDot) {
+          markerDot.className = 'relative w-3 h-3 mx-auto rounded-full border border-slate-600/80 hover:border-slate-200/90 bg-slate-900/80 hover:bg-slate-800/90';
+        }
+      });
+
+      const markLine = (idx, colorClass) => {
+        if (idx == null) return;
+        const tr = panel.elements.tbody.querySelector(`tr[data-index="${idx}"]`);
+        if (!tr) return;
+        const markerDot = tr.querySelector('td[data-gutter="true"] div');
+        if (markerDot) {
+          markerDot.className = `relative w-3 h-3 mx-auto rounded-full border border-${colorClass.split(' ')[0].replace('bg-', '')} ${colorClass}`;
+        }
+        tr.classList.add('bg-slate-900/80');
+      };
+
+      markLine(panel.markerA, 'bg-emerald-500');
+      markLine(panel.markerB, 'bg-rose-500');
+
+      // Δt
+      if (panel.markerA != null && panel.markerB != null) {
+        const a = panel.lines[panel.markerA];
+        const b = panel.lines[panel.markerB];
+        if (a && b && a.timeNs != null && b.timeNs != null) {
+          const delta = b.timeNs - a.timeNs;
+          panel.elements.delta.textContent = `Δt: ${formatDurationNs(delta)}`;
+        } else {
+          panel.elements.delta.textContent = 'Δt: –';
+        }
+      } else {
+        panel.elements.delta.textContent = 'Δt: –';
+      }
+    }
+
+    // --- Global filters and interactions ---
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const locationFilterInput = document.getElementById('location-filter');
+    const levelChips = Array.from(document.querySelectorAll('.level-chip'));
+    const linkScrollCheckbox = document.getElementById('link-scroll');
+    const globalStats = document.getElementById('global-stats');
+    const resetViewBtn = document.getElementById('reset-view');
+
+    let activeLevel = 'ALL';
+
+    levelChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeLevel = chip.dataset.level;
+        levelChips.forEach(c => c.classList.remove('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-200', 'dark:bg-slate-800'));
+        chip.classList.add('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-200', 'dark:bg-slate-800');
+        applyGlobalFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', () => {
+      clearSearchBtn.disabled = !searchInput.value;
+      applyGlobalFilters();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearSearchBtn.disabled = true;
+      applyGlobalFilters();
+    });
+
+    locationFilterInput.addEventListener('input', () => {
+      applyGlobalFilters();
+    });
+
+    resetViewBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      locationFilterInput.value = '';
+      clearSearchBtn.disabled = true;
+      activeLevel = 'ALL';
+      levelChips.forEach(chip => {
+        if (chip.dataset.level === 'ALL') {
+          chip.classList.add('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-200', 'dark:bg-slate-800');
+        } else {
+          chip.classList.remove('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-200', 'dark:bg-slate-800');
+        }
+      });
+      applyGlobalFilters();
+    });
+
+    function applyGlobalFilters() {
+      const query = searchInput.value || '';
+      const loc = (locationFilterInput.value || '').toLowerCase().trim();
+
+      [panelA, panelB].forEach(panel => {
+        if (!panel.lines.length) return;
+        panel.filtered = panel.lines.filter((line, i) => {
+          if (activeLevel !== 'ALL' && line.level !== activeLevel) return false;
+          if (loc) {
+            const fileLoc = `${line.file || ''}:${line.line || ''}`.toLowerCase();
+            if (!fileLoc.includes(loc)) return false;
+          }
+          if (query) {
+            const idx = panel.indexedText[i] || '';
+            if (!tokensMatch(idx, query)) return false;
+          }
+          return true;
+        });
+        renderPanel(panel);
+      });
+      updateGlobalStats();
+    }
+
+    function updateGlobalStats() {
+      const total = panelA.lines.length + panelB.lines.length;
+      const visible = (panelA.filtered?.length || 0) + (panelB.filtered?.length || 0);
+      globalStats.textContent = `${visible} visible / ${total} total`;
+    }
+
+    // Scroll linking
+    function linkScrolls(srcPanel, dstPanel) {
+      const src = srcPanel.elements.scrollContainer;
+      const dst = dstPanel.elements.scrollContainer;
+      src.addEventListener('scroll', () => {
+        if (!linkScrollCheckbox.checked) return;
+        const ratio = src.scrollTop / (src.scrollHeight - src.clientHeight || 1);
+        dst.scrollTop = ratio * (dst.scrollHeight - dst.clientHeight);
+      });
+    }
+
+    linkScrolls(panelA, panelB);
+    linkScrolls(panelB, panelA);
+
+    // Initialize default level chip highlight
+    const allChip = levelChips.find(c => c.dataset.level === 'ALL');
+    if (allChip) {
+      allChip.classList.add('ring-1', 'ring-accent-light/80', 'dark:ring-accent-dark/80', 'bg-slate-200', 'dark:bg-slate-800');
+    }
+  </script>
+</body>
+</html>
