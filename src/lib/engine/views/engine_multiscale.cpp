@@ -1091,7 +1091,8 @@ namespace gridfire {
         const double rho
     ) const {
         const fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
-        fourdst::composition::Composition qseComposition = solveQSEAbundances(result, T9, rho);
+
+        fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(result, T9, rho);
 
         return qseComposition;
     }
@@ -1902,6 +1903,8 @@ namespace gridfire {
                 J_qse(i, j) = y_qse(j) * (J_qse(i, j) - on_diag_correction) / y_qse(i); // Apply chain rule J'(i,j) = y_j * (J(i,j) - δ_ij(F_i/Y_i)) / Y_i
             }
         }
+
+        m_cached_jacobian = J_qse; // Cache the computed Jacobian for future use
 
         return 0; // Success
     }

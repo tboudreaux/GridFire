@@ -670,6 +670,8 @@ namespace gridfire {
              */
             const std::unordered_map<fourdst::atomic::Species, size_t> m_qse_solve_species_index_map;
 
+            mutable std::optional<JacobianType> m_cached_jacobian = std::nullopt;
+
             /**
              * @brief Constructs an EigenFunctor.
              *
