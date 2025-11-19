@@ -10,9 +10,12 @@ namespace gridfire::exceptions {
         std::string m_message;
         std::string m_reactionID;
     public:
-        ReactionError(const std::string& msg, const std::string& reactionId): m_message(msg), m_reactionID(reactionId) {}
+        ReactionError(const std::string& msg, const std::string& reactionId) {
+            m_reactionID = reactionId;
+            m_message = std::format("Reaction {}: {}", reactionId, msg);
+        }
         const char* what() const noexcept override {
-            return std::format("Reaction {}: {}", m_reactionID, m_message).c_str();
+            return m_message.c_str();
         }
     };
 
