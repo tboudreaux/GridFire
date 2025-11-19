@@ -156,7 +156,7 @@ namespace gridfire::solver {
     ) {
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
-        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 0.01, 10);
+        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 1e-6, 10);
         LOG_TRACE_L1(m_logger, "Engine update trigger built!");
 
 
@@ -454,10 +454,6 @@ namespace gridfire::solver {
                 initialize_cvode_integration_resources(N, numSpecies, current_time, currentComposition, absTol, relTol, accumulated_energy);
 
                 check_cvode_flag(CVodeReInit(m_cvode_mem, current_time, m_Y), "CVodeReInit");
-
-                std::cerr << "Aborting for debug purposes\n";
-                exit(0);
-
             }
 
         }

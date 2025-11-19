@@ -38,7 +38,6 @@ static bool s_wrote_abundance_history = false;
 static bool s_wrote_reaction_history = false;
 void quill_terminate_handler();
 
-
 inline std::unique_ptr<gridfire::partition::PartitionFunction> build_partition_function() {
     using gridfire::partition::BasePartitionType;
     const auto partitionFunction = gridfire::partition::CompositePartitionFunction({
@@ -246,15 +245,15 @@ void save_callback_data(const std::string_view filename) {
     csvFile.close();
 }
 
-void log_callback_data() {
+void log_callback_data(const double temp) {
     if (s_wrote_abundance_history) {
         std::cout << "Saving abundance history to abundance_history.csv" << std::endl;
-        save_callback_data("abundance_history.csv");
+        save_callback_data("abundance_history_" + std::to_string(temp) + ".csv");
     }
 
     if (s_wrote_reaction_history) {
         std::cout << "Saving reaction history to reaction_contribution_history.json" << std::endl;
-        std::ofstream jsonFile("reaction_contribution_history.json", std::ios::out);
+        std::ofstream jsonFile("reaction_contribution_history_" + std::to_string(temp) + ".json", std::ios::out);
         jsonFile << boost::json::serialize(g_reaction_contribution_history);
         jsonFile.close();
     }
@@ -262,7 +261,7 @@ void log_callback_data() {
 
 void quill_terminate_handler()
 {
-    log_callback_data();
+    log_callback_data(1.5e7);
     quill::Backend::stop();
     if (g_previousHandler)
         g_previousHandler();
@@ -277,7 +276,9 @@ void callback_main(const gridfire::solver::CVODESolverStrategy::TimestepContext&
 
 int main() {
     using namespace gridfire;
-    const NetIn netIn = init(1.5e7);
+
+    constexpr double temp = 1.5e7; // 15 MK
+    const NetIn netIn = init(temp);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();
@@ -285,7 +286,8 @@ int main() {
 
     solver::CVODESolverStrategy solver(engine);
     solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
-    const NetOut netOut = solver.evaluate(netIn);
+
+    const NetOut netOut = solver.evaluate(netIn, true);
     log_results(netOut, netIn);
-    log_callback_data();
+    log_callback_data(temp);
 }
