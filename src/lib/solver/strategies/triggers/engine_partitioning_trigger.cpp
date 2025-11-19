@@ -359,6 +359,9 @@ namespace gridfire::trigger::solver::CVODE {
         const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
     ) const {
         const float mean = current_mean();
+        if (mean < 10) {
+            return false; // Avoid triggering on small means
+        }
         if (static_cast<float>(ctx.currentConvergenceFailures) - mean  > m_relativeFailureRate * mean) {
             return true;
         }
