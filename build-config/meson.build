@@ -3,7 +3,7 @@ cmake = import('cmake')
 subdir('fourdst')
 subdir('libplugin')
 
-subdir('cvode')
+subdir('sundials')
 
 subdir('boost')
 subdir('cppad')

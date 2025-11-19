@@ -66,7 +66,7 @@ gridfire::NetIn init(const double temp) {
     netIn.density = 1.5e2;
     netIn.energy = 0;
 
-    netIn.tMax = 3e17;
+    netIn.tMax = 1e17;
     netIn.dt0 = 1e-12;
 
     return netIn;

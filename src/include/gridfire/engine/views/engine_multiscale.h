@@ -3,6 +3,10 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_graph.h"
+#include "sundials/sundials_linearsolver.h"
+#include "sundials/sundials_matrix.h"
+#include "sundials/sundials_nvector.h"
+#include "sundials/sundials_types.h"
 
 #include "unsupported/Eigen/NonLinearOptimization"
 
@@ -77,6 +81,8 @@ namespace gridfire {
          *                   because this view relies on its specific implementation details.
          */
         explicit MultiscalePartitioningEngineView(DynamicEngine& baseEngine);
+
+        ~MultiscalePartitioningEngineView() override;
 
         /**
          * @brief Gets the list of species in the network.
@@ -611,120 +617,81 @@ namespace gridfire {
             [[nodiscard]] [[maybe_unused]] std::string toString() const;
         };
 
-        /**
-         * @brief Functor for solving QSE abundances using Eigen's nonlinear optimization.
-         *
-         * @par Purpose
-         * This struct provides the objective function (`operator()`) and its Jacobian
-         * (`df`) to Eigen's Levenberg-Marquardt solver. The goal is to find the abundances
-         * of algebraic species that make their time derivatives (`dY/dt`) equal to zero.
-         *
-         * @how
-         * - **`operator()`**: Takes a vector `v_qse` (scaled abundances of algebraic species) as input.
-         *   It constructs a full trial abundance vector `y_trial`, calls the base engine's
-         *   `calculateRHSAndEnergy`, and returns the `dY/dt` values for the algebraic species.
-         *   The solver attempts to drive this return vector to zero.
-         * - **`df`**: Computes the Jacobian of the objective function. It calls the base engine's
-         *   `generateJacobianMatrix` and extracts the sub-matrix corresponding to the algebraic
-         *   species. It applies the chain rule to account for the `asinh` scaling used on the
-         *   abundances.
-         *
-         * The abundances are scaled using `asinh` to handle the large dynamic range and ensure positivity.
-         */
-        struct EigenFunctor {
-            using InputType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-            using OutputType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-            using JacobianType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-            enum {
-                InputsAtCompileTime = Eigen::Dynamic,
-                ValuesAtCompileTime = Eigen::Dynamic
+        class QSESolver {
+        public:
+            QSESolver(
+                const std::vector<fourdst::atomic::Species>& species,
+                const DynamicEngine& engine,
+                SUNContext sun_ctx
+            );
+
+            QSESolver(
+                const QSESolver& other
+            ) = delete;
+            QSESolver& operator=(
+                const QSESolver& other
+            ) = delete;
+
+            ~QSESolver();
+
+            fourdst::composition::Composition solve(
+                const fourdst::composition::Composition& comp,
+                double T9,
+                double rho
+            ) const;
+
+            size_t solves() const;
+
+            void log_diagnostics() const;
+        private:
+
+            static int sys_func(
+                N_Vector y,
+                N_Vector f,
+                void *user_data
+            );
+            static int sys_jac(
+                N_Vector y,
+                N_Vector fy,
+                SUNMatrix J,
+                void *user_data,
+                N_Vector tmp1,
+                N_Vector tmp2
+            );
+
+            struct UserData {
+                const DynamicEngine& engine;
+                double T9;
+                double rho;
+                fourdst::composition::Composition& comp;
+                const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map;
+                const std::vector<fourdst::atomic::Species>& qse_solve_species;
             };
 
-            /**
-             * @brief Pointer to the MultiscalePartitioningEngineView instance.
-             */
-            const MultiscalePartitioningEngineView& m_view;
-            /**
-             * @brief The set of species to solve for in the QSE group.
-             */
-            const std::set<fourdst::atomic::Species>& m_qse_solve_species;
-            /**
-             * @brief Initial abundances of all species in the full network.
-             */
-            const fourdst::composition::CompositionAbstract& m_initial_comp;
-            /**
-             * @brief Temperature in units of 10^9 K.
-             */
-            const double m_T9;
-            /**
-             * @brief Density in g/cm^3.
-             */
-            const double m_rho;
-            /**
-             * @brief Scaling factors for the species abundances, used to improve solver stability.
-             */
-            const Eigen::VectorXd& m_Y_scale;
+        private:
+            mutable size_t m_solves = 0;
+            size_t m_N;
+            const DynamicEngine& m_engine;
+            std::vector<fourdst::atomic::Species> m_species;
+            std::unordered_map<fourdst::atomic::Species, size_t> m_speciesMap;
 
-            /**
-             * @brief Mapping from species to their indices in the QSE solve vector.
-             */
-            const std::unordered_map<fourdst::atomic::Species, size_t> m_qse_solve_species_index_map;
+            // --- SUNDIALS / KINSOL Persistent resources
+            SUNContext m_sun_ctx   = nullptr;
+            void* m_kinsol_mem     = nullptr;
 
-            mutable std::optional<JacobianType> m_cached_jacobian = std::nullopt;
+            N_Vector m_Y           = nullptr;
+            N_Vector m_scale       = nullptr;
+            N_Vector m_f_scale     = nullptr;
+            N_Vector m_constraints = nullptr;
+            N_Vector m_func_tmpl   = nullptr;
 
-            /**
-             * @brief Constructs an EigenFunctor.
-             *
-             * @param view The MultiscalePartitioningEngineView instance.
-             * @param qse_solve_species Species to solve for in the QSE group.
-             * @param initial_comp Initial abundances of all species in the full network.
-             * @param T9 Temperature in units of 10^9 K.
-             * @param rho Density in g/cm^3.
-             * @param Y_scale Scaling factors for the species abundances.
-             * @param qse_solve_species_index_map Mapping from species to their indices in the QSE solve vector.
-             */
-            EigenFunctor(
-                const MultiscalePartitioningEngineView& view,
-                const std::set<fourdst::atomic::Species>& qse_solve_species,
-                const fourdst::composition::CompositionAbstract& initial_comp,
-                const double T9,
-                const double rho,
-                const Eigen::VectorXd& Y_scale,
-                const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map
-            ) :
-            m_view(view),
-            m_qse_solve_species(qse_solve_species),
-            m_initial_comp(initial_comp),
-            m_T9(T9),
-            m_rho(rho),
-            m_Y_scale(Y_scale),
-            m_qse_solve_species_index_map(qse_solve_species_index_map) {}
+            SUNMatrix m_J          = nullptr;
+            SUNLinearSolver m_LS   = nullptr;
 
-            /**
-             * @brief Gets the number of output values from the functor (size of the residual vector).
-             * @return The number of algebraic species being solved.
-             */
-            [[nodiscard]] size_t values() const { return m_qse_solve_species.size(); }
-            /**
-             * @brief Gets the number of input values to the functor (size of the variable vector).
-             * @return The number of algebraic species being solved.
-             */
-            [[nodiscard]] size_t inputs() const { return m_qse_solve_species.size(); }
+            static quill::Logger* getLogger() {
+                return LogManager::getInstance().getLogger("log");
+            }
 
-            /**
-             * @brief Evaluates the functor's residual vector `f_qse = dY_alg/dt`.
-             * @param v_qse The input vector of scaled algebraic abundances.
-             * @param f_qse The output residual vector.
-             * @return 0 on success.
-             */
-            int operator()(const InputType& v_qse, OutputType& f_qse) const;
-            /**
-             * @brief Evaluates the Jacobian of the functor, `J_qse = d(f_qse)/d(v_qse)`.
-             * @param v_qse The input vector of scaled algebraic abundances.
-             * @param J_qse The output Jacobian matrix.
-             * @return 0 on success.
-             */
-            int df(const InputType& v_qse, JacobianType& J_qse) const;
         };
 
         struct FluxValidationResult {
@@ -746,6 +713,11 @@ namespace gridfire {
          * @brief The list of identified equilibrium groups.
          */
         std::vector<QSEGroup> m_qse_groups;
+
+        /**
+         * @brief A set of solvers, one for each QSE group
+         */
+        std::vector<std::unique_ptr<QSESolver>> m_qse_solvers;
         /**
          * @brief The simplified set of species presented to the solver (the "slow" species).
          */
@@ -770,6 +742,8 @@ namespace gridfire {
         std::vector<size_t> m_activeReactionIndices;
 
         mutable std::unordered_map<uint64_t, fourdst::composition::Composition> m_composition_cache;
+
+        SUNContext m_sun_ctx = nullptr; // TODO: initialize and safely destroy this
 
     private:
         /**

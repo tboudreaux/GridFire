@@ -34,7 +34,7 @@ sundials_sunmatrixdense_dep = cvode_sp.dependency('sundials_sunmatrixdense_share
 # For the dense linear solver library
 sundials_sunlinsoldense_dep = cvode_sp.dependency('sundials_sunlinsoldense_shared')
 
-sundials_dep = declare_dependency(
+cvode_dep = declare_dependency(
     dependencies: [
         sundials_core_dep,
         sundials_cvode_dep,
