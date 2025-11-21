@@ -3,7 +3,7 @@
 #include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
-    class SolverError : GridFireError {
+    class SolverError : public GridFireError {
         using GridFireError::GridFireError;
     };
 
