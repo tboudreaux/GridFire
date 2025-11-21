@@ -4,22 +4,14 @@
 #include <string>
 #include <utility>
 
-namespace gridfire::exceptions {
-    class UtilityError : public std::exception {
-    public:
-        explicit UtilityError(std::string  message) : m_message(std::move(message)) {}
+#include "gridfire/exceptions/gridfire_exception.h"
 
-        [[nodiscard]] const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-    private:
-        std::string m_message;
+namespace gridfire::exceptions {
+    class UtilityError : public GridFireError {
+        using GridFireError::GridFireError;
     };
 
     class HashingError final : public UtilityError {
-    public:
-
-        explicit HashingError(const std::string &message) : UtilityError(message) {}
-
+        using UtilityError::UtilityError;
     };
 }

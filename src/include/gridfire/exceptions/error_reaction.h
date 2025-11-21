@@ -4,16 +4,19 @@
 #include <string>
 #include <format>
 
+#include "gridfire/exceptions/gridfire_exception.h"
+
 namespace gridfire::exceptions {
-    class ReactionError : public std::exception {
+    class ReactionError : public GridFireError {
     private:
         std::string m_message;
         std::string m_reactionID;
     public:
-        ReactionError(const std::string& msg, const std::string& reactionId) {
+        ReactionError(const std::string& msg, const std::string& reactionId) : GridFireError(msg) {
             m_reactionID = reactionId;
             m_message = std::format("Reaction {}: {}", reactionId, msg);
         }
+
         const char* what() const noexcept override {
             return m_message.c_str();
         }

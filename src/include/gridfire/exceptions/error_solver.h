@@ -1,22 +1,10 @@
 #pragma once
 
-#include <exception>
-#include <string>
+#include "gridfire/exceptions/gridfire_exception.h"
 
 namespace gridfire::exceptions {
-    class SolverError : public std::exception {
-    public:
-        SolverError(std::string msg) : m_msg(std::move(msg)) {}
-
-        [[nodiscard]] const char* what() const noexcept override {
-            return m_msg.c_str();
-        }
-    private:
-        std::string m_msg;
-    };
-
-    class CVODESolverFailureError final : public SolverError {
-        using SolverError::SolverError;
+    class SolverError : GridFireError {
+        using GridFireError::GridFireError;
     };
 
     class SingularJacobianError final : public SolverError {
@@ -26,4 +14,17 @@ namespace gridfire::exceptions {
     class IllConditionedJacobianError final : public SolverError {
         using SolverError::SolverError;
     };
+
+    class SUNDIALSError : public SolverError {
+        using SolverError::SolverError;
+    };
+
+    class CVODESolverFailureError final : public SUNDIALSError {
+        using SUNDIALSError::SUNDIALSError;
+    };
+
+    class KINSolSolverFailureError final : public SUNDIALSError {
+        using SUNDIALSError::SUNDIALSError;
+    };
+
 }

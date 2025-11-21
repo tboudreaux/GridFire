@@ -15,6 +15,8 @@
 #include <string>
 #include <utility>
 
+#include "gridfire/exceptions/gridfire_exception.h"
+
 namespace gridfire::exceptions {
     /**
      * @class PolicyError
@@ -23,23 +25,8 @@ namespace gridfire::exceptions {
      * This exception is the parent for more specific policy-related errors. Catching this
      * type will catch any exception originating from the policy system.
      */
-    class PolicyError : public std::exception {
-    public:
-        /**
-         * @brief Constructs a PolicyError with a descriptive message.
-         * @param msg The error message.
-         */
-        explicit PolicyError(std::string  msg) : m_message(std::move(msg)) {};
-
-        /**
-         * @brief Returns the explanatory string.
-         * @return A C-style string with the error message.
-         */
-        [[nodiscard]] const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-    private:
-        std::string m_message;
+    class PolicyError : public GridFireError {
+        using GridFireError::GridFireError;
     };
 
     /**
@@ -50,12 +37,7 @@ namespace gridfire::exceptions {
      * reaction library used by GridFire does not contain a reaction specified by the policy.
      */
     class MissingBaseReactionError final : public PolicyError {
-    public:
-        /**
-         * @brief Constructs a MissingBaseReactionError with a descriptive message.
-         * @param msg The error message.
-         */
-        explicit MissingBaseReactionError(const std::string& msg) : PolicyError(msg) {};
+        using PolicyError::PolicyError;
     };
 
     /**
@@ -66,12 +48,7 @@ namespace gridfire::exceptions {
      * one or more of the essential species needed to construct the network.
      */
     class MissingSeedSpeciesError final : public PolicyError {
-    public:
-        /**
-         * @brief Constructs a MissingSeedSpeciesError with a descriptive message.
-         * @param msg The error message.
-         */
-        explicit MissingSeedSpeciesError(const std::string& msg) : PolicyError(msg) {};
+        using PolicyError::PolicyError;
     };
 
     /**
@@ -82,11 +59,6 @@ namespace gridfire::exceptions {
      * the network has been built but fails the final verification step.
      */
     class MissingKeyReactionError final : public PolicyError {
-    public:
-        /**
-         * @brief Constructs a MissingKeyReactionError with a descriptive message.
-         * @param msg The error message.
-         */
-        explicit MissingKeyReactionError(const std::string& msg) : PolicyError(msg) {}
+        using PolicyError::PolicyError;
     };
 }
