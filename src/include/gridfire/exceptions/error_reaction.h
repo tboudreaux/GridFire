@@ -1,10 +1,9 @@
 #pragma once
 
-#include <exception>
 #include <string>
 #include <format>
 
-#include "gridfire/exceptions/gridfire_exception.h"
+#include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
     class ReactionError : public GridFireError {

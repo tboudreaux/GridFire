@@ -1,10 +1,9 @@
 #pragma once
 
-#include <exception>
 #include <source_location>
 #include <string>
 
-#include "gridfire/exceptions/gridfire_exception.h"
+#include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
     class DebugException final : public GridFireError{
