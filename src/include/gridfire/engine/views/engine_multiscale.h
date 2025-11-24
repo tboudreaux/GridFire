@@ -643,15 +643,6 @@ namespace gridfire::engine {
             std::set<fourdst::atomic::Species> seed_species;      ///< Dynamic species in this group.
             double mean_timescale;                                ///< Mean timescale of the group.
 
-            // DEBUG METHODS.
-            // THESE SHOULD NOT BE USED IN PRODUCTION CODE.
-            [[deprecated("Use for debug only")]] void removeSpecies(const fourdst::atomic::Species& species);
-
-            [[deprecated("Use for debug only")]] void addSpeciesToAlgebraic(const fourdst::atomic::Species& species);
-
-            [[deprecated("Use for debug only")]] void addSpeciesToSeed(const fourdst::atomic::Species& species);
-
-
             /**
              * @brief Less-than operator for QSEGroup, used for sorting.
              * @param other The other QSEGroup to compare to.
@@ -739,6 +730,8 @@ namespace gridfire::engine {
                 const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map;
                 const std::vector<fourdst::atomic::Species>& qse_solve_species;
                 const QSESolver& instance;
+                std::vector<double> row_scaling_factors;
+                const double initial_group_mass;
             };
 
         private:
@@ -943,6 +936,9 @@ namespace gridfire::engine {
          * @brief Builds a connectivity graph from a species pool.
          *
          * @param species_pool A vector of species indices representing a species pool.
+         * @param comp
+         * @param T9
+         * @param rho
          * @return An unordered map representing the adjacency list of the connectivity graph.
          *
          * @par Purpose
@@ -955,7 +951,8 @@ namespace gridfire::engine {
          *      that reaction that are also in the pool.
          */
         std::unordered_map<fourdst::atomic::Species, std::vector<fourdst::atomic::Species>> buildConnectivityGraph(
-            const std::vector<fourdst::atomic::Species>& species_pool
+            const std::vector<fourdst::atomic::Species>& species_pool, const fourdst::composition::Composition &comp, double T9, double
+            rho
         ) const;
 
         /**
@@ -989,6 +986,9 @@ namespace gridfire::engine {
          *
          * @param timescale_pools A vector of vectors of species indices, where each inner vector
          *                        represents a timescale pool.
+         * @param comp
+         * @param T9
+         * @param rho
          * @return A vector of vectors of species indices, where each inner vector represents a
          *         single connected component.
          *
@@ -1002,7 +1002,8 @@ namespace gridfire::engine {
          *      The resulting components from all pools are collected and returned.
          */
         std::vector<std::vector<fourdst::atomic::Species>> analyzeTimescalePoolConnectivity(
-            const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools
+            const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools, const fourdst::composition::Composition &
+            comp, double T9, double rho
         ) const;
 
         std::vector<QSEGroup> pruneValidatedGroups(
@@ -1012,6 +1013,11 @@ namespace gridfire::engine {
             double T9,
             double rho
         ) const;
+
+        static std::vector<QSEGroup> merge_coupled_groups(
+            const std::vector<QSEGroup> &groups,
+            const std::vector<reaction::ReactionSet> &groupReactions
+        );
     };
 }
 

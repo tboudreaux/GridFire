@@ -14,6 +14,7 @@
 #include <queue>
 
 #include <algorithm>
+#include <numeric>
 
 #include "fourdst/atomic/species.h"
 #include "quill/LogMacros.h"
@@ -161,6 +162,28 @@ namespace {
         // For everything else, use the default SUNDIALS logger (or your own)
         SUNLogErrHandlerFn(line, func, file, msg, err_code, err_user_data, sunctx);
     }
+
+    struct DisjointSet {
+        std::vector<size_t> parent;
+        explicit DisjointSet(const size_t n) {
+            parent.resize(n);
+            std::iota(parent.begin(), parent.end(), 0);
+        }
+
+        size_t find(const size_t i) {
+            if (parent.at(i) == i) return i;
+            return parent.at(i) = find(parent.at(i)); // Path compression
+        }
+
+        void unite(const size_t i, const size_t j) {
+            const size_t root_i = find(i);
+            const size_t root_j = find(j);
+            if (root_i != root_j) {
+                parent.at(root_i) = root_j;
+            }
+
+        }
+    };
 }
 
 namespace gridfire::engine {
@@ -405,7 +428,8 @@ namespace gridfire::engine {
     }
 
     std::vector<std::vector<Species>> MultiscalePartitioningEngineView::analyzeTimescalePoolConnectivity(
-        const std::vector<std::vector<Species>> &timescale_pools
+        const std::vector<std::vector<Species>> &timescale_pools, const fourdst::composition::Composition &comp, double T9, double
+        rho
     ) const {
         std::vector<std::vector<Species>> final_connected_pools;
 
@@ -415,7 +439,7 @@ namespace gridfire::engine {
             }
 
             // For each timescale pool, we need to analyze connectivity.
-            auto connectivity_graph = buildConnectivityGraph(pool);
+            auto connectivity_graph = buildConnectivityGraph(pool, comp, T9, rho);
             auto components = findConnectedComponentsBFS(connectivity_graph, pool);
             final_connected_pools.insert(final_connected_pools.end(), components.begin(), components.end());
         }
@@ -608,6 +632,60 @@ namespace gridfire::engine {
         return newGroups;
     }
 
+    std::vector<MultiscalePartitioningEngineView::QSEGroup> MultiscalePartitioningEngineView::merge_coupled_groups(
+        const std::vector<QSEGroup> &groups,
+        const std::vector<reaction::ReactionSet> &groupReactions
+    ) {
+        if (groups.empty()) { return {}; }
+        DisjointSet dsu(groups.size());
+
+        std::unordered_map<std::string_view, size_t> reaction_owner;
+
+        for (size_t group_idx = 0; group_idx < groups.size(); ++group_idx) {
+            for (const auto& reaction : groupReactions[group_idx]) {
+                const std::string_view rxn_id = reaction->id();
+                if (reaction_owner.contains(rxn_id)) {
+                    dsu.unite(group_idx, reaction_owner[rxn_id]);
+                } else {
+                    reaction_owner[rxn_id] = group_idx;
+                }
+            }
+        }
+
+        std::unordered_map<size_t, std::pair<QSEGroup, size_t>> merged_groups_map;
+        for (size_t i = 0; i < groups.size(); ++i) {
+            size_t root = dsu.find(i);
+
+            if (!merged_groups_map.contains(root)) {
+                merged_groups_map[root].first = QSEGroup();
+                merged_groups_map.at(root).first.mean_timescale = 0.0;
+                merged_groups_map.at(root).first.is_in_equilibrium = true;
+            }
+
+            QSEGroup& target_group = merged_groups_map.at(root).first;
+            const QSEGroup& source_group = groups[i];
+
+            target_group.seed_species.insert(source_group.seed_species.begin(), source_group.seed_species.end());
+            target_group.algebraic_species.insert(source_group.algebraic_species.begin(), source_group.algebraic_species.end());
+
+            target_group.mean_timescale += source_group.mean_timescale;
+            merged_groups_map.at(root).second += 1;
+        }
+
+        std::vector<QSEGroup> final_merged_groups;
+        for (auto &groupInfo: merged_groups_map | std::views::values) {
+            QSEGroup& group = groupInfo.first;
+            for (const auto& alg_species : group.algebraic_species) {
+                group.seed_species.erase(alg_species); // A species cannot be both seed and algebraic. Algebraic takes precedence.
+            }
+            group.mean_timescale /= static_cast<double>(groupInfo.second);
+
+            final_merged_groups.push_back(std::move(group));
+        }
+
+        return final_merged_groups;
+    }
+
     fourdst::composition::Composition MultiscalePartitioningEngineView::partitionNetwork(
         const NetIn &netIn
     ) {
@@ -650,7 +728,7 @@ namespace gridfire::engine {
         }
 
         LOG_TRACE_L1(m_logger, "Preforming connectivity analysis on timescale pools...");
-        const std::vector<std::vector<Species>> connected_pools = analyzeTimescalePoolConnectivity(candidate_pools);
+        const std::vector<std::vector<Species>> connected_pools = analyzeTimescalePoolConnectivity(candidate_pools, comp, T9, rho);
         LOG_TRACE_L1(m_logger, "Found {} connected pools (compared to {} timescale pools) for QSE analysis.", connected_pools.size(), timescale_pools.size());
 
 
@@ -663,13 +741,18 @@ namespace gridfire::engine {
         const auto [validated_groups, invalidate_groups, validated_group_reactions] = validateGroupsWithFluxAnalysis(candidate_groups, comp, T9, rho);
         LOG_TRACE_L1(m_logger, "Validated {} group(s) QSE groups. {}", validated_groups.size(), utils::iterable_to_delimited_string(validated_groups));
 
+
         LOG_TRACE_L1(m_logger, "Pruning groups based on log abundance-normalized flux analysis...");
         const std::vector<QSEGroup> prunedGroups = pruneValidatedGroups(validated_groups, validated_group_reactions, comp, T9, rho);
         LOG_TRACE_L1(m_logger, "After Pruning remaining groups are: {}", utils::iterable_to_delimited_string(prunedGroups));
 
         LOG_TRACE_L1(m_logger, "Re-validating pruned groups with flux analysis...");
-        auto [pruned_validated_groups, _, __] = validateGroupsWithFluxAnalysis(prunedGroups, comp, T9, rho);
+        auto [pruned_validated_groups, _, pruned_validated_reactions] = validateGroupsWithFluxAnalysis(prunedGroups, comp, T9, rho);
         LOG_TRACE_L1(m_logger, "After re-validation, {} QSE groups remain. ({})",pruned_validated_groups.size(), utils::iterable_to_delimited_string(pruned_validated_groups));
+
+        LOG_TRACE_L1(m_logger, "Merging coupled QSE groups...");
+        const std::vector<QSEGroup> merged_groups = merge_coupled_groups(pruned_validated_groups, pruned_validated_reactions);
+        LOG_TRACE_L1(m_logger, "After merging, {} QSE groups remain. ({})", merged_groups.size(), utils::iterable_to_delimited_string(merged_groups));
 
         m_qse_groups = pruned_validated_groups;
 
@@ -1509,7 +1592,10 @@ namespace gridfire::engine {
     }
 
     std::unordered_map<Species, std::vector<Species>> MultiscalePartitioningEngineView::buildConnectivityGraph(
-        const std::vector<Species> &species_pool
+        const std::vector<Species> &species_pool,
+        const fourdst::composition::Composition &comp,
+        double T9,
+        double rho
     ) const {
         std::unordered_map<Species, std::vector<Species>> connectivity_graph;
         const std::set<Species> pool_set(species_pool.begin(), species_pool.end());
@@ -1714,26 +1800,28 @@ namespace gridfire::engine {
         N_VConst(1.0, m_constraints);
         m_kinsol_mem = KINCreate(m_sun_ctx);
 
-        utils::check_cvode_flag(m_kinsol_mem ? 0 : -1, "KINCreate");
-        utils::check_cvode_flag(KINInit(m_kinsol_mem, sys_func, m_func_tmpl), "KINInit");
-        utils::check_cvode_flag(KINSetConstraints(m_kinsol_mem, m_constraints), "KINSetConstraints");
+        utils::check_sundials_flag(m_kinsol_mem ? 0 : -1, "KINCreate", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+        utils::check_sundials_flag(KINInit(m_kinsol_mem, sys_func, m_func_tmpl), "KINInit", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+        utils::check_sundials_flag(KINSetConstraints(m_kinsol_mem, m_constraints), "KINSetConstraints", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         m_J = SUNDenseMatrix(static_cast<sunindextype>(m_N), static_cast<sunindextype>(m_N), m_sun_ctx);
-        utils::check_cvode_flag(m_J ? 0 : -1, "SUNDenseMatrix");
+        utils::check_sundials_flag(m_J ? 0 : -1, "SUNDenseMatrix", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         m_LS = SUNLinSol_Dense(m_Y, m_J, m_sun_ctx);
-        utils::check_cvode_flag(m_LS ? 0 : -1, "SUNLinSol_Dense");
+        utils::check_sundials_flag(m_LS ? 0 : -1, "SUNLinSol_Dense", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_cvode_flag(KINSetLinearSolver(m_kinsol_mem, m_LS, m_J), "KINSetLinearSolver");
-        utils::check_cvode_flag(KINSetJacFn(m_kinsol_mem, sys_jac), "KINSetJacFn");
+        utils::check_sundials_flag(KINSetLinearSolver(m_kinsol_mem, m_LS, m_J), "KINSetLinearSolver", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+        utils::check_sundials_flag(KINSetJacFn(m_kinsol_mem, sys_jac), "KINSetJacFn", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_cvode_flag(KINSetMaxSetupCalls(m_kinsol_mem, 20), "KINSetMaxSetupCalls");
+        utils::check_sundials_flag(KINSetMaxSetupCalls(m_kinsol_mem, 20), "KINSetMaxSetupCalls", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_cvode_flag(KINSetFuncNormTol(m_kinsol_mem, 1e-6), "KINSetFuncNormTol");
-        utils::check_cvode_flag(KINSetNumMaxIters(m_kinsol_mem, 200), "KINSetNumMaxIters");
+        utils::check_sundials_flag(KINSetFuncNormTol(m_kinsol_mem, 1e-6), "KINSetFuncNormTol", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+        utils::check_sundials_flag(KINSetNumMaxIters(m_kinsol_mem, 200), "KINSetNumMaxIters", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+
+        utils::check_sundials_flag(KINSetScaledStepTol(m_kinsol_mem, 1e-10), "KINSetScaledStepTol", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         // We want to effectively disable this since enormous changes in order of magnitude are realistic for this problem.
-        utils::check_cvode_flag(KINSetMaxNewtonStep(m_kinsol_mem, std::numeric_limits<double>::infinity()), "KINSetMaxNewtonStep");
+        utils::check_sundials_flag(KINSetMaxNewtonStep(m_kinsol_mem, std::numeric_limits<double>::infinity()), "KINSetMaxNewtonStep", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
         LOG_TRACE_L1(getLogger(), "Finished initializing QSE Solver.");
     }
 
@@ -1789,7 +1877,7 @@ namespace gridfire::engine {
             *this
         };
 
-        utils::check_cvode_flag(KINSetUserData(m_kinsol_mem, &data), "KINSetUserData");
+        utils::check_sundials_flag(KINSetUserData(m_kinsol_mem, &data), "KINSetUserData", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         sunrealtype* y_data = N_VGetArrayPointer(m_Y);
         sunrealtype* scale_data = N_VGetArrayPointer(m_scale);
@@ -1819,9 +1907,9 @@ namespace gridfire::engine {
 
         if (m_solves > 0 && m_has_jacobian) {
             // After the initial solution we want to allow kinsol to reuse its state
-            utils::check_cvode_flag(KINSetNoInitSetup(m_kinsol_mem, SUNTRUE), "KINSetNoInitSetup");
+            utils::check_sundials_flag(KINSetNoInitSetup(m_kinsol_mem, SUNTRUE), "KINSetNoInitSetup", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
         } else {
-            utils::check_cvode_flag(KINSetNoInitSetup(m_kinsol_mem, SUNFALSE), "KINSetNoInitSetup");
+            utils::check_sundials_flag(KINSetNoInitSetup(m_kinsol_mem, SUNFALSE), "KINSetNoInitSetup", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
         }
 
         LOG_TRACE_L2(
@@ -1874,10 +1962,21 @@ namespace gridfire::engine {
         );
 
         const int flag = KINSol(m_kinsol_mem, m_Y, KIN_LINESEARCH, m_scale, m_f_scale);
+
         if (flag < 0) {
-            LOG_WARNING(getLogger(), "KINSol failed to converge while solving QSE abundances with flag {}.", utils::cvode_ret_code_map.at(flag));
-            throw exceptions::InvalidQSESolutionError("KINSol failed to converge while solving QSE abundances. Check the log file for more details regarding the specific failure mode.");
+            double fnorm = 0.0;
+            constexpr double ACCEPTABLE_FTOL = 1e-4; // Due to row scaling this is a relative threshold. So this is saying that the imbalance is 0.01% of the abundance scale.
+            utils::check_sundials_flag(KINGetFuncNorm(m_kinsol_mem, &fnorm), "KINGetFuncNorm", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+            if (fnorm < ACCEPTABLE_FTOL) {
+                LOG_INFO(getLogger(), "KINSol failed to converge within the maximum number of iterations, but achieved acceptable accuracy with function norm {} < {}. Proceeding with solution.",
+                    fnorm, ACCEPTABLE_FTOL);
+            } else {
+                LOG_WARNING(getLogger(), "KINSol failed to converge while solving QSE abundances with flag {}. Error {}", utils::kinsol_ret_code_map.at(flag), fnorm);
+                throw exceptions::InvalidQSESolutionError("KINSol failed to converge while solving QSE abundances. " + utils::kinsol_ret_code_map.at(flag));
+            }
         }
+
+
 
         for (size_t i = 0; i < m_N; ++i) {
             const auto& species = m_species[i];
@@ -1895,11 +1994,11 @@ namespace gridfire::engine {
     void MultiscalePartitioningEngineView::QSESolver::log_diagnostics(const QSEGroup &group, const fourdst::composition::Composition &comp) const {
         long int nni, nfe, nje;
 
-        utils::check_cvode_flag(KINGetNumNonlinSolvIters(m_kinsol_mem, &nni), "KINGetNumNonlinSolvIters");
+        utils::check_sundials_flag(KINGetNumNonlinSolvIters(m_kinsol_mem, &nni), "KINGetNumNonlinSolvIters", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_cvode_flag(KINGetNumFuncEvals(m_kinsol_mem, &nfe), "KINGetNumFuncEvals");
+        utils::check_sundials_flag(KINGetNumFuncEvals(m_kinsol_mem, &nfe), "KINGetNumFuncEvals", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_cvode_flag(KINGetNumJacEvals(m_kinsol_mem, &nje), "KINGetNumJacEvals");
+        utils::check_sundials_flag(KINGetNumJacEvals(m_kinsol_mem, &nje), "KINGetNumJacEvals", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         LOG_TRACE_L1(getLogger(),
             "QSE Stats | Iters: {} | RHS Evals: {} | Jac Evals: {} | Ratio (J/I): {:.2f} | Algebraic Species: {}",
@@ -2008,7 +2107,8 @@ namespace gridfire::engine {
 #endif
 
         for (const auto& [species, index] : map) {
-            f_data[index] = dydt.at(species);
+            const double val = dydt.at(species);
+            f_data[index] = val;
         }
 
         return 0; // Success
@@ -2018,12 +2118,12 @@ namespace gridfire::engine {
     int MultiscalePartitioningEngineView::QSESolver::sys_jac(
         const N_Vector y,
         N_Vector fy,
-        SUNMatrix J,
+        const SUNMatrix J,
         void *user_data,
         N_Vector tmp1,
         N_Vector tmp2
     ) {
-        const auto* data = static_cast<UserData*>(user_data);
+        auto* data = static_cast<UserData*>(user_data);
 
         const sunrealtype* y_data = N_VGetArrayPointer(y);
         const auto& map = data->qse_solve_species_index_map;
@@ -2041,11 +2141,47 @@ namespace gridfire::engine {
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const sunindextype N = SUNDenseMatrix_Columns(J);
 
-        for (const auto& [col_species, col_idx] : map) {
-            for (const auto& [row_species, row_idx] : map) {
+        if (data->row_scaling_factors.size() != static_cast<size_t>(N)) {
+            data->row_scaling_factors.resize(N, 0.0);
+        }
+
+        for (const auto& [row_species, row_idx]: map) {
+            double max_value = std::numeric_limits<double>::lowest();
+            for (const auto &col_species: map | std::views::keys) {
+                const double val = std::abs(jac(row_species, col_species));
+                if (val > max_value) {
+                    max_value = val;
+                }
+            }
+
+            for (const auto& [col_species, col_idx] : map) {
                 J_data[col_idx * N + row_idx] = jac(row_species, col_species);
             }
         }
+
+        LOG_TRACE_L2( getLogger(), "After filling, Jacobian in sys_jac is: {}",
+            [&]() -> std::string {
+                std::ostringstream oss;
+                const sunrealtype* J_log_data = SUNDenseMatrix_Data(J);
+                const sunindextype N_log = SUNDenseMatrix_Columns(J);
+                oss << "[";
+                for (size_t i = 0; i < data->qse_solve_species.size(); ++i) {
+                    oss << "[";
+                    for (size_t j = 0; j < data->qse_solve_species.size(); ++j) {
+                        oss << J_log_data[i * N_log + j];
+                        if (j < data->qse_solve_species.size() - 1) {
+                            oss << ", ";
+                        }
+                    }
+                    oss << "]";
+                    if (i < data->qse_solve_species.size() - 1) {
+                        oss << ", ";
+                    }
+                }
+                oss << "]";
+                return oss.str();
+            }()
+        );
 
         data->instance.m_has_jacobian = true;
 
@@ -2060,35 +2196,6 @@ namespace gridfire::engine {
 
     bool MultiscalePartitioningEngineView::QSEGroup::operator==(const QSEGroup &other) const {
        return mean_timescale == other.mean_timescale;
-    }
-
-    void MultiscalePartitioningEngineView::QSEGroup::removeSpecies(const Species &species) {
-        if (algebraic_species.contains(species)) {
-            algebraic_species.erase(species);
-        }
-        if (seed_species.contains(species)) {
-            seed_species.erase(species);
-        }
-    }
-
-    void MultiscalePartitioningEngineView::QSEGroup::addSpeciesToAlgebraic(const Species &species) {
-        if (seed_species.contains(species)) {
-            const std::string msg = std::format("Cannot add species {:8} to algebraic set as it is already in the seed set.", species.name());
-            throw std::invalid_argument(msg);
-        }
-        if (!algebraic_species.contains(species)) {
-            algebraic_species.insert(species);
-        }
-    }
-
-    void MultiscalePartitioningEngineView::QSEGroup::addSpeciesToSeed(const Species &species) {
-        if (algebraic_species.contains(species)) {
-            const std::string msg = std::format("Cannot add species {:8} to seed set as it is already in the algebraic set.", species.name());
-            throw std::invalid_argument(msg);
-        }
-        if (!seed_species.contains(species)) {
-            seed_species.insert(species);
-        }
     }
 
     bool MultiscalePartitioningEngineView::QSEGroup::operator<(const QSEGroup &other) const {

@@ -573,7 +573,7 @@ namespace gridfire::reaction {
         }
 
         // Now, process the grouped REACLIB reactions
-        for (const auto &reactionsGroup: groupedReaclibReactions | std::views::values) {
+        for (const auto &[key, reactionsGroup]: groupedReaclibReactions) {
             if (reactionsGroup.empty()) {
                 continue;
             }
@@ -581,7 +581,14 @@ namespace gridfire::reaction {
                 finalReactionSet.add_reaction(reactionsGroup.front());
             }
             else {
-                const auto logicalReaction = std::make_unique<LogicalReaclibReaction>(reactionsGroup);
+                // Check that is_reverse is consistent across the group
+                assert(std::ranges::all_of(
+                    reactionsGroup,
+                    [&reactionsGroup](const ReaclibReaction& r) {
+                        return r.is_reverse() == reactionsGroup.front().is_reverse();
+                    }
+                ) && "Inconsistent is_reverse values in grouped REACLIB reactions.");
+                const auto logicalReaction = std::make_unique<LogicalReaclibReaction>(reactionsGroup, reactionsGroup.front().is_reverse());
                 finalReactionSet.add_reaction(logicalReaction->clone());
             }
         }

@@ -566,11 +566,11 @@ namespace gridfire::solver {
             LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper completed successfully at time {}", t);
             return 0;
         } catch (const exceptions::EngineError& e) {
-            LOG_ERROR(instance->m_logger, "EngineError caught in CVODE RHS wrapper at time {}: {}", t, e.what());
-            data->captured_exception = std::make_unique<exceptions::EngineError>(e);
+            LOG_ERROR(instance->m_logger, "EngineError caught in CVODE RHS wrapper at time {}: {}. Will attempt to recover...", t, e.what());
             return 1; // 1 Indicates a recoverable error, CVODE will retry the step
-        } catch (...) {
-            LOG_CRITICAL(instance->m_logger, "Unrecoverable and Unknown exception caught in CVODE RHS wrapper at time {}", t);
+        } catch (const std::exception& e) {
+            LOG_CRITICAL(instance->m_logger, "Unrecoverable and Unknown exception caught in CVODE RHS wrapper at time {} ({})", t, e.what());
+            // data->captured_exception = std::make_unique<exceptions::GridFireError>(e.what());
             return -1; // Some unrecoverable error
         }
     }
