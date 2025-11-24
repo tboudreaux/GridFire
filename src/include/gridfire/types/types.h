@@ -2,13 +2,13 @@
 //
 //   Copyright (C) 2025 -- The 4D-STAR Collaboration
 //   File Authors: Emily Boudreaux, Aaron Dotter
-//   Last Modified: March 21, 2025
+//   Last Modified: Nov 24, 2025
 //
-//   4DSSE is free software; you can use it and/or modify
+//   GridFire is free software; you can use it and/or modify
 //   it under the terms and restrictions the GNU General Library Public
 //   License version 3 (GPLv3) as published by the Free Software Foundation.
 //
-//   4DSSE is distributed in the hope that it will be useful,
+//   GridFire is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //   See the GNU Library General Public License for more details.
@@ -28,20 +28,6 @@
 
 
 namespace gridfire {
-
-
-    enum NetworkFormat {
-        APPROX8, ///< Approx8 nuclear reaction network format.
-        REACLIB, ///< General REACLIB nuclear reaction network format.
-        UNKNOWN,
-    };
-
-    static inline std::unordered_map<NetworkFormat, std::string> FormatStringLookup = {
-        {APPROX8, "Approx8"},
-        {REACLIB, "REACLIB"},
-        {UNKNOWN, "Unknown"}
-    };
-
     struct NetIn {
         fourdst::composition::Composition composition; ///< Composition of the network
         double tMax; ///< Maximum time

@@ -10,6 +10,8 @@ subdir('cppad')
 subdir('xxHash')
 subdir('eigen')
 
+subdir('json')
+
 subdir('pybind')
 
 
