@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -106,16 +106,17 @@ $(function(){initNavTree('engine__graph_8cpp.html',''); initResizable(true); });
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="reaction_8h.html">gridfire/reaction/reaction.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="network_8h.html">gridfire/network.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="screening__types_8h.html">gridfire/screening/screening_types.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="priming_8h.html">gridfire/engine/procedures/priming.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="partition__ground_8h.html">gridfire/partition/partition_ground.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="construction_8h.html">gridfire/engine/procedures/construction.h</a>&quot;</code><br />
-<code>#include &quot;fourdst/composition/species.h&quot;</code><br />
-<code>#include &quot;fourdst/composition/atomicSpecies.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="hashing_8h.html">gridfire/utils/hashing.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="table__format_8h.html">gridfire/utils/table_format.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/atomic/species.h&quot;</code><br />
+<code>#include &quot;fourdst/atomic/atomicSpecies.h&quot;</code><br />
 <code>#include &quot;quill/LogMacros.h&quot;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
@@ -126,13 +127,21 @@ $(function(){initNavTree('engine__graph_8cpp.html',''); initResizable(true); });
 <code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;ranges&gt;</code><br />
 <code>#include &lt;boost/numeric/odeint.hpp&gt;</code><br />
+<code>#include &lt;boost/numeric/ublas/matrix_sparse.hpp&gt;</code><br />
 <code>#include &quot;cppad/cppad.hpp&quot;</code><br />
 <code>#include &quot;cppad/utility/sparse_rc.hpp&quot;</code><br />
 <code>#include &quot;cppad/utility/sparse_rcv.hpp&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for engine_graph.cpp:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="engine__graph_8cpp__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

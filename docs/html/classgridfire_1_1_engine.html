@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -113,20 +113,8 @@ $(function(){initNavTree('classgridfire_1_1_engine.html',''); initResizable(true
 <div class="dynheader">
 Inheritance diagram for gridfire::Engine:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classgridfire_1_1_engine.png" usemap="#gridfire::Engine_map" alt=""/>
-  <map id="gridfire::Engine_map" name="gridfire::Engine_map">
-<area href="class_py_engine.html" alt="PyEngine" shape="rect" coords="0,56,246,80"/>
-<area href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="gridfire::DynamicEngine" shape="rect" coords="512,56,758,80"/>
-<area href="class_py_dynamic_engine.html" alt="PyDynamicEngine" shape="rect" coords="0,112,246,136"/>
-<area href="classgridfire_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions." alt="gridfire::AdaptiveEngineView" shape="rect" coords="256,112,502,136"/>
-<area href="classgridfire_1_1_defined_engine_view.html" alt="gridfire::DefinedEngineView" shape="rect" coords="512,112,758,136"/>
-<area href="classgridfire_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation." alt="gridfire::GraphEngine" shape="rect" coords="768,112,1014,136"/>
-<area href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales." alt="gridfire::MultiscalePartitioningEngineView" shape="rect" coords="1024,112,1270,136"/>
-<area href="classgridfire_1_1_file_defined_engine_view.html" alt="gridfire::FileDefinedEngineView" shape="rect" coords="384,168,630,192"/>
-<area href="classgridfire_1_1_network_priming_engine_view.html" title="Provides a view of a DynamicEngine filtered to reactions involving a specified priming species." alt="gridfire::NetworkPrimingEngineView" shape="rect" coords="640,168,886,192"/>
-  </map>
-</div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1_engine__inherit__graph.svg" width="100%" height="487"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -136,9 +124,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a020e1b493d6964cafdad08fde697ceb3" id="r_a020e1b493d6964cafdad08fde697ceb3"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a020e1b493d6964cafdad08fde697ceb3">getNetworkSpecies</a> () const =0</td></tr>
 <tr class="memdesc:a020e1b493d6964cafdad08fde697ceb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
 <tr class="separator:a020e1b493d6964cafdad08fde697ceb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89f714d19b84a93a004a7afbb487a6cb" id="r_a89f714d19b84a93a004a7afbb487a6cb"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89f714d19b84a93a004a7afbb487a6cb">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:a89f714d19b84a93a004a7afbb487a6cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
-<tr class="separator:a89f714d19b84a93a004a7afbb487a6cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add48d3af9ebde17717e42e220e349740" id="r_add48d3af9ebde17717e42e220e349740"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add48d3af9ebde17717e42e220e349740">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:add48d3af9ebde17717e42e220e349740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
+<tr class="separator:add48d3af9ebde17717e42e220e349740"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract base class for a reaction network engine. </p>
@@ -147,7 +135,7 @@ Public Member Functions</h2></td></tr>
 <p>Example: </p><div class="fragment"><div class="line"><span class="keyword">class </span>MyEngine : <span class="keyword">public</span> <a class="code hl_class" href="classgridfire_1_1_engine.html">gridfire::Engine</a> {</div>
 <div class="line">    <span class="comment">// Implement required methods...</span></div>
 <div class="line">};</div>
-<div class="ttc" id="aclassgridfire_1_1_engine_html"><div class="ttname"><a href="classgridfire_1_1_engine.html">gridfire::Engine</a></div><div class="ttdoc">Abstract base class for a reaction network engine.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:84</div></div>
+<div class="ttc" id="aclassgridfire_1_1_engine_html"><div class="ttname"><a href="classgridfire_1_1_engine.html">gridfire::Engine</a></div><div class="ttdoc">Abstract base class for a reaction network engine.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:96</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2e7970bed2100699f226f4141d5db037" name="a2e7970bed2100699f226f4141d5db037"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e7970bed2100699f226f4141d5db037">&#9670;&#160;</a></span>~Engine()</h2>
@@ -177,8 +165,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a89f714d19b84a93a004a7afbb487a6cb" name="a89f714d19b84a93a004a7afbb487a6cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89f714d19b84a93a004a7afbb487a6cb">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<a id="add48d3af9ebde17717e42e220e349740" name="add48d3af9ebde17717e42e220e349740"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add48d3af9ebde17717e42e220e349740">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -189,7 +177,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::Engine::calculateRHSAndEnergy </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -212,16 +200,16 @@ Public Member Functions</h2></td></tr>
 <p>Calculate the right-hand side (dY/dt) and energy generation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y</td><td>Vector of current abundances for all species. </td></tr>
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives&lt;double&gt;</a> containing dY/dt and energy generation rate.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>expected&lt;StepDerivatives&lt;double&gt;&gt; containing either dY/dt and energy generation rate or a stale engine error indicating that the engine must be updated</dd></dl>
 <p>This function must be implemented by derived classes to compute the time derivatives of all species and the specific nuclear energy generation rate for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#af703ad17ea65ffff4b75bf8ccc00e5d5">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#a4b0d71367cb1d4c06bcd01251bbeb60d">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#aaed3743a52246b0f7bf03995e1c12081">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a716d7357e944e8394d8b8e0b5e7625eb">gridfire::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#a5b7f0cfe327c634ec125303256de8b9a">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a2f92602ecf210414b46838fc0a9ae26d">PyEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1_adaptive_engine_view.html#ac5545d546166de94514871d7ad7b8669">gridfire::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1_defined_engine_view.html#af273b29d7700cdc34da6e2712fffc5c2">gridfire::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1_graph_engine.html#a7acc98647427981a9602d251c9288012">gridfire::GraphEngine</a>, <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html#a5c1ab19bc3394a5d29241ef02073c4cb">gridfire::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#a6bd76ef1df93d361bf5791270390c914">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a7a298603e9d94ca58dc0db53e5b07add">PyEngine</a>.</p>
 
 </div>
 </div>

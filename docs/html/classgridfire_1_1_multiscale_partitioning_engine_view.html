@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -117,14 +117,13 @@ $(function(){initNavTree('classgridfire_1_1_multiscale_partitioning_engine_view.
 <div class="dynheader">
 Inheritance diagram for gridfire::MultiscalePartitioningEngineView:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classgridfire_1_1_multiscale_partitioning_engine_view.png" usemap="#gridfire::MultiscalePartitioningEngineView_map" alt=""/>
-  <map id="gridfire::MultiscalePartitioningEngineView_map" name="gridfire::MultiscalePartitioningEngineView_map">
-<area href="classgridfire_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="gridfire::DynamicEngine" shape="rect" coords="0,56,246,80"/>
-<area href="classgridfire_1_1_engine_view.html" alt="gridfire::EngineView&lt; DynamicEngine &gt;" shape="rect" coords="256,56,502,80"/>
-<area href="classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="gridfire::Engine" shape="rect" coords="0,0,246,24"/>
-  </map>
-</div></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1_multiscale_partitioning_engine_view__inherit__graph.svg" width="334" height="214"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for gridfire::MultiscalePartitioningEngineView:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1_multiscale_partitioning_engine_view__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -140,42 +139,51 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0df457c0f0f6f403a295335c84fd828f" id="r_a0df457c0f0f6f403a295335c84fd828f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0df457c0f0f6f403a295335c84fd828f">MultiscalePartitioningEngineView</a> (<a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;baseEngine)</td></tr>
-<tr class="memdesc:a0df457c0f0f6f403a295335c84fd828f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a>.  <br /></td></tr>
-<tr class="separator:a0df457c0f0f6f403a295335c84fd828f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b3720628b22f038391949fffe6fc962" id="r_a1b3720628b22f038391949fffe6fc962"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b3720628b22f038391949fffe6fc962">MultiscalePartitioningEngineView</a> (<a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine)</td></tr>
+<tr class="memdesc:a1b3720628b22f038391949fffe6fc962"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html" title="An engine view that partitions the reaction network into multiple groups based on timescales.">MultiscalePartitioningEngineView</a>.  <br /></td></tr>
+<tr class="separator:a1b3720628b22f038391949fffe6fc962"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a696f74f5135bbd62169b6577f92fee80" id="r_a696f74f5135bbd62169b6577f92fee80"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a696f74f5135bbd62169b6577f92fee80">getNetworkSpecies</a> () const override</td></tr>
 <tr class="memdesc:a696f74f5135bbd62169b6577f92fee80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of species in the network.  <br /></td></tr>
 <tr class="separator:a696f74f5135bbd62169b6577f92fee80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a716d7357e944e8394d8b8e0b5e7625eb" id="r_a716d7357e944e8394d8b8e0b5e7625eb"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a716d7357e944e8394d8b8e0b5e7625eb">calculateRHSAndEnergy</a> (const std::vector&lt; double &gt; &amp;Y_full, double T9, double rho) const override</td></tr>
-<tr class="memdesc:a716d7357e944e8394d8b8e0b5e7625eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
-<tr class="separator:a716d7357e944e8394d8b8e0b5e7625eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdf5ad8765290ea2b78170235aea391d" id="r_acdf5ad8765290ea2b78170235aea391d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdf5ad8765290ea2b78170235aea391d">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_full, double T9, double rho) const override</td></tr>
-<tr class="memdesc:acdf5ad8765290ea2b78170235aea391d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the current state.  <br /></td></tr>
-<tr class="separator:acdf5ad8765290ea2b78170235aea391d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac961484383e86d9712a424728e068633" id="r_ac961484383e86d9712a424728e068633"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac961484383e86d9712a424728e068633">getJacobianMatrixEntry</a> (int i_full, int j_full) const override</td></tr>
-<tr class="memdesc:ac961484383e86d9712a424728e068633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the previously generated Jacobian matrix.  <br /></td></tr>
-<tr class="separator:ac961484383e86d9712a424728e068633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c1ab19bc3394a5d29241ef02073c4cb" id="r_a5c1ab19bc3394a5d29241ef02073c4cb"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c1ab19bc3394a5d29241ef02073c4cb">calculateRHSAndEnergy</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a5c1ab19bc3394a5d29241ef02073c4cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
+<tr class="separator:a5c1ab19bc3394a5d29241ef02073c4cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99f9116d5a18afcbf0e808ef111d1be8" id="r_a99f9116d5a18afcbf0e808ef111d1be8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99f9116d5a18afcbf0e808ef111d1be8">calculateEpsDerivatives</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a99f9116d5a18afcbf0e808ef111d1be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the derivatives of the energy generation rate with respect to T and rho.  <br /></td></tr>
+<tr class="separator:a99f9116d5a18afcbf0e808ef111d1be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9f71bc9a1c0f98ec9cc1c7da00fd975" id="r_ab9f71bc9a1c0f98ec9cc1c7da00fd975"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9f71bc9a1c0f98ec9cc1c7da00fd975">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:ab9f71bc9a1c0f98ec9cc1c7da00fd975"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for the current state.  <br /></td></tr>
+<tr class="separator:ab9f71bc9a1c0f98ec9cc1c7da00fd975"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31e636745b8c427cee0319e6c61039be" id="r_a31e636745b8c427cee0319e6c61039be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31e636745b8c427cee0319e6c61039be">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const override</td></tr>
+<tr class="memdesc:a31e636745b8c427cee0319e6c61039be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix for a subset of active species.  <br /></td></tr>
+<tr class="separator:a31e636745b8c427cee0319e6c61039be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac683ef0ba25356bc587749b69a582286" id="r_ac683ef0ba25356bc587749b69a582286"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac683ef0ba25356bc587749b69a582286">generateJacobianMatrix</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const override</td></tr>
+<tr class="memdesc:ac683ef0ba25356bc587749b69a582286"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Jacobian matrix using a sparsity pattern.  <br /></td></tr>
+<tr class="separator:ac683ef0ba25356bc587749b69a582286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a586da5402750151fee5db2666785b6e4" id="r_a586da5402750151fee5db2666785b6e4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a586da5402750151fee5db2666785b6e4">getJacobianMatrixEntry</a> (const fourdst::atomic::Species &amp;rowSpecies, const fourdst::atomic::Species &amp;colSpecies) const override</td></tr>
+<tr class="memdesc:a586da5402750151fee5db2666785b6e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the previously generated Jacobian matrix.  <br /></td></tr>
+<tr class="separator:a586da5402750151fee5db2666785b6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe76a46784b1ebc8ad67a9eec40d369a" id="r_abe76a46784b1ebc8ad67a9eec40d369a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe76a46784b1ebc8ad67a9eec40d369a">generateStoichiometryMatrix</a> () override</td></tr>
 <tr class="memdesc:abe76a46784b1ebc8ad67a9eec40d369a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the stoichiometry matrix for the network.  <br /></td></tr>
 <tr class="separator:abe76a46784b1ebc8ad67a9eec40d369a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a510b920dea726aef859ac1f6d051807e" id="r_a510b920dea726aef859ac1f6d051807e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a510b920dea726aef859ac1f6d051807e">getStoichiometryMatrixEntry</a> (int speciesIndex, int reactionIndex) const override</td></tr>
-<tr class="memdesc:a510b920dea726aef859ac1f6d051807e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the stoichiometry matrix.  <br /></td></tr>
-<tr class="separator:a510b920dea726aef859ac1f6d051807e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79eb9c108d694a27ec913ed0143aa044" id="r_a79eb9c108d694a27ec913ed0143aa044"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79eb9c108d694a27ec913ed0143aa044">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; double &gt; &amp;Y_full, double T9, double rho) const override</td></tr>
-<tr class="memdesc:a79eb9c108d694a27ec913ed0143aa044"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction.  <br /></td></tr>
-<tr class="separator:a79eb9c108d694a27ec913ed0143aa044"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad751f2c1306895ee74a61f2071ca96eb" id="r_ad751f2c1306895ee74a61f2071ca96eb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad751f2c1306895ee74a61f2071ca96eb">getNetworkReactions</a> () const override</td></tr>
-<tr class="memdesc:ad751f2c1306895ee74a61f2071ca96eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of logical reactions in the network.  <br /></td></tr>
-<tr class="separator:ad751f2c1306895ee74a61f2071ca96eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb5fa7f03cd89b8c1b6b9ffdf3abb12e" id="r_acb5fa7f03cd89b8c1b6b9ffdf3abb12e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb5fa7f03cd89b8c1b6b9ffdf3abb12e">setNetworkReactions</a> (const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;reactions) override</td></tr>
-<tr class="memdesc:acb5fa7f03cd89b8c1b6b9ffdf3abb12e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the set of logical reactions in the network.  <br /></td></tr>
-<tr class="separator:acb5fa7f03cd89b8c1b6b9ffdf3abb12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a560612347bbd5b7b380e990624d01105" id="r_a560612347bbd5b7b380e990624d01105"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a560612347bbd5b7b380e990624d01105">getSpeciesTimescales</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const override</td></tr>
-<tr class="memdesc:a560612347bbd5b7b380e990624d01105"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all species in the network.  <br /></td></tr>
-<tr class="separator:a560612347bbd5b7b380e990624d01105"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38c367ef3c74d012ccd10521cd5a727" id="r_aa38c367ef3c74d012ccd10521cd5a727"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa38c367ef3c74d012ccd10521cd5a727">getSpeciesDestructionTimescales</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const override</td></tr>
-<tr class="memdesc:aa38c367ef3c74d012ccd10521cd5a727"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes destruction timescales for all species in the network.  <br /></td></tr>
-<tr class="separator:aa38c367ef3c74d012ccd10521cd5a727"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7140384baaaa0bd05ca448a0d8fec471" id="r_a7140384baaaa0bd05ca448a0d8fec471"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7140384baaaa0bd05ca448a0d8fec471">getStoichiometryMatrixEntry</a> (const fourdst::atomic::Species &amp;species, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) const override</td></tr>
+<tr class="memdesc:a7140384baaaa0bd05ca448a0d8fec471"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an entry from the stoichiometry matrix.  <br /></td></tr>
+<tr class="separator:a7140384baaaa0bd05ca448a0d8fec471"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87687a960f263a4e1bc035e4d0a345db" id="r_a87687a960f263a4e1bc035e4d0a345db"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87687a960f263a4e1bc035e4d0a345db">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a87687a960f263a4e1bc035e4d0a345db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the molar reaction flow for a given reaction.  <br /></td></tr>
+<tr class="separator:a87687a960f263a4e1bc035e4d0a345db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a253e51d6dc7226a863a123683049af61" id="r_a253e51d6dc7226a863a123683049af61"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a253e51d6dc7226a863a123683049af61">getNetworkReactions</a> () const override</td></tr>
+<tr class="memdesc:a253e51d6dc7226a863a123683049af61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the set of logical reactions in the network.  <br /></td></tr>
+<tr class="separator:a253e51d6dc7226a863a123683049af61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af99f5e4871808188d00379c1c35868fe" id="r_af99f5e4871808188d00379c1c35868fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af99f5e4871808188d00379c1c35868fe">setNetworkReactions</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions) override</td></tr>
+<tr class="memdesc:af99f5e4871808188d00379c1c35868fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the set of logical reactions in the network.  <br /></td></tr>
+<tr class="separator:af99f5e4871808188d00379c1c35868fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea2c3d2ae6ddf77bd4a9b07b86f3306b" id="r_aea2c3d2ae6ddf77bd4a9b07b86f3306b"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea2c3d2ae6ddf77bd4a9b07b86f3306b">getSpeciesTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:aea2c3d2ae6ddf77bd4a9b07b86f3306b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes timescales for all species in the network.  <br /></td></tr>
+<tr class="separator:aea2c3d2ae6ddf77bd4a9b07b86f3306b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accbbe1bd96672e74919d00387673f180" id="r_accbbe1bd96672e74919d00387673f180"><td class="memItemLeft" align="right" valign="top">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accbbe1bd96672e74919d00387673f180">getSpeciesDestructionTimescales</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:accbbe1bd96672e74919d00387673f180"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes destruction timescales for all species in the network.  <br /></td></tr>
+<tr class="separator:accbbe1bd96672e74919d00387673f180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bee75b5a6e508e6eebf83f0d48c50b8" id="r_a6bee75b5a6e508e6eebf83f0d48c50b8"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bee75b5a6e508e6eebf83f0d48c50b8">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) override</td></tr>
 <tr class="memdesc:a6bee75b5a6e508e6eebf83f0d48c50b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the internal state of the engine, performing partitioning and QSE equilibration.  <br /></td></tr>
 <tr class="separator:a6bee75b5a6e508e6eebf83f0d48c50b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,21 +199,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a22bd1f0e821ed415611d75bac67063d1" id="r_a22bd1f0e821ed415611d75bac67063d1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22bd1f0e821ed415611d75bac67063d1">getBaseEngine</a> () const override</td></tr>
 <tr class="memdesc:a22bd1f0e821ed415611d75bac67063d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the base engine.  <br /></td></tr>
 <tr class="separator:a22bd1f0e821ed415611d75bac67063d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13e764c118a6cc51847384e9c70e05b" id="r_af13e764c118a6cc51847384e9c70e05b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af13e764c118a6cc51847384e9c70e05b">analyzeTimescalePoolConnectivity</a> (const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;timescale_pools, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
-<tr class="memdesc:af13e764c118a6cc51847384e9c70e05b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Analyzes the connectivity of timescale pools.  <br /></td></tr>
-<tr class="separator:af13e764c118a6cc51847384e9c70e05b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d26945df5395b9317552a3989c42d1c" id="r_a7d26945df5395b9317552a3989c42d1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d26945df5395b9317552a3989c42d1c">partitionNetwork</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho)</td></tr>
-<tr class="memdesc:a7d26945df5395b9317552a3989c42d1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitions the network into dynamic and algebraic (QSE) groups based on timescales.  <br /></td></tr>
-<tr class="separator:a7d26945df5395b9317552a3989c42d1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e45017bbb772c586f483bd527004ee" id="r_a05e45017bbb772c586f483bd527004ee"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05e45017bbb772c586f483bd527004ee">analyzeTimescalePoolConnectivity</a> (const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;timescale_pools, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a05e45017bbb772c586f483bd527004ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Analyzes the connectivity of timescale pools.  <br /></td></tr>
+<tr class="separator:a05e45017bbb772c586f483bd527004ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c327a40d7c667043826002975baa2b4" id="r_a3c327a40d7c667043826002975baa2b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c327a40d7c667043826002975baa2b4">partitionNetwork</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho)</td></tr>
+<tr class="memdesc:a3c327a40d7c667043826002975baa2b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitions the network into dynamic and algebraic (QSE) groups based on timescales.  <br /></td></tr>
+<tr class="separator:a3c327a40d7c667043826002975baa2b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98b11ffe498846f5a3a72f08504346b7" id="r_a98b11ffe498846f5a3a72f08504346b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98b11ffe498846f5a3a72f08504346b7">partitionNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)</td></tr>
 <tr class="memdesc:a98b11ffe498846f5a3a72f08504346b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitions the network based on timescales from a <code><a class="el" href="structgridfire_1_1_net_in.html">NetIn</a></code> struct.  <br /></td></tr>
 <tr class="separator:a98b11ffe498846f5a3a72f08504346b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acff59a15abac30eee16e9fa7b355fb18" id="r_acff59a15abac30eee16e9fa7b355fb18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acff59a15abac30eee16e9fa7b355fb18">exportToDot</a> (const std::string &amp;filename, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const</td></tr>
-<tr class="memdesc:acff59a15abac30eee16e9fa7b355fb18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the network to a DOT file for visualization.  <br /></td></tr>
-<tr class="separator:acff59a15abac30eee16e9fa7b355fb18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91d32b7197fcb27ee697d5bfde960f3f" id="r_a91d32b7197fcb27ee697d5bfde960f3f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91d32b7197fcb27ee697d5bfde960f3f">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
-<tr class="memdesc:a91d32b7197fcb27ee697d5bfde960f3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the index of a species in the full network.  <br /></td></tr>
-<tr class="separator:a91d32b7197fcb27ee697d5bfde960f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e3c7d6320cd0fdc51b3a40d1ec6b262" id="r_a2e3c7d6320cd0fdc51b3a40d1ec6b262"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e3c7d6320cd0fdc51b3a40d1ec6b262">exportToDot</a> (const std::string &amp;filename, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a2e3c7d6320cd0fdc51b3a40d1ec6b262"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the network to a DOT file for visualization.  <br /></td></tr>
+<tr class="separator:a2e3c7d6320cd0fdc51b3a40d1ec6b262"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8db21995e6878f4043f3a5a45bf36d5e" id="r_a8db21995e6878f4043f3a5a45bf36d5e"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8db21995e6878f4043f3a5a45bf36d5e">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="memdesc:a8db21995e6878f4043f3a5a45bf36d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the index of a species in the full network.  <br /></td></tr>
+<tr class="separator:a8db21995e6878f4043f3a5a45bf36d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aada497e8df74a295fdf5df7d7cdf64e0" id="r_aada497e8df74a295fdf5df7d7cdf64e0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aada497e8df74a295fdf5df7d7cdf64e0">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
 <tr class="memdesc:aada497e8df74a295fdf5df7d7cdf64e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a <code><a class="el" href="structgridfire_1_1_net_in.html">NetIn</a></code> struct to a molar abundance vector for the full network.  <br /></td></tr>
 <tr class="separator:aada497e8df74a295fdf5df7d7cdf64e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,15 +226,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e04e8cb8c84b1bd033ac599accf0888" id="r_a1e04e8cb8c84b1bd033ac599accf0888"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e04e8cb8c84b1bd033ac599accf0888">getDynamicSpecies</a> () const</td></tr>
 <tr class="memdesc:a1e04e8cb8c84b1bd033ac599accf0888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the dynamic species in the network.  <br /></td></tr>
 <tr class="separator:a1e04e8cb8c84b1bd033ac599accf0888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bc879246c6fbd8633b05052858df51d" id="r_a4bc879246c6fbd8633b05052858df51d"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bc879246c6fbd8633b05052858df51d">equilibrateNetwork</a> (const std::vector&lt; double &gt; &amp;Y, double T9, double rho)</td></tr>
-<tr class="memdesc:a4bc879246c6fbd8633b05052858df51d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equilibrates the network by partitioning and solving for QSE abundances.  <br /></td></tr>
-<tr class="separator:a4bc879246c6fbd8633b05052858df51d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f0c45d4e2b2f9de5d961088f3ab0a9a" id="r_a2f0c45d4e2b2f9de5d961088f3ab0a9a"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a">equilibrateNetwork</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho)</td></tr>
+<tr class="memdesc:a2f0c45d4e2b2f9de5d961088f3ab0a9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equilibrates the network by partitioning and solving for QSE abundances.  <br /></td></tr>
+<tr class="separator:a2f0c45d4e2b2f9de5d961088f3ab0a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b17f94386882ea1524147782b7a1ddc" id="r_a1b17f94386882ea1524147782b7a1ddc"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b17f94386882ea1524147782b7a1ddc">equilibrateNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)</td></tr>
 <tr class="memdesc:a1b17f94386882ea1524147782b7a1ddc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equilibrates the network using QSE from a <code><a class="el" href="structgridfire_1_1_net_in.html">NetIn</a></code> struct.  <br /></td></tr>
 <tr class="separator:a1b17f94386882ea1524147782b7a1ddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adde288ec903d0cf45cfc3031e3a1fa8b" id="r_adde288ec903d0cf45cfc3031e3a1fa8b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adde288ec903d0cf45cfc3031e3a1fa8b">involvesSpecies</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
+<tr class="separator:adde288ec903d0cf45cfc3031e3a1fa8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e23f9e7c9e72bf1d3de15f98157afdb" id="r_a3e23f9e7c9e72bf1d3de15f98157afdb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e23f9e7c9e72bf1d3de15f98157afdb">involvesSpeciesInQSE</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
+<tr class="separator:a3e23f9e7c9e72bf1d3de15f98157afdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4961ef6ad6db601bfaa0721ede02369" id="r_ae4961ef6ad6db601bfaa0721ede02369"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4961ef6ad6db601bfaa0721ede02369">involvesSpeciesInDynamic</a> (const fourdst::atomic::Species &amp;species) const</td></tr>
+<tr class="separator:ae4961ef6ad6db601bfaa0721ede02369"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7056e235c56be39e2a672988962b3948" id="r_a7056e235c56be39e2a672988962b3948"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7056e235c56be39e2a672988962b3948">collectComposition</a> (fourdst::composition::Composition &amp;comp) const override</td></tr>
+<tr class="memdesc:a7056e235c56be39e2a672988962b3948"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collect the composition from this and sub engines.  <br /></td></tr>
+<tr class="separator:a7056e235c56be39e2a672988962b3948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1_dynamic_engine.html">gridfire::DynamicEngine</a></td></tr>
-<tr class="memitem:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a818d942efa843959393e4eed3263b7e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a818d942efa843959393e4eed3263b7e7">generateJacobianMatrix</a> (const std::vector&lt; double &gt; &amp;Y_dynamic, double T9, double rho, const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;sparsityPattern) const</td></tr>
-<tr class="separator:a818d942efa843959393e4eed3263b7e7 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine" id="r_a04317b66ef14d519264bc30ee69f5bf9"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_dynamic_engine.html#a04317b66ef14d519264bc30ee69f5bf9">getDepth</a> () const</td></tr>
 <tr class="memdesc:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the network.  <br /></td></tr>
 <tr class="separator:a04317b66ef14d519264bc30ee69f5bf9 inherit pub_methods_classgridfire_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -250,51 +265,45 @@ Private Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ad4d29ee55f89384807616d1068797067" id="r_ad4d29ee55f89384807616d1068797067"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4d29ee55f89384807616d1068797067">partitionByTimescale</a> (const std::vector&lt; double &gt; &amp;Y_full, double T9, double rho) const</td></tr>
-<tr class="memdesc:ad4d29ee55f89384807616d1068797067"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitions the network by timescale.  <br /></td></tr>
-<tr class="separator:ad4d29ee55f89384807616d1068797067"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae0865e361dfeb23984d70409fdd9f39" id="r_aae0865e361dfeb23984d70409fdd9f39"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; size_t, std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae0865e361dfeb23984d70409fdd9f39">buildConnectivityGraph</a> (const std::unordered_set&lt; size_t &gt; &amp;fast_reaction_indices) const</td></tr>
-<tr class="memdesc:aae0865e361dfeb23984d70409fdd9f39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a connectivity graph from a set of fast reaction indices.  <br /></td></tr>
-<tr class="separator:aae0865e361dfeb23984d70409fdd9f39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa55ed182301d216264daae3e6dfd8917" id="r_aa55ed182301d216264daae3e6dfd8917"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa55ed182301d216264daae3e6dfd8917">validateGroupsWithFluxAnalysis</a> (const std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt; &amp;candidate_groups, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
-<tr class="memdesc:aa55ed182301d216264daae3e6dfd8917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates candidate QSE groups using flux analysis.  <br /></td></tr>
-<tr class="separator:aa55ed182301d216264daae3e6dfd8917"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c5fcb8e3396d74359fd601554c9ffa9" id="r_a3c5fcb8e3396d74359fd601554c9ffa9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c5fcb8e3396d74359fd601554c9ffa9">solveQSEAbundances</a> (const std::vector&lt; double &gt; &amp;Y_full, double T9, double rho)</td></tr>
-<tr class="memdesc:a3c5fcb8e3396d74359fd601554c9ffa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solves for the QSE abundances of the algebraic species in a given state.  <br /></td></tr>
-<tr class="separator:a3c5fcb8e3396d74359fd601554c9ffa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54ca8004fbd8d6d3ea6f67efeb5dbc8d" id="r_a54ca8004fbd8d6d3ea6f67efeb5dbc8d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54ca8004fbd8d6d3ea6f67efeb5dbc8d">identifyMeanSlowestPool</a> (const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;pools, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
-<tr class="memdesc:a54ca8004fbd8d6d3ea6f67efeb5dbc8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifies the pool with the slowest mean timescale.  <br /></td></tr>
-<tr class="separator:a54ca8004fbd8d6d3ea6f67efeb5dbc8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3875c61dc916c0982ed122c2e272d94" id="r_ae3875c61dc916c0982ed122c2e272d94"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; size_t, std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3875c61dc916c0982ed122c2e272d94">buildConnectivityGraph</a> (const std::vector&lt; size_t &gt; &amp;species_pool) const</td></tr>
-<tr class="memdesc:ae3875c61dc916c0982ed122c2e272d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a connectivity graph from a species pool.  <br /></td></tr>
-<tr class="separator:ae3875c61dc916c0982ed122c2e272d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac206840057bac65b7f7738e6dfd1047a" id="r_ac206840057bac65b7f7738e6dfd1047a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac206840057bac65b7f7738e6dfd1047a">constructCandidateGroups</a> (const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;candidate_pools, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
-<tr class="memdesc:ac206840057bac65b7f7738e6dfd1047a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs candidate QSE groups from connected timescale pools.  <br /></td></tr>
-<tr class="separator:ac206840057bac65b7f7738e6dfd1047a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6" id="r_a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6">partitionByTimescale</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitions the network by timescale.  <br /></td></tr>
+<tr class="separator:a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad94c6fa2281d9104471631c6b90f411e" id="r_ad94c6fa2281d9104471631c6b90f411e"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">MultiscalePartitioningEngineView::QSEGroup</a> &gt;, std::vector&lt; <a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">MultiscalePartitioningEngineView</a> ::QSEGroup &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad94c6fa2281d9104471631c6b90f411e">validateGroupsWithFluxAnalysis</a> (const std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt; &amp;candidate_groups, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:ad94c6fa2281d9104471631c6b90f411e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates candidate QSE groups using flux analysis.  <br /></td></tr>
+<tr class="separator:ad94c6fa2281d9104471631c6b90f411e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40ce2c18063cd56cffd58419b9ae96bf" id="r_a40ce2c18063cd56cffd58419b9ae96bf"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40ce2c18063cd56cffd58419b9ae96bf">solveQSEAbundances</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho)</td></tr>
+<tr class="memdesc:a40ce2c18063cd56cffd58419b9ae96bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solves for the QSE abundances of the algebraic species in a given state.  <br /></td></tr>
+<tr class="separator:a40ce2c18063cd56cffd58419b9ae96bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70f4a0c4123b7f78305f64eb11beeeeb" id="r_a70f4a0c4123b7f78305f64eb11beeeeb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70f4a0c4123b7f78305f64eb11beeeeb">identifyMeanSlowestPool</a> (const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;pools, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a70f4a0c4123b7f78305f64eb11beeeeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifies the pool with the slowest mean timescale.  <br /></td></tr>
+<tr class="separator:a70f4a0c4123b7f78305f64eb11beeeeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d1c11f3c0883385833462dd088f6f89" id="r_a5d1c11f3c0883385833462dd088f6f89"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; fourdst::atomic::Species, std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d1c11f3c0883385833462dd088f6f89">buildConnectivityGraph</a> (const std::vector&lt; fourdst::atomic::Species &gt; &amp;species_pool) const</td></tr>
+<tr class="memdesc:a5d1c11f3c0883385833462dd088f6f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a connectivity graph from a species pool.  <br /></td></tr>
+<tr class="separator:a5d1c11f3c0883385833462dd088f6f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaabaae8e33ca8a05a2aa1f374e792795" id="r_aaabaae8e33ca8a05a2aa1f374e792795"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaabaae8e33ca8a05a2aa1f374e792795">constructCandidateGroups</a> (const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;candidate_pools, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:aaabaae8e33ca8a05a2aa1f374e792795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs candidate QSE groups from connected timescale pools.  <br /></td></tr>
+<tr class="separator:aaabaae8e33ca8a05a2aa1f374e792795"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a7d357c775dcbb253a4001d172805380a" id="r_a7d357c775dcbb253a4001d172805380a"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d357c775dcbb253a4001d172805380a">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
 <tr class="memdesc:a7d357c775dcbb253a4001d172805380a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logger instance for logging messages.  <br /></td></tr>
 <tr class="separator:a7d357c775dcbb253a4001d172805380a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0437c51f94bf834a11adf481b2afad93" id="r_a0437c51f94bf834a11adf481b2afad93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0437c51f94bf834a11adf481b2afad93">m_baseEngine</a></td></tr>
-<tr class="memdesc:a0437c51f94bf834a11adf481b2afad93"><td class="mdescLeft">&#160;</td><td class="mdescRight">The base engine to which this view delegates calculations.  <br /></td></tr>
-<tr class="separator:a0437c51f94bf834a11adf481b2afad93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a999b68226d658c9df2f4a3b890b9e5d1" id="r_a999b68226d658c9df2f4a3b890b9e5d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a999b68226d658c9df2f4a3b890b9e5d1">m_baseEngine</a></td></tr>
+<tr class="memdesc:a999b68226d658c9df2f4a3b890b9e5d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The base engine to which this view delegates calculations.  <br /></td></tr>
+<tr class="separator:a999b68226d658c9df2f4a3b890b9e5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b4aa04a1e641204e4fd82361b0e39c6" id="r_a1b4aa04a1e641204e4fd82361b0e39c6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b4aa04a1e641204e4fd82361b0e39c6">m_qse_groups</a></td></tr>
 <tr class="memdesc:a1b4aa04a1e641204e4fd82361b0e39c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The list of identified equilibrium groups.  <br /></td></tr>
 <tr class="separator:a1b4aa04a1e641204e4fd82361b0e39c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec6126b5c4a397d090790d7b75f9f70f" id="r_aec6126b5c4a397d090790d7b75f9f70f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec6126b5c4a397d090790d7b75f9f70f">m_dynamic_species</a></td></tr>
 <tr class="memdesc:aec6126b5c4a397d090790d7b75f9f70f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The simplified set of species presented to the solver (the "slow" species).  <br /></td></tr>
 <tr class="separator:aec6126b5c4a397d090790d7b75f9f70f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38b4f0373c3bd81503889650c0bb69bb" id="r_a38b4f0373c3bd81503889650c0bb69bb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38b4f0373c3bd81503889650c0bb69bb">m_dynamic_species_indices</a></td></tr>
-<tr class="memdesc:a38b4f0373c3bd81503889650c0bb69bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices mapping the dynamic species back to the base engine's full species list.  <br /></td></tr>
-<tr class="separator:a38b4f0373c3bd81503889650c0bb69bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4656c05b8235dbf4ec698b03a716a8c8" id="r_a4656c05b8235dbf4ec698b03a716a8c8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4656c05b8235dbf4ec698b03a716a8c8">m_algebraic_species</a></td></tr>
 <tr class="memdesc:a4656c05b8235dbf4ec698b03a716a8c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Species that are treated as algebraic (in QSE) in the QSE groups.  <br /></td></tr>
 <tr class="separator:a4656c05b8235dbf4ec698b03a716a8c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53862719dd73f98bc69eecde090cf655" id="r_a53862719dd73f98bc69eecde090cf655"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53862719dd73f98bc69eecde090cf655">m_algebraic_species_indices</a></td></tr>
-<tr class="memdesc:a53862719dd73f98bc69eecde090cf655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices of algebraic species in the full network.  <br /></td></tr>
-<tr class="separator:a53862719dd73f98bc69eecde090cf655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3af2b37ce21829d9554d702cad074470" id="r_a3af2b37ce21829d9554d702cad074470"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; fourdst::atomic::Species, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3af2b37ce21829d9554d702cad074470">m_algebraic_abundances</a></td></tr>
+<tr class="memdesc:a3af2b37ce21829d9554d702cad074470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map from species to their calculated abundances in the QSE state.  <br /></td></tr>
+<tr class="separator:a3af2b37ce21829d9554d702cad074470"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57d97b11e80fa78ab5f509fce1f156b8" id="r_a57d97b11e80fa78ab5f509fce1f156b8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d97b11e80fa78ab5f509fce1f156b8">m_activeSpeciesIndices</a></td></tr>
 <tr class="memdesc:a57d97b11e80fa78ab5f509fce1f156b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indices of all species considered active in the current partition (dynamic + algebraic).  <br /></td></tr>
 <tr class="separator:a57d97b11e80fa78ab5f509fce1f156b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -311,7 +320,7 @@ Private Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An engine view that partitions the reaction network into multiple groups based on timescales. </p>
 <dl class="section user"><dt>Purpose</dt><dd>This class is designed to accelerate the integration of stiff nuclear reaction networks. It identifies species that react on very short timescales ("fast" species) and treats them as being in Quasi-Steady-State Equilibrium (QSE). Their abundances are solved for algebraically, removing their stiff differential equations from the system. The remaining "slow" or "dynamic" species are integrated normally. This significantly improves the stability and performance of the solver.</dd></dl>
-<dl class="section user"><dt>How</dt><dd>The core logic resides in the <code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> and <code><a class="el" href="#a4bc879246c6fbd8633b05052858df51d" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> methods. The partitioning process involves:<ol type="1">
+<dl class="section user"><dt>How</dt><dd>The core logic resides in the <code><a class="el" href="#a3c327a40d7c667043826002975baa2b4" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> and <code><a class="el" href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> methods. The partitioning process involves:<ol type="1">
 <li><b>Timescale Analysis:</b> Using <code>getSpeciesDestructionTimescales</code> from the base engine, all species are sorted by their characteristic timescales.</li>
 <li><b>Gap Detection:</b> The sorted list of timescales is scanned for large gaps (e.g., several orders of magnitude) to create distinct "timescale pools".</li>
 <li><b>Connectivity Analysis:</b> Each pool is analyzed for internal reaction connectivity to form cohesive groups.</li>
@@ -335,9 +344,9 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="comment">//    The integrator will call calculateRHSAndEnergy, etc. on the multiscaleEngine.</span></div>
 <div class="line"><span class="keyword">auto</span> Y_initial = multiscaleEngine.mapNetInToMolarAbundanceVector({equilibratedComp, ...});</div>
 <div class="line"><span class="keyword">auto</span> derivatives = multiscaleEngine.calculateRHSAndEnergy(Y_initial, T9, rho);</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:100</div></div>
-<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:182</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> network.h:53</div></div>
+<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:99</div></div>
+<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:180</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> network.h:51</div></div>
 </div><!-- fragment --></dd></dl>
 <p>&lt;DynamicEngine&gt; </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
@@ -367,8 +376,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0df457c0f0f6f403a295335c84fd828f" name="a0df457c0f0f6f403a295335c84fd828f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0df457c0f0f6f403a295335c84fd828f">&#9670;&#160;</a></span>MultiscalePartitioningEngineView()</h2>
+<a id="a1b3720628b22f038391949fffe6fc962" name="a1b3720628b22f038391949fffe6fc962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3720628b22f038391949fffe6fc962">&#9670;&#160;</a></span>MultiscalePartitioningEngineView()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -379,7 +388,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">gridfire::MultiscalePartitioningEngineView::MultiscalePartitioningEngineView </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>baseEngine</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>baseEngine</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -401,21 +410,21 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af13e764c118a6cc51847384e9c70e05b" name="af13e764c118a6cc51847384e9c70e05b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af13e764c118a6cc51847384e9c70e05b">&#9670;&#160;</a></span>analyzeTimescalePoolConnectivity()</h2>
+<a id="a05e45017bbb772c586f483bd527004ee" name="a05e45017bbb772c586f483bd527004ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05e45017bbb772c586f483bd527004ee">&#9670;&#160;</a></span>analyzeTimescalePoolConnectivity()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; std::vector&lt; size_t &gt; &gt; gridfire::MultiscalePartitioningEngineView::analyzeTimescalePoolConnectivity </td>
+          <td class="memname">std::vector&lt; std::vector&lt; Species &gt; &gt; gridfire::MultiscalePartitioningEngineView::analyzeTimescalePoolConnectivity </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>timescale_pools</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>timescale_pools</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -434,7 +443,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">timescale_pools</td><td>A vector of vectors of species indices, where each inner vector represents a timescale pool. </td></tr>
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for the full network. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -446,8 +455,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aae0865e361dfeb23984d70409fdd9f39" name="aae0865e361dfeb23984d70409fdd9f39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae0865e361dfeb23984d70409fdd9f39">&#9670;&#160;</a></span>buildConnectivityGraph() <span class="overload">[1/2]</span></h2>
+<a id="a5d1c11f3c0883385833462dd088f6f89" name="a5d1c11f3c0883385833462dd088f6f89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d1c11f3c0883385833462dd088f6f89">&#9670;&#160;</a></span>buildConnectivityGraph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -456,45 +465,9 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt; size_t, std::vector&lt; size_t &gt; &gt; gridfire::MultiscalePartitioningEngineView::buildConnectivityGraph </td>
+          <td class="memname">std::unordered_map&lt; Species, std::vector&lt; Species &gt; &gt; gridfire::MultiscalePartitioningEngineView::buildConnectivityGraph </td>
           <td>(</td>
-          <td class="paramtype">const std::unordered_set&lt; size_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>fast_reaction_indices</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Builds a connectivity graph from a set of fast reaction indices. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fast_reaction_indices</td><td>A set of indices for reactions considered "fast". </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>An unordered map representing the adjacency list of the connectivity graph, where keys are species indices and values are vectors of connected species indices.</dd></dl>
-<dl class="section user"><dt>Purpose</dt><dd>To represent the reaction pathways among a subset of reactions.</dd></dl>
-<dl class="section user"><dt>How</dt><dd>It iterates through the specified fast reactions. For each reaction, it creates a two-way edge in the graph between every reactant and every product, signifying that mass can flow between them. </dd></dl>
-
-</div>
-</div>
-<a id="ae3875c61dc916c0982ed122c2e272d94" name="ae3875c61dc916c0982ed122c2e272d94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3875c61dc916c0982ed122c2e272d94">&#9670;&#160;</a></span>buildConnectivityGraph() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; size_t, std::vector&lt; size_t &gt; &gt; gridfire::MultiscalePartitioningEngineView::buildConnectivityGraph </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; size_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species_pool</em></span></td><td>)</td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species_pool</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -518,8 +491,56 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a79eb9c108d694a27ec913ed0143aa044" name="a79eb9c108d694a27ec913ed0143aa044"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79eb9c108d694a27ec913ed0143aa044">&#9670;&#160;</a></span>calculateMolarReactionFlow()</h2>
+<a id="a99f9116d5a18afcbf0e808ef111d1be8" name="a99f9116d5a18afcbf0e808ef111d1be8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99f9116d5a18afcbf0e808ef111d1be8">&#9670;&#160;</a></span>calculateEpsDerivatives()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> gridfire::MultiscalePartitioningEngineView::calculateEpsDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the derivatives of the energy generation rate with respect to T and rho. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1_energy_derivatives.html">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
+<p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a264bd5a8891c8c5f0dff32867effe547">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a87687a960f263a4e1bc035e4d0a345db" name="a87687a960f263a4e1bc035e4d0a345db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87687a960f263a4e1bc035e4d0a345db">&#9670;&#160;</a></span>calculateMolarReactionFlow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -535,7 +556,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -559,7 +580,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">reaction</td><td>The reaction for which to calculate the flow. </td></tr>
-    <tr><td class="paramname">Y_full</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -576,12 +597,12 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6633b1757c41dd9e1c397333f4f9e785">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a39cf5b738eea0a275bf8c0eb5789fab3">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a716d7357e944e8394d8b8e0b5e7625eb" name="a716d7357e944e8394d8b8e0b5e7625eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a716d7357e944e8394d8b8e0b5e7625eb">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<a id="a5c1ab19bc3394a5d29241ef02073c4cb" name="a5c1ab19bc3394a5d29241ef02073c4cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c1ab19bc3394a5d29241ef02073c4cb">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -592,7 +613,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::expected&lt; <a class="el" href="structgridfire_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::MultiscalePartitioningEngineView::calculateRHSAndEnergy </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -615,7 +636,7 @@ Private Attributes</h2></td></tr>
 <p>Calculates the right-hand side (dY/dt) and energy generation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y_full</td><td>Vector of current molar abundances for all species in the base engine. </td></tr>
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -624,7 +645,7 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A <code>std::expected</code> containing <code><a class="el" href="structgridfire_1_1_step_derivatives.html" title="Structure holding derivatives and energy generation for a network step.">StepDerivatives</a>&lt;double&gt;</code> on success, or a <code>StaleEngineError</code> if the engine's QSE cache does not contain a solution for the given state.</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To compute the time derivatives for the ODE solver. This implementation modifies the derivatives from the base engine to enforce the QSE condition.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It first performs a lookup in the QSE abundance cache (<code>m_qse_abundance_cache</code>). If a cache hit occurs, it calls the base engine's <code>calculateRHSAndEnergy</code>. It then manually sets the time derivatives (<code>dydt</code>) of all identified algebraic species to zero, effectively removing their differential equations from the system being solved.</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd>The engine must have been updated via <code><a class="el" href="#a6bee75b5a6e508e6eebf83f0d48c50b8" title="Updates the internal state of the engine, performing partitioning and QSE equilibration.">update()</a></code> or <code><a class="el" href="#a4bc879246c6fbd8633b05052858df51d" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> for the current thermodynamic conditions, so that a valid entry exists in the QSE cache. </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>The engine must have been updated via <code><a class="el" href="#a6bee75b5a6e508e6eebf83f0d48c50b8" title="Updates the internal state of the engine, performing partitioning and QSE equilibration.">update()</a></code> or <code><a class="el" href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> for the current thermodynamic conditions, so that a valid entry exists in the QSE cache. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The returned derivatives will have <code>dydt=0</code> for all algebraic species.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -633,12 +654,54 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_engine.html#a89f714d19b84a93a004a7afbb487a6cb">gridfire::Engine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_engine.html#add48d3af9ebde17717e42e220e349740">gridfire::Engine</a>.</p>
 
 </div>
 </div>
-<a id="ac206840057bac65b7f7738e6dfd1047a" name="ac206840057bac65b7f7738e6dfd1047a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac206840057bac65b7f7738e6dfd1047a">&#9670;&#160;</a></span>constructCandidateGroups()</h2>
+<a id="a7056e235c56be39e2a672988962b3948" name="a7056e235c56be39e2a672988962b3948"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7056e235c56be39e2a672988962b3948">&#9670;&#160;</a></span>collectComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">fourdst::composition::Composition gridfire::MultiscalePartitioningEngineView::collectComposition </td>
+          <td>(</td>
+          <td class="paramtype">fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Collect the composition from this and sub engines. </p>
+<p>This method operates by injecting the current equilibrium abundances for algebraic species into the composition object so that they can be bubbled up to the caller. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Input Composition </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>New composition which is comp + any edits from lower levels + the equilibrium abundances of all algebraic species. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">BadCollectionError</td><td>if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a827c7e6fa7f2c5baf13a564fb4911388">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="aaabaae8e33ca8a05a2aa1f374e792795" name="aaabaae8e33ca8a05a2aa1f374e792795"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaabaae8e33ca8a05a2aa1f374e792795">&#9670;&#160;</a></span>constructCandidateGroups()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -649,12 +712,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">MultiscalePartitioningEngineView::QSEGroup</a> &gt; gridfire::MultiscalePartitioningEngineView::constructCandidateGroups </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>candidate_pools</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>candidate_pools</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -678,7 +741,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">candidate_pools</td><td>A vector of vectors of species indices, where each inner vector represents a connected pool of species with similar fast timescales. </td></tr>
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -691,8 +754,49 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2f0c45d4e2b2f9de5d961088f3ab0a9a" name="a2f0c45d4e2b2f9de5d961088f3ab0a9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a">&#9670;&#160;</a></span>equilibrateNetwork() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fourdst::composition::Composition gridfire::MultiscalePartitioningEngineView::equilibrateNetwork </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Equilibrates the network by partitioning and solving for QSE abundances. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new composition object with the equilibrated abundances.</dd></dl>
+<dl class="section user"><dt>Purpose</dt><dd>A convenience method to run the full QSE analysis and get an equilibrated composition object as a result.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>It first calls <code><a class="el" href="#a3c327a40d7c667043826002975baa2b4" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> with the given state to define the QSE groups. Then, it calls <code><a class="el" href="#a40ce2c18063cd56cffd58419b9ae96bf" title="Solves for the QSE abundances of the algebraic species in a given state.">solveQSEAbundances()</a></code> to compute the new equilibrium abundances for the algebraic species. Finally, it packs the resulting full abundance vector into a new <code>fourdst::composition::Composition</code> object and returns it.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>The engine's internal partition is updated. A new composition object is returned. </dd></dl>
+
+</div>
+</div>
 <a id="a1b17f94386882ea1524147782b7a1ddc" name="a1b17f94386882ea1524147782b7a1ddc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b17f94386882ea1524147782b7a1ddc">&#9670;&#160;</a></span>equilibrateNetwork() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b17f94386882ea1524147782b7a1ddc">&#9670;&#160;</a></span>equilibrateNetwork() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -719,49 +823,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a4bc879246c6fbd8633b05052858df51d" name="a4bc879246c6fbd8633b05052858df51d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bc879246c6fbd8633b05052858df51d">&#9670;&#160;</a></span>equilibrateNetwork() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">fourdst::composition::Composition gridfire::MultiscalePartitioningEngineView::equilibrateNetwork </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Equilibrates the network by partitioning and solving for QSE abundances. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A new composition object with the equilibrated abundances.</dd></dl>
-<dl class="section user"><dt>Purpose</dt><dd>A convenience method to run the full QSE analysis and get an equilibrated composition object as a result.</dd></dl>
-<dl class="section user"><dt>How</dt><dd>It first calls <code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> with the given state to define the QSE groups. Then, it calls <code><a class="el" href="#a3c5fcb8e3396d74359fd601554c9ffa9" title="Solves for the QSE abundances of the algebraic species in a given state.">solveQSEAbundances()</a></code> to compute the new equilibrium abundances for the algebraic species. Finally, it packs the resulting full abundance vector into a new <code>fourdst::composition::Composition</code> object and returns it.</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The engine's internal partition is updated. A new composition object is returned. </dd></dl>
-
-</div>
-</div>
-<a id="acff59a15abac30eee16e9fa7b355fb18" name="acff59a15abac30eee16e9fa7b355fb18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acff59a15abac30eee16e9fa7b355fb18">&#9670;&#160;</a></span>exportToDot()</h2>
+<a id="a2e3c7d6320cd0fdc51b3a40d1ec6b262" name="a2e3c7d6320cd0fdc51b3a40d1ec6b262"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e3c7d6320cd0fdc51b3a40d1ec6b262">&#9670;&#160;</a></span>exportToDot()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -774,17 +837,17 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -793,7 +856,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filename</td><td>The name of the DOT file to create. </td></tr>
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>Composition object </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
   </table>
@@ -804,8 +867,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="acdf5ad8765290ea2b78170235aea391d" name="acdf5ad8765290ea2b78170235aea391d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdf5ad8765290ea2b78170235aea391d">&#9670;&#160;</a></span>generateJacobianMatrix()</h2>
+<a id="ab9f71bc9a1c0f98ec9cc1c7da00fd975" name="ab9f71bc9a1c0f98ec9cc1c7da00fd975"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9f71bc9a1c0f98ec9cc1c7da00fd975">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -816,7 +879,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void gridfire::MultiscalePartitioningEngineView::generateJacobianMatrix </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -839,7 +902,7 @@ Private Attributes</h2></td></tr>
 <p>Generates the Jacobian matrix for the current state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y_full</td><td>Vector of current molar abundances. </td></tr>
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
   </table>
@@ -856,7 +919,131 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a29bdd4231c29c3a4e524ad6ca66a127d">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a21d15531309456ee83f7675251e7a1bf">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="ac683ef0ba25356bc587749b69a582286" name="ac683ef0ba25356bc587749b69a582286"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac683ef0ba25356bc587749b69a582286">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespacegridfire.html#a898dfe22579e649935645cbd6f073178">SparsityPattern</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>sparsityPattern</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Jacobian matrix using a sparsity pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">sparsityPattern</td><td>The sparsity pattern to use for the Jacobian.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Purpose</dt><dd>To compute the Jacobian matrix while leveraging a known sparsity pattern for efficiency. This is effectively a lower level version of the active species method.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>It first checks the QSE cache. On a hit, it delegates to the base engine's <code>generateJacobianMatrix</code> method with the provided sparsity pattern.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>The engine must have a valid QSE cache entry for the given state. </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>The base engine's internal Jacobian is updated according to the sparsity pattern.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classgridfire_1_1exceptions_1_1_stale_engine_error.html">exceptions::StaleEngineError</a></td><td>If the QSE cache misses. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a495bdb1e0c6f9911deb844b22c33644e">gridfire::DynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a31e636745b8c427cee0319e6c61039be" name="a31e636745b8c427cee0319e6c61039be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31e636745b8c427cee0319e6c61039be">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::generateJacobianMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>activeSpecies</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Jacobian matrix for a subset of active species. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">activeSpecies</td><td>The subset of species to include in the Jacobian.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Purpose</dt><dd>To compute a reduced Jacobian matrix for implicit solvers that only consider a subset of species.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>Similar to the full Jacobian generation, it first checks the QSE cache. On a hit, it calls the base engine's <code>generateJacobianMatrix</code> with the specified active species. The returned Jacobian still reflects the full network, but only for the active species subset.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>The engine must have a valid QSE cache entry for the given state. </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>The base engine's internal Jacobian is updated for the active species.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classgridfire_1_1exceptions_1_1_stale_engine_error.html">exceptions::StaleEngineError</a></td><td>If the QSE cache misses. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a8538fd9285a192f879a45e3dd3f26362">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -948,7 +1135,7 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the vector of species identified as "dynamic" or "slow".</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To allow external queries of the partitioning results.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It returns a const reference to the <code>m_dynamic_species</code> member vector.</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a3c327a40d7c667043826002975baa2b4" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
 
 </div>
 </div>
@@ -979,12 +1166,12 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A vector of species identified as "fast" or "algebraic" by the partitioning.</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To allow external queries of the partitioning results.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It returns a copy of the <code>m_algebraic_species</code> member vector.</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#a3c327a40d7c667043826002975baa2b4" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> must have been called. </dd></dl>
 
 </div>
 </div>
-<a id="ac961484383e86d9712a424728e068633" name="ac961484383e86d9712a424728e068633"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac961484383e86d9712a424728e068633">&#9670;&#160;</a></span>getJacobianMatrixEntry()</h2>
+<a id="a586da5402750151fee5db2666785b6e4" name="a586da5402750151fee5db2666785b6e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a586da5402750151fee5db2666785b6e4">&#9670;&#160;</a></span>getJacobianMatrixEntry()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -995,12 +1182,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">double gridfire::MultiscalePartitioningEngineView::getJacobianMatrixEntry </td>
           <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>i_full</em></span>, </td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>rowSpecies</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>j_full</em></span>&#160;) const</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>colSpecies</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1013,22 +1200,22 @@ Private Attributes</h2></td></tr>
 <p>Gets an entry from the previously generated Jacobian matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i_full</td><td>Row index (species index) in the full network. </td></tr>
-    <tr><td class="paramname">j_full</td><td>Column index (species index) in the full network. </td></tr>
+    <tr><td class="paramname">rowSpecies</td><td>Species corresponding to the row index (i_full). </td></tr>
+    <tr><td class="paramname">colSpecies</td><td>Species corresponding to the column index (j_full). </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Value of the Jacobian matrix at (i_full, j_full).</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To provide Jacobian entries to an implicit solver.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>This method directly delegates to the base engine's <code>getJacobianMatrixEntry</code>. It does not currently modify the Jacobian to reflect the QSE algebraic constraints, as these are handled by setting <code>dY/dt = 0</code> in <code>calculateRHSAndEnergy</code>.</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#acdf5ad8765290ea2b78170235aea391d" title="Generates the Jacobian matrix for the current state.">generateJacobianMatrix()</a></code> must have been called for the current state. </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#ab9f71bc9a1c0f98ec9cc1c7da00fd975" title="Generates the Jacobian matrix for the current state.">generateJacobianMatrix()</a></code> must have been called for the current state. </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a05d15ff35a6bc06a2fa7eda19838bd07">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a88dbf350dc0ea3e2b64d825f489e0d60">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="ad751f2c1306895ee74a61f2071ca96eb" name="ad751f2c1306895ee74a61f2071ca96eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad751f2c1306895ee74a61f2071ca96eb">&#9670;&#160;</a></span>getNetworkReactions()</h2>
+<a id="a253e51d6dc7226a863a123683049af61" name="a253e51d6dc7226a863a123683049af61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a253e51d6dc7226a863a123683049af61">&#9670;&#160;</a></span>getNetworkReactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1037,7 +1224,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp; gridfire::MultiscalePartitioningEngineView::getNetworkReactions </td>
+          <td class="memname">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp; gridfire::MultiscalePartitioningEngineView::getNetworkReactions </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -1051,9 +1238,9 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Gets the set of logical reactions in the network. </p>
-<dl class="section return"><dt>Returns</dt><dd>A const reference to the <code><a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31" title="A set of logical reactions.">LogicalReactionSet</a></code> from the base engine, containing all reactions in the full network. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A const reference to the <code>LogicalReactionSet</code> from the base engine, containing all reactions in the full network. </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad2a82099edbb374bbb2c9509ccdb1037">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#af496e04f7be9a0a51ac65dc95f901ffe">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1118,8 +1305,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa38c367ef3c74d012ccd10521cd5a727" name="aa38c367ef3c74d012ccd10521cd5a727"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa38c367ef3c74d012ccd10521cd5a727">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
+<a id="accbbe1bd96672e74919d00387673f180" name="accbbe1bd96672e74919d00387673f180"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accbbe1bd96672e74919d00387673f180">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1128,9 +1315,9 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::MultiscalePartitioningEngineView::getSpeciesDestructionTimescales </td>
+          <td class="memname">std::expected&lt; std::unordered_map&lt; Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::MultiscalePartitioningEngineView::getSpeciesDestructionTimescales </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1153,7 +1340,7 @@ Private Attributes</h2></td></tr>
 <p>Computes destruction timescales for all species in the network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1170,12 +1357,12 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6ca0f315f75252ca505507a61556dda6">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a25c040d3078f6ff2ef38f733eb68f1fa">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a91d32b7197fcb27ee697d5bfde960f3f" name="a91d32b7197fcb27ee697d5bfde960f3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91d32b7197fcb27ee697d5bfde960f3f">&#9670;&#160;</a></span>getSpeciesIndex()</h2>
+<a id="a8db21995e6878f4043f3a5a45bf36d5e" name="a8db21995e6878f4043f3a5a45bf36d5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8db21995e6878f4043f3a5a45bf36d5e">&#9670;&#160;</a></span>getSpeciesIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1184,7 +1371,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int gridfire::MultiscalePartitioningEngineView::getSpeciesIndex </td>
+          <td class="memname">size_t gridfire::MultiscalePartitioningEngineView::getSpeciesIndex </td>
           <td>(</td>
           <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
           <td> const</td>
@@ -1205,14 +1392,14 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The index of the species in the base engine's network.</dd></dl>
-<dl class="section user"><dt>How</dt><dd>This method delegates directly to the base engine's <code><a class="el" href="#a91d32b7197fcb27ee697d5bfde960f3f" title="Gets the index of a species in the full network.">getSpeciesIndex()</a></code>. </dd></dl>
+<dl class="section user"><dt>How</dt><dd>This method delegates directly to the base engine's <code><a class="el" href="#a8db21995e6878f4043f3a5a45bf36d5e" title="Gets the index of a species in the full network.">getSpeciesIndex()</a></code>. </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad3d56a8b9161b9cc7f4da51f6bf7e8c9">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a8f66fb76c9f983ee93bf8b95cdc85596">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a560612347bbd5b7b380e990624d01105" name="a560612347bbd5b7b380e990624d01105"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a560612347bbd5b7b380e990624d01105">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
+<a id="aea2c3d2ae6ddf77bd4a9b07b86f3306b" name="aea2c3d2ae6ddf77bd4a9b07b86f3306b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea2c3d2ae6ddf77bd4a9b07b86f3306b">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1223,7 +1410,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::expected&lt; std::unordered_map&lt; Species, double &gt;, <a class="el" href="structgridfire_1_1expectations_1_1_stale_engine_error.html">expectations::StaleEngineError</a> &gt; gridfire::MultiscalePartitioningEngineView::getSpeciesTimescales </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1246,7 +1433,7 @@ Private Attributes</h2></td></tr>
 <p>Computes timescales for all species in the network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>The current composition. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1263,12 +1450,12 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a6772ac384b4c3d3e91712041e4aaa813">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ae7114f5ebc6667b5e5971c0450ed03d9">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a510b920dea726aef859ac1f6d051807e" name="a510b920dea726aef859ac1f6d051807e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a510b920dea726aef859ac1f6d051807e">&#9670;&#160;</a></span>getStoichiometryMatrixEntry()</h2>
+<a id="a7140384baaaa0bd05ca448a0d8fec471" name="a7140384baaaa0bd05ca448a0d8fec471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7140384baaaa0bd05ca448a0d8fec471">&#9670;&#160;</a></span>getStoichiometryMatrixEntry()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1279,12 +1466,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">int gridfire::MultiscalePartitioningEngineView::getStoichiometryMatrixEntry </td>
           <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>speciesIndex</em></span>, </td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>reactionIndex</em></span>&#160;) const</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1297,22 +1484,22 @@ Private Attributes</h2></td></tr>
 <p>Gets an entry from the stoichiometry matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">speciesIndex</td><td>Index of the species in the full network. </td></tr>
-    <tr><td class="paramname">reactionIndex</td><td>Index of the reaction in the full network. </td></tr>
+    <tr><td class="paramname">species</td><td>Species to look up stoichiometry for. </td></tr>
+    <tr><td class="paramname">reaction</td><td><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> to find. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Stoichiometric coefficient for the species in the reaction.</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To query the stoichiometric relationship between a species and a reaction.</dd></dl>
-<dl class="section user"><dt>How</dt><dd>This method delegates directly to the base engine's <code><a class="el" href="#a510b920dea726aef859ac1f6d051807e" title="Gets an entry from the stoichiometry matrix.">getStoichiometryMatrixEntry()</a></code>.</dd></dl>
+<dl class="section user"><dt>How</dt><dd>This method delegates directly to the base engine's <code><a class="el" href="#a7140384baaaa0bd05ca448a0d8fec471" title="Gets an entry from the stoichiometry matrix.">getStoichiometryMatrixEntry()</a></code>.</dd></dl>
 <dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#abe76a46784b1ebc8ad67a9eec40d369a" title="Generates the stoichiometry matrix for the network.">generateStoichiometryMatrix()</a></code> must have been called. </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afa108dd5227dbb1045e90d7b3bd8b84f">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#ad19c8451b6f624e2938f771cc067d5c1">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a54ca8004fbd8d6d3ea6f67efeb5dbc8d" name="a54ca8004fbd8d6d3ea6f67efeb5dbc8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54ca8004fbd8d6d3ea6f67efeb5dbc8d">&#9670;&#160;</a></span>identifyMeanSlowestPool()</h2>
+<a id="a70f4a0c4123b7f78305f64eb11beeeeb" name="a70f4a0c4123b7f78305f64eb11beeeeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70f4a0c4123b7f78305f64eb11beeeeb">&#9670;&#160;</a></span>identifyMeanSlowestPool()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1323,12 +1510,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">size_t gridfire::MultiscalePartitioningEngineView::identifyMeanSlowestPool </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>pools</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>pools</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1352,7 +1539,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pools</td><td>A vector of vectors of species indices, where each inner vector represents a timescale pool. </td></tr>
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for the full network. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1361,6 +1548,57 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The index of the pool with the largest (slowest) mean destruction timescale.</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To identify the core set of dynamic species that will not be part of any QSE group.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It calculates the geometric mean of the destruction timescales for all species in each pool and returns the index of the pool with the maximum mean timescale. </dd></dl>
+
+</div>
+</div>
+<a id="adde288ec903d0cf45cfc3031e3a1fa8b" name="adde288ec903d0cf45cfc3031e3a1fa8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adde288ec903d0cf45cfc3031e3a1fa8b">&#9670;&#160;</a></span>involvesSpecies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::MultiscalePartitioningEngineView::involvesSpecies </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae4961ef6ad6db601bfaa0721ede02369" name="ae4961ef6ad6db601bfaa0721ede02369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4961ef6ad6db601bfaa0721ede02369">&#9670;&#160;</a></span>involvesSpeciesInDynamic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::MultiscalePartitioningEngineView::involvesSpeciesInDynamic </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3e23f9e7c9e72bf1d3de15f98157afdb" name="a3e23f9e7c9e72bf1d3de15f98157afdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e23f9e7c9e72bf1d3de15f98157afdb">&#9670;&#160;</a></span>involvesSpeciesInQSE()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::MultiscalePartitioningEngineView::involvesSpeciesInQSE </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1439,8 +1677,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad4d29ee55f89384807616d1068797067" name="ad4d29ee55f89384807616d1068797067"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4d29ee55f89384807616d1068797067">&#9670;&#160;</a></span>partitionByTimescale()</h2>
+<a id="a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6" name="a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aa4eb7a0d6e6d04b3e1aa1b1fb7f3f6">&#9670;&#160;</a></span>partitionByTimescale()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1449,9 +1687,9 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; std::vector&lt; size_t &gt; &gt; gridfire::MultiscalePartitioningEngineView::partitionByTimescale </td>
+          <td class="memname">std::vector&lt; std::vector&lt; Species &gt; &gt; gridfire::MultiscalePartitioningEngineView::partitionByTimescale </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1474,7 +1712,7 @@ Private Attributes</h2></td></tr>
 <p>Partitions the network by timescale. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y_full</td><td>Vector of current molar abundances for all species. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for all species. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1486,8 +1724,54 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a3c327a40d7c667043826002975baa2b4" name="a3c327a40d7c667043826002975baa2b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c327a40d7c667043826002975baa2b4">&#9670;&#160;</a></span>partitionNetwork() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::MultiscalePartitioningEngineView::partitionNetwork </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Partitions the network into dynamic and algebraic (QSE) groups based on timescales. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Purpose</dt><dd>To perform the core partitioning logic that identifies which species are "fast" (and can be treated algebraically) and which are "slow" (and must be integrated dynamically).</dd></dl>
+<p>@how</p><ol type="1">
+<li><b><code>partitionByTimescale</code></b>: Gets species destruction timescales from the base engine, sorts them, and looks for large gaps to create timescale "pools".</li>
+<li><b><code>identifyMeanSlowestPool</code></b>: The pool with the slowest average timescale is designated as the core set of dynamic species.</li>
+<li><b><code>analyzeTimescalePoolConnectivity</code></b>: The other (faster) pools are analyzed for reaction connectivity to form cohesive groups.</li>
+<li><b><code>constructCandidateGroups</code></b>: These connected groups are processed to identify "seed" species (dynamic species that feed the group) and "algebraic" species (the rest).</li>
+<li><b><code>validateGroupsWithFluxAnalysis</code></b>: The groups are validated by ensuring their internal reaction flux is much larger than the flux connecting them to the outside network.</li>
+</ol>
+<dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>The internal member variables <code>m_qse_groups</code>, <code>m_dynamic_species</code>, and <code>m_algebraic_species</code> (and their index maps) are populated with the results of the partitioning. </dd></dl>
+
+</div>
+</div>
 <a id="a98b11ffe498846f5a3a72f08504346b7" name="a98b11ffe498846f5a3a72f08504346b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98b11ffe498846f5a3a72f08504346b7">&#9670;&#160;</a></span>partitionNetwork() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a98b11ffe498846f5a3a72f08504346b7">&#9670;&#160;</a></span>partitionNetwork() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1510,52 +1794,6 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section user"><dt>Purpose</dt><dd>A convenience overload for <code>partitionNetwork</code>.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It unpacks the <code>netIn</code> struct into <code>Y</code>, <code>T9</code>, and <code>rho</code> and then calls the primary <code>partitionNetwork</code> method. </dd></dl>
-
-</div>
-</div>
-<a id="a7d26945df5395b9317552a3989c42d1c" name="a7d26945df5395b9317552a3989c42d1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d26945df5395b9317552a3989c42d1c">&#9670;&#160;</a></span>partitionNetwork() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void gridfire::MultiscalePartitioningEngineView::partitionNetwork </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Partitions the network into dynamic and algebraic (QSE) groups based on timescales. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section user"><dt>Purpose</dt><dd>To perform the core partitioning logic that identifies which species are "fast" (and can be treated algebraically) and which are "slow" (and must be integrated dynamically).</dd></dl>
-<p>@how</p><ol type="1">
-<li><b><code>partitionByTimescale</code></b>: Gets species destruction timescales from the base engine, sorts them, and looks for large gaps to create timescale "pools".</li>
-<li><b><code>identifyMeanSlowestPool</code></b>: The pool with the slowest average timescale is designated as the core set of dynamic species.</li>
-<li><b><code>analyzeTimescalePoolConnectivity</code></b>: The other (faster) pools are analyzed for reaction connectivity to form cohesive groups.</li>
-<li><b><code>constructCandidateGroups</code></b>: These connected groups are processed to identify "seed" species (dynamic species that feed the group) and "algebraic" species (the rest).</li>
-<li><b><code>validateGroupsWithFluxAnalysis</code></b>: The groups are validated by ensuring their internal reaction flux is much larger than the flux connecting them to the outside network.</li>
-</ol>
-<dl class="section pre"><dt>Precondition</dt><dd>The input state (Y, T9, rho) must be a valid physical state. </dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The internal member variables <code>m_qse_groups</code>, <code>m_dynamic_species</code>, and <code>m_algebraic_species</code> (and their index maps) are populated with the results of the partitioning. </dd></dl>
 
 </div>
 </div>
@@ -1597,8 +1835,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="acb5fa7f03cd89b8c1b6b9ffdf3abb12e" name="acb5fa7f03cd89b8c1b6b9ffdf3abb12e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb5fa7f03cd89b8c1b6b9ffdf3abb12e">&#9670;&#160;</a></span>setNetworkReactions()</h2>
+<a id="af99f5e4871808188d00379c1c35868fe" name="af99f5e4871808188d00379c1c35868fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af99f5e4871808188d00379c1c35868fe">&#9670;&#160;</a></span>setNetworkReactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1609,7 +1847,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void gridfire::MultiscalePartitioningEngineView::setNetworkReactions </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespacegridfire_1_1reaction.html#aa86f08712565f278adacc7cd2361eb31">reaction::LogicalReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1636,7 +1874,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#afb2ec904d88fc8aab516db4059d0e00f">gridfire::DynamicEngine</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1_dynamic_engine.html#a49025489901e22a20cdf99b455ff2ff0">gridfire::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1676,8 +1914,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c5fcb8e3396d74359fd601554c9ffa9" name="a3c5fcb8e3396d74359fd601554c9ffa9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c5fcb8e3396d74359fd601554c9ffa9">&#9670;&#160;</a></span>solveQSEAbundances()</h2>
+<a id="a40ce2c18063cd56cffd58419b9ae96bf" name="a40ce2c18063cd56cffd58419b9ae96bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40ce2c18063cd56cffd58419b9ae96bf">&#9670;&#160;</a></span>solveQSEAbundances()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1686,9 +1924,9 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; double &gt; gridfire::MultiscalePartitioningEngineView::solveQSEAbundances </td>
+          <td class="memname">fourdst::composition::Composition gridfire::MultiscalePartitioningEngineView::solveQSEAbundances </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y_full</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1711,7 +1949,7 @@ Private Attributes</h2></td></tr>
 <p>Solves for the QSE abundances of the algebraic species in a given state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Y_full</td><td>Vector of current molar abundances for all species in the base engine. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for all species in the base engine. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1759,9 +1997,9 @@ Private Attributes</h2></td></tr>
 <dl class="section user"><dt>Purpose</dt><dd>This is the main entry point for preparing the multiscale engine for use. It triggers the network partitioning and solves for the initial QSE abundances, caching the result.</dd></dl>
 <p>@how</p><ol type="1">
 <li>It first checks the QSE cache. If a valid entry already exists for the input state, it returns the input composition, as no work is needed.</li>
-<li>If the cache misses, it calls <code><a class="el" href="#a4bc879246c6fbd8633b05052858df51d" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code>.</li>
-<li><code><a class="el" href="#a4bc879246c6fbd8633b05052858df51d" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> in turn calls <code><a class="el" href="#a7d26945df5395b9317552a3989c42d1c" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> to define the dynamic and algebraic species sets.</li>
-<li>It then calls <code><a class="el" href="#a3c5fcb8e3396d74359fd601554c9ffa9" title="Solves for the QSE abundances of the algebraic species in a given state.">solveQSEAbundances()</a></code> to compute the equilibrium abundances.</li>
+<li>If the cache misses, it calls <code><a class="el" href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code>.</li>
+<li><code><a class="el" href="#a2f0c45d4e2b2f9de5d961088f3ab0a9a" title="Equilibrates the network by partitioning and solving for QSE abundances.">equilibrateNetwork()</a></code> in turn calls <code><a class="el" href="#a3c327a40d7c667043826002975baa2b4" title="Partitions the network into dynamic and algebraic (QSE) groups based on timescales.">partitionNetwork()</a></code> to define the dynamic and algebraic species sets.</li>
+<li>It then calls <code><a class="el" href="#a40ce2c18063cd56cffd58419b9ae96bf" title="Solves for the QSE abundances of the algebraic species in a given state.">solveQSEAbundances()</a></code> to compute the equilibrium abundances.</li>
 <li>The resulting equilibrium abundances for the algebraic species are stored in the <code>m_qse_abundance_cache</code>.</li>
 <li>A new <code>fourdst::composition::Composition</code> object reflecting the equilibrated state is created and returned.</li>
 </ol>
@@ -1772,8 +2010,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa55ed182301d216264daae3e6dfd8917" name="aa55ed182301d216264daae3e6dfd8917"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa55ed182301d216264daae3e6dfd8917">&#9670;&#160;</a></span>validateGroupsWithFluxAnalysis()</h2>
+<a id="ad94c6fa2281d9104471631c6b90f411e" name="ad94c6fa2281d9104471631c6b90f411e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad94c6fa2281d9104471631c6b90f411e">&#9670;&#160;</a></span>validateGroupsWithFluxAnalysis()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1782,14 +2020,14 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">MultiscalePartitioningEngineView::QSEGroup</a> &gt; gridfire::MultiscalePartitioningEngineView::validateGroupsWithFluxAnalysis </td>
+          <td class="memname">std::pair&lt; std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">MultiscalePartitioningEngineView::QSEGroup</a> &gt;, std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">MultiscalePartitioningEngineView::QSEGroup</a> &gt; &gt; gridfire::MultiscalePartitioningEngineView::validateGroupsWithFluxAnalysis </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>candidate_groups</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1813,7 +2051,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">candidate_groups</td><td>A vector of candidate QSE groups. </td></tr>
-    <tr><td class="paramname">Y</td><td>Vector of current molar abundances for the full network. </td></tr>
+    <tr><td class="paramname">comp</td><td>Vector of current molar abundances for the full network. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
   </table>
@@ -1874,6 +2112,30 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a3af2b37ce21829d9554d702cad074470" name="a3af2b37ce21829d9554d702cad074470"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3af2b37ce21829d9554d702cad074470">&#9670;&#160;</a></span>m_algebraic_abundances</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;fourdst::atomic::Species, double&gt; gridfire::MultiscalePartitioningEngineView::m_algebraic_abundances</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map from species to their calculated abundances in the QSE state. </p>
+
+</div>
+</div>
 <a id="a4656c05b8235dbf4ec698b03a716a8c8" name="a4656c05b8235dbf4ec698b03a716a8c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4656c05b8235dbf4ec698b03a716a8c8">&#9670;&#160;</a></span>m_algebraic_species</h2>
 
@@ -1898,8 +2160,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a53862719dd73f98bc69eecde090cf655" name="a53862719dd73f98bc69eecde090cf655"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53862719dd73f98bc69eecde090cf655">&#9670;&#160;</a></span>m_algebraic_species_indices</h2>
+<a id="a999b68226d658c9df2f4a3b890b9e5d1" name="a999b68226d658c9df2f4a3b890b9e5d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a999b68226d658c9df2f4a3b890b9e5d1">&#9670;&#160;</a></span>m_baseEngine</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1908,31 +2170,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;size_t&gt; gridfire::MultiscalePartitioningEngineView::m_algebraic_species_indices</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Indices of algebraic species in the full network. </p>
-
-</div>
-</div>
-<a id="a0437c51f94bf834a11adf481b2afad93" name="a0437c51f94bf834a11adf481b2afad93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0437c51f94bf834a11adf481b2afad93">&#9670;&#160;</a></span>m_baseEngine</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a>&amp; gridfire::MultiscalePartitioningEngineView::m_baseEngine</td>
+          <td class="memname"><a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a>&amp; gridfire::MultiscalePartitioningEngineView::m_baseEngine</td>
         </tr>
       </table>
   </td>
@@ -1991,30 +2229,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The simplified set of species presented to the solver (the "slow" species). </p>
-
-</div>
-</div>
-<a id="a38b4f0373c3bd81503889650c0bb69bb" name="a38b4f0373c3bd81503889650c0bb69bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38b4f0373c3bd81503889650c0bb69bb">&#9670;&#160;</a></span>m_dynamic_species_indices</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;size_t&gt; gridfire::MultiscalePartitioningEngineView::m_dynamic_species_indices</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Indices mapping the dynamic species back to the base engine's full species list. </p>
 
 </div>
 </div>

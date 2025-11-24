@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -115,12 +115,13 @@ $(function(){initNavTree('classgridfire_1_1partition_1_1_composite_partition_fun
 <div class="dynheader">
 Inheritance diagram for gridfire::partition::CompositePartitionFunction:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classgridfire_1_1partition_1_1_composite_partition_function.png" usemap="#gridfire::partition::CompositePartitionFunction_map" alt=""/>
-  <map id="gridfire::partition::CompositePartitionFunction_map" name="gridfire::partition::CompositePartitionFunction_map">
-<area href="classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions." alt="gridfire::partition::PartitionFunction" shape="rect" coords="0,0,263,24"/>
-  </map>
-</div></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1partition_1_1_composite_partition_function__inherit__graph.svg" width="202" height="140"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for gridfire::partition::CompositePartitionFunction:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1partition_1_1_composite_partition_function__coll__graph.svg" width="100%" height="422"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -145,8 +146,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a44325e313db7f8f901c0dd5d84d4845b" id="r_a44325e313db7f8f901c0dd5d84d4845b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44325e313db7f8f901c0dd5d84d4845b">selectPartitionFunction</a> (const <a class="el" href="namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728c">BasePartitionType</a> <a class="el" href="#a66560e21a4a7b08e8da135ce8279ed88">type</a>) const</td></tr>
-<tr class="separator:a44325e313db7f8f901c0dd5d84d4845b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f397abf9e9ace9f0c721e4e14eb60b" id="r_a32f397abf9e9ace9f0c721e4e14eb60b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32f397abf9e9ace9f0c721e4e14eb60b">selectPartitionFunction</a> (<a class="el" href="namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728c">BasePartitionType</a> <a class="el" href="#a66560e21a4a7b08e8da135ce8279ed88">type</a>) const</td></tr>
+<tr class="separator:a32f397abf9e9ace9f0c721e4e14eb60b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -155,6 +156,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a85aaac230e9de2fd50d4d453f6d5def8" id="r_a85aaac230e9de2fd50d4d453f6d5def8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85aaac230e9de2fd50d4d453f6d5def8">m_partitionFunctions</a></td></tr>
 <tr class="memdesc:a85aaac230e9de2fd50d4d453f6d5def8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of partition functions to use in the composite partition function.  <br /></td></tr>
 <tr class="separator:a85aaac230e9de2fd50d4d453f6d5def8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aea5eda63b9be4d3b8f65c13d317dcc" id="r_a9aea5eda63b9be4d3b8f65c13d317dcc"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint_fast32_t, const <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a> &amp; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9aea5eda63b9be4d3b8f65c13d317dcc">m_supportCache</a></td></tr>
+<tr class="memdesc:a9aea5eda63b9be4d3b8f65c13d317dcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cache mapping isotope keys to supporting partition functions for fast lookup.  <br /></td></tr>
+<tr class="separator:a9aea5eda63b9be4d3b8f65c13d317dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Combines multiple <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions.">PartitionFunction</a> instances into a single composite strategy. </p>
@@ -354,8 +358,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a44325e313db7f8f901c0dd5d84d4845b" name="a44325e313db7f8f901c0dd5d84d4845b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44325e313db7f8f901c0dd5d84d4845b">&#9670;&#160;</a></span>selectPartitionFunction()</h2>
+<a id="a32f397abf9e9ace9f0c721e4e14eb60b" name="a32f397abf9e9ace9f0c721e4e14eb60b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32f397abf9e9ace9f0c721e4e14eb60b">&#9670;&#160;</a></span>selectPartitionFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -366,13 +370,13 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a> &gt; gridfire::partition::CompositePartitionFunction::selectPartitionFunction </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728c">BasePartitionType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728c">BasePartitionType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -504,6 +508,30 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Set of partition functions to use in the composite partition function. </p>
+
+</div>
+</div>
+<a id="a9aea5eda63b9be4d3b8f65c13d317dcc" name="a9aea5eda63b9be4d3b8f65c13d317dcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9aea5eda63b9be4d3b8f65c13d317dcc">&#9670;&#160;</a></span>m_supportCache</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;uint_fast32_t, const <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">PartitionFunction</a>&amp;&gt; gridfire::partition::CompositePartitionFunction::m_supportCache</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Cache mapping isotope keys to supporting partition functions for fast lookup. </p>
 
 </div>
 </div>

@@ -5,10 +5,8 @@
 #include "fourdst/logging/logging.h"
 
 #include <string>
-#include <vector>
 #include <unordered_map>
 #include <array>
-#include <utility>
 #include <memory>
 
 namespace gridfire::partition {
@@ -45,7 +43,7 @@ namespace gridfire::partition {
          * @post No side effects.
          * @throws std::out_of_range If isotope key not found in m_partitionData.
          */
-        double evaluate(int z, int a, double T9) const override;
+        [[nodiscard]] double evaluate(int z, int a, double T9) const override;
         /**
          * @brief Evaluate temperature derivative of partition function.
          *
@@ -58,7 +56,7 @@ namespace gridfire::partition {
          * @post No side effects.
          * @throws std::out_of_range If isotope data is missing.
          */
-        double evaluateDerivative(int z, int a, double T9) const override;
+        [[nodiscard]] double evaluateDerivative(int z, int a, double T9) const override;
         /**
          * @brief Check if partition data exists for given isotope.
          * @param z Atomic number.
@@ -66,19 +64,19 @@ namespace gridfire::partition {
          * @return true if data available; false otherwise.
          * @post No side effects.
          */
-        bool supports(int z, int a) const override;
+        [[nodiscard]] bool supports(int z, int a) const override;
         /**
          * @brief Get type identifier for this partition function.
          * @return Literal string "RauscherThielemann".
          * @post No side effects.
          */
-        std::string type() const override { return "RauscherThielemann"; }
+        [[nodiscard]] std::string type() const override { return "RauscherThielemann"; }
         /**
          * @brief Clone this partition function instance.
          * @return Unique pointer to a copy of this object.
          * @post Caller owns the returned object.
          */
-        std::unique_ptr<PartitionFunction> clone() const override {
+        [[nodiscard]] std::unique_ptr<PartitionFunction> clone() const override {
             return std::make_unique<RauscherThielemannPartitionFunction>(*this);
         }
     private:
@@ -132,7 +130,7 @@ namespace gridfire::partition {
          * @return IdentifiedIsotope with data reference and indices.
          * @throws std::out_of_range If isotope not found in m_partitionData.
          */
-        IdentifiedIsotope find(int z, int a, double T9) const;
+        [[nodiscard]] IdentifiedIsotope find(int z, int a, double T9) const;
         /**
          * @brief Generate integer key for isotope (z,a).
          * @param z Atomic number.

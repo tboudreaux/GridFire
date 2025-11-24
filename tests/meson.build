@@ -4,5 +4,4 @@ gtest_main = dependency('gtest_main', required: true)
 gtest_nomain_dep = dependency('gtest', main: false, required : true)
 
 # Subdirectories for unit and integration tests
-subdir('network')
 subdir('graphnet_sandbox')

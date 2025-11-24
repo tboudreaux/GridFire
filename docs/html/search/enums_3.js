@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operators_0',['operators',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac558e59f790508a5e8522c412be5b505',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]]
+  ['jacobianmatrixstate_0',['JacobianMatrixState',['../classgridfire_1_1engine_1_1_graph_engine.html#a19305dc4affde99bb84056c9eeda9f1e',1,'gridfire::engine::GraphEngine']]]
 ];

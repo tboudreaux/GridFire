@@ -1,20 +1,16 @@
 #pragma once
 
-#include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/views/engine_defined.h"
 
-#include "gridfire/network.h"
-
 #include "fourdst/logging/logging.h"
-#include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/composition.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "quill/Logger.h"
 
 #include <vector>
 #include <string>
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @class NetworkPrimingEngineView
@@ -39,7 +35,7 @@ namespace gridfire {
          * @throws std::out_of_range If primingSymbol is not found in the species registry.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const std::string& primingSymbol, DynamicEngine& baseEngine);
+        NetworkPrimingEngineView(const std::string& primingSymbol, GraphEngine& baseEngine);
         /**
          * @brief Constructs the view using an existing Species object.
          *
@@ -49,11 +45,11 @@ namespace gridfire {
          * @post The view will contain only reactions that involve the priming species.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, DynamicEngine& baseEngine);
+        NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, GraphEngine& baseEngine);
 
 
     private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         fourdst::atomic::Species m_primingSpecies; ///< The priming species, if specified.
     private:
         /**
@@ -66,9 +62,9 @@ namespace gridfire {
          * @return Vector of reaction name strings containing the priming species.
          * @throws std::runtime_error If no reactions involve the priming species.
          */
-        std::vector<std::string> constructPrimingReactionSet(
+        [[nodiscard]] std::vector<std::string> constructPrimingReactionSet(
             const fourdst::atomic::Species& primingSpecies,
-            const DynamicEngine& baseEngine
+            const GraphEngine& baseEngine
         ) const;
     };
 

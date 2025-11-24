@@ -25,7 +25,7 @@
  * Emily M. Boudreaux
  */
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @brief Concept for types allowed as engine bases in EngineView.

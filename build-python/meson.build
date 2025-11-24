@@ -1,6 +1,14 @@
 # --- Python Extension Setup ---
 py_installation = import('python').find_installation('python3')
 
+gridfire_py_deps = [
+    pybind11_dep,
+    const_dep,
+    config_dep,
+    composition_dep,
+    gridfire_dep
+]
+
 py_mod = py_installation.extension_module(
     'gridfire', # Name of the generated .so/.pyd file (without extension)
     sources: [
@@ -21,13 +29,7 @@ py_mod = py_installation.extension_module(
         meson.project_source_root() + '/src/python/solver/trampoline/py_solver.cpp',
         meson.project_source_root() + '/src/python/utils/bindings.cpp',
     ],
-    dependencies : [
-        pybind11_dep,
-        const_dep,
-        config_dep,
-        composition_dep,
-        gridfire_dep,
-    ],
+    dependencies : gridfire_py_deps,
     cpp_args : ['-UNDEBUG'], # Example: Ensure assertions are enabled if needed
     install : true,
 )

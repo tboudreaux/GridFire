@@ -5,6 +5,7 @@
 
 #include "gridfire/partition/partition_ground.h"
 #include "gridfire/partition/partition_rauscher_thielemann.h"
+#include "gridfire/utils/hashing.h"
 #include "quill/LogMacros.h"
 
 namespace gridfire::partition {
@@ -25,13 +26,14 @@ namespace gridfire::partition {
     }
 
     double CompositePartitionFunction::evaluate(int z, int a, double T9) const {
-        LOG_TRACE_L3(m_logger, "Evaluating partition function for Z={} A={} T9={}", z, a, T9);
+        const uint_fast32_t hash = utils::hash_atomic(a, z);
+        if (m_supportCache.contains(hash)) {
+            return m_supportCache.at(hash).evaluate(z, a, T9);
+        }
         for (const auto& partitionFunction : m_partitionFunctions) {
             if (partitionFunction->supports(z, a)) {
-                LOG_TRACE_L3(m_logger, "Partition function of type {} supports Z={} A={}", partitionFunction->type(), z, a);
+                m_supportCache.emplace(hash, *partitionFunction);
                 return partitionFunction->evaluate(z, a, T9);
-            } else {
-                LOG_TRACE_L3(m_logger, "Partition function of type {} does not support Z={} A={}", partitionFunction->type(), z, a);
             }
         }
         LOG_ERROR(
@@ -46,9 +48,13 @@ namespace gridfire::partition {
     }
 
     double CompositePartitionFunction::evaluateDerivative(int z, int a, double T9) const {
+        const uint_fast32_t hash = utils::hash_atomic(a, z);
+        if (m_supportCache.contains(hash)) {
+            return m_supportCache.at(hash).evaluateDerivative(z, a, T9);
+        }
         for (const auto& partitionFunction : m_partitionFunctions) {
             if (partitionFunction->supports(z, a)) {
-                LOG_TRACE_L3(m_logger, "Evaluating derivative of partition function for Z={} A={} T9={}", z, a, T9);
+                m_supportCache.emplace(hash, *partitionFunction);
                 return partitionFunction->evaluateDerivative(z, a, T9);
             }
         }
@@ -64,9 +70,12 @@ namespace gridfire::partition {
     }
 
     bool CompositePartitionFunction::supports(int z, int a) const {
+        const uint_fast32_t hash = utils::hash_atomic(a, z);
+        if (m_supportCache.contains(hash)) {
+            return true;
+        }
         for (const auto& partitionFunction : m_partitionFunctions) {
             if (partitionFunction->supports(z, a)) {
-                LOG_TRACE_L2(m_logger, "Partition function supports Z={} A={}", z, a);
                 return true;
             }
         }

@@ -1,6 +1,6 @@
 #include "gridfire/screening/screening_bare.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "cppad/cppad.hpp"
 
@@ -10,9 +10,9 @@
 namespace gridfire::screening {
     using ADDouble = CppAD::AD<double>;
     std::vector<ADDouble> BareScreeningModel::calculateScreeningFactors(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species>& species,
-        const std::vector<ADDouble> &Y,
+        const std::vector<screening::ADDouble> &Y,
         const ADDouble T9,
         const ADDouble rho
     ) const {
@@ -20,7 +20,7 @@ namespace gridfire::screening {
     }
 
     std::vector<double> BareScreeningModel::calculateScreeningFactors(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species>& species,
         const std::vector<double> &Y,
         const double T9,

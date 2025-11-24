@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -104,23 +104,97 @@ $(function(){initNavTree('namespacegridfire_1_1exceptions.html',''); initResizab
   <div class="headertitle"><div class="title">gridfire::exceptions Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Namespace for GridFire exception classes. All custom exceptions defined in GridFire inherit from std::exception and are organized within this namespace for clarity and modularity.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_bad_collection_error.html">BadCollectionError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for invalid composition collection in the engine.  <a href="classgridfire_1_1exceptions_1_1_bad_collection_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_bad_r_h_s_engine_error.html">BadRHSEngineError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for errors in calculating the right-hand side (RHS).  <a href="classgridfire_1_1exceptions_1_1_bad_r_h_s_engine_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_c_v_o_d_e_solver_failure_error.html">CVODESolverFailureError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for failures in the CVODE solver.  <a href="classgridfire_1_1exceptions_1_1_c_v_o_d_e_solver_failure_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_debug_exception.html">DebugException</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception class for debug-only errors.  <a href="classgridfire_1_1exceptions_1_1_debug_exception.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_engine_error.html">EngineError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for engine-related exceptions.  <a href="classgridfire_1_1exceptions_1_1_engine_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html">FailedToPartitionEngineError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for failures in partitioning the engine.  <a href="classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_grid_fire_error.html">GridFireError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for GridFire exceptions.  <a href="classgridfire_1_1exceptions_1_1_grid_fire_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_hashing_error.html">HashingError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception class for hashing-related errors in GridFire.  <a href="classgridfire_1_1exceptions_1_1_hashing_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_ill_conditioned_jacobian_error.html">IllConditionedJacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception thrown when the Jacobian matrix is ill-conditioned.  <a href="classgridfire_1_1exceptions_1_1_ill_conditioned_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_invalid_q_s_e_solution_error.html">InvalidQSESolutionError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for invalid QSE solution in the engine.  <a href="classgridfire_1_1exceptions_1_1_invalid_q_s_e_solution_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_jacobian_error.html">JacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for Jacobian-related exceptions.  <a href="classgridfire_1_1exceptions_1_1_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html">KINSolSolverFailureError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for failures in the KINSOL solver.  <a href="classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html">MissingBaseReactionError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception thrown when a required reaction is missing from the underlying database (e.g., REACLIB).  <a href="classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html">MissingKeyReactionError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception thrown when a constructed network fails to include a key reaction required by the policy.  <a href="classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_missing_seed_species_error.html">MissingSeedSpeciesError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception thrown when a required seed species is not found in the initial composition.  <a href="classgridfire_1_1exceptions_1_1_missing_seed_species_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_network_resized_error.html">NetworkResizedError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for errors during network resizing.  <a href="classgridfire_1_1exceptions_1_1_network_resized_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_stale_engine_error.html">StaleEngineError</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_policy_error.html">PolicyError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all exceptions related to network policy operations.  <a href="classgridfire_1_1exceptions_1_1_policy_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_stale_engine_trigger.html">StaleEngineTrigger</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_reaction_error.html">ReactionError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all exceptions related to reaction operations.  <a href="classgridfire_1_1exceptions_1_1_reaction_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_reaction_parsing_error.html">ReactionParsingError</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_singular_jacobian_error.html">SingularJacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception thrown when the Jacobian matrix is singular.  <a href="classgridfire_1_1exceptions_1_1_singular_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_solver_error.html">SolverError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all exceptions related to solver operations.  <a href="classgridfire_1_1exceptions_1_1_solver_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_stale_jacobian_error.html">StaleJacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for stale Jacobian matrix access.  <a href="classgridfire_1_1exceptions_1_1_stale_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_s_u_n_d_i_a_l_s_error.html">SUNDIALSError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for exceptions related to SUNDIALS solver operations.  <a href="classgridfire_1_1exceptions_1_1_s_u_n_d_i_a_l_s_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html">UnableToSetNetworkReactionsError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for failures in setting network reactions.  <a href="classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html">UninitializedJacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for uninitialized Jacobian matrix access.  <a href="classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html">UnknownJacobianError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception for unknown Jacobian matrix access.  <a href="classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1exceptions_1_1_utility_error.html">UtilityError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for utility-related errors in GridFire.  <a href="classgridfire_1_1exceptions_1_1_utility_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Namespace for GridFire exception classes. All custom exceptions defined in GridFire inherit from std::exception and are organized within this namespace for clarity and modularity. </p>
+<p>All GridFire exception classes derive from std::exception and then from <a class="el" href="classgridfire_1_1exceptions_1_1_grid_fire_error.html" title="Base class for GridFire exceptions.">gridfire::exceptions::GridFireError</a>; </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

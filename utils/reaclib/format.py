@@ -69,9 +69,11 @@ from collections import defaultdict
 from re import Match
 from typing import List, Tuple, Any, LiteralString
 import numpy as np
-from serif.atomic import species
-from serif.atomic import Species
-from serif.constants import Constants
+
+from fourdst.atomic import species
+from fourdst.atomic import Species
+from fourdst.constants import Constants
+
 import hashlib
 from collections import Counter
 import math
@@ -281,13 +283,13 @@ def translate_names_to_species(names: List[str]) -> List[Species]:
         try:
             sp.append(species[name])
         except Exception as e:
-            print("Error: Species not found in database:", name, e)
             raise ReaclibParseError(f"Species '{name}' not found in species database.", line_content=name)
     return sp
 
 def determine_reaction_type(reactants: List[str],
                             products: List[str],
-                            qValue: float
+                            qValue: float,
+                            chapter: int
                             ) -> Tuple[str, List[str], List[str], str, str, str]:
     """
     Analyze a reaction for quantum number conservation and classify projectiles/ejectiles.
@@ -323,8 +325,6 @@ def determine_reaction_type(reactants: List[str],
     - Identifies weak (leptonic) and photonic processes.
     - Determines projectiles/ejectiles based on mass and reaction type.
     """
-    if abs(qValue - 4.621) < 1e-6:
-        print("Looking at he3(he3, 2p)he4")
     # --- helper look-ups ----------------------------------------------------
     reactantSpecies = translate_names_to_species(reactants)
     productSpecies  = translate_names_to_species(products)
@@ -360,24 +360,24 @@ def determine_reaction_type(reactants: List[str],
     projectiles: List[str] = []
     ejectiles:   List[str] = []
 
+
+    BETA_PLUS_THRESHOLD_ENERGY = 1.022 # MeV
+
     # -----------------------------------------------------------------------
     # 1.  Charged-lepton bookkeeping (|ΔZ| = 1) ------------------------------
     # -----------------------------------------------------------------------
-    if abs(dZ) == 1:
-        # Proton → neutron  (β⁻ / e- capture)
-        if dZ == -1:
-            # Electron capture when (i) exo-thermic and (ii) nucleus count unchanged
-            if qValue > 0 and dN == 0:
-                projectiles.append("e-")      # write e- as projectile
-            else:
-                ejectiles.append("e-")        # β⁻ decay: e- is an ejectile
 
-        # Neutron → proton  (β⁺ / positron capture – capture is vanishingly rare)
-        elif dZ == 1:
-            ejectiles.append("e+")            # β⁺ / weak-proton capture
+    if dZ == -1 and chapter == 1:
+        ejectiles.append("e-") # β- decay
+    if dZ == -1 and chapter != 1:
+        projectiles.append("e+") # positron capture
+    if dZ == 1 and chapter == 1 and qValue >= BETA_PLUS_THRESHOLD_ENERGY:
+        ejectiles.append("e+") # β+ Decay
+    if dZ == 1 and chapter == 1 and qValue < BETA_PLUS_THRESHOLD_ENERGY:
+        projectiles.append("e-") # electron capture
+    if dZ == 1 and chapter != 1:
+        ejectiles.append("e+") # Positron as byproduct of two body reaction
 
-        # Neutrino companion is implicit – never written
-        # (dL is automatically fixed by hiding ν or ν̄)
 
     # -----------------------------------------------------------------------
     # 2.  Photon bookkeeping (ΔZ = 0) ----------------------------------------
@@ -452,12 +452,10 @@ def extract_groups(match: re.Match, reverse: bool) -> Reaction:
     chapter = int(groups[0].strip())
     rawGroup = groups[1].strip()
     rList, pList = get_rp(rawGroup, chapter)
-    if 'c12' in rList and 'mg24' in pList:
-        print("Found it!")
     if reverse:
         rList, pList = pList, rList
     qValue = float(groups[3].strip())
-    target, proj, ejec, residual, key, rType = determine_reaction_type(rList, pList, qValue)
+    target, proj, ejec, residual, key, rType = determine_reaction_type(rList, pList, qValue, chapter)
     reaction = Reaction(
         reactants=rList,
         products=pList,

@@ -7,7 +7,6 @@
 
 #include <stdexcept>
 #include <algorithm>
-#include <vector>
 #include <array>
 #include <iostream>
 
@@ -23,10 +22,10 @@ namespace gridfire::partition {
         const auto* records = reinterpret_cast<const record::RauscherThielemannPartitionDataRecord*>(rauscher_thielemann_partition_data);
         for (size_t i = 0; i < numRecords; ++i) {
             const auto&[z, a, ground_state_spin, normalized_g_values] = records[i];
-            IsotopeData data;
+            IsotopeData data{};
             data.ground_state_spin = ground_state_spin;
             std::ranges::copy(normalized_g_values, data.normalized_g_values.begin());
-            const int key = make_key(z, a);
+            const int key = make_key(static_cast<int>(z), static_cast<int>(a));
             LOG_TRACE_L3_LIMIT_EVERY_N(
                 100,
                 m_logger,
@@ -36,7 +35,7 @@ namespace gridfire::partition {
                 key
             );
 
-            m_partitionData[key] = std::move(data);
+            m_partitionData[key] = data;
         }
     }
 
@@ -45,21 +44,21 @@ namespace gridfire::partition {
         const int a,
         const double T9
     ) const {
-        LOG_TRACE_L2(m_logger, "Evaluating Rauscher-Thielemann partition function for Z={} A={} T9={}", z, a, T9);
+        LOG_TRACE_L3(m_logger, "Evaluating Rauscher-Thielemann partition function for Z={} A={} T9={}", z, a, T9);
 
         const auto [bound, data, upperIndex, lowerIndex] = find(z, a, T9);
 
         switch (bound) {
             case FRONT: {
-                LOG_TRACE_L2(m_logger, "Using FRONT bound for Z={} A={} T9={}", z, a, T9);
+                LOG_TRACE_L3(m_logger, "Using FRONT bound for Z={} A={} T9={}", z, a, T9);
                 return data.normalized_g_values.front() * (2.0 * data.ground_state_spin + 1.0);
             }
             case BACK: {
-                LOG_TRACE_L2(m_logger, "Using BACK bound for Z={} A={} T9={}", z, a, T9);
+                LOG_TRACE_L3(m_logger, "Using BACK bound for Z={} A={} T9={}", z, a, T9);
                 return data.normalized_g_values.back() * (2.0 * data.ground_state_spin + 1.0);
             }
             case MIDDLE: {
-                LOG_TRACE_L2(m_logger, "Using MIDDLE bound for Z={} A={} T9={}", z, a, T9);
+                LOG_TRACE_L3(m_logger, "Using MIDDLE bound for Z={} A={} T9={}", z, a, T9);
             }
         }
 
@@ -80,10 +79,10 @@ namespace gridfire::partition {
         const int a,
         const double T9
     ) const {
-        LOG_TRACE_L2(m_logger, "Evaluating derivative of Rauscher-Thielemann partition function for Z={} A={} T9={}", z, a, T9);
+        LOG_TRACE_L3(m_logger, "Evaluating derivative of Rauscher-Thielemann partition function for Z={} A={} T9={}", z, a, T9);
         const auto [bound, data, upperIndex, lowerIndex] = find(z, a, T9);
         if (bound == FRONT || bound == BACK) {
-            LOG_TRACE_L2(m_logger, "Derivative is zero for Z={} A={} T9={} (bound: {})", z, a, T9, bound == FRONT ? "FRONT" : "BACK");
+            LOG_TRACE_L3(m_logger, "Derivative is zero for Z={} A={} T9={} (bound: {})", z, a, T9, bound == FRONT ? "FRONT" : "BACK");
             return 0.0; // Derivative is zero at the boundaries
         }
         const auto [T9_high, G_norm_high, T9_low, G_norm_low] = get_interpolation_points(

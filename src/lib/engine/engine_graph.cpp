@@ -1,18 +1,19 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/reaction/reaction.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/engine/procedures/priming.h"
 #include "gridfire/partition/partition_ground.h"
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/utils/hashing.h"
+#include "gridfire/utils/table_format.h"
 
-#include "fourdst/composition/species.h"
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "quill/LogMacros.h"
 
 #include <cstdint>
-#include <iostream>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -24,13 +25,14 @@
 #include <ranges>
 
 #include <boost/numeric/odeint.hpp>
+#include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/utility/sparse_rcv.hpp"
 
 
-namespace gridfire {
+namespace gridfire::engine {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
         const BuildDepthType buildDepth
@@ -39,8 +41,16 @@ namespace gridfire {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
         const partition::PartitionFunction& partitionFunction,
-        const BuildDepthType buildDepth) :
-    m_reactions(build_reaclib_nuclear_network(composition, buildDepth, false)),
+        const BuildDepthType buildDepth
+    ) : GraphEngine(composition, partitionFunction, buildDepth, NetworkConstructionFlags::DEFAULT){}
+
+    GraphEngine::GraphEngine(
+        const fourdst::composition::Composition &composition,
+        const partition::PartitionFunction &partitionFunction,
+        const BuildDepthType buildDepth,
+        const NetworkConstructionFlags reactionTypes ) :
+    m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
+    m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
     m_depth(buildDepth),
     m_partitionFunction(partitionFunction.clone())
     {
@@ -48,54 +58,159 @@ namespace gridfire {
     }
 
     GraphEngine::GraphEngine(
-        const reaction::LogicalReactionSet &reactions
+        const reaction::ReactionSet &reactions
     ) :
-    m_reactions(reactions) {
+    m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
+    m_reactions(reactions)
+    {
         syncInternalMaps();
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
-        const std::vector<double> &Y,
+    std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
+        return calculateRHSAndEnergy(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
+        const double Ye = comp.getElectronAbundance();
+        const double mue = 0.0; // TODO: Remove
         if (m_usePrecomputation) {
+            LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
-            bare_rates.reserve(m_reactions.size());
-            bare_reverse_rates.reserve(m_reactions.size());
+            bare_rates.reserve(activeReactions.size());
+            bare_reverse_rates.reserve(activeReactions.size());
 
-            // TODO: Add cache to this
-            for (const auto& reaction: m_reactions) {
-                bare_rates.push_back(reaction.calculate_rate(T9));
-                bare_reverse_rates.push_back(calculateReverseRate(reaction, T9));
+            for (const auto& reaction: activeReactions) {
+                assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
+                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, mue, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
+                if (reaction->type() != reaction::ReactionType::WEAK) {
+                    bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
+                }
             }
 
+            LOG_TRACE_L3(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
+
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
-            return calculateAllDerivativesUsingPrecomputation(Y, bare_rates, bare_reverse_rates, T9, rho);
+            return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
         } else {
-            return calculateAllDerivatives<double>(Y, T9, rho);
+            LOG_TRACE_L2(m_logger, "Not using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
+            StepDerivatives<double> result = calculateAllDerivatives<double>(
+                comp.getMolarAbundanceVector(),
+                T9,
+                rho,
+                Ye,
+                mue,
+                [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                    if (comp.contains(species)) {
+                        return comp.getSpeciesIndex(species); // Return the index of the species in the composition
+                    }
+                    return std::nullopt; // Species not found in the composition
+                },
+                [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                    if (activeReactions.contains(reaction)) { return true; }
+                    return false;
+                }
+            );
+            return result;
         }
     }
 
+    EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        return calculateEpsDerivatives(comp, T9, rho, m_reactions);
+    }
+
+    EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        const size_t numSpecies = m_networkSpecies.size();
+        const size_t numADInputs = numSpecies + 2; // +2 for T9 and rho
+
+        if (comp.getRegisteredSpecies().size() != numSpecies) {
+            LOG_ERROR(m_logger, "Input abundance vector size ({}) does not match number of species in the network ({}).",
+                      comp.getRegisteredSpecies().size(), numSpecies);
+            throw std::invalid_argument("Input abundance vector size does not match number of species in the network.");
+        }
+
+        std::vector<double> x(numADInputs);
+        const std::vector<double> Y = comp.getMolarAbundanceVector();
+        for (size_t i = 0; i < numSpecies; ++i) {
+            x[i] = Y[i];
+        }
+
+        x[numSpecies] = T9;
+        x[numSpecies + 1] = rho;
+
+        // Use reverse mode to get the gradient. W selects which dependent variable we care about, the Eps AD tape only has eps as a dependent variable so we just select set the 0th element to 1.
+        std::vector<double> w(numSpecies + 1, 0.0);
+        w[numSpecies] = 1.0; // We want the derivative of the energy generation rate
+
+        // Sweep the tape forward to record the function value at x
+        m_rhsADFun.Forward(0, x);
+
+        // Extract the gradient at the previously evaluated point x using reverse mode
+        const std::vector<double> eps_derivatives = m_rhsADFun.Reverse(1, w);
+
+        const double dEps_dT9 = eps_derivatives[numSpecies];
+        const double dEps_dRho = eps_derivatives[numSpecies + 1];
+
+        // Chain rule to scale from deps/dT9 to deps/dT
+        // dT9/dT = 1e-9
+        const double dEps_dT = dEps_dT9 * 1e-9;
+
+
+        return {dEps_dT, dEps_dRho};
+    }
+
     void GraphEngine::syncInternalMaps() {
+
         LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
         collectNetworkSpecies();
         populateReactionIDMap();
         populateSpeciesToIndexMap();
         collectAtomicReverseRateAtomicBases();
         generateStoichiometryMatrix();
-        reserveJacobianMatrix();
-        recordADTape();
 
-        const size_t n = m_rhsADFun.Domain();
-        const size_t m = m_rhsADFun.Range();
+        recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
 
-        const std::vector<bool> select_domain(n, true);
-        const std::vector<bool> select_range(m, true);
+        [[maybe_unused]] const size_t inputSize = m_rhsADFun.Domain();
+        const size_t outputSize = m_rhsADFun.Range();
 
-        m_rhsADFun.subgraph_sparsity(select_domain, select_range, false, m_full_jacobian_sparsity_pattern);
+        // Create a range x range identity pattern
+        CppAD::sparse_rc<std::vector<size_t>> patternIn(outputSize, outputSize, outputSize);
+        for (size_t i = 0; i < outputSize; ++i) {
+            patternIn.set(i, i, i);
+        }
+
+        m_rhsADFun.rev_jac_sparsity(patternIn, false, false, false, m_full_jacobian_sparsity_pattern);
+
         m_jac_work.clear();
+        m_full_sparsity_set.clear();
+        const auto& rows = m_full_jacobian_sparsity_pattern.row();
+        const auto& cols = m_full_jacobian_sparsity_pattern.col();
+        const size_t nnz = m_full_jacobian_sparsity_pattern.nnz();
+
+        for (size_t k = 0; k < nnz; ++k) {
+            if (cols[k] < m_networkSpecies.size() + 1) {
+                m_full_sparsity_set.insert(std::make_pair(rows[k], cols[k]));
+            }
+        }
 
         precomputeNetwork();
         LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
@@ -110,10 +225,10 @@ namespace gridfire {
         std::set<std::string_view> uniqueSpeciesNames;
 
         for (const auto& reaction: m_reactions) {
-            for (const auto& reactant: reaction.reactants()) {
+            for (const auto& reactant: reaction->reactants()) {
                 uniqueSpeciesNames.insert(reactant.name());
             }
-            for (const auto& product: reaction.products()) {
+            for (const auto& product: reaction->products()) {
                 uniqueSpeciesNames.insert(product.name());
             }
         }
@@ -129,14 +244,16 @@ namespace gridfire {
                 throw std::runtime_error("Species not found in global atomic species database: " + std::string(name));
             }
         }
-
+        std::ranges::sort(m_networkSpecies, [](const fourdst::atomic::Species& a, const fourdst::atomic::Species& b) -> bool {
+            return a.mass() < b.mass(); // Otherwise, sort by mass
+        });
     }
 
     void GraphEngine::populateReactionIDMap() {
         LOG_TRACE_L1(m_logger, "Populating reaction ID map for REACLIB graph network (serif::network::GraphNetwork)...");
         m_reactionIDMap.clear();
         for (auto& reaction: m_reactions) {
-            m_reactionIDMap.emplace(reaction.id(), &reaction);
+            m_reactionIDMap.emplace(reaction->id(), reaction.get());
         }
         LOG_TRACE_L1(m_logger, "Populated {} reactions in the reaction ID map.", m_reactionIDMap.size());
     }
@@ -146,40 +263,28 @@ namespace gridfire {
         for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
             m_speciesToIndexMap.insert({m_networkSpecies[i], i});
         }
-    }
-
-    void GraphEngine::reserveJacobianMatrix() const {
-        // The implementation of this function (and others) constrains this nuclear network to a constant temperature and density during
-        // each evaluation.
-        const size_t numSpecies = m_networkSpecies.size();
-        m_jacobianMatrix.clear();
-        m_jacobianMatrix.resize(numSpecies, numSpecies, false); // Sparse matrix, no initial values
-        LOG_TRACE_L2(m_logger, "Jacobian matrix resized to {} rows and {} columns.",
-                 m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+        m_indexToSpeciesMap.clear();
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            m_indexToSpeciesMap.insert({i, m_networkSpecies[i]});
+        }
     }
 
     // --- Basic Accessors and Queries ---
     const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
-        // Returns a constant reference to the vector of unique species in the network.
-        LOG_TRACE_L3(m_logger, "Providing access to network species vector. Size: {}.", m_networkSpecies.size());
         return m_networkSpecies;
     }
 
-    const reaction::LogicalReactionSet& GraphEngine::getNetworkReactions() const {
-        // Returns a constant reference to the set of reactions in the network.
-        LOG_TRACE_L3(m_logger, "Providing access to network reactions set. Size: {}.", m_reactions.size());
+    const reaction::ReactionSet& GraphEngine::getNetworkReactions() const {
         return m_reactions;
     }
 
-    void GraphEngine::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+    void GraphEngine::setNetworkReactions(const reaction::ReactionSet &reactions) {
         m_reactions = reactions;
         syncInternalMaps();
     }
 
     bool GraphEngine::involvesSpecies(const fourdst::atomic::Species& species) const {
-        // Checks if a given species is present in the network's species map for efficient lookup.
         const bool found = m_networkSpeciesMap.contains(species.name());
-        LOG_DEBUG(m_logger, "Checking if species '{}' is involved in the network: {}.", species.name(), found ? "Yes" : "No");
         return found;
     }
 
@@ -194,7 +299,7 @@ namespace gridfire {
             uint64_t totalProductZ = 0;
 
             // Calculate total A and Z for reactants
-            for (const auto& reactant : reaction.reactants()) {
+            for (const auto& reactant : reaction->reactants()) {
                 auto it = m_networkSpeciesMap.find(reactant.name());
                 if (it != m_networkSpeciesMap.end()) {
                     totalReactantA += it->second.a();
@@ -203,13 +308,13 @@ namespace gridfire {
                     // This scenario indicates a severe data integrity issue:
                     // a reactant is part of a reaction but not in the network's species map.
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Reactant species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             reactant.name(), reaction.id());
+                             reactant.name(), reaction->id());
                     return false;
                 }
             }
 
             // Calculate total A and Z for products
-            for (const auto& product : reaction.products()) {
+            for (const auto& product : reaction->products()) {
                 auto it = m_networkSpeciesMap.find(product.name());
                 if (it != m_networkSpeciesMap.end()) {
                     totalProductA += it->second.a();
@@ -217,7 +322,7 @@ namespace gridfire {
                 } else {
                     // Similar critical error for product species
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Product species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             product.name(), reaction.id());
+                             product.name(), reaction->id());
                     return false;
                 }
             }
@@ -225,12 +330,12 @@ namespace gridfire {
             // Compare totals for conservation
             if (totalReactantA != totalProductA) {
                 LOG_ERROR(m_logger, "Mass number (A) not conserved for reaction '{}': Reactants A={} vs Products A={}.",
-                         reaction.id(), totalReactantA, totalProductA);
+                         reaction->id(), totalReactantA, totalProductA);
                 return false;
             }
             if (totalReactantZ != totalProductZ) {
                 LOG_ERROR(m_logger, "Atomic number (Z) not conserved for reaction '{}': Reactants Z={} vs Products Z={}.",
-                         reaction.id(), totalReactantZ, totalProductZ);
+                         reaction->id(), totalReactantZ, totalProductZ);
                 return false;
             }
         }
@@ -241,7 +346,9 @@ namespace gridfire {
 
     double GraphEngine::calculateReverseRate(
         const reaction::Reaction &reaction,
-        const double T9
+        const double T9,
+        const double rho,
+        const fourdst::composition::CompositionAbstract &comp
     ) const {
         if (!m_useReverseReactions) {
             LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
@@ -249,18 +356,31 @@ namespace gridfire {
         }
         const double temp = T9 * 1e9; // Convert T9 to Kelvin
 
+        // Reverse reactions are only relevant for strong reactions (at least during the vast majority of stellar evolution)
+        // So here we just let these be dummy values since we know
+        // 1. The reaction should always be strong
+        // 2. The strong reaction rate is independent of Ye and mue
+        //
+        // In development builds the assert below will confirm this
+        constexpr double Ye = 0.0;
+        constexpr double mue = 0.0;
+
+        // It is a logic error to call this function on a weak reaction
+        assert(reaction.type() != gridfire::reaction::ReactionType::WEAK);
+
         // In debug builds we check the units on kB to ensure it is in erg/K. This is removed in release builds to avoid overhead. (Note assert is a no-op in release builds)
         assert(Constants::getInstance().get("kB").unit == "erg / K");
 
         const double kBMeV = m_constants.kB * 624151; // Convert kB to MeV/K NOTE: This relies on the fact that m_constants.kB is in erg/K!
         const double expFactor = std::exp(-reaction.qValue() / (kBMeV * temp));
         double reverseRate = 0.0;
-        const double forwardRate = reaction.calculate_rate(T9);
+        // We also let Y be an empy vector since the strong reaction rate is independent of Y
+        const double forwardRate = reaction.calculate_rate(T9, rho, Ye, mue, {}, m_indexToSpeciesMap);
 
         if (reaction.reactants().size() == 2 && reaction.products().size() == 2) {
             reverseRate = calculateReverseRateTwoBody(reaction, T9, forwardRate, expFactor);
         } else {
-            LOG_WARNING_LIMIT_EVERY_N(1000000, m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented (reaction id {}).", reaction.peName());
+            LOG_WARNING_LIMIT_EVERY_N(1000000, m_logger, "Reverse rate calculation for reactions with more than two reactants or products is not implemented (reaction id {}).", reaction.id());
         }
         LOG_TRACE_L2_LIMIT_EVERY_N(1000, m_logger, "Calculated reverse rate for reaction '{}': {:.3E} at T9={:.3E}.", reaction.id(), reverseRate, T9);
         return reverseRate;
@@ -346,13 +466,17 @@ namespace gridfire {
     double GraphEngine::calculateReverseRateTwoBodyDerivative(
         const reaction::Reaction &reaction,
         const double T9,
+        const double rho,
+        const fourdst::composition::Composition& comp,
         const double reverseRate
     ) const {
+        assert(reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB);
+
         if (!m_useReverseReactions) {
             LOG_TRACE_L3_LIMIT_EVERY_N(std::numeric_limits<int>::max(), m_logger, "Reverse reactions are disabled. Returning 0.0 for reverse rate of reaction '{}'.", reaction.id());
             return 0.0; // If reverse reactions are not used, return 0.0
         }
-        const double d_log_kFwd = reaction.calculate_forward_rate_log_derivative(T9);
+        const double d_log_kFwd = reaction.calculate_log_rate_partial_deriv_wrt_T9(T9, rho, {}, {}, {});
 
         auto log_deriv_pf_op = [&](double acc, const auto& species) {
             const double g = m_partitionFunction->evaluate(species.z(), species.a(), T9);
@@ -392,14 +516,14 @@ namespace gridfire {
         m_useReverseReactions = useReverse;
     }
 
-    int GraphEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+    size_t GraphEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
         return m_speciesToIndexMap.at(species); // Returns the index of the species in the stoichiometry matrix
     }
 
     std::vector<double> GraphEngine::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
         std::vector<double> Y(m_networkSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [symbol, entry] : netIn.composition) {
-            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        for (const auto& [sp, y] : netIn.composition) {
+            Y[getSpeciesIndex(sp)] = y; // Map species to their molar abundance
         }
         return Y; // Return the vector of molar abundances
     }
@@ -408,26 +532,34 @@ namespace gridfire {
         NetIn fullNetIn;
         fourdst::composition::Composition composition;
 
-        std::vector<std::string> symbols;
-        symbols.reserve(m_networkSpecies.size());
-        for (const auto &symbol: m_networkSpecies) {
-            symbols.emplace_back(symbol.name());
-        }
-        composition.registerSymbol(symbols);
-        for (const auto& [symbol, entry] : netIn.composition) {
-            if (m_networkSpeciesMap.contains(symbol)) {
-                composition.setMassFraction(symbol, entry.mass_fraction());
-            } else {
-                composition.setMassFraction(symbol, 0.0);
+        for (const auto& sp : m_networkSpecies) {
+            composition.registerSpecies(sp);
+            if (netIn.composition.contains(sp)) {
+                composition.setMolarAbundance(sp, netIn.composition.getMolarAbundance(sp));
             }
         }
-        composition.finalize(true);
+
         fullNetIn.composition = composition;
         fullNetIn.temperature = netIn.temperature;
         fullNetIn.density = netIn.density;
 
-        auto primingReport = primeNetwork(fullNetIn, *this);
+        // Short circuit path if already primed
+        // if (m_has_been_primed) {
+        //     PrimingReport report;
+        //     report.primedComposition = composition;
+        //     report.success = true;
+        //     report.status = PrimingReportStatus::ALREADY_PRIMED;
+        //     return report;
+        // }
 
+        std::optional<std::vector<reaction::ReactionType>> reactionTypesToIgnore = std::nullopt;
+        if (!m_useReverseReactions) {
+            reactionTypesToIgnore = {reaction::ReactionType::WEAK};
+        }
+
+        auto primingReport = primeNetwork(fullNetIn, *this, reactionTypesToIgnore);
+
+        m_has_been_primed = true;
         return primingReport;
     }
 
@@ -435,106 +567,189 @@ namespace gridfire {
         return m_depth;
     }
 
-    void GraphEngine::rebuild(const fourdst::composition::Composition& comp, const BuildDepthType depth) {
+    void GraphEngine::rebuild(const fourdst::composition::CompositionAbstract &comp, const BuildDepthType depth) {
         if (depth != m_depth) {
             m_depth = depth;
-            m_reactions = build_reaclib_nuclear_network(comp, m_depth, false);
+            m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth);
             syncInternalMaps(); // Resync internal maps after changing the depth
         } else {
             LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
         }
     }
 
+    fourdst::composition::Composition GraphEngine::collectComposition(
+        const fourdst::composition::CompositionAbstract &comp,
+        double T9,
+        double rho
+    ) const {
+        for (const auto &species: comp.getRegisteredSpecies()) {
+            if (!m_networkSpeciesMap.contains(species.name())) {
+                throw exceptions::BadCollectionError("Cannot collect composition from GraphEngine as " + std::string(species.name()) + " present in input composition does not exist in the network species map");
+            }
+        }
+        fourdst::composition::Composition result;
+        for (const auto& species : m_networkSpecies ) {
+            result.registerSpecies(species);
+            if (comp.contains(species)) {
+                result.setMolarAbundance(species, comp.getMolarAbundance(species));
+            }
+        }
+        return result;
+    }
+
+    SpeciesStatus GraphEngine::getSpeciesStatus(const fourdst::atomic::Species &species) const {
+        if (m_networkSpeciesMap.contains(species.name())) {
+            return SpeciesStatus::ACTIVE;
+        }
+        return SpeciesStatus::NOT_PRESENT;
+
+    }
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
-        const std::vector<double> &Y_in,
+        const fourdst::composition::CompositionAbstract &comp,
         const std::vector<double> &bare_rates,
         const std::vector<double> &bare_reverse_rates,
         const double T9,
-        const double rho
+        const double rho,
+        const reaction::ReactionSet &activeReactions
     ) const {
+        LOG_TRACE_L3(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
-            m_reactions,
+            activeReactions,
             m_networkSpecies,
-            Y_in,
+            comp.getMolarAbundanceVector(),
             T9,
             rho
         );
+
 
         // --- Optimized loop ---
         std::vector<double> molarReactionFlows;
         molarReactionFlows.reserve(m_precomputedReactions.size());
 
-        for (const auto& precomp : m_precomputedReactions) {
+        size_t reactionCounter = 0;
+        for (const auto& reaction : activeReactions) {
+            // --- Efficient lookup of only the active reactions ---
+            uint64_t reactionHash = utils::hash_reaction(*reaction);
+            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
+            PrecomputedReaction precomputedReaction = m_precomputedReactions[reactionIndex];
+
+            // --- Forward abundance product ---
             double forwardAbundanceProduct = 1.0;
-            // bool below_threshold = false;
-            for (size_t i = 0; i < precomp.unique_reactant_indices.size(); ++i) {
-                const size_t reactantIndex = precomp.unique_reactant_indices[i];
-                const int power = precomp.reactant_powers[i];
-                // const double abundance = Y_in[reactantIndex];
-                // if (abundance < MIN_ABUNDANCE_THRESHOLD) {
-                //     below_threshold = true;
-                //     break;
-                // }
+            for (size_t i = 0; i < precomputedReaction.unique_reactant_indices.size(); ++i) {
+                const size_t reactantIndex = precomputedReaction.unique_reactant_indices[i];
+                const fourdst::atomic::Species& reactant = m_networkSpecies[reactantIndex];
+                const int power = precomputedReaction.reactant_powers[i];
 
-                forwardAbundanceProduct *= std::pow(Y_in[reactantIndex], power);
+                if (!comp.contains(reactant)) {
+                    forwardAbundanceProduct = 0.0;
+                    break; // No need to continue if one of the reactants has zero abundance
+                }
+                double factor = std::pow(comp.getMolarAbundance(reactant), power);
+                if (!std::isfinite(factor)) {
+                    LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction->id());
+                    throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
+                }
+                forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
             }
-            // if (below_threshold) {
-            //     molarReactionFlows.push_back(0.0);
-            //     continue; // Skip this reaction if any reactant is below the abundance threshold
-            // }
 
-            const double bare_rate = bare_rates[precomp.reaction_index];
-            const double screeningFactor = screeningFactors[precomp.reaction_index];
-            const size_t numReactants = m_reactions[precomp.reaction_index].reactants().size();
-            const size_t numProducts = m_reactions[precomp.reaction_index].products().size();
+            const double bare_rate = bare_rates.at(reactionCounter);
 
+            const double screeningFactor = screeningFactors[reactionCounter];
+            const size_t numReactants = m_reactions[reactionIndex].reactants().size();
+            const size_t numProducts = m_reactions[reactionIndex].products().size();
+
+            // --- Forward reaction flow ---
             const double forwardMolarReactionFlow =
                     screeningFactor *
                     bare_rate *
-                    precomp.symmetry_factor *
+                    precomputedReaction.symmetry_factor *
                     forwardAbundanceProduct *
-                    std::pow(rho, numReactants >  1 ? numReactants - 1 : 0.0);
+                    std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
+            if (!std::isfinite(forwardMolarReactionFlow)) {
+                LOG_CRITICAL(m_logger, "Non-finite forward molar reaction flow computed for reaction '{}'. Check input abundances and rates for validity.", reaction->id());
+                throw exceptions::BadRHSEngineError("Non-finite forward molar reaction flow computed.");
+            }
 
+            // --- Reverse reaction flow ---
+            // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
             double reverseMolarReactionFlow = 0.0;
-            if (precomp.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
-                const double bare_reverse_rate = bare_reverse_rates[precomp.reaction_index];
+            if (precomputedReaction.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
+                const double bare_reverse_rate = bare_reverse_rates.at(reactionCounter);
+
                 double reverseAbundanceProduct = 1.0;
-                for (size_t i = 0; i < precomp.unique_product_indices.size(); ++i) {
-                    reverseAbundanceProduct *= std::pow(Y_in[precomp.unique_product_indices[i]], precomp.product_powers[i]);
+                for (size_t i = 0; i < precomputedReaction.unique_product_indices.size(); ++i) {
+                    const size_t productIndex = precomputedReaction.unique_product_indices[i];
+                    const fourdst::atomic::Species& product = m_networkSpecies[productIndex];
+                    reverseAbundanceProduct *= std::pow(comp.getMolarAbundance(product), precomputedReaction.product_powers[i]);
                 }
+
                 reverseMolarReactionFlow = screeningFactor *
                     bare_reverse_rate *
-                    precomp.reverse_symmetry_factor *
+                    precomputedReaction.reverse_symmetry_factor *
                     reverseAbundanceProduct *
-                    std::pow(rho, numProducts > 1 ? numProducts - 1 : 0.0);
+                    std::pow(rho, numProducts > 1 ? static_cast<double>(numProducts) - 1 : 0.0);
             }
 
             molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
-
+            reactionCounter++;
         }
+
+        LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         // --- Assemble molar abundance derivatives ---
         StepDerivatives<double> result;
-        result.dydt.assign(m_networkSpecies.size(), 0.0); // Initialize derivatives to zero
-        for (size_t j = 0; j < m_precomputedReactions.size(); ++j) {
+        for (const auto& species: m_networkSpecies) {
+            result.dydt[species] = 0.0; // Initialize the change in abundance for each network species to 0
+        }
+
+        reactionCounter = 0;
+        for (const auto& reaction: activeReactions) {
+            size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
             const auto& precomp = m_precomputedReactions[j];
-            const double R_j = molarReactionFlows[j];
+            const double R_j = molarReactionFlows[reactionCounter];
 
             for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
                 const size_t speciesIndex = precomp.affected_species_indices[i];
+                const fourdst::atomic::Species& species = m_networkSpecies[speciesIndex];
+
                 const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
 
                 // Update the derivative for this species
-                result.dydt[speciesIndex] += static_cast<double>(stoichiometricCoefficient) * R_j;
+                double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
+                result.dydt.at(species) += dydt_increment;
+                result.reactionContributions[species][std::string(reaction->id())] = dydt_increment;
             }
+            reactionCounter++;
         }
+
+        // std::vector<std::string> reactionIDs;
+        // for (const auto& reaction: activeReactions) {
+        //     reactionIDs.push_back(std::string(reaction->id()));
+        // }
+        //
+        // std::vector<std::unique_ptr<utils::ColumnBase>> columns;
+        // columns.push_back(std::make_unique<utils::Column<std::string>>("Reaction", reactionIDs));
+        // for (const auto& [species, contributions] : reactionContributions) {
+        //     std::vector<double> speciesData;
+        //     for (const auto& reactionID : reactionIDs) {
+        //         if (contributions.contains(reactionID)) {
+        //             speciesData.push_back(contributions.at(reactionID));
+        //         } else {
+        //             speciesData.push_back(0.0);
+        //         }
+        //     }
+        //     columns.push_back(std::make_unique<utils::Column<double>>(std::string(species.name()), speciesData));
+        // }
+
+        // utils::print_table("Contributions", columns);
+        // exit(0);
 
         // --- Calculate the nuclear energy generation rate ---
         double massProductionRate = 0.0; // [mol][s^-1]
-        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
-            const auto& species = m_networkSpecies[i];
-            massProductionRate += result.dydt[i] * species.mass() * m_constants.u;
+        for (const auto & species : m_networkSpecies) {
+            massProductionRate += result.dydt[species] * species.mass() * m_constants.u;
         }
         result.nuclearEnergyGenerationRate = -massProductionRate * m_constants.Na * m_constants.c * m_constants.c; // [erg][s^-1][g^-1]
         return result;
@@ -558,7 +773,7 @@ namespace gridfire {
         size_t reactionColumnIndex = 0;
         for (const auto& reaction : m_reactions) {
             // Get the net stoichiometry for the current reaction
-            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = reaction.stoichiometry();
+            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = reaction->stoichiometry();
 
             // Iterate through the species and their coefficients in the stoichiometry map
             for (const auto& [species, coefficient] : netStoichiometry) {
@@ -571,7 +786,7 @@ namespace gridfire {
                 } else {
                     // This scenario should ideally not happen if m_networkSpeciesMap and m_speciesToIndexMap are correctly synced
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Species '{}' from reaction '{}' stoichiometry not found in species to index map.",
-                             species.name(), reaction.id());
+                             species.name(), reaction->id());
                     m_logger -> flush_log();
                     throw std::runtime_error("Species not found in species to index map: " + std::string(species.name()));
                 }
@@ -581,22 +796,6 @@ namespace gridfire {
 
         LOG_TRACE_L1(m_logger, "Stoichiometry matrix population complete. Number of non-zero elements: {}.",
                  m_stoichiometryMatrix.nnz()); // Assuming nnz() exists for compressed_matrix
-    }
-
-    StepDerivatives<double> GraphEngine::calculateAllDerivatives(
-        const std::vector<double> &Y_in,
-        const double T9,
-        const double rho
-    ) const {
-        return calculateAllDerivatives<double>(Y_in, T9, rho);
-    }
-
-    StepDerivatives<ADDouble> GraphEngine::calculateAllDerivatives(
-        const std::vector<ADDouble> &Y_in,
-        const ADDouble &T9,
-        const ADDouble &rho
-    ) const {
-        return calculateAllDerivatives<ADDouble>(Y_in, T9, rho);
     }
 
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
@@ -622,26 +821,49 @@ namespace gridfire {
 
     double GraphEngine::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const std::vector<double> &Y,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        return calculateMolarReactionFlow<double>(reaction, Y, T9, rho);
+
+        const double Ye = comp.getElectronAbundance();
+
+        return calculateMolarReactionFlow<double>(
+            reaction,
+            comp.getMolarAbundanceVector(),
+            T9,
+            rho,
+            Ye,
+            0.0,
+            [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                if (comp.contains(species)) { // Species present in the composition
+                    return comp.getSpeciesIndex(species);
+                }
+                return std::nullopt; // Species not present
+            }
+        );
     }
 
-    void GraphEngine::generateJacobianMatrix(
-        const std::vector<double> &Y_dynamic,
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-
+        fourdst::composition::Composition mutableComp;
+        for (const auto& species : m_networkSpecies) {
+            mutableComp.registerSpecies(species);
+            if (comp.contains(species)) {
+                mutableComp.setMolarAbundance(species, comp.getMolarAbundance(species));
+            }
+        }
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
         // 1. Pack the input variables into a vector for CppAD
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
+        const std::vector<double>& Y_dynamic = mutableComp.getMolarAbundanceVector();
         for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = std::max(Y_dynamic[i], 1e-99); // regularize the jacobian...
+            adInput[i] = Y_dynamic[i];
         }
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
@@ -650,54 +872,120 @@ namespace gridfire {
         const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
 
         // 3. Pack jacobian vector into sparse matrix
-        m_jacobianMatrix.clear();
+        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        std::vector<Eigen::Triplet<double> > triplets;
         for (size_t i = 0; i < numSpecies; ++i) {
             for (size_t j = 0; j < numSpecies; ++j) {
-                const double value = dotY[i * (numSpecies + 2) + j];
+                double value = dotY[i * (numSpecies + 2) + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
-                    m_jacobianMatrix(i, j) = value;
+                    triplets.emplace_back(i, j, value);
                 }
             }
         }
-        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", m_jacobianMatrix.size1(), m_jacobianMatrix.size2());
+        LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", jacobianMatrix.rows(), jacobianMatrix.cols());
+
+        auto index_to_species = [this](const size_t index) -> fourdst::atomic::Species {
+            if (index < m_networkSpecies.size()) {
+                return m_networkSpecies[index];
+            }
+            throw std::out_of_range("Index out of range in index_to_species mapping.");
+        };
+        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
+        NetworkJacobian jac(jacobianMatrix, index_to_species);
+        return jac;
     }
 
-    void GraphEngine::generateJacobianMatrix(
-        const std::vector<double> &Y_dynamic,
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const std::vector<fourdst::atomic::Species> &activeSpecies
+    ) const {
+        // PERF: For small k it may make sense to implement a purley forward mode AD computation, some heuristic could be used to switch between the two methods based on k and total network species
+        const size_t k_active = activeSpecies.size();
+
+        // --- 1. Get the list of global indices ---
+        std::vector<size_t> active_indices;
+        active_indices.reserve(k_active);
+
+        for (const auto& species : activeSpecies) {
+            assert(involvesSpecies(species));
+            active_indices.push_back(getSpeciesIndex(species));
+        }
+
+        // --- 2. Build the k x k sparsity pattern ---
+        SparsityPattern sparsityPattern;
+        sparsityPattern.reserve(k_active * k_active);
+
+        for (const size_t i_global : active_indices) { // k rows
+            for (const size_t j_global : active_indices) { // k columns
+                sparsityPattern.emplace_back(i_global, j_global);
+            }
+        }
+
+        // --- 3. Call the sparse reverse-mode implementation ---
+        return generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+    }
+
+    NetworkJacobian GraphEngine::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
+        SparsityPattern intersectionSparsityPattern;
+        for (const auto& entry : sparsityPattern) {
+            if (m_full_sparsity_set.contains(entry)) {
+                intersectionSparsityPattern.push_back(entry);
+            }
+        }
+
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
-        for (size_t i = 0; i < numSpecies; ++i) {
-           x[i] = Y_dynamic[i];
+        // const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
+        // for (size_t i = 0; i < numSpecies; ++i) {
+        //    x[i] = Y_dynamic[i];
+        // }
+        size_t i = 0;
+        for (const auto& species: m_networkSpecies) {
+            double Yi = 0.0; // Small floor to avoid issues with zero abundances
+            if (comp.contains(species)) {
+                Yi = comp.getMolarAbundance(species);
+            }
+            x[i] = Yi;
+            i++;
         }
         x[numSpecies] = T9;
         x[numSpecies + 1] = rho;
 
         // --- Convert into CppAD Sparsity pattern ---
-        const size_t nnz = sparsityPattern.size(); // Number of non-zero entries in the sparsity pattern
+        const size_t nnz = intersectionSparsityPattern.size(); // Number of non-zero entries in the sparsity pattern
         std::vector<size_t> row_indices(nnz);
         std::vector<size_t> col_indices(nnz);
 
         for (size_t k = 0; k < nnz; ++k) {
-            row_indices[k] = sparsityPattern[k].first;
-            col_indices[k] = sparsityPattern[k].second;
+            row_indices[k] = intersectionSparsityPattern[k].first;
+            col_indices[k] = intersectionSparsityPattern[k].second;
         }
 
         std::vector<double> values(nnz);
-        const size_t num_rows_jac = numSpecies;
+        const size_t num_rows_jac = numSpecies + 1; // num species + epsilon
         const size_t num_cols_jac = numSpecies + 2; // +2 for T9 and rho
 
         CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
         for (size_t k = 0; k < nnz; ++k) {
-            CppAD_sparsity_pattern.set(k, sparsityPattern[k].first, sparsityPattern[k].second);
+            CppAD_sparsity_pattern.set(k, intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
         }
 
         CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
 
+        // PERF: one of *the* most pressing things that needs to be done is remove the need for this call every
+        //       time the jacobian is needed since coloring is expensive and we are throwing away the caching
+        //       power of CppAD by clearing the work vector each time. We do this since we make a new subset every
+        //       time. However, a better solution would be to make the subset stateful so it only changes if the requested
+        //       sparsity pattern changes. This way we could reuse the work vector.
+        m_jac_work.clear();
         m_rhsADFun.sparse_jac_rev(
             x,
             jac_subset, // Sparse Jacobian output
@@ -706,22 +994,26 @@ namespace gridfire {
             m_jac_work // Work vector for CppAD
         );
 
-        // --- Convert the sparse Jacobian back to the Boost uBLAS format ---
-        m_jacobianMatrix.clear();
+        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        std::vector<Eigen::Triplet<double> > triplets;
         for (size_t k = 0; k < nnz; ++k) {
             const size_t row = jac_subset.row()[k];
             const size_t col = jac_subset.col()[k];
             const double value = jac_subset.val()[k];
 
-            if (std::abs(value) > MIN_JACOBIAN_THRESHOLD) {
-                m_jacobianMatrix(row, col) = value; // Insert into the sparse matrix
+            if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || row == col) { // Always keep diagonal elements to avoid pathological stiffness
+                triplets.emplace_back(row, col, value);
             }
         }
-    }
-
-    double GraphEngine::getJacobianMatrixEntry(const int i, const int j) const {
-        // LOG_TRACE_L3(m_logger, "Getting jacobian matrix entry for {},{} = {}", i, j, m_jacobianMatrix(i, j));
-        return m_jacobianMatrix(i, j);
+        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
+        auto index_to_species = [this](const size_t index) -> fourdst::atomic::Species {
+            if (index < m_networkSpecies.size()) {
+                return m_networkSpecies[index];
+            }
+            throw std::out_of_range("Index out of range in index_to_species mapping.");
+        };
+        NetworkJacobian jac(jacobianMatrix, index_to_species);
+        return jac;
     }
 
     std::unordered_map<fourdst::atomic::Species, int> GraphEngine::getNetReactionStoichiometry(
@@ -731,10 +1023,10 @@ namespace gridfire {
     }
 
     int GraphEngine::getStoichiometryMatrixEntry(
-        const int speciesIndex,
-        const int reactionIndex
+        const fourdst::atomic::Species& species,
+        const reaction::Reaction &reaction
     ) const {
-        return m_stoichiometryMatrix(speciesIndex, reactionIndex);
+        return reaction.stoichiometry(species);
     }
 
     void GraphEngine::exportToDot(const std::string &filename) const {
@@ -763,19 +1055,19 @@ namespace gridfire {
         dotFile << "    // --- Reaction Edges ---\n";
         for (const auto& reaction : m_reactions) {
             // Create a unique ID for the reaction node
-            std::string reactionNodeId = "reaction_" + std::string(reaction.id());
+            std::string reactionNodeId = "reaction_" + std::string(reaction->id());
 
             // Define the reaction node (small, black dot)
             dotFile << "    \"" << reactionNodeId << "\" [shape=point, fillcolor=black, width=0.1, height=0.1, label=\"\"];\n";
 
             // Draw edges from reactants to the reaction node
-            for (const auto& reactant : reaction.reactants()) {
+            for (const auto& reactant : reaction->reactants()) {
                 dotFile << "    \"" << reactant.name() << "\" -> \"" << reactionNodeId << "\";\n";
             }
 
             // Draw edges from the reaction node to products
-            for (const auto& product : reaction.products()) {
-                dotFile << "    \"" << reactionNodeId << "\" -> \"" << product.name() << "\" [label=\"" << reaction.qValue() << " MeV\"];\n";
+            for (const auto& product : reaction->products()) {
+                dotFile << "    \"" << reactionNodeId << "\" -> \"" << product.name() << "\" [label=\"" << reaction->qValue() << " MeV\"];\n";
             }
             dotFile << "\n";
         }
@@ -797,86 +1089,132 @@ namespace gridfire {
         csvFile << "Reaction;Reactants;Products;Q-value;sources;rates\n";
         for (const auto& reaction : m_reactions) {
             // Dynamic cast to REACLIBReaction to access specific properties
-            csvFile << reaction.id() << ";";
+            csvFile << reaction->id() << ";";
             // Reactants
             size_t count = 0;
-            for (const auto& reactant : reaction.reactants()) {
+            for (const auto& reactant : reaction->reactants()) {
                 csvFile << reactant.name();
-                if (++count < reaction.reactants().size()) {
+                if (++count < reaction->reactants().size()) {
                     csvFile << ",";
                 }
             }
             csvFile << ";";
             count = 0;
-            for (const auto& product : reaction.products()) {
+            for (const auto& product : reaction->products()) {
                 csvFile << product.name();
-                if (++count < reaction.products().size()) {
+                if (++count < reaction->products().size()) {
                     csvFile << ",";
                 }
             }
-            csvFile << ";" << reaction.qValue() << ";";
+            csvFile << ";" << reaction->qValue() << ";";
             // Reaction coefficients
-            auto sources = reaction.sources();
-            count = 0;
-            for (const auto& source : sources) {
-                csvFile << source;
-                if (++count < sources.size()) {
-                    csvFile << ",";
-                }
-            }
-            csvFile << ";";
-            // Reaction coefficients
-            count = 0;
-            for (const auto& rates : reaction) {
-                csvFile << rates;
-                if (++count < reaction.size()) {
-                    csvFile << ",";
-                }
-            }
             csvFile << "\n";
         }
         csvFile.close();
         LOG_TRACE_L1(m_logger, "Successfully exported network graph to {}", filename);
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
-        const std::vector<double> &Y,
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        auto [dydt, _] = calculateAllDerivatives<double>(Y, T9, rho);
+        return getSpeciesTimescales(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        const double Ye = comp.getElectronAbundance();
+
+        auto [dydt, _, __] = calculateAllDerivatives<double>(
+            comp.getMolarAbundanceVector(),
+            T9,
+            rho,
+            Ye,
+            0.0,
+            [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+                if (comp.contains(species)) { // Species present in the composition
+                    return comp.getSpeciesIndex(species);
+                }
+                return std::nullopt; // Species not present
+            },
+            [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                return activeReactions.contains(reaction);
+            }
+        );
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescales;
         speciesTimescales.reserve(m_networkSpecies.size());
-        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+        for (const auto& species : m_networkSpecies) {
             double timescale = std::numeric_limits<double>::infinity();
-            const auto species = m_networkSpecies[i];
-            if (std::abs(dydt[i]) > 0.0) {
-                timescale = std::abs(Y[i] / dydt[i]);
+            if (std::abs(dydt.at(species)) > 0.0) {
+                timescale = std::abs(comp.getMolarAbundance(species) / dydt.at(species));
             }
             speciesTimescales.emplace(species, timescale);
         }
         return speciesTimescales;
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
-        const std::vector<double> &Y,
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        auto [dydt, _] = calculateAllDerivatives<double>(Y, T9, rho);
+        return getSpeciesDestructionTimescales(comp, T9, rho, m_reactions);
+    }
+
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        const double Ye = comp.getElectronAbundance();
+        const std::vector<double>& Y = comp.getMolarAbundanceVector();
+
+        auto speciesLookup = [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
+            if (comp.contains(species)) { // Species present in the composition
+                return comp.getSpeciesIndex(species);
+            }
+            return std::nullopt; // Species not present
+        };
+
+        auto [dydt, _, __] = calculateAllDerivatives<double>(
+            Y,
+            T9,
+            rho,
+            Ye,
+            0.0,
+            speciesLookup,
+            [&activeReactions](const reaction::Reaction& reaction) -> bool {
+                return activeReactions.contains(reaction);
+            }
+        );
+
         std::unordered_map<fourdst::atomic::Species, double> speciesDestructionTimescales;
         speciesDestructionTimescales.reserve(m_networkSpecies.size());
         for (const auto& species : m_networkSpecies) {
             double netDestructionFlow = 0.0;
             for (const auto& reaction : m_reactions) {
-                if (reaction.stoichiometry(species) < 0) {
-                    const double flow = calculateMolarReactionFlow<double>(reaction, Y, T9, rho);
+                if (reaction->stoichiometry(species) < 0) {
+                    const auto flow = calculateMolarReactionFlow<double>(
+                        *reaction,
+                        Y,
+                        T9,
+                        rho,
+                        Ye,
+                        0.0,
+                        speciesLookup
+                    );
                     netDestructionFlow += flow;
                 }
             }
             double timescale = std::numeric_limits<double>::infinity();
             if (netDestructionFlow != 0.0) {
-                timescale = Y[getSpeciesIndex(species)] / netDestructionFlow;
+                timescale = comp.getMolarAbundance(species) / netDestructionFlow;
             }
             speciesDestructionTimescales.emplace(species, timescale);
         }
@@ -888,10 +1226,8 @@ namespace gridfire {
         for (const auto& species : m_networkSpecies) {
             if (!netIn.composition.contains(species)) {
                 baseUpdatedComposition.registerSpecies(species);
-                baseUpdatedComposition.setMassFraction(species, 0.0);
             }
         }
-        baseUpdatedComposition.finalize(false);
         return baseUpdatedComposition;
     }
 
@@ -899,7 +1235,7 @@ namespace gridfire {
         return false;
     }
 
-    void GraphEngine::recordADTape() {
+    void GraphEngine::recordADTape() const {
         LOG_TRACE_L1(m_logger, "Recording AD tape for the RHS calculation...");
 
         // Task 1: Set dimensions and initialize the matrix
@@ -909,7 +1245,7 @@ namespace gridfire {
             m_logger->flush_log();
             throw std::runtime_error("Cannot record AD tape: No species in the network.");
         }
-        const size_t numADInputs = numSpecies + 2; // Note here that by not letting T9 and rho be independent variables, we are constraining the network to a constant temperature and density during each evaluation.
+        const size_t numADInputs = numSpecies + 2; // Y + T9 + rho
 
         // --- CppAD Tape Recording ---
         // 1. Declare independent variable (adY)
@@ -926,22 +1262,46 @@ namespace gridfire {
         //    This also beings the tape recording process.
         CppAD::Independent(adInput);
 
-        std::vector<CppAD::AD<double>> adY(numSpecies);
-        for(size_t i = 0; i < numSpecies; ++i) {
-            adY[i] = adInput[i];
-        }
+        const std::vector<CppAD::AD<double>> adY(adInput.begin(), adInput.begin() + static_cast<long>(numSpecies));
         const CppAD::AD<double> adT9  = adInput[numSpecies];
         const CppAD::AD<double> adRho = adInput[numSpecies + 1];
+
+        // Dummy values for Ye and mue to let taping happen
+        const CppAD::AD<double> adYe = 1e6;
+        const CppAD::AD<double> adMue = 10.0;
 
 
         // 5. Call the actual templated function
         // We let T9 and rho be constant, so we pass them as fixed values.
-        auto [dydt, nuclearEnergyGenerationRate] = calculateAllDerivatives<CppAD::AD<double>>(adY, adT9, adRho);
+        auto [dydt, nuclearEnergyGenerationRate, _] = calculateAllDerivatives<CppAD::AD<double>>(
+            adY,
+            adT9,
+            adRho,
+            adYe,
+            adMue,
+            [&](const fourdst::atomic::Species& querySpecies) -> size_t {
+                return m_speciesToIndexMap.at(querySpecies);
+            },
+            [](const reaction::Reaction& reaction) -> bool {
+                return true; // Use all reactions
+            }
+        );
 
-        m_rhsADFun.Dependent(adInput, dydt);
+        // Extract the raw vector from the associative map
+        std::vector<CppAD::AD<double>> dependentVector;
+        dependentVector.reserve(dydt.size() + 1);
+        std::ranges::transform(
+            dydt,
+            std::back_inserter(dependentVector),
+            [](const auto& kv) {
+                return kv.second;
+            }
+        );
+        dependentVector.push_back(nuclearEnergyGenerationRate);
 
-        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS calculation. Number of independent variables: {}.",
-                 adInput.size());
+        m_rhsADFun.Dependent(adInput, dependentVector);
+
+        LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.", adInput.size());
     }
 
     void GraphEngine::collectAtomicReverseRateAtomicBases() {
@@ -949,8 +1309,8 @@ namespace gridfire {
         m_atomicReverseRates.reserve(m_reactions.size());
 
         for (const auto& reaction: m_reactions) {
-            if (reaction.qValue() != 0.0) {
-                m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(reaction, *this));
+            if (reaction->qValue() != 0.0) {
+                m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(*reaction, *this));
             } else {
                 m_atomicReverseRates.push_back(nullptr);
             }
@@ -968,11 +1328,18 @@ namespace gridfire {
 
         m_precomputedReactions.clear();
         m_precomputedReactions.reserve(m_reactions.size());
+        m_precomputedReactionIndexMap.clear();
+        m_precomputedReactionIndexMap.reserve(m_reactions.size());
 
         for (size_t i = 0; i < m_reactions.size(); ++i) {
             const auto& reaction = m_reactions[i];
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
+            precomp.reaction_type = reaction.type();
+            uint64_t reactionHash = utils::hash_reaction(reaction);
+
+            precomp.reaction_hash = reactionHash;
+            m_precomputedReactionIndexMap[reactionHash] = i;
 
             // --- Precompute forward reaction information ---
             // Count occurrences for each reactant to determine powers and symmetry
@@ -993,7 +1360,7 @@ namespace gridfire {
             precomp.symmetry_factor = 1.0/symmetryDenominator;
 
             // --- Precompute reverse reaction information ---
-            if (reaction.qValue() != 0.0) {
+            if (reaction.qValue() != 0.0 && reaction.type() != reaction::ReactionType::WEAK) {
                 std::unordered_map<size_t, int> productCounts;
                 for (const auto& product : reaction.products()) {
                     productCounts[speciesIndexMap.at(product)]++;
@@ -1009,7 +1376,7 @@ namespace gridfire {
             } else {
                 precomp.unique_product_indices.clear();
                 precomp.product_powers.clear();
-                precomp.reverse_symmetry_factor = 0.0; // No reverse reaction for Q = 0 reactions
+                precomp.reverse_symmetry_factor = 0.0; // No reverse reaction for weak reactions
             }
 
             // --- Precompute stoichiometry information ---
@@ -1024,6 +1391,7 @@ namespace gridfire {
 
             m_precomputedReactions.push_back(std::move(precomp));
         }
+        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputedReactions.size());
     }
 
     bool GraphEngine::AtomicReverseRate::forward(
@@ -1038,8 +1406,10 @@ namespace gridfire {
         if ( p != 0) { return false; }
         const double T9 = tx[0];
 
-        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9);
-        // std::cout << m_reaction.peName() << " reverseRate: " << reverseRate << " at T9: " << T9 << "\n";
+        // We can pass a dummy comp and rho because reverse rates should only be calculated for strong reactions whose
+        // rates of progression do not depend on composition or density.
+        const fourdst::composition::Composition dummyComp;
+        const double reverseRate = m_engine.calculateReverseRate(m_reaction, T9, 0.0, dummyComp);
         ty[0] = reverseRate; // Store the reverse rate in the output vector
 
         if (vx.size() > 0) {
@@ -1049,7 +1419,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::reverse(
-        size_t q,
+        const size_t q,
         const CppAD::vector<double> &tx,
         const CppAD::vector<double> &ty,
         CppAD::vector<double> &px,
@@ -1058,8 +1428,7 @@ namespace gridfire {
         const double T9 = tx[0];
         const double reverseRate = ty[0];
 
-        const double derivative = m_engine.calculateReverseRateTwoBodyDerivative(m_reaction, T9, reverseRate);
-        // std::cout << m_reaction.peName() << " reverseRate Derivative: " << derivative << "\n";
+        const double derivative = m_engine.calculateReverseRateTwoBodyDerivative(m_reaction, T9, 0, {}, reverseRate);
 
         px[0] = py[0] * derivative; // Return the derivative of the reverse rate with respect to T9
 
@@ -1067,7 +1436,7 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::for_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t>> &r,
         CppAD::vector<std::set<size_t>> &s
     ) {
@@ -1076,11 +1445,53 @@ namespace gridfire {
     }
 
     bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
-        size_t q,
+        const size_t q,
         const CppAD::vector<std::set<size_t>> &rt,
         CppAD::vector<std::set<size_t>> &st
     ) {
         st[0] = rt[0];
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::for_sparse_jac(
+        const size_t q,
+        const CppAD::vector<bool> &r,
+        CppAD::vector<bool> &s,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 1;
+        constexpr size_t m = 1;
+
+        CPPAD_ASSERT_KNOWN(r.size() == n * q, "AtomicReverseRate::for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(s.size() == m * q, "AtomicReverseRate::for_sparse_jac: 's' size is incorrect.");
+
+        // S = R
+        for (size_t j = 0; j < q; j++) {
+            // s(0,j) = r(0,j)
+            s[j*m] = r[j*n];
+        }
+
+        return true;
+    }
+
+    bool GraphEngine::AtomicReverseRate::rev_sparse_jac(
+        const size_t q,
+        const CppAD::vector<bool> &rt,
+        CppAD::vector<bool> &st,
+        const CppAD::vector<double> &x
+    ) {
+        constexpr size_t n = 1;
+        constexpr size_t m = 1;
+
+        CPPAD_ASSERT_KNOWN(rt.size() == n * q, "AtomicReverseRate::for_sparse_jac: 'r' size is incorrect.");
+        CPPAD_ASSERT_KNOWN(st.size() == m * q, "AtomicReverseRate::for_sparse_jac: 's' size is incorrect.");
+
+        // st = rt
+        for (size_t j = 0; j < q; j++) {
+            // st(j, 0) = rt(j, 0)
+            st[j * n] = rt[j * m];
+        }
+
         return true;
     }
 }

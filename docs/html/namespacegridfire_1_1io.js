@@ -1,5 +1,6 @@
 var namespacegridfire_1_1io =
 [
+    [ "gen", "namespacegridfire_1_1io_1_1gen.html", "namespacegridfire_1_1io_1_1gen" ],
     [ "MESANetworkFileParser", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser" ],
     [ "NetworkFileParser", "classgridfire_1_1io_1_1_network_file_parser.html", "classgridfire_1_1io_1_1_network_file_parser" ],
     [ "SimpleReactionListFileParser", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser" ],

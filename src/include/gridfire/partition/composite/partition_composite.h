@@ -6,7 +6,6 @@
 #include "fourdst/logging/logging.h"
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include <memory>
@@ -91,6 +90,9 @@ namespace gridfire::partition {
      private:
          quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
          std::vector<std::unique_ptr<PartitionFunction>> m_partitionFunctions; ///< Set of partition functions to use in the composite partition function.
+
+         mutable std::unordered_map<uint_fast32_t, const PartitionFunction&> m_supportCache; ///< Cache mapping isotope keys to supporting partition functions for fast lookup.
+
      private:
         /**
          * @brief Instantiate a sub-function by its type.
@@ -99,6 +101,6 @@ namespace gridfire::partition {
          * @return Unique pointer to a new PartitionFunction instance of the given type.
          * @throws std::runtime_error If the given type is not recognized.
 +         */
-         std::unique_ptr<PartitionFunction> selectPartitionFunction(const BasePartitionType type) const;
+         [[nodiscard]] std::unique_ptr<PartitionFunction> selectPartitionFunction(BasePartitionType type) const;
      };
  }

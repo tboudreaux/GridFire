@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
-#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc if needed directly
+#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 
 #include <string_view>
 #include <vector>
@@ -22,150 +22,370 @@ void register_reaction_bindings(py::module &m) {
         );
 
     using fourdst::atomic::Species;
-    py::class_<gridfire::reaction::Reaction>(m, "Reaction")
-        .def(py::init<const std::string_view, const std::string_view, int, const std::vector<Species>&, const std::vector<Species>&, double, std::string_view, gridfire::reaction::RateCoefficientSet, bool>(),
-            py::arg("id"), py::arg("peName"), py::arg("chapter"),
-            py::arg("reactants"), py::arg("products"), py::arg("qValue"),
-            py::arg("label"), py::arg("sets"), py::arg("reverse") = false,
-            "Construct a Reaction with the given parameters.")
-        .def("calculate_rate", static_cast<double (gridfire::reaction::Reaction::*)(double) const>(&gridfire::reaction::Reaction::calculate_rate),
-             py::arg("T9"), "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K).")
-        .def("peName", &gridfire::reaction::Reaction::peName,
-             "Get the reaction name in (projectile, ejectile) notation (e.g., 'p(p,g)d').")
-        .def("chapter", &gridfire::reaction::Reaction::chapter,
-            "Get the REACLIB chapter number defining the reaction structure.")
-        .def("sourceLabel", &gridfire::reaction::Reaction::sourceLabel,
-            "Get the source label for the rate data (e.g., 'wc12w', 'st08').")
-        .def("rateCoefficients", &gridfire::reaction::Reaction::rateCoefficients,
-            "get the set of rate coefficients.")
-        .def("contains", &gridfire::reaction::Reaction::contains,
-             py::arg("species"), "Check if the reaction contains a specific species.")
-        .def("contains_reactant", &gridfire::reaction::Reaction::contains_reactant,
-            "Check if the reaction contains a specific reactant species.")
-        .def("contains_product", &gridfire::reaction::Reaction::contains_product,
-            "Check if the reaction contains a specific product species.")
-        .def("all_species", &gridfire::reaction::Reaction::all_species,
-            "Get all species involved in the reaction (both reactants and products) as a set.")
-        .def("reactant_species", &gridfire::reaction::Reaction::reactant_species,
-            "Get the reactant species of the reaction as a set.")
-        .def("product_species", &gridfire::reaction::Reaction::product_species,
-            "Get the product species of the reaction as a set.")
-        .def("num_species", &gridfire::reaction::Reaction::num_species,
-            "Count the number of species in the reaction.")
-        .def("stoichiometry", static_cast<int (gridfire::reaction::Reaction::*)(const Species&) const>(&gridfire::reaction::Reaction::stoichiometry),
-            py::arg("species"),
-            "Get the stoichiometry of the reaction as a map from species to their coefficients.")
-        .def("stoichiometry", static_cast<std::unordered_map<Species, int> (gridfire::reaction::Reaction::*)() const>(&gridfire::reaction::Reaction::stoichiometry),
-             "Get the stoichiometry of the reaction as a map from species to their coefficients.")
-        .def("id", &gridfire::reaction::Reaction::id,
-             "Get the unique identifier of the reaction.")
-        .def("qValue", &gridfire::reaction::Reaction::qValue,
-            "Get the Q-value of the reaction in MeV.")
-        .def("reactants", &gridfire::reaction::Reaction::reactants,
-            "Get a list of reactant species in the reaction.")
-        .def("products", &gridfire::reaction::Reaction::products,
-            "Get a list of product species in the reaction.")
-        .def("is_reverse", &gridfire::reaction::Reaction::is_reverse,
-            "Check if this is a reverse reaction rate.")
-        .def("excess_energy", &gridfire::reaction::Reaction::excess_energy,
-            "Calculate the excess energy from the mass difference of reactants and products.")
-        .def("__eq__", &gridfire::reaction::Reaction::operator==,
-            "Equality operator for reactions based on their IDs.")
-        .def("__neq__", &gridfire::reaction::Reaction::operator!=,
-            "Inequality operator for reactions based on their IDs.")
-        .def("hash", &gridfire::reaction::Reaction::hash,
-             py::arg("seed") = 0,
-             "Compute a hash for the reaction based on its ID.")
-        .def("__repr__", [](const gridfire::reaction::Reaction& self) {
-            std::stringstream ss;
-            ss << self; // Use the existing operator<< for Reaction
-            return ss.str();
-        });
-
-    py::class_<gridfire::reaction::LogicalReaction, gridfire::reaction::Reaction>(m, "LogicalReaction")
-        .def(py::init<const std::vector<gridfire::reaction::Reaction>>(),
-             py::arg("reactions"),
-             "Construct a LogicalReaction from a vector of Reaction objects.")
-        .def("add_reaction", &gridfire::reaction::LogicalReaction::add_reaction,
-             py::arg("reaction"),
-             "Add another Reaction source to this logical reaction.")
-        .def("size", &gridfire::reaction::LogicalReaction::size,
-             "Get the number of source rates contributing to this logical reaction.")
-        .def("__len__", &gridfire::reaction::LogicalReaction::size,
-            "Overload len() to return the number of source rates.")
-        .def("sources", &gridfire::reaction::LogicalReaction::sources,
-            "Get the list of source labels for the aggregated rates.")
-        .def("calculate_rate", static_cast<double (gridfire::reaction::LogicalReaction::*)(double) const>(&gridfire::reaction::LogicalReaction::calculate_rate),
-             py::arg("T9"), "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K).")
-        .def("calculate_forward_rate_log_derivative", &gridfire::reaction::LogicalReaction::calculate_forward_rate_log_derivative,
-             py::arg("T9"), "Calculate the forward rate log derivative at a given temperature T9 (in units of 10^9 K).");
-
-    py::class_<gridfire::reaction::LogicalReactionSet>(m, "LogicalReactionSet")
-        .def(py::init<const std::vector<gridfire::reaction::LogicalReaction>>(),
-            py::arg("reactions"),
-            "Construct a LogicalReactionSet from a vector of LogicalReaction objects.")
-        .def(py::init<>(),
-            "Default constructor for an empty LogicalReactionSet.")
-        .def(py::init<const gridfire::reaction::LogicalReactionSet&>(),
-            py::arg("other"),
-            "Copy constructor for LogicalReactionSet.")
-        .def("add_reaction", &gridfire::reaction::LogicalReactionSet::add_reaction,
-            py::arg("reaction"),
-            "Add a LogicalReaction to the set.")
-        .def("remove_reaction", &gridfire::reaction::LogicalReactionSet::remove_reaction,
-            py::arg("reaction"),
-            "Remove a LogicalReaction from the set.")
-        .def("contains", py::overload_cast<const std::string_view&>(&gridfire::reaction::LogicalReactionSet::contains, py::const_),
+    py::class_<gridfire::reaction::ReaclibReaction>(m, "ReaclibReaction")
+        .def(
+            py::init<
+                const std::string_view,
+                const std::string_view,
+                int,
+                const std::vector<Species>&,
+                const std::vector<Species>&,
+                double, std::string_view,
+                gridfire::reaction::RateCoefficientSet,
+                bool
+            >(),
             py::arg("id"),
-            "Check if the set contains a specific LogicalReaction.")
-        .def("contains", py::overload_cast<const gridfire::reaction::Reaction&>(&gridfire::reaction::LogicalReactionSet::contains, py::const_),
-            py::arg("reaction"),
-            "Check if the set contains a specific Reaction.")
-        .def("size", &gridfire::reaction::LogicalReactionSet::size,
-            "Get the number of LogicalReactions in the set.")
-        .def("__len__", &gridfire::reaction::LogicalReactionSet::size,
-            "Overload len() to return the number of LogicalReactions.")
-        .def("clear", &gridfire::reaction::LogicalReactionSet::clear,
-            "Remove all LogicalReactions from the set.")
-        .def("containes_species", &gridfire::reaction::LogicalReactionSet::contains_species,
-            py::arg("species"),
-            "Check if any reaction in the set involves the given species.")
-        .def("contains_reactant", &gridfire::reaction::LogicalReactionSet::contains_reactant,
-            py::arg("species"),
-            "Check if any reaction in the set has the species as a reactant.")
-        .def("contains_product", &gridfire::reaction::LogicalReactionSet::contains_product,
-            py::arg("species"),
-            "Check if any reaction in the set has the species as a product.")
-        .def("__getitem__", py::overload_cast<size_t>(&gridfire::reaction::LogicalReactionSet::operator[], py::const_),
-            py::arg("index"),
-            "Get a LogicalReaction by index.")
-        .def("__getitem___", py::overload_cast<const std::string_view&>(&gridfire::reaction::LogicalReactionSet::operator[], py::const_),
-            py::arg("id"),
-            "Get a LogicalReaction by its ID.")
-        .def("__eq__", &gridfire::reaction::LogicalReactionSet::operator==,
-            py::arg("LogicalReactionSet"),
-            "Equality operator for LogicalReactionSets based on their contents.")
-        .def("__ne__", &gridfire::reaction::LogicalReactionSet::operator!=,
-            py::arg("LogicalReactionSet"),
-            "Inequality operator for LogicalReactionSets based on their contents.")
-        .def("hash", &gridfire::reaction::LogicalReactionSet::hash,
-             py::arg("seed") = 0,
-             "Compute a hash for the LogicalReactionSet based on its contents."
+            py::arg("peName"),
+            py::arg("chapter"),
+            py::arg("reactants"),
+            py::arg("products"),
+            py::arg("qValue"),
+            py::arg("label"),
+            py::arg("sets"),
+            py::arg("reverse") = false,
+            "Construct a Reaction with the given parameters."
         )
-        .def("__repr__", [](const gridfire::reaction::LogicalReactionSet& self) {
-            std::stringstream ss;
-            ss << self;
-            return ss.str();
-        })
-        .def("getReactionSetSpecies", &gridfire::reaction::LogicalReactionSet::getReactionSetSpecies,
-             "Get all species involved in the reactions of the set as a set of Species objects.");
+        .def(
+            "calculate_rate",
+             [](const gridfire::reaction::ReaclibReaction& self, const double T9, const double rho, const std::vector<double>& Y) -> double {
+                 return self.calculate_rate(T9, rho, 0, {}, Y, {});
+             },
+             py::arg("T9"),
+             py::arg("rho"),
+             py::arg("Y"),
+             "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K)."
+        )
+        .def(
+            "peName",
+            &gridfire::reaction::ReaclibReaction::peName,
+             "Get the reaction name in (projectile, ejectile) notation (e.g., 'p(p,g)d')."
+        )
+        .def(
+            "chapter",
+            &gridfire::reaction::ReaclibReaction::chapter,
+            "Get the REACLIB chapter number defining the reaction structure."
+        )
+        .def(
+            "sourceLabel",
+            &gridfire::reaction::ReaclibReaction::sourceLabel,
+            "Get the source label for the rate data (e.g., 'wc12w', 'st08')."
+        )
+        .def(
+            "rateCoefficients",
+            &gridfire::reaction::ReaclibReaction::rateCoefficients,
+            "get the set of rate coefficients."
+        )
+        .def(
+            "contains",
+            &gridfire::reaction::ReaclibReaction::contains,
+             py::arg("species"),
+             "Check if the reaction contains a specific species."
+        )
+        .def(
+            "contains_reactant",
+            &gridfire::reaction::ReaclibReaction::contains_reactant,
+            "Check if the reaction contains a specific reactant species."
+        )
+        .def(
+            "contains_product",
+            &gridfire::reaction::ReaclibReaction::contains_product,
+            "Check if the reaction contains a specific product species."
+        )
+        .def(
+            "all_species",
+            &gridfire::reaction::ReaclibReaction::all_species,
+            "Get all species involved in the reaction (both reactants and products) as a set."
+        )
+        .def(
+            "reactant_species",
+            &gridfire::reaction::ReaclibReaction::reactant_species,
+            "Get the reactant species of the reaction as a set."
+        )
+        .def(
+            "product_species",
+            &gridfire::reaction::ReaclibReaction::product_species,
+            "Get the product species of the reaction as a set."
+        )
+        .def(
+            "num_species",
+            &gridfire::reaction::ReaclibReaction::num_species,
+            "Count the number of species in the reaction."
+        )
+        .def(
+            "stoichiometry",
+            [](const gridfire::reaction::ReaclibReaction& self, const Species& species) -> int {
+                return self.stoichiometry(species);
+            },
+            py::arg("species"),
+            "Get the stoichiometry of the reaction as a map from species to their coefficients."
+        )
+        .def(
+            "stoichiometry",
+            [](const gridfire::reaction::ReaclibReaction& self) -> std::unordered_map<Species, int> {
+                return self.stoichiometry();
+            },
+             "Get the stoichiometry of the reaction as a map from species to their coefficients."
+        )
+        .def(
+            "id",
+            &gridfire::reaction::ReaclibReaction::id,
+             "Get the unique identifier of the reaction."
+        )
+        .def(
+            "qValue",
+            &gridfire::reaction::ReaclibReaction::qValue,
+            "Get the Q-value of the reaction in MeV."
+        )
+        .def(
+            "reactants",
+            &gridfire::reaction::ReaclibReaction::reactants,
+            "Get a list of reactant species in the reaction."
+        )
+        .def(
+            "products",
+            &gridfire::reaction::ReaclibReaction::products,
+            "Get a list of product species in the reaction."
+        )
+        .def(
+            "is_reverse",
+            &gridfire::reaction::ReaclibReaction::is_reverse,
+            "Check if this is a reverse reaction rate."
+        )
+        .def(
+            "excess_energy",
+            &gridfire::reaction::ReaclibReaction::excess_energy,
+            "Calculate the excess energy from the mass difference of reactants and products."
+        )
+        .def(
+            "__eq__",
+            &gridfire::reaction::ReaclibReaction::operator==,
+            "Equality operator for reactions based on their IDs."
+        )
+        .def(
+            "__neq__",
+            &gridfire::reaction::ReaclibReaction::operator!=,
+            "Inequality operator for reactions based on their IDs."
+        )
+        .def(
+            "hash",
+            &gridfire::reaction::ReaclibReaction::hash,
+             py::arg("seed") = 0,
+             "Compute a hash for the reaction based on its ID."
+        )
+        .def(
+            "__repr__",
+            [](const gridfire::reaction::ReaclibReaction& self) {
+                std::stringstream ss;
+                ss << self; // Use the existing operator<< for Reaction
+                return ss.str();
+            }
+        );
 
-        m.def("packReactionSetToLogicalReactionSet",
-            &gridfire::reaction::packReactionSetToLogicalReactionSet,
+    py::class_<gridfire::reaction::LogicalReaclibReaction, gridfire::reaction::ReaclibReaction>(m, "LogicalReaclibReaction")
+        .def(
+            py::init<const std::vector<gridfire::reaction::ReaclibReaction>>(),
+             py::arg("reactions"),
+             "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."
+        )
+        .def(
+            py::init<const std::vector<gridfire::reaction::ReaclibReaction>, bool>(),
+             py::arg("reactions"),
+             py::arg("is_reverse"),
+             "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."
+        )
+        .def(
+            "add_reaction",
+            &gridfire::reaction::LogicalReaclibReaction::add_reaction,
+             py::arg("reaction"),
+             "Add another Reaction source to this logical reaction."
+        )
+        .def(
+            "size",
+            &gridfire::reaction::LogicalReaclibReaction::size,
+             "Get the number of source rates contributing to this logical reaction."
+        )
+        .def(
+            "__len__",
+            &gridfire::reaction::LogicalReaclibReaction::size,
+            "Overload len() to return the number of source rates."
+        )
+        .def(
+            "sources",
+            &gridfire::reaction::LogicalReaclibReaction::sources,
+            "Get the list of source labels for the aggregated rates."
+        )
+        .def(
+            "calculate_rate",
+            [](
+                const gridfire::reaction::LogicalReaclibReaction& self,
+                const double T9,
+                const double rho,
+                const double Ye,
+                const double mue,
+                const std::vector<double>& Y,
+                const std::unordered_map<size_t, Species>& index_to_species_map
+            ) -> double {
+                return self.calculate_rate(T9, rho, Ye, mue, Y, index_to_species_map);
+            },
+            py::arg("T9"),
+            py::arg("rho"),
+            py::arg("Ye"),
+            py::arg("mue"),
+            py::arg("Y"),
+            py::arg("index_to_species_map"),
+            "Calculate the reaction rate at a given temperature T9 (in units of 10^9 K). Note that for a reaclib reaction only T9 is actually used, all other parameters are there for interface compatibility."
+        )
+        .def(
+            "calculate_forward_rate_log_derivative",
+            &gridfire::reaction::LogicalReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9,
+            py::arg("T9"),
+            py::arg("rho"),
+            py::arg("Ye"),
+            py::arg("mue"),
+            py::arg("Composition"),
+            "Calculate the forward rate log derivative at a given temperature T9 (in units of 10^9 K)."
+        );
+
+    py::class_<gridfire::reaction::ReactionSet>(m, "ReactionSet")
+        .def(
+            py::init<const std::vector<gridfire::reaction::Reaction*>>(),
+            py::arg("reactions"),
+            py::keep_alive<1, 2>(), // Keep arg 2 (reactions) alive as long as arg 1 (self) is alive. This helps mitigate use-after-free errors
+            "Construct a LogicalReactionSet from a vector of LogicalReaclibReaction objects."
+        )
+        .def_static(
+            "from_clones",
+            [](const std::vector<gridfire::reaction::Reaction*>& py_reactions) {
+                std::vector<std::unique_ptr<gridfire::reaction::Reaction>> cpp_reactions;
+                cpp_reactions.reserve(py_reactions.size());
+                for (const auto& reaction : py_reactions) {
+                    cpp_reactions.emplace_back(reaction->clone());
+                }
+                return std::make_unique<gridfire::reaction::ReactionSet>(std::move(cpp_reactions));
+            },
+            py::arg("reactions"),
+            "Create a ReactionSet that takes ownership of the reactions by cloning the input reactions."
+        )
+        .def(
+            py::init<>(),
+            "Default constructor for an empty LogicalReactionSet."
+        )
+        .def(
+            py::init<const gridfire::reaction::ReactionSet&>(),
+            py::arg("other"),
+            "Copy constructor for LogicalReactionSet."
+        )
+        .def(
+            "add_reaction",
+            py::overload_cast<const gridfire::reaction::Reaction&>(&gridfire::reaction::ReactionSet::add_reaction),
+            py::arg("reaction"),
+            "Add a LogicalReaclibReaction to the set."
+        )
+        .def(
+            "remove_reaction",
+            &gridfire::reaction::ReactionSet::remove_reaction,
+            py::arg("reaction"),
+            "Remove a LogicalReaclibReaction from the set."
+        )
+        .def(
+            "contains",
+            py::overload_cast<const std::string_view&>(&gridfire::reaction::ReactionSet::contains, py::const_),
+            py::arg("id"),
+            "Check if the set contains a specific LogicalReaclibReaction."
+        )
+        .def(
+            "contains",
+            py::overload_cast<const gridfire::reaction::Reaction&>(&gridfire::reaction::ReactionSet::contains, py::const_),
+            py::arg("reaction"),
+            "Check if the set contains a specific Reaction."
+        )
+        .def(
+            "size",
+            &gridfire::reaction::ReactionSet::size,
+            "Get the number of LogicalReactions in the set."
+        )
+        .def(
+            "__len__", &gridfire::reaction::ReactionSet::size,
+            "Overload len() to return the number of LogicalReactions."
+        )
+        .def(
+            "clear",
+            &gridfire::reaction::ReactionSet::clear,
+            "Remove all LogicalReactions from the set."
+        )
+        .def("contains_species",
+            &gridfire::reaction::ReactionSet::contains_species,
+            py::arg("species"),
+            "Check if any reaction in the set involves the given species."
+        )
+        .def(
+            "contains_reactant",
+            &gridfire::reaction::ReactionSet::contains_reactant,
+            py::arg("species"),
+            "Check if any reaction in the set has the species as a reactant."
+        )
+        .def(
+            "contains_product",
+            &gridfire::reaction::ReactionSet::contains_product,
+            py::arg("species"),
+            "Check if any reaction in the set has the species as a product."
+        )
+        .def(
+            "__getitem__",
+            py::overload_cast<size_t>(&gridfire::reaction::ReactionSet::operator[], py::const_),
+            py::return_value_policy::reference,
+            py::arg("index"),
+            "Get a LogicalReaclibReaction by index."
+        )
+        .def(
+            "__getitem___",
+            py::overload_cast<const std::string_view&>(&gridfire::reaction::ReactionSet::operator[], py::const_),
+            py::return_value_policy::reference,
+            py::arg("id"),
+            "Get a LogicalReaclibReaction by its ID."
+        )
+        .def(
+            "__eq__",
+            &gridfire::reaction::ReactionSet::operator==,
+            py::arg("LogicalReactionSet"),
+            "Equality operator for LogicalReactionSets based on their contents."
+        )
+        .def(
+            "__ne__",
+            &gridfire::reaction::ReactionSet::operator!=,
+            py::arg("LogicalReactionSet"),
+            "Inequality operator for LogicalReactionSets based on their contents."
+        )
+        .def(
+            "hash",
+            &gridfire::reaction::ReactionSet::hash,
+            py::arg("seed") = 0,
+            "Compute a hash for the LogicalReactionSet based on its contents."
+        )
+        .def(
+            "__repr__",
+            [](const gridfire::reaction::ReactionSet& self) {
+                std::stringstream ss;
+                ss << self;
+                return ss.str();
+            }
+        )
+        .def(
+            "getReactionSetSpecies",
+            &gridfire::reaction::ReactionSet::getReactionSetSpecies,
+             "Get all species involved in the reactions of the set as a set of Species objects."
+        );
+
+        m.def(
+            "packReactionSet",
+            &gridfire::reaction::packReactionSet,
             py::arg("reactionSet"),
             "Convert a ReactionSet to a LogicalReactionSet by aggregating reactions with the same peName."
         );
 
-        m.def("get_all_reactions", &gridfire::reaclib::get_all_reactions,
-            "Get all reactions from the REACLIB database.");
+        m.def(
+            "get_all_reactions",
+            &gridfire::reaclib::get_all_reaclib_reactions,
+            "Get all reactions from the REACLIB database."
+        );
 }

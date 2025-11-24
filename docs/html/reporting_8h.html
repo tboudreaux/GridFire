@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -103,52 +103,67 @@ $(function(){initNavTree('reporting_8h.html',''); initResizable(true); });
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">reporting.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;map&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;ranges&gt;</code><br />
-<code>#include &lt;vector&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;ostream&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
 <code>#include &quot;fourdst/composition/composition.h&quot;</code><br />
-<code>#include &quot;fourdst/composition/atomicSpecies.h&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for reporting.h:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="reporting_8h__incl.svg" width="478" height="140"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="reporting_8h__dep__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_priming_report.html">gridfire::PrimingReport</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Captures the result of a network priming operation.  <a href="structgridfire_1_1_priming_report.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">gridfire::engine::PrimingReport</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Captures the result of a network priming operation.  <a href="structgridfire_1_1engine_1_1_priming_report.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a8bea3d74f35d640e693fa398e9b3e154" id="r_a8bea3d74f35d640e693fa398e9b3e154"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154">gridfire::PrimingReportStatus</a> { <br />
-&#160;&#160;<a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a64d98633bac1de0eb2a539cbfd2a5c2a">gridfire::FULL_SUCCESS</a> = 0
-, <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a708c14ec56942aa5f32e7bef1e29db45">gridfire::NO_SPECIES_TO_PRIME</a> = 1
-, <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a5afaf45bc4c02208d502d9c0c26d8287">gridfire::MAX_ITERATIONS_REACHED</a> = 2
-, <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154ae8870a753743b62c511c939eef95c93f">gridfire::FAILED_TO_FINALIZE_COMPOSITION</a> = 3
-, <br />
-&#160;&#160;<a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a9870268bdece09274aea75557a19158a">gridfire::FAILED_TO_FIND_CREATION_CHANNEL</a> = 4
-, <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154a186367e42446c004076290ca7913d931">gridfire::FAILED_TO_FIND_PRIMING_REACTIONS</a> = 5
-, <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154ab837953f2841baabbae6bb5f2e43e71e">gridfire::BASE_NETWORK_TOO_SHALLOW</a> = 6
-<br />
+<tr class="memitem:ada706e6a92b733f6be85aa4425b135c1" id="r_ada706e6a92b733f6be85aa4425b135c1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1">gridfire::engine::PrimingReportStatus</a> { <a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1ad0749aaba8b833466dfcbb0428e4f89c">gridfire::engine::SUCCESS</a>
+, <a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1aa79c9fd21a71b9db74af815d8fed8397">gridfire::engine::ALREADY_PRIMED</a>
+, <a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1afae3583994fb36fc9a5efcfe0a9b35c9">gridfire::engine::SOLVER_FAILURE</a>
  }</td></tr>
-<tr class="memdesc:a8bea3d74f35d640e693fa398e9b3e154"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates outcome codes for a network priming operation.  <a href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154">More...</a><br /></td></tr>
-<tr class="separator:a8bea3d74f35d640e693fa398e9b3e154"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ada706e6a92b733f6be85aa4425b135c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates outcome codes for a network priming operation.  <a href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1">More...</a><br /></td></tr>
+<tr class="separator:ada706e6a92b733f6be85aa4425b135c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83c9d755597668bba3cf00cd0ea10ee3" id="r_a83c9d755597668bba3cf00cd0ea10ee3"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">gridfire::engine::SpeciesStatus</a> { <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a18ff74f43da410c5529f7d6fca84f115">gridfire::engine::ACTIVE</a>
+, <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a07516dd4b4fea20466b56654d553549f">gridfire::engine::EQUILIBRIUM</a>
+, <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a898112b589038d0a221e6a3eae3ba64f">gridfire::engine::INACTIVE_FLOW</a>
+, <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a4b8e04af593e6ce16901570c52fe5607">gridfire::engine::NOT_PRESENT</a>
+ }</td></tr>
+<tr class="memdesc:a83c9d755597668bba3cf00cd0ea10ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the status of a species in the simulation.  <a href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">More...</a><br /></td></tr>
+<tr class="separator:a83c9d755597668bba3cf00cd0ea10ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a6d1bd8b2b8161b50a260bf012c3f058f" id="r_a6d1bd8b2b8161b50a260bf012c3f058f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a6d1bd8b2b8161b50a260bf012c3f058f">gridfire::engine::SpeciesStatus_to_string</a> (const <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">SpeciesStatus</a> status)</td></tr>
+<tr class="memdesc:a6d1bd8b2b8161b50a260bf012c3f058f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3" title="Enumerates the status of a species in the simulation.">SpeciesStatus</a> enum value to its string representation.  <br /></td></tr>
+<tr class="separator:a6d1bd8b2b8161b50a260bf012c3f058f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a02be158966bf82a91b159b7a962c3fa5" id="r_a02be158966bf82a91b159b7a962c3fa5"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154">PrimingReportStatus</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a02be158966bf82a91b159b7a962c3fa5">gridfire::PrimingReportStatusStrings</a></td></tr>
-<tr class="memdesc:a02be158966bf82a91b159b7a962c3fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mapping from <a class="el" href="namespacegridfire.html#a8bea3d74f35d640e693fa398e9b3e154" title="Enumerates outcome codes for a network priming operation.">PrimingReportStatus</a> codes to human-readable strings.  <br /></td></tr>
-<tr class="separator:a02be158966bf82a91b159b7a962c3fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ec7640033e9b4418220e91f17bde16b" id="r_a1ec7640033e9b4418220e91f17bde16b"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1">PrimingReportStatus</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a1ec7640033e9b4418220e91f17bde16b">gridfire::engine::PrimingReportStatusStrings</a></td></tr>
+<tr class="memdesc:a1ec7640033e9b4418220e91f17bde16b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mapping from <a class="el" href="namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1" title="Enumerates outcome codes for a network priming operation.">PrimingReportStatus</a> codes to human-readable strings.  <br /></td></tr>
+<tr class="separator:a1ec7640033e9b4418220e91f17bde16b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

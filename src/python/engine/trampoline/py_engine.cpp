@@ -23,10 +23,9 @@ const std::vector<fourdst::atomic::Species>& PyEngine::getNetworkSpecies() const
     /*
      * get_override() looks for a Python method that overrides this C++ one.
      */
-    py::function override = py::get_override(this, "getNetworkSpecies");
 
-    if (override) {
-        py::object result = override();
+    if (const py::function override = py::get_override(this, "getNetworkSpecies")) {
+        const py::object result = override();
         m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
         return m_species_cache;
     }
@@ -34,12 +33,12 @@ const std::vector<fourdst::atomic::Species>& PyEngine::getNetworkSpecies() const
     py::pybind11_fail("Tried to call pure virtual function \"DynamicEngine::getNetworkSpecies\"");
 }
 
-std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyEngine::calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const {
+std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyEngine::calculateRHSAndEnergy(const fourdst::composition::Composition &comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         PYBIND11_TYPE(std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError>),
         gridfire::Engine,
         calculateRHSAndEnergy,
-        Y, T9, rho
+        comp, T9, rho
     );
 }
 
@@ -57,49 +56,71 @@ const std::vector<fourdst::atomic::Species>& PyDynamicEngine::getNetworkSpecies(
     /*
      * get_override() looks for a Python method that overrides this C++ one.
      */
-    py::function override = py::get_override(this, "getNetworkSpecies");
 
-    if (override) {
-        py::object result = override();
+    if (const py::function override = py::get_override(this, "getNetworkSpecies")) {
+        const py::object result = override();
         m_species_cache = result.cast<std::vector<fourdst::atomic::Species>>();
         return m_species_cache;
     }
 
     py::pybind11_fail("Tried to call pure virtual function \"DynamicEngine::getNetworkSpecies\"");
 }
-std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::calculateRHSAndEnergy(const std::vector<double> &Y, double T9, double rho) const {
+std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::calculateRHSAndEnergy(const fourdst::composition::Composition &comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         PYBIND11_TYPE(std::expected<gridfire::StepDerivatives<double>, gridfire::expectations::StaleEngineError>),
         gridfire::Engine,
         calculateRHSAndEnergy,
-        Y, T9, rho
+        comp, T9, rho
     );
 }
 
-void PyDynamicEngine::generateJacobianMatrix(const std::vector<double> &Y_dynamic, double T9, double rho) const {
+void PyDynamicEngine::generateJacobianMatrix(const fourdst::composition::Composition& comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         void,
         gridfire::DynamicEngine,
         generateJacobianMatrix,
-        Y_dynamic, T9, rho
+        comp,
+        T9,
+        rho
     );
 }
 
-void PyDynamicEngine::generateJacobianMatrix(const std::vector<double> &Y_dynamic, double T9, double rho, const gridfire::SparsityPattern &sparsityPattern) const {
+void PyDynamicEngine::generateJacobianMatrix(
+    const fourdst::composition::Composition &comp,
+    const double T9,
+    const double rho,
+    const std::vector<fourdst::atomic::Species> &activeSpecies
+) const {
     PYBIND11_OVERRIDE_PURE(
         void,
         gridfire::DynamicEngine,
         generateJacobianMatrix,
-        Y_dynamic, T9, rho, sparsityPattern
+        comp,
+        T9,
+        rho,
+        activeSpecies
     );
 }
 
-double PyDynamicEngine::getJacobianMatrixEntry(int i, int j) const {
+void PyDynamicEngine::generateJacobianMatrix(const fourdst::composition::Composition &comp, double T9, double rho, const gridfire::SparsityPattern &sparsityPattern) const {
+    PYBIND11_OVERRIDE_PURE(
+        void,
+        gridfire::DynamicEngine,
+        generateJacobianMatrix,
+        comp,
+        T9,
+        rho,
+        sparsityPattern
+    );
+}
+
+double PyDynamicEngine::getJacobianMatrixEntry(const fourdst::atomic::Species& rowSpecies, const fourdst::atomic::Species& colSpecies) const {
     PYBIND11_OVERRIDE_PURE(
         double,
         gridfire::DynamicEngine,
         getJacobianMatrixEntry,
-        i, j
+        rowSpecies,
+        colSpecies
     );
 }
 
@@ -111,33 +132,37 @@ void PyDynamicEngine::generateStoichiometryMatrix() {
     );
 }
 
-int PyDynamicEngine::getStoichiometryMatrixEntry(int speciesIndex, int reactionIndex) const {
+int PyDynamicEngine::getStoichiometryMatrixEntry(const fourdst::atomic::Species& species, const gridfire::reaction::Reaction& reaction) const {
     PYBIND11_OVERRIDE_PURE(
         int,
         gridfire::DynamicEngine,
         getStoichiometryMatrixEntry,
-        speciesIndex, reactionIndex
+        species,
+        reaction
     );
 }
 
-double PyDynamicEngine::calculateMolarReactionFlow(const gridfire::reaction::Reaction &reaction, const std::vector<double> &Y, double T9, double rho) const {
+double PyDynamicEngine::calculateMolarReactionFlow(const gridfire::reaction::Reaction &reaction, const fourdst::composition::Composition &comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         double,
         gridfire::DynamicEngine,
         calculateMolarReactionFlow,
-        reaction, Y, T9, rho
+        reaction,
+        comp,
+        T9,
+        rho
     );
 }
 
-const gridfire::reaction::LogicalReactionSet& PyDynamicEngine::getNetworkReactions() const {
+const gridfire::reaction::ReactionSet& PyDynamicEngine::getNetworkReactions() const {
     PYBIND11_OVERRIDE_PURE(
-        const gridfire::reaction::LogicalReactionSet&,
+        const gridfire::reaction::ReactionSet&,
         gridfire::DynamicEngine,
         getNetworkReactions
     );
 }
 
-void PyDynamicEngine::setNetworkReactions(const gridfire::reaction::LogicalReactionSet& reactions) {
+void PyDynamicEngine::setNetworkReactions(const gridfire::reaction::ReactionSet& reactions) {
     PYBIND11_OVERRIDE_PURE(
         void,
         gridfire::DynamicEngine,
@@ -146,21 +171,23 @@ void PyDynamicEngine::setNetworkReactions(const gridfire::reaction::LogicalReact
     );
 }
 
-std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::getSpeciesTimescales(const std::vector<double> &Y, double T9, double rho) const {
+std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::getSpeciesTimescales(const fourdst::composition::Composition &comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         PYBIND11_TYPE(std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError>),
         gridfire::DynamicEngine,
         getSpeciesTimescales,
-        Y, T9, rho
+        comp,
+        T9,
+        rho
     );
 }
 
-std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::getSpeciesDestructionTimescales(const std::vector<double> &Y, double T9, double rho) const {
+std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError> PyDynamicEngine::getSpeciesDestructionTimescales(const fourdst::composition::Composition &comp, double T9, double rho) const {
     PYBIND11_OVERRIDE_PURE(
         PYBIND11_TYPE(std::expected<std::unordered_map<fourdst::atomic::Species, double>, gridfire::expectations::StaleEngineError>),
         gridfire::DynamicEngine,
         getSpeciesDestructionTimescales,
-        Y, T9, rho
+        comp, T9, rho
     );
 }
 
@@ -199,7 +226,7 @@ gridfire::screening::ScreeningType PyDynamicEngine::getScreeningModel() const {
     );
 }
 
-int PyDynamicEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+size_t PyDynamicEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
     PYBIND11_OVERRIDE_PURE(
         int,
         gridfire::DynamicEngine,
@@ -223,6 +250,31 @@ gridfire::PrimingReport PyDynamicEngine::primeEngine(const gridfire::NetIn &netI
         gridfire::DynamicEngine,
         primeEngine,
         netIn
+    );
+}
+
+gridfire::EnergyDerivatives PyDynamicEngine::calculateEpsDerivatives(
+    const fourdst::composition::Composition &comp,
+    const double T9,
+    const double rho) const {
+    PYBIND11_OVERRIDE_PURE(
+        gridfire::EnergyDerivatives,
+        gridfire::DynamicEngine,
+        calculateEpsDerivatives,
+        comp,
+        T9,
+        rho
+    );
+}
+
+fourdst::composition::Composition PyDynamicEngine::collectComposition(
+    fourdst::composition::Composition &comp
+) const {
+    PYBIND11_OVERRIDE_PURE(
+        fourdst::composition::Composition,
+        gridfire::DynamicEngine,
+        collectComposition,
+        comp
     );
 }
 

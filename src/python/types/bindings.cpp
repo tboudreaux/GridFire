@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
 #include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
+#include <format>
 
 #include "bindings.h"
 
@@ -8,7 +9,7 @@ namespace py = pybind11;
 
 #include "gridfire/network.h"
 
-void register_type_bindings(pybind11::module &m) {
+void register_type_bindings(const pybind11::module &m) {
     py::class_<gridfire::NetIn>(m, "NetIn")
     .def(py::init<>())
     .def_readwrite("composition", &gridfire::NetIn::composition)
@@ -32,12 +33,18 @@ void register_type_bindings(pybind11::module &m) {
         .def_readonly("composition", &gridfire::NetOut::composition)
         .def_readonly("num_steps", &gridfire::NetOut::num_steps)
         .def_readonly("energy", &gridfire::NetOut::energy)
+        .def_readonly("dEps_dT", &gridfire::NetOut::dEps_dT)
+        .def_readonly("dEps_dRho", &gridfire::NetOut::dEps_dRho)
         .def("__repr__", [](const gridfire::NetOut &netOut) {
-            std::stringstream ss;
-            ss << "NetOut(composition=" << netOut.composition
-               << ", num_steps=" << netOut.num_steps
-               << ", energy=" << netOut.energy << ")";
-            return ss.str();
+            std::string repr = std::format(
+                "NetOut(<μ> = {} steps = {}, ε = {}, dε/dT = {}, dε/dρ = {})",
+                netOut.composition.getMeanParticleMass(),
+                netOut.num_steps,
+                netOut.energy,
+                netOut.dEps_dT,
+                netOut.dEps_dRho
+            );
+            return repr;
         });
 
 }

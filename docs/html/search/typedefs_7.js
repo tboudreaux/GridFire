@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['matrix_5ftype_0',['matrix_type',['../namespacegridfire_1_1approx8.html#a275aecf94e3145c2ff3d1756deda54ce',1,'gridfire::approx8']]]
+  ['qsepartition_0',['QSEPartition',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a892741542388166db4dc55631567ee0a',1,'gridfire::engine::MultiscalePartitioningEngineView']]]
 ];

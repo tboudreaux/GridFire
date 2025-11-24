@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parsednetworkdata_0',['ParsedNetworkData',['../namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352',1,'gridfire::io']]]
+  ['sparsitypattern_0',['SparsityPattern',['../namespacegridfire_1_1engine.html#a9de1791ec719c0a9b76b835703336870',1,'gridfire::engine']]]
 ];

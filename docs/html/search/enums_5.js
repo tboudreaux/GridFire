@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['screeningtype_0',['ScreeningType',['../namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25',1,'gridfire::screening']]],
-  ['staleengineerrortypes_1',['StaleEngineErrorTypes',['../namespacegridfire_1_1expectations.html#aef568e2802c03adef56dbcb6511d66c7',1,'gridfire::expectations']]]
+  ['primingreportstatus_0',['PrimingReportStatus',['../namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1',1,'gridfire::engine']]]
 ];

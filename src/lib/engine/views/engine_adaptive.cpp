@@ -5,103 +5,34 @@
 #include <algorithm>
 
 
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_engine.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::atomic::Species;
     AdaptiveEngineView::AdaptiveEngineView(
         DynamicEngine &baseEngine
     ) :
     m_baseEngine(baseEngine),
     m_activeSpecies(baseEngine.getNetworkSpecies()),
-    m_activeReactions(baseEngine.getNetworkReactions()),
-    m_speciesIndexMap(constructSpeciesIndexMap()),
-    m_reactionIndexMap(constructReactionIndexMap())
-    {
-    }
-
-    std::vector<size_t> AdaptiveEngineView::constructSpeciesIndexMap() const {
-        LOG_TRACE_L1(m_logger, "Constructing species index map for adaptive engine view...");
-        std::unordered_map<Species, size_t> fullSpeciesReverseMap;
-        const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
-
-        fullSpeciesReverseMap.reserve(fullSpeciesList.size());
-
-        for (size_t i = 0; i < fullSpeciesList.size(); ++i) {
-            fullSpeciesReverseMap[fullSpeciesList[i]] = i;
-        }
-
-        std::vector<size_t> speciesIndexMap;
-        speciesIndexMap.reserve(m_activeSpecies.size());
-
-        for (const auto& active_species : m_activeSpecies) {
-            auto it = fullSpeciesReverseMap.find(active_species);
-            if (it != fullSpeciesReverseMap.end()) {
-                speciesIndexMap.push_back(it->second);
-            } else {
-                LOG_ERROR(m_logger, "Species '{}' not found in full species map.", active_species.name());
-                m_logger -> flush_log();
-                throw std::runtime_error("Species not found in full species map: " + std::string(active_species.name()));
-            }
-        }
-        LOG_TRACE_L1(m_logger, "Species index map constructed with {} entries.", speciesIndexMap.size());
-        return speciesIndexMap;
-
-    }
-
-    std::vector<size_t> AdaptiveEngineView::constructReactionIndexMap() const {
-        LOG_TRACE_L1(m_logger, "Constructing reaction index map for adaptive engine view...");
-
-        // --- Step 1: Create a reverse map using the reaction's unique ID as the key. ---
-        std::unordered_map<std::string_view, size_t> fullReactionReverseMap;
-        const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
-        fullReactionReverseMap.reserve(fullReactionSet.size());
-
-        for (size_t i_full = 0; i_full < fullReactionSet.size(); ++i_full) {
-            fullReactionReverseMap[fullReactionSet[i_full].id()] = i_full;
-        }
-
-        // --- Step 2: Build the final index map using the active reaction set. ---
-        std::vector<size_t> reactionIndexMap;
-        reactionIndexMap.reserve(m_activeReactions.size());
-
-        for (const auto& active_reaction_ptr : m_activeReactions) {
-            auto it = fullReactionReverseMap.find(active_reaction_ptr.id());
-
-            if (it != fullReactionReverseMap.end()) {
-                reactionIndexMap.push_back(it->second);
-            } else {
-                LOG_ERROR(m_logger, "Active reaction '{}' not found in base engine during reaction index map construction.", active_reaction_ptr.id());
-                m_logger->flush_log();
-                throw std::runtime_error("Mismatch between active reactions and base engine.");
-            }
-        }
-
-        LOG_TRACE_L1(m_logger, "Reaction index map constructed with {} entries.", reactionIndexMap.size());
-        return reactionIndexMap;
-    }
+    m_activeReactions(baseEngine.getNetworkReactions())
+    {}
 
     fourdst::composition::Composition AdaptiveEngineView::update(const NetIn &netIn) {
+        m_activeReactions.clear();
+        m_activeSpecies.clear();
+
         fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
         NetIn updatedNetIn = netIn;
 
-        // for (const auto &entry: netIn.composition | std::views::values) {
-        //     if (baseUpdatedComposition.contains(entry.isotope())) {
-        //         updatedNetIn.composition.setMassFraction(entry.isotope(), baseUpdatedComposition.getMassFraction(entry.isotope()));
-        //     }
-        // }
         updatedNetIn.composition = baseUpdatedComposition;
-
-        updatedNetIn.composition.finalize(false);
 
         LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 
-        std::vector<double> Y_Full;
-        std::vector<ReactionFlow> allFlows = calculateAllReactionFlows(updatedNetIn, Y_Full);
+        auto [allFlows, composition] = calculateAllReactionFlows(updatedNetIn);
 
         double maxFlow = 0.0;
 
@@ -115,24 +46,21 @@ namespace gridfire {
         const std::unordered_set<Species> reachableSpecies = findReachableSpecies(updatedNetIn);
         LOG_DEBUG(m_logger, "Found {} reachable species in adaptive engine view.", reachableSpecies.size());
 
-        const std::vector<const reaction::LogicalReaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, Y_Full, maxFlow);
+        const std::vector<const reaction::Reaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, composition, maxFlow);
 
         finalizeActiveSet(finalReactions);
 
-        auto [rescuedReactions, rescuedSpecies] = rescueEdgeSpeciesDestructionChannel(Y_Full, netIn.temperature/1e9, netIn.density, m_activeSpecies, m_activeReactions);
+        auto [rescuedReactions, rescuedSpecies] = rescueEdgeSpeciesDestructionChannel(composition, netIn.temperature/1e9, netIn.density, m_activeSpecies, m_activeReactions);
 
         for (const auto& reactionPtr : rescuedReactions) {
             m_activeReactions.add_reaction(*reactionPtr);
         }
 
         for (const auto& species : rescuedSpecies) {
-            if (!std::ranges::contains(m_activeSpecies, species)) {
+            if (!std::ranges::contains(m_activeSpecies, species) && m_baseEngine.getSpeciesStatus(species) == SpeciesStatus::ACTIVE) {
                 m_activeSpecies.push_back(species);
             }
         }
-
-        m_speciesIndexMap = constructSpeciesIndexMap();
-        m_reactionIndexMap = constructReactionIndexMap();
 
         m_isStale = false;
 
@@ -149,49 +77,94 @@ namespace gridfire {
         return m_activeSpecies;
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> AdaptiveEngineView::calculateRHSAndEnergy(
-        const std::vector<double> &Y_culled,
+    std::expected<StepDerivatives<double>, EngineStatus> AdaptiveEngineView::calculateRHSAndEnergy(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
+        LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in AdaptiveEngineView at T9 = {}, rho = {}.", T9, rho);
         validateState();
-
-        const auto Y_full = mapCulledToFull(Y_culled);
-
-        auto result = m_baseEngine.calculateRHSAndEnergy(Y_full, T9, rho);
+        LOG_TRACE_L2(
+            m_logger,
+            "Adaptive engine view state validated prior to composition collection. Input Composition: {}",
+            [&comp]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                for (const auto& [species, abundance] : comp) {
+                    ss << species.name() << ": " << abundance;
+                    if (i < comp.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                return ss.str();
+            }());
+        fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
+        LOG_TRACE_L2(
+            m_logger,
+            "Composition Collected prior to passing to base engine. Collected Composition: {}",
+            [&comp, &collectedComp]() -> std::string {
+                std::stringstream ss;
+                size_t i = 0;
+                for (const auto& [species, abundance] : collectedComp) {
+                    ss << species.name() << ": " << abundance;
+                    if (comp.contains(species)) {
+                        ss << " (input: " << comp.getMolarAbundance(species) << ")";
+                    }
+                    if (i < collectedComp.size() - 1) {
+                        ss << ", ";
+                    }
+                    i++;
+                }
+                return ss.str();
+            }());
+        auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho);
+        LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
+            LOG_TRACE_L2(m_logger, "Base engine returned stale error during RHS and Energy calculation.");
             return std::unexpected{result.error()};
         }
 
-        const auto [dydt, nuclearEnergyGenerationRate] = result.value();
-        StepDerivatives<double> culledResults;
-        culledResults.nuclearEnergyGenerationRate = nuclearEnergyGenerationRate;
-        culledResults.dydt = mapFullToCulled(dydt);
-
-        return culledResults;
+        return result.value();
     }
 
-    void AdaptiveEngineView::generateJacobianMatrix(
-        const std::vector<double> &Y_dynamic,
+    EnergyDerivatives AdaptiveEngineView::calculateEpsDerivatives(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
         validateState();
-        const auto Y_full = mapCulledToFull(Y_dynamic);
-
-        m_baseEngine.generateJacobianMatrix(Y_full, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
     }
 
-    double AdaptiveEngineView::getJacobianMatrixEntry(
-        const int i_culled,
-        const int j_culled
+    NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        return generateJacobianMatrix(comp, T9, rho, m_activeSpecies);
+    }
+
+    NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const std::vector<Species> &activeSpecies
     ) const {
         validateState();
-        const size_t i_full = mapCulledToFullSpeciesIndex(i_culled);
-        const size_t j_full = mapCulledToFullSpeciesIndex(j_culled);
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, activeSpecies);
 
-        return m_baseEngine.getJacobianMatrixEntry(i_full, j_full);
+    }
+
+    NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const SparsityPattern &sparsityPattern
+    ) const {
+        validateState();
+        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
     }
 
     void AdaptiveEngineView::generateStoichiometryMatrix() {
@@ -200,18 +173,16 @@ namespace gridfire {
     }
 
     int AdaptiveEngineView::getStoichiometryMatrixEntry(
-        const int speciesIndex_culled,
-        const int reactionIndex_culled
+        const Species &species,
+        const reaction::Reaction& reaction
     ) const {
         validateState();
-        const size_t speciesIndex_full = mapCulledToFullSpeciesIndex(speciesIndex_culled);
-        const size_t reactionIndex_full = mapCulledToFullReactionIndex(reactionIndex_culled);
-        return m_baseEngine.getStoichiometryMatrixEntry(speciesIndex_full, reactionIndex_full);
+        return m_baseEngine.getStoichiometryMatrixEntry(species, reaction);
     }
 
     double AdaptiveEngineView::calculateMolarReactionFlow(
         const reaction::Reaction &reaction,
-        const std::vector<double> &Y_culled,
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
@@ -221,34 +192,32 @@ namespace gridfire {
             m_logger -> flush_log();
             throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
         }
-        const auto Y = mapCulledToFull(Y_culled);
 
-        return m_baseEngine.calculateMolarReactionFlow(reaction, Y, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
     }
 
-    const reaction::LogicalReactionSet & AdaptiveEngineView::getNetworkReactions() const {
+    const reaction::ReactionSet & AdaptiveEngineView::getNetworkReactions() const {
         return m_activeReactions;
     }
 
-    void AdaptiveEngineView::setNetworkReactions(const reaction::LogicalReactionSet &reactions) {
+    void AdaptiveEngineView::setNetworkReactions(const reaction::ReactionSet &reactions) {
         LOG_CRITICAL(m_logger, "AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
         throw exceptions::UnableToSetNetworkReactionsError("AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> AdaptiveEngineView::getSpeciesTimescales(
-        const std::vector<double> &Y_culled,
+    std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
         validateState();
-        const auto Y_full = mapCulledToFull(Y_culled);
-        const auto result = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
         }
 
-        const std::unordered_map<Species, double> fullTimescales = result.value();
+        const std::unordered_map<Species, double>& fullTimescales = result.value();
 
 
         std::unordered_map<Species, double> culledTimescales;
@@ -262,22 +231,18 @@ namespace gridfire {
 
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError>
-    AdaptiveEngineView::getSpeciesDestructionTimescales(
-        const std::vector<double> &Y,
-        double T9,
-        double rho
+    std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesDestructionTimescales(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
     ) const {
         validateState();
 
-        const auto Y_full = mapCulledToFull(Y);
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(Y_full, T9, rho);
-
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
-
-        const std::unordered_map<Species, double> destructionTimescales = result.value();
+        const std::unordered_map<Species, double>& destructionTimescales = result.value();
 
         std::unordered_map<Species, double> culledTimescales;
         culledTimescales.reserve(m_activeSpecies.size());
@@ -299,8 +264,8 @@ namespace gridfire {
 
     std::vector<double> AdaptiveEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
         std::vector<double> Y(m_activeSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [symbol, entry] : netIn.composition) {
-            Y[getSpeciesIndex(entry.isotope())] = netIn.composition.getMolarAbundance(symbol); // Map species to their molar abundance
+        for (const auto& [species, y] : netIn.composition) {
+            Y[getSpeciesIndex(species)] = y; // Map species to their molar abundance
         }
         return Y; // Return the vector of molar abundances
     }
@@ -309,7 +274,31 @@ namespace gridfire {
         return m_baseEngine.primeEngine(netIn);
     }
 
-    int AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+    fourdst::composition::Composition AdaptiveEngineView::collectComposition(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
+
+        for (const auto& species : m_activeSpecies) {
+            if (!result.contains(species)) {
+                result.registerSpecies(species);
+            }
+        }
+
+        return result;
+    }
+
+    SpeciesStatus AdaptiveEngineView::getSpeciesStatus(const fourdst::atomic::Species &species) const {
+        const SpeciesStatus status = m_baseEngine.getSpeciesStatus(species);
+        if (status == SpeciesStatus::ACTIVE && std::ranges::find(m_activeSpecies, species) == m_activeSpecies.end()) {
+            return SpeciesStatus::INACTIVE_FLOW;
+        }
+        return status;
+    }
+
+    size_t AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
         const auto it = std::ranges::find(m_activeSpecies, species);
         if (it != m_activeSpecies.end()) {
             return static_cast<int>(std::distance(m_activeSpecies.begin(), it));
@@ -320,42 +309,6 @@ namespace gridfire {
         }
     }
 
-    std::vector<double> AdaptiveEngineView::mapCulledToFull(const std::vector<double>& culled) const {
-        std::vector<double> full(m_baseEngine.getNetworkSpecies().size(), 0.0);
-        for (size_t i_culled = 0; i_culled < culled.size(); ++i_culled) {
-            const size_t i_full = m_speciesIndexMap[i_culled];
-            full[i_full] += culled[i_culled];
-        }
-        return full;
-    }
-
-    std::vector<double> AdaptiveEngineView::mapFullToCulled(const std::vector<double>& full) const {
-        std::vector<double> culled(m_activeSpecies.size(), 0.0);
-        for (size_t i_culled = 0; i_culled < m_activeSpecies.size(); ++i_culled) {
-            const size_t i_full = m_speciesIndexMap[i_culled];
-            culled[i_culled] = full[i_full];
-        }
-        return culled;
-    }
-
-    size_t AdaptiveEngineView::mapCulledToFullSpeciesIndex(size_t culledSpeciesIndex) const {
-        if (culledSpeciesIndex < 0 || culledSpeciesIndex >= m_speciesIndexMap.size()) {
-            LOG_ERROR(m_logger, "Culled index {} is out of bounds for species index map of size {}.", culledSpeciesIndex, m_speciesIndexMap.size());
-            m_logger->flush_log();
-            throw std::out_of_range("Culled index " + std::to_string(culledSpeciesIndex) + " is out of bounds for species index map of size " + std::to_string(m_speciesIndexMap.size()) + ".");
-        }
-        return m_speciesIndexMap[culledSpeciesIndex];
-    }
-
-    size_t AdaptiveEngineView::mapCulledToFullReactionIndex(size_t culledReactionIndex) const {
-        if (culledReactionIndex < 0 || culledReactionIndex >= m_reactionIndexMap.size()) {
-            LOG_ERROR(m_logger, "Culled index {} is out of bounds for reaction index map of size {}.", culledReactionIndex, m_reactionIndexMap.size());
-            m_logger->flush_log();
-            throw std::out_of_range("Culled index " + std::to_string(culledReactionIndex) + " is out of bounds for reaction index map of size " + std::to_string(m_reactionIndexMap.size()) + ".");
-        }
-        return m_reactionIndexMap[culledReactionIndex];
-    }
-
     void AdaptiveEngineView::validateState() const {
         if (m_isStale) {
             LOG_ERROR(m_logger, "AdaptiveEngineView is stale. Please call update() before calculating RHS and energy.");
@@ -364,21 +317,16 @@ namespace gridfire {
         }
     }
 
-    // TODO: Change this to use a return value instead of an output parameter.
-    std::vector<AdaptiveEngineView::ReactionFlow> AdaptiveEngineView::calculateAllReactionFlows(
-        const NetIn &netIn,
-        std::vector<double> &out_Y_Full
+    std::pair<std::vector<AdaptiveEngineView::ReactionFlow>, fourdst::composition::Composition> AdaptiveEngineView::calculateAllReactionFlows(
+        const NetIn &netIn
     ) const {
         const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
-        out_Y_Full.clear();
-        out_Y_Full.reserve(fullSpeciesList.size());
+        fourdst::composition::Composition composition = netIn.composition;
 
         for (const auto& species: fullSpeciesList) {
-            if (netIn.composition.contains(species)) {
-                out_Y_Full.push_back(netIn.composition.getMolarAbundance(std::string(species.name())));
-            } else {
-                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Setting abundance to 0.0.", species.name());
-                out_Y_Full.push_back(0.0);
+            if (!netIn.composition.contains(species)) {
+                LOG_TRACE_L2(m_logger, "Species '{}' not found in composition. Registering", species.name());
+                composition.registerSpecies(species);
             }
         }
 
@@ -389,11 +337,11 @@ namespace gridfire {
         const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
         reactionFlows.reserve(fullReactionSet.size());
         for (const auto& reaction : fullReactionSet) {
-            const double flow = m_baseEngine.calculateMolarReactionFlow(reaction, out_Y_Full, T9, rho);
-            reactionFlows.push_back({&reaction, flow});
-            LOG_TRACE_L1(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction.id(), flow);
+            const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, composition, T9, rho);
+            reactionFlows.push_back({reaction.get(), flow});
+            LOG_TRACE_L3(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction->id(), flow);
         }
-        return reactionFlows;
+        return {reactionFlows, composition};
     }
 
     std::unordered_set<Species> AdaptiveEngineView::findReachableSpecies(
@@ -408,7 +356,7 @@ namespace gridfire {
                 if (!reachable.contains(species)) {
                     to_vist.push(species);
                     reachable.insert(species);
-                    LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is part of the initial fuel.", species.name());
+                    LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species {:5} is part of the initial fuel", species.name());
                 }
             }
         }
@@ -418,18 +366,18 @@ namespace gridfire {
             new_species_found_in_pass = false;
             for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
                 bool all_reactants_reachable = true;
-                for (const auto& reactant: reaction.reactants()) {
+                for (const auto& reactant: reaction->reactants()) {
                     if (!reachable.contains(reactant)) {
                         all_reactants_reachable = false;
                         break;
                     }
                 }
                 if (all_reactants_reachable) {
-                    for (const auto& product: reaction.products()) {
+                    for (const auto& product: reaction->products()) {
                         if (!reachable.contains(product)) {
                             reachable.insert(product);
                             new_species_found_in_pass = true;
-                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is reachable via reaction '{}'.", product.name(), reaction.id());
+                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species {:5} is reachable via reaction {:20}", product.name(), reaction->id());
                         }
                     }
                 }
@@ -439,30 +387,28 @@ namespace gridfire {
         return reachable;
     }
 
-    std::vector<const reaction::LogicalReaction *> AdaptiveEngineView::cullReactionsByFlow(
+    std::vector<const reaction::Reaction *> AdaptiveEngineView::cullReactionsByFlow(
         const std::vector<ReactionFlow> &allFlows,
         const std::unordered_set<fourdst::atomic::Species> &reachableSpecies,
-        const std::vector<double> &Y_full,
+        const fourdst::composition::Composition &comp,
         const double maxFlow
     ) const {
         LOG_TRACE_L1(m_logger, "Culling reactions based on flow rates...");
         const auto relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
         double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
-        LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
-        std::vector<const reaction::LogicalReaction*> culledReactions;
+        LOG_DEBUG(m_logger, "Relative culling threshold: {:7.3E} ({:7.3E})", relative_culling_threshold, absoluteCullingThreshold);
+        std::vector<const reaction::Reaction*> culledReactions;
         for (const auto& [reactionPtr, flowRate]: allFlows) {
             bool keepReaction = false;
             if (flowRate > absoluteCullingThreshold) {
-                LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with relative (abs) flow rate: {:0.3E} ({:0.3E} [mol/s])", reactionPtr->id(), flowRate/maxFlow, flowRate);
+                LOG_TRACE_L2(m_logger, "Maintaining reaction '{:20}' with relative (abs) flow rate: {:7.3E} ({:7.3E} [mol/s])", reactionPtr->id(), flowRate/maxFlow, flowRate);
                 keepReaction = true;
             } else {
                 bool zero_flow_due_to_reachable_reactants = false;
                 if (flowRate < 1e-99 && flowRate > 0.0) {
                     for (const auto& reactant: reactionPtr->reactants()) {
-                        const auto it = std::ranges::find(m_baseEngine.getNetworkSpecies(), reactant);
-                        const size_t index = std::distance(m_baseEngine.getNetworkSpecies().begin(), it);
-                        if (Y_full[index] < 1e-99 && reachableSpecies.contains(reactant)) {
-                            LOG_TRACE_L1(m_logger, "Maintaining reaction '{}' with low flow ({:0.3E} [mol/s/g]) due to reachable reactant '{}'.", reactionPtr->id(), flowRate, reactant.name());
+                        if (comp.getMolarAbundance(reactant) < 1e-99 && reachableSpecies.contains(reactant)) {
+                            LOG_TRACE_L1(m_logger, "Maintaining reaction {:20} with low flow ({:7.3E} [mol/s/g]) due to reachable reactant '{:6}'.", reactionPtr->id(), flowRate, reactant.name());
                             zero_flow_due_to_reachable_reactants = true;
                             break;
                         }
@@ -475,29 +421,30 @@ namespace gridfire {
             if (keepReaction) {
                 culledReactions.push_back(reactionPtr);
             } else {
-                LOG_TRACE_L1(m_logger, "Culling reaction '{}' due to low flow rate or lack of connectivity.", reactionPtr->id());
+                LOG_TRACE_L1(m_logger, "Culling     reaction '{:20}' due to low flow rate or lack of connectivity.", reactionPtr->id());
             }
         }
-        LOG_DEBUG(m_logger, "Selected {} (total: {}, culled: {}) reactions based on flow rates.", culledReactions.size(), allFlows.size(), allFlows.size() - culledReactions.size());
+        LOG_DEBUG(m_logger, "Selected {:5} (total: {:5}, culled: {:5}) reactions based on flow rates.", culledReactions.size(), allFlows.size(), allFlows.size() - culledReactions.size());
         return culledReactions;
     }
 
     AdaptiveEngineView::RescueSet AdaptiveEngineView::rescueEdgeSpeciesDestructionChannel(
-        const std::vector<double> &Y_full,
+        const fourdst::composition::Composition &comp,
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies,
-        const reaction::LogicalReactionSet &activeReactions
+        const reaction::ReactionSet &activeReactions
     ) const {
-        const auto result = m_baseEngine.getSpeciesTimescales(Y_full, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
         if (!result) {
-            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state.");
-            throw exceptions::StaleEngineError("Failed to get species timescales");
+            LOG_CRITICAL(m_logger, "Failed to get species timescales due to base engine failure");
+            m_logger->flush_log();
+            throw exceptions::EngineError("Failed to get species timescales due base engine failure");
         }
         std::unordered_map<Species, double> timescales = result.value();
         std::set<Species> onlyProducedSpecies;
         for (const auto& reaction : activeReactions) {
-            const std::vector<Species> products = reaction.products();
+            const std::vector<Species>& products = reaction->products();
             onlyProducedSpecies.insert(products.begin(), products.end());
         }
 
@@ -506,7 +453,7 @@ namespace gridfire {
             onlyProducedSpecies,
             [&](const Species &species) {
                 for (const auto& reaction : activeReactions) {
-                    if (reaction.contains_reactant(species)) {
+                    if (reaction->contains_reactant(species)) {
                         return true; // If any active reaction consumes the species then erase it from the set.
                     }
                 }
@@ -522,49 +469,39 @@ namespace gridfire {
             }
         );
 
-        LOG_TRACE_L1(
-            m_logger,
-            "Found {} species {}that are produced but not consumed in any reaction and do not have an inf timescale (those are expected to be equilibrium species and do not contribute to the stiffness of the network).",
-            onlyProducedSpecies.size(),
-            [&]() -> std::string {
-                std::ostringstream ss;
-                if (onlyProducedSpecies.empty()) {
-                    return "";
-                }
-                int count = 0;
-                ss << "(";
-                for (const auto& species : onlyProducedSpecies) {
-                    ss << species.name();
-                    if (count < onlyProducedSpecies.size() - 1) {
-                        ss << ", ";
-                    }
-                    count++;
-                }
-                ss << ") ";
-                return ss.str();
-            }()
-        );
-
-        std::unordered_map<Species, const reaction::LogicalReaction*> reactionsToRescue;
+        std::unordered_map<Species, const reaction::Reaction*> reactionsToRescue;
         for (const auto& species : onlyProducedSpecies) {
             double maxSpeciesConsumptionRate = 0.0;
             for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
-                const bool speciesToCheckIsConsumed = reaction.contains_reactant(species);
+                const bool speciesToCheckIsConsumed = reaction->contains_reactant(species);
                 if (!speciesToCheckIsConsumed) {
                     continue; // If the species is not consumed by this reaction, skip it.
                 }
                 bool allOtherReactantsAreAvailable = true;
-                for (const auto& reactant : reaction.reactants()) {
+                for (const auto& reactant : reaction->reactants()) {
                     const bool reactantIsAvailable = std::ranges::contains(activeSpecies, reactant);
                     if (!reactantIsAvailable && reactant != species) {
                         allOtherReactantsAreAvailable = false;
                     }
                 }
-                if (allOtherReactantsAreAvailable && speciesToCheckIsConsumed) {
-                    double rate = reaction.calculate_rate(T9);
+                if (allOtherReactantsAreAvailable) {
+                    std::vector<double> Y = comp.getMolarAbundanceVector();
+
+                    const double Ye = comp.getElectronAbundance();
+
+                    std::unordered_map<Species, double> speciesMassMap;
+                    for (const auto &sp: comp | std::views::keys) {
+                        speciesMassMap[sp] = sp.mass();
+                    }
+                    std::unordered_map<size_t, Species> speciesIndexMap;
+                    for (const auto& sp: comp | std::views::keys) {
+                        size_t distance = std::distance(speciesMassMap.begin(), speciesMassMap.find(sp));
+                        speciesIndexMap.emplace(distance, sp);
+                    }
+                    double rate = reaction->calculate_rate(T9, rho, Ye, 0.0, Y, speciesIndexMap);
                     if (rate > maxSpeciesConsumptionRate) {
                         maxSpeciesConsumptionRate = rate;
-                        reactionsToRescue[species] = &reaction;
+                        reactionsToRescue[species] = reaction.get();
                     }
                 }
             }
@@ -625,8 +562,7 @@ namespace gridfire {
             }()
         );
 
-        RescueSet rescueSet;
-        std::unordered_set<const reaction::LogicalReaction*> newReactions;
+        std::unordered_set<const reaction::Reaction*> newReactions;
         std::unordered_set<Species> newSpecies;
 
         for (const auto &reactionPtr: reactionsToRescue | std::views::values) {
@@ -639,27 +575,25 @@ namespace gridfire {
     }
 
     void AdaptiveEngineView::finalizeActiveSet(
-        const std::vector<const reaction::LogicalReaction *> &finalReactions
+        const std::vector<const reaction::Reaction *> &finalReactions
     ) {
         std::unordered_set<Species>finalSpeciesSet;
         m_activeReactions.clear();
         for (const auto* reactionPtr: finalReactions) {
             m_activeReactions.add_reaction(*reactionPtr);
             for (const auto& reactant : reactionPtr->reactants()) {
-                if (!finalSpeciesSet.contains(reactant)) {
-                    LOG_TRACE_L1(m_logger, "Adding reactant '{}' to active species set through reaction {}.", reactant.name(), reactionPtr->id());
-                } else {
-                    LOG_TRACE_L1(m_logger, "Reactant '{}' already in active species set through another reaction.", reactant.name());
+                const SpeciesStatus reactantStatus = m_baseEngine.getSpeciesStatus(reactant);
+                if (!finalSpeciesSet.contains(reactant) && (reactantStatus == SpeciesStatus::ACTIVE || reactantStatus == SpeciesStatus::EQUILIBRIUM)) {
+                    LOG_TRACE_L3(m_logger, "Adding reactant '{}' to active species set through reaction {}.", reactant.name(), reactionPtr->id());
+                    finalSpeciesSet.insert(reactant);
                 }
-                finalSpeciesSet.insert(reactant);
             }
             for (const auto& product : reactionPtr->products()) {
-                if (!finalSpeciesSet.contains(product)) {
-                    LOG_TRACE_L1(m_logger, "Adding product '{}' to active species set through reaction {}.", product.name(), reactionPtr->id());
-                } else {
-                    LOG_TRACE_L1(m_logger, "Product '{}' already in active species set through another reaction.", product.name());
+                const SpeciesStatus productStatus = m_baseEngine.getSpeciesStatus(product);
+                if (!finalSpeciesSet.contains(product) && (productStatus == SpeciesStatus::ACTIVE || productStatus == SpeciesStatus::EQUILIBRIUM)) {
+                    LOG_TRACE_L3(m_logger, "Adding product '{}' to active species set through reaction {}.", product.name(), reactionPtr->id());
+                    finalSpeciesSet.insert(product);
                 }
-                finalSpeciesSet.insert(product);
             }
         }
         m_activeSpecies.clear();

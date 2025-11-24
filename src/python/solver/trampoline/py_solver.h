@@ -11,5 +11,10 @@ class PyDynamicNetworkSolverStrategy final : public gridfire::solver::DynamicNet
     explicit PyDynamicNetworkSolverStrategy(gridfire::DynamicEngine &engine) : gridfire::solver::DynamicNetworkSolverStrategy(engine) {}
     gridfire::NetOut evaluate(const gridfire::NetIn &netIn) override;
     void set_callback(const std::any &callback) override;
-    std::vector<std::tuple<std::string, std::string>> describe_callback_context() const override;
+    [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe_callback_context() const override;
+};
+
+class PySolverContextBase final : public gridfire::solver::SolverContextBase {
+public:
+    [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
 };

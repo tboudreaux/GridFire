@@ -8,7 +8,7 @@ namespace py = pybind11;
 
 #include "gridfire/expectations/expectations.h"
 
-void register_expectation_bindings(py::module &m) {
+void register_expectation_bindings(const py::module &m) {
     py::enum_<gridfire::expectations::EngineErrorTypes>(m, "EngineErrorTypes")
         .value("FAILURE", gridfire::expectations::EngineErrorTypes::FAILURE)
         .value("INDEX", gridfire::expectations::EngineErrorTypes::INDEX)

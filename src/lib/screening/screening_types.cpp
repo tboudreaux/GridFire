@@ -7,13 +7,12 @@
 
 namespace gridfire::screening {
     std::unique_ptr<ScreeningModel> selectScreeningModel(const ScreeningType type) {
-        switch (type) {
-            case ScreeningType::WEAK:
-                return std::make_unique<WeakScreeningModel>();
-            case ScreeningType::BARE:
-                return std::make_unique<BareScreeningModel>();
-            default:
-                return std::make_unique<BareScreeningModel>();
-        }
+      switch (type) {
+          case ScreeningType::WEAK:
+              return std::make_unique<WeakScreeningModel>();
+          case ScreeningType::BARE:
+              return std::make_unique<BareScreeningModel>();
+      }
+      throw std::runtime_error("Unknown ScreeningType");
     }
 }

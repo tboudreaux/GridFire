@@ -1,5 +1,5 @@
 var class_py_screening =
 [
-    [ "calculateScreeningFactors", "class_py_screening.html#a5539d59311c778cf7f0006acc8f84ade", null ],
-    [ "calculateScreeningFactors", "class_py_screening.html#a2b8756c197eb89e77cb6dd231c979315", null ]
+    [ "calculateScreeningFactors", "class_py_screening.html#a68a126de903e1a87a1d7d1cfec8add0f", null ],
+    [ "calculateScreeningFactors", "class_py_screening.html#aa67b5f0528006d9c742033b8c5ab3a05", null ]
 ];

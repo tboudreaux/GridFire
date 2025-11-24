@@ -40,7 +40,7 @@ namespace gridfire::partition {
          * @return Dimensionless partition function value = 2*spin + 1.
          * @throws std::out_of_range If the isotope key is not found in m_ground_state_spin.
 +         */
-         double evaluate(
+         [[nodiscard]] double evaluate(
              const int z,
              const int a,
              const double T9
@@ -57,7 +57,7 @@ namespace gridfire::partition {
          * @return Zero.
          * @throws std::out_of_range If the isotope key is not found.
 +         */
-         double evaluateDerivative(
+         [[nodiscard]] double evaluateDerivative(
              const int z,
              const int a,
              const double T9
@@ -70,7 +70,7 @@ namespace gridfire::partition {
          * @return True if m_ground_state_spin contains the key; false otherwise.
          * @post No side effects.
 +         */
-         bool supports(
+         [[nodiscard]] bool supports(
              const int z,
              const int a
          ) const override;
@@ -79,13 +79,13 @@ namespace gridfire::partition {
          * @return The string literal "GroundState".
          * @post No side effects.
 +         */
-         std::string type() const override { return "GroundState"; }
+         [[nodiscard]] std::string type() const override { return "GroundState"; }
         /**
          * @brief Create a deep copy of this partition function.
          * @return Unique_ptr to a new GroundStatePartitionFunction cloned from this object.
          * @post Caller owns the returned instance.
 +         */
-         std::unique_ptr<PartitionFunction> clone() const override {
+         [[nodiscard]] std::unique_ptr<PartitionFunction> clone() const override {
              return std::make_unique<GroundStatePartitionFunction>(*this);
          }
      private:
@@ -94,15 +94,13 @@ namespace gridfire::partition {
         /**
          * @brief Generate a unique lookup key for an isotope.
 +         *
-         * Combines atomic number z and mass number a into a single integer.
+         * Combines atomic number z and mass number an into a single integer.
          * @param z Proton number of the isotope.
          * @param a Mass number of the isotope; should be < 1000 to avoid collisions.
          * @pre a < 1000.
          * @return Integer key = z * 1000 + a.
 +         */
-         static constexpr int make_key(
-             const int z,
-         const int a);
+         static constexpr int make_key(int z, int a);
      };
 
  }

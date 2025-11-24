@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logicalreaction_0',['LogicalReaction',['../classgridfire_1_1reaction_1_1_logical_reaction.html',1,'gridfire::reaction']]]
+  ['kinsolsolverfailureerror_0',['KINSolSolverFailureError',['../classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html',1,'gridfire::exceptions']]]
 ];

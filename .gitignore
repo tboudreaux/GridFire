@@ -76,6 +76,13 @@ subprojects/libconstants/
 subprojects/liblogging/
 subprojects/eigen-*/
 subprojects/fourdst/
+subprojects/libplugin/
+subprojects/minizip-ng-4.0.10/
+subprojects/cvode-*/
+subprojects/kinsol-*/
+subprojects/CLI11-*/
+*.fbundle
+*.wraplock
 
 *.csv
 *.dot
@@ -104,3 +111,5 @@ output/
 scratch/
 
 meson-boost-test/
+
+*.json

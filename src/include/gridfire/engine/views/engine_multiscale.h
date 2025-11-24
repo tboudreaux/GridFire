@@ -4,128 +4,12 @@
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_graph.h"
 
-#include "unsupported/Eigen/NonLinearOptimization"
+#include "sundials/sundials_linearsolver.h"
+#include "sundials/sundials_matrix.h"
+#include "sundials/sundials_nvector.h"
+#include "sundials/sundials_types.h"
 
-namespace gridfire {
-    /**
-     * @brief Configuration struct for the QSE cache.
-     *
-     * @par Purpose
-     * This struct defines the tolerances used to determine if a QSE cache key
-     * is considered a hit. It allows for tuning the sensitivity of the cache.
-     *
-     * @par How
-     * It works by providing binning widths for temperature, density, and abundances.
-     * When a `QSECacheKey` is created, it uses these tolerances to discretize the
-     * continuous physical values into bins. If two sets of conditions fall into the
-     * same bins, they will produce the same hash and be considered a cache hit.
-     *
-     * @par Usage Example:
-     * Although not typically set by the user directly, the `QSECacheKey` uses this
-     * internally. A smaller tolerance (e.g., `T9_tol = 1e-4`) makes the cache more
-     * sensitive, leading to more frequent re-partitions, while a larger tolerance
-     * (`T9_tol = 1e-2`) makes it less sensitive.
-     */
-    struct QSECacheConfig {
-        double T9_tol; ///< Absolute tolerance to produce the same hash for T9.
-        double rho_tol; ///< Absolute tolerance to produce the same hash for rho.
-        double Yi_tol; ///< Absolute tolerance to produce the same hash for species abundances.
-    };
-
-    /**
-     * @brief Key struct for the QSE abundance cache.
-     *
-     * @par Purpose
-     * This struct is used as the key for the QSE abundance cache (`m_qse_abundance_cache`)
-     * within the `MultiscalePartitioningEngineView`. Its primary goal is to avoid
-     * expensive re-partitioning and QSE solves for thermodynamic conditions that are
-     * "close enough" to previously computed ones.
-     *
-     * @par How
-     * It works by storing the temperature (`m_T9`), density (`m_rho`), and species
-     * abundances (`m_Y`). A pre-computed hash is generated in the constructor by
-     * calling the `hash()` method. This method discretizes the continuous physical
-     * values into bins using the tolerances defined in `QSECacheConfig`. The `operator==`
-     * simply compares the pre-computed hash values for fast lookups in the `std::unordered_map`.
-     */
-    struct QSECacheKey {
-        double m_T9;
-        double m_rho;
-        std::vector<double> m_Y; ///< Note that the ordering of Y must match the dynamic species indices in the view.
-
-        std::size_t m_hash = 0; ///< Precomputed hash value for this key.
-
-        // TODO: We should probably sort out how to adjust these from absolute to relative tolerances.
-        QSECacheConfig m_cacheConfig = {
-            1e-3, // Default tolerance for T9
-            1e-1, // Default tolerance for rho
-            1e-3  // Default tolerance for species abundances
-        };
-
-        /**
-         * @brief Constructs a QSECacheKey.
-         *
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         * @param Y Species molar abundances.
-         *
-         * @post The `m_hash` member is computed and stored.
-         */
-        QSECacheKey(
-            const double T9,
-            const double rho,
-            const std::vector<double>& Y
-        );
-
-        /**
-         * @brief Computes the hash value for this key.
-         *
-         * @return The computed hash value.
-         *
-         * @par How
-         * This method combines the hashes of the binned temperature, density, and
-         * each species abundance. The `bin()` static method is used for discretization.
-         */
-        size_t hash() const;
-
-        /**
-         * @brief Converts a value to a discrete bin based on a tolerance.
-         * @param value The value to bin.
-         * @param tol The tolerance (bin width) to use for binning.
-         * @return The bin number as a long integer.
-         *
-         * @par How
-         * The algorithm is `floor(value / tol)`.
-         */
-        static long bin(double value, double tol);
-
-        /**
-         * @brief Equality operator for QSECacheKey.
-         * @param other The other QSECacheKey to compare to.
-         * @return True if the pre-computed hashes are equal, false otherwise.
-         */
-        bool operator==(const QSECacheKey& other) const;
-
-    };
-}
-
-// Needs to be in this order (splitting gridfire namespace up) to avoid some issues with forward declarations and the () operator.
-namespace std {
-    template <>
-    struct hash<gridfire::QSECacheKey> {
-        /**
-         * @brief Computes the hash of a QSECacheKey for use in `std::unordered_map`.
-         * @param key The QSECacheKey to hash.
-         * @return The pre-computed hash value of the key.
-         */
-        size_t operator()(const gridfire::QSECacheKey& key) const noexcept {
-            // The hash is pre-computed, so we just return it.
-            return key.m_hash;
-        }
-    };
-} // namespace std
-
-namespace gridfire {
+namespace gridfire::engine {
     /**
      * @class MultiscalePartitioningEngineView
      * @brief An engine view that partitions the reaction network into multiple groups based on timescales.
@@ -195,7 +79,9 @@ namespace gridfire {
          *                   It must be a `GraphEngine` and not a more general `DynamicEngine`
          *                   because this view relies on its specific implementation details.
          */
-        explicit MultiscalePartitioningEngineView(GraphEngine& baseEngine);
+        explicit MultiscalePartitioningEngineView(DynamicEngine& baseEngine);
+
+        ~MultiscalePartitioningEngineView() override;
 
         /**
          * @brief Gets the list of species in the network.
@@ -208,7 +94,7 @@ namespace gridfire {
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation.
          *
-         * @param Y_full Vector of current molar abundances for all species in the base engine.
+         * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A `std::expected` containing `StepDerivatives<double>` on success, or a
@@ -232,8 +118,21 @@ namespace gridfire {
          * @throws StaleEngineError If the QSE cache does not contain an entry for the given
          *         (T9, rho, Y_full). This indicates `update()` was not called recently enough.
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const std::vector<double> &Y_full,
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
+
+        /**
+         * @brief Calculates the energy generation rate derivatives with respect to abundances.
+         * @param comp The current composition.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @return The energy generation rate derivatives (dEps/dT and dEps/drho).
+         */
+        [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -241,7 +140,7 @@ namespace gridfire {
         /**
          * @brief Generates the Jacobian matrix for the current state.
          *
-         * @param Y_full Vector of current molar abundances.
+         * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
@@ -261,32 +160,68 @@ namespace gridfire {
          * @throws exceptions::StaleEngineError If the QSE cache misses, as it cannot proceed
          *         without a valid partition.
          */
-        void generateJacobianMatrix(
-            const std::vector<double> &Y_full,
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
         /**
-         * @brief Gets an entry from the previously generated Jacobian matrix.
+         * @brief Generates the Jacobian matrix for a subset of active species.
          *
-         * @param i_full Row index (species index) in the full network.
-         * @param j_full Column index (species index) in the full network.
-         * @return Value of the Jacobian matrix at (i_full, j_full).
+         * @param comp The current composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param activeSpecies The subset of species to include in the Jacobian.
          *
          * @par Purpose
-         * To provide Jacobian entries to an implicit solver.
+         * To compute a reduced Jacobian matrix for implicit solvers that only
+         * consider a subset of species.
          *
          * @par How
-         * This method directly delegates to the base engine's `getJacobianMatrixEntry`.
-         *      It does not currently modify the Jacobian to reflect the QSE algebraic constraints,
-         *      as these are handled by setting `dY/dt = 0` in `calculateRHSAndEnergy`.
+         * Similar to the full Jacobian generation, it first checks the QSE cache.
+         * On a hit, it calls the base engine's `generateJacobianMatrix` with
+         * the specified active species. The returned Jacobian still reflects
+         * the full network, but only for the active species subset.
          *
-         * @pre `generateJacobianMatrix()` must have been called for the current state.
+         * @pre The engine must have a valid QSE cache entry for the given state.
+         * @post The base engine's internal Jacobian is updated for the active species.
+         *
+         * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] double getJacobianMatrixEntry(
-            int i_full,
-            int j_full
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species> &activeSpecies
+        ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix using a sparsity pattern.
+         *
+         * @param comp The current composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian.
+         *
+         * @par Purpose
+         * To compute the Jacobian matrix while leveraging a known sparsity pattern
+         * for efficiency. This is effectively a lower level version of the active species method.
+         *
+         * @par How
+         * It first checks the QSE cache. On a hit, it delegates to the base engine's
+         * `generateJacobianMatrix` method with the provided sparsity pattern.
+         *
+         * @pre The engine must have a valid QSE cache entry for the given state.
+         * @post The base engine's internal Jacobian is updated according to the sparsity pattern.
+         *
+         * @throws exceptions::StaleEngineError If the QSE cache misses.
+         */
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
         ) const override;
 
         /**
@@ -304,8 +239,8 @@ namespace gridfire {
         /**
          * @brief Gets an entry from the stoichiometry matrix.
          *
-         * @param speciesIndex Index of the species in the full network.
-         * @param reactionIndex Index of the reaction in the full network.
+         * @param species Species to look up stoichiometry for.
+         * @param reaction Reaction to find.
          * @return Stoichiometric coefficient for the species in the reaction.
          *
          * @par Purpose
@@ -317,15 +252,15 @@ namespace gridfire {
          * @pre `generateStoichiometryMatrix()` must have been called.
          */
         [[nodiscard]] int getStoichiometryMatrixEntry(
-            int speciesIndex,
-            int reactionIndex
+            const fourdst::atomic::Species& species,
+            const reaction::Reaction& reaction
         ) const override;
 
         /**
          * @brief Calculates the molar reaction flow for a given reaction.
          *
          * @param reaction The reaction for which to calculate the flow.
-         * @param Y_full Vector of current molar abundances for the full network.
+         * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
@@ -345,7 +280,7 @@ namespace gridfire {
          */
         [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction &reaction,
-            const std::vector<double> &Y_full,
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -356,7 +291,7 @@ namespace gridfire {
          * @return A const reference to the `LogicalReactionSet` from the base engine,
          *         containing all reactions in the full network.
          */
-        [[nodiscard]] const reaction::LogicalReactionSet & getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet & getNetworkReactions() const override;
 
         /**
          * @brief Sets the set of logical reactions in the network.
@@ -375,13 +310,13 @@ namespace gridfire {
          * @throws exceptions::UnableToSetNetworkReactionsError Always.
          */
         void setNetworkReactions(
-            const reaction::LogicalReactionSet &reactions
+            const reaction::ReactionSet &reactions
         ) override;
 
         /**
          * @brief Computes timescales for all species in the network.
          *
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A `std::expected` containing a map from `Species` to their characteristic
@@ -398,8 +333,9 @@ namespace gridfire {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const std::vector<double> &Y,
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesTimescales(
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -407,7 +343,7 @@ namespace gridfire {
         /**
          * @brief Computes destruction timescales for all species in the network.
          *
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A `std::expected` containing a map from `Species` to their characteristic
@@ -424,8 +360,9 @@ namespace gridfire {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const std::vector<double> &Y,
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesDestructionTimescales(
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
@@ -507,66 +444,7 @@ namespace gridfire {
          */
         const DynamicEngine & getBaseEngine() const override;
 
-        /**
-         * @brief Analyzes the connectivity of timescale pools.
-         *
-         * @param timescale_pools A vector of vectors of species indices, where each inner vector
-         *                        represents a timescale pool.
-         * @param Y Vector of current molar abundances for the full network.
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         * @return A vector of vectors of species indices, where each inner vector represents a
-         *         single connected component.
-         *
-         * @par Purpose
-         * To merge timescale pools that are strongly connected by reactions, forming
-         *          cohesive groups for QSE analysis.
-         *
-         * @par How
-         * For each pool, it builds a reaction connectivity graph using `buildConnectivityGraph`.
-         *      It then finds the connected components within that graph using a Breadth-First Search (BFS).
-         *      The resulting components from all pools are collected and returned.
-         */
-        std::vector<std::vector<size_t>> analyzeTimescalePoolConnectivity(
-            const std::vector<std::vector<size_t>> &timescale_pools,
-            const std::vector<double> &Y,
-            double T9,
-            double rho
-        ) const;
 
-        /**
-         * @brief Partitions the network into dynamic and algebraic (QSE) groups based on timescales.
-         *
-         * @param Y Vector of current molar abundances for the full network.
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         *
-         * @par Purpose
-         * To perform the core partitioning logic that identifies which species are "fast"
-         * (and can be treated algebraically) and which are "slow" (and must be integrated dynamically).
-         *
-         * @how
-         * 1.  **`partitionByTimescale`**: Gets species destruction timescales from the base engine,
-         *     sorts them, and looks for large gaps to create timescale "pools".
-         * 2.  **`identifyMeanSlowestPool`**: The pool with the slowest average timescale is designated
-         *     as the core set of dynamic species.
-         * 3.  **`analyzeTimescalePoolConnectivity`**: The other (faster) pools are analyzed for
-         *     reaction connectivity to form cohesive groups.
-         * 4.  **`constructCandidateGroups`**: These connected groups are processed to identify "seed"
-         *     species (dynamic species that feed the group) and "algebraic" species (the rest).
-         * 5.  **`validateGroupsWithFluxAnalysis`**: The groups are validated by ensuring their internal
-         *     reaction flux is much larger than the flux connecting them to the outside network.
-         *
-         * @pre The input state (Y, T9, rho) must be a valid physical state.
-         * @post The internal member variables `m_qse_groups`, `m_dynamic_species`, and
-         *       `m_algebraic_species` (and their index maps) are populated with the results of the
-         *       partitioning.
-         */
-        void partitionNetwork(
-            const std::vector<double>& Y,
-            double T9,
-            double rho
-        );
 
         /**
          * @brief Partitions the network based on timescales from a `NetIn` struct.
@@ -580,15 +458,15 @@ namespace gridfire {
          * It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
          *      primary `partitionNetwork` method.
          */
-        void partitionNetwork(
-            const NetIn& netIn
+        fourdst::composition::Composition partitionNetwork(
+            const NetIn &netIn
         );
 
         /**
          * @brief Exports the network to a DOT file for visualization.
          *
          * @param filename The name of the DOT file to create.
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp Composition object
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          *
@@ -601,9 +479,9 @@ namespace gridfire {
          */
         void exportToDot(
             const std::string& filename,
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
         ) const;
 
         /**
@@ -615,7 +493,7 @@ namespace gridfire {
          * @par How
          * This method delegates directly to the base engine's `getSpeciesIndex()`.
          */
-        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
         /**
          * @brief Maps a `NetIn` struct to a molar abundance vector for the full network.
@@ -673,49 +551,83 @@ namespace gridfire {
         [[nodiscard]] const std::vector<fourdst::atomic::Species>& getDynamicSpecies() const;
 
         /**
-         * @brief Equilibrates the network by partitioning and solving for QSE abundances.
+         * @brief Checks if a species is involved in the partitioned network.
          *
-         * @param Y Vector of current molar abundances for the full network.
-         * @param T9 Temperature in units of 10^9 K.
-         * @param rho Density in g/cm^3.
-         * @return A new composition object with the equilibrated abundances.
+         * @param species The species to check.
+         * @return `true` if the species is in either the dynamic or algebraic sets, `false` otherwise.
          *
          * @par Purpose
-         * A convenience method to run the full QSE analysis and get an equilibrated
-         * composition object as a result.
+         * To allow external queries about species involvement in the partitioned network.
          *
          * @par How
-         * It first calls `partitionNetwork()` with the given state to define the QSE groups.
-         * Then, it calls `solveQSEAbundances()` to compute the new equilibrium abundances for the
-         * algebraic species. Finally, it packs the resulting full abundance vector into a new
-         * `fourdst::composition::Composition` object and returns it.
+         * It checks for membership in both `m_dynamic_species` and `m_algebraic_species`.
          *
-         * @pre The input state (Y, T9, rho) must be a valid physical state.
-         * @post The engine's internal partition is updated. A new composition object is returned.
+         * @pre `partitionNetwork()` must have been called.
          */
-        fourdst::composition::Composition equilibrateNetwork(
-            const std::vector<double> &Y,
-            double T9,
-            double rho
-        );
+        bool involvesSpecies(const fourdst::atomic::Species &species) const;
 
         /**
-         * @brief Equilibrates the network using QSE from a `NetIn` struct.
+         * @brief Check if a species is involved in the QSE (algebraic) set.
+         * @param species The species to check.
+         * @return Boolean indicating if the species is in the algebraic set.
+         */
+        bool involvesSpeciesInQSE(const fourdst::atomic::Species &species) const;
+
+        /**
+         * @brief Check if a species is involved in the dynamic set.
+         * @param species The species to check.
+         * @return Boolean indicating if the species is in the dynamic set.
+         */
+        bool involvesSpeciesInDynamic(const fourdst::atomic::Species &species) const;
+
+        /**
+         * @brief Gets a normalized composition with QSE species equilibrated.
          *
-         * @param netIn A struct containing the current network input.
-         * @return The equilibrated composition.
+         * @param comp The input composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return A new `Composition` object with algebraic species set to their equilibrium values.
          *
          * @par Purpose
-         * A convenience overload for `equilibrateNetwork`.
+         * To provide a way to get the equilibrated composition without modifying the internal state.
          *
          * @par How
-         * It unpacks the `netIn` struct into `Y`, `T9`, and `rho` and then calls the
-         *      primary `equilibrateNetwork` method.
+         * It calls `solveQSEAbundances()` to compute the equilibrium abundances for the algebraic species,
+         * then constructs a new `Composition` object reflecting these values.
+         *
+         * @pre The engine must have a valid QSE partition for the given state.
+         * @throws StaleEngineError If the QSE cache misses.
          */
-        fourdst::composition::Composition equilibrateNetwork(
-            const NetIn &netIn
-        );
+        fourdst::composition::Composition getNormalizedEquilibratedComposition(const fourdst::composition::CompositionAbstract& comp, double T9, double rho) const;
 
+        /**
+         * @brief Collect the composition from this and sub engines.
+         * @details This method operates by injecting the current equilibrium abundances for algebraic species into
+         * the composition object so that they can be bubbled up to the caller.
+         * @param comp Input Composition
+         * @param T9
+         * @param rho
+         * @return New composition which is comp + any edits from lower levels + the equilibrium abundances of all algebraic species.
+         * @throws BadCollectionError: if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w
+         */
+        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+
+        /**
+         * @brief Gets the status of a species in the network.
+         *
+         * @param species The species to query.
+         * @return The `SpeciesStatus` indicating if the species is dynamic, algebraic, or not involved.
+         *
+         * @par Purpose
+         * To allow external queries about the role of a species in the partitioned network.
+         *
+         * @par How
+         * It checks for membership in `m_dynamic_species` and `m_algebraic_species` to determine
+         * the appropriate status.
+         *
+         * @pre `partitionNetwork()` must have been called.
+         */
+        SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
 
     private:
         /**
@@ -726,11 +638,10 @@ namespace gridfire {
          * in quasi-steady-state equilibrium with each other.
          */
         struct QSEGroup {
-            std::set<size_t> species_indices; ///< Indices of all species in this group.
-            bool is_in_equilibrium = false;      ///< Flag set by flux analysis.
-            std::set<size_t> algebraic_indices; ///< Indices of algebraic species in this group.
-            std::set<size_t> seed_indices; ///< Indices of dynamic species in this group.
-            double mean_timescale; ///< Mean timescale of the group.
+            bool is_in_equilibrium = false;                       ///< Flag set by flux analysis.
+            std::set<fourdst::atomic::Species> algebraic_species; ///< Algebraic species in this group.
+            std::set<fourdst::atomic::Species> seed_species;      ///< Dynamic species in this group.
+            double mean_timescale;                                ///< Mean timescale of the group.
 
             /**
              * @brief Less-than operator for QSEGroup, used for sorting.
@@ -756,205 +667,109 @@ namespace gridfire {
              * @return True if the sets of species indices are not identical.
              */
             bool operator!=(const QSEGroup& other) const;
+
+            [[nodiscard]] [[maybe_unused]] std::string toString(bool verbose) const;
+
+            friend std::ostream& operator<<(std::ostream& os, const QSEGroup& group) {
+                os << group.toString(false);
+                return os;
+            }
+
+            bool contains(const fourdst::atomic::Species& species) const;
+            bool containsAlgebraic(const fourdst::atomic::Species &species) const;
+            bool containsSeed(const fourdst::atomic::Species &species) const;
         };
 
-        /**
-         * @brief Functor for solving QSE abundances using Eigen's nonlinear optimization.
-         *
-         * @par Purpose
-         * This struct provides the objective function (`operator()`) and its Jacobian
-         * (`df`) to Eigen's Levenberg-Marquardt solver. The goal is to find the abundances
-         * of algebraic species that make their time derivatives (`dY/dt`) equal to zero.
-         *
-         * @how
-         * - **`operator()`**: Takes a vector `v_qse` (scaled abundances of algebraic species) as input.
-         *   It constructs a full trial abundance vector `y_trial`, calls the base engine's
-         *   `calculateRHSAndEnergy`, and returns the `dY/dt` values for the algebraic species.
-         *   The solver attempts to drive this return vector to zero.
-         * - **`df`**: Computes the Jacobian of the objective function. It calls the base engine's
-         *   `generateJacobianMatrix` and extracts the sub-matrix corresponding to the algebraic
-         *   species. It applies the chain rule to account for the `asinh` scaling used on the
-         *   abundances.
-         *
-         * The abundances are scaled using `asinh` to handle the large dynamic range and ensure positivity.
-         */
-        struct EigenFunctor {
-            using InputType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-            using OutputType = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-            using JacobianType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-            enum {
-                InputsAtCompileTime = Eigen::Dynamic,
-                ValuesAtCompileTime = Eigen::Dynamic
+        class QSESolver {
+        public:
+            QSESolver(
+                const std::vector<fourdst::atomic::Species>& species,
+                const DynamicEngine& engine,
+                SUNContext sun_ctx
+            );
+
+            QSESolver(
+                const QSESolver& other
+            ) = delete;
+            QSESolver& operator=(
+                const QSESolver& other
+            ) = delete;
+
+            ~QSESolver();
+
+            fourdst::composition::Composition solve(
+                const fourdst::composition::Composition& comp,
+                double T9,
+                double rho
+            ) const;
+
+            size_t solves() const;
+
+            void log_diagnostics(const QSEGroup &group, const fourdst::composition::Composition &comp) const;
+        private:
+
+            static int sys_func(
+                N_Vector y,
+                N_Vector f,
+                void *user_data
+            );
+            static int sys_jac(
+                N_Vector y,
+                N_Vector fy,
+                SUNMatrix J,
+                void *user_data,
+                N_Vector tmp1,
+                N_Vector tmp2
+            );
+
+            struct UserData {
+                const DynamicEngine& engine;
+                double T9;
+                double rho;
+                fourdst::composition::Composition& comp;
+                const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map;
+                const std::vector<fourdst::atomic::Species>& qse_solve_species;
+                const QSESolver& instance;
+                std::vector<double> row_scaling_factors;
+                const double initial_group_mass;
             };
 
-            /**
-             * @brief Pointer to the MultiscalePartitioningEngineView instance.
-             */
-            MultiscalePartitioningEngineView* m_view;
-            /**
-             * @brief Indices of the species to solve for in the QSE group.
-             */
-            const std::vector<size_t>& m_qse_solve_indices;
-            /**
-             * @brief Initial abundances of all species in the full network.
-             */
-            const std::vector<double>& m_Y_full_initial;
-            /**
-             * @brief Temperature in units of 10^9 K.
-             */
-            const double m_T9;
-            /**
-             * @brief Density in g/cm^3.
-             */
-            const double m_rho;
-            /**
-             * @brief Scaling factors for the species abundances, used to improve solver stability.
-             */
-            const Eigen::VectorXd& m_Y_scale;
+        private:
+            // Cache members
+            mutable size_t m_solves = 0;
+            mutable bool m_has_jacobian = false;
 
-            /**
-             * @brief Constructs an EigenFunctor.
-             *
-             * @param view The MultiscalePartitioningEngineView instance.
-             * @param qse_solve_indices Indices of the species to solve for in the QSE group.
-             * @param Y_full_initial Initial abundances of all species.
-             * @param T9 Temperature in units of 10^9 K.
-             * @param rho Density in g/cm^3.
-             * @param Y_scale Scaling factors for the species abundances.
-             */
-            EigenFunctor(
-                MultiscalePartitioningEngineView& view,
-                const std::vector<size_t>& qse_solve_indices,
-                const std::vector<double>& Y_full_initial,
-                const double T9,
-                const double rho,
-                const Eigen::VectorXd& Y_scale
-            ) :
-            m_view(&view),
-            m_qse_solve_indices(qse_solve_indices),
-            m_Y_full_initial(Y_full_initial),
-            m_T9(T9),
-            m_rho(rho),
-            m_Y_scale(Y_scale) {}
+            // Solver members
+            size_t m_N;
+            const DynamicEngine& m_engine;
+            std::vector<fourdst::atomic::Species> m_species;
+            std::unordered_map<fourdst::atomic::Species, size_t> m_speciesMap;
 
-            /**
-             * @brief Gets the number of output values from the functor (size of the residual vector).
-             * @return The number of algebraic species being solved.
-             */
-            [[nodiscard]] int values() const { return m_qse_solve_indices.size(); }
-            /**
-             * @brief Gets the number of input values to the functor (size of the variable vector).
-             * @return The number of algebraic species being solved.
-             */
-            [[nodiscard]] int inputs() const { return m_qse_solve_indices.size(); }
+            // --- SUNDIALS / KINSOL Persistent resources
+            SUNContext m_sun_ctx   = nullptr;
+            void* m_kinsol_mem     = nullptr;
 
-            /**
-             * @brief Evaluates the functor's residual vector `f_qse = dY_alg/dt`.
-             * @param v_qse The input vector of scaled algebraic abundances.
-             * @param f_qse The output residual vector.
-             * @return 0 on success.
-             */
-            int operator()(const InputType& v_qse, OutputType& f_qse) const;
-            /**
-             * @brief Evaluates the Jacobian of the functor, `J_qse = d(f_qse)/d(v_qse)`.
-             * @param v_qse The input vector of scaled algebraic abundances.
-             * @param J_qse The output Jacobian matrix.
-             * @return 0 on success.
-             */
-            int df(const InputType& v_qse, JacobianType& J_qse) const;
+            N_Vector m_Y           = nullptr;
+            N_Vector m_scale       = nullptr;
+            N_Vector m_f_scale     = nullptr;
+            N_Vector m_constraints = nullptr;
+            N_Vector m_func_tmpl   = nullptr;
+
+            SUNMatrix m_J          = nullptr;
+            SUNLinearSolver m_LS   = nullptr;
+
+            static quill::Logger* getLogger() {
+                return LogManager::getInstance().getLogger("log");
+            }
+
+
         };
 
-
-        /**
-         * @brief Struct for tracking cache statistics.
-         *
-         * @par Purpose
-         * A simple utility to monitor the performance of the QSE cache by counting
-         * hits and misses for various engine operations.
-         */
-        struct CacheStats {
-            enum class operators {
-                CalculateRHSAndEnergy,
-                GenerateJacobianMatrix,
-                CalculateMolarReactionFlow,
-                GetSpeciesTimescales,
-                GetSpeciesDestructionTimescales,
-                Other,
-                All
-            };
-
-            /**
-             * @brief Map from operators to their string names for logging.
-             */
-            std::map<operators, std::string> operatorsNameMap = {
-                {operators::CalculateRHSAndEnergy, "calculateRHSAndEnergy"},
-                {operators::GenerateJacobianMatrix, "generateJacobianMatrix"},
-                {operators::CalculateMolarReactionFlow, "calculateMolarReactionFlow"},
-                {operators::GetSpeciesTimescales, "getSpeciesTimescales"},
-                {operators::GetSpeciesDestructionTimescales, "getSpeciesDestructionTimescales"},
-                {operators::Other, "other"}
-            };
-
-            /**
-             * @brief Total number of cache hits.
-             */
-            size_t m_hit = 0;
-            /**
-             * @brief Total number of cache misses.
-             */
-            size_t m_miss = 0;
-
-            /**
-             * @brief Map from operators to the number of cache hits for that operator.
-             */
-            std::map<operators, size_t> m_operatorHits = {
-                {operators::CalculateRHSAndEnergy, 0},
-                {operators::GenerateJacobianMatrix, 0},
-                {operators::CalculateMolarReactionFlow, 0},
-                {operators::GetSpeciesTimescales, 0},
-                {operators::GetSpeciesDestructionTimescales, 0},
-                {operators::Other, 0}
-            };
-
-            /**
-             * @brief Map from operators to the number of cache misses for that operator.
-             */
-            std::map<operators, size_t> m_operatorMisses = {
-                {operators::CalculateRHSAndEnergy, 0},
-                {operators::GenerateJacobianMatrix, 0},
-                {operators::CalculateMolarReactionFlow, 0},
-                {operators::GetSpeciesTimescales, 0},
-                {operators::GetSpeciesDestructionTimescales, 0},
-                {operators::Other, 0}
-            };
-
-            /**
-             * @brief Increments the hit counter for a given operator.
-             * @param op The operator that resulted in a cache hit.
-             * @throws std::invalid_argument if `op` is `All`.
-             */
-            void hit(const operators op=operators::Other);
-            /**
-             * @brief Increments the miss counter for a given operator.
-             * @param op The operator that resulted in a cache miss.
-             * @throws std::invalid_argument if `op` is `All`.
-             */
-            void miss(const operators op=operators::Other);
-
-            /**
-             * @brief Gets the number of hits for a specific operator or all operators.
-             * @param op The operator to get the number of hits for. Defaults to `All`.
-             * @return The number of hits.
-             */
-            [[nodiscard]] size_t hits(const operators op=operators::All) const;
-            /**
-             * @brief Gets the number of misses for a specific operator or all operators.
-             * @param op The operator to get the number of misses for. Defaults to `All`.
-             * @return The number of misses.
-             */
-            [[nodiscard]] size_t misses(const operators op=operators::All) const;
+        struct FluxValidationResult {
+            std::vector<QSEGroup> valid_groups;
+            std::vector<QSEGroup> invalid_groups;
+            std::vector<reaction::ReactionSet> validatedGroupReactions;
         };
-
 
     private:
         /**
@@ -964,27 +779,29 @@ namespace gridfire {
         /**
          * @brief The base engine to which this view delegates calculations.
          */
-        GraphEngine& m_baseEngine;
+        DynamicEngine& m_baseEngine;
         /**
          * @brief The list of identified equilibrium groups.
          */
         std::vector<QSEGroup> m_qse_groups;
+
+        /**
+         * @brief A set of solvers, one for each QSE group
+         */
+        std::vector<std::unique_ptr<QSESolver>> m_qse_solvers;
         /**
          * @brief The simplified set of species presented to the solver (the "slow" species).
          */
         std::vector<fourdst::atomic::Species> m_dynamic_species;
         /**
-         * @brief Indices mapping the dynamic species back to the base engine's full species list.
-         */
-        std::vector<size_t> m_dynamic_species_indices;
-        /**
          * @brief Species that are treated as algebraic (in QSE) in the QSE groups.
          */
         std::vector<fourdst::atomic::Species> m_algebraic_species;
+
         /**
-         * @brief Indices of algebraic species in the full network.
+         * @brief Map from species to their calculated abundances in the QSE state.
          */
-        std::vector<size_t> m_algebraic_species_indices;
+        std::unordered_map<fourdst::atomic::Species, double> m_algebraic_abundances;
 
         /**
          * @brief Indices of all species considered active in the current partition (dynamic + algebraic).
@@ -995,29 +812,15 @@ namespace gridfire {
          */
         std::vector<size_t> m_activeReactionIndices;
 
-        // TODO: Enhance the hashing for the cache to consider not just T and rho but also the current abundance in some careful way that automatically ignores small changes (i.e. network should only be repartitioned sometimes)
-        /**
-         * @brief Cache for QSE abundances based on T9, rho, and Y.
-         *
-         * @par Purpose
-         * This is the core of the caching mechanism. It stores the results of QSE solves
-         * to avoid re-computation. The key is a `QSECacheKey` which hashes the thermodynamic
-         * state, and the value is the vector of solved molar abundances for the algebraic species.
-         */
-        mutable std::unordered_map<QSECacheKey, std::vector<double>> m_qse_abundance_cache;
-        /**
-         * @brief Statistics for the QSE abundance cache.
-         */
-        mutable CacheStats m_cacheStats;
+        mutable std::unordered_map<uint64_t, fourdst::composition::Composition> m_composition_cache;
 
-
-
+        SUNContext m_sun_ctx = nullptr;
 
     private:
         /**
          * @brief Partitions the network by timescale.
          *
-         * @param Y_full Vector of current molar abundances for all species.
+         * @param comp Vector of current molar abundances for all species.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A vector of vectors of species indices, where each inner vector represents a
@@ -1032,36 +835,31 @@ namespace gridfire {
          *      a gap between consecutive timescales that is larger than a predefined threshold
          *      (e.g., a factor of 100).
          */
-        std::vector<std::vector<size_t>> partitionByTimescale(
-            const std::vector<double> &Y_full,
+        std::vector<std::vector<fourdst::atomic::Species>> partitionByTimescale(
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
 
-        /**
-         * @brief Builds a connectivity graph from a set of fast reaction indices.
-         *
-         * @param fast_reaction_indices A set of indices for reactions considered "fast".
-         * @return An unordered map representing the adjacency list of the connectivity graph,
-         *         where keys are species indices and values are vectors of connected species indices.
-         *
-         * @par Purpose
-         * To represent the reaction pathways among a subset of reactions.
-         *
-         * @par How
-         * It iterates through the specified fast reactions. For each reaction, it creates
-         *      a two-way edge in the graph between every reactant and every product, signifying
-         *      that mass can flow between them.
-         */
-        std::unordered_map<size_t, std::vector<size_t>> buildConnectivityGraph(
-            const std::unordered_set<size_t> &fast_reaction_indices
+        std::pair<bool, reaction::ReactionSet> group_is_a_qse_cluster(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const QSEGroup &group
+        ) const;
+
+        bool group_is_a_qse_pipeline(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const QSEGroup &group
         ) const;
 
         /**
          * @brief Validates candidate QSE groups using flux analysis.
          *
          * @param candidate_groups A vector of candidate QSE groups.
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp Vector of current molar abundances for the full network.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A vector of validated QSE groups that meet the flux criteria.
@@ -1077,9 +875,9 @@ namespace gridfire {
          *      flux exceeds a configurable threshold, the group is considered valid and is added
          *      to the returned vector.
          */
-        std::vector<QSEGroup> validateGroupsWithFluxAnalysis(
+        FluxValidationResult validateGroupsWithFluxAnalysis(
             const std::vector<QSEGroup> &candidate_groups,
-            const std::vector<double>& Y,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
@@ -1087,7 +885,7 @@ namespace gridfire {
         /**
          * @brief Solves for the QSE abundances of the algebraic species in a given state.
          *
-         * @param Y_full Vector of current molar abundances for all species in the base engine.
+         * @param comp Vector of current molar abundances for all species in the base engine.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A vector of molar abundances for the algebraic species.
@@ -1104,18 +902,18 @@ namespace gridfire {
          * @pre The input state (Y_full, T9, rho) must be a valid physical state.
          * @post The algebraic species in the QSE cache are updated with the new equilibrium abundances.
          */
-        std::vector<double> solveQSEAbundances(
-            const std::vector<double> &Y_full,
+        fourdst::composition::Composition solveQSEAbundances(
+            const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
-        );
+        ) const;
 
         /**
          * @brief Identifies the pool with the slowest mean timescale.
          *
          * @param pools A vector of vectors of species indices, where each inner vector represents a
          *              timescale pool.
-         * @param Y Vector of current molar abundances for the full network.
+         * @param comp Vector of current molar abundances for the full network.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return The index of the pool with the largest (slowest) mean destruction timescale.
@@ -1128,8 +926,8 @@ namespace gridfire {
          *      pool and returns the index of the pool with the maximum mean timescale.
          */
         size_t identifyMeanSlowestPool(
-            const std::vector<std::vector<size_t>>& pools,
-            const std::vector<double> &Y,
+            const std::vector<std::vector<fourdst::atomic::Species>>& pools,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
@@ -1138,6 +936,9 @@ namespace gridfire {
          * @brief Builds a connectivity graph from a species pool.
          *
          * @param species_pool A vector of species indices representing a species pool.
+         * @param comp
+         * @param T9
+         * @param rho
          * @return An unordered map representing the adjacency list of the connectivity graph.
          *
          * @par Purpose
@@ -1149,8 +950,9 @@ namespace gridfire {
          *      and one as a product), it adds edges between all reactants and products from
          *      that reaction that are also in the pool.
          */
-        std::unordered_map<size_t, std::vector<size_t>> buildConnectivityGraph(
-            const std::vector<size_t>& species_pool
+        std::unordered_map<fourdst::atomic::Species, std::vector<fourdst::atomic::Species>> buildConnectivityGraph(
+            const std::vector<fourdst::atomic::Species>& species_pool, const fourdst::composition::Composition &comp, double T9, double
+            rho
         ) const;
 
         /**
@@ -1158,7 +960,7 @@ namespace gridfire {
          *
          * @param candidate_pools A vector of vectors of species indices, where each inner vector
          *                        represents a connected pool of species with similar fast timescales.
-         * @param Y Vector of current molar abundances.
+         * @param comp Vector of current molar abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return A vector of `QSEGroup` structs, ready for flux validation.
@@ -1173,11 +975,49 @@ namespace gridfire {
          * @post A list of candidate `QSEGroup` objects is returned.
          */
         std::vector<QSEGroup> constructCandidateGroups(
-            const std::vector<std::vector<size_t>>& candidate_pools,
-            const std::vector<double>& Y,
+            const std::vector<std::vector<fourdst::atomic::Species>>& candidate_pools,
+            const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
+
+        /**
+         * @brief Analyzes the connectivity of timescale pools.
+         *
+         * @param timescale_pools A vector of vectors of species indices, where each inner vector
+         *                        represents a timescale pool.
+         * @param comp
+         * @param T9
+         * @param rho
+         * @return A vector of vectors of species indices, where each inner vector represents a
+         *         single connected component.
+         *
+         * @par Purpose
+         * To merge timescale pools that are strongly connected by reactions, forming
+         *          cohesive groups for QSE analysis.
+         *
+         * @par How
+         * For each pool, it builds a reaction connectivity graph using `buildConnectivityGraph`.
+         *      It then finds the connected components within that graph using a Breadth-First Search (BFS).
+         *      The resulting components from all pools are collected and returned.
+         */
+        std::vector<std::vector<fourdst::atomic::Species>> analyzeTimescalePoolConnectivity(
+            const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools, const fourdst::composition::Composition &
+            comp, double T9, double rho
+        ) const;
+
+        std::vector<QSEGroup> pruneValidatedGroups(
+            const std::vector<QSEGroup> &groups,
+            const std::vector<reaction::ReactionSet> &groupReactions,
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
+        ) const;
+
+        static std::vector<QSEGroup> merge_coupled_groups(
+            const std::vector<QSEGroup> &groups,
+            const std::vector<reaction::ReactionSet> &groupReactions
+        );
     };
 }
 

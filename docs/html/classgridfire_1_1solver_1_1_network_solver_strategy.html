@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -110,7 +110,7 @@ $(function(){initNavTree('classgridfire_1_1solver_1_1_network_solver_strategy.ht
 <p>Abstract base class for network solver strategies.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;solver.h&gt;</code></p>
+<p><code>#include &lt;strategy_abstract.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -142,7 +142,7 @@ class gridfire::solver::NetworkSolverStrategy&lt; EngineT &gt;</div><p>Abstract 
 <p>This class defines the interface for network solver strategies, which are responsible for integrating the reaction network ODEs over a given timestep. It is templated on the engine type to allow for different engine implementations to be used with the same solver.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">EngineT</td><td>The type of engine to use with this solver strategy. Must inherit from <a class="el" href="classgridfire_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a>. </td></tr>
+    <tr><td class="paramname">EngineT</td><td>The type of engine to use with this solver strategy. Must inherit from <a class="el" href="classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -232,7 +232,7 @@ template&lt;typename EngineT&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -241,7 +241,7 @@ template&lt;typename EngineT&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A vector of tuples, each containing a string for the parameter's name and a string for its type.</dd></dl>
 <p>This method should be overridden by derived classes to provide a description of the context that will be passed to the callback function. The intent of this method is that an end user can investigate the context that will be passed to the callback function, and use this information to craft their own callback function. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a053c9c1343af8f30ced69707e1d899e3">gridfire::solver::DirectNetworkSolver</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a147a0a543268427a5930143902217ac3">PyDynamicNetworkSolverStrategy</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html#a5dfb7a2ce0008d41dee4aa596a4e1ce4">gridfire::solver::CVODESolverStrategy</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a147a0a543268427a5930143902217ac3">PyDynamicNetworkSolverStrategy</a>.</p>
 
 </div>
 </div>
@@ -279,7 +279,7 @@ template&lt;typename EngineT&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The output conditions after the timestep. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a0e8a4b8ef656e0b084d11bea982e412a">gridfire::solver::DirectNetworkSolver</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a2095abb83ed6229ebb27b4883cec51c4">PyDynamicNetworkSolverStrategy</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html#ab8224d205ea3a28d9c723631c2f00b53">gridfire::solver::CVODESolverStrategy</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a2095abb83ed6229ebb27b4883cec51c4">PyDynamicNetworkSolverStrategy</a>.</p>
 
 </div>
 </div>
@@ -317,7 +317,7 @@ template&lt;typename EngineT&gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_direct_network_solver.html#a6bb0738eef5669b3ad83a3c65a0d1e96">gridfire::solver::DirectNetworkSolver</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a112a7babc03858a69d6994a7155370d3">PyDynamicNetworkSolverStrategy</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html#a77638ef3d2279009e5a57bbd3f0eb63b">gridfire::solver::CVODESolverStrategy</a>, and <a class="el" href="class_py_dynamic_network_solver_strategy.html#a112a7babc03858a69d6994a7155370d3">PyDynamicNetworkSolverStrategy</a>.</p>
 
 </div>
 </div>
@@ -349,7 +349,7 @@ template&lt;typename EngineT&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/include/gridfire/solver/<a class="el" href="solver_8h.html">solver.h</a></li>
+<li>src/include/gridfire/solver/strategies/<a class="el" href="strategy__abstract_8h.html">strategy_abstract.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

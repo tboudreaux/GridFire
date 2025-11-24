@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -106,29 +106,38 @@ $(function(){initNavTree('priming_8h.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="network_8h.html">gridfire/network.h</a>&quot;</code><br />
-<code>#include &quot;fourdst/composition/composition.h&quot;</code><br />
-<code>#include &quot;fourdst/composition/atomicSpecies.h&quot;</code><br />
-<code>#include &lt;map&gt;</code><br />
-<code>#include &lt;ranges&gt;</code><br />
-<code>#include &lt;sstream&gt;</code><br />
+<code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/atomic/atomicSpecies.h&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for priming.h:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="priming_8h__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="priming_8h__dep__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:acd0bfdfbce4e84af102d62ff8a797c9f" id="r_acd0bfdfbce4e84af102d62ff8a797c9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#acd0bfdfbce4e84af102d62ff8a797c9f">gridfire::primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;, <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine)</td></tr>
-<tr class="memdesc:acd0bfdfbce4e84af102d62ff8a797c9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
-<tr class="separator:acd0bfdfbce4e84af102d62ff8a797c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f26d5f5fabb42e88261e42bc060cea2" id="r_a8f26d5f5fabb42e88261e42bc060cea2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a8f26d5f5fabb42e88261e42bc060cea2">gridfire::calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho)</td></tr>
-<tr class="memdesc:a8f26d5f5fabb42e88261e42bc060cea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the destruction rate constant for a specific species.  <br /></td></tr>
-<tr class="separator:a8f26d5f5fabb42e88261e42bc060cea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c4b6104d5dfc5afddda36f726c5d07d" id="r_a7c4b6104d5dfc5afddda36f726c5d07d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a7c4b6104d5dfc5afddda36f726c5d07d">gridfire::calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho)</td></tr>
-<tr class="memdesc:a7c4b6104d5dfc5afddda36f726c5d07d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the creation rate for a specific species.  <br /></td></tr>
-<tr class="separator:a7c4b6104d5dfc5afddda36f726c5d07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6552165b4b36ea227479567880d8402" id="r_aa6552165b4b36ea227479567880d8402"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#aa6552165b4b36ea227479567880d8402">gridfire::engine::primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
+<tr class="memdesc:aa6552165b4b36ea227479567880d8402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
+<tr class="separator:aa6552165b4b36ea227479567880d8402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dc985b6bf1b86754f49b72dba478862" id="r_a9dc985b6bf1b86754f49b72dba478862"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a9dc985b6bf1b86754f49b72dba478862">gridfire::engine::calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="memdesc:a9dc985b6bf1b86754f49b72dba478862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the destruction rate constant for a specific species.  <br /></td></tr>
+<tr class="separator:a9dc985b6bf1b86754f49b72dba478862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb18048942c7af6debe9c0479a395a13" id="r_afb18048942c7af6debe9c0479a395a13"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#afb18048942c7af6debe9c0479a395a13">gridfire::engine::calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
+<tr class="memdesc:afb18048942c7af6debe9c0479a395a13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the creation rate for a specific species.  <br /></td></tr>
+<tr class="separator:afb18048942c7af6debe9c0479a395a13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

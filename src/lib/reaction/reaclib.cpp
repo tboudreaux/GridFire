@@ -1,32 +1,103 @@
-#include "fourdst/composition/atomicSpecies.h"
-#include "fourdst/composition/species.h"
+#include "fourdst/atomic/atomicSpecies.h"
+#include "fourdst/atomic/species.h"
 
 #include "gridfire/reaction/reaclib.h"
 #include "gridfire/reaction/reactions_data.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
+#include "gridfire/exceptions/error_reaction.h"
 
 #include <stdexcept>
 #include <sstream>
 #include <vector>
 #include <string>
+#include <format>
+#include <expected>
 
-std::string trim_whitespace(const std::string& str) {
-    auto startIt = str.begin();
-    const auto endIt   = str.end();
+namespace {
+    std::string trim_whitespace(const std::string& str) {
+        auto startIt = str.begin();
+        const auto endIt   = str.end();
 
-    while (startIt != endIt && std::isspace(static_cast<unsigned char>(*startIt))) {
-        ++startIt;
+        while (startIt != endIt && std::isspace(static_cast<unsigned char>(*startIt))) {
+            ++startIt;
+        }
+        if (startIt == endIt) {
+            return "";
+        }
+        const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
+                                 [](const unsigned char ch){ return !std::isspace(ch); });
+        return {startIt, ritr.base()};
     }
-    if (startIt == endIt) {
-        return "";
+
+    enum class ReactionParseError {
+        MissingOpenParenthesis,
+        MissingCloseParenthesis,
+        ParenthesesOutOfOrder,
+        MissingComma,
+        BadFormat // Generic error (e.g., from an out_of_range exception)
+    };
+
+    std::string error_to_string(const ReactionParseError err) {
+        switch (err) {
+            case ReactionParseError::MissingOpenParenthesis:
+                return "Missing '('";
+            case ReactionParseError::MissingCloseParenthesis:
+                return "Missing ')'";
+            case ReactionParseError::ParenthesesOutOfOrder:
+                return "')' found before '('";
+            case ReactionParseError::MissingComma:
+                return "Missing ',' within parentheses";
+            case ReactionParseError::BadFormat:
+                return "Bad format (substr error)";
+        }
+        return "Unknown error";
     }
-    const auto ritr = std::find_if(str.rbegin(), std::string::const_reverse_iterator(startIt),
-                             [](const unsigned char ch){ return !std::isspace(ch); });
-    return std::string(startIt, ritr.base());
+
+    std::expected<std::string, ReactionParseError> reverse_pe_name(const std::string& forwardPEName) noexcept {
+        try {
+            size_t pos_open_paren = forwardPEName.find('(');
+            size_t pos_close_paren = forwardPEName.find(')');
+
+            if (pos_open_paren == std::string::npos) {
+                return std::unexpected(ReactionParseError::MissingOpenParenthesis);
+            }
+            if (pos_close_paren == std::string::npos) {
+                return std::unexpected(ReactionParseError::MissingCloseParenthesis);
+            }
+            if (pos_close_paren < pos_open_paren) {
+                return std::unexpected(ReactionParseError::ParenthesesOutOfOrder);
+            }
+
+            std::string target = forwardPEName.substr(0, pos_open_paren);
+            std::string result = forwardPEName.substr(pos_close_paren + 1);
+
+            std::string inner_content = forwardPEName.substr(
+                pos_open_paren + 1,
+                pos_close_paren - pos_open_paren - 1
+            );
+
+            size_t pos_comma = inner_content.find(',');
+
+            if (pos_comma == std::string::npos) {
+                return std::unexpected(ReactionParseError::MissingComma);
+            }
+
+            std::string projectiles = inner_content.substr(0, pos_comma);
+
+            std::string ejectiles = inner_content.substr(pos_comma + 1);
+
+            std::ostringstream oss;
+            oss << result << "(" << ejectiles << "," << projectiles << ")" << target;
+
+            return oss.str();
+
+        } catch (const std::out_of_range&) {
+            return std::unexpected(ReactionParseError::BadFormat);
+        }
+    }
 }
-
 namespace gridfire::reaclib {
-    static reaction::LogicalReactionSet* s_all_reaclib_reactions_ptr = nullptr;
+    static std::unique_ptr<reaction::ReactionSet> s_all_reaclib_reactions_ptr = nullptr;
 
     #pragma pack(push, 1)
     struct ReactionRecord {
@@ -85,12 +156,11 @@ namespace gridfire::reaclib {
         const auto* records = reinterpret_cast<const ReactionRecord*>(raw_reactions_data);
         constexpr size_t num_reactions = raw_reactions_data_len / sizeof(ReactionRecord);
 
-        std::vector<reaction::Reaction> reaction_list;
+        std::vector<std::unique_ptr<reaction::Reaction>> reaction_list;
         reaction_list.reserve(num_reactions);
 
         for (size_t i = 0; i < num_reactions; ++i) {
             const auto&[chapter, qValue, coeffs, reverse, label, rpName, reactants_str, products_str] = records[i];
-
             // The char arrays from the binary are not guaranteed to be null-terminated
             // if the string fills the entire buffer. We create null-terminated string_views.
             const std::string_view label_sv(label, strnlen(label, sizeof(label)));
@@ -107,10 +177,20 @@ namespace gridfire::reaclib {
                 coeffs[6]
             };
 
+            auto rpName_revNormalized = std::string(rpName_sv);
+            if (reverse) {
+                auto result = reverse_pe_name(std::string(rpName_sv));
+                if (!result) {
+                    std::string msg = std::format("Error reversing stored projectile-ejectile name for marked reverse reaction ({})", error_to_string(result.error()));
+                    throw exceptions::ReactionParsingError(msg, rpName_revNormalized);
+                }
+                rpName_revNormalized = result.value();
+            }
+
             // Construct the Reaction object. We use rpName for both the unique ID and the human-readable name.
-            reaction_list.emplace_back(
-                rpName_sv,
-                rpName_sv,
+            reaction_list.emplace_back(std::make_unique<reaction::ReaclibReaction>(
+                rpName_revNormalized,
+                rpName_revNormalized,
                 chapter,
                 reactants,
                 products,
@@ -118,16 +198,14 @@ namespace gridfire::reaclib {
                 label_sv,
                 rate_coeffs,
                 reverse
-            );
+            ));
         }
 
         // The ReactionSet takes the vector of all individual reactions.
         const reaction::ReactionSet reaction_set(std::move(reaction_list));
 
         // The LogicalReactionSet groups reactions by their peName, which is what we want.
-        s_all_reaclib_reactions_ptr = new reaction::LogicalReactionSet(
-            reaction::packReactionSetToLogicalReactionSet(reaction_set)
-        );
+        s_all_reaclib_reactions_ptr = std::make_unique<reaction::ReactionSet>(reaction::packReactionSet(reaction_set));
 
         s_initialized = true;
     }
@@ -135,7 +213,7 @@ namespace gridfire::reaclib {
 
     // --- Public Interface Implementation ---
 
-    const reaction::LogicalReactionSet& get_all_reactions() {
+    const reaction::ReactionSet &get_all_reaclib_reactions() {
         // This ensures that the initialization happens only on the first call.
         if (!s_initialized) {
             initializeAllReaclibReactions();

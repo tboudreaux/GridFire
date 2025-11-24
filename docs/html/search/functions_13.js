@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['unabletosetnetworkreactionserror_0',['UnableToSetNetworkReactionsError',['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html#acb3183c3dea755a8a26b00d638183c30',1,'gridfire::exceptions::UnableToSetNetworkReactionsError']]],
-  ['update_1',['update',['../classgridfire_1_1_dynamic_engine.html#aa799ff785e7e79bf35b11efd55f6282a',1,'gridfire::DynamicEngine::update()'],['../classgridfire_1_1_graph_engine.html#a5ac7cff23e70bd07ba7e510b753e2ab6',1,'gridfire::GraphEngine::update()'],['../classgridfire_1_1_adaptive_engine_view.html#a2a7ecf985a326b4bea43e00cf9ee43dd',1,'gridfire::AdaptiveEngineView::update()'],['../classgridfire_1_1_defined_engine_view.html#ae5762f395caea5381ec177507816b5ae',1,'gridfire::DefinedEngineView::update()'],['../classgridfire_1_1_multiscale_partitioning_engine_view.html#a6bee75b5a6e508e6eebf83f0d48c50b8',1,'gridfire::MultiscalePartitioningEngineView::update()'],['../class_py_dynamic_engine.html#af8e6a8cd44f278535d7bcc9a896d6da8',1,'PyDynamicEngine::update()']]]
+  ['validateconservation_0',['validateConservation',['../classgridfire_1_1engine_1_1_graph_engine.html#a87bf3a33fc21f7da2a26173ebdfa69f7',1,'gridfire::engine::GraphEngine']]],
+  ['validategroupswithfluxanalysis_1',['validateGroupsWithFluxAnalysis',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#acf5cfbd18ebb2566f637cb176f861423',1,'gridfire::engine::MultiscalePartitioningEngineView']]],
+  ['validatenetworkstate_2',['validateNetworkState',['../classgridfire_1_1engine_1_1_defined_engine_view.html#a91ea88e43c17f99ff0d95a8f54b09cbf',1,'gridfire::engine::DefinedEngineView']]],
+  ['validatestate_3',['validateState',['../classgridfire_1_1engine_1_1_adaptive_engine_view.html#a63837a6a4343a2ac6a61e21576b62655',1,'gridfire::engine::AdaptiveEngineView']]],
+  ['visual_5fwidth_4',['visual_width',['../namespacegridfire_1_1utils.html#ab9afa50593a895415d9314ad853806f3',1,'gridfire::utils']]]
 ];

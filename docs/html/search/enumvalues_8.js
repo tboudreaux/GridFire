@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['other_0',['Other',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac558e59f790508a5e8522c412be5b505a6311ae17c1ee52b36e68aaf4ad066387',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]]
+  ['kinsol_0',['KINSOL',['../namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04ea78689531838e490ef6bb41a3b5c43b7d',1,'gridfire::utils']]]
 ];

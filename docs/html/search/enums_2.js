@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['networkbuilddepth_0',['NetworkBuildDepth',['../namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57',1,'gridfire']]],
-  ['networkformat_1',['NetworkFormat',['../namespacegridfire.html#a3f3d6b3f9742b70e62049ccefbb60f37',1,'gridfire']]]
+  ['interpolationerrortype_0',['InterpolationErrorType',['../namespacegridfire_1_1rates_1_1weak.html#a3fc4243d5c894779b986110c3a1ee1d4',1,'gridfire::rates::weak']]]
 ];

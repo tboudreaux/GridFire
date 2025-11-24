@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reaction Contributions Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Plotly CDN -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+  <style>
+    /* ===================== THEME ===================== */
+    :root{
+      /* Dark (default) */
+      --bg:#0f172a;--panel:#111827;--panel-2:#0b1220;--text:#e5e7eb;--muted:#9ca3af;--accent:#60a5fa;--border:#1f2937;
+      --sidebar-width:340px;--plot-height:560px;
+      --good:#22c55e;--warn:#f59e0b;--abund:#fbbf24; /* abundance line color (bright) */
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f8fafc;--panel:#ffffff;--panel-2:#f1f5f9;--text:#0f172a;--muted:#475569;--accent:#2563eb;--border:#e2e8f0;
+        --good:#16a34a;--warn:#d97706;--abund:#b45309; /* still high-contrast on light */
+      }
+    }
+
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans",sans-serif}
+    .app{display:grid;grid-template-columns:var(--sidebar-width) 6px 1fr;height:100vh;width:100vw}
+    .side{background:var(--panel);border-right:1px solid var(--border);padding:14px;overflow:auto;display:flex;flex-direction:column;min-width:240px;max-width:60vw}
+    .side h2{margin:0 0 8px 0;font-size:16px;font-weight:600}
+    .section{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+    .upload{border:2px dashed var(--border);background:var(--panel);border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:var(--muted)}
+    .upload.dragover{border-color:var(--accent);color:var(--text);background:var(--panel-2)}
+    .status{font-size:12px;color:var(--muted);margin-top:6px;word-break:break-word}
+    .controls-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    label{font-size:12px;color:var(--muted)}
+    input[type="number"],input[type="text"],select{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px;font-size:13px;width:100%;box-sizing:border-box}
+    .btn{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-size:13px;cursor:pointer}
+    .btn:hover{border-color:#334155}
+    .pill{font-size:11px;padding:2px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+    .muted{color:var(--muted)}
+
+    /* Progress bars (minimal) */
+    .progress-wrap{height:6px;background:var(--panel);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px;display:none}
+    .progress-bar{height:100%;width:0%;background:var(--accent);transition:width .2s ease}
+    .progress-indeterminate{height:6px;border:1px solid var(--border);border-radius:999px;position:relative;overflow:hidden;margin-top:8px;display:none;background:var(--panel)}
+    .progress-indeterminate::after{content:"";position:absolute;left:-30%;top:0;height:100%;width:30%;background:var(--accent);animation:indet 1s linear infinite}
+    @keyframes indet{from{left:-30%}to{left:100%}}
+
+    /* Splitters */
+    .v-splitter{width:6px;cursor:col-resize;background:var(--panel);border-right:1px solid var(--border);border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+    .v-splitter::after{content:"";width:2px;height:38px;border-radius:2px;background:#1f2937}
+    .v-splitter.dragging{background:#0d1530}
+
+    /* Species toggles */
+    .species-panel{display:flex;flex-direction:column;gap:8px;max-height:240px;overflow:auto;border:1px solid var(--border);border-radius:10px;padding:8px;background:var(--panel)}
+    .species-item{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:4px 0}
+    .toggle{position:relative;width:46px;height:26px;flex:0 0 auto}
+    .toggle input{opacity:0;width:0;height:0;position:absolute}
+    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#374151;transition:.2s;border-radius:999px;border:1px solid var(--border)}
+    .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;top:2px;background:#fff;transition:.2s;border-radius:999px}
+    .toggle input:checked + .slider{background:#2563eb}
+    .toggle input:checked + .slider:before{transform:translateX(20px)}
+
+    /* Plots */
+    .plots{background:var(--panel);border-left:1px solid var(--border);padding:12px;overflow:auto}
+    .plot-card{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:8px;margin-bottom:12px}
+    .card-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap}
+    .seg{display:inline-flex;background:var(--panel);border:1px solid var(--border);border-radius:999px;overflow:hidden}
+    .seg button{background:transparent;color:var(--text);border:none;padding:6px 10px;font-size:12px;cursor:pointer}
+    .seg button.active{background:#1f2937;color:#fff}
+    .axis-toggles{display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .axis-toggles label{display:inline-flex;gap:6px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px}
+    .axis-toggles input[type="checkbox"]{accent-color:var(--accent)}
+    .axis-toggles .disabled{opacity:.45;pointer-events:none}
+    .card-height-bar{height:10px;margin:8px 0 0 0;cursor:row-resize;background:var(--panel);border:1px solid var(--border);border-radius:6px}
+    .card-height-bar.dragging{background:#0d1530}
+    .plot-host{width:100%;height:var(--plot-height)}
+
+    /* Per-plot legend panel */
+    .legend{position:relative}
+    .legend details{background:var(--panel);border:1px solid var(--border);border-radius:10px}
+    .legend summary{list-style:none;padding:6px 10px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+    .legend summary::-webkit-details-marker{display:none}
+    .legend .legend-panel{position:absolute;z-index:5;right:0;top:36px;min-width:280px;max-width:420px;max-height:260px;overflow:hidden;border:1px solid var(--border);background:var(--panel);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+    .legend .legend-body{display:flex;flex-direction:column;padding:8px;gap:8px}
+    .legend .legend-actions{display:flex;gap:8px}
+    .legend .legend-search{background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:12px;width:100%}
+    .legend .legend-list{border:1px solid var(--border);border-radius:10px;background:var(--panel-2);overflow:auto;max-height:180px;padding:6px}
+    .legend .legend-item{display:flex;gap:8px;align-items:center;font-size:12px;padding:4px 2px}
+    .legend .legend-count{font-size:11px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="side">
+      <h2>Reaction Contributions Explorer</h2>
+
+      <!-- Upload -->
+      <div class="section">
+        <div class="upload" id="dropzone">
+          <div><strong>Upload JSON</strong> or drop file here</div>
+          <div class="muted" style="font-size:12px;margin-top:6px;">Format: { step: { t, dt, reaction_contribution: { species: { reaction: rate }}, abundance|species_abundance: { species: value } }}</div>
+          <input id="fileInput" type="file" accept=".json,application/json" style="display:none;" />
+        </div>
+        <div class="status" id="status">No file loaded.</div>
+
+        <!-- Progress bars -->
+        <div class="progress-wrap" id="readProgressWrap"><div class="progress-bar" id="readProgressBar"></div></div>
+        <div class="progress-indeterminate" id="parseProgress"></div>
+      </div>
+
+      <!-- Species -->
+      <div class="section" id="speciesSection">
+        <div class="controls-row" style="margin-bottom:8px;">
+          <input id="speciesSearch" type="text" placeholder="Filter species..." />
+        </div>
+        <div class="controls-row" style="margin-bottom:8px;">
+          <button class="btn" id="speciesSelectAll">Select all</button>
+          <button class="btn" id="speciesClearAll">Clear all</button>
+          <span class="pill" id="speciesCount">0 species</span>
+        </div>
+        <div class="species-panel" id="speciesList"></div>
+      </div>
+
+      <!-- Options -->
+      <div class="section" id="optionsSection">
+        <div class="controls-row">
+          <div style="flex:1;">
+            <label>Plot Type</label>
+            <select id="plotType">
+              <option value="individual">individual (lines)</option>
+              <option value="stacked">stacked (pos/neg areas)</option>
+              <option value="net">net (grouped bars)</option>
+            </select>
+          </div>
+          <div>
+            <label>Top-N</label>
+            <input id="topN" type="number" min="0" placeholder="All" style="width:90px;" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button class="btn" id="replotBtn">Plot</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Vertical splitter -->
+    <div class="v-splitter" id="vSplitter" title="Drag to resize sidebar"></div>
+
+    <!-- Plots -->
+    <main class="plots">
+      <div id="plotsContainer"></div>
+    </main>
+  </div>
+
+  <script>
+    // ------------------ State ------------------
+    const state = {
+      raw: null, steps: [], times: [], dts: [],
+      speciesSet: new Set(), perSpecies: new Map(), // species -> Map(reaction -> Float64Array)
+      selectedSpecies: new Set(), plotType: 'individual', topN: null,
+      speciesModes: new Map(), // species -> 'all' | 'creating' | 'consuming'
+      speciesAxes: new Map(), // species -> { logX:boolean, logY:boolean }
+      speciesLocalReactions: new Map(), // species -> Set(reaction)
+      abundances: new Map(), // species -> Float64Array abundance over time
+      speciesShowAbundance: new Map(), // species -> boolean
+      speciesLineStyle: new Map() // species -> 'lines' | 'markers' | 'lines+markers'
+    };
+
+    // ----------------- DOM -----------------
+    // Debounced plot resizer for horizontal layout changes
+    function schedule_plots_resize(){
+      if(schedule_plots_resize._raf) return;
+      schedule_plots_resize._raf = requestAnimationFrame(()=>{
+        schedule_plots_resize._raf = null;
+        document.querySelectorAll('.plot-host').forEach(el=>{ try{ Plotly?.Plots?.resize(el); }catch{} });
+      });
+    }
+    const el = id => document.getElementById(id);
+    const fileInput = el('fileInput'), dropzone = el('dropzone'), statusEl = el('status');
+    const readProgressWrap = el('readProgressWrap'), readProgressBar = el('readProgressBar'), parseProgress = el('parseProgress');
+    const speciesSearch = el('speciesSearch'), speciesList = el('speciesList');
+    const speciesSelectAll = el('speciesSelectAll'), speciesClearAll = el('speciesClearAll'), speciesCount = el('speciesCount');
+    const plotTypeSelect = el('plotType'), topNInput = el('topN'), replotBtn = el('replotBtn');
+    const vSplitter = el('vSplitter');
+    const plotsContainer = el('plotsContainer');
+
+    // --------------- Utils -----------------
+    function formatBytes(bytes){ if(bytes===0) return '0 B'; const k=1024, sizes=['B','KB','MB','GB','TB']; const i=Math.floor(Math.log(bytes)/Math.log(k)); return (bytes/Math.pow(k,i)).toFixed(2)+' '+sizes[i]; }
+    function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    function estimateMinPositiveDiff(arr){ let min=Infinity; for(let i=1;i<arr.length;i++){ const d=arr[i]-arr[i-1]; if(d>0 && d<min) min=d; } return isFinite(min)?min:null; }
+    const anyNonZero = arr => { for(let i=0;i<arr.length;i++){ if(arr[i]!==0) return true; } return false; };
+
+    // Theme helpers for Plotly
+    function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+    // ---------------- Upload with streaming + worker parse ----------------
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); });
+
+    function resetProgressUI(){ readProgressBar.style.width='0%'; readProgressWrap.style.display='none'; parseProgress.style.display='none'; }
+
+    async function handleFile(file){
+      resetProgressUI();
+      statusEl.textContent = `Reading: ${file.name} …`;
+      readProgressWrap.style.display='block';
+      readProgressBar.style.width='0%';
+
+      const worker = createParserWorker();
+      const total = file.size; let loaded = 0;
+
+      worker.onmessage = (ev)=>{
+        const {type, data, error} = ev.data || {};
+        if(type==='parsed'){
+          parseProgress.style.display='none';
+          statusEl.textContent = `Loaded: ${file.name} (${formatBytes(total)})`;
+          ingest(data);
+          setTimeout(()=>{ readProgressWrap.style.display='none'; }, 500);
+          worker.terminate();
+        } else if(type==='parse-error'){
+          parseProgress.style.display='none';
+          statusEl.textContent = `Error: JSON parse failed — ${error||''}`;
+          worker.terminate();
+        }
+      };
+
+      const reader = file.stream().getReader();
+      worker.postMessage({type:'start'});
+
+      try{
+        while(true){
+          const {done, value} = await reader.read();
+          if(done) break;
+          loaded += value.byteLength;
+          worker.postMessage({type:'chunk', chunk:value.buffer}, [value.buffer]);
+          const pct = Math.max(0, Math.min(100, (loaded/total)*100));
+          readProgressBar.style.width = pct.toFixed(1)+'%';
+          statusEl.textContent = `Reading: ${file.name} (${formatBytes(loaded)} / ${formatBytes(total)})`;
+          await new Promise(requestAnimationFrame);
+        }
+      }catch(err){
+        statusEl.textContent = 'Error: failed to read file.';
+        readProgressWrap.style.display='none';
+        worker.terminate();
+        return;
+      }
+
+      parseProgress.style.display='block';
+      statusEl.textContent = `Parsing: ${file.name} …`;
+      worker.postMessage({type:'end'});
+    }
+
+    function createParserWorker(){
+      const src = `
+        let chunks = [];
+        const decoder = new TextDecoder();
+        self.onmessage = async (ev)=>{
+          const {type, chunk} = ev.data || {};
+          if(type==='start'){ chunks = []; }
+          else if(type==='chunk'){ chunks.push(new Uint8Array(chunk)); }
+          else if(type==='end'){
+            try{
+              let totalLen = 0; for(const c of chunks) totalLen += c.byteLength;
+              const merged = new Uint8Array(totalLen); let offset = 0; for(const c of chunks){ merged.set(c, offset); offset += c.byteLength; }
+              const text = decoder.decode(merged);
+              const obj = JSON.parse(text);
+              postMessage({type:'parsed', data: obj});
+            }catch(err){ postMessage({type:'parse-error', error: (err && err.message) ? err.message : String(err)}); }
+          }
+        };
+      `;
+      const blob = new Blob([src], {type:'application/javascript'});
+      const url = URL.createObjectURL(blob);
+      return new Worker(url, {type:'module'});
+    }
+
+    // ---------------- Ingest data ----------------
+    function ingest(json){
+      state.raw = json;
+      const steps = Object.keys(json).map(k=>parseInt(k,10)).sort((a,b)=>a-b);
+      state.steps = steps;
+      const times = new Float64Array(steps.length);
+      const dts   = new Float64Array(steps.length);
+      const speciesSet = new Set();
+
+      steps.forEach((s,i)=>{
+        const sd = json[s];
+        times[i]=sd.t; dts[i]=sd.dt;
+        const rc = sd.reaction_contribution || sd.reaction_contributions || {};
+        Object.keys(rc).forEach(sp=>speciesSet.add(sp));
+        const ab = sd.abundance || sd.species_abundance || {};
+        Object.keys(ab).forEach(sp=>speciesSet.add(sp));
+      });
+
+      state.times = times; state.dts = dts; state.speciesSet = speciesSet;
+
+      // Build per-species reaction arrays (integrated rate * dt)
+      const perSpecies = new Map();
+      for(const sp of speciesSet){
+        const map = new Map();
+        // discover reactions
+        steps.forEach((s,i)=>{
+          const sd = json[s];
+          const rc = sd.reaction_contribution || sd.reaction_contributions || {};
+          const sData = rc[sp] || {};
+          for(const rxn of Object.keys(sData)){
+            if(!map.has(rxn)) map.set(rxn, new Float64Array(steps.length));
+          }
+        });
+        // fill values
+        steps.forEach((s,i)=>{
+          const sd = json[s];
+          const rc = sd.reaction_contribution || sd.reaction_contributions || {};
+          const sData = rc[sp] || {};
+          for(const [rxn, arr] of map.entries()){
+            const rate = (rxn in sData) ? sData[rxn] : 0.0;
+            arr[i] = rate;// * dts[i];
+          }
+        });
+        // prune reactions that are identically zero across all timesteps
+        for(const [rxn, arr] of Array.from(map.entries())){
+          if(!anyNonZero(arr)) map.delete(rxn);
+        }
+        perSpecies.set(sp, map);
+      }
+      state.perSpecies = perSpecies;
+
+      // Build abundances per species
+      const abundances = new Map();
+      for(const sp of speciesSet){ abundances.set(sp, new Float64Array(steps.length)); }
+      steps.forEach((s,i)=>{
+        const sd = json[s];
+        const ab = sd.abundance || sd.species_abundance || {};
+        for(const sp of Object.keys(ab)){
+          const arr = abundances.get(sp); if(arr) arr[i] = +ab[sp];
+        }
+      });
+      state.abundances = abundances;
+
+      // Default selection: H-1 if present, else first species; and default mode & axes
+      const allSpecies = [...state.speciesSet].sort();
+      state.selectedSpecies.clear();
+      if(allSpecies.includes('H-1')) state.selectedSpecies.add('H-1');
+      else if(allSpecies.length>0) state.selectedSpecies.add(allSpecies[0]);
+      for(const sp of allSpecies){
+        if(!state.speciesModes.has(sp)) state.speciesModes.set(sp,'all');
+        if(!state.speciesAxes.has(sp)) state.speciesAxes.set(sp,{logX:false, logY:false});
+        if(!state.speciesShowAbundance.has(sp)) state.speciesShowAbundance.set(sp,false);
+        state.speciesLocalReactions.delete(sp); // reset per-file-load
+      }
+
+      renderSpeciesList();
+      renderPlots();
+    }
+
+    // ------------- Species UI (search + toggles) -------------
+    function renderSpeciesList(){
+      speciesList.innerHTML='';
+      const filter = (speciesSearch.value||'').toLowerCase();
+      const all = [...state.speciesSet].sort();
+      const shown = all.filter(s=>s.toLowerCase().includes(filter));
+
+      for(const sp of shown){
+        const row = document.createElement('div'); row.className='species-item';
+        const label = document.createElement('div'); label.textContent=sp; label.style.flex='1';
+
+        const toggle = document.createElement('label'); toggle.className='toggle';
+        const input = document.createElement('input'); input.type='checkbox'; input.checked = state.selectedSpecies.has(sp);
+        const slider = document.createElement('span'); slider.className='slider';
+        toggle.appendChild(input); toggle.appendChild(slider);
+
+        input.addEventListener('change', ()=>{
+          if(input.checked) state.selectedSpecies.add(sp); else state.selectedSpecies.delete(sp);
+          // reset per-plot selections when species set changes
+          state.speciesLocalReactions.clear();
+          renderPlots();
+        });
+
+        row.appendChild(label); row.appendChild(toggle); speciesList.appendChild(row);
+      }
+      speciesCount.textContent = `${state.speciesSet.size} species`;
+    }
+    speciesSearch.addEventListener('input', renderSpeciesList);
+    speciesSelectAll.addEventListener('click', ()=>{ state.selectedSpecies = new Set([...state.speciesSet]); state.speciesLocalReactions.clear(); renderSpeciesList(); renderPlots(); });
+    speciesClearAll.addEventListener('click', ()=>{ state.selectedSpecies.clear(); state.speciesLocalReactions.clear(); renderSpeciesList(); renderPlots(); });
+
+    // ---------------- Core helper ----------------
+    function reactionsForSpeciesWithTopN(sp, topN){
+      const rxnMap = state.perSpecies.get(sp); if(!rxnMap) return new Map();
+
+      // Map is already pruned to non-zero series; apply Top-N if requested
+      if(!topN || topN<=0 || rxnMap.size<=topN) return rxnMap;
+
+      const totals=[];
+      for(const [rxn,arr] of rxnMap.entries()){
+        let sum=0; for(let i=0;i<arr.length;i++) sum+=Math.abs(arr[i]); totals.push([rxn,sum]);
+      }
+      totals.sort((a,b)=>b[1]-a[1]); const top = new Set(totals.slice(0,topN).map(x=>x[0]));
+
+      const filtered = new Map(); const other = new Float64Array(state.times.length);
+      for(const [rxn,arr] of rxnMap.entries()){
+        if(top.has(rxn)) filtered.set(rxn,arr);
+        else for(let i=0;i<arr.length;i++) other[i]+=arr[i];
+      }
+      if(anyNonZero(other)) filtered.set('Other', other);
+      return filtered;
+    }
+
+    // ---------------- Plotting (per-card resize, per-plot legend & axes) ----------------
+    function renderPlots(){
+      plotsContainer.innerHTML='';
+      const plotType = state.plotType; const T = Array.from(state.times);
+
+      if(!state.raw || state.selectedSpecies.size===0){
+        const msg=document.createElement('div'); msg.className='muted'; msg.textContent='Load a file and toggle at least one species.'; plotsContainer.appendChild(msg); return;
+      }
+
+      for(const sp of [...state.selectedSpecies].sort()){
+        const card=document.createElement('div'); card.className='plot-card';
+        const bar=document.createElement('div'); bar.className='card-height-bar'; bar.title='Drag to resize this plot';
+
+        // Toolbar with segmented mode toggle, axis toggles, abundance toggle, per-plot line style, and legend
+        const toolbar=document.createElement('div'); toolbar.className='card-toolbar';
+
+        // Line style selector (per-plot)
+        const lineStyleSel=document.createElement('select'); lineStyleSel.style.marginLeft='6px';
+        ['lines','markers','lines+markers'].forEach((opt)=>{
+          const o=document.createElement('option'); o.value=opt; o.text= opt==='markers'?'o': opt==='lines+markers'?'o-':'-';
+          lineStyleSel.appendChild(o);
+        });
+        lineStyleSel.value = state.speciesLineStyle.get(sp) || 'lines';
+        lineStyleSel.addEventListener('change',()=>{ state.speciesLineStyle.set(sp, lineStyleSel.value); renderPlots(); });
+
+        const seg=document.createElement('div'); seg.className='seg';
+        const btnAll=document.createElement('button'); btnAll.textContent='Show all';
+        const btnCreate=document.createElement('button'); btnCreate.textContent='Show creating';
+        const btnConsume=document.createElement('button'); btnConsume.textContent='Show consuming';
+        seg.appendChild(btnAll); seg.appendChild(btnCreate); seg.appendChild(btnConsume);
+
+        const axesBox=document.createElement('div'); axesBox.className='axis-toggles';
+        const ax = state.speciesAxes.get(sp) || {logX:false,logY:false};
+        const mode = state.speciesModes.get(sp) || 'all';
+
+        const logXWrap=document.createElement('label');
+        const logXInput=document.createElement('input'); logXInput.type='checkbox'; logXInput.checked=!!ax.logX;
+        const logXText=document.createElement('span'); logXText.textContent='log x';
+        logXWrap.appendChild(logXInput); logXWrap.appendChild(logXText);
+
+        const logYWrap=document.createElement('label');
+        const logYInput=document.createElement('input'); logYInput.type='checkbox'; logYInput.checked=!!ax.logY;
+        const logYText=document.createElement('span'); logYText.textContent='log y';
+        logYWrap.appendChild(logYInput); logYWrap.appendChild(logYText);
+
+        const logYDisabled = (mode==='all');
+        if(logYDisabled){ logYWrap.classList.add('disabled'); logYInput.disabled = true; }
+
+        // Abundance toggle
+        const abundWrap=document.createElement('label');
+        const abundInput=document.createElement('input'); abundInput.type='checkbox'; abundInput.checked=!!state.speciesShowAbundance.get(sp);
+        const abundText=document.createElement('span'); abundText.textContent='abundance line';
+        abundWrap.appendChild(abundInput); abundWrap.appendChild(abundText);
+
+        axesBox.appendChild(logXWrap); axesBox.appendChild(logYWrap); axesBox.appendChild(abundWrap);
+
+        // Per-plot legend panel (search + checkboxes)
+        const legendBox = document.createElement('div'); legendBox.className='legend';
+        const legendDetails = document.createElement('details');
+        const legendSummary = document.createElement('summary'); legendSummary.innerHTML = `⚙️ Reactions`;
+        const legendPanel = document.createElement('div'); legendPanel.className='legend-panel';
+        const legendBody = document.createElement('div'); legendBody.className='legend-body';
+        const legendActions = document.createElement('div'); legendActions.className='legend-actions';
+        const legendSearch = document.createElement('input'); legendSearch.className='legend-search'; legendSearch.placeholder='Filter…';
+        const legendList = document.createElement('div'); legendList.className='legend-list';
+        const legendCount = document.createElement('div'); legendCount.className='legend-count';
+        const legendSelectAll = document.createElement('button'); legendSelectAll.className='btn'; legendSelectAll.textContent='All';
+        const legendClearAll = document.createElement('button'); legendClearAll.className='btn'; legendClearAll.textContent='None';
+        legendActions.appendChild(legendSelectAll); legendActions.appendChild(legendClearAll);
+        legendBody.appendChild(legendActions); legendBody.appendChild(legendSearch); legendBody.appendChild(legendList); legendBody.appendChild(legendCount);
+        legendPanel.appendChild(legendBody);
+        legendDetails.appendChild(legendSummary); legendDetails.appendChild(legendPanel);
+        legendBox.appendChild(legendDetails);
+
+        toolbar.appendChild(seg); toolbar.appendChild(lineStyleSel);
+        toolbar.appendChild(axesBox);
+        toolbar.appendChild(legendBox);
+
+        const host=document.createElement('div'); host.className='plot-host';
+        host.style.height = getComputedStyle(document.documentElement).getPropertyValue('--plot-height');
+        card.appendChild(toolbar); card.appendChild(host); card.appendChild(bar); plotsContainer.appendChild(card);
+
+        [btnAll,btnCreate,btnConsume].forEach(b=>b.classList.remove('active'));
+        if(mode==='all') btnAll.classList.add('active');
+        else if(mode==='creating') btnCreate.classList.add('active');
+        else btnConsume.classList.add('active');
+
+        function setMode(m){ state.speciesModes.set(sp,m); renderPlots(); }
+        btnAll.addEventListener('click', ()=>setMode('all'));
+        btnCreate.addEventListener('click', ()=>setMode('creating'));
+        btnConsume.addEventListener('click', ()=>setMode('consuming'));
+
+        logXInput.addEventListener('change', ()=>{ const cur = state.speciesAxes.get(sp)||{logX:false,logY:false}; cur.logX = !!logXInput.checked; state.speciesAxes.set(sp,cur); renderPlots(); });
+        logYInput.addEventListener('change', ()=>{ const cur = state.speciesAxes.get(sp)||{logX:false,logY:false}; cur.logY = !!logYInput.checked; state.speciesAxes.set(sp,cur); renderPlots(); });
+        abundInput.addEventListener('change', ()=>{ state.speciesShowAbundance.set(sp, !!abundInput.checked); renderPlots(); });
+
+        // Build reaction set for this species (local per-plot)
+        const rxnMap = reactionsForSpeciesWithTopN(sp, parseInt(topNInput.value||'0',10));
+        const availableRxns = [...rxnMap.keys()].sort();
+        let localSet = state.speciesLocalReactions.get(sp);
+        if(!localSet){
+          // default to all available reactions for this species
+          localSet = new Set(availableRxns);
+          state.speciesLocalReactions.set(sp, localSet);
+        }
+
+        function buildLegendList(){
+          legendList.innerHTML='';
+          const q = (legendSearch.value||'').toLowerCase();
+          const items = availableRxns.filter(r=>r.toLowerCase().includes(q));
+          for(const rxn of items){
+            const row=document.createElement('div'); row.className='legend-item';
+            const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=localSet.has(rxn);
+            cb.addEventListener('change', ()=>{ if(cb.checked) localSet.add(rxn); else localSet.delete(rxn); state.speciesLocalReactions.set(sp, localSet); renderPlots(); });
+            const label=document.createElement('label'); label.textContent=rxn; label.style.cursor='pointer';
+            row.appendChild(cb); row.appendChild(label); legendList.appendChild(row);
+          }
+          legendCount.textContent = `${items.length} / ${availableRxns.length} reactions`;
+        }
+        legendSearch.addEventListener('input', buildLegendList);
+        legendSelectAll.addEventListener('click', ()=>{ localSet = new Set(availableRxns); state.speciesLocalReactions.set(sp, localSet); buildLegendList(); renderPlots(); });
+        legendClearAll.addEventListener('click', ()=>{ localSet = new Set(); state.speciesLocalReactions.set(sp, localSet); buildLegendList(); renderPlots(); });
+        buildLegendList();
+
+        // Determine which reactions to show for this plot
+        const showList = availableRxns.filter(r=>localSet.has(r));
+        const traces=[];
+
+        const yVec = (arr)=>{
+          if((state.speciesModes.get(sp)||'all')==='creating') return Array.from(arr, v => v>0 ? v : null);
+          if((state.speciesModes.get(sp)||'all')==='consuming'){
+            if((state.speciesAxes.get(sp)||{}).logY) return Array.from(arr, v => v<0 ? Math.abs(v) : null);
+            return Array.from(arr, v => v<0 ? v : null);
+          }
+          return Array.from(arr);
+        };
+
+        if(state.plotType==='individual'){
+          const modeVal = state.speciesLineStyle.get(sp) || 'lines';
+          for(const rxn of showList){
+            const arr = rxnMap.get(rxn); if(!arr) continue;
+            traces.push({type:'scatter',mode:modeVal,x:T,y:yVec(arr),name:rxn,hovertemplate:`reaction: <b>${escapeHtml(rxn)}</b><br>t: %{x:.6g}s<br>Δ: %{y:.3e} mol/g<extra></extra>`,line:{width:2}});
+          }
+        }else if(state.plotType==='stacked'){
+          for(const rxn of showList){
+            const arr = rxnMap.get(rxn); if(!arr) continue;
+            const pos = Array.from(arr,v=>Math.max(v,0));
+            const negRaw = Array.from(arr,v=>Math.min(v,0));
+            const logY = (state.speciesAxes.get(sp)||{}).logY;
+            const neg = logY ? Array.from(negRaw,v=>v<0?Math.abs(v):0) : negRaw; // abs when logY
+            const modeSel = state.speciesModes.get(sp)||'all';
+            if(modeSel==='all' || modeSel==='creating'){
+              if(pos.some(v=>v!==0)) traces.push({type:'scatter',mode:'lines',fill:'tonexty',stackgroup:'pos_'+sp,x:T,y:pos,name:rxn+' (+)',hovertemplate:`reaction: <b>${escapeHtml(rxn)}</b><br>t: %{x:.6g}s<br>Δ: %{y:.3e} mol/g<extra></extra>`,line:{width:1.5}});
+            }
+            if(modeSel==='all' || modeSel==='consuming'){
+              if(neg.some(v=>v!==0)) traces.push({type:'scatter',mode:'lines',fill:'tonexty',stackgroup:'neg_'+sp,x:T,y:neg,name:rxn+(logY?' (|−|)':' (−)'),hovertemplate:`reaction: <b>${escapeHtml(rxn)}</b><br>t: %{x:.6g}s<br>Δ: %{y:.3e} mol/g<extra></extra>`,line:{width:1.5}});
+            }
+          }
+        }else if(state.plotType==='net'){
+          const dt = estimateMinPositiveDiff(T) ?? 1.0; const maxGroups=Math.max(1,showList.length); const width = dt/(maxGroups+2); let k=0;
+          for(const rxn of showList){
+            const arr = rxnMap.get(rxn); if(!arr) continue;
+            traces.push({type:'bar',x:T,y:yVec(arr),width:width,name:rxn,offsetgroup:String(k++),hovertemplate:`reaction: <b>${escapeHtml(rxn)}</b><br>t: %{x:.6g}s<br>Δ: %{y:.3e} mol/g<extra></extra>`});
+          }
+        }
+
+        // Abundance overlay (secondary axis)
+        const abundArr = state.abundances.get(sp);
+        const showAbund = !!state.speciesShowAbundance.get(sp) && abundArr && abundArr.length===T.length;
+        if(showAbund){
+          traces.push({type:'scatter',mode:'lines',x:T,y:Array.from(abundArr),name:'Abundance',yaxis:'y2',hovertemplate:`species: <b>${escapeHtml(sp)}</b><br>t: %{x:.6g}s<br>Y: %{y:.3e}<extra></extra>`,line:{width:3,dash:'dash',color:cssVar('--abund')}});
+        }
+
+        const logX = (state.speciesAxes.get(sp)||{}).logX;
+        const logY = (state.speciesAxes.get(sp)||{}).logY && (state.speciesModes.get(sp)||'all')!=='all';
+        const yTitleAbs = logY && (state.speciesModes.get(sp)||'all')==='consuming' ? `|Δ[${sp}]| (mol/g)` : `Δ[${sp}] (mol/g)`;
+
+        // Pull theme colors from CSS variables
+        const plotBg = cssVar('--panel');
+        const paperBg = cssVar('--panel-2');
+        const fontColor = cssVar('--text');
+        const gridColor = cssVar('--border');
+
+        const layout = {
+          title:`Reaction Contributions to ${sp}`,
+          plot_bgcolor:plotBg, paper_bgcolor:paperBg, font:{color:fontColor},
+          margin:{l:60,r:showAbund?60:20,t:40,b:50},
+          xaxis:{type: logX ? 'log' : 'linear', title:'Time (s)',gridcolor:gridColor,zerolinecolor:gridColor},
+          yaxis:{type: logY ? 'log' : 'linear', title: yTitleAbs, gridcolor:gridColor, zerolinecolor:gridColor},
+          legend:{orientation:'h',y:-0.18,x:0},
+          showlegend:false
+        };
+        if(showAbund){
+          layout.yaxis2 = {title:`Y(${sp})`, overlaying:'y', side:'right', showgrid:false, rangemode:'tozero'};
+        }
+
+        Plotly.newPlot(host, traces, layout, {responsive:true, displaylogo:false});
+
+        // Per-card resize drag
+        (() => {
+          let dragging=false, startY=0, startH=0, af=null;
+          function onDown(e){ dragging=true; startY=(e.clientY??e.touches?.[0]?.clientY); startH=parseFloat(getComputedStyle(host).height); bar.classList.add('dragging');
+            document.addEventListener('mousemove',onMove); document.addEventListener('mouseup',onUp);
+            document.addEventListener('touchmove',onMove,{passive:false}); document.addEventListener('touchend',onUp); }
+          function onMove(e){
+            if(!dragging) return; const y=(e.clientY??e.touches?.[0]?.clientY); const delta=y-startY;
+            const newH=Math.max(240, Math.min(1200, startH+delta)); host.style.height=newH+'px';
+            if(!af){ af = requestAnimationFrame(()=>{ af=null; try{ Plotly.Plots.resize(host); }catch{} }); }
+            e.preventDefault?.();
+          }
+          function onUp(){ dragging=false; bar.classList.remove('dragging');
+            document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onUp);
+            document.removeEventListener('touchmove',onMove); document.removeEventListener('touchend',onUp); }
+          bar.addEventListener('mousedown',onDown); bar.addEventListener('touchstart',onDown,{passive:true});
+        })();
+      }
+    }
+
+    // -------------- Controls wiring ----------------
+    plotTypeSelect.addEventListener('change', ()=>{ state.plotType = plotTypeSelect.value; renderPlots(); });
+    topNInput.addEventListener('change', ()=>{ state.speciesLocalReactions.clear(); renderPlots(); });
+    replotBtn.addEventListener('click', ()=>{ state.speciesLocalReactions.clear(); renderPlots(); });
+
+    // ---------------- Splitters ----------------
+    // Vertical: sidebar width
+    (()=>{ let dragging=false,startX=0,startW=0;
+      function down(e){ dragging=true; startX=(e.clientX??e.touches?.[0]?.clientX); startW=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')); vSplitter.classList.add('dragging');
+        document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+        document.addEventListener('touchmove',move,{passive:false}); document.addEventListener('touchend',up); }
+      function move(e){ if(!dragging) return; const x=(e.clientX??e.touches?.[0]?.clientX), d=x-startX;
+        let w=Math.max(240, Math.min(window.innerWidth*0.6, startW+d));
+        document.documentElement.style.setProperty('--sidebar-width', w+'px');
+        schedule_plots_resize();
+        e.preventDefault?.(); }
+      function up(){ dragging=false; vSplitter.classList.remove('dragging');
+        schedule_plots_resize();
+        document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up);
+        document.removeEventListener('touchmove',move); document.removeEventListener('touchend',up); }
+      vSplitter.addEventListener('mousedown',down); vSplitter.addEventListener('touchstart',down,{passive:true});
+    })();
+
+    // ---------------- Lightweight self-tests ----------------
+    (function selfTests(){
+      try{
+        console.assert(escapeHtml('<>&"')==='&lt;&gt;&amp;&quot;', 'escapeHtml failed');
+        const z = new Float64Array([0,0,0]);
+        const nz = new Float64Array([0,1,0]);
+        console.assert(!anyNonZero(z), 'anyNonZero zero array failed');
+        console.assert(anyNonZero(nz), 'anyNonZero nz array failed');
+        // Top-N collapse smoke test + abundance overlay
+        (function(){
+          const fake={0:{t:0,dt:1,reaction_contribution:{A:{r1:1,r2:0}},abundance:{A:1e-1}},1:{t:1,dt:1,reaction_contribution:{A:{r1:1,r2:1}},abundance:{A:9e-2}}};
+          ingest(fake);
+          const m = reactionsForSpeciesWithTopN('A',1);
+          console.assert(m.size>=1,'Top-N should keep one reaction');
+          // per-plot line style map / abundance map present
+          console.assert(state.speciesLineStyle instanceof Map, 'speciesLineStyle must be Map');
+          console.assert(state.speciesShowAbundance instanceof Map, 'speciesShowAbundance must be Map');
+        })();
+        console.log('%cSelf-tests passed','color:'+cssVar('--good'));
+      }catch(e){ console.error('Self-tests failed:', e); }
+    })();
+
+    // Re-apply Plotly theme on system theme change
+    if(window.matchMedia){
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      mq.addEventListener?.('change', ()=>{ if(state.raw) renderPlots(); });
+    }
+  </script>
+</body>
+</html>

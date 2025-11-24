@@ -1,112 +1,121 @@
 #pragma once
 
-#include <exception>
-#include <string>
-#include <iostream>
+#include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
-    class EngineError : public std::exception {};
-
-    class StaleEngineTrigger final : public EngineError {
-    public:
-        struct state {
-            double m_T9;
-            double m_rho;
-            std::vector<double> m_Y;
-            double m_t;
-            int m_total_steps;
-            double m_eps_nuc;
-        };
-        explicit StaleEngineTrigger(const state &s)
-            :  m_state(s) {}
-
-        const char* what() const noexcept override{
-            return "Engine reports stale state. This means that the caller should trigger a update of the engine state before continuing with the integration. If you as an end user are seeing this error, it is likely a bug in the code that should be reported. Please provide the input parameters and the context in which this error occurred. Thank you for your help!";
-        }
-
-        state getState() const {
-            return m_state;
-        }
-
-        size_t numSpecies() const {
-            return m_state.m_Y.size();
-        }
-
-        size_t totalSteps() const {
-            return m_state.m_total_steps;
-        }
-
-        double energy() const {
-            return m_state.m_eps_nuc;
-        }
-
-        double getMolarAbundance(const size_t index) const {
-            if (index > m_state.m_Y.size() - 1) {
-                throw std::out_of_range("Index out of bounds for molar abundance vector.");
-            }
-            return m_state.m_Y[index];
-        }
-
-        double temperature() const {
-            return m_state.m_T9 * 1e9; // Convert T9 back to Kelvin
-        }
-
-        double density() const {
-            return m_state.m_rho;
-        }
-    private:
-        state m_state;
-
+    /**
+     * @brief Base class for engine-related exceptions.
+     *
+     * This class serves as the base for all exceptions specific to the
+     * reaction network engine in the GridFire library. It extends the
+     * GridFireError class and allows for custom error messages related
+     * to engine operations.
+     */
+    class EngineError : public GridFireError {
+        using GridFireError::GridFireError;
     };
 
-    class StaleEngineError final : public EngineError {
-    public:
-        explicit StaleEngineError(const std::string& message)
-            : m_message(message) {}
-
-        const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-
-    private:
-        std::string m_message;
-    };
-
+    /**
+     * @brief Exception for failures in partitioning the engine.
+     *
+     * This exception is thrown when the engine fails to partition
+     * the reaction network as required for certain calculations or
+     * optimizations.
+     */
     class FailedToPartitionEngineError final : public EngineError {
-    public:
-        explicit FailedToPartitionEngineError(const std::string& message)
-            : m_message(message) {}
-
-        const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-    private:
-        std::string m_message;
+        using EngineError::EngineError;
     };
 
+    /**
+     * @brief Exception for errors during network resizing.
+     *
+     * This exception is thrown when the engine encounters an error
+     * while attempting to resize the reaction network, such as when
+     * adding or removing species or reactions.
+     */
     class NetworkResizedError final : public EngineError {
-    public:
-        explicit NetworkResizedError(const std::string& message)
-            : m_message(message) {}
-
-        const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-    private:
-        std::string m_message;
+        using EngineError::EngineError;
     };
 
+    /**
+     * @brief Exception for failures in setting network reactions.
+     *
+     * This exception is thrown when the engine fails to properly
+     * set or initialize the reactions in the reaction network.
+     */
     class UnableToSetNetworkReactionsError final : public EngineError {
-    public:
-        explicit UnableToSetNetworkReactionsError(const std::string& message)
-            : m_message(message) {}
-
-        const char* what() const noexcept override {
-            return m_message.c_str();
-        }
-
-    private:
-        std::string m_message;
+        using EngineError::EngineError;
     };
+
+    /**
+     * @brief Exception for invalid composition collection in the engine.
+     *
+     * This exception is thrown when the engine encounters an
+     * invalid state while trying to collect the composition from the entire engine stack
+     */
+    class BadCollectionError final : public EngineError {
+        using EngineError::EngineError;
+    };
+
+    /**
+     * @brief Exception for invalid QSE solution in the engine.
+     *
+     * This exception is thrown when the engine computes an
+     * invalid solution while performing Quasi-Statistical Equilibrium (QSE) calculations.
+     */
+    class InvalidQSESolutionError final : public EngineError {
+        using EngineError::EngineError;
+    };
+
+    /**
+     * @brief Exception for errors in calculating the right-hand side (RHS).
+     *
+     * This exception is thrown when the engine encounters an error
+     * while calculating the right-hand side of the reaction network equations.
+     */
+    class BadRHSEngineError final : public EngineError {
+        using EngineError::EngineError;
+    };
+
+    /**
+     * @brief Base class for Jacobian-related exceptions.
+     *
+     * This class serves as the base for all exceptions specific to
+     * Jacobian matrix operations in the reaction network engine.
+     */
+    class JacobianError : public EngineError {
+        using EngineError::EngineError;
+    };
+
+    /**
+     * @brief Exception for stale Jacobian matrix access.
+     *
+     * This exception is thrown when an attempt is made to access
+     * a Jacobian matrix that is stale and needs to be regenerated.
+     */
+    class StaleJacobianError final : public JacobianError {
+        using JacobianError::JacobianError;
+    };
+
+    /**
+     * @brief Exception for uninitialized Jacobian matrix access.
+     *
+     * This exception is thrown when an attempt is made to access
+     * a Jacobian matrix that has not been initialized.
+     */
+    class UninitializedJacobianError final: public JacobianError {
+        using JacobianError::JacobianError;
+    };
+
+    /**
+     * @brief Exception for unknown Jacobian matrix access.
+     *
+     * This exception is thrown when an attempt is made to access
+     * a Jacobian matrix that is unknown or not recognized by the engine.
+     */
+    class UnknownJacobianError final : public JacobianError {
+        using JacobianError::JacobianError;
+    };
+
 
 }

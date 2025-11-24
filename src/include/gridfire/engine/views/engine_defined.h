@@ -2,8 +2,9 @@
 
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/engine_graph.h"
 #include "gridfire/io/network_file.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
@@ -12,24 +13,28 @@
 
 #include <string>
 
-namespace gridfire{
+namespace gridfire::engine {
     class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {
     public:
-        DefinedEngineView(const std::vector<std::string>& peNames, DynamicEngine& baseEngine);
-        const DynamicEngine& getBaseEngine() const override;
+        DefinedEngineView(const std::vector<std::string>& peNames, GraphEngine& baseEngine);
+
+        /** @brief Get the base engine associated with this defined engine view.
+         * @return A const reference to the base DynamicEngine.
+         */
+        [[nodiscard]] const DynamicEngine& getBaseEngine() const override;
 
         // --- Engine Interface ---
         /**
          * @brief Gets the list of active species in the network defined by the file.
          * @return A const reference to the vector of active species.
          */
-        const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
 
         // --- DynamicEngine Interface ---
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation for the active species.
          *
-         * @param Y_defined A vector of abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          * @return A StepDerivatives struct containing the derivatives of the active species and the
@@ -37,75 +42,104 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
-        std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const override;
+
+        [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
+
         /**
          * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param Y_dynamic A vector of abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          *
          * @throws std::runtime_error If the view is stale.
          */
-        void generateJacobianMatrix(
-            const std::vector<double>& Y_dynamic,
-            const double T9,
-            const double rho
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const override;
+
         /**
-         * @brief Gets an entry from the Jacobian matrix for the active species.
+         * @brief Generates the Jacobian matrix for the active species.
          *
-         * @param i_defined The row index (species index) in the defined matrix.
-         * @param j_defined The column index (species index) in the defined matrix.
-         * @return The value of the Jacobian matrix at (i_defined, j_defined).
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param activeSpecies The vector of active species to include in the Jacobian.
          *
          * @throws std::runtime_error If the view is stale.
-         * @throws std::out_of_range If an index is out of bounds.
          */
-        double getJacobianMatrixEntry(
-            const int i_defined,
-            const int j_defined
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            const std::vector<fourdst::atomic::Species> &activeSpecies
         ) const override;
+
+        /**
+         * @brief Generates the Jacobian matrix for a given sparsity pattern
+         *
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian matrix.
+         *
+         * @throws std::runtime_error If the view is stale.
+         */
+        [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            const SparsityPattern &sparsityPattern
+        ) const override;
+
         /**
          * @brief Generates the stoichiometry matrix for the active reactions and species.
          *
          * @throws std::runtime_error If the view is stale.
          */
         void generateStoichiometryMatrix() override;
+
         /**
          * @brief Gets an entry from the stoichiometry matrix for the active species and reactions.
          *
-         * @param speciesIndex_defined The index of the species in the defined species list.
-         * @param reactionIndex_defined The index of the reaction in the defined reaction list.
+         * @param species The species for which to get the stoichiometric coefficient.
+         * @param reaction The reaction for which to get the stoichiometric coefficient.
          * @return The stoichiometric coefficient for the given species and reaction.
          *
          * @throws std::runtime_error If the view is stale.
          * @throws std::out_of_range If an index is out of bounds.
          */
-        int getStoichiometryMatrixEntry(
-            const int speciesIndex_defined,
-            const int reactionIndex_defined
+        [[nodiscard]] int getStoichiometryMatrixEntry(
+            const fourdst::atomic::Species& species,
+            const reaction::Reaction& reaction
         ) const override;
         /**
          * @brief Calculates the molar reaction flow for a given reaction in the active network.
          *
          * @param reaction The reaction for which to calculate the flow.
-         * @param Y_defined Vector of current abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Molar flow rate for the reaction (e.g., mol/g/s).
          *
          * @throws std::runtime_error If the view is stale or if the reaction is not in the active set.
          */
-        double calculateMolarReactionFlow(
+        [[nodiscard]] double calculateMolarReactionFlow(
             const reaction::Reaction& reaction,
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const override;
         /**
          * @brief Gets the set of active logical reactions in the network.
@@ -114,29 +148,49 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        const reaction::LogicalReactionSet& getNetworkReactions() const override;
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
-        void setNetworkReactions(const reaction::LogicalReactionSet& reactions) override;
+        /**
+         * @brief Sets the active reactions in the network.
+         *
+         * @param reactions The ReactionSet containing the reactions to set as active.
+         *
+         * @post The view is marked as stale and will need to be updated.
+         */
+        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
+
         /**
          * @brief Computes timescales for all active species in the network.
          *
-         * @param Y_defined Vector of current abundances for the active species.
+         * @param comp A Composition object containing the current composition of the system
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
          * @return Map from Species to their characteristic timescales (s).
          *
          * @throws std::runtime_error If the view is stale.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesTimescales(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const override;
 
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
-            const std::vector<double>& Y_defined,
-            const double T9,
-            const double rho
+        /**
+         * @brief Computes destruction timescales for all active species in the network.
+         *
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Map from Species to their destruction timescales (s).
+         *
+         * @throws std::runtime_error If the view is stale.
+         */
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesDestructionTimescales(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
         ) const override;
 
         /**
@@ -152,7 +206,13 @@ namespace gridfire{
          */
         fourdst::composition::Composition update(const NetIn &netIn) override;
 
-        bool isStale(const NetIn& netIn) override;
+        /**
+         * @brief Checks if the engine view is stale.
+         *
+         * @param netIn The current network input (unused).
+         * @return True if the view is stale and needs to be updated; false otherwise.
+         */
+        [[deprecated]] bool isStale(const NetIn& netIn) override;
 
         /**
          * @brief Sets the screening model for the base engine.
@@ -168,20 +228,59 @@ namespace gridfire{
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
-        [[nodiscard]] int getSpeciesIndex(const fourdst::atomic::Species &species) const override;
+        /** @brief Maps a species from the full network to its index in the defined active network.
+         *
+         * @param species The species to map.
+         * @return The index of the species in the active network.
+         *
+         * @throws std::runtime_error If the species is not in the active set.
+         */
+        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
+        /**
+         * @brief Map from a NetIn object to a vector of molar abundances for the active species.
+         * @param netIn The NetIn object containing the full network abundances.
+         * @return A vector of molar abundances for the active species.
+         */
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
+        /**
+         * @brief Prime the engine view for calculations. This will delegate to the base engine.
+         * @param netIn The current network input.
+         * @return The PrimingReport from the base engine.
+         */
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+
+        /**
+         * @brief Collects a Composition object from the base engine.
+         *
+         * @param comp The full Composition object.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @return A composition object representing the state of the engine stack and the current view.
+         */
+        [[nodiscard]] fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+
+        /**
+         * @brief Gets the status of a species in the active network.
+         *
+         * @param species The species for which to get the status.
+         * @return The SpeciesStatus indicating if the species is active, inactive, or not present.
+         */
+        [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     protected:
         bool m_isStale = true;
-        DynamicEngine& m_baseEngine;
+        GraphEngine& m_baseEngine;
     private:
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
         ///< Active species in the defined engine.
-        std::vector<fourdst::atomic::Species> m_activeSpecies;
+        std::set<fourdst::atomic::Species> m_activeSpecies;
+
+        ///< Cache for the active species vector to avoid dangling references.
+        mutable std::optional<std::vector<fourdst::atomic::Species>> m_activeSpeciesVectorCache = std::nullopt;
+
         ///< Active reactions in the defined engine.
-        reaction::LogicalReactionSet m_activeReactions;
+        reaction::ReactionSet m_activeReactions;
 
         ///< Maps indices of active species to indices in the full network.
         std::vector<size_t> m_speciesIndexMap;
@@ -198,7 +297,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If an active species is not found in the base engine's species list.
          */
-        std::vector<size_t> constructSpeciesIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap() const;
 
         /**
          * @brief Constructs the reaction index map.
@@ -210,7 +309,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If an active reaction is not found in the base engine's reaction list.
          */
-        std::vector<size_t> constructReactionIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructReactionIndexMap() const;
 
         /**
          * @brief Maps a vector of culled abundances to a vector of full abundances.
@@ -219,7 +318,7 @@ namespace gridfire{
          * @return A vector of abundances for the full network, with the abundances of the active
          *         species copied from the defined vector.
          */
-        std::vector<double> mapViewToFull(const std::vector<double>& defined) const;
+        [[nodiscard]] std::vector<double> mapViewToFull(const std::vector<double>& defined) const;
 
         /**
          * @brief Maps a vector of full abundances to a vector of culled abundances.
@@ -228,7 +327,7 @@ namespace gridfire{
          * @return A vector of abundances for the active species, with the abundances of the active
          *         species copied from the full vector.
          */
-        std::vector<double> mapFullToView(const std::vector<double>& full) const;
+        [[nodiscard]] std::vector<double> mapFullToView(const std::vector<double>& full) const;
 
         /**
          * @brief Maps a culled species index to a full species index.
@@ -238,7 +337,7 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the defined index is out of bounds for the species index map.
          */
-        size_t mapViewToFullSpeciesIndex(size_t definedSpeciesIndex) const;
+        [[nodiscard]] size_t mapViewToFullSpeciesIndex(size_t definedSpeciesIndex) const;
 
         /**
          * @brief Maps a culled reaction index to a full reaction index.
@@ -248,7 +347,7 @@ namespace gridfire{
          *
          * @throws std::out_of_range If the defined index is out of bounds for the reaction index map.
          */
-        size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
+        [[nodiscard]] size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
 
         void validateNetworkState() const;
 
@@ -259,12 +358,12 @@ namespace gridfire{
     class FileDefinedEngineView final: public DefinedEngineView {
     public:
         explicit FileDefinedEngineView(
-            DynamicEngine& baseEngine,
+            GraphEngine& baseEngine,
             const std::string& fileName,
             const io::NetworkFileParser& parser
         );
-        std::string getNetworkFile() const { return m_fileName; }
-        const io::NetworkFileParser& getParser() const { return m_parser; }
+        [[nodiscard]] std::string getNetworkFile() const { return m_fileName; }
+        [[nodiscard]] const io::NetworkFileParser& getParser() const { return m_parser; }
     private:
         using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;

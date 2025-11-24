@@ -2,6 +2,7 @@
 
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/reaction/reaction.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/logging/logging.h"
 #include "quill/Logger.h"
@@ -33,7 +34,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances (mol/g) for each species.
+         * @param Y The composition object giving the current molar abundances.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The plasma density in g/cm^3.
          * @return A vector of screening factors (dimensionless), one for each reaction.
@@ -48,11 +49,11 @@ namespace gridfire::screening {
          * @endcode
          */
         [[nodiscard]] std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
+            const std::vector<double> &Y,
+            double T9,
+            double rho
         ) const override;
 
         /**
@@ -64,17 +65,17 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances as AD types.
+         * @param Y The composition object giving the current molar abundances.
          * @param T9 The temperature as an AD type.
          * @param rho The plasma density as an AD type.
          * @return A vector of screening factors as AD types.
          */
         [[nodiscard]] std::vector<CppAD::AD<double>> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<CppAD::AD<double>>& Y,
-            const CppAD::AD<double> T9,
-            const CppAD::AD<double> rho
+            const std::vector<CppAD::AD<double>> &Y,
+            CppAD::AD<double> T9,
+            CppAD::AD<double> rho
         ) const override;
     private:
         /// @brief Logger instance for recording trace and debug information.
@@ -91,18 +92,18 @@ namespace gridfire::screening {
          * @tparam T The numeric type, either `double` or `CppAD::AD<double>`.
          * @param reactions The set of reactions.
          * @param species A vector of all species in the network.
-         * @param Y A vector of molar abundances.
+         * @param Y The composition object with current molar abundances.
          * @param T9 The temperature in 10^9 K.
          * @param rho The density in g/cm^3.
          * @return A vector of screening factors of type `T`.
          */
-        template <typename T>
+        template <IsArithmeticOrAD T>
         [[nodiscard]] std::vector<T> calculateFactors_impl(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<T>& Y,
-            const T T9,
-            const T rho
+            T T9,
+            T rho
         ) const;
     };
 
@@ -115,7 +116,7 @@ namespace gridfire::screening {
      * @tparam T The numeric type (`double` or `CppAD::AD<double>`).
      * @param reactions The set of reactions to be screened.
      * @param species The list of all species in the network.
-     * @param Y The molar abundances of the species.
+     * @param Y The composition object providing current molar abundances.
      * @param T9 The temperature in 10^9 K.
      * @param rho The density in g/cm^3.
      * @return A vector of screening factors, one for each reaction.
@@ -137,9 +138,9 @@ namespace gridfire::screening {
      *     and unphysical screening factors (exp(2) ≈ 7.4).
      * 6.  **Final Factor**: The screening factor for the reaction is `exp(H_12)`.
      */
-    template <typename T>
+    template <IsArithmeticOrAD T>
     std::vector<T> WeakScreeningModel::calculateFactors_impl(
-        const reaction::LogicalReactionSet& reactions,
+        const reaction::ReactionSet& reactions,
         const std::vector<fourdst::atomic::Species>& species,
         const std::vector<T>& Y,
         const T T9,
@@ -177,7 +178,7 @@ namespace gridfire::screening {
         factors.reserve(reactions.size());
         for (const auto& reaction : reactions) {
             T H_12(0.0); // screening abundance term
-            const auto& reactants = reaction.reactants();
+            const auto& reactants = reaction->reactants();
             const bool isTripleAlpha = (
                 reactants.size() == 3 &&
                 reactants[0].m_z == 2 &&
@@ -187,13 +188,13 @@ namespace gridfire::screening {
                 reactants[1] == reactants[2]
                 );
             if (reactants.size() == 2) {
-                LOG_TRACE_L3(m_logger, "Calculating screening factor for reaction: {}", reaction.peName());
+                LOG_TRACE_L3(m_logger, "Calculating screening factor for reaction: {}", reaction->id());
                 const T Z1 = static_cast<T>(reactants[0].m_z);
                 const T Z2 = static_cast<T>(reactants[1].m_z);
                 H_12 = prefactor * Z1 * Z2;
             }
             else if (isTripleAlpha) {
-                LOG_TRACE_L3(m_logger, "Special case for triple alpha process in reaction: {}", reaction.peName());
+                LOG_TRACE_L3(m_logger, "Special case for triple alpha process in reaction: {}", reaction->id());
                 // Special case for triple alpha process
                 const T Z_alpha = static_cast<T>(2.0);
                 const T H_alpha_alpha = prefactor * Z_alpha * Z_alpha;

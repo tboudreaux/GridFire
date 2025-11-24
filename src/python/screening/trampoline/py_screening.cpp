@@ -13,7 +13,13 @@
 
 namespace py = pybind11;
 
-std::vector<double> PyScreening::calculateScreeningFactors(const gridfire::reaction::LogicalReactionSet &reactions, const std::vector<fourdst::atomic::Species> &species, const std::vector<double> &Y, const double T9, const double rho) const {
+std::vector<double> PyScreening::calculateScreeningFactors(
+    const gridfire::reaction::ReactionSet &reactions,
+    const std::vector<fourdst::atomic::Species> &species,
+    const std::vector<double> &Y,
+    const double T9,
+    const double rho
+) const {
     PYBIND11_OVERLOAD_PURE(
         std::vector<double>,  // Return type
         gridfire::screening::ScreeningModel,
@@ -22,7 +28,13 @@ std::vector<double> PyScreening::calculateScreeningFactors(const gridfire::react
 }
 
 using ADDouble = gridfire::screening::ScreeningModel::ADDouble;
-std::vector<ADDouble> PyScreening::calculateScreeningFactors(const gridfire::reaction::LogicalReactionSet &reactions, const std::vector<fourdst::atomic::Species> &species, const std::vector<ADDouble> &Y, const ADDouble T9, const ADDouble rho) const {
+std::vector<ADDouble> PyScreening::calculateScreeningFactors(
+    const gridfire::reaction::ReactionSet &reactions,
+    const std::vector<fourdst::atomic::Species> &species,
+    const std::vector<ADDouble> &Y,
+    const ADDouble T9,
+    const ADDouble rho
+) const {
     PYBIND11_OVERLOAD_PURE(
         std::vector<ADDouble>,  // Return type
         gridfire::screening::ScreeningModel,

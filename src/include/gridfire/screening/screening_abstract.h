@@ -2,7 +2,7 @@
 
 #include "gridfire/reaction/reaction.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "cppad/cppad.hpp"
 
@@ -44,7 +44,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances (mol/g) for each species.
+         * @param Y The current composition, providing molar abundances (mol/g) for each species.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The plasma density in g/cm^3.
          * @return A vector of screening factors (dimensionless), one for each reaction
@@ -70,13 +70,13 @@ namespace gridfire::screening {
          * }
          * @endcode
          */
-        virtual std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+        [[nodiscard]] virtual std::vector<double> calculateScreeningFactors(
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
-            ) const = 0;
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const = 0;
 
         /**
          * @brief Calculates screening factors using CppAD types for automatic differentiation.
@@ -88,7 +88,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species involved in the network.
-         * @param Y A vector of the molar abundances (mol/g) for each species, as AD types.
+         * @param Y The current composition, providing molar abundances (mol/g) for each species.
          * @param T9 The temperature in units of 10^9 K, as an AD type.
          * @param rho The plasma density in g/cm^3, as an AD type.
          * @return A vector of screening factors (dimensionless), as AD types.
@@ -97,12 +97,12 @@ namespace gridfire::screening {
          * This method is essential for including the effects of screening in the
          * Jacobian matrix of the reaction network.
          */
-        virtual std::vector<ADDouble> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+        [[nodiscard]] virtual std::vector<ADDouble> calculateScreeningFactors(
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<ADDouble>& Y,
-            const ADDouble T9,
-            const ADDouble rho
+            const std::vector<CppAD::AD<double>> &Y,
+            ADDouble T9,
+            ADDouble rho
         ) const = 0;
     };
 }

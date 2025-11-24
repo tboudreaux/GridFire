@@ -1,8 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <string>
-
 #include "types/bindings.h"
 #include "partition/bindings.h"
 #include "expectations/bindings.h"

@@ -2,7 +2,6 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <pybind11/functional.h> // Needed for std::function
 
 #include <vector>
 #include <tuple>
@@ -38,5 +37,14 @@ std::vector<std::tuple<std::string, std::string>> PyDynamicNetworkSolverStrategy
         DescriptionVector,  // Return type
         gridfire::solver::DynamicNetworkSolverStrategy,  // Base class
         describe_callback_context  // Method name
+    );
+}
+
+std::vector<std::tuple<std::string, std::string>> PySolverContextBase::describe() const {
+    using DescriptionVector = std::vector<std::tuple<std::string, std::string>>;
+    PYBIND11_OVERRIDE_PURE(
+        DescriptionVector,
+        gridfire::solver::SolverContextBase,
+        describe
     );
 }

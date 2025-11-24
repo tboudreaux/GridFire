@@ -2,6 +2,7 @@
 
 #include<string_view>
 #include<string>
+#include <utility>
 #include<vector>
 #include<unordered_set>
 #include<algorithm>
@@ -9,14 +10,23 @@
 
 #include "quill/LogMacros.h"
 
-#include "fourdst/composition/atomicSpecies.h"
+#include "fourdst/atomic/atomicSpecies.h"
 
 #include "xxhash64.h"
+
+namespace {
+    std::string_view safe_check_reactant_id(const std::vector<gridfire::reaction::ReaclibReaction>& reactions) {
+        if (reactions.empty()) {
+            throw std::runtime_error("No reactions found in the REACLIB reaction set.");
+        }
+        return reactions.front().peName();
+    }
+}
 
 namespace gridfire::reaction {
     using namespace fourdst::atomic;
 
-    Reaction::Reaction(
+    ReaclibReaction::ReaclibReaction(
         const std::string_view id,
         const std::string_view peName,
         const int chapter,
@@ -30,21 +40,46 @@ namespace gridfire::reaction {
     m_peName(peName),
     m_chapter(chapter),
     m_qValue(qValue),
-    m_reactants(reactants),
-    m_products(products),
     m_sourceLabel(label),
     m_rateCoefficients(sets),
-    m_reverse(reverse) {}
+    m_reverse(reverse) {
+        for (const auto& reactant : reactants) {
+            m_reactants[reactant]++;
+        }
+        for (const auto& product : products) {
+            m_products[product]++;
+        }
+    }
 
-    double Reaction::calculate_rate(const double T9) const {
+    double ReaclibReaction::calculate_rate(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue,
+        const std::vector<double> &Y,
+        const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<double>(T9);
     }
 
-    CppAD::AD<double> Reaction::calculate_rate(const CppAD::AD<double> T9) const {
+    CppAD::AD<double> ReaclibReaction::calculate_rate(
+        const CppAD::AD<double> T9,
+        const CppAD::AD<double> rho,
+        CppAD::AD<double> Ye,
+        CppAD::AD<double> mue,
+        const std::vector<CppAD::AD<double>>& Y,
+        const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
-    double Reaction::calculate_forward_rate_log_derivative(const double T9) const {
+    double ReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue,
+        const fourdst::composition::Composition& comp
+    ) const {
         constexpr double r_p13 = 1.0 / 3.0;
         constexpr double r_p53 = 5.0 / 3.0;
         constexpr double r_p23 = 2.0 / 3.0;
@@ -65,157 +100,171 @@ namespace gridfire::reaction {
         return d_log_k_fwd_dT9; // Return the derivative of the log rate with respect to T9
     }
 
-    bool Reaction::contains(const Species &species) const {
+    std::optional<std::vector<RateCoefficientSet>> ReaclibReaction::getRateCoefficients() const {
+        std::vector<RateCoefficientSet> rateCoefficients;
+        rateCoefficients.push_back(m_rateCoefficients);
+        return rateCoefficients;
+    }
+
+    bool ReaclibReaction::contains(const Species &species) const {
         return contains_reactant(species) || contains_product(species);
     }
 
 
-    bool Reaction::contains_reactant(const Species& species) const {
-        for (const auto& reactant : m_reactants) {
-            if (reactant == species) {
-                return true;
-            }
-        }
-        return false;
+    bool ReaclibReaction::contains_reactant(const Species& species) const {
+        return m_reactants.contains(species);
     }
 
-    bool Reaction::contains_product(const Species& species) const {
-        for (const auto& product : m_products) {
-            if (product == species) {
-                return true;
-            }
-        }
-        return false;
+    bool ReaclibReaction::contains_product(const Species& species) const {
+        return m_products.contains(species);
     }
 
-    std::unordered_set<Species> Reaction::all_species() const {
+    std::unordered_set<Species> ReaclibReaction::all_species() const {
         auto rs = reactant_species();
         auto ps = product_species();
         rs.insert(ps.begin(), ps.end());
         return rs;
     }
 
-    std::unordered_set<Species> Reaction::reactant_species() const {
+    std::unordered_set<Species> ReaclibReaction::reactant_species() const {
         std::unordered_set<Species> reactantsSet;
-        for (const auto& reactant : m_reactants) {
+        for (const auto& reactant : m_reactants | std::views::keys) {
             reactantsSet.insert(reactant);
         }
         return reactantsSet;
     }
 
-    std::unordered_set<Species> Reaction::product_species() const {
+    std::unordered_set<Species> ReaclibReaction::product_species() const {
         std::unordered_set<Species> productsSet;
-        for (const auto& product : m_products) {
+        for (const auto& product : m_products | std::views::keys) {
             productsSet.insert(product);
         }
         return productsSet;
     }
 
-    int Reaction::stoichiometry(const Species& species) const {
+    int ReaclibReaction::stoichiometry(const Species& species) const {
         int s = 0;
-        for (const auto& reactant : m_reactants) {
+        for (const auto& [reactant, count] : m_reactants) {
             if (reactant == species) {
-                s--;
+                s -= count;
             }
         }
-        for (const auto& product : m_products) {
+        for (const auto& [product, count] : m_products) {
             if (product == species) {
-                s++;
+                s += count;
             }
         }
         return s;
     }
 
-    size_t Reaction::num_species() const {
+    size_t ReaclibReaction::num_species() const {
         return all_species().size();
     }
 
-    std::unordered_map<Species, int> Reaction::stoichiometry() const {
+    std::unordered_map<Species, int> ReaclibReaction::stoichiometry() const {
         std::unordered_map<Species, int> stoichiometryMap;
-        for (const auto& reactant : m_reactants) {
-            stoichiometryMap[reactant]--;
-        }
-        for (const auto& product : m_products) {
-            stoichiometryMap[product]++;
+        for (const auto& sp : all_species()) {
+            stoichiometryMap[sp] = stoichiometry(sp);
         }
         return stoichiometryMap;
     }
 
-    double Reaction::excess_energy() const {
+    double ReaclibReaction::excess_energy() const {
         double reactantMass = 0.0;
         double productMass = 0.0;
         constexpr double AMU2MeV = 931.494893; // Conversion factor from atomic mass unit to MeV
-        for (const auto& reactant : m_reactants) {
+        for (const auto& reactant : m_reactants | std::views::keys) {
             reactantMass += reactant.mass();
         }
-        for (const auto& product : m_products) {
+        for (const auto& product : m_products | std::views::keys) {
             productMass += product.mass();
         }
         return (reactantMass - productMass) * AMU2MeV;
     }
 
-    uint64_t Reaction::hash(const uint64_t seed) const {
+    uint64_t ReaclibReaction::hash(const uint64_t seed) const {
         return XXHash64::hash(m_id.data(), m_id.size(), seed);
     }
 
+    std::unique_ptr<Reaction> ReaclibReaction::clone() const {
+        return std::make_unique<ReaclibReaction>(*this);
+    }
 
 
-    LogicalReaction::LogicalReaction(const std::vector<Reaction>& reactants) :
-        Reaction(reactants.front().peName(),
-                 reactants.front().peName(),
-                 reactants.front().chapter(),
-                 reactants.front().reactants(),
-                 reactants.front().products(),
-                 reactants.front().qValue(),
-                 reactants.front().sourceLabel(),
-                 reactants.front().rateCoefficients(),
-                 reactants.front().is_reverse()) {
+    LogicalReaclibReaction::LogicalReaclibReaction(
+        const std::vector<ReaclibReaction>& reactions
+    ) : LogicalReaclibReaction(reactions, false) {}
 
-        m_sources.reserve(reactants.size());
-        m_rates.reserve(reactants.size());
-        for (const auto& reaction : reactants) {
-            if (std::abs(std::abs(reaction.qValue()) - std::abs(m_qValue)) > 1e-6) {
+    LogicalReaclibReaction::LogicalReaclibReaction(
+        const std::vector<ReaclibReaction> &reactions,
+        const bool reverse
+    ) :
+    ReaclibReaction(
+        safe_check_reactant_id(reactions),
+        reactions.front().peName(),
+        reactions.front().chapter(),
+        reactions.front().reactants(),
+        reactions.front().products(),
+        reactions.front().qValue(),
+        reactions.front().sourceLabel(),
+        reactions.front().rateCoefficients(),
+        reverse)
+    {
+        m_sources.reserve(reactions.size());
+        m_rates.reserve(reactions.size());
+        for (const auto& reaction : reactions) {
+            if (std::abs(reaction.qValue() - m_qValue) > 1e-6) {
                 LOG_ERROR(
                     m_logger,
-                    "LogicalReaction constructed with reactions having different Q-values. Expected {} got {}.",
+                    "LogicalReaclibReaction constructed with reactions having different Q-values. Expected {} got {}.",
                     m_qValue,
                     reaction.qValue()
                 );
                 m_logger -> flush_log();
-                throw std::runtime_error("LogicalReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction.qValue()) + " (difference : " + std::to_string(std::abs(reaction.qValue() - m_qValue)) + ").");
+                throw std::runtime_error("LogicalReaclibReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction.qValue()) + " (difference : " + std::to_string(std::abs(reaction.qValue() - m_qValue)) + ").");
             }
-            m_sources.push_back(std::string(reaction.sourceLabel()));
+            m_sources.emplace_back(reaction.sourceLabel());
             m_rates.push_back(reaction.rateCoefficients());
         }
     }
 
-    void LogicalReaction::add_reaction(const Reaction& reaction) {
+
+    void LogicalReaclibReaction::add_reaction(const ReaclibReaction& reaction) {
         if (reaction.peName() != m_id) {
-            LOG_ERROR(m_logger, "Cannot add reaction with different peName to LogicalReaction. Expected {} got {}.", m_id, reaction.peName());
+            LOG_ERROR(m_logger, "Cannot add reaction with different peName to LogicalReaclibReaction. Expected {} got {}.", m_id, reaction.peName());
             m_logger -> flush_log();
-            throw std::runtime_error("Cannot add reaction with different peName to LogicalReaction. Expected " + std::string(m_id) + " got " + std::string(reaction.peName()) + ".");
+            throw std::runtime_error("Cannot add reaction with different peName to LogicalReaclibReaction. Expected " + std::string(m_id) + " got " + std::string(reaction.peName()) + ".");
         }
         for (const auto& source : m_sources) {
             if (source == reaction.sourceLabel()) {
-                LOG_ERROR(m_logger, "Cannot add reaction with duplicate source label {} to LogicalReaction.", reaction.sourceLabel());
+                LOG_ERROR(m_logger, "Cannot add reaction with duplicate source label {} to LogicalReaclibReaction.", reaction.sourceLabel());
                 m_logger -> flush_log();
-                throw std::runtime_error("Cannot add reaction with duplicate source label " + std::string(reaction.sourceLabel()) + " to LogicalReaction.");
+                throw std::runtime_error("Cannot add reaction with duplicate source label " + std::string(reaction.sourceLabel()) + " to LogicalReaclibReaction.");
             }
         }
         if (std::abs(reaction.qValue() - m_qValue) > 1e-6) {
-            LOG_ERROR(m_logger, "LogicalReaction constructed with reactions having different Q-values. Expected {} got {}.", m_qValue, reaction.qValue());
+            LOG_ERROR(m_logger, "LogicalReaclibReaction constructed with reactions having different Q-values. Expected {} got {}.", m_qValue, reaction.qValue());
             m_logger -> flush_log();
-            throw std::runtime_error("LogicalReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction.qValue()) + ".");
+            throw std::runtime_error("LogicalReaclibReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction.qValue()) + ".");
         }
-        m_sources.push_back(std::string(reaction.sourceLabel()));
+        m_sources.emplace_back(reaction.sourceLabel());
         m_rates.push_back(reaction.rateCoefficients());
     }
 
-    double LogicalReaction::calculate_rate(const double T9) const {
+    double LogicalReaclibReaction::calculate_rate(
+        const double T9,
+        const double rho,
+        double Ye,
+        double mue, const std::vector<double> &Y, const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<double>(T9);
     }
 
-    double LogicalReaction::calculate_forward_rate_log_derivative(const double T9) const {
+    double LogicalReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9(
+        const double T9,
+        const double rho,
+        double Ye, double mue, const fourdst::composition::Composition& comp
+    ) const {
         constexpr double r_p13 = 1.0 / 3.0;
         constexpr double r_p53 = 5.0 / 3.0;
         constexpr double r_p23 = 2.0 / 3.0;
@@ -236,6 +285,7 @@ namespace gridfire::reaction {
         const double T9_p23 = std::pow(T9, r_p23);
 
 
+        // ReSharper disable once CppUseStructuredBinding
         for (const auto& coeffs : m_rates) {
             const double exponent = coeffs.a0 +
                                     coeffs.a1 * T9_m1 +
@@ -266,26 +316,286 @@ namespace gridfire::reaction {
         return totalRateDerivative / totalRate;
     }
 
-    CppAD::AD<double> LogicalReaction::calculate_rate(const CppAD::AD<double> T9) const {
+    std::unique_ptr<Reaction> LogicalReaclibReaction::clone() const {
+        return std::make_unique<LogicalReaclibReaction>(*this);
+    }
+
+    CppAD::AD<double> LogicalReaclibReaction::calculate_rate(
+        const CppAD::AD<double> T9,
+        const CppAD::AD<double> rho,
+        CppAD::AD<double> Ye,
+        CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, Species>& index_to_species_map
+    ) const {
         return calculate_rate<CppAD::AD<double>>(T9);
     }
 
-    LogicalReactionSet packReactionSetToLogicalReactionSet(const ReactionSet& reactionSet) {
-        std::unordered_map<std::string_view, std::vector<Reaction>> groupedReactions;
-
-        for (const auto& reaction: reactionSet) {
-            groupedReactions[reaction.peName()].push_back(reaction);
+    std::optional<std::vector<RateCoefficientSet>> LogicalReaclibReaction::getRateCoefficients() const {
+        std::vector<RateCoefficientSet> rates;
+        for (const auto& rate : m_rates) {
+            rates.push_back(rate);
         }
-
-        std::vector<LogicalReaction> reactions;
-        reactions.reserve(groupedReactions.size());
-
-        for (const auto &reactionsGroup: groupedReactions | std::views::values) {
-            LogicalReaction logicalReaction(reactionsGroup);
-            reactions.push_back(logicalReaction);
-        }
-        return LogicalReactionSet(std::move(reactions));
+        return rates;
     }
+
+    ReactionSet::ReactionSet(
+        std::vector<std::unique_ptr<Reaction>>&& reactions
+    ) :
+    m_reactions(std::move(reactions)) {
+        if (m_reactions.empty()) {
+            return; // Case where the reactions will be added later.
+        }
+        m_reactionNameMap.reserve(m_reactions.size());
+        m_reactionHashes.reserve(m_reactions.size());
+        size_t i = 0;
+        for (const auto& reaction : m_reactions) {
+            m_id += reaction->id();
+            m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
+            i++;
+        }
+    }
+
+    ReactionSet::ReactionSet(const std::vector<Reaction *> &reactions) {
+        m_reactions.reserve(reactions.size());
+        m_reactionNameMap.reserve(reactions.size());
+        m_reactionHashes.reserve(reactions.size());
+        size_t i = 0;
+        for (const auto& reaction : reactions) {
+            m_reactions.push_back(reaction->clone());
+            m_id += reaction->id();
+            m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
+            i++;
+        }
+    }
+
+    ReactionSet::ReactionSet() = default;
+
+    ReactionSet::ReactionSet(const ReactionSet &other) {
+        m_reactions.reserve(other.m_reactions.size());
+        m_reactionHashes.reserve(other.m_reactions.size());
+        m_reactionNameMap.reserve(other.m_reactionNameMap.size());
+        size_t i = 0;
+        for (const auto& reaction: other.m_reactions) {
+            m_reactions.push_back(reaction->clone());
+            m_reactionNameMap.emplace(std::string(reaction->id()), i);
+            m_reactionHashes.insert(reaction->hash(0));
+            i++;
+        }
+    }
+
+    ReactionSet& ReactionSet::operator=(const ReactionSet &other) {
+        if (this != &other) {
+            ReactionSet temp(other);
+            std::swap(m_reactions, temp.m_reactions);
+            std::swap(m_reactionNameMap, temp.m_reactionNameMap);
+        }
+        return *this;
+    }
+
+    void ReactionSet::add_reaction(const Reaction& reaction) {
+        const std::size_t new_index = m_reactions.size();
+
+        auto reaction_id = std::string(reaction.id());
+
+        m_reactions.emplace_back(reaction.clone());
+        m_id += reaction_id;
+
+        m_reactionNameMap.emplace(std::move(reaction_id), new_index);
+
+        m_reactionHashes.insert(reaction.hash(0));
+    }
+
+    void ReactionSet::add_reaction(std::unique_ptr<Reaction>&& reaction) {
+        const std::size_t new_index = m_reactionNameMap.size();
+
+        auto reaction_id = std::string(reaction->id());
+        size_t reaction_hash = reaction->hash(0);
+
+        m_reactions.emplace_back(std::move(reaction));
+
+        m_id += reaction_id;
+
+        m_reactionNameMap.emplace(std::move(reaction_id), new_index);
+
+        m_reactionHashes.insert(reaction_hash);
+    }
+
+    void ReactionSet::extend(const ReactionSet &other) {
+        for (const auto& reaction : other.m_reactions) {
+            add_reaction(*reaction);
+        }
+    }
+
+    std::optional<std::unique_ptr<Reaction>> ReactionSet::get(const std::string_view &id) const {
+        if (!contains(id)) {
+            return std::nullopt;
+        }
+        return std::make_optional(m_reactions[m_reactionNameMap.at(std::string(id))]->clone());
+    }
+
+    void ReactionSet::remove_reaction(const Reaction& reaction) {
+        const size_t rh = reaction.hash(0);
+        if (!m_reactionHashes.contains(rh)) {
+            return;
+        }
+
+        std::erase_if(m_reactions, [&rh](const auto& r_ptr) {
+            return r_ptr->hash(0) == rh;
+        });
+
+        m_reactionNameMap.erase(std::string(reaction.id()));
+
+        m_id.clear();
+        for (const auto& r_ptr : m_reactions) {
+            m_id += r_ptr->id();
+        }
+
+        m_reactionHashes.erase(rh);
+    }
+
+    bool ReactionSet::contains(const std::string_view& id) const {
+        return m_reactionNameMap.contains(std::string(id));
+    }
+
+    bool ReactionSet::contains(const Reaction& reaction) const {
+        const size_t rh = reaction.hash(0);
+        return m_reactionHashes.contains(rh);
+    }
+
+    void ReactionSet::clear() {
+        m_reactions.clear();
+        m_reactionNameMap.clear();
+    }
+
+    bool ReactionSet::contains_species(const Species& species) const {
+        for (const auto& reaction : m_reactions) {
+            if (reaction->contains(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool ReactionSet::contains_reactant(const Species& species) const {
+        for (const auto& r : m_reactions) {
+            if (r->contains_reactant(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool ReactionSet::contains_product(const Species& species) const {
+        for (const auto& r : m_reactions) {
+            if (r->contains_product(species)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const Reaction& ReactionSet::operator[](const size_t index) const {
+        if (index >= m_reactions.size()) {
+            m_logger -> flush_log();
+            throw std::out_of_range("Index" + std::to_string(index) + " out of range for ReactionSet of size " + std::to_string(m_reactions.size()) + ".");
+        }
+        return *m_reactions[index];
+    }
+
+    const Reaction& ReactionSet::operator[](const std::string_view& id) const {
+        if (!contains(id)) {
+            m_logger -> flush_log();
+            throw std::out_of_range("Reaction " + std::string(id) + " does not exist in ReactionSet.");
+        }
+        const size_t idx = m_reactionNameMap.at(std::string(id));
+        return *m_reactions[idx];
+    }
+
+    bool ReactionSet::operator==(const ReactionSet& other) const {
+        if (size() != other.size()) {
+            return false;
+        }
+        return hash(0) == other.hash(0);
+    }
+
+    bool ReactionSet::operator!=(const ReactionSet& other) const {
+        return !(*this == other);
+    }
+
+    uint64_t ReactionSet::hash(const uint64_t seed) const {
+        if (m_reactions.empty()) {
+            return XXHash64::hash(nullptr, 0, seed);
+        }
+        std::vector<uint64_t> individualReactionHashes;
+        individualReactionHashes.reserve(m_reactions.size());
+        for (const auto& reaction : m_reactions) {
+            individualReactionHashes.push_back(reaction->hash(seed));
+        }
+
+        std::ranges::sort(individualReactionHashes);
+
+        const auto data = static_cast<const void*>(individualReactionHashes.data());
+        const size_t sizeInBytes = individualReactionHashes.size() * sizeof(uint64_t);
+        return XXHash64::hash(data, sizeInBytes, seed);
+    }
+
+    std::unordered_set<Species> ReactionSet::getReactionSetSpecies() const {
+        std::unordered_set<Species> species;
+        for (const auto& reaction : m_reactions) {
+            const auto reactionSpecies = reaction->all_species();
+            species.insert(reactionSpecies.begin(), reactionSpecies.end());
+        }
+        return species;
+    }
+
+    ReactionSet packReactionSet(const ReactionSet& reactionSet) {
+        std::unordered_map<std::string, std::vector<ReaclibReaction>> groupedReaclibReactions;
+        ReactionSet finalReactionSet;
+
+        for (const auto& reaction_ptr : reactionSet) {
+            switch (reaction_ptr->type()) {
+                case ReactionType::REACLIB: {
+                    const auto& reaclib_cast_reaction = static_cast<const ReaclibReaction&>(*reaction_ptr); // NOLINT(*-pro-type-static-cast-downcast)
+                    std::string rid = std::format("{}{}", reaclib_cast_reaction.peName(), (reaclib_cast_reaction.is_reverse() ? "_r" : ""));
+                    groupedReaclibReactions[rid].push_back(reaclib_cast_reaction);
+                    break;
+                }
+                case ReactionType::LOGICAL_REACLIB: {
+                    // It doesn't make sense to pack an already-packed reaction.
+                    throw std::runtime_error("packReactionSet: Cannot pack a LogicalReaclibReaction.");
+                }
+                case ReactionType::WEAK: {
+                    finalReactionSet.add_reaction(*reaction_ptr);
+                    break;
+                }
+            }
+        }
+
+        // Now, process the grouped REACLIB reactions
+        for (const auto &[key, reactionsGroup]: groupedReaclibReactions) {
+            if (reactionsGroup.empty()) {
+                continue;
+            }
+            if (reactionsGroup.size() == 1) {
+                finalReactionSet.add_reaction(reactionsGroup.front());
+            }
+            else {
+                // Check that is_reverse is consistent across the group
+                assert(std::ranges::all_of(
+                    reactionsGroup,
+                    [&reactionsGroup](const ReaclibReaction& r) {
+                        return r.is_reverse() == reactionsGroup.front().is_reverse();
+                    }
+                ) && "Inconsistent is_reverse values in grouped REACLIB reactions.");
+                const auto logicalReaction = std::make_unique<LogicalReaclibReaction>(reactionsGroup, reactionsGroup.front().is_reverse());
+                finalReactionSet.add_reaction(logicalReaction->clone());
+            }
+        }
+
+    return finalReactionSet;
+}
+
 }
 
 namespace std {
@@ -299,13 +609,6 @@ namespace std {
     template<>
     struct hash<gridfire::reaction::ReactionSet> {
         size_t operator()(const gridfire::reaction::ReactionSet& s) const noexcept {
-            return s.hash(0);
-        }
-    };
-
-    template<>
-    struct hash<gridfire::reaction::LogicalReactionSet> {
-        size_t operator()(const gridfire::reaction::LogicalReactionSet& s) const noexcept {
             return s.hash(0);
         }
     };

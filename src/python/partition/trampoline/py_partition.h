@@ -7,9 +7,9 @@
 
 
 class PyPartitionFunction final : public gridfire::partition::PartitionFunction {
-    double evaluate(int z, int a, double T9) const override;
-    double evaluateDerivative(int z, int a, double T9) const override;
-    bool supports(int z, int a) const override;
-    std::string type() const override;
-    std::unique_ptr<gridfire::partition::PartitionFunction> clone() const override;
+    [[nodiscard]] double evaluate(int z, int a, double T9) const override;
+    [[nodiscard]] double evaluateDerivative(int z, int a, double T9) const override;
+    [[nodiscard]] bool supports(int z, int a) const override;
+    [[nodiscard]] std::string type() const override;
+    [[nodiscard]] std::unique_ptr<PartitionFunction> clone() const override;
 };

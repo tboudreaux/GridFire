@@ -1,8 +1,16 @@
+/**
+* @file building.h
+* @brief Defines types related to building reaction networks in the GridFire engine.
+*
+* This file contains the enumeration and variant type used to specify the depth of reaction
+* network construction within the GridFire simulation engine.
+*
+*/
 #pragma once
 
 #include <variant>
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @enum NetworkBuildDepth

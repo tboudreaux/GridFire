@@ -31,7 +31,7 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species (unused).
-         * @param Y A vector of the molar abundances (unused).
+         * @param Y A vector of the molar abundances.
          * @param T9 The temperature (unused).
          * @param rho The plasma density (unused).
          * @return A vector of doubles, with each element being 1.0, of the same
@@ -52,11 +52,11 @@ namespace gridfire::screening {
          * @endcode
          */
         [[nodiscard]] std::vector<double> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<double>& Y,
-            const double T9,
-            const double rho
+            const std::vector<double> &Y,
+            double T9,
+            double rho
         ) const override;
 
         /**
@@ -68,18 +68,18 @@ namespace gridfire::screening {
          *
          * @param reactions The set of logical reactions in the network.
          * @param species A vector of all atomic species (unused).
-         * @param Y A vector of the molar abundances as AD types (unused).
+         * @param Y The current composition, providing molar abundances (mol/g) for each species (unused).
          * @param T9 The temperature as an AD type (unused).
          * @param rho The plasma density as an AD type (unused).
          * @return A vector of ADDouble, with each element being 1.0, of the same
          *         size as the `reactions` set.
          */
         [[nodiscard]] std::vector<ADDouble> calculateScreeningFactors(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
-            const std::vector<ADDouble>& Y,
-            const ADDouble T9,
-            const ADDouble rho
+            const std::vector<CppAD::AD<double>> &Y,
+            ADDouble T9,
+            ADDouble rho
         ) const override;
     private:
         /**
@@ -92,18 +92,18 @@ namespace gridfire::screening {
          * @tparam T The numeric type, either `double` or `CppAD::AD<double>`.
          * @param reactions The set of reactions for which to calculate factors.
          * @param species A vector of all atomic species (unused).
-         * @param Y A vector of molar abundances (unused).
+         * @param Y The current molar composition (unused).
          * @param T9 The temperature (unused).
          * @param rho The density (unused).
          * @return A vector of type `T` with all elements initialized to 1.0.
          */
         template <typename T>
         [[nodiscard]] std::vector<T> calculateFactors_impl(
-            const reaction::LogicalReactionSet& reactions,
+            const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
             const std::vector<T>& Y,
-            const T T9,
-            const T rho
+            const T& T9,
+            const T& rho
         ) const;
     };
 
@@ -117,18 +117,18 @@ namespace gridfire::screening {
      * @tparam T The numeric type, either `double` or `CppAD::AD<double>`.
      * @param reactions The set of reactions, used to determine the size of the output vector.
      * @param species Unused parameter.
-     * @param Y Unused parameter.
+     * @param Y Unused parameter.`
      * @param T9 Unused parameter.
      * @param rho Unused parameter.
      * @return A `std::vector<T>` of the same size as `reactions`, with all elements set to 1.0.
      */
     template<typename T>
     std::vector<T> BareScreeningModel::calculateFactors_impl(
-        const reaction::LogicalReactionSet &reactions,
+        const reaction::ReactionSet &reactions,
         const std::vector<fourdst::atomic::Species> &species,
         const std::vector<T> &Y,
-        const T T9,
-        const T rho
+        const T& T9,
+        const T& rho
     ) const {
         return std::vector<T>(reactions.size(), T(1.0)); // Bare screening returns 1.0 for all reactions
     }

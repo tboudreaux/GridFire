@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -100,6 +100,7 @@ $(function(){initNavTree('structgridfire_1_1_step_derivatives.html',''); initRes
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structgridfire_1_1_step_derivatives-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">gridfire::StepDerivatives&lt; T &gt; Struct Template Reference</div></div>
@@ -110,12 +111,22 @@ $(function(){initNavTree('structgridfire_1_1_step_derivatives.html',''); initRes
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;engine_abstract.h&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for gridfire::StepDerivatives&lt; T &gt;:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1_step_derivatives__coll__graph.svg" width="374" height="230"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a26deeb236e77eddb0119ad368a5d8f1c" id="r_a26deeb236e77eddb0119ad368a5d8f1c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26deeb236e77eddb0119ad368a5d8f1c">StepDerivatives</a> ()</td></tr>
+<tr class="separator:a26deeb236e77eddb0119ad368a5d8f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ae0de268b86c2404379409c4feae0b34d" id="r_ae0de268b86c2404379409c4feae0b34d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0de268b86c2404379409c4feae0b34d">dydt</a></td></tr>
-<tr class="memdesc:ae0de268b86c2404379409c4feae0b34d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derivatives of abundances (dY/dt for each species).  <br /></td></tr>
-<tr class="separator:ae0de268b86c2404379409c4feae0b34d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ae99ac1684d8df519f8d6af413d2cb1" id="r_a1ae99ac1684d8df519f8d6af413d2cb1"><td class="memItemLeft" align="right" valign="top">std::map&lt; fourdst::atomic::Species, T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ae99ac1684d8df519f8d6af413d2cb1">dydt</a></td></tr>
+<tr class="memdesc:a1ae99ac1684d8df519f8d6af413d2cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derivatives of abundances (dY/dt for each species).  <br /></td></tr>
+<tr class="separator:a1ae99ac1684d8df519f8d6af413d2cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4aeb41be952c7b5844e1ee81fef9008" id="r_ab4aeb41be952c7b5844e1ee81fef9008"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4aeb41be952c7b5844e1ee81fef9008">nuclearEnergyGenerationRate</a> = T(0.0)</td></tr>
 <tr class="memdesc:ab4aeb41be952c7b5844e1ee81fef9008"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific energy generation rate (e.g., erg/g/s).  <br /></td></tr>
 <tr class="separator:ab4aeb41be952c7b5844e1ee81fef9008"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,17 +141,45 @@ struct gridfire::StepDerivatives&lt; T &gt;</div><p>Structure holding derivative
   </dd>
 </dl>
 <p>This struct is used to return both the time derivatives of all species abundances and the specific nuclear energy generation rate for a single network evaluation.</p>
-<p>Example usage: </p><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_step_derivatives.html">StepDerivatives&lt;double&gt;</a> result = engine.calculateRHSAndEnergy(Y, T9, rho);</div>
-<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">double</span> dydt_i : result.<a class="code hl_variable" href="#ae0de268b86c2404379409c4feae0b34d">dydt</a>) {</div>
+<p>Example usage: </p><div class="fragment"><div class="line"><a class="code hl_function" href="#a26deeb236e77eddb0119ad368a5d8f1c">StepDerivatives&lt;double&gt;</a> result = engine.calculateRHSAndEnergy(Y, T9, rho);</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">double</span> dydt_i : result.<a class="code hl_variable" href="#a1ae99ac1684d8df519f8d6af413d2cb1">dydt</a>) {</div>
 <div class="line">    <span class="comment">// Use derivative</span></div>
 <div class="line">}</div>
 <div class="line"><span class="keywordtype">double</span> energyRate = result.<a class="code hl_variable" href="#ab4aeb41be952c7b5844e1ee81fef9008">nuclearEnergyGenerationRate</a>;</div>
-<div class="ttc" id="astructgridfire_1_1_step_derivatives_html"><div class="ttname"><a href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a></div><div class="ttdoc">Structure holding derivatives and energy generation for a network step.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:60</div></div>
+<div class="ttc" id="astructgridfire_1_1_step_derivatives_html_a1ae99ac1684d8df519f8d6af413d2cb1"><div class="ttname"><a href="#a1ae99ac1684d8df519f8d6af413d2cb1">gridfire::StepDerivatives::dydt</a></div><div class="ttdeci">std::map&lt; fourdst::atomic::Species, T &gt; dydt</div><div class="ttdoc">Derivatives of abundances (dY/dt for each species).</div><div class="ttdef"><b>Definition</b> engine_abstract.h:61</div></div>
+<div class="ttc" id="astructgridfire_1_1_step_derivatives_html_a26deeb236e77eddb0119ad368a5d8f1c"><div class="ttname"><a href="#a26deeb236e77eddb0119ad368a5d8f1c">gridfire::StepDerivatives::StepDerivatives</a></div><div class="ttdeci">StepDerivatives()</div><div class="ttdef"><b>Definition</b> engine_abstract.h:64</div></div>
 <div class="ttc" id="astructgridfire_1_1_step_derivatives_html_ab4aeb41be952c7b5844e1ee81fef9008"><div class="ttname"><a href="#ab4aeb41be952c7b5844e1ee81fef9008">gridfire::StepDerivatives::nuclearEnergyGenerationRate</a></div><div class="ttdeci">T nuclearEnergyGenerationRate</div><div class="ttdoc">Specific energy generation rate (e.g., erg/g/s).</div><div class="ttdef"><b>Definition</b> engine_abstract.h:62</div></div>
-<div class="ttc" id="astructgridfire_1_1_step_derivatives_html_ae0de268b86c2404379409c4feae0b34d"><div class="ttname"><a href="#ae0de268b86c2404379409c4feae0b34d">gridfire::StepDerivatives::dydt</a></div><div class="ttdeci">std::vector&lt; T &gt; dydt</div><div class="ttdoc">Derivatives of abundances (dY/dt for each species).</div><div class="ttdef"><b>Definition</b> engine_abstract.h:61</div></div>
-</div><!-- fragment --> </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ae0de268b86c2404379409c4feae0b34d" name="ae0de268b86c2404379409c4feae0b34d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0de268b86c2404379409c4feae0b34d">&#9670;&#160;</a></span>dydt</h2>
+</div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a26deeb236e77eddb0119ad368a5d8f1c" name="a26deeb236e77eddb0119ad368a5d8f1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26deeb236e77eddb0119ad368a5d8f1c">&#9670;&#160;</a></span>StepDerivatives()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;IsArithmeticOrAD T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; T &gt;::StepDerivatives </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a1ae99ac1684d8df519f8d6af413d2cb1" name="a1ae99ac1684d8df519f8d6af413d2cb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ae99ac1684d8df519f8d6af413d2cb1">&#9670;&#160;</a></span>dydt</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,7 +187,7 @@ struct gridfire::StepDerivatives&lt; T &gt;</div><p>Structure holding derivative
 template&lt;IsArithmeticOrAD T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;T&gt; <a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; T &gt;::dydt</td>
+          <td class="memname">std::map&lt;fourdst::atomic::Species, T&gt; <a class="el" href="structgridfire_1_1_step_derivatives.html">gridfire::StepDerivatives</a>&lt; T &gt;::dydt</td>
         </tr>
       </table>
 </div><div class="memdoc">

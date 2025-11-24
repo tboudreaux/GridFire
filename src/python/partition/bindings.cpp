@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
-#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc if needed directly
+#include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 
 #include <iostream>
 #include <memory>
@@ -19,7 +19,7 @@ namespace py = pybind11;
 
 void register_partition_bindings(pybind11::module &m) {
     using PF = gridfire::partition::PartitionFunction;
-    py::class_<PF, PyPartitionFunction>(m, "PartitionFunction");
+    auto TrampPartitionFunction = py::class_<PF, PyPartitionFunction>(m, "PartitionFunction");
 
     register_partition_types_bindings(m);
     register_ground_state_partition_bindings(m);
@@ -44,7 +44,7 @@ void register_partition_types_bindings(pybind11::module &m) {
     }, py::arg("typeStr"), "Convert string to BasePartitionType.");
 }
 
-void register_ground_state_partition_bindings(pybind11::module &m) {
+void register_ground_state_partition_bindings(const pybind11::module &m) {
     using GSPF = gridfire::partition::GroundStatePartitionFunction;
     using PF = gridfire::partition::PartitionFunction;
     py::class_<GSPF, PF>(m, "GroundStatePartitionFunction")
@@ -62,7 +62,7 @@ void register_ground_state_partition_bindings(pybind11::module &m) {
              "Get the type of the partition function (should return 'GroundState').");
 }
 
-void register_rauscher_thielemann_partition_data_record_bindings(pybind11::module &m) {
+void register_rauscher_thielemann_partition_data_record_bindings(const pybind11::module &m) {
     py::class_<gridfire::partition::record::RauscherThielemannPartitionDataRecord>(m, "RauscherThielemannPartitionDataRecord")
         .def_readonly("z", &gridfire::partition::record::RauscherThielemannPartitionDataRecord::z, "Atomic number")
         .def_readonly("a", &gridfire::partition::record::RauscherThielemannPartitionDataRecord::a, "Mass number")
@@ -71,7 +71,7 @@ void register_rauscher_thielemann_partition_data_record_bindings(pybind11::modul
 }
 
 
-void register_rauscher_thielemann_partition_bindings(pybind11::module &m) {
+void register_rauscher_thielemann_partition_bindings(const pybind11::module &m) {
     using RTPF = gridfire::partition::RauscherThielemannPartitionFunction;
     using PF = gridfire::partition::PartitionFunction;
     py::class_<RTPF, PF>(m, "RauscherThielemannPartitionFunction")
@@ -89,7 +89,7 @@ void register_rauscher_thielemann_partition_bindings(pybind11::module &m) {
              "Get the type of the partition function (should return 'RauscherThielemann').");
 }
 
-void register_composite_partition_bindings(pybind11::module &m) {
+void register_composite_partition_bindings(const pybind11::module &m) {
     py::class_<gridfire::partition::CompositePartitionFunction>(m, "CompositePartitionFunction")
         .def(py::init<const std::vector<gridfire::partition::BasePartitionType>&>(),
              py::arg("partitionFunctions"),
