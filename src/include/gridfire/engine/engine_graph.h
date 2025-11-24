@@ -5,7 +5,7 @@
 #include "fourdst/logging/logging.h"
 #include "fourdst/config/config.h"
 
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/screening/screening_abstract.h"
@@ -33,7 +33,7 @@
 //       this makes extra copies of the species, which is not ideal and could be optimized further.
 //       Even more relevant is the member m_reactionIDMap which makes copies of a REACLIBReaction for each reaction ID.
 //       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
-namespace gridfire {
+namespace gridfire::engine {
     /**
      * @brief Alias for CppAD AD type for double precision.
      *
@@ -150,7 +150,7 @@ namespace gridfire {
          *
          * @see StepDerivatives
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -172,7 +172,7 @@ namespace gridfire {
          *
          * @see StepDerivatives
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract& comp,
             double T9,
             double rho,
@@ -372,7 +372,8 @@ namespace gridfire {
          * This method estimates the timescale for abundance change of each species,
          * which can be used for timestep control or diagnostics.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -391,7 +392,7 @@ namespace gridfire {
          * considering only the specified subset of reactions. This allows for flexible
          * calculations with different reaction sets without modifying the engine's internal state.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -410,7 +411,8 @@ namespace gridfire {
          * This method estimates the destruction timescale for each species,
          * which can be useful for understanding reaction flows and equilibrium states.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -429,7 +431,7 @@ namespace gridfire {
          * considering only the specified subset of reactions. This allows for flexible
          * calculations with different reaction sets without modifying the engine's internal state.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -449,6 +451,7 @@ namespace gridfire {
         fourdst::composition::Composition update(
             const NetIn &netIn
         ) override;
+
 
         /**
          * @brief Checks if the engine view is stale and needs to be updated.
@@ -739,6 +742,16 @@ namespace gridfire {
          */
         fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
 
+        /**
+         * @brief Gets the status of a species in the network.
+         *
+         * @param species The species for which to get the status.
+         * @return SpeciesStatus indicating the status of the species.
+         *
+         * This method checks if the given species is part of the network and
+         * returns its status (e.g., Active, Inactive, NotFound).
+         */
+        [[nodiscard]]
         SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
 
 
@@ -854,6 +867,9 @@ namespace gridfire {
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
+
+        bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
+
         CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
         std::set<std::pair<size_t, size_t>> m_full_sparsity_set; ///< For quick lookups of the base sparsity pattern
 

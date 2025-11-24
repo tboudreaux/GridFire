@@ -135,7 +135,7 @@ namespace gridfire::policy {
          * // ... run solver ...
          * @endcode
          */
-        DynamicEngine& construct() override;
+        engine::DynamicEngine& construct() override;
 
         /**
          * @brief Gets the current status of the policy.
@@ -143,20 +143,20 @@ namespace gridfire::policy {
          */
         [[nodiscard]] NetworkPolicyStatus getStatus() const override;
 
-        [[nodiscard]] const std::vector<std::unique_ptr<DynamicEngine>> &get_engine_stack() const override;
+        [[nodiscard]] const std::vector<std::unique_ptr<engine::DynamicEngine>> &get_engine_stack() const override;
 
-        [[nodiscard]] std::vector<EngineTypes> get_engine_types_stack() const override;
+        [[nodiscard]] std::vector<engine::EngineTypes> get_engine_types_stack() const override;
         [[nodiscard]] const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const override;
 
     private:
-        std::set<fourdst::atomic::Species> m_seed_species;
+        std::set<fourdst::atomic::Species> m_seed_species; ///< The set of seed species required by this policy. These are H-1, He-3, He-4, C-12, N-14, O-16, Ne-20, Mg-24.
 
-        std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<MainSequenceReactionChainPolicy>();
-        fourdst::composition::Composition m_initializing_composition;
-        std::unique_ptr<partition::PartitionFunction> m_partition_function;
-        std::vector<std::unique_ptr<DynamicEngine>> m_network_stack;
+        std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<MainSequenceReactionChainPolicy>(); ///< The composed reaction chain policy (PP-chain + CNO-cycle).
+        fourdst::composition::Composition m_initializing_composition; ///< The initial composition used to build the network.
+        std::unique_ptr<partition::PartitionFunction> m_partition_function; ///< The partition function used in network construction.
+        std::vector<std::unique_ptr<engine::DynamicEngine>> m_network_stack; ///< The stack of dynamic engines constructed by the policy.
 
-        NetworkPolicyStatus m_status = NetworkPolicyStatus::UNINITIALIZED;
+        NetworkPolicyStatus m_status = NetworkPolicyStatus::UNINITIALIZED; ///< The current status of the policy.
     private:
         static std::unique_ptr<partition::PartitionFunction> build_partition_function();
         [[nodiscard]] NetworkPolicyStatus check_status() const;

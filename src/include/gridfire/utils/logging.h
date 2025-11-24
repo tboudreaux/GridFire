@@ -4,6 +4,7 @@
 #include "fourdst/composition/composition.h"
 
 #include <string>
+#include <functional>
 
 namespace gridfire::utils {
     /**
@@ -57,11 +58,46 @@ namespace gridfire::utils {
      * @endcode
      */
     std::string formatNuclearTimescaleLogString(
-        const DynamicEngine& engine,
+        const engine::DynamicEngine& engine,
         const fourdst::composition::Composition& composition,
         double T9,
         double rho
     );
+
+    template <typename T>
+    concept Streamable = requires(std::ostream& os, const T& value) {
+            { os << value } -> std::same_as<std::ostream&>;
+    };
+
+    template <
+        std::ranges::input_range Container,
+        typename Elem = std::ranges::range_reference_t<Container>,
+        typename Transform = std::identity,
+        typename Pred = bool(*)(const std::ranges::range_value_t<Container>&)
+    >
+    requires std::invocable<Transform, Elem> && Streamable<std::invoke_result_t<Transform, Elem>> && std::predicate<Pred, Elem>
+    static std::string iterable_to_delimited_string(
+        const Container& container,
+        const std::string_view delimiter = ", ",
+        Transform transform = {},
+        Pred pred = [](const auto&){ return true; }
+    ) noexcept {
+        std::ostringstream oss;
+        bool first = true;
+        for (auto&& item : container) {
+            if (!std::invoke(pred, item)) {
+                continue;
+            }
+            if (!first) {
+                oss << delimiter;
+            }
+            oss << std::invoke(transform, item);
+            first = false;
+        }
+        return oss.str();
+    }
+
+
 
 
 }

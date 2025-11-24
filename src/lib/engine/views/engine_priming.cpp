@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::atomic::species;
 
     NetworkPrimingEngineView::NetworkPrimingEngineView(

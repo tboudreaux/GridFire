@@ -3,14 +3,13 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_graph.h"
+
 #include "sundials/sundials_linearsolver.h"
 #include "sundials/sundials_matrix.h"
 #include "sundials/sundials_nvector.h"
 #include "sundials/sundials_types.h"
 
-#include "unsupported/Eigen/NonLinearOptimization"
-
-namespace gridfire {
+namespace gridfire::engine {
     /**
      * @class MultiscalePartitioningEngineView
      * @brief An engine view that partitions the reaction network into multiple groups based on timescales.
@@ -119,12 +118,19 @@ namespace gridfire {
          * @throws StaleEngineError If the QSE cache does not contain an entry for the given
          *         (T9, rho, Y_full). This indicates `update()` was not called recently enough.
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
+        /**
+         * @brief Calculates the energy generation rate derivatives with respect to abundances.
+         * @param comp The current composition.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @return The energy generation rate derivatives (dEps/dT and dEps/drho).
+         */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -327,7 +333,8 @@ namespace gridfire {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -353,7 +360,8 @@ namespace gridfire {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -542,13 +550,54 @@ namespace gridfire {
          */
         [[nodiscard]] const std::vector<fourdst::atomic::Species>& getDynamicSpecies() const;
 
-
+        /**
+         * @brief Checks if a species is involved in the partitioned network.
+         *
+         * @param species The species to check.
+         * @return `true` if the species is in either the dynamic or algebraic sets, `false` otherwise.
+         *
+         * @par Purpose
+         * To allow external queries about species involvement in the partitioned network.
+         *
+         * @par How
+         * It checks for membership in both `m_dynamic_species` and `m_algebraic_species`.
+         *
+         * @pre `partitionNetwork()` must have been called.
+         */
         bool involvesSpecies(const fourdst::atomic::Species &species) const;
 
+        /**
+         * @brief Check if a species is involved in the QSE (algebraic) set.
+         * @param species The species to check.
+         * @return Boolean indicating if the species is in the algebraic set.
+         */
         bool involvesSpeciesInQSE(const fourdst::atomic::Species &species) const;
 
+        /**
+         * @brief Check if a species is involved in the dynamic set.
+         * @param species The species to check.
+         * @return Boolean indicating if the species is in the dynamic set.
+         */
         bool involvesSpeciesInDynamic(const fourdst::atomic::Species &species) const;
 
+        /**
+         * @brief Gets a normalized composition with QSE species equilibrated.
+         *
+         * @param comp The input composition.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return A new `Composition` object with algebraic species set to their equilibrium values.
+         *
+         * @par Purpose
+         * To provide a way to get the equilibrated composition without modifying the internal state.
+         *
+         * @par How
+         * It calls `solveQSEAbundances()` to compute the equilibrium abundances for the algebraic species,
+         * then constructs a new `Composition` object reflecting these values.
+         *
+         * @pre The engine must have a valid QSE partition for the given state.
+         * @throws StaleEngineError If the QSE cache misses.
+         */
         fourdst::composition::Composition getNormalizedEquilibratedComposition(const fourdst::composition::CompositionAbstract& comp, double T9, double rho) const;
 
         /**
@@ -563,8 +612,22 @@ namespace gridfire {
          */
         fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
 
+        /**
+         * @brief Gets the status of a species in the network.
+         *
+         * @param species The species to query.
+         * @return The `SpeciesStatus` indicating if the species is dynamic, algebraic, or not involved.
+         *
+         * @par Purpose
+         * To allow external queries about the role of a species in the partitioned network.
+         *
+         * @par How
+         * It checks for membership in `m_dynamic_species` and `m_algebraic_species` to determine
+         * the appropriate status.
+         *
+         * @pre `partitionNetwork()` must have been called.
+         */
         SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
-
 
     private:
         /**
@@ -614,7 +677,16 @@ namespace gridfire {
              */
             bool operator!=(const QSEGroup& other) const;
 
-            [[nodiscard]] [[maybe_unused]] std::string toString() const;
+            [[nodiscard]] [[maybe_unused]] std::string toString(bool verbose) const;
+
+            friend std::ostream& operator<<(std::ostream& os, const QSEGroup& group) {
+                os << group.toString(false);
+                return os;
+            }
+
+            bool contains(const fourdst::atomic::Species& species) const;
+            bool containsAlgebraic(const fourdst::atomic::Species &species) const;
+            bool containsSeed(const fourdst::atomic::Species &species) const;
         };
 
         class QSESolver {
@@ -642,7 +714,7 @@ namespace gridfire {
 
             size_t solves() const;
 
-            void log_diagnostics() const;
+            void log_diagnostics(const QSEGroup &group, const fourdst::composition::Composition &comp) const;
         private:
 
             static int sys_func(
@@ -666,10 +738,15 @@ namespace gridfire {
                 fourdst::composition::Composition& comp;
                 const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map;
                 const std::vector<fourdst::atomic::Species>& qse_solve_species;
+                const QSESolver& instance;
             };
 
         private:
+            // Cache members
             mutable size_t m_solves = 0;
+            mutable bool m_has_jacobian = false;
+
+            // Solver members
             size_t m_N;
             const DynamicEngine& m_engine;
             std::vector<fourdst::atomic::Species> m_species;
@@ -691,6 +768,7 @@ namespace gridfire {
             static quill::Logger* getLogger() {
                 return LogManager::getInstance().getLogger("log");
             }
+
 
         };
 
@@ -743,7 +821,7 @@ namespace gridfire {
 
         mutable std::unordered_map<uint64_t, fourdst::composition::Composition> m_composition_cache;
 
-        SUNContext m_sun_ctx = nullptr; // TODO: initialize and safely destroy this
+        SUNContext m_sun_ctx = nullptr;
 
     private:
         /**
@@ -768,6 +846,20 @@ namespace gridfire {
             const fourdst::composition::Composition &comp,
             double T9,
             double rho
+        ) const;
+
+        std::pair<bool, reaction::ReactionSet> group_is_a_qse_cluster(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const QSEGroup &group
+        ) const;
+
+        bool group_is_a_qse_pipeline(
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho,
+            const QSEGroup &group
         ) const;
 
         /**

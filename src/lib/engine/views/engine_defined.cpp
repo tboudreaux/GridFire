@@ -17,7 +17,7 @@
 
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::atomic::Species;
 
     DefinedEngineView::DefinedEngineView(
@@ -40,7 +40,7 @@ namespace gridfire {
         return m_activeSpeciesVectorCache.value();
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> DefinedEngineView::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, EngineStatus> DefinedEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -170,7 +170,7 @@ namespace gridfire {
         m_activeSpeciesVectorCache = std::nullopt; // Invalidate species vector cache
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> DefinedEngineView::getSpeciesTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -193,7 +193,7 @@ namespace gridfire {
         return definedTimescales;
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> DefinedEngineView::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> DefinedEngineView::getSpeciesDestructionTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho

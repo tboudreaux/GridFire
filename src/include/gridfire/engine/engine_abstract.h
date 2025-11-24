@@ -1,15 +1,13 @@
 #pragma once
 
 #include "gridfire/reaction/reaction.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
 
 #include "gridfire/engine/types/reporting.h"
 #include "gridfire/engine/types/building.h"
 #include "gridfire/engine/types/jacobian.h"
-
-#include "gridfire/expectations/expected_engine.h"
 
 #include "fourdst/composition/composition_abstract.h"
 
@@ -31,16 +29,8 @@
  * Emily M. Boudreaux
  */
 
-namespace gridfire {
+namespace gridfire::engine {
 
-    /**
-     * @brief Concept for types allowed in engine calculations.
-     *
-     * This concept restricts template parameters to either double or CppAD::AD<double>,
-     * enabling both standard and automatic differentiation types.
-     */
-    template<typename T>
-    concept IsArithmeticOrAD = std::is_same_v<T, double> || std::is_same_v<T, CppAD::AD<double>>;
 
     /**
      * @brief Structure holding derivatives and energy generation for a network step.
@@ -68,8 +58,14 @@ namespace gridfire {
         StepDerivatives() : dydt(), nuclearEnergyGenerationRate(T(0.0)) {}
     };
 
-    using SparsityPattern = std::vector<std::pair<size_t, size_t>>;
+    using SparsityPattern = std::vector<std::pair<size_t, size_t>>; ///< Type alias for sparsity pattern representation.
 
+    /**
+     * @brief Structure holding derivatives of energy generation rate with respect to T and rho.
+     *
+     * This struct encapsulates the partial derivatives of the specific nuclear energy
+     * generation rate with respect to temperature and density.
+     */
     struct EnergyDerivatives {
         double dEps_dT = 0.0;  ///< Partial derivative of energy generation rate with respect to temperature.
         double dEps_dRho = 0.0;///< Partial derivative of energy generation rate with respect to density.
@@ -79,6 +75,35 @@ namespace gridfire {
             return os;
         }
     };
+
+    /**
+     * @brief Enumeration of possible engine statuses.
+     *
+     * This enum defines the various states an engine can be in after performing
+     * calculations, such as being up-to-date (OKAY), needing an update (STALE),
+     * or encountering an error (ERROR).
+     */
+    enum class EngineStatus {
+        OKAY,
+        STALE,
+        ERROR,
+        COUNT
+    };
+
+    /**
+     * @brief Convert EngineStatus enum to string representation.
+     *
+     * @param status The EngineStatus value to convert.
+     * @return A string_view representing the name of the EngineStatus.
+     */
+    constexpr std::string_view EngineStatus_to_string(const EngineStatus status) {
+        constexpr std::array<std::string_view, static_cast<size_t>(EngineStatus::COUNT)> names = {
+            "OKAY",
+            "STALE",
+            "ERROR"
+        };
+        return names[static_cast<size_t>(status)];
+    }
 
     /**
      * @brief Abstract base class for a reaction network engine.
@@ -123,7 +148,7 @@ namespace gridfire {
          * time derivatives of all species and the specific nuclear energy generation
          * rate for the current state.
          */
-        [[nodiscard]] virtual std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] virtual std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -142,7 +167,7 @@ namespace gridfire {
      *
      * Intended usage: Derive from this class to implement engines that support
      * advanced solver features such as implicit integration, sensitivity analysis,
-     * QSE (Quasi-Steady-State Equilibrium) handling, and more.
+     * QSE (Quasi-Steady-State Equilibrium) handling, and more. Generally this will be the main engine type
      */
     class DynamicEngine : public Engine {
     public:
@@ -162,6 +187,18 @@ namespace gridfire {
             double rho
         ) const = 0;
 
+        /**
+         * @brief Generate the Jacobian matrix for the current state using a subset of active species.
+         *
+         * @param comp Composition object containing current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param activeSpecies The set of species to include in the Jacobian calculation.
+         *
+         * This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j)
+         * for the current state, considering only the specified subset of active species.
+         * The matrix can then be accessed via getJacobianMatrixEntry().
+         */
         [[nodiscard]] virtual NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -169,6 +206,22 @@ namespace gridfire {
             const std::vector<fourdst::atomic::Species>& activeSpecies
         ) const = 0;
 
+
+        /**
+         * @brief Generate the Jacobian matrix for the current state with a specified sparsity pattern.
+         *
+         * @param comp Composition object containing current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian matrix.
+         *
+         * This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j)
+         * for the current state using automatic differentiation, taking into
+         * account the provided sparsity pattern. The matrix can then be accessed
+         * via `getJacobianMatrixEntry()`.
+         *
+         * @see getJacobianMatrixEntry()
+         */
         [[nodiscard]] virtual NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -242,6 +295,15 @@ namespace gridfire {
          */
         [[nodiscard]] virtual const reaction::ReactionSet& getNetworkReactions() const = 0;
 
+        /**
+         * @brief Set the reactions for the network.
+         *
+         * @param reactions The set of reactions to use in the network.
+         *
+         * This method replaces the current set of reactions in the network
+         * with the provided set. It marks the engine as stale, requiring
+         * regeneration of matrices and recalculation of rates.
+         */
         virtual void setNetworkReactions(const reaction::ReactionSet& reactions) = 0;
 
         /**
@@ -255,13 +317,24 @@ namespace gridfire {
          * This method estimates the timescale for abundance change of each species,
          * which can be used for timestep control, diagnostics, and reaction network culling.
          */
-        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const = 0;
 
-        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        /**
+         * @brief Compute destruction timescales for all species in the network.
+         *
+         * @param comp Composition object containing current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Map from Species to their destruction timescales (s).
+         *
+         * This method estimates the destruction timescale for each species,
+         * which can be useful for understanding reaction flows and equilibrium states.
+         */
+        [[nodiscard]] virtual std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -289,6 +362,26 @@ namespace gridfire {
          */
         virtual fourdst::composition::Composition update(const NetIn &netIn) = 0;
 
+        /**
+         * @brief Check if the engine's internal state is stale.
+         *
+         * @param netIn A struct containing the current network input, such as
+         *              temperature, density, and composition.
+         * @return True if the engine's state is stale and needs to be updated; false otherwise.
+         *
+         * This method allows derived classes to determine if their internal state
+         * is out-of-date with respect to the provided network conditions. If the engine
+         * is stale, it may require a call to `update()` before performing calculations.
+         *
+         * @par Usage Example:
+         * @code
+         * NetIn input = { ... };
+         * if (myEngine.isStale(input)) {
+         *     // Update the engine before proceeding
+         * }
+         * @endcode
+         */
+        [[nodiscard]]
         virtual bool isStale(const NetIn& netIn) = 0;
 
         /**
@@ -405,6 +498,15 @@ namespace gridfire {
             double rho
         ) const = 0;
 
+        /**
+         * @brief Get the status of a species in the network.
+         *
+         * @param species The species to check.
+         * @return SpeciesStatus indicating whether the species is active, inactive, or culled.
+         *
+         * This method allows querying the current status of a specific species
+         * within the engine's network.
+         */
         [[nodiscard]] virtual SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species& species) const = 0;
 
     };

@@ -2,14 +2,11 @@
 
 #include <map>
 #include <string>
-#include <vector>
-#include <utility>
 #include <ostream>
 #include <sstream>
 #include "fourdst/composition/composition.h"
-#include "fourdst/atomic/atomicSpecies.h"
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @enum PrimingReportStatus
@@ -28,6 +25,7 @@ namespace gridfire {
      */
     enum class PrimingReportStatus {
         SUCCESS,
+        ALREADY_PRIMED,
         SOLVER_FAILURE,
     };
 
@@ -40,6 +38,7 @@ namespace gridfire {
     inline std::map<PrimingReportStatus, std::string> PrimingReportStatusStrings = {
         {PrimingReportStatus::SUCCESS, "SUCCESS"},
         {PrimingReportStatus::SOLVER_FAILURE, "SOLVER_FAILURE"},
+        {PrimingReportStatus::ALREADY_PRIMED, "ALREADY_PRIMED"},
     };
 
     /**
@@ -78,6 +77,16 @@ namespace gridfire {
         }
     };
 
+    /**
+     * @enum SpeciesStatus
+     * @brief Enumerates the status of a species in the simulation.
+     *
+     * These status codes indicate the current state of a species:
+     *   - ACTIVE: The species is actively participating in reactions.
+     *   - EQUILIBRIUM: The species is in equilibrium and not changing concentration.
+     *   - INACTIVE_FLOW: The species is present but not currently flowing.
+     *   - NOT_PRESENT: The species is not present in the system.
+     */
     enum class SpeciesStatus {
         ACTIVE,
         EQUILIBRIUM,
@@ -85,6 +94,12 @@ namespace gridfire {
         NOT_PRESENT
     };
 
+    /**
+     * @brief Convert a SpeciesStatus enum value to its string representation.
+     *
+     * @param status The SpeciesStatus value to convert.
+     * @return A string representing the SpeciesStatus.
+     */
     inline std::string SpeciesStatus_to_string(const SpeciesStatus status) {
         switch (status) {
             case SpeciesStatus::ACTIVE:

@@ -9,7 +9,7 @@
 #include <string>
 
 std::string gridfire::utils::formatNuclearTimescaleLogString(
-    const DynamicEngine& engine,
+    const engine::DynamicEngine& engine,
     const fourdst::composition::Composition& composition,
     const double T9,
     const double rho
@@ -17,7 +17,7 @@ std::string gridfire::utils::formatNuclearTimescaleLogString(
     auto const& result = engine.getSpeciesTimescales(composition, T9, rho);
     if (!result) {
         std::ostringstream ss;
-        ss << "Failed to get species timescales: " << result.error();
+        ss << "Failed to get species timescales: " << engine::EngineStatus_to_string(result.error());
         return ss.str();
     }
     const std::unordered_map<fourdst::atomic::Species, double>& timescales = result.value();

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <utility>
 #include <vector>
 #include <string>
@@ -9,11 +8,10 @@
 #include <algorithm>
 #include <numeric>
 #include <memory>
-#include <format>
 #include <print>
-#include <cstdlib>
 #include <cwchar>
-#include <clocale>
+
+#include "nlohmann/json.hpp"
 
 
 
@@ -23,15 +21,15 @@ namespace gridfire::utils {
         // for mbtowc and wcwidth to function correctly with the system's locale.
 
         size_t width = 0;
-        std::mbtowc(nullptr, 0, 0); // Reset multi-byte state
+        std::mbtowc(nullptr, nullptr, 0); // Reset multi-byte state
 
         const char* p = s.c_str();
         const char* end = s.c_str() + s.length();
 
         while (p < end) {
             wchar_t wc;
-            // Convert the next multi-byte char to a wide char
-            int byte_len = std::mbtowc(&wc, p, end - p);
+            // Convert the next multibyte char to a wide char
+            const int byte_len = std::mbtowc(&wc, p, end - p);
 
             if (byte_len <= 0) {
                 // Invalid byte sequence or null char.
@@ -383,6 +381,35 @@ namespace gridfire::utils {
             }
             output << "\n";
         }
+        output.close();
+    }
+
+
+    inline nlohmann::json to_json(const std::vector<std::unique_ptr<ColumnBase>>& columns) {
+        using json = nlohmann::json;
+        json j;
+        for (const auto& col : columns) {
+            std::vector<std::string> col_data;
+            const size_t row_count = col->getRowCount();
+            for (size_t i = 0; i < row_count; ++i) {
+                col_data.push_back(col->getCellData(i));
+            }
+            j[col->getHeader()] = col_data;
+        }
+        return j;
+    }
+
+    inline void to_json_file(const std::string& filename, const std::vector<std::vector<std::unique_ptr<ColumnBase>>> &tables, const std::vector<std::string>& tableNames) {
+        using json = nlohmann::json;
+        json j;
+        for (size_t t = 0; t < tables.size(); ++t) {
+            j[tableNames[t]] = to_json(tables[t]);
+        }
+        std::ofstream output(filename);
+        if (!output.is_open()) {
+            throw std::runtime_error("Failed to open file for writing: " + filename);
+        }
+        output << j.dump(4);
         output.close();
     }
 

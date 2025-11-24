@@ -1,3 +1,7 @@
+/**
+ * @file construction.h
+ * @brief Functions for constructing nuclear reaction networks.
+ */
 #pragma once
 
 #include "gridfire/reaction/reaction.h"
@@ -9,9 +13,14 @@
 
 #include "gridfire/reaction/weak/weak_interpolator.h"
 
-namespace gridfire {
-
-
+namespace gridfire::engine {
+    /**
+     * @brief Flags to specify which types of nuclear reactions to include when constructing a reaction network.
+     *
+     * These flags allow fine-grained control over the inclusion of strong and weak nuclear reactions
+     * (beta decay, electron/positron capture) from various sources (Reaclib, WRL) during network construction.
+     * They can be combined using bitwise operations to create custom reaction sets.
+     */
     enum class NetworkConstructionFlags : uint32_t {
         NONE = 0,
 
@@ -34,22 +43,63 @@ namespace gridfire {
         ALL = STRONG | WRL_WEAK
     };
 
+    /** @brief Helper function to convert NetworkConstructionFlags to their underlying integer type.
+     *
+     * This function facilitates bitwise operations on NetworkConstructionFlags by converting them
+     * to their underlying integer representation.
+     *
+     * @param f The NetworkConstructionFlags value to convert.
+     * @return The underlying integer representation of the flag.
+     */
     constexpr auto to_underlying(NetworkConstructionFlags f) noexcept {
         return static_cast<std::underlying_type_t<NetworkConstructionFlags>>(f);
     }
 
+    /** @brief Bitwise OR operator for NetworkConstructionFlags.
+     *
+     * This operator allows combining two NetworkConstructionFlags values using the bitwise OR operation.
+     *
+     * @param lhs The left-hand side NetworkConstructionFlags value.
+     * @param rhs The right-hand side NetworkConstructionFlags value.
+     * @return A new NetworkConstructionFlags value representing the combination of the two inputs.
+     */
     inline NetworkConstructionFlags operator|(const NetworkConstructionFlags lhs, const NetworkConstructionFlags rhs) {
         return static_cast<NetworkConstructionFlags>(to_underlying(lhs) | to_underlying(rhs));
     }
 
+    /** @brief Bitwise AND operator for NetworkConstructionFlags.
+     *
+     * This operator allows checking for common flags between two NetworkConstructionFlags values
+     * using the bitwise AND operation.
+     *
+     * @param lhs The left-hand side NetworkConstructionFlags value.
+     * @param rhs The right-hand side NetworkConstructionFlags value.
+     * @return A new NetworkConstructionFlags value representing the intersection of the two inputs.
+     */
     inline NetworkConstructionFlags operator&(const NetworkConstructionFlags lhs, const NetworkConstructionFlags rhs) {
         return static_cast<NetworkConstructionFlags>(to_underlying(lhs) & to_underlying(rhs));
     }
 
+    /** @brief Checks if a specific flag is set within a NetworkConstructionFlags value.
+     *
+     * This function determines whether a particular flag is present in a given NetworkConstructionFlags value.
+     *
+     * @param flags The NetworkConstructionFlags value to check.
+     * @param flag_to_check The specific flag to look for.
+     * @return True if the flag is set; otherwise, false.
+     */
     inline bool has_flag(const NetworkConstructionFlags flags, const NetworkConstructionFlags flag_to_check) {
         return (flags & flag_to_check) != NetworkConstructionFlags::NONE;
     }
 
+    /** @brief Converts NetworkConstructionFlags to a human-readable string.
+     *
+     * This function generates a comma-separated string representation of the set flags
+     * within a NetworkConstructionFlags value. If no flags are set, it returns "No reactions".
+     *
+     * @param flags The NetworkConstructionFlags value to convert.
+     * @return A string listing the set flags or "No reactions" if none are set.
+     */
     inline std::string NetworkConstructionFlagsToString(NetworkConstructionFlags flags) {
         std::stringstream ss;
         constexpr std::array<NetworkConstructionFlags, 6> bases_flags_array = {

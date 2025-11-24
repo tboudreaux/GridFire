@@ -4,7 +4,7 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/io/network_file.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace gridfire{
+namespace gridfire::engine {
     class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {
     public:
         DefinedEngineView(const std::vector<std::string>& peNames, GraphEngine& baseEngine);
@@ -42,7 +42,7 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -150,7 +150,15 @@ namespace gridfire{
          */
         [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
+        /**
+         * @brief Sets the active reactions in the network.
+         *
+         * @param reactions The ReactionSet containing the reactions to set as active.
+         *
+         * @post The view is marked as stale and will need to be updated.
+         */
         void setNetworkReactions(const reaction::ReactionSet& reactions) override;
+
         /**
          * @brief Computes timescales for all active species in the network.
          *
@@ -161,13 +169,25 @@ namespace gridfire{
          *
          * @throws std::runtime_error If the view is stale.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        /**
+         * @brief Computes destruction timescales for all active species in the network.
+         *
+         * @param comp A Composition object containing the current composition of the system
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Map from Species to their destruction timescales (s).
+         *
+         * @throws std::runtime_error If the view is stale.
+         */
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
+        getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -186,6 +206,12 @@ namespace gridfire{
          */
         fourdst::composition::Composition update(const NetIn &netIn) override;
 
+        /**
+         * @brief Checks if the engine view is stale.
+         *
+         * @param netIn The current network input (unused).
+         * @return True if the view is stale and needs to be updated; false otherwise.
+         */
         [[deprecated]] bool isStale(const NetIn& netIn) override;
 
         /**
@@ -202,14 +228,45 @@ namespace gridfire{
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
+        /** @brief Maps a species from the full network to its index in the defined active network.
+         *
+         * @param species The species to map.
+         * @return The index of the species in the active network.
+         *
+         * @throws std::runtime_error If the species is not in the active set.
+         */
         [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
+        /**
+         * @brief Map from a NetIn object to a vector of molar abundances for the active species.
+         * @param netIn The NetIn object containing the full network abundances.
+         * @return A vector of molar abundances for the active species.
+         */
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
+        /**
+         * @brief Prime the engine view for calculations. This will delegate to the base engine.
+         * @param netIn The current network input.
+         * @return The PrimingReport from the base engine.
+         */
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
-        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+        /**
+         * @brief Collects a Composition object from the base engine.
+         *
+         * @param comp The full Composition object.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @return A composition object representing the state of the engine stack and the current view.
+         */
+        [[nodiscard]] fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
 
+        /**
+         * @brief Gets the status of a species in the active network.
+         *
+         * @param species The species for which to get the status.
+         * @return The SpeciesStatus indicating if the species is active, inactive, or not present.
+         */
         [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     protected:
         bool m_isStale = true;

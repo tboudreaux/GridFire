@@ -331,8 +331,8 @@ namespace gridfire::trigger::solver::CVODE {
      *
      * @param simulationTimeInterval Interval used by SimulationTimeTrigger (> 0).
      * @param offDiagonalThreshold Off-diagonal Jacobian magnitude threshold (>= 0).
-     * @param relativeTimestepCollapseThreshold Threshold for timestep deviation (>= 0, and <= 1 when relative).
-     * @param timestepGrowthWindowSize Window size for timestep averaging (>= 1 recommended).
+     * @param timestepCollapseRatio Threshold for timestep deviation (>= 0, and <= 1 when relative).
+     * @param maxConvergenceFailures Window size for timestep averaging (>= 1 recommended).
      * @return A unique_ptr to a composed Trigger<TimestepContext> implementing the policy above.
      *
      * @note The exact policy is subject to change; this function centralizes that decision.
@@ -340,7 +340,7 @@ namespace gridfire::trigger::solver::CVODE {
     std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
         const double simulationTimeInterval,
         const double offDiagonalThreshold,
-        const double relativeTimestepCollapseThreshold,
-        const size_t timestepGrowthWindowSize
+        const double timestepCollapseRatio,
+        const size_t maxConvergenceFailures
     );
 }

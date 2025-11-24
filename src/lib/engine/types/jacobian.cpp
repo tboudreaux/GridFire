@@ -10,7 +10,7 @@
 
 #include "quill/LogMacros.h"
 
-namespace gridfire {
+namespace gridfire::engine {
     NetworkJacobian::NetworkJacobian(
         const Eigen::SparseMatrix<double>& jacobianMatrix,
         const std::function<fourdst::atomic::Species(size_t)> &indexToSpeciesFunc

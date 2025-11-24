@@ -1,34 +1,20 @@
 #include <iostream>
 #include <fstream>
 
-#include "gridfire/engine/engine_graph.h"
-#include "gridfire/engine/views/engine_adaptive.h"
-#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
-#include "gridfire/policy/stellar_policy.h"
-#include "gridfire/utils/table_format.h"
-
-#include "gridfire/network.h"
+#include "gridfire/gridfire.h"
 
 #include "fourdst/composition/composition.h"
-
 #include "fourdst/plugin/bundle/bundle.h"
-
 #include "fourdst/logging/logging.h"
+#include "fourdst/atomic/species.h"
+#include "fourdst/composition/utils.h"
+
 #include "quill/Logger.h"
-#include "quill/LogMacros.h"
 #include "quill/Backend.h"
 
 #include <clocale>
-#include <functional>
-
-#include "fourdst/atomic/species.h"
-#include "fourdst/composition/utils.h"
-#include "gridfire/exceptions/error_solver.h"
 
 #include <boost/json/src.hpp>
-
-#include "gridfire/reaction/reaclib.h"
-#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
 
 
 static std::terminate_handler g_previousHandler = nullptr;
@@ -38,16 +24,7 @@ static bool s_wrote_abundance_history = false;
 static bool s_wrote_reaction_history = false;
 void quill_terminate_handler();
 
-inline std::unique_ptr<gridfire::partition::PartitionFunction> build_partition_function() {
-    using gridfire::partition::BasePartitionType;
-    const auto partitionFunction = gridfire::partition::CompositePartitionFunction({
-        BasePartitionType::RauscherThielemann,
-        BasePartitionType::GroundState
-    });
-    return std::make_unique<gridfire::partition::CompositePartitionFunction>(partitionFunction);
-}
-
-gridfire::NetIn init(const double temp) {
+gridfire::NetIn init(const double temp, const double rho, const double tMax) {
     std::setlocale(LC_ALL, "");
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
@@ -63,10 +40,10 @@ gridfire::NetIn init(const double temp) {
     NetIn netIn;
     netIn.composition = composition;
     netIn.temperature = temp;
-    netIn.density = 1.5e2;
+    netIn.density = rho;
     netIn.energy = 0;
 
-    netIn.tMax = 1e17;
+    netIn.tMax = tMax;
     netIn.dt0 = 1e-12;
 
     return netIn;
@@ -277,17 +254,31 @@ void callback_main(const gridfire::solver::CVODESolverStrategy::TimestepContext&
 int main() {
     using namespace gridfire;
 
-    constexpr double temp = 1.5e7; // 15 MK
-    const NetIn netIn = init(temp);
+    constexpr double temp = 1.5e7;
+    constexpr double rho = 1.5e2;
+    constexpr double tMax = 3e17;
+    NetIn netIn = init(temp, rho, tMax);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();
-    DynamicEngine& engine = stellarPolicy.construct();
+    engine::DynamicEngine& engine = stellarPolicy.construct();
 
     solver::CVODESolverStrategy solver(engine);
     solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
 
     const NetOut netOut = solver.evaluate(netIn, true);
+
     log_results(netOut, netIn);
     log_callback_data(temp);
+
+    // LOG_TRACE_L1(LogManager::getInstance().getLogger("log"), "Performing final engine update for verification...");
+    //
+    //
+    // const std::vector<double> Y            = {0.2131, 1.991e-6, 0.1917, 6.310e-7, 3.296e-4, 9.62e-3, 1.62e-3, 5.16e-4};
+    // const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
+    //
+    // fourdst::composition::Composition manualLateComposition(symbols, Y);
+    // const fourdst::composition::Composition comp = engine.update(netIn);
+    // std::cout << comp.getMolarAbundance("H-2") << std::endl;
+
 }

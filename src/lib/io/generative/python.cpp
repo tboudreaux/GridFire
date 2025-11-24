@@ -137,7 +137,7 @@ namespace gridfire::io::gen {
 
     }
 
-    std::string exportEngineToPy(const gridfire::DynamicEngine& engine) {
+    std::string exportEngineToPy(const engine::DynamicEngine& engine) {
         auto reactions = engine.getNetworkReactions();
         std::vector<std::string> functions;
         functions.emplace_back(R"(import numpy as np
@@ -150,7 +150,7 @@ from typing import Dict, List, Tuple, Callable)");
         return join<std::string>(functions, "\n\n");
     }
 
-    void exportEngineToPy(const DynamicEngine &engine, const std::string &fileName) {
+    void exportEngineToPy(const engine::DynamicEngine &engine, const std::string &fileName) {
         const std::string funcCode = exportEngineToPy(engine);
         std::ofstream outFile(fileName);
         outFile << funcCode;

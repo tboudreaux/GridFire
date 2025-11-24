@@ -3,7 +3,7 @@
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/config/config.h"
@@ -13,7 +13,7 @@
 
 #include "quill/Logger.h"
 
-namespace gridfire {
+namespace gridfire::engine {
     /**
      * @class AdaptiveEngineView
      * @brief An engine view that dynamically adapts the reaction network based on runtime conditions.
@@ -101,7 +101,7 @@ namespace gridfire {
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          * @see AdaptiveEngineView::update()
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, expectations::StaleEngineError> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -140,6 +140,20 @@ namespace gridfire {
             double rho
         ) const override;
 
+        /**
+         * @brief Generates the Jacobian matrix for some set of active species such that that set is a subset of the active species in the view.
+         *
+         * @param comp The current composition of the system.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param activeSpecies The list of active species for which to generate the Jacobian.
+         *
+         * This method maps the culled abundances to the full network abundances and calls the base engine
+         * to generate the Jacobian matrix.
+         *
+         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
+         * @see AdaptiveEngineView::update()
+         */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -147,6 +161,20 @@ namespace gridfire {
             const std::vector<fourdst::atomic::Species> &activeSpecies
         ) const override;
 
+        /**
+         * @brief Generates the Jacobian matrix for the active species with a given sparsity pattern.
+         *
+         * @param comp The current composition of the system.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         * @param sparsityPattern The sparsity pattern to use for the Jacobian matrix.
+         *
+         * This method maps the culled abundances to the full network abundances and calls the base engine
+         * to generate the Jacobian matrix.
+         *
+         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
+         * @see AdaptiveEngineView::update()
+         */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -213,6 +241,15 @@ namespace gridfire {
          */
         [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
 
+        /**
+         * @brief Sets the reaction set for the base engine.
+         *
+         * This method delegates the call to the base engine to set the reaction set.
+         *
+         * @param reactions The ReactionSet to set in the base engine.
+         *
+         * @post The reaction set of the base engine is updated.
+         */
         void setNetworkReactions(const reaction::ReactionSet& reactions) override;
 
         /**
@@ -228,13 +265,26 @@ namespace gridfire {
          *
          * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
         ) const override;
 
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> getSpeciesDestructionTimescales(
+        /**
+         * @brief Computes destruction timescales for all active species in the network.
+         *
+         * @param comp Composition object containing current abundances.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         * @return Map from Species to their destruction timescales (s).
+         *
+         * This method maps the culled abundances to the full network abundances and calls the base engine
+         * to compute the species destruction timescales.
+         *
+         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
+         */
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -278,14 +328,62 @@ namespace gridfire {
          */
         [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
 
+        /**
+         * @brief Gets the index of a species in the active species list.
+         *
+         * @param species The species for which to get the index.
+         * @return The index of the species in the active species list.
+         *
+         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
+         * @throws std::out_of_range If the species is not part of the active species in the adaptive engine view.
+         */
         [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
 
+        /**
+         * @brief Maps the molar abundance vector from the active species to the full network species.
+         *
+         * @param netIn The current network input, containing temperature, density, and composition.
+         * @return A vector of molar abundances for all species in the full network.
+         *
+         * This method constructs a molar abundance vector for the full network by mapping the
+         * abundances from the active species in `netIn` to their corresponding indices in the
+         * full network. Species not present in `netIn` are assigned an abundance of zero.
+         *
+         * @throws std::runtime_error If the AdaptiveEngineView is stale (i.e., `update()` has not been called).
+         */
         [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
 
+        /**
+         * @brief Primes the engine with the given network input.
+         *
+         * @param netIn The current network input, containing temperature, density, and composition.
+         * @return A PrimingReport indicating the result of the priming operation.
+         *
+         * This method delegates the priming operation to the base engine.
+         */
         [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
 
-        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+        /**
+         * @brief Collect the composition of the base engine, ensure all active species are registered, and pass
+         * the composition back to the caller.
+         *
+         * @param comp The current composition of the system.
+         * @param T9 The temperature in units of 10^9 K.
+         * @param rho The density in g/cm^3.
+         *
+         * @note This function ensures that the state of both the base engine and the adaptive view are synchronized in the
+         * result back to the caller
+         */
+        [[nodiscard]] fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
 
+        /**
+         * @brief Gets the status of a species in the network.
+         *
+         * @param species The species for which to get the status.
+         * @return The SpeciesStatus indicating the status of the species.
+         *
+         * This method delegates the call to the base engine to get the species status. If the base engine says that the species is active but it is not in the active species list of this view, the status is returned as INACTIVE_FLOW.
+         */
         [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     private:
         using Config = fourdst::config::Config;

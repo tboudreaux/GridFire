@@ -20,12 +20,8 @@
 // *********************************************************************** */
 #pragma once
 
-#include <vector>
-
 #include "fourdst/composition/composition.h"
-
-#include <unordered_map>
-
+#include "cppad/cppad.hpp"
 
 namespace gridfire {
     struct NetIn {
@@ -50,5 +46,14 @@ namespace gridfire {
             return os;
         }
     };
+
+    /**
+     * @brief Concept for types allowed in engine calculations.
+     *
+     * This concept restricts template parameters to either double or CppAD::AD<double>,
+     * enabling both standard and automatic differentiation types.
+     */
+    template<typename T>
+    concept IsArithmeticOrAD = std::is_same_v<T, double> || std::is_same_v<T, CppAD::AD<double>>;
 
 } // namespace nuclearNetwork

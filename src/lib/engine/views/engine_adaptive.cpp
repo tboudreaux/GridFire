@@ -5,13 +5,13 @@
 #include <algorithm>
 
 
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_engine.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::atomic::Species;
     AdaptiveEngineView::AdaptiveEngineView(
         DynamicEngine &baseEngine
@@ -77,7 +77,7 @@ namespace gridfire {
         return m_activeSpecies;
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> AdaptiveEngineView::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, EngineStatus> AdaptiveEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -205,7 +205,7 @@ namespace gridfire {
         throw exceptions::UnableToSetNetworkReactionsError("AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> AdaptiveEngineView::getSpeciesTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -231,8 +231,7 @@ namespace gridfire {
 
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError>
-    AdaptiveEngineView::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesDestructionTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -357,7 +356,7 @@ namespace gridfire {
                 if (!reachable.contains(species)) {
                     to_vist.push(species);
                     reachable.insert(species);
-                    LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is part of the initial fuel.", species.name());
+                    LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species {:5} is part of the initial fuel", species.name());
                 }
             }
         }
@@ -378,7 +377,7 @@ namespace gridfire {
                         if (!reachable.contains(product)) {
                             reachable.insert(product);
                             new_species_found_in_pass = true;
-                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species '{}' is reachable via reaction '{}'.", product.name(), reaction->id());
+                            LOG_TRACE_L2(m_logger, "Network Connectivity Analysis: Species {:5} is reachable via reaction {:20}", product.name(), reaction->id());
                         }
                     }
                 }
@@ -397,19 +396,19 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Culling reactions based on flow rates...");
         const auto relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
         double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
-        LOG_DEBUG(m_logger, "Relative culling threshold: {:0.3E} ({})", relative_culling_threshold, absoluteCullingThreshold);
+        LOG_DEBUG(m_logger, "Relative culling threshold: {:7.3E} ({:7.3E})", relative_culling_threshold, absoluteCullingThreshold);
         std::vector<const reaction::Reaction*> culledReactions;
         for (const auto& [reactionPtr, flowRate]: allFlows) {
             bool keepReaction = false;
             if (flowRate > absoluteCullingThreshold) {
-                LOG_TRACE_L2(m_logger, "Maintaining reaction '{}' with relative (abs) flow rate: {:0.3E} ({:0.3E} [mol/s])", reactionPtr->id(), flowRate/maxFlow, flowRate);
+                LOG_TRACE_L2(m_logger, "Maintaining reaction '{:20}' with relative (abs) flow rate: {:7.3E} ({:7.3E} [mol/s])", reactionPtr->id(), flowRate/maxFlow, flowRate);
                 keepReaction = true;
             } else {
                 bool zero_flow_due_to_reachable_reactants = false;
                 if (flowRate < 1e-99 && flowRate > 0.0) {
                     for (const auto& reactant: reactionPtr->reactants()) {
                         if (comp.getMolarAbundance(reactant) < 1e-99 && reachableSpecies.contains(reactant)) {
-                            LOG_TRACE_L1(m_logger, "Maintaining reaction '{}' with low flow ({:0.3E} [mol/s/g]) due to reachable reactant '{}'.", reactionPtr->id(), flowRate, reactant.name());
+                            LOG_TRACE_L1(m_logger, "Maintaining reaction {:20} with low flow ({:7.3E} [mol/s/g]) due to reachable reactant '{:6}'.", reactionPtr->id(), flowRate, reactant.name());
                             zero_flow_due_to_reachable_reactants = true;
                             break;
                         }
@@ -422,10 +421,10 @@ namespace gridfire {
             if (keepReaction) {
                 culledReactions.push_back(reactionPtr);
             } else {
-                LOG_TRACE_L1(m_logger, "Culling reaction '{}' due to low flow rate or lack of connectivity.", reactionPtr->id());
+                LOG_TRACE_L1(m_logger, "Culling     reaction '{:20}' due to low flow rate or lack of connectivity.", reactionPtr->id());
             }
         }
-        LOG_DEBUG(m_logger, "Selected {} (total: {}, culled: {}) reactions based on flow rates.", culledReactions.size(), allFlows.size(), allFlows.size() - culledReactions.size());
+        LOG_DEBUG(m_logger, "Selected {:5} (total: {:5}, culled: {:5}) reactions based on flow rates.", culledReactions.size(), allFlows.size(), allFlows.size() - culledReactions.size());
         return culledReactions;
     }
 
@@ -438,8 +437,9 @@ namespace gridfire {
     ) const {
         const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
         if (!result) {
-            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state.");
-            throw exceptions::StaleEngineError("Failed to get species timescales");
+            LOG_CRITICAL(m_logger, "Failed to get species timescales due to base engine failure");
+            m_logger->flush_log();
+            throw exceptions::EngineError("Failed to get species timescales due base engine failure");
         }
         std::unordered_map<Species, double> timescales = result.value();
         std::set<Species> onlyProducedSpecies;

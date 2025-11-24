@@ -569,7 +569,6 @@ namespace gridfire::rates::weak {
                 log_rhoYe
             );
 
-            // TODO: Clean this up. When a bit of code needs this many comments to make it clear it is bad code
             if (!result.has_value()) {
                 bool okayToClamp = true;
                 const auto&[errorType, boundsErrorInfo] = result.error();

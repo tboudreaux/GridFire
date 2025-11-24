@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @class NetworkPrimingEngineView

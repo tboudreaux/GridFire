@@ -5,17 +5,17 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 #include <algorithm>
 
-namespace gridfire::diagnostics {
-    void report_limiting_species(
-        const DynamicEngine& engine,
-        const std::vector<double>& Y_full,
-        const std::vector<double>& E_full,
+namespace gridfire::engine::diagnostics {
+    std::optional<nlohmann::json> report_limiting_species(
+        const DynamicEngine &engine,
+        const std::vector<double> &Y_full,
+        const std::vector<double> &E_full,
         const double relTol,
         const double absTol,
-        const size_t top_n
+        const size_t top_n,
+        bool json
     ) {
         struct SpeciesError {
             std::string name;
@@ -66,15 +66,21 @@ namespace gridfire::diagnostics {
         columns.push_back(std::make_unique<utils::Column<double>>("Abundance", sorted_abundances));
         columns.push_back(std::make_unique<utils::Column<double>>("Error", sorted_errors));
 
-        std::cout << utils::format_table("Timestep Limiting Species", columns) << std::endl;
+        if (json) {
+            return utils::to_json(columns);
+        }
+
+        utils::print_table("Timestep Limiting Species", columns);
+        return std::nullopt;
     }
 
-    void inspect_species_balance(
+    std::optional<nlohmann::json> inspect_species_balance(
         const DynamicEngine& engine,
         const std::string& species_name,
         const fourdst::composition::Composition &comp,
         const double T9,
-        const double rho
+        const double rho,
+        bool json
     ) {
         const auto& species_obj = fourdst::atomic::species.at(species_name);
 
@@ -103,12 +109,18 @@ namespace gridfire::diagnostics {
             }
         }
 
+        nlohmann::json j;
         {
             std::vector<std::unique_ptr<utils::ColumnBase>> columns;
             columns.push_back(std::make_unique<utils::Column<std::string>>("Reaction ID", creation_ids));
             columns.push_back(std::make_unique<utils::Column<int>>("Stoichiometry", creation_stoichiometry));
             columns.push_back(std::make_unique<utils::Column<double>>("Molar Flow", creation_flows));
-            std::cout << utils::format_table("Creation Reactions for " + species_name, columns) << std::endl;
+            if (json) {
+                j["Creation_Reactions_" + species_name] = utils::to_json(columns);
+            }
+            else {
+                utils::print_table("Creation Reactions for " + species_name, columns);
+            }
         }
 
         {
@@ -116,43 +128,44 @@ namespace gridfire::diagnostics {
             columns.push_back(std::make_unique<utils::Column<std::string>>("Reaction ID", destruction_ids));
             columns.push_back(std::make_unique<utils::Column<int>>("Stoichiometry", destruction_stoichiometry));
             columns.push_back(std::make_unique<utils::Column<double>>("Molar Flow", destruction_flows));
-            std::cout << utils::format_table("Destruction Reactions for " + species_name, columns) << std::endl;
+            if (json) {
+                j["Destruction_Reactions_" + species_name] = utils::to_json(columns);
+            } else {
+                utils::print_table("Destruction Reactions for " + species_name, columns);
+            }
         }
 
-        std::cout << "--- Balance Summary for " << species_name << " ---" << std::endl;
-        std::cout << "  Total Creation Rate:  " << std::scientific << total_creation_flow << " [mol/g/s]" << std::endl;
-        std::cout << "  Total Destruction Rate: " << std::scientific << total_destruction_flow << " [mol/g/s]" << std::endl;
-        std::cout << "  Net dY/dt:              " << std::scientific << (total_creation_flow - total_destruction_flow) << std::endl;
-        std::cout << "-----------------------------------" << std::endl;
+        std::vector<std::unique_ptr<utils::ColumnBase>> summary_columns;
+        summary_columns.push_back(std::make_unique<utils::Column<std::string>>("Metric", std::vector<std::string>{
+            "Total Creation Rate [mol/g/s]",
+            "Total Destruction Rate [mol/g/s]",
+            "Net dY/dt [mol/g/s]"
+        }));
+        summary_columns.push_back(std::make_unique<utils::Column<double>>("Value", std::vector<double>{
+            total_creation_flow,
+            total_destruction_flow,
+            total_creation_flow - total_destruction_flow
+        }));
+
+        if (json) {
+            j["Species_Balance_Summary_" + species_name] = utils::to_json(summary_columns);
+            return j;
+        }
+
+        utils::print_table("Species Balance Summary for " + species_name, summary_columns);
+        return std::nullopt;
     }
 
-    void inspect_jacobian_stiffness(
+    std::optional<nlohmann::json> inspect_jacobian_stiffness(
         const DynamicEngine &engine,
         const fourdst::composition::Composition &comp,
         const double T9,
-        const double rho
-    ) {
-        inspect_jacobian_stiffness(engine, comp, T9, rho, false, std::nullopt);
-    }
-
-
-    void inspect_jacobian_stiffness(
-        const DynamicEngine& engine,
-        const fourdst::composition::Composition &comp,
-        const double T9,
         const double rho,
-        const bool save,
-        const std::optional<std::string> &filename
+        const bool json
     ) {
         NetworkJacobian jac = engine.generateJacobianMatrix(comp, T9, rho);
 
         jac = regularize_jacobian(jac, comp);
-        if (save) {
-            if (!filename.has_value()) {
-                throw std::invalid_argument("Filename must be provided when save is true.");
-            }
-            jac.to_csv(filename.value());
-        }
 
         const auto& species_list = engine.getNetworkSpecies();
 
@@ -172,16 +185,28 @@ namespace gridfire::diagnostics {
             }
         }
 
-        std::cout << "\n--- Jacobian Stiffness Report ---" << std::endl;
-        if (max_diag_species.has_value()) {
-            std::cout << "  Largest Diagonal Element (d(dYi/dt)/dYi): " << std::scientific << max_diag
-                      << " for species " << max_diag_species->name() << std::endl;
+        std::vector<std::unique_ptr<utils::ColumnBase>> jacobian_columns;
+        jacobian_columns.push_back(std::make_unique<utils::Column<std::string>>("Metric", std::vector<std::string>{
+            "Largest Diagonal Element (d(dYi/dt)/dYi)",
+            "Largest Off-Diagonal Element (d(dYi/dt)/dYj)"
+        }));
+        jacobian_columns.push_back(std::make_unique<utils::Column<double>>("Value", std::vector<double>{
+            max_diag,
+            max_off_diag
+        }));
+        jacobian_columns.push_back(std::make_unique<utils::Column<std::string>>("Species", std::vector<std::string>{
+            max_diag_species.has_value() ? std::string(max_diag_species->name()) : "N/A",
+            max_off_diag_species.has_value() ?
+                ("d(" + std::string(max_off_diag_species->first.name()) + ")/d(" + std::string(max_off_diag_species->second.name()) + ")")
+                : "N/A"
+        }));
+
+        if (json) {
+            nlohmann::json j;
+            j["Jacobian_Stiffness"] = utils::to_json(jacobian_columns);
+            return j;
         }
-        if (max_off_diag_species.has_value()) {
-            std::cout << "  Largest Off-Diagonal Element (d(dYi/dt)/dYj): " << std::scientific << max_off_diag
-                      << " for d(" << max_off_diag_species->first.name()
-                      << ")/d(" << max_off_diag_species->second.name() << ")" << std::endl;
-        }
-        std::cout << "---------------------------------" << std::endl;
+        utils::print_table("Jacobian Stiffness Diagnostics", jacobian_columns);
+        return std::nullopt;
     }
 }

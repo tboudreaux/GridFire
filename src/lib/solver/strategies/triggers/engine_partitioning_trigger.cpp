@@ -203,6 +203,7 @@ namespace gridfire::trigger::solver::CVODE {
 
     void TimestepCollapseTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
         m_updates++;
+        m_timestep_window.clear();
     }
 
     void TimestepCollapseTrigger::step(
@@ -279,7 +280,7 @@ namespace gridfire::trigger::solver::CVODE {
     void ConvergenceFailureTrigger::update(
         const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
     ) {
-        // --- ConvergenceFailureTrigger::update does nothing and is intentionally left blank --- //
+        m_window.clear();
     }
 
     void ConvergenceFailureTrigger::step(
@@ -371,27 +372,38 @@ namespace gridfire::trigger::solver::CVODE {
     std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
         const double simulationTimeInterval,
         const double offDiagonalThreshold,
-        const double relativeTimestepCollapseThreshold,
-        const size_t timestepGrowthWindowSize
+        const double timestepCollapseRatio,
+        const size_t maxConvergenceFailures
     ) {
         using ctx_t = gridfire::solver::CVODESolverStrategy::TimestepContext;
 
-        // Create the individual conditions that can trigger a repartitioning
-        // The current trigger logic is as follows
-        // 1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
-        // 2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
-        // 3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
-        // 4. OR if the number of convergence failures begins to grow
+        // 1. INSTABILITY TRIGGERS (High Priority)
+        auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(
+            maxConvergenceFailures,
+            1.0f,
+            10
+        );
 
-        // TODO: This logic likely needs to be revisited; however, for now it is easy enough to change and test and it works reasonably well
-        auto simulationTimeTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<SimulationTimeTrigger>(simulationTimeInterval), 1000);
+        auto timestepCollapseTrigger = std::make_unique<TimestepCollapseTrigger>(
+            timestepCollapseRatio,
+            true, // relative
+            5
+        );
+
+        auto instabilityGroup = std::make_unique<OrTrigger<ctx_t>>(
+            std::move(convergenceFailureTrigger),
+            std::move(timestepCollapseTrigger)
+        );
+
+        // 2. MAINTENANCE TRIGGERS
         auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(offDiagonalThreshold);
-        auto timestepGrowthTrigger = std::make_unique<EveryNthTrigger<ctx_t>>(std::make_unique<TimestepCollapseTrigger>(relativeTimestepCollapseThreshold, true, timestepGrowthWindowSize), 10);
-        auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(5, 1.0f, 10);
 
-
-        auto convergenceOrTimestepTrigger = std::make_unique<OrTrigger<ctx_t>>(std::move(timestepGrowthTrigger), std::move(convergenceFailureTrigger));
-
-        return convergenceOrTimestepTrigger;
+        // Combine: (Instability) OR (Structure Change)
+        return std::make_unique<OrTrigger<ctx_t>>(
+            std::move(instabilityGroup),
+            std::move(offDiagTrigger)
+        );
     }
+
+
 }

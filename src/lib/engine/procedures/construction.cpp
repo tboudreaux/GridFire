@@ -19,6 +19,11 @@
 #include "quill/LogMacros.h"
 namespace {
     // Simple heuristic to check if a reaclib reaction is a strong or weak reaction
+    /*  A weak reaction is defined here as one where:
+        - The number of reactants is equal to the number of products
+        - There is only one reactant and one product
+        - The mass number (A) of the reactant is equal to the mass number (A) of the product
+    */
     bool reaclib_reaction_is_weak(const gridfire::reaction::Reaction& reaction) {
         const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
         const std::vector<fourdst::atomic::Species>& products = reaction.products();
@@ -41,10 +46,10 @@ namespace {
 
     gridfire::reaction::ReactionSet register_weak_reactions(
         const gridfire::rates::weak::WeakRateInterpolator &weakInterpolator,
-        const gridfire::NetworkConstructionFlags reactionTypes
+        const gridfire::engine::NetworkConstructionFlags reactionTypes
     ) {
         gridfire::reaction::ReactionSet weak_reaction_pool;
-        if (!has_flag(reactionTypes, gridfire::NetworkConstructionFlags::WRL_WEAK)) {
+        if (!has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::WRL_WEAK)) {
             return weak_reaction_pool;
         }
 
@@ -58,7 +63,7 @@ namespace {
                 parent_species.z() - 1
             );
             if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::BETA_PLUS)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::BETA_PLUS)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -67,7 +72,7 @@ namespace {
                         )
                     );
                 }
-                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::ELECTRON_CAPTURE)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::ELECTRON_CAPTURE)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -78,7 +83,7 @@ namespace {
                 }
             }
             if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::BETA_MINUS)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::BETA_MINUS)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -87,7 +92,7 @@ namespace {
                         )
                     );
                 }
-                if (has_flag(reactionTypes, gridfire::NetworkConstructionFlags::POSITRON_CAPTURE)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::POSITRON_CAPTURE)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -103,14 +108,14 @@ namespace {
     }
 
     gridfire::reaction::ReactionSet register_strong_reactions(
-        const gridfire::NetworkConstructionFlags reaction_types
+        const gridfire::engine::NetworkConstructionFlags reaction_types
     ) {
         gridfire::reaction::ReactionSet strong_reaction_pool;
-        if (has_flag(reaction_types, gridfire::NetworkConstructionFlags::STRONG)) {
+        if (has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::STRONG)) {
             const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
             for (const auto& reaction : allReaclibReactions) {
                 const bool isWeakReaction = reaclib_reaction_is_weak(*reaction);
-                const bool okayToUseReaclibWeakReaction = has_flag(reaction_types, gridfire::NetworkConstructionFlags::REACLIB_WEAK);
+                const bool okayToUseReaclibWeakReaction = has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK);
 
                 const bool reaclibWeakOkay = !isWeakReaction || okayToUseReaclibWeakReaction;
                 if (!reaction->is_reverse() && reaclibWeakOkay) {
@@ -121,17 +126,17 @@ namespace {
         return strong_reaction_pool;
     }
 
-    bool validate_unique_weak_set(gridfire::NetworkConstructionFlags flag) {
+    bool validate_unique_weak_set(gridfire::engine::NetworkConstructionFlags flag) {
         // This method ensures that weak reactions will only be fetched from either reaclib or the weak reaction library (WRL)
         // but not both
-        std::array<gridfire::NetworkConstructionFlags, 4> WRL_Flags = {
-            gridfire::NetworkConstructionFlags::BETA_PLUS,
-            gridfire::NetworkConstructionFlags::ELECTRON_CAPTURE,
-            gridfire::NetworkConstructionFlags::POSITRON_CAPTURE,
-            gridfire::NetworkConstructionFlags::BETA_MINUS
+        std::array<gridfire::engine::NetworkConstructionFlags, 4> WRL_Flags = {
+            gridfire::engine::NetworkConstructionFlags::BETA_PLUS,
+            gridfire::engine::NetworkConstructionFlags::ELECTRON_CAPTURE,
+            gridfire::engine::NetworkConstructionFlags::POSITRON_CAPTURE,
+            gridfire::engine::NetworkConstructionFlags::BETA_MINUS
         };
 
-        if (!has_flag(flag, gridfire::NetworkConstructionFlags::REACLIB_WEAK)) {
+        if (!has_flag(flag, gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK)) {
             return true;
         }
         for (const auto& WRLReactionType : WRL_Flags) {
@@ -143,7 +148,7 @@ namespace {
     }
 }
 
-namespace gridfire {
+namespace gridfire::engine {
     using reaction::ReactionSet;
     using reaction::Reaction;
     using fourdst::atomic::Species;

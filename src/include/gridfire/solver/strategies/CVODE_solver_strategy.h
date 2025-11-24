@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gridfire/solver/solver.h"
+#include "gridfire/solver/strategies/strategy_abstract.h"
 #include "gridfire/engine/engine_abstract.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/exceptions/exceptions.h"
 
 #include "fourdst/atomic/atomicSpecies.h"
@@ -85,7 +85,7 @@ namespace gridfire::solver {
          * @param engine DynamicEngine used for RHS/Jacobian evaluation and network access.
          * @throws std::runtime_error If SUNContext_Create fails.
          */
-        explicit CVODESolverStrategy(DynamicEngine& engine);
+        explicit CVODESolverStrategy(engine::DynamicEngine& engine);
         /**
          * @brief Destructor: cleans CVODE/SUNDIALS resources and frees SUNContext.
          */
@@ -152,6 +152,12 @@ namespace gridfire::solver {
          */
         void set_stdout_logging_enabled(bool logging_enabled);
 
+        void set_absTol(double absTol);
+        void set_relTol(double relTol);
+
+        double get_absTol() const;
+        double get_relTol() const;
+
         /**
          * @brief Schema of fields exposed to the timestep callback context.
          */
@@ -173,7 +179,7 @@ namespace gridfire::solver {
             const double T9;                ///< Temperature in GK.
             const double rho;               ///< Density [g cm^-3].
             const size_t num_steps;         ///< Number of CVODE steps taken so far.
-            const DynamicEngine& engine;    ///< Reference to the engine.
+            const engine::DynamicEngine& engine;    ///< Reference to the engine.
             const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
             const size_t currentConvergenceFailures; ///< Total number of convergence failures
             const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
@@ -190,7 +196,7 @@ namespace gridfire::solver {
                 double t9,
                 double rho,
                 size_t num_steps,
-                const DynamicEngine& engine,
+                const engine::DynamicEngine& engine,
                 const std::vector<fourdst::atomic::Species>& networkSpecies,
                 size_t currentConvergenceFailure,
                 size_t currentNonlinearIterations,
@@ -219,12 +225,12 @@ namespace gridfire::solver {
          */
         struct CVODEUserData {
             CVODESolverStrategy* solver_instance{}; // Pointer back to the class instance
-            DynamicEngine* engine{};
+            engine::DynamicEngine* engine{};
             double T9{};
             double rho{};
             double energy{};
             const std::vector<fourdst::atomic::Species>* networkSpecies{};
-            std::unique_ptr<exceptions::StaleEngineTrigger> captured_exception = nullptr;
+            std::unique_ptr<exceptions::EngineError> captured_exception = nullptr;
             std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
         };
 
@@ -281,6 +287,9 @@ namespace gridfire::solver {
          */
         void cleanup_cvode_resources(bool memFree);
 
+        void set_detailed_step_logging(bool enabled);
+
+
         /**
          * @brief Compute and print per-component error ratios; run diagnostic helpers.
          *
@@ -288,8 +297,8 @@ namespace gridfire::solver {
          * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
-        void log_step_diagnostics(const CVODEUserData& user_data, bool displayJacobianStiffness, bool saveIntermediateJacobians, bool
-                                  displaySpeciesBalance) const;
+        void log_step_diagnostics(const CVODEUserData& user_data, bool displayJacobianStiffness, bool
+                                  displaySpeciesBalance, bool to_file, std::optional<std::string> filename) const;
     private:
         SUNContext m_sun_ctx = nullptr;   ///< SUNDIALS context (lifetime of the solver).
         void* m_cvode_mem = nullptr;      ///< CVODE memory block.
@@ -305,5 +314,10 @@ namespace gridfire::solver {
         bool m_stdout_logging_enabled = true; ///< If true, print per-step logs and use CV_ONE_STEP.
 
         N_Vector m_constraints = nullptr; ///< CVODE constraints vector (>= 0 for species entries).
+
+        std::optional<double> m_absTol;        ///< User-specified absolute tolerance.
+        std::optional<double> m_relTol;        ///< User-specified relative tolerance.
+
+        bool m_detailed_step_logging = false;    ///< If true, log detailed step diagnostics (error ratios, Jacobian, species balance).
     };
 }

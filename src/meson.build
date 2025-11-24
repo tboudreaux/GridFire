@@ -1,6 +1,5 @@
 # Define the library
 gridfire_sources = files(
-    'lib/network.cpp',
     'lib/engine/engine_graph.cpp',
     'lib/engine/views/engine_adaptive.cpp',
     'lib/engine/views/engine_defined.cpp',
@@ -42,6 +41,7 @@ gridfire_build_dependencies = [
     eigen_dep,
     plugin_dep,
     sundials_dep,
+    json_dep,
 ]
 
 # Define the libnetwork library so it can be linked against by other parts of the build system

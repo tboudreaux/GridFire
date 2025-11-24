@@ -3,7 +3,7 @@
 
 #include "gridfire/reaction/reaclib.h"
 #include "gridfire/reaction/reactions_data.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_reaction.h"
 
 #include <stdexcept>
@@ -11,7 +11,6 @@
 #include <vector>
 #include <string>
 #include <format>
-#include <print>
 #include <expected>
 
 namespace {
@@ -38,7 +37,7 @@ namespace {
         BadFormat // Generic error (e.g., from an out_of_range exception)
     };
 
-    std::string error_to_string(ReactionParseError err) {
+    std::string error_to_string(const ReactionParseError err) {
         switch (err) {
             case ReactionParseError::MissingOpenParenthesis:
                 return "Missing '('";

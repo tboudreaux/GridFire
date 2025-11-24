@@ -2,6 +2,7 @@
 
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/reaction/reaction.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/logging/logging.h"
 #include "quill/Logger.h"
@@ -96,7 +97,7 @@ namespace gridfire::screening {
          * @param rho The density in g/cm^3.
          * @return A vector of screening factors of type `T`.
          */
-        template <typename T>
+        template <IsArithmeticOrAD T>
         [[nodiscard]] std::vector<T> calculateFactors_impl(
             const reaction::ReactionSet& reactions,
             const std::vector<fourdst::atomic::Species>& species,
@@ -137,7 +138,7 @@ namespace gridfire::screening {
      *     and unphysical screening factors (exp(2) ≈ 7.4).
      * 6.  **Final Factor**: The screening factor for the reaction is `exp(H_12)`.
      */
-    template <typename T>
+    template <IsArithmeticOrAD T>
     std::vector<T> WeakScreeningModel::calculateFactors_impl(
         const reaction::ReactionSet& reactions,
         const std::vector<fourdst::atomic::Species>& species,

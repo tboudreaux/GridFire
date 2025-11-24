@@ -11,12 +11,6 @@
  * example:
  *  - gridfire/policy/stellar_policy.h  (concrete stellar network policy used in many examples)
  *  - gridfire/policy/chains.h          (reaction-chain helper policies such as proton-proton, CNO)
- *
- * An example of using a concrete policy to construct and run an engine is available at:
- *  - tests/graphnet_sandbox/main.cpp
- *
- * @note Doxygen comments on public methods include @par Example usage blocks. Methods that may
- *       throw in concrete implementations include @throws tags.
  */
 
 #pragma once
@@ -145,7 +139,7 @@ namespace gridfire::policy {
          * NetOut out = solver.evaluate(netIn, true);
          * @endcode
          */
-        [[nodiscard]] virtual DynamicEngine& construct() = 0;
+        [[nodiscard]] virtual engine::DynamicEngine& construct() = 0;
 
         /**
          * @brief Returns the current verification/construction status of the policy.
@@ -161,9 +155,9 @@ namespace gridfire::policy {
          */
         [[nodiscard]] virtual NetworkPolicyStatus getStatus() const = 0;
 
-        [[nodiscard]] virtual const std::vector<std::unique_ptr<DynamicEngine>> &get_engine_stack() const = 0;
+        [[nodiscard]] virtual const std::vector<std::unique_ptr<engine::DynamicEngine>> &get_engine_stack() const = 0;
 
-        [[nodiscard]] virtual std::vector<EngineTypes> get_engine_types_stack() const = 0;
+        [[nodiscard]] virtual std::vector<engine::EngineTypes> get_engine_types_stack() const = 0;
 
         [[nodiscard]] virtual const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const = 0;
     };

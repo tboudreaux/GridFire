@@ -1,6 +1,6 @@
 #include "gridfire/solver/strategies/CVODE_solver_strategy.h"
 
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/utils/table_format.h"
 #include "gridfire/engine/diagnostics/dynamic_engine_diagnostics.h"
 
@@ -19,6 +19,7 @@
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/engine/engine_graph.h"
+#include "gridfire/engine/types/engine_types.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/exceptions/error_solver.h"
@@ -26,6 +27,7 @@
 
 
 namespace gridfire::solver {
+     using namespace gridfire::engine;
 
     CVODESolverStrategy::TimestepContext::TimestepContext(
         const double t,
@@ -99,14 +101,26 @@ namespace gridfire::solver {
     ) {
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
-        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 1e-6, 10);
+        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 0.5, 2);
         LOG_TRACE_L1(m_logger, "Engine update trigger built!");
 
 
         const double T9 = netIn.temperature / 1e9; // Convert temperature from Kelvin to T9 (T9 = T / 1e9)
 
-        const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
-        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-5);
+        // The tolerance selection algorithm is that
+        //  1. Default tolerances are taken from the config file
+        //  2. If the user has set tolerances in code, those override the config
+        //  3. If the user has not set tolerances in code and the config does not have them, use hardcoded defaults
+
+        auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
+        auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-5);
+
+        if (m_absTol) {
+            absTol = *m_absTol;
+        }
+        if (m_relTol) {
+            relTol = *m_relTol;
+        }
 
         LOG_TRACE_L1(m_logger, "Starting engine update chain...");
         fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
@@ -143,6 +157,7 @@ namespace gridfire::solver {
         size_t total_steps = 0;
 
         LOG_TRACE_L1(m_logger, "Starting CVODE iteration");
+        fourdst::composition::Composition postStep = equilibratedComposition;
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;
             user_data.rho = netIn.density;
@@ -156,13 +171,10 @@ namespace gridfire::solver {
             LOG_TRACE_L2(m_logger, "CVODE step complete. Current time: {}, step status: {}", current_time, utils::cvode_ret_code_map.at(flag));
 
             if (user_data.captured_exception){
+                LOG_CRITICAL(m_logger, "An exception was captured during RHS evaluation ({}). Rethrowing...", user_data.captured_exception->what());
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
-
-            // TODO: Come up with some way to save these to a file rather than spamming stdout. JSON maybe? OPAT?
-            // log_step_diagnostics(user_data, true, false, false);
-            // exit(0);
             utils::check_cvode_flag(flag, "CVode");
 
             long int n_steps;
@@ -178,21 +190,41 @@ namespace gridfire::solver {
             size_t iter_diff = (total_nonlinear_iterations + nliters) - prev_nonlinear_iterations;
             size_t convFail_diff = (total_convergence_failures + nlcfails) - prev_convergence_failures;
             if (m_stdout_logging_enabled) {
-                std::cout << std::scientific << std::setprecision(3)
-                    << "Step: " << std::setw(6) << total_steps + n_steps
-                    << " | Updates: " << std::setw(3) << total_update_stages_triggered
-                    << " | Epoch Steps: " << std::setw(4) << n_steps
-                    << " | t: " << current_time << " [s]"
-                    << " | dt: " << last_step_size << " [s]"
-                    // << " | Molar Abundance (min a): " << y_data[0] << " [mol/g]"
-                    // << " | Accumulated Energy: " << current_energy << " [erg/g]"
-                    << " | Iterations: " << std::setw(6) << total_nonlinear_iterations + nliters
-                    << " (+" << std::setw(2) << iter_diff << ")"
-                    << " | Total Convergence Failures: " << std::setw(2) << total_convergence_failures + nlcfails
-                    << " (+" << std::setw(2) << convFail_diff << ")"
-                    << "\n";
+                std::println(
+                    "Step: {:6} | Updates: {:3} | Epoch Steps: {:4} | t: {:.3e} [s] | dt: {:15.6E} [s] | Iterations: {:6} (+{:2}) | Total Convergence Failures: {:2} (+{:2})",
+                    total_steps + n_steps,
+                    total_update_stages_triggered,
+                    n_steps,
+                    current_time,
+                    last_step_size,
+                    total_nonlinear_iterations + nliters,
+                    iter_diff,
+                    total_convergence_failures + nlcfails,
+                    convFail_diff
+                );
             }
-            LOG_INFO(m_logger, "Completed {} steps to time {} [s] (dt = {} [s]). Current specific energy: {} [erg/g]", n_steps, current_time, last_step_size, current_energy);
+            for (size_t i = 0; i < numSpecies; ++i) {
+                const auto& species = m_engine.getNetworkSpecies()[i];
+                if (y_data[i] > 0.0) {
+                    postStep.setMolarAbundance(species, y_data[i]);
+                }
+            }
+            fourdst::composition::Composition collectedComposition = m_engine.collectComposition(postStep, netIn.temperature/1e9, netIn.density);
+            for (size_t i = 0; i < numSpecies; ++i) {
+                y_data[i] = collectedComposition.getMolarAbundance(m_engine.getNetworkSpecies()[i]);
+            }
+            LOG_INFO(m_logger, "Completed {:5} steps to time {:10.4E} [s] (dt = {:15.6E} [s]). Current specific energy: {:15.6E} [erg/g]", total_steps + n_steps, current_time, last_step_size, current_energy);
+            LOG_DEBUG(m_logger, "Current composition (molar abundance): {}", [&]() -> std::string {
+                std::stringstream ss;
+                for (size_t i = 0; i < numSpecies; ++i) {
+                    const auto& species = m_engine.getNetworkSpecies()[i];
+                    ss << species.name() << ": (y_data = " << y_data[i] << ", collected = " << collectedComposition.getMolarAbundance(species) << ")";
+                    if (i < numSpecies - 1) {
+                        ss << ", ";
+                    }
+                }
+                return ss.str();
+            }());
 
             static const std::map<fourdst::atomic::Species,
                       std::unordered_map<std::string,double>> kEmptyMap{};
@@ -224,8 +256,9 @@ namespace gridfire::solver {
             }
             trigger->step(ctx);
 
-            // log_step_diagnostics(user_data, true, true, false);
-            // exit(0);
+            if (m_detailed_step_logging) {
+                log_step_diagnostics(user_data, true, true, true, "step_" + std::to_string(total_steps + n_steps) + ".json");
+            }
 
             if (trigger->check(ctx)) {
                 if (m_stdout_logging_enabled && displayTrigger) {
@@ -389,6 +422,7 @@ namespace gridfire::solver {
                 numSpecies = m_engine.getNetworkSpecies().size();
                 N = numSpecies + 1;
 
+                LOG_INFO(m_logger, "Starting CVODE reinitialization after engine update...");
                 cleanup_cvode_resources(true);
 
                 m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
@@ -397,6 +431,8 @@ namespace gridfire::solver {
                 initialize_cvode_integration_resources(N, numSpecies, current_time, currentComposition, absTol, relTol, accumulated_energy);
 
                 utils::check_cvode_flag(CVodeReInit(m_cvode_mem, current_time, m_Y), "CVodeReInit");
+                // throw exceptions::DebugException("Debug");
+                LOG_INFO(m_logger, "Done reinitializing CVODE after engine update. The next log messages will be from the first step after reinitialization...");
             }
 
         }
@@ -405,7 +441,7 @@ namespace gridfire::solver {
             std::cout << std::flush;
         }
 
-        LOG_TRACE_L2(m_logger, "CVODE iteration complete");
+        LOG_INFO(m_logger, "CVODE iteration complete");
 
         sunrealtype* y_data = N_VGetArrayPointer(m_Y);
         accumulated_energy += y_data[numSpecies];
@@ -417,16 +453,41 @@ namespace gridfire::solver {
             }
         }
 
-        LOG_TRACE_L2(m_logger, "Constructing final composition= with {} species", numSpecies);
+        LOG_INFO(m_logger, "Constructing final composition= with {} species", numSpecies);
 
         fourdst::composition::Composition topLevelComposition(m_engine.getNetworkSpecies(), y_vec);
+        LOG_INFO(m_logger, "Final composition constructed from solver state successfully! ({})", [&topLevelComposition]() -> std::string {
+            std::ostringstream ss;
+            size_t i = 0;
+            for (const auto& [species, abundance] : topLevelComposition) {
+                ss << species.name() << ": " << abundance;
+                if (i < topLevelComposition.size() - 1) {
+                    ss << ", ";
+                }
+                ++i;
+            }
+            return ss.str();
+        }());
+
+        LOG_INFO(m_logger, "Collecting final composition...");
         fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition, netIn.temperature/1e9, netIn.density);
 
         assert(outputComposition.getRegisteredSymbols().size() == equilibratedComposition.getRegisteredSymbols().size());
 
-        LOG_TRACE_L2(m_logger, "Final composition constructed successfully!");
+        LOG_INFO(m_logger, "Final composition constructed successfully! ({})", [&outputComposition]() -> std::string {
+            std::ostringstream ss;
+            size_t i = 0;
+            for (const auto& [species, abundance] : outputComposition) {
+                ss << species.name() << ": " << abundance;
+                if (i < outputComposition.size() - 1) {
+                    ss << ", ";
+                }
+                ++i;
+            }
+            return ss.str();
+        }());
 
-        LOG_TRACE_L2(m_logger, "Constructing output data...");
+        LOG_INFO(m_logger, "Constructing output data...");
         NetOut netOut;
         netOut.composition = outputComposition;
         netOut.energy = accumulated_energy;
@@ -461,6 +522,30 @@ namespace gridfire::solver {
         m_stdout_logging_enabled = logging_enabled;
     }
 
+    void CVODESolverStrategy::set_absTol(double absTol) {
+        m_absTol = absTol;
+    }
+
+    void CVODESolverStrategy::set_relTol(double relTol) {
+        m_relTol = relTol;
+    }
+
+    double CVODESolverStrategy::get_absTol() const {
+        if (m_absTol.has_value()) {
+            return m_absTol.value();
+        } else {
+            return -1.0;
+        }
+    }
+
+    double CVODESolverStrategy::get_relTol() const {
+        if (m_relTol.has_value()) {
+            return m_relTol.value();
+        } else {
+            return -1.0;
+        }
+    }
+
     std::vector<std::tuple<std::string, std::string>> CVODESolverStrategy::describe_callback_context() const {
         return {};
     }
@@ -476,13 +561,13 @@ namespace gridfire::solver {
 
         try {
             LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper called at time {}", t);
-            const CVODERHSOutputData out = instance->calculate_rhs(t, y, ydot, data);
-            data->reaction_contribution_map = out.reaction_contribution_map;
+            const auto [reaction_contribution_map] = instance->calculate_rhs(t, y, ydot, data);
+            data->reaction_contribution_map = reaction_contribution_map;
             LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper completed successfully at time {}", t);
             return 0;
-        } catch (const exceptions::StaleEngineTrigger& e) {
-            LOG_ERROR(instance->m_logger, "StaleEngineTrigger caught in CVODE RHS wrapper at time {}: {}", t, e.what());
-            data->captured_exception = std::make_unique<exceptions::StaleEngineTrigger>(e);
+        } catch (const exceptions::EngineError& e) {
+            LOG_ERROR(instance->m_logger, "EngineError caught in CVODE RHS wrapper at time {}: {}", t, e.what());
+            data->captured_exception = std::make_unique<exceptions::EngineError>(e);
             return 1; // 1 Indicates a recoverable error, CVODE will retry the step
         } catch (...) {
             LOG_CRITICAL(instance->m_logger, "Unrecoverable and Unknown exception caught in CVODE RHS wrapper at time {}", t);
@@ -634,8 +719,8 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition", t, composition.size());
         const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
         if (!result) {
-            LOG_WARNING(m_logger, "StaleEngineTrigger thrown during RHS calculation at time {}", t);
-            throw exceptions::StaleEngineTrigger({data->T9, data->rho, y_vec, t, m_num_steps, y_data[numSpecies]});
+            LOG_CRITICAL(m_logger, "Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error()));
+            throw exceptions::BadRHSEngineError(std::format("Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error())));
         }
 
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
@@ -746,12 +831,21 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Done Cleaning up cvode resources");
     }
 
+    void CVODESolverStrategy::set_detailed_step_logging(const bool enabled) {
+        m_detailed_step_logging = enabled;
+    }
+
     void CVODESolverStrategy::log_step_diagnostics(
         const CVODEUserData &user_data,
         bool displayJacobianStiffness,
-        bool saveIntermediateJacobians,
-        bool displaySpeciesBalance
+        bool displaySpeciesBalance,
+        bool to_file,
+        std::optional<std::string> filename
     ) const {
+        if (to_file && !filename.has_value()) {
+            LOG_ERROR(m_logger, "Filename must be provided when logging diagnostics to file.");
+            throw exceptions::UtilityError("Filename must be provided when logging diagnostics to file.");
+        }
 
         // --- 1. Get CVODE Step Statistics ---
         sunrealtype hlast, hcur, tcur;
@@ -762,6 +856,7 @@ namespace gridfire::solver {
         utils::check_cvode_flag(CVodeGetLastOrder(m_cvode_mem, &qlast), "CVodeGetLastOrder");
         utils::check_cvode_flag(CVodeGetCurrentTime(m_cvode_mem, &tcur), "CVodeGetCurrentTime");
 
+        nlohmann::json j;
         {
             std::vector<std::string> labels = {"Current Time (tcur)", "Last Step (hlast)", "Current Step (hcur)", "Last Order (qlast)"};
             std::vector<double> values = {static_cast<double>(tcur), static_cast<double>(hlast), static_cast<double>(hcur), static_cast<double>(qlast)};
@@ -770,7 +865,11 @@ namespace gridfire::solver {
             columns.push_back(std::make_unique<utils::Column<std::string>>("Statistic", labels));
             columns.push_back(std::make_unique<utils::Column<double>>("Value", values));
 
-            std::cout << utils::format_table("CVODE Step Stats", columns) << std::endl;
+            if (to_file) {
+                j["CVODE_Step_Stats"] = utils::to_json(columns);
+            } else {
+                utils::print_table("CVODE Step Stats", columns);
+            }
         }
 
         // --- 2. Get CVODE Cumulative Solver Statistics ---
@@ -803,7 +902,11 @@ namespace gridfire::solver {
             columns.push_back(std::make_unique<utils::Column<std::string>>("Counter", labels));
             columns.push_back(std::make_unique<utils::Column<long int>>("Count", values));
 
-            std::cout << utils::format_table("CVODE Cumulative Stats", columns) << std::endl;
+            if (to_file) {
+                j["CVODE_Cumulative_Stats"] = utils::to_json(columns);
+            } else {
+                utils::print_table("CVODE Cumulative Stats", columns);
+            }
         }
 
         // --- 3. Get Estimated Local Errors (Your Original Logic) ---
@@ -822,7 +925,10 @@ namespace gridfire::solver {
         std::vector<double> Y_full(y_data, y_data + num_components - 1);
         std::vector<double> E_full(y_err_data, y_err_data + num_components - 1);
 
-        diagnostics::report_limiting_species(*user_data.engine, Y_full, E_full, relTol, absTol);
+        auto result = diagnostics::report_limiting_species(*user_data.engine, Y_full, E_full, relTol, absTol, 10, to_file);
+        if (to_file && result.has_value()) {
+            j["Limiting_Species"] = result.value();
+        }
 
         std::ranges::replace_if(
             Y_full,
@@ -880,7 +986,11 @@ namespace gridfire::solver {
             table.push_back(std::make_unique<utils::Column<double>>(destructionTimescaleColumn));
             table.push_back(std::make_unique<utils::Column<std::string>>(speciesStatusColumn));
 
-            utils::print_table("Species Timescales", table);
+            if (to_file) {
+                j["Species_Timescales"] = utils::to_json(table);
+            } else {
+                utils::print_table("Species Timescales", table);
+            }
         }
 
 
@@ -917,29 +1027,41 @@ namespace gridfire::solver {
             columns.push_back(std::make_unique<utils::Column<fourdst::atomic::Species>>("Species", sorted_species));
             columns.push_back(std::make_unique<utils::Column<double>>("Error Ratio", sorted_err_ratios));
 
-            std::cout << utils::format_table("Species Error Ratios (Log)", columns) << std::endl;
+            if (to_file) {
+                j["Species_Error_Ratios_Linear"] = utils::to_json(columns);
+            } else {
+                utils::print_table("Species Error Ratios (Linear)", columns);
+            }
         }
 
         // --- 4. Call Your Jacobian and Balance Diagnostics ---
         if (displayJacobianStiffness) {
-            std::cout << "--- Starting Jacobian Diagnostics ---" << std::endl;
-            std::optional<std::string> filename;
-            if (saveIntermediateJacobians) {
-                filename = std::format("jacobian_s{}.csv", nsteps);
+            auto jStiff = diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho, to_file);
+            if (to_file && jStiff.has_value()) {
+                j["Jacobian_Stiffness_Diagnostics"] = jStiff.value();
             }
-            diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho, saveIntermediateJacobians, filename);
-            std::cout << "--- Finished Jacobian Diagnostics ---" << std::endl;
         }
         if (displaySpeciesBalance) {
-            std::cout << "--- Starting Species Balance Diagnostics ---" << std::endl;
             // Limit this to the top N species to avoid spamming
             const size_t num_species_to_inspect = std::min(sorted_species.size(), static_cast<size_t>(5));
-            std::cout << " > Inspecting balance for top " << num_species_to_inspect << " species with highest error ratio:" << std::endl;
             for (size_t i = 0; i < num_species_to_inspect; ++i) {
                 const auto& species = sorted_species[i];
-                diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho);
+                auto sbr = diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho, to_file);
+                if (to_file && sbr.has_value()) {
+                    j[std::string("Species_Balance_Diagnostics_") + species.name().data()] = sbr.value();
+                }
             }
-            std::cout << "--- Finished Species Balance Diagnostics ---" << std::endl;
+        }
+
+        if (to_file) {
+            std::ofstream ofs(filename.value());
+            if (!ofs.is_open()) {
+                LOG_ERROR(m_logger, "Failed to open file {} for writing diagnostics.", filename.value());
+                throw exceptions::UtilityError(std::format("Failed to open file {} for writing diagnostics.", filename.value()));
+            }
+            ofs << j.dump(4);
+            ofs.close();
+            LOG_TRACE_L2(m_logger, "Diagnostics written to file {}", filename.value());
         }
     }
 

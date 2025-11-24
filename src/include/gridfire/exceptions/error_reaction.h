@@ -6,6 +6,13 @@
 #include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
+    /**
+     * @class ReactionError
+     * @brief Base class for all exceptions related to reaction operations.
+     *
+     * This exception is the parent for more specific reaction-related errors. Catching this
+     * type will catch any exception originating from reaction handling.
+     */
     class ReactionError : public GridFireError {
     private:
         std::string m_message;

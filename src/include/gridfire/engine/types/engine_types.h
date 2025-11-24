@@ -1,9 +1,18 @@
 #pragma once
 
-#include "gridfire/engine/types/building.h"
-#include "gridfire/engine/types/reporting.h"
-
-namespace gridfire {
+namespace gridfire::engine {
+    /**
+     * @enum EngineTypes
+     * @brief Enumeration of different engine types available in GridFire.
+     *
+     * Values:
+     *   - GRAPH_ENGINE: The standard graph-based engine.
+     *   - ADAPTIVE_ENGINE_VIEW: An engine that adapts based on certain criteria.
+     *   - MULTISCALE_PARTITIONING_ENGINE_VIEW: An engine that partitions the system at multiple scales.
+     *   - PRIMING_ENGINE_VIEW: An engine that uses a priming strategy for simulations.
+     *   - DEFINED_ENGINE_VIEW: An engine defined by user specifications.
+     *   - FILE_DEFINED_ENGINE_VIEW: An engine defined through external files.
+     */
     enum class EngineTypes {
         GRAPH_ENGINE,
         ADAPTIVE_ENGINE_VIEW,
@@ -13,7 +22,13 @@ namespace gridfire {
         FILE_DEFINED_ENGINE_VIEW
     };
 
-    inline std::string engine_type_to_string(const EngineTypes type) {
+    /**
+     * @brief Converts an EngineTypes enum value to its corresponding string representation.
+     *
+     * @param type The EngineTypes enum value to convert.
+     * @return A string_view representing the name of the engine type.
+     */
+    constexpr std::string_view engine_type_to_string(const EngineTypes type) {
         switch (type) {
             case EngineTypes::GRAPH_ENGINE:
                 return "GraphEngine";

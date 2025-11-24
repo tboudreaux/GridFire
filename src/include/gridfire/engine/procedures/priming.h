@@ -2,12 +2,12 @@
 
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/engine/engine_graph.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 
 #include "fourdst/atomic/atomicSpecies.h"
 
 
-namespace gridfire {
+namespace gridfire::engine {
 
     /**
      * @brief Primes absent species in the network to their equilibrium abundances.

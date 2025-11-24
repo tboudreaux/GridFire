@@ -47,22 +47,22 @@ namespace gridfire::policy {
         m_partition_function = build_partition_function();
     }
 
-    DynamicEngine& MainSequencePolicy::construct() {
+    engine::DynamicEngine& MainSequencePolicy::construct() {
         m_network_stack.clear();
 
         m_network_stack.emplace_back(
-            std::make_unique<GraphEngine>(m_initializing_composition, *m_partition_function, NetworkBuildDepth::ThirdOrder, NetworkConstructionFlags::DEFAULT)
+            std::make_unique<engine::GraphEngine>(m_initializing_composition, *m_partition_function, engine::NetworkBuildDepth::ThirdOrder, engine::NetworkConstructionFlags::DEFAULT)
         );
 
-        auto& graphRepr = dynamic_cast<GraphEngine&>(*m_network_stack.back().get());
+        auto& graphRepr = dynamic_cast<engine::GraphEngine&>(*m_network_stack.back().get());
         graphRepr.setUseReverseReactions(false);
 
 
         m_network_stack.emplace_back(
-            std::make_unique<MultiscalePartitioningEngineView>(*m_network_stack.back().get())
+            std::make_unique<engine::MultiscalePartitioningEngineView>(*m_network_stack.back().get())
         );
         m_network_stack.emplace_back(
-            std::make_unique<AdaptiveEngineView>(*m_network_stack.back().get())
+            std::make_unique<engine::AdaptiveEngineView>(*m_network_stack.back().get())
         );
 
         m_status = NetworkPolicyStatus::INITIALIZED_UNVERIFIED;
@@ -96,18 +96,18 @@ namespace gridfire::policy {
         return m_status;
     }
 
-    const std::vector<std::unique_ptr<DynamicEngine>> &MainSequencePolicy::get_engine_stack() const {
+    const std::vector<std::unique_ptr<engine::DynamicEngine>> &MainSequencePolicy::get_engine_stack() const {
         if (m_status != NetworkPolicyStatus::INITIALIZED_VERIFIED) {
             throw exceptions::PolicyError("Cannot get engine stack from MainSequencePolicy: Policy is not initialized and verified. Call construct() first.");
         }
         return m_network_stack;
     }
 
-    std::vector<EngineTypes> MainSequencePolicy::get_engine_types_stack() const {
+    std::vector<engine::EngineTypes> MainSequencePolicy::get_engine_types_stack() const {
         return {
-            EngineTypes::GRAPH_ENGINE,
-            EngineTypes::MULTISCALE_PARTITIONING_ENGINE_VIEW,
-            EngineTypes::ADAPTIVE_ENGINE_VIEW
+            engine::EngineTypes::GRAPH_ENGINE,
+            engine::EngineTypes::MULTISCALE_PARTITIONING_ENGINE_VIEW,
+            engine::EngineTypes::ADAPTIVE_ENGINE_VIEW
         };
     }
 

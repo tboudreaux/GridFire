@@ -2,6 +2,7 @@
 #include "gridfire/exceptions/error_engine.h"
 #include "gridfire/engine/procedures/priming.h"
 #include "gridfire/utils/sundials.h"
+#include "gridfire/utils/logging.h"
 
 #include <stdexcept>
 #include <vector>
@@ -149,21 +150,6 @@ namespace {
         return reactantSample != productSample;
     }
 
-    const std::unordered_map<Eigen::LevenbergMarquardtSpace::Status, std::string> lm_status_map = {
-        {Eigen::LevenbergMarquardtSpace::Status::NotStarted, "NotStarted"},
-        {Eigen::LevenbergMarquardtSpace::Status::Running, "Running"},
-        {Eigen::LevenbergMarquardtSpace::Status::ImproperInputParameters, "ImproperInputParameters"},
-        {Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall, "RelativeReductionTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall, "RelativeErrorTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::RelativeErrorAndReductionTooSmall, "RelativeErrorAndReductionTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::CosinusTooSmall, "CosinusTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::TooManyFunctionEvaluation, "TooManyFunctionEvaluation"},
-        {Eigen::LevenbergMarquardtSpace::Status::FtolTooSmall, "FtolTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::XtolTooSmall, "XtolTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::GtolTooSmall, "GtolTooSmall"},
-        {Eigen::LevenbergMarquardtSpace::Status::UserAsked, "UserAsked"}
-    };
-
     void QuietErrorRouter(int line, const char *func, const char *file, const char *msg,
                       SUNErrCode err_code, void *err_user_data, SUNContext sunctx) {
 
@@ -177,7 +163,7 @@ namespace {
     }
 }
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::atomic::Species;
 
     MultiscalePartitioningEngineView::MultiscalePartitioningEngineView(
@@ -204,7 +190,7 @@ namespace gridfire {
         return m_baseEngine.getNetworkSpecies();
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, EngineStatus> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -355,7 +341,7 @@ namespace gridfire {
         throw exceptions::UnableToSetNetworkReactionsError("setNetworkReactions is not supported in MultiscalePartitioningEngineView. Did you mean to call this on the base engine?");
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError> MultiscalePartitioningEngineView::getSpeciesTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> MultiscalePartitioningEngineView::getSpeciesTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -372,8 +358,7 @@ namespace gridfire {
         return speciesTimescales;
     }
 
-    std::expected<std::unordered_map<Species, double>, expectations::StaleEngineError>
-    MultiscalePartitioningEngineView::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<Species, double>, EngineStatus> MultiscalePartitioningEngineView::getSpeciesDestructionTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -396,6 +381,7 @@ namespace gridfire {
         NetIn baseUpdatedNetIn = netIn;
         baseUpdatedNetIn.composition = baseUpdatedComposition;
         fourdst::composition::Composition equilibratedComposition = partitionNetwork(baseUpdatedNetIn);
+        m_composition_cache.clear();
 
         return equilibratedComposition;
     }
@@ -451,6 +437,11 @@ namespace gridfire {
         std::unordered_map<Species, double> speciesTimescales = result.value();
         std::vector<QSEGroup> newGroups;
         for (const auto &[group, reactions] : std::views::zip(groups, groupReactions)) {
+            if (reactions.size() == 0) { // If a QSE group has gotten here it should have reactions associated with it. If it doesn't that is a serious error.
+                LOG_CRITICAL(m_logger, "No reactions specified for QSE group {} during pruning analysis.", group.toString(false));
+                throw std::runtime_error("No reactions specified for QSE group " + group.toString(false) + " during pruneValidatedGroups flux analysis.");
+            }
+            LOG_TRACE_L2(m_logger, "Attempting pruning of QSE Group {:40} (reactions: {}).", group.toString(false), utils::iterable_to_delimited_string(reactions, ", ", [](const auto& r) { return r->id(); }));
             std::unordered_map<size_t, double> reactionFluxes;
             std::unordered_map<size_t, const reaction::Reaction&> reactionLookup;
             reactionFluxes.reserve(reactions.size());
@@ -501,9 +492,9 @@ namespace gridfire {
             for (const auto& [hash, normalizedFlux] : reactionFluxes) {
                 if (normalizedFlux > -30) { // TODO: replace -30 with some more physically motivated value
                     pruned_reaction_fluxes.emplace(hash, normalizedFlux);
-                    LOG_TRACE_L2(m_logger, "Retaining reaction {} with log(mean abundance normalized flux) {} during pruning.", reactionLookup.at(hash).id(), normalizedFlux);
+                    LOG_TRACE_L2(m_logger, "Retaining reaction {:15} with log(mean abundance normalized flux) {:10.4E} during pruning.", reactionLookup.at(hash).id(), normalizedFlux);
                 } else {
-                    LOG_TRACE_L2(m_logger, "Pruning reaction {} with log(mean abundance normalized flux) {} during pruning.", reactionLookup.at(hash).id(), normalizedFlux);
+                    LOG_TRACE_L2(m_logger, "Pruning   reaction {:15} with log(mean abundance normalized flux) {:10.4E} during pruning.", reactionLookup.at(hash).id(), normalizedFlux);
                 }
             }
 
@@ -666,121 +657,23 @@ namespace gridfire {
         // --- Step 5. Identify potential seed species for each candidate pool ---
         LOG_TRACE_L1(m_logger, "Identifying potential seed species for candidate pools...");
         const std::vector<QSEGroup> candidate_groups = constructCandidateGroups(connected_pools, comp, T9, rho);
-        LOG_TRACE_L1(m_logger, "Found {} candidate QSE groups for further analysis", candidate_groups.size());
-        LOG_TRACE_L2(
-            m_logger,
-            "{}",
-             [&]() -> std::string {
-                 std::stringstream ss;
-                 int j = 0;
-                 for (const auto& group : candidate_groups) {
-                     ss << "CandidateQSEGroup(Algebraic: {";
-                     int i = 0;
-                     for (const auto& species : group.algebraic_species) {
-                         ss << species.name();
-                         if (i < group.algebraic_species.size() - 1) {
-                             ss << ", ";
-                         }
-                     }
-                     ss << "}, Seed: {";
-                     i = 0;
-                     for (const auto& species : group.seed_species) {
-                         ss << species.name();
-                         if (i < group.seed_species.size() - 1) {
-                             ss << ", ";
-                         }
-                         i++;
-                     }
-                     ss << "})";
-                     if (j < candidate_groups.size() - 1) {
-                         ss << ", ";
-                     }
-                     j++;
-                 }
-                 return ss.str();
-             }()
-        );
+        LOG_TRACE_L1(m_logger, "Found {} candidate QSE groups for further analysis ({})", candidate_groups.size(), utils::iterable_to_delimited_string(candidate_groups));
 
         LOG_TRACE_L1(m_logger, "Validating candidate groups with flux analysis...");
         const auto [validated_groups, invalidate_groups, validated_group_reactions] = validateGroupsWithFluxAnalysis(candidate_groups, comp, T9, rho);
-        LOG_TRACE_L1(
-            m_logger,
-            "Validated {} group(s) QSE groups. {}",
-            validated_groups.size(),
-            [&]() -> std::string {
-                std::stringstream ss;
-                int count = 0;
-                for (const auto& group : validated_groups) {
-                    ss << "Group " << count + 1;
-                    if (group.is_in_equilibrium) {
-                        ss << " is in equilibrium";
-                    } else {
-                        ss << " is not in equilibrium";
-                    }
-                    if (count < validated_groups.size() - 1) {
-                        ss << ", ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }()
-        );
+        LOG_TRACE_L1(m_logger, "Validated {} group(s) QSE groups. {}", validated_groups.size(), utils::iterable_to_delimited_string(validated_groups));
 
         LOG_TRACE_L1(m_logger, "Pruning groups based on log abundance-normalized flux analysis...");
         const std::vector<QSEGroup> prunedGroups = pruneValidatedGroups(validated_groups, validated_group_reactions, comp, T9, rho);
-        LOG_TRACE_L1(m_logger, "After Pruning remaining groups are: {}", [&]() -> std::string {
-            std::stringstream ss;
-            int j = 0;
-            for (const auto& group : prunedGroups) {
-                ss << "PrunedQSEGroup(Algebraic: {";
-                int i = 0;
-                for (const auto& species : group.algebraic_species) {
-                    ss << species.name();
-                    if (i < group.algebraic_species.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                ss << "}, Seed: {";
-                i = 0;
-                for (const auto& species : group.seed_species) {
-                    ss << species.name();
-                    if (i < group.seed_species.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                ss << "})";
-                if (j < prunedGroups.size() - 1) {
-                    ss << ", ";
-                }
-                j++;
-            }
-            return ss.str();
-        }());
+        LOG_TRACE_L1(m_logger, "After Pruning remaining groups are: {}", utils::iterable_to_delimited_string(prunedGroups));
+
         LOG_TRACE_L1(m_logger, "Re-validating pruned groups with flux analysis...");
         auto [pruned_validated_groups, _, __] = validateGroupsWithFluxAnalysis(prunedGroups, comp, T9, rho);
-        LOG_TRACE_L1(
-            m_logger,
-            "After re-validation, {} QSE groups remain. ({})",
-            pruned_validated_groups.size(),
-            [&pruned_validated_groups]()->std::string {
-                std::stringstream ss;
-                size_t count = 0;
-                for (const auto& group : pruned_validated_groups) {
-                    ss << group.toString();
-                    if (pruned_validated_groups.size() > 1 && count < pruned_validated_groups.size() - 1) {
-                        ss << ", ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }()
-        );
+        LOG_TRACE_L1(m_logger, "After re-validation, {} QSE groups remain. ({})",pruned_validated_groups.size(), utils::iterable_to_delimited_string(pruned_validated_groups));
 
         m_qse_groups = pruned_validated_groups;
-        LOG_TRACE_L1(m_logger, "Identified {} QSE groups.", m_qse_groups.size());
 
+        LOG_TRACE_L1(m_logger, "Pushing all identified algebraic species into algebraic set...");
         for (const auto& group : m_qse_groups) {
             // Add algebraic species to the algebraic set
             for (const auto& species : group.algebraic_species) {
@@ -789,41 +682,34 @@ namespace gridfire {
                 }
             }
         }
+        LOG_TRACE_L1(m_logger, "Algebraic species identified: {}", utils::iterable_to_delimited_string(m_algebraic_species));
 
         LOG_INFO(
             m_logger,
             "Partitioning complete. Found {} dynamic species, {} algebraic (QSE) species ({}) spread over {} QSE group{}.",
             m_dynamic_species.size(),
             m_algebraic_species.size(),
-            [&]() -> std::string {
-                std::stringstream ss;
-                size_t count = 0;
-                for (const auto& species : m_algebraic_species) {
-                    ss << species.name();
-                    if (m_algebraic_species.size() > 1 && count < m_algebraic_species.size() - 1) {
-                        ss << ", ";
-                    }
-                    count++;
-                }
-                return ss.str();
-            }(),
+            utils::iterable_to_delimited_string(m_algebraic_species),
             m_qse_groups.size(),
             m_qse_groups.size() == 1 ? "" : "s"
         );
 
         // Sort the QSE groups by mean timescale so that fastest groups get equilibrated first (as these may feed slower groups)
+        LOG_TRACE_L1(m_logger, "Sorting algebraic set by mean timescale...");
         std::ranges::sort(m_qse_groups, [](const QSEGroup& a, const QSEGroup& b) {
             return a.mean_timescale < b.mean_timescale;
         });
 
+        LOG_TRACE_L1(m_logger, "Finalizing dynamic species list...");
         for (const auto& species : m_baseEngine.getNetworkSpecies()) {
             const bool involvesAlgebraic = involvesSpeciesInQSE(species);
             if (std::ranges::find(m_dynamic_species, species) == m_dynamic_species.end() && !involvesAlgebraic) {
-                // Species is classed as neither dynamic nor algebraic at end of partitioning → add to dynamic set. This ensures that all species are classified.
                 m_dynamic_species.push_back(species);
             }
         }
+        LOG_TRACE_L1(m_logger, "Final dynamic species set: {}", utils::iterable_to_delimited_string(m_dynamic_species));
 
+        LOG_TRACE_L1(m_logger, "Creating QSE solvers for each identified QSE group...");
         for (const auto& group : m_qse_groups) {
             std::vector<Species> groupAlgebraicSpecies;
             for (const auto& species : group.algebraic_species) {
@@ -831,8 +717,11 @@ namespace gridfire {
             }
             m_qse_solvers.push_back(std::make_unique<QSESolver>(groupAlgebraicSpecies, m_baseEngine, m_sun_ctx));
         }
+        LOG_TRACE_L1(m_logger, "{} QSE solvers created.", m_qse_solvers.size());
 
+        LOG_TRACE_L1(m_logger, "Calculating final equilibrated composition...");
         fourdst::composition::Composition result = getNormalizedEquilibratedComposition(comp, T9, rho);
+        LOG_TRACE_L1(m_logger, "Final equilibrated composition calculated...");
 
         return result;
     }
@@ -1163,15 +1052,10 @@ namespace gridfire {
         const auto destructionTimescale= m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         const auto netTimescale = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
 
-        if (!destructionTimescale) {
-            LOG_ERROR(m_logger, "Failed to get species destruction timescales due to stale engine state");
-            m_logger->flush_log();
-            throw exceptions::StaleEngineError("Failed to get species destruction timescales due to stale engine state");
-        }
-        if (!netTimescale) {
-            LOG_ERROR(m_logger, "Failed to get net species timescales due to stale engine state");
-            m_logger->flush_log();
-            throw exceptions::StaleEngineError("Failed to get net species timescales due to stale engine state");
+        if (!destructionTimescale || !netTimescale) {
+            LOG_CRITICAL(m_logger, "Failed to compute species timescales for partitioning due to base engine error.");
+            m_logger -> flush_log();
+            throw exceptions::EngineError("Failed to compute species timescales for partitioning in MultiscalePartitioningEngineView due to base engine error.");
         }
         const std::unordered_map<Species, double>& destruction_timescales = destructionTimescale.value();
         [[maybe_unused]] const std::unordered_map<Species, double>& net_timescales = netTimescale.value();
@@ -1182,7 +1066,7 @@ namespace gridfire {
             [&]() -> std::string {
                 std::stringstream ss;
                 for (const auto& [species, destruction_timescale] : destruction_timescales) {
-                    ss << std::format("For {} destruction timescale is {}s\n", species.name(), destruction_timescale);
+                    ss << std::format("For {:6} destruction timescale is {:10.4E}s\n", species.name(), destruction_timescale);
                 }
                 return ss.str();
             }()
@@ -1194,10 +1078,10 @@ namespace gridfire {
         for (const auto & species : all_species) {
             double destruction_timescale = destruction_timescales.at(species);
             if (std::isfinite(destruction_timescale) && destruction_timescale > 0) {
-                LOG_TRACE_L2(m_logger, "Species {} has finite destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescales.at(species));
+                LOG_TRACE_L2(m_logger, "Species {:6} has finite destruction timescale: destruction: {:10.4E} s, net: {:10.4E} s", species.name(), destruction_timescale, net_timescales.at(species));
                 sorted_destruction_timescales.emplace_back(destruction_timescale, species);
             } else {
-                LOG_TRACE_L2(m_logger, "Species {} has infinite or negative destruction timescale: destruction: {} s, net: {} s", species.name(), destruction_timescale, net_timescales.at(species));
+                LOG_TRACE_L2(m_logger, "Species {:6} has infinite or negative destruction timescale: destruction: {:10.4E} s, net: {:10.4E} s", species.name(), destruction_timescale, net_timescales.at(species));
             }
         }
 
@@ -1219,50 +1103,44 @@ namespace gridfire {
         constexpr double MAX_MOLAR_ABUNDANCE_THRESHOLD = 1e-10; // Maximum molar abundance which a fast species is allowed to have (anything more abundant is always considered dynamic)
         constexpr double MIN_MOLAR_ABUNDANCE_THRESHOLD = 1e-50; // Minimum molar abundance to consider a species at all (anything less abundance will be classed as dynamic but with the intent that some latter view will deal with it)
 
-        LOG_TRACE_L2(m_logger, "Found {} species with finite timescales.", sorted_destruction_timescales.size());
-        LOG_TRACE_L2(m_logger, "Absolute QSE timescale threshold: {} seconds ({} years).",
+        LOG_TRACE_L2(m_logger, "Found {:5} species with finite timescales.", sorted_destruction_timescales.size());
+        LOG_TRACE_L2(m_logger, "Absolute QSE timescale threshold: {:7.3E} seconds ({:7.2E} years).",
             ABSOLUTE_QSE_TIMESCALE_THRESHOLD, ABSOLUTE_QSE_TIMESCALE_THRESHOLD / 3.156e7);
-        LOG_TRACE_L2(m_logger, "Minimum gap threshold: {} orders of magnitude.", MIN_GAP_THRESHOLD);
-        LOG_TRACE_L2(m_logger, "Maximum molar abundance threshold for fast species consideration : {}.", MAX_MOLAR_ABUNDANCE_THRESHOLD);
-        LOG_TRACE_L2(m_logger, "Minimum molar abundance threshold for species consideration : {}.", MIN_MOLAR_ABUNDANCE_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Minimum gap threshold: {:3} orders of magnitude.", MIN_GAP_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Maximum molar abundance threshold for fast species consideration : {:3}.", MAX_MOLAR_ABUNDANCE_THRESHOLD);
+        LOG_TRACE_L2(m_logger, "Minimum molar abundance threshold for species consideration : {:3}.", MIN_MOLAR_ABUNDANCE_THRESHOLD);
 
         std::vector<Species> dynamic_pool_species;
         std::vector<std::pair<double, Species>> fast_candidates;
 
         // 1. First Pass: Absolute Timescale Cutoff
         for (const auto& [destruction_timescale, species] : sorted_destruction_timescales) {
-            if (species == n_1) {
-                LOG_TRACE_L2(m_logger, "Skipping neutron (n) from timescale analysis. Neutrons are always considered dynamic due to their extremely high connectivity.");
-                dynamic_pool_species.push_back(species);
-
-                continue;
-            }
             if (destruction_timescale > ABSOLUTE_QSE_TIMESCALE_THRESHOLD) {
-                LOG_TRACE_L2(m_logger, "Species {} with timescale {} is considered dynamic (slower than qse timescale threshold).",
+                LOG_TRACE_L2(m_logger, "Species {:5} with timescale {:10.4E} is considered dynamic (slower than qse timescale threshold).",
                     species.name(), destruction_timescale);
                 dynamic_pool_species.push_back(species);
             } else {
                 const double Yi = comp.getMolarAbundance(species);
                 if (Yi > MAX_MOLAR_ABUNDANCE_THRESHOLD) {
-                    LOG_TRACE_L2(m_logger, "Species {} with abundance {} is considered dynamic (above minimum abundance threshold of {}).",
+                    LOG_TRACE_L2(m_logger, "Species {:5} with abundance {:10.4E} is considered dynamic (above minimum abundance threshold of {}).",
                         species.name(), Yi, MAX_MOLAR_ABUNDANCE_THRESHOLD);
                     dynamic_pool_species.push_back(species);
                     continue;
                 }
                 if (Yi < MIN_MOLAR_ABUNDANCE_THRESHOLD) {
-                    LOG_TRACE_L2(m_logger, "Species {} with abundance {} is considered dynamic (below minimum abundance threshold of {}). Likely another network view (such as adaptive engine view) will be needed to deal with this species",
+                    LOG_TRACE_L2(m_logger, "Species {:5} with abundance {:10.4E} is considered dynamic (below minimum abundance threshold of {:10.4E}). Likely another network view (such as adaptive engine view) will be needed to deal with this species",
                         species.name(), Yi, MIN_MOLAR_ABUNDANCE_THRESHOLD);
                     dynamic_pool_species.push_back(species);
                     continue;
                 }
-                LOG_TRACE_L2(m_logger, "Species {} with timescale {} and molar abundance {} is a candidate fast species (faster than qse timescale threshold and less than the molar abundance threshold).",
+                LOG_TRACE_L2(m_logger, "Species {:5} with timescale {:10.4E} and molar abundance {:10.4E} is a candidate fast species (faster than qse timescale threshold and less than the molar abundance threshold).",
                     species.name(), destruction_timescale, Yi);
                 fast_candidates.emplace_back(destruction_timescale, species);
             }
         }
 
         if (!dynamic_pool_species.empty()) {
-            LOG_TRACE_L2(m_logger, "Found {} dynamic species (slower than QSE timescale threshold).", dynamic_pool_species.size());
+            LOG_TRACE_L2(m_logger, "Found {:5} dynamic species (slower than QSE timescale threshold).", dynamic_pool_species.size());
             final_pools.push_back(dynamic_pool_species);
         }
 
@@ -1277,7 +1155,7 @@ namespace gridfire {
             const double t1 = fast_candidates[i].first;
             const double t2 = fast_candidates[i+1].first;
             if (std::log10(t1) - std::log10(t2) > MIN_GAP_THRESHOLD) {
-                LOG_TRACE_L2(m_logger, "Detected gap between species {} (timescale {:0.2E}) and {} (timescale {:0.2E}).",
+                LOG_TRACE_L2(m_logger, "Detected gap between species {:5} (timescale {:8.2E}) and {:5} (timescale {:10.2E}).",
                     fast_candidates[i].second.name(), t1,
                     fast_candidates[i+1].second.name(), t2);
                 split_points.push_back(i + 1);
@@ -1349,6 +1227,171 @@ namespace gridfire {
 
     }
 
+    std::pair<bool, reaction::ReactionSet> MultiscalePartitioningEngineView::group_is_a_qse_cluster(
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const QSEGroup &group
+    ) const {
+        constexpr double FLUX_RATIO_THRESHOLD = 5;
+
+        const std::unordered_set<Species> algebraic_group_members(
+            group.algebraic_species.begin(),
+            group.algebraic_species.end()
+        );
+
+        const std::unordered_set<Species> seed_group_members(
+            group.seed_species.begin(),
+            group.seed_species.end()
+        );
+
+        reaction::ReactionSet group_reaction_set;
+        double coupling_flux = 0.0;
+        double leakage_flux = 0.0;
+
+        for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
+            const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
+            if (flow == 0.0) {
+                continue; // Skip reactions with zero flow
+            }
+            bool has_internal_algebraic_reactant = false;
+
+            for (const auto& reactant : reaction->reactants()) {
+                if (algebraic_group_members.contains(reactant)) {
+                    has_internal_algebraic_reactant = true;
+                    LOG_TRACE_L3(m_logger, "Adjusting destruction flux (+= {} mol g^-1 s^-1) for QSEGroup due to reactant {} from reaction {}",
+                                 flow, reactant.name(), reaction->id());
+                }
+
+            }
+
+            bool has_internal_algebraic_product = false;
+
+            for (const auto& product : reaction->products()) {
+                if (algebraic_group_members.contains(product)) {
+                    has_internal_algebraic_product = true;
+                    LOG_TRACE_L3(m_logger, "Adjusting creation flux (+= {} mol g^-1 s^-1) for QSEGroup due to product {} from reaction {}",
+                                 flow, product.name(), reaction->id());
+                }
+            }
+
+            if (!has_internal_algebraic_product && !has_internal_algebraic_reactant) {
+                LOG_TRACE_L3(m_logger, "{}: Skipping reaction {} as it has no internal algebraic species in reactants or products.", group.toString(false), reaction->id());
+                continue;
+            }
+
+            group_reaction_set.add_reaction(reaction->clone());
+
+            LOG_TRACE_L3(
+                m_logger,
+                "Reaction {:20} has flow {:15.4E} mol g^-1 s^-1 contributing to QSEGroup {:40}",
+                reaction->id(),
+                flow,
+                group.toString(false)
+            );
+
+            double algebraic_participants = 0;
+            double seed_participants = 0;
+            double external_participants = 0;
+
+            std::unordered_set<Species> participants;
+            for(const auto& p : reaction->reactants()) participants.insert(p);
+            for(const auto& p : reaction->products()) participants.insert(p);
+
+            for (const auto& species : participants) {
+                if (algebraic_group_members.contains(species)) {
+                    LOG_TRACE_L3(m_logger, "{}: Species {} is an algebraic participant in reaction {}.", group.toString(true), species.name(), reaction->id());
+                    algebraic_participants++;
+                } else if (seed_group_members.contains(species)) {
+                    LOG_TRACE_L3(m_logger, "{}: Species {} is a seed participant in reaction {}.", group.toString(true), species.name(), reaction->id());
+                    seed_participants++;
+                } else {
+                    LOG_TRACE_L3(m_logger, "{}: Species {} is an external participant in reaction {}.", group.toString(true), species.name(), reaction->id());
+                    external_participants++;
+                }
+            }
+
+            const double total_participants = algebraic_participants + seed_participants + external_participants;
+
+            if (total_participants == 0) {
+                LOG_CRITICAL(m_logger, "Some catastrophic error has occurred. Reaction {} has no participants.", reaction->id());
+                throw std::runtime_error("Some catastrophic error has occurred. Reaction " + std::string(reaction->id()) + " has no participants.");
+            }
+
+            const double leakage_fraction = external_participants / total_participants;
+            const double coupling_fraction = (algebraic_participants + seed_participants) / total_participants;
+
+            leakage_flux += flow * leakage_fraction;
+            coupling_flux += flow * coupling_fraction;
+
+            LOG_TRACE_L2(m_logger, "Reaction {:20} contributes coupling flux {:15.4E} and leakage flux {:15.4E} to QSEGroup {}.",
+                reaction->id(),
+                flow * coupling_fraction,
+                flow * leakage_fraction,
+                group.toString(false)
+            );
+
+
+        }
+
+        bool leakage_coupled = (coupling_flux / leakage_flux > FLUX_RATIO_THRESHOLD);
+        return std::make_pair(leakage_coupled, group_reaction_set);
+    }
+
+    bool MultiscalePartitioningEngineView::group_is_a_qse_pipeline(
+    const fourdst::composition::Composition &comp,
+    const double T9,
+    const double rho,
+    const QSEGroup &group
+    ) const {
+        // Total fluxes (Standard check)
+        double total_prod = 0.0;
+        double total_dest = 0.0;
+
+        // Charged-particle only fluxes (Heuristic for fast-neutron regimes)
+        double charged_prod = 0.0;
+        double charged_dest = 0.0;
+
+        for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
+            const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
+            if (std::abs(flow) < 1.0e-99) continue;
+
+            int groupNetStoichiometry = 0;
+            for (const auto& species : group.algebraic_species) {
+                groupNetStoichiometry += reaction->stoichiometry(species);
+            }
+            if (groupNetStoichiometry == 0) continue;
+
+            const double flux = flow * groupNetStoichiometry;
+            const bool is_neutron_reaction = reaction->contains(n_1);
+
+            if (flux > 0.0) {
+                total_prod += flux;
+                if (!is_neutron_reaction) charged_prod += flux;
+            } else {
+                total_dest += -flux;
+                if (!is_neutron_reaction) charged_dest += -flux;
+            }
+        }
+
+        // Check 1: Total Balance
+        const double mean_total = (total_prod + total_dest) / 2.0;
+        const double diff_total = std::abs(total_prod - total_dest);
+        bool total_balanced = (mean_total > 0) && ((diff_total / mean_total) < 0.05);
+
+        // Check 2: Charged-Particle Balance (The "Neutron-Exclusion" Check)
+        // Only valid if there IS charged flow (avoid 0/0 success)
+        const double mean_charged = (charged_prod + charged_dest) / 2.0;
+        const double diff_charged = std::abs(charged_prod - charged_dest);
+        bool charged_balanced = (mean_charged > 0) && ((diff_charged / mean_charged) < 0.05);
+
+        LOG_TRACE_L2(m_logger, "{} Pipeline Check | Total Pass: {} | Charged Pass: {}",
+            group.toString(false), total_balanced, charged_balanced);
+
+        return total_balanced || charged_balanced;
+    }
+
+
     MultiscalePartitioningEngineView::FluxValidationResult MultiscalePartitioningEngineView::validateGroupsWithFluxAnalysis(
         const std::vector<QSEGroup> &candidate_groups,
         const fourdst::composition::Composition &comp,
@@ -1360,178 +1403,26 @@ namespace gridfire {
         validated_groups.reserve(candidate_groups.size());
         group_reactions.reserve(candidate_groups.size());
         for (auto& group : candidate_groups) {
-            reaction::ReactionSet group_reaction_set;
-            constexpr double FLUX_RATIO_THRESHOLD = 5;
-
-            const std::unordered_set<Species> algebraic_group_members(
-                group.algebraic_species.begin(),
-                group.algebraic_species.end()
-            );
-
-            const std::unordered_set<Species> seed_group_members(
-                group.seed_species.begin(),
-                group.seed_species.end()
-            );
-
             // Values for measuring the flux coupling vs leakage
-            double coupling_flux = 0.0;
-            double leakage_flux = 0.0;
-
-            for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
-                const double flow = std::abs(m_baseEngine.calculateMolarReactionFlow(*reaction, comp, T9, rho));
-                if (flow == 0.0) {
-                    continue; // Skip reactions with zero flow
-                }
-                bool has_internal_algebraic_reactant = false;
-
-                for (const auto& reactant : reaction->reactants()) {
-                    if (algebraic_group_members.contains(reactant)) {
-                        has_internal_algebraic_reactant = true;
-                        LOG_TRACE_L3(m_logger, "Adjusting destruction flux (+= {} mol g^-1 s^-1) for QSEGroup due to reactant {} from reaction {}",
-                            flow, reactant.name(), reaction->id());
-                    }
-
-                }
-
-                bool has_internal_algebraic_product = false;
-
-                for (const auto& product : reaction->products()) {
-                    if (algebraic_group_members.contains(product)) {
-                        has_internal_algebraic_product = true;
-                        LOG_TRACE_L3(m_logger, "Adjusting creation flux (+= {} mol g^-1 s^-1) for QSEGroup due to product {} from reaction {}",
-                            flow, product.name(), reaction->id());
-                    }
-                }
-
-                if (!has_internal_algebraic_product && !has_internal_algebraic_reactant) {
-                    LOG_TRACE_L3(m_logger, "{}: Skipping reaction {} as it has no internal algebraic species in reactants or products.", group.toString(), reaction->id());
-                    continue;
-                }
-
-                group_reaction_set.add_reaction(reaction->clone());
-
-                LOG_TRACE_L2(
-                    m_logger,
-                    "Reaction {} (Coupling {}) has flow {} mol g^-1 s^-1 contributing to QSEGroup {}",
-                    reaction->id(),
-                    [&group, &reaction]() -> std::string {
-                        std::ostringstream ss;
-                        if (group.algebraic_species.empty()) {
-                            ss << "N/A (no algebraic species)";
-                        } else {
-                            // Make a string of all the group species coupled from the reaction in the form of
-                            // "A, B -> C, D"
-                            int count = 0;
-                            for (const auto& species : group.algebraic_species) {
-                                if (std::ranges::find(reaction->reactants(), species) != reaction->reactants().end()) {
-                                    ss << species.name();
-                                    if (count < group.algebraic_species.size() - 1) {
-                                        ss << ", ";
-                                    }
-                                    count++;
-                                }
-                            }
-                            ss << " -> ";
-                            count = 0;
-                            for (const auto& species : group.algebraic_species) {
-                                if (std::ranges::find(reaction->products(), species) != reaction->products().end()) {
-                                    ss << species.name();
-                                    if (count < group.algebraic_species.size() - 1) {
-                                        ss << ", ";
-                                    }
-                                    count++;
-                                }
-                            }
-                        }
-                        return ss.str();
-
-                    }(),
-                    flow,
-                    group.toString()
-                );
-
-                double algebraic_participants = 0;
-                double seed_participants = 0;
-                double external_participants = 0;
-
-                std::unordered_set<Species> participants;
-                for(const auto& p : reaction->reactants()) participants.insert(p);
-                for(const auto& p : reaction->products()) participants.insert(p);
-
-                for (const auto& species : participants) {
-                    if (algebraic_group_members.contains(species)) {
-                        LOG_TRACE_L3(m_logger, "{}: Species {} is an algebraic participant in reaction {}.", group.toString(), species.name(), reaction->id());
-                        algebraic_participants++;
-                    } else if (seed_group_members.contains(species)) {
-                        LOG_TRACE_L3(m_logger, "{}: Species {} is a seed participant in reaction {}.", group.toString(), species.name(), reaction->id());
-                        seed_participants++;
-                    } else {
-                        LOG_TRACE_L3(m_logger, "{}: Species {} is an external participant in reaction {}.", group.toString(), species.name(), reaction->id());
-                        external_participants++;
-                    }
-                }
-
-                const double total_participants = algebraic_participants + seed_participants + external_participants;
-
-                if (total_participants == 0) {
-                    LOG_CRITICAL(m_logger, "Some catastrophic error has occurred. Reaction {} has no participants.", reaction->id());
-                    throw std::runtime_error("Some catastrophic error has occurred. Reaction " + std::string(reaction->id()) + " has no participants.");
-                }
-
-                const double leakage_fraction = external_participants / total_participants;
-                const double coupling_fraction = (algebraic_participants + seed_participants) / total_participants;
-
-                leakage_flux += flow * leakage_fraction;
-                coupling_flux += flow * coupling_fraction;
+            auto [leakage_coupled, group_reaction_set] = group_is_a_qse_cluster(comp, T9, rho, group);
 
 
-            }
+            bool is_flow_balanced = group_is_a_qse_pipeline(comp, T9, rho, group);
 
-            if (coupling_flux / leakage_flux > FLUX_RATIO_THRESHOLD) {
-                LOG_TRACE_L1(
-                    m_logger,
-                    "Group containing {} is in equilibrium due to high coupling flux and balanced creation and destruction rate: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>",
-                    [&]() -> std::string {
-                        std::stringstream ss;
-                        int count = 0;
-                        for (const auto& species: group.algebraic_species) {
-                            ss << species.name();
-                            if (count < group.algebraic_species.size() - 1) {
-                                ss << ", ";
-                            }
-                            count++;
-                        }
-                        return ss.str();
-                    }(),
-                    leakage_flux,
-                    coupling_flux,
-                    coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD
-                );
+            if (leakage_coupled) {
+                LOG_TRACE_L1(m_logger, "{} is in equilibrium due to high coupling flux", group.toString(false));
                 validated_groups.emplace_back(group);
                 validated_groups.back().is_in_equilibrium = true;
                 group_reactions.emplace_back(group_reaction_set);
-            } else {
-                LOG_TRACE_L1(
-                    m_logger,
-                    "Group containing {} is NOT in equilibrium: <coupling: leakage flux = {}, coupling flux = {}, ratio = {} (Threshold: {})>",
-                    [&]() -> std::string {
-                        std::stringstream ss;
-                        int count = 0;
-                        for (const auto& species : group.algebraic_species) {
-                            ss << species.name();
-                            if (count < group.algebraic_species.size() - 1) {
-                                ss << ", ";
-                            }
-                            count++;
-                        }
-                        return ss.str();
-                    }(),
-                    leakage_flux,
-                    coupling_flux,
-                    coupling_flux / leakage_flux,
-                    FLUX_RATIO_THRESHOLD
-                );
+            }
+            else if (is_flow_balanced) {
+                LOG_TRACE_L1(m_logger, "{} is in equilibrium due to balanced production and destruction fluxes.", group.toString(false));
+                validated_groups.emplace_back(group);
+                validated_groups.back().is_in_equilibrium = true;
+                group_reactions.emplace_back(group_reaction_set);
+            }
+            else {
+                LOG_TRACE_L1(m_logger, "{} is NOT in equilibrium due to high leakage flux and lack of pipeline detection.", group.toString(false));
                 invalidated_groups.emplace_back(group);
                 invalidated_groups.back().is_in_equilibrium = false;
             }
@@ -1553,9 +1444,15 @@ namespace gridfire {
         for (const auto& [group, solver]: std::views::zip(m_qse_groups, m_qse_solvers)) {
             const fourdst::composition::Composition groupResult = solver->solve(outputComposition, T9, rho);
             for (const auto& [sp, y] : groupResult) {
+                if (!std::isfinite(y)) {
+                    LOG_CRITICAL(m_logger, "Non-finite abundance {} computed for species {} in QSE group solve at T9 = {}, rho = {}.",
+                        y, sp.name(), T9, rho);
+                    m_logger->flush_log();
+                    throw exceptions::EngineError("Non-finite abundance computed for species " + std::string(sp.name()) + " in QSE group solve.");
+                }
                 outputComposition.setMolarAbundance(sp, y);
             }
-            solver->log_diagnostics();
+            solver->log_diagnostics(group, outputComposition);
         }
         LOG_TRACE_L2(m_logger, "Done solving for QSE abundances!");
         return outputComposition;
@@ -1569,9 +1466,9 @@ namespace gridfire {
     ) const {
         const auto& result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         if (!result) {
-            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            LOG_CRITICAL(m_logger, "Failed to get species destruction timescales due base engine failure");
             m_logger->flush_log();
-            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+            throw exceptions::EngineError("Failed to get species destruction timescales due base engine failure");
         }
         const std::unordered_map<Species, double> all_timescales = result.value();
 
@@ -1674,9 +1571,9 @@ namespace gridfire {
         const auto& all_reactions = m_baseEngine.getNetworkReactions();
         const auto& result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
         if (!result) {
-            LOG_ERROR(m_logger, "Failed to get species timescales due to stale engine state");
+            LOG_ERROR(m_logger, "Failed to get species destruction timescales due base engine failure");
             m_logger->flush_log();
-            throw exceptions::StaleEngineError("Failed to get species timescales due to stale engine state");
+            throw exceptions::EngineError("Failed to get species destruction timescales due base engine failure");
         }
         const std::unordered_map<Species, double> destruction_timescales = result.value();
 
@@ -1764,7 +1661,19 @@ namespace gridfire {
     //////////////////////////////////
 
 
-    MultiscalePartitioningEngineView::QSESolver::QSESolver(
+     bool MultiscalePartitioningEngineView::QSEGroup::contains(const fourdst::atomic::Species &species) const {
+        return algebraic_species.contains(species) || seed_species.contains(species);
+     }
+
+     bool MultiscalePartitioningEngineView::QSEGroup::containsAlgebraic(const Species &species) const {
+        return algebraic_species.contains(species);
+     }
+
+     bool MultiscalePartitioningEngineView::QSEGroup::containsSeed(const Species &species) const {
+        return seed_species.contains(species);
+     }
+
+     MultiscalePartitioningEngineView::QSESolver::QSESolver(
         const std::vector<fourdst::atomic::Species>& species,
         const DynamicEngine& engine,
         const SUNContext sun_ctx
@@ -1773,6 +1682,20 @@ namespace gridfire {
     m_engine(engine),
     m_species(species),
     m_sun_ctx(sun_ctx) {
+        LOG_TRACE_L1(getLogger(), "Initializing QSE Solver with {} species ({})", m_N,
+            [&]() -> std::string {
+                std::stringstream ss;
+                int count = 0;
+                for (const auto& sp : species) {
+                    ss << sp.name();
+                    if (count < species.size() - 1) {
+                        ss << ", ";
+                    }
+                    count++;
+                }
+                return ss.str();
+            }()
+        );
         m_Y = utils::init_sun_vector(m_N, m_sun_ctx);
         m_scale = N_VClone(m_Y);
         m_f_scale = N_VClone(m_Y);
@@ -1810,8 +1733,8 @@ namespace gridfire {
         utils::check_cvode_flag(KINSetNumMaxIters(m_kinsol_mem, 200), "KINSetNumMaxIters");
 
         // We want to effectively disable this since enormous changes in order of magnitude are realistic for this problem.
-        utils::check_cvode_flag(KINSetMaxNewtonStep(m_kinsol_mem, 200), "KINSetMaxNewtonStep");
-
+        utils::check_cvode_flag(KINSetMaxNewtonStep(m_kinsol_mem, std::numeric_limits<double>::infinity()), "KINSetMaxNewtonStep");
+        LOG_TRACE_L1(getLogger(), "Finished initializing QSE Solver.");
     }
 
     MultiscalePartitioningEngineView::QSESolver::~QSESolver() {
@@ -1862,7 +1785,8 @@ namespace gridfire {
             rho,
             result,
             m_speciesMap,
-            m_species
+            m_species,
+            *this
         };
 
         utils::check_cvode_flag(KINSetUserData(m_kinsol_mem, &data), "KINSetUserData");
@@ -1878,7 +1802,7 @@ namespace gridfire {
             constexpr double abundance_floor = 1.0e-100;
             Y = std::max(abundance_floor, Y);
             y_data[i] = Y;
-            scale_data[i] = 1.0;
+            scale_data[i] = 1.0 / Y;
         }
 
         auto initial_rhs = m_engine.calculateRHSAndEnergy(result, T9, rho);
@@ -1893,17 +1817,66 @@ namespace gridfire {
             f_scale_data[i] = 1.0 / (dydt + 1e-15);
         }
 
-        if (m_solves > 0) {
+        if (m_solves > 0 && m_has_jacobian) {
             // After the initial solution we want to allow kinsol to reuse its state
             utils::check_cvode_flag(KINSetNoInitSetup(m_kinsol_mem, SUNTRUE), "KINSetNoInitSetup");
         } else {
             utils::check_cvode_flag(KINSetNoInitSetup(m_kinsol_mem, SUNFALSE), "KINSetNoInitSetup");
         }
 
+        LOG_TRACE_L2(
+            getLogger(),
+            "Starting KINSol QSE solver with initial state: {}",
+            [&comp, &initial_rhs, &data]() -> std::string {
+                std::ostringstream oss;
+                oss << "Solve species: <";
+                size_t count = 0;
+                for (const auto& species : data.qse_solve_species) {
+                    oss << species.name();
+                    if (count < data.qse_solve_species.size() - 1) {
+                        oss << ", ";
+                    }
+                    count++;
+                }
+                oss << "> | Initial abundances and rates: ";
+                count = 0;
+                for (const auto& [species, abundance] : comp) {
+                    oss << species.name() << ": Y = " << abundance << ", dY/dt = " << initial_rhs.value().dydt.at(species);
+                    if (count < comp.size() - 1) {
+                        oss << ", ";
+                    }
+                    count++;
+                }
+                return oss.str();
+            }()
+        );
+        LOG_TRACE_L2(
+            getLogger(),
+            "Jacobian Prior to KINSol is: {}",
+            [&]() -> std::string {
+                std::ostringstream oss;
+                sunrealtype* J_data = SUNDenseMatrix_Data(m_J);
+                const sunindextype N = SUNDenseMatrix_Columns(m_J);
+                oss << "[";
+                for (size_t i = 0; i < m_N; ++i) {
+                    oss << "[";
+                    for (size_t j = 0; j < m_N; ++j) {
+                        oss << J_data[i * N + j];
+                        if (j < m_N - 1) {
+                            oss << ", ";
+                        }
+                    }
+                    oss << "]";
+                }
+                oss << "]";
+                return oss.str();
+            }()
+        );
+
         const int flag = KINSol(m_kinsol_mem, m_Y, KIN_LINESEARCH, m_scale, m_f_scale);
         if (flag < 0) {
             LOG_WARNING(getLogger(), "KINSol failed to converge while solving QSE abundances with flag {}.", utils::cvode_ret_code_map.at(flag));
-            return comp;
+            throw exceptions::InvalidQSESolutionError("KINSol failed to converge while solving QSE abundances. Check the log file for more details regarding the specific failure mode.");
         }
 
         for (size_t i = 0; i < m_N; ++i) {
@@ -1919,18 +1892,56 @@ namespace gridfire {
         return m_solves;
     }
 
-    void MultiscalePartitioningEngineView::QSESolver::log_diagnostics() const {
+    void MultiscalePartitioningEngineView::QSESolver::log_diagnostics(const QSEGroup &group, const fourdst::composition::Composition &comp) const {
         long int nni, nfe, nje;
 
-        int flag = KINGetNumNonlinSolvIters(m_kinsol_mem, &nni);
+        utils::check_cvode_flag(KINGetNumNonlinSolvIters(m_kinsol_mem, &nni), "KINGetNumNonlinSolvIters");
 
-        flag = KINGetNumFuncEvals(m_kinsol_mem, &nfe);
+        utils::check_cvode_flag(KINGetNumFuncEvals(m_kinsol_mem, &nfe), "KINGetNumFuncEvals");
 
-        flag = KINGetNumJacEvals(m_kinsol_mem, &nje);
+        utils::check_cvode_flag(KINGetNumJacEvals(m_kinsol_mem, &nje), "KINGetNumJacEvals");
 
-        LOG_INFO(getLogger(),
-            "QSE Stats | Iters: {} | RHS Evals: {} | Jac Evals: {} | Ratio (J/I): {:.2f}",
-            nni, nfe, nje, static_cast<double>(nje) / static_cast<double>(nni)
+        LOG_TRACE_L1(getLogger(),
+            "QSE Stats | Iters: {} | RHS Evals: {} | Jac Evals: {} | Ratio (J/I): {:.2f} | Algebraic Species: {}",
+            nni,
+            nfe,
+            nje,
+            static_cast<double>(nje) / static_cast<double>(nni),
+            [&group, &comp]() -> std::string {
+                std::ostringstream oss;
+                size_t count = 0;
+                oss << "[";
+                for (const auto& species : group.algebraic_species) {
+                    oss << species.name() << "(Y = " << comp.getMolarAbundance(species) << ")";
+                    if (count < group.algebraic_species.size() - 1) {
+                        oss << ", ";
+                    }
+                    count++;
+                }
+                oss << "]";
+                return oss.str();
+            }()
+        );
+        LOG_TRACE_L2(getLogger(),
+            "Jacobian After KINSol is: {}",
+            [&]() -> std::string {
+                std::ostringstream oss;
+                sunrealtype* J_data = SUNDenseMatrix_Data(m_J);
+                const sunindextype N = SUNDenseMatrix_Columns(m_J);
+                oss << "[";
+                for (size_t i = 0; i < m_N; ++i) {
+                    oss << "[";
+                    for (size_t j = 0; j < m_N; ++j) {
+                        oss << J_data[i * N + j];
+                        if (j < m_N - 1) {
+                            oss << ", ";
+                        }
+                    }
+                    oss << "]";
+                }
+                oss << "]";
+                return oss.str();
+            }()
         );
         getLogger()->flush_log(true);
     }
@@ -1949,6 +1960,12 @@ namespace gridfire {
         const auto& map = data->qse_solve_species_index_map;
         for (size_t index = 0; index < data->qse_solve_species.size(); ++index) {
             const auto& species = data->qse_solve_species[index];
+            if (!std::isfinite(y_data[index])) {
+                std::string msg = std::format("Non-finite abundance {} encountered for species {} in QSE solver sys_func. Attempting recovery...",
+                    y_data[index], species.name());
+                LOG_ERROR(getLogger(), "{}", msg);
+                return 1; // Potentially recoverable error
+            }
             data->comp.setMolarAbundance(species, y_data[index]);
         }
 
@@ -1959,6 +1976,36 @@ namespace gridfire {
         }
 
         const auto& dydt = result.value().dydt;
+#ifndef NDEBUG
+        // In debug mode check that all dydt values are finite and not NaN
+        for (const auto &species: map | std::views::keys) {
+            const double value = dydt.at(species);
+            if (!std::isfinite(value)) {
+                std::vector<std::pair<Species, double>> invalid_species;
+                for (const auto &s: map | std::views::keys) {
+                    const double v = dydt.at(s);
+                    if (!std::isfinite(v)) {
+                        invalid_species.push_back(std::make_pair(s, v));
+                    }
+                }
+                std::string msg = std::format("Non-finite dydt values encountered for species: {}",
+                    [&invalid_species]() -> std::string {
+                        std::ostringstream ss;
+                        size_t count = 0;
+                        for (const auto& [sp, val] : invalid_species) {
+                            ss << sp.name() << ": " << val;
+                            if (count < invalid_species.size() - 1) {
+                                ss << ", ";
+                            }
+                            count++;
+                        }
+                        return ss.str();
+                    }());
+                LOG_CRITICAL(getLogger(), "{}", msg);
+                throw exceptions::InvalidQSESolutionError(msg);
+            }
+        }
+#endif
 
         for (const auto& [species, index] : map) {
             f_data[index] = dydt.at(species);
@@ -2000,6 +2047,8 @@ namespace gridfire {
             }
         }
 
+        data->instance.m_has_jacobian = true;
+
         return 0;
     }
 
@@ -2024,7 +2073,7 @@ namespace gridfire {
 
     void MultiscalePartitioningEngineView::QSEGroup::addSpeciesToAlgebraic(const Species &species) {
         if (seed_species.contains(species)) {
-            const std::string msg = std::format("Cannot add species {} to algebraic set as it is already in the seed set.", species.name());
+            const std::string msg = std::format("Cannot add species {:8} to algebraic set as it is already in the seed set.", species.name());
             throw std::invalid_argument(msg);
         }
         if (!algebraic_species.contains(species)) {
@@ -2034,7 +2083,7 @@ namespace gridfire {
 
     void MultiscalePartitioningEngineView::QSEGroup::addSpeciesToSeed(const Species &species) {
         if (algebraic_species.contains(species)) {
-            const std::string msg = std::format("Cannot add species {} to seed set as it is already in the algebraic set.", species.name());
+            const std::string msg = std::format("Cannot add species {:8} to seed set as it is already in the algebraic set.", species.name());
             throw std::invalid_argument(msg);
         }
         if (!seed_species.contains(species)) {
@@ -2054,28 +2103,17 @@ namespace gridfire {
         return !(*this == other);
     }
 
-    std::string MultiscalePartitioningEngineView::QSEGroup::toString() const {
-        std::stringstream ss;
-        ss << "QSEGroup(Algebraic: [";
-        size_t count = 0;
-        for (const auto& species  : algebraic_species) {
-            ss << species.name();
-            if (count < algebraic_species.size() - 1) {
-                ss << ", ";
-            }
-            count++;
+    std::string MultiscalePartitioningEngineView::QSEGroup::toString(const bool verbose) const {
+        if (verbose) {
+            return std::format(
+                "QSEGroup(Algebraic: [{:40}], Seed [{:40}], Mean Timescale: {:10.4E}, Is in Equilibrium: {:6}",
+                utils::iterable_to_delimited_string(algebraic_species),
+                utils::iterable_to_delimited_string(seed_species),
+                mean_timescale,
+                is_in_equilibrium ? "True" : "False"
+            );
         }
-        ss << "], Seed: [";
-        count = 0;
-        for (const auto& species : seed_species) {
-            ss << species.name();
-            if (count < seed_species.size() - 1) {
-                ss << ", ";
-            }
-            count++;
-        }
-        ss << "], Mean Timescale: " << mean_timescale << ", Is In Equilibrium: " << (is_in_equilibrium ? "True" : "False") << ")";
-        return ss.str();
-
+        return std::format("QSEGroup({})", utils::iterable_to_delimited_string(algebraic_species));
     }
+
 }

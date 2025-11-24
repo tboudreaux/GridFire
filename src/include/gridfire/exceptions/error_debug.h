@@ -2,10 +2,25 @@
 
 #include <source_location>
 #include <string>
+#include <format>
 
 #include "gridfire/exceptions/error_gridfire.h"
 
 namespace gridfire::exceptions {
+    /**
+     * @brief Exception class for debug-only errors.
+     *
+     * This exception is intended to be used for errors that should only
+     * occur during development and debugging. In release builds, attempts
+     * to throw this exception will result in a compilation error.
+     *
+     * Example usage:
+     * @code
+     * if (debug_condition_failed) {
+     *     throw DebugException("Debug condition failed");
+     * }
+     * @endcode
+     */
     class DebugException final : public GridFireError{
     public:
     #ifdef NDEBUG

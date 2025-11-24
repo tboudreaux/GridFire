@@ -6,7 +6,11 @@
 #include "sundials/sundials_nvector.h"
 
 namespace gridfire::utils {
-    inline std::unordered_map<int, std::string> cvode_ret_code_map {
+    enum class SUNDIALS_RET_CODE_TYPES {
+        CVODE,
+        KINSOL
+    };
+    static inline std::unordered_map<int, std::string> cvode_ret_code_map {
         {0, "CV_SUCCESS: The solver succeeded."},
         {1, "CV_TSTOP_RETURN: The solver reached the specified stopping time."},
         {2, "CV_ROOT_RETURN: A root was found."},
@@ -40,6 +44,35 @@ namespace gridfire::utils {
         {-30, "CV_PROJFUNC_FAIL: The projection function failed in an unrecoverable manner."},
         {-31, "CV_REPTD_PROJFUNC_ERR: The projection function has repeated recoverable errors."}
     };
+    static inline std::unordered_map<int, std::string> kinsol_ret_code_map {
+        {0, "KIN_SUCCESS: The solver succeeded."},
+        {1, "KIN_STEP_LT_STPTOL: The solver step size became less than the stopping tolerance."},
+        {2, "KIN_RES_REPTD_ERR: The residual function repeatedly failed recoverably."},
+        {-1, "KIN_MEM_NULL: The KINSOL memory structure is NULL."},
+        {-2, "KIN_ILL_INPUT: An illegal input was detected."},
+        {-3, "KIN_NO_MALLOC: The KINSOL memory structure has not been allocated."},
+        {-4, "KIN_MEM_FAIL: Memory allocation failed."},
+        {-5, "KIN_LINIT_FAIL: The linear solver's initialization function failed."},
+        {-6, "KIN_LSETUP_FAIL: The linear solver's setup function failed."},
+        {-7, "KIN_LSOLVE_FAIL: The linear solver's solve function failed."},
+        {-8, "KIN_RESFUNC_FAIL: The residual function failed in an unrecoverable manner."},
+        {-9, "KIN_CONSTR_FAIL: The inequality constraint was violated and the solver was unable to recover."},
+        {-10, "KIN_NLS_INIT_FAIL: The nonlinear solver's initialization function failed."},
+        {-11, "KIN_NLS_SETUP_FAIL: The nonlinear solver's setup function failed."},
+        {-12, "KIN_NLS_FAIL: The nonlinear solver's solve function failed."}
+    };
+
+    inline const std::unordered_map<int, std::string>& sundials_retcode_map(const SUNDIALS_RET_CODE_TYPES type) {
+        switch (type) {
+            case SUNDIALS_RET_CODE_TYPES::CVODE:
+                return cvode_ret_code_map;
+            case SUNDIALS_RET_CODE_TYPES::KINSOL:
+                return kinsol_ret_code_map;
+            default:
+                throw exceptions::CVODESolverFailureError("Unknown SUNDIALS return code type.");
+        }
+
+    }
 
     inline void check_cvode_flag(const int flag, const std::string& func_name) {
         if (flag < 0) {

@@ -1,6 +1,6 @@
 #include "gridfire/engine/engine_graph.h"
 #include "gridfire/reaction/reaction.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/engine/procedures/priming.h"
 #include "gridfire/partition/partition_ground.h"
@@ -32,7 +32,7 @@
 #include "cppad/utility/sparse_rcv.hpp"
 
 
-namespace gridfire {
+namespace gridfire::engine {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
         const BuildDepthType buildDepth
@@ -66,7 +66,7 @@ namespace gridfire {
         syncInternalMaps();
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -74,17 +74,17 @@ namespace gridfire {
         return calculateRHSAndEnergy(comp, T9, rho, m_reactions);
     }
 
-    std::expected<StepDerivatives<double>, expectations::StaleEngineError> GraphEngine::calculateRHSAndEnergy(
+    std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
-        LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
+        LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
         const double mue = 0.0; // TODO: Remove
         if (m_usePrecomputation) {
-            LOG_TRACE_L2(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
+            LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
             bare_rates.reserve(activeReactions.size());
@@ -98,7 +98,7 @@ namespace gridfire {
                 }
             }
 
-            LOG_TRACE_L2(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
+            LOG_TRACE_L3(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
             return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
@@ -543,6 +543,15 @@ namespace gridfire {
         fullNetIn.temperature = netIn.temperature;
         fullNetIn.density = netIn.density;
 
+        // Short circuit path if already primed
+        // if (m_has_been_primed) {
+        //     PrimingReport report;
+        //     report.primedComposition = composition;
+        //     report.success = true;
+        //     report.status = PrimingReportStatus::ALREADY_PRIMED;
+        //     return report;
+        // }
+
         std::optional<std::vector<reaction::ReactionType>> reactionTypesToIgnore = std::nullopt;
         if (!m_useReverseReactions) {
             reactionTypesToIgnore = {reaction::ReactionType::WEAK};
@@ -550,6 +559,7 @@ namespace gridfire {
 
         auto primingReport = primeNetwork(fullNetIn, *this, reactionTypesToIgnore);
 
+        m_has_been_primed = true;
         return primingReport;
     }
 
@@ -603,7 +613,7 @@ namespace gridfire {
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
-        LOG_TRACE_L2(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
+        LOG_TRACE_L3(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
             activeReactions,
@@ -636,6 +646,11 @@ namespace gridfire {
                     forwardAbundanceProduct = 0.0;
                     break; // No need to continue if one of the reactants has zero abundance
                 }
+                double factor = std::pow(comp.getMolarAbundance(reactant), power);
+                if (!std::isfinite(factor)) {
+                    LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction->id());
+                    throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
+                }
                 forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
             }
 
@@ -652,7 +667,10 @@ namespace gridfire {
                     precomputedReaction.symmetry_factor *
                     forwardAbundanceProduct *
                     std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
-
+            if (!std::isfinite(forwardMolarReactionFlow)) {
+                LOG_CRITICAL(m_logger, "Non-finite forward molar reaction flow computed for reaction '{}'. Check input abundances and rates for validity.", reaction->id());
+                throw exceptions::BadRHSEngineError("Non-finite forward molar reaction flow computed.");
+            }
 
             // --- Reverse reaction flow ---
             // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
@@ -678,7 +696,7 @@ namespace gridfire {
             reactionCounter++;
         }
 
-        LOG_TRACE_L2(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
+        LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         // --- Assemble molar abundance derivatives ---
         StepDerivatives<double> result;
@@ -860,10 +878,6 @@ namespace gridfire {
             for (size_t j = 0; j < numSpecies; ++j) {
                 double value = dotY[i * (numSpecies + 2) + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
-                    if (i == j && value == 0) {
-                        LOG_WARNING(m_logger, "While generating the Jacobian matrix, a zero diagonal element was encountered at index ({}, {}) (species: {}, abundance: {}). This may lead to numerical instability. Setting to -1 to avoid singularity", i, j, m_networkSpecies[i].name(), adInput[i]);
-                        // value = -1.0;
-                    }
                     triplets.emplace_back(i, j, value);
                 }
             }
@@ -966,7 +980,7 @@ namespace gridfire {
 
         CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
 
-        // PERF: one of *the* most pressing things that needs to be done is remove the nead for this call every
+        // PERF: one of *the* most pressing things that needs to be done is remove the need for this call every
         //       time the jacobian is needed since coloring is expensive and we are throwing away the caching
         //       power of CppAD by clearing the work vector each time. We do this since we make a new subset every
         //       time. However, a better solution would be to make the subset stateful so it only changes if the requested
@@ -1100,7 +1114,7 @@ namespace gridfire {
         LOG_TRACE_L1(m_logger, "Successfully exported network graph to {}", filename);
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -1108,7 +1122,7 @@ namespace gridfire {
         return getSpeciesTimescales(comp, T9, rho, m_reactions);
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesTimescales(
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -1144,7 +1158,7 @@ namespace gridfire {
         return speciesTimescales;
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
@@ -1152,7 +1166,7 @@ namespace gridfire {
         return getSpeciesDestructionTimescales(comp, T9, rho, m_reactions);
     }
 
-    std::expected<std::unordered_map<fourdst::atomic::Species, double>, expectations::StaleEngineError> GraphEngine::getSpeciesDestructionTimescales(
+    std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,

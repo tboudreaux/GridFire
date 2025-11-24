@@ -6,7 +6,7 @@
 #include "gridfire/solver/solver.h"
 
 #include "gridfire/engine/engine_abstract.h"
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_solver.h"
 
 #include "fourdst/logging/logging.h"
@@ -15,7 +15,7 @@
 #include "quill/LogMacros.h"
 
 
-namespace gridfire {
+namespace gridfire::engine {
     using fourdst::composition::Composition;
     using fourdst::atomic::Species;
 
@@ -26,6 +26,11 @@ namespace gridfire {
     ) {
         const auto logger = LogManager::getInstance().getLogger("log");
         solver::CVODESolverStrategy integrator(engine);
+
+        // Do not need high precision for priming
+        integrator.set_absTol(1e-3);
+        integrator.set_relTol(1e-3);
+
         integrator.set_stdout_logging_enabled(false);
         NetIn solverInput(netIn);
 
