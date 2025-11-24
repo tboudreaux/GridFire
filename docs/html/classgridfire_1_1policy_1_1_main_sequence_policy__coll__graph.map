@@ -1,0 +1,23 @@
+<map id="gridfire::policy::MainSequencePolicy" name="gridfire::policy::MainSequencePolicy">
+<area shape="rect" id="Node000001" title="A NetworkPolicy for building reaction networks suitable for low&#45;mass main&#45;sequence stars." alt="" coords="1101,136,1297,177"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1policy_1_1_network_policy.html" title="Abstract interface for policies that construct DynamicEngine networks from a seed composition." alt="" coords="750,5,909,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="925,44,1000,65,1078,91,1163,133,1161,138,1076,96,999,70,923,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="766,71,893,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="909,102,1101,136,1100,142,908,107"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="727,136,932,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="948,154,1101,154,1101,159,948,159"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway." alt="" coords="451,136,613,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="628,154,726,154,726,159,628,159"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="733,201,926,242"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="941,199,1100,171,1101,176,942,205"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions." alt="" coords="468,201,596,242"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="611,219,732,219,732,224,611,224"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="750,266,909,322"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="924,267,999,245,1076,217,1161,175,1163,180,1078,222,1001,250,925,272"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="442,273,622,314"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="637,291,749,291,749,296,637,296"/>
+<area shape="rect" id="Node000010" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="209,273,375,314"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="391,291,442,291,442,296,391,296"/>
+<area shape="rect" id="Node000011" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="5,281,160,306"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="176,291,208,291,208,296,176,296"/>
+</map>

@@ -11,6 +11,8 @@ var classgridfire_1_1reaction_1_1_reaction =
     [ "contains", "classgridfire_1_1reaction_1_1_reaction.html#a768db057d358240d4825c21869af0792", null ],
     [ "contains_product", "classgridfire_1_1reaction_1_1_reaction.html#a2708d2e8f42159df6605a5948b13c4c5", null ],
     [ "contains_reactant", "classgridfire_1_1reaction_1_1_reaction.html#ab28bf4f9417ecabcc8350bae449fedd5", null ],
+    [ "countProductOccurrences", "classgridfire_1_1reaction_1_1_reaction.html#a62fc82b29bacc10cfbceaa1571b14525", null ],
+    [ "countReactantOccurrences", "classgridfire_1_1reaction_1_1_reaction.html#a036773e4dc917facbf2308dbbe853633", null ],
     [ "getRateCoefficients", "classgridfire_1_1reaction_1_1_reaction.html#a6c51c30a0eec2f00c7d1f1c0be44cb0b", null ],
     [ "hash", "classgridfire_1_1reaction_1_1_reaction.html#a7ba8c18cd5445aa3499a6fd351183f7a", null ],
     [ "id", "classgridfire_1_1reaction_1_1_reaction.html#a94b92308b9619ec20c690e55157786ba", null ],

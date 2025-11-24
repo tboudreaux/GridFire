@@ -166,7 +166,7 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 3. Step-by-Step Example</h1>
 <p>Adapted from <a href="../../tests/python/test.py"><code>tests/python/test.py</code></a>. Comments explain each choice.</p>
 <div class="fragment"><div class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</div>
-<div class="line"><span class="keyword">from</span> gridfire.engine <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
+<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">gridfire.engine</a> <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
 <div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> DirectNetworkSolver</div>
 <div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
 <div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
@@ -207,7 +207,8 @@ $(function(){initNavTree('md_docs_2static_2usage.html',''); initResizable(true);
 <div class="line"> </div>
 <div class="line"><span class="comment"># 8. Final result:</span></div>
 <div class="line">print(f<span class="stringliteral">&quot;Final H-1 fraction: {netOut.composition.getMassFraction(&#39;H-1&#39;)}&quot;</span>)</div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> solver.h:12</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:38</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> CVODE_solver_strategy.h:46</div></div>
 </div><!-- fragment --><p><b>Why these choices?</b> <br  />
 </p><ul>
 <li><b>buildDepth=2</b>: In Emily’s preliminary tests, depth=2 captures key reaction loops without the overhead of a full network. <br  />

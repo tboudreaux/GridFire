@@ -1,0 +1,57 @@
+<map id="gridfire::exceptions::GridFireError" name="gridfire::exceptions::GridFireError">
+<area shape="rect" id="Node000001" title="Base class for GridFire exceptions." alt="" coords="157,624,288,665"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1exceptions_1_1_debug_exception.html" title="Exception class for debug&#45;only errors." alt="" coords="336,201,467,242"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="222,608,229,537,247,443,261,393,280,344,304,296,334,253,348,240,352,244,338,257,309,299,285,346,266,395,252,445,234,537,227,609"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1exceptions_1_1_engine_error.html" title="Base class for engine&#45;related exceptions." alt="" coords="336,267,467,307"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="238,609,388,307,392,309,243,611"/>
+<area shape="rect" id="Node000015" href="$classgridfire_1_1exceptions_1_1_policy_error.html" title="Base class for all exceptions related to network policy operations." alt="" coords="336,559,467,599"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="293,616,343,597,345,602,295,621"/>
+<area shape="rect" id="Node000019" href="$classgridfire_1_1exceptions_1_1_reaction_error.html" title="Base class for all exceptions related to reaction operations." alt="" coords="336,656,467,697"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="304,656,336,662,335,667,303,661"/>
+<area shape="rect" id="Node000021" href="$classgridfire_1_1exceptions_1_1_solver_error.html" title="Base class for all exceptions related to solver operations." alt="" coords="336,769,467,810"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="262,672,377,767,373,771,259,677"/>
+<area shape="rect" id="Node000027" href="$classgridfire_1_1exceptions_1_1_utility_error.html" title="Base class for utility&#45;related errors in GridFire." alt="" coords="336,900,467,941"/>
+<area shape="poly" id="edge26_Node000001_Node000027" title=" " alt="" coords="247,677,338,820,389,898,384,901,334,823,243,680"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,632,109,657"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,642,156,642,156,647,124,647"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1exceptions_1_1_bad_collection_error.html" title="Exception for invalid composition collection in the engine." alt="" coords="552,5,691,46"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="463,255,465,252,480,227,487,203,487,155,485,131,487,106,496,82,513,57,531,43,551,34,553,39,534,48,517,61,500,84,493,108,491,131,492,154,492,203,485,229,470,255,467,258"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1exceptions_1_1_bad_r_h_s_engine_error.html" title="Exception for errors in calculating the right&#45;hand side (RHS)." alt="" coords="547,71,696,111"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="463,255,465,252,477,235,483,219,487,187,492,155,500,139,514,122,545,103,548,107,517,126,504,142,497,157,493,188,488,221,482,238,469,255,466,259"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html" title="Exception for failures in partitioning the engine." alt="" coords="524,136,719,177"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="460,256,465,252,480,235,488,219,497,203,514,188,536,175,538,180,517,192,502,207,493,222,484,238,469,256,464,260"/>
+<area shape="rect" id="Node000008" href="$classgridfire_1_1exceptions_1_1_invalid_q_s_e_solution_error.html" title="Exception for invalid QSE solution in the engine." alt="" coords="536,201,707,242"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="481,261,550,240,551,245,483,266"/>
+<area shape="rect" id="Node000009" href="$classgridfire_1_1exceptions_1_1_jacobian_error.html" title="Base class for Jacobian&#45;related exceptions." alt="" coords="556,267,687,307"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="483,284,555,284,555,290,483,290"/>
+<area shape="rect" id="Node000013" href="$classgridfire_1_1exceptions_1_1_network_resized_error.html" title="Exception for errors during network resizing." alt="" coords="544,332,699,373"/>
+<area shape="poly" id="edge12_Node000004_Node000013" title=" " alt="" coords="483,308,551,329,550,334,481,313"/>
+<area shape="rect" id="Node000014" href="$classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html" title="Exception for failures in setting network reactions." alt="" coords="515,396,728,452"/>
+<area shape="poly" id="edge13_Node000004_Node000014" title=" " alt="" coords="435,316,472,350,517,382,539,394,536,398,514,387,469,354,431,320"/>
+<area shape="rect" id="Node000010" href="$classgridfire_1_1exceptions_1_1_stale_jacobian_error.html" title="Exception for stale Jacobian matrix access." alt="" coords="797,201,936,242"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="702,263,795,238,797,243,703,268"/>
+<area shape="rect" id="Node000011" href="$classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html" title="Exception for uninitialized Jacobian matrix access." alt="" coords="776,267,956,307"/>
+<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="703,284,776,284,776,290,703,290"/>
+<area shape="rect" id="Node000012" href="$classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html" title="Exception for unknown Jacobian matrix access." alt="" coords="784,332,948,373"/>
+<area shape="poly" id="edge11_Node000009_Node000012" title=" " alt="" coords="703,306,788,329,787,334,702,311"/>
+<area shape="rect" id="Node000016" href="$classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html" title="Exception thrown when a required reaction is missing from the underlying database (e...." alt="" coords="529,476,714,517"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="460,550,514,527,550,515,552,520,516,532,462,554"/>
+<area shape="rect" id="Node000017" href="$classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html" title="Exception thrown when a constructed network fails to include a key reaction required by the policy." alt="" coords="533,541,710,582"/>
+<area shape="poly" id="edge16_Node000015_Node000017" title=" " alt="" coords="483,570,532,566,533,571,483,575"/>
+<area shape="rect" id="Node000018" href="$classgridfire_1_1exceptions_1_1_missing_seed_species_error.html" title="Exception thrown when a required seed species is not found in the initial composition." alt="" coords="532,607,711,647"/>
+<area shape="poly" id="edge17_Node000015_Node000018" title=" " alt="" coords="483,594,532,605,531,610,482,599"/>
+<area shape="rect" id="Node000020" href="$classgridfire_1_1exceptions_1_1_reaction_parsing_error.html" title=" " alt="" coords="545,672,698,713"/>
+<area shape="poly" id="edge19_Node000019_Node000020" title=" " alt="" coords="483,680,545,684,544,689,482,685"/>
+<area shape="rect" id="Node000022" href="$classgridfire_1_1exceptions_1_1_ill_conditioned_jacobian_error.html" title="Exception thrown when the Jacobian matrix is ill&#45;conditioned." alt="" coords="527,737,716,778"/>
+<area shape="poly" id="edge21_Node000021_Node000022" title=" " alt="" coords="482,775,527,769,527,774,483,781"/>
+<area shape="rect" id="Node000023" href="$classgridfire_1_1exceptions_1_1_s_u_n_d_i_a_l_s_error.html" title="Base class for exceptions related to SUNDIALS solver operations." alt="" coords="556,803,687,843"/>
+<area shape="poly" id="edge22_Node000021_Node000023" title=" " alt="" coords="483,799,556,810,555,816,482,805"/>
+<area shape="rect" id="Node000026" href="$classgridfire_1_1exceptions_1_1_singular_jacobian_error.html" title="Exception thrown when the Jacobian matrix is singular." alt="" coords="543,868,700,909"/>
+<area shape="poly" id="edge25_Node000021_Node000026" title=" " alt="" coords="448,816,516,853,548,865,546,870,514,857,446,821"/>
+<area shape="rect" id="Node000024" href="$classgridfire_1_1exceptions_1_1_c_v_o_d_e_solver_failure_error.html" title="Exception for failures in the CVODE solver." alt="" coords="776,771,957,811"/>
+<area shape="poly" id="edge23_Node000023_Node000024" title=" " alt="" coords="702,810,775,800,776,805,703,815"/>
+<area shape="rect" id="Node000025" href="$classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html" title="Exception for failures in the KINSOL solver." alt="" coords="779,836,954,877"/>
+<area shape="poly" id="edge24_Node000023_Node000025" title=" " alt="" coords="703,831,778,842,778,847,702,837"/>
+<area shape="rect" id="Node000028" href="$classgridfire_1_1exceptions_1_1_hashing_error.html" title="Exception class for hashing&#45;related errors in GridFire." alt="" coords="556,933,687,974"/>
+<area shape="poly" id="edge27_Node000027_Node000028" title=" " alt="" coords="483,930,556,941,555,946,482,935"/>
+</map>

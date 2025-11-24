@@ -442,9 +442,8 @@ GraphEngine Initialization</h3>
 <div class="line"><span class="keywordtype">int</span> main(){</div>
 <div class="line">    <span class="comment">// Define a composition and initialize the engine</span></div>
 <div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> engine(comp);</div>
+<div class="line">    gridfire::GraphEngine engine(comp);</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:99</div></div>
 <div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md48"></a>
 Adaptive Network View</h3>
@@ -453,11 +452,10 @@ Adaptive Network View</h3>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main(){</div>
 <div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp);</div>
+<div class="line">    gridfire::GraphEngine baseEngine(comp);</div>
 <div class="line">    <span class="comment">// Dynamically adapt network topology based on reaction flows</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptiveView(baseEngine);</div>
+<div class="line">    gridfire::AdaptiveEngineView adaptiveView(baseEngine);</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_adaptive_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a></div><div class="ttdoc">An engine view that dynamically adapts the reaction network based on runtime conditions.</div><div class="ttdef"><b>Definition</b> engine_adaptive.h:49</div></div>
 <div class="ttc" id="aengine__adaptive_8h_html"><div class="ttname"><a href="engine__adaptive_8h.html">engine_adaptive.h</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md49"></a>
 Composition Initialization</h3>
@@ -500,13 +498,13 @@ Common Workflow Example</h3>
 <div class="line">    comp.finalize(<span class="keyword">true</span>);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
+<div class="line">    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
+<div class="line">    gridfire::MultiscalePartitioningEngineView msView(baseEngine);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
+<div class="line">    gridfire::AdaptiveEngineView adaptView(msView);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
 <div class="line">    gridfire::DirectNetworkSolver solver(adaptView);</div>
@@ -524,7 +522,6 @@ Common Workflow Example</h3>
 <div class="line">    NetOut output = solver.evaluate(input);</div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1_multiscale_partitioning_engine_view_html"><div class="ttname"><a href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></div><div class="ttdoc">An engine view that partitions the reaction network into multiple groups based on timescales.</div><div class="ttdef"><b>Definition</b> engine_multiscale.h:180</div></div>
 <div class="ttc" id="aengine_8h_html"><div class="ttname"><a href="engine_8h.html">engine.h</a></div><div class="ttdoc">Core header for the GridFire reaction network engine module.</div></div>
 <div class="ttc" id="asolver_8h_html"><div class="ttname"><a href="solver_8h.html">solver.h</a></div></div>
 </div><!-- fragment --><h4><a class="anchor" id="autotoc_md51"></a>
@@ -566,13 +563,13 @@ Callback Example</h3>
 <div class="line">    comp.finalize(<span class="keyword">true</span>);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_graph_engine.html">gridfire::GraphEngine</a> baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
+<div class="line">    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a> msView(baseEngine);</div>
+<div class="line">    gridfire::MultiscalePartitioningEngineView msView(baseEngine);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1_adaptive_engine_view.html">gridfire::AdaptiveEngineView</a> adaptView(msView);</div>
+<div class="line">    gridfire::AdaptiveEngineView adaptView(msView);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
 <div class="line">    gridfire::DirectNetworkSolver solver(adaptView);</div>
@@ -603,11 +600,11 @@ Callback Context</h4>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md54"></a>
 Python</h2>
 <p>The python bindings intentionally look <b>very</b> similar to the C++ code. Generally all examples can be adapted to python by replacing includes of paths with imports of modules such that</p>
-<p><code>#include "gridfire/engine/GraphEngine.h"</code> becomes <code>import gridfire.engine.GraphEngine</code></p>
+<p><code>#include "gridfire/engine/GraphEngine.h"</code> becomes <code>import <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">gridfire.engine.GraphEngine</a></code></p>
 <p>All GridFire C++ types have been bound and can be passed around as one would expect.</p>
 <h3><a class="anchor" id="autotoc_md55"></a>
 Common Workflow Example</h3>
-<p>This example implements the same logic as the above C++ example </p><div class="fragment"><div class="line"><span class="keyword">from</span> gridfire.engine <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
+<p>This example implements the same logic as the above C++ example </p><div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">gridfire.engine</a> <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
 <div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> DirectNetworkSolver</div>
 <div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
 <div class="line"> </div>
@@ -643,11 +640,12 @@ Common Workflow Example</h3>
 <div class="line">results = solver.evaluate(netIn)</div>
 <div class="line"> </div>
 <div class="line">print(f<span class="stringliteral">&quot;Final H-1 mass fraction {results.composition.getMassFraction(&quot;</span>H-1<span class="stringliteral">&quot;)}&quot;</span>)</div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> solver.h:12</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:38</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> CVODE_solver_strategy.h:46</div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md56"></a>
 Python callbacks</h3>
 <p>Just like in C++, python users can register callbacks to be called at the end of each successful timestep. Note that these may slow down code significantly as the interpreter needs to jump up into the slower python code therefore these should likely only be used for debugging purposes.</p>
-<p>The syntax for registration is very similar to C++ </p><div class="fragment"><div class="line"><span class="keyword">from</span> gridfire.engine <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
+<p>The syntax for registration is very similar to C++ </p><div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">gridfire.engine</a> <span class="keyword">import</span> GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView</div>
 <div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> DirectNetworkSolver</div>
 <div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
 <div class="line"> </div>

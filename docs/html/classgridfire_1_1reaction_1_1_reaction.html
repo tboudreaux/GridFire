@@ -158,6 +158,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d16572ae2b664374d32ee6c4e22123a" id="r_a0d16572ae2b664374d32ee6c4e22123a"><td class="memItemLeft" align="right" valign="top">virtual std::unordered_set&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d16572ae2b664374d32ee6c4e22123a">product_species</a> () const =0</td></tr>
 <tr class="memdesc:a0d16572ae2b664374d32ee6c4e22123a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of unique product species.  <br /></td></tr>
 <tr class="separator:a0d16572ae2b664374d32ee6c4e22123a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a036773e4dc917facbf2308dbbe853633" id="r_a036773e4dc917facbf2308dbbe853633"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a036773e4dc917facbf2308dbbe853633">countReactantOccurrences</a> (const fourdst::atomic::Species &amp;species) const =0</td></tr>
+<tr class="separator:a036773e4dc917facbf2308dbbe853633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62fc82b29bacc10cfbceaa1571b14525" id="r_a62fc82b29bacc10cfbceaa1571b14525"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62fc82b29bacc10cfbceaa1571b14525">countProductOccurrences</a> (const fourdst::atomic::Species &amp;species) const =0</td></tr>
+<tr class="separator:a62fc82b29bacc10cfbceaa1571b14525"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2a1b0395ac127c792a8049cd0bcc249" id="r_ae2a1b0395ac127c792a8049cd0bcc249"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2a1b0395ac127c792a8049cd0bcc249">num_species</a> () const =0</td></tr>
 <tr class="memdesc:ae2a1b0395ac127c792a8049cd0bcc249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of unique species involved in the reaction.  <br /></td></tr>
 <tr class="separator:ae2a1b0395ac127c792a8049cd0bcc249"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,7 +208,7 @@ Friends</h2></td></tr>
 <div class="line">    <span class="stringliteral">&quot;H_1_H_1_to_H_2&quot;</span>, <span class="stringliteral">&quot;p(p,g)d&quot;</span>, 1, {H_1, H_1}, {H_2}, 5.493, <span class="stringliteral">&quot;st08&quot;</span>, rate_coeffs</div>
 <div class="line">);</div>
 <div class="line"><span class="keywordtype">double</span> rate = p_gamma_d.<a class="code hl_function" href="#a83c121480533593adfd68c4a67a649f1">calculate_rate</a>(0.1); <span class="comment">// T9 = 0.1</span></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> reaction.h:92</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> reaction.h:91</div></div>
 <div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html_a83c121480533593adfd68c4a67a649f1"><div class="ttname"><a href="#a83c121480533593adfd68c4a67a649f1">gridfire::reaction::Reaction::calculate_rate</a></div><div class="ttdeci">virtual double calculate_rate(double T9, double rho, double Ye, double mue, const std::vector&lt; double &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const =0</div><div class="ttdoc">Compute the temperature- and composition-dependent reaction rate.</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1860df84843be70f97469761e11ab6a" name="ab1860df84843be70f97469761e11ab6a"></a>
@@ -727,6 +731,60 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a62fc82b29bacc10cfbceaa1571b14525" name="a62fc82b29bacc10cfbceaa1571b14525"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62fc82b29bacc10cfbceaa1571b14525">&#9670;&#160;</a></span>countProductOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual size_t gridfire::reaction::Reaction::countProductOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aeba08ed8204fc4999dc0324076d67d2a">gridfire::rates::weak::WeakReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#abe3ab72b2577cbe0f87436b063ce812c">gridfire::reaction::ReaclibReaction</a>.</p>
+
+</div>
+</div>
+<a id="a036773e4dc917facbf2308dbbe853633" name="a036773e4dc917facbf2308dbbe853633"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a036773e4dc917facbf2308dbbe853633">&#9670;&#160;</a></span>countReactantOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual size_t gridfire::reaction::Reaction::countReactantOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#acfc3740ed0aa72986b2c1bc2666974d6">gridfire::rates::weak::WeakReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a79928f9c52822202b3156bd145e35ad8">gridfire::reaction::ReaclibReaction</a>.</p>
+
+</div>
+</div>
 <a id="a6c51c30a0eec2f00c7d1f1c0be44cb0b" name="a6c51c30a0eec2f00c7d1f1c0be44cb0b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c51c30a0eec2f00c7d1f1c0be44cb0b">&#9670;&#160;</a></span>getRateCoefficients()</h2>
 
@@ -745,7 +803,7 @@ Friends</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

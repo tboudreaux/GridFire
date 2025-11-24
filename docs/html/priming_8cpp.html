@@ -106,12 +106,15 @@ $(function(){initNavTree('priming_8cpp.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="priming_8h.html">gridfire/engine/procedures/priming.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/atomic/species.h&quot;</code><br />
+<code>#include &quot;fourdst/composition/utils.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__priming_8h.html">gridfire/engine/views/engine_priming.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="construction_8h.html">gridfire/engine/procedures/construction.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="solver_8h.html">gridfire/solver/solver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="network_8h.html">gridfire/network.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="error__solver_8h.html">gridfire/exceptions/error_solver.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/logging/logging.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="_c_v_o_d_e__solver__strategy_8h.html">gridfire/solver/strategies/CVODE_solver_strategy.h</a>&quot;</code><br />
 <code>#include &quot;quill/Logger.h&quot;</code><br />
 <code>#include &quot;quill/LogMacros.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -124,18 +127,14 @@ Include dependency graph for priming.cpp:</div>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a831f081d9eb1db7129677c50c5590d57" id="r_a831f081d9eb1db7129677c50c5590d57"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a831f081d9eb1db7129677c50c5590d57">gridfire::findDominantCreationChannel</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;comp, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionsTypesToIgnore)</td></tr>
-<tr class="separator:a831f081d9eb1db7129677c50c5590d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66905e14e8bb9a353889d9d014c61d12" id="r_a66905e14e8bb9a353889d9d014c61d12"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a66905e14e8bb9a353889d9d014c61d12">gridfire::primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
-<tr class="memdesc:a66905e14e8bb9a353889d9d014c61d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
-<tr class="separator:a66905e14e8bb9a353889d9d014c61d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac73e0b3ba4d1a411197979672e6e70ef" id="r_ac73e0b3ba4d1a411197979672e6e70ef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#ac73e0b3ba4d1a411197979672e6e70ef">gridfire::calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;composition, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
-<tr class="separator:ac73e0b3ba4d1a411197979672e6e70ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41733bdcb8f8027e48855f9b493401a6" id="r_a41733bdcb8f8027e48855f9b493401a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a41733bdcb8f8027e48855f9b493401a6">gridfire::calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const Species &amp;species, const Composition &amp;composition, const double T9, const double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
-<tr class="separator:a41733bdcb8f8027e48855f9b493401a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6552165b4b36ea227479567880d8402" id="r_aa6552165b4b36ea227479567880d8402"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#aa6552165b4b36ea227479567880d8402">gridfire::engine::primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
+<tr class="memdesc:aa6552165b4b36ea227479567880d8402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
+<tr class="separator:aa6552165b4b36ea227479567880d8402"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

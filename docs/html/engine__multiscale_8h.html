@@ -108,7 +108,10 @@ $(function(){initNavTree('engine__multiscale_8h.html',''); initResizable(true); 
 <div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__view__abstract_8h.html">gridfire/engine/views/engine_view_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
-<code>#include &quot;unsupported/Eigen/NonLinearOptimization&quot;</code><br />
+<code>#include &quot;sundials/sundials_linearsolver.h&quot;</code><br />
+<code>#include &quot;sundials/sundials_matrix.h&quot;</code><br />
+<code>#include &quot;sundials/sundials_nvector.h&quot;</code><br />
+<code>#include &quot;sundials/sundials_types.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for engine_multiscale.h:</div>
 <div class="dyncontent">
@@ -117,35 +120,29 @@ Include dependency graph for engine_multiscale.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="engine__multiscale_8h__dep__incl.svg" width="643" height="436"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="engine__multiscale_8h__dep__incl.svg" width="570" height="436"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_q_s_e_cache_config.html">gridfire::QSECacheConfig</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration struct for the QSE cache.  <a href="structgridfire_1_1_q_s_e_cache_config.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html">gridfire::engine::MultiscalePartitioningEngineView</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An engine view that partitions the reaction network into multiple groups based on timescales.  <a href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_q_s_e_cache_key.html">gridfire::QSECacheKey</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Key struct for the QSE abundance cache.  <a href="structgridfire_1_1_q_s_e_cache_key.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">gridfire::engine::MultiscalePartitioningEngineView::QSEGroup</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct representing a QSE group.  <a href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1hash_3_01gridfire_1_1_q_s_e_cache_key_01_4.html">std::hash&lt; gridfire::QSECacheKey &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html">gridfire::engine::MultiscalePartitioningEngineView::QSESolver</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1_multiscale_partitioning_engine_view.html">gridfire::MultiscalePartitioningEngineView</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An engine view that partitions the reaction network into multiple groups based on timescales.  <a href="classgridfire_1_1_multiscale_partitioning_engine_view.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html">gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">gridfire::MultiscalePartitioningEngineView::QSEGroup</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct representing a QSE group.  <a href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html">gridfire::MultiscalePartitioningEngineView::EigenFunctor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor for solving QSE abundances using Eigen's nonlinear optimization.  <a href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html">gridfire::MultiscalePartitioningEngineView::CacheStats</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct for tracking cache statistics.  <a href="structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html">gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

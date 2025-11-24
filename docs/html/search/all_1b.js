@@ -1,17 +1,16 @@
 var searchData=
 [
-  ['validateconservation_0',['validateConservation',['../classgridfire_1_1_graph_engine.html#acf4cfccea20f5cb31c9886bf233a28be',1,'gridfire::GraphEngine']]],
-  ['validategroupswithfluxanalysis_1',['validateGroupsWithFluxAnalysis',['../classgridfire_1_1_multiscale_partitioning_engine_view.html#ad94c6fa2281d9104471631c6b90f411e',1,'gridfire::MultiscalePartitioningEngineView']]],
-  ['validatenetworkstate_2',['validateNetworkState',['../classgridfire_1_1_defined_engine_view.html#a56bd041c2fc7fe4f1371c38c8c0443e0',1,'gridfire::DefinedEngineView']]],
-  ['validatestate_3',['validateState',['../classgridfire_1_1_adaptive_engine_view.html#aedc0dedb51c81e03f253cc409a5d5c40',1,'gridfire::AdaptiveEngineView']]],
-  ['value_4',['value',['../structgridfire_1_1trigger_1_1_trigger_result.html#a372af12d705b623075c41872f3ec96e1',1,'gridfire::trigger::TriggerResult']]],
-  ['values_5',['values',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a6f5611ca669567534df1bd793e90d2e3',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]],
-  ['valuesatcompiletime_6',['ValuesAtCompileTime',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a5a2ecfa4d17720d1da14e53f4c261a81a29d2722f9dbe03584086bc1ab8e102c0',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]],
-  ['vec7_7',['vec7',['../namespacegridfire_1_1approx8.html#aaa49cb0c9ad4b0b9dd0f9b5e192ca12a',1,'gridfire::approx8']]],
-  ['vector_5ftype_8',['vector_type',['../namespacegridfire_1_1approx8.html#aa04f907d4ef6a1b6b2a9a28d4bb53882',1,'gridfire::approx8']]],
-  ['versions_9',['Minimum compiler versions',['../index.html#autotoc_md26',1,'']]],
-  ['view_10',['Adaptive Network View',['../index.html#autotoc_md48',1,'']]],
-  ['views_11',['Views',['../md_docs_2static_2usage.html#autotoc_md64',1,'2. Why These Engines and Views?'],['../engine_8h.html#AvailableViews',1,'Available Views'],['../index.html#autotoc_md34',1,'Engine Views']]],
-  ['visualizing_20reaction_20networks_12',['4. Visualizing Reaction Networks',['../md_docs_2static_2usage.html#autotoc_md68',1,'']]],
-  ['vs_20gcc_13',['Clang vs. GCC',['../index.html#autotoc_md24',1,'']]]
+  ['valid_5fgroups_0',['valid_groups',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html#a0eb57bc4fe8ca0c9b60b769c9e1fadba',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
+  ['validateconservation_1',['validateConservation',['../classgridfire_1_1engine_1_1_graph_engine.html#a87bf3a33fc21f7da2a26173ebdfa69f7',1,'gridfire::engine::GraphEngine']]],
+  ['validatedgroupreactions_2',['validatedGroupReactions',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html#a0e6e189fbd53ec2f47d2cef21b9a1792',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
+  ['validategroupswithfluxanalysis_3',['validateGroupsWithFluxAnalysis',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#acf5cfbd18ebb2566f637cb176f861423',1,'gridfire::engine::MultiscalePartitioningEngineView']]],
+  ['validatenetworkstate_4',['validateNetworkState',['../classgridfire_1_1engine_1_1_defined_engine_view.html#a91ea88e43c17f99ff0d95a8f54b09cbf',1,'gridfire::engine::DefinedEngineView']]],
+  ['validatestate_5',['validateState',['../classgridfire_1_1engine_1_1_adaptive_engine_view.html#a63837a6a4343a2ac6a61e21576b62655',1,'gridfire::engine::AdaptiveEngineView']]],
+  ['value_6',['value',['../structgridfire_1_1trigger_1_1_trigger_result.html#a372af12d705b623075c41872f3ec96e1',1,'gridfire::trigger::TriggerResult']]],
+  ['versions_7',['Minimum compiler versions',['../index.html#autotoc_md26',1,'']]],
+  ['view_8',['Adaptive Network View',['../index.html#autotoc_md48',1,'']]],
+  ['views_9',['Views',['../md_docs_2static_2usage.html#autotoc_md64',1,'2. Why These Engines and Views?'],['../engine_8h.html#AvailableViews',1,'Available Views'],['../index.html#autotoc_md34',1,'Engine Views']]],
+  ['visual_5fwidth_10',['visual_width',['../namespacegridfire_1_1utils.html#ab9afa50593a895415d9314ad853806f3',1,'gridfire::utils']]],
+  ['visualizing_20reaction_20networks_11',['4. Visualizing Reaction Networks',['../md_docs_2static_2usage.html#autotoc_md68',1,'']]],
+  ['vs_20gcc_12',['Clang vs. GCC',['../index.html#autotoc_md24',1,'']]]
 ];

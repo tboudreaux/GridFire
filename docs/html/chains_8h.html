@@ -109,9 +109,8 @@ $(function(){initNavTree('chains_8h.html',''); initResizable(true); });
 <p>Concrete implementations of ReactionChainPolicy for key stellar reaction chains.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="policy__abstract_8h.html">gridfire/policy/policy_abstract.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="policy__logical_8h.html">gridfire/policy/policy_logical.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="reaction_8h.html">gridfire/reaction/reaction.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="reaclib_8h.html">gridfire/reaction/reaclib.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="error__policy_8h.html">gridfire/exceptions/error_policy.h</a>&quot;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for chains.h:</div>
@@ -121,22 +120,61 @@ Include dependency graph for chains.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="chains_8h__dep__incl.svg" width="159" height="140"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="chains_8h__dep__incl.svg" width="446" height="318"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html">gridfire::policy::TemperatureDependentChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for reaction chain policies that are active only within specific temperature ranges.  <a href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1policy_1_1_temperature_dependent_chain_policy_1_1_active_temp_range.html">gridfire::policy::TemperatureDependentChainPolicy::ActiveTempRange</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct to hold the active temperature range for the reaction chain.  <a href="structgridfire_1_1policy_1_1_temperature_dependent_chain_policy_1_1_active_temp_range.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html">gridfire::policy::ProtonProtonIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proton-Proton I Chain Policy.  <a href="classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html">gridfire::policy::ProtonProtonIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proton-Proton II Chain Policy.  <a href="classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html">gridfire::policy::ProtonProtonIIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proton-Proton III Chain Policy.  <a href="classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">gridfire::policy::ProtonProtonChainPolicy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway.">ReactionChainPolicy</a> for the Proton-Proton (PP) chain.  <a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proton-Proton Chain Policy.  <a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html">gridfire::policy::CNOIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CNO I Chain Policy.  <a href="classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html">gridfire::policy::CNOIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CNO II Chain Policy.  <a href="classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html">gridfire::policy::CNOIIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CNO III Chain Policy.  <a href="classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html">gridfire::policy::CNOIVChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CNO IV Chain Policy.  <a href="classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html">gridfire::policy::CNOChainPolicy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway.">ReactionChainPolicy</a> for the Carbon-Nitrogen-Oxygen (CNO) cycle.  <a href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CNO Chain Policy.  <a href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html">gridfire::policy::HotCNOIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hot CNO I Chain Policy.  <a href="classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html">gridfire::policy::HotCNOIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hot CNO II Chain Policy.  <a href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html">gridfire::policy::HotCNOIIIChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hot CNO III Chain Policy.  <a href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html">gridfire::policy::HotCNOChainPolicy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway.">ReactionChainPolicy</a> for the Hot CNO (HCNO) cycle.  <a href="classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hot CNO Chain Policy.  <a href="classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy.html">gridfire::policy::LowMassMainSequenceReactionChainPolicy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html" title="A ReactionChainPolicy composed of multiple child ReactionChainPolicy instances.">MultiReactionChainPolicy</a> for low-mass main-sequence stars.  <a href="classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html">gridfire::policy::TripleAlphaChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triple-Alpha Chain Policy.  <a href="classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html">gridfire::policy::MainSequenceReactionChainPolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main Sequence Reaction Chain Policy.  <a href="classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -149,7 +187,7 @@ Namespaces</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Concrete implementations of ReactionChainPolicy for key stellar reaction chains. </p>
 <p>This file provides concrete policies for fundamental nuclear reaction chains, such as the Proton-Proton chain and the CNO cycle. These policies inherit from ReactionChainPolicy (see <code><a class="el" href="policy__abstract_8h.html" title="Abstract policy interfaces used to construct reaction networks (DynamicEngine) from seed compositions...">policy_abstract.h</a></code>) and provide a pre-defined set of reactions.</p>
-<p>They are typically used by higher-level NetworkPolicy implementations (e.g., <code>LowMassMainSequencePolicy</code> in <code><a class="el" href="stellar__policy_8h.html" title="High-level concrete NetworkPolicy for specific stellar environments.">stellar_policy.h</a></code>) to compose a complete set of required reactions for a particular stellar environment.</p>
+<p>They are typically used by higher-level NetworkPolicy implementations (e.g., <code>MainSequencePolicy</code> in <code><a class="el" href="stellar__policy_8h.html" title="High-level concrete NetworkPolicy for specific stellar environments.">stellar_policy.h</a></code>) to compose a complete set of required reactions for a particular stellar environment.</p>
 <dl class="section note"><dt>Note</dt><dd>Constructors for these policies may throw <code><a class="el" href="classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html" title="Exception thrown when a required reaction is missing from the underlying database (e....">gridfire::exceptions::MissingBaseReactionError</a></code> if a required reaction is not found in the underlying REACLIB database. This usually indicates an issue with the GridFire installation or the bundled reaction data. </dd></dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

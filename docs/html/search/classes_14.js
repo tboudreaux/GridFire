@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['weakratederivatives_0',['WeakRateDerivatives',['../structgridfire_1_1rates_1_1weak_1_1_weak_rate_derivatives.html',1,'gridfire::rates::weak']]],
-  ['weakrateinterpolator_1',['WeakRateInterpolator',['../classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html',1,'gridfire::rates::weak']]],
-  ['weakratepayload_2',['WeakRatePayload',['../structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html',1,'gridfire::rates::weak']]],
-  ['weakreaction_3',['WeakReaction',['../classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html',1,'gridfire::rates::weak']]],
-  ['weakreactionentry_4',['WeakReactionEntry',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_entry.html',1,'gridfire::rates::weak']]],
-  ['weakreactionmap_5',['WeakReactionMap',['../classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html',1,'gridfire::rates::weak']]],
-  ['weakscreeningmodel_6',['WeakScreeningModel',['../classgridfire_1_1screening_1_1_weak_screening_model.html',1,'gridfire::screening']]]
+  ['unabletosetnetworkreactionserror_0',['UnableToSetNetworkReactionsError',['../classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html',1,'gridfire::exceptions']]],
+  ['uninitializedjacobianerror_1',['UninitializedJacobianError',['../classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html',1,'gridfire::exceptions']]],
+  ['unknownjacobianerror_2',['UnknownJacobianError',['../classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html',1,'gridfire::exceptions']]],
+  ['userdata_3',['UserData',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html',1,'gridfire::engine::MultiscalePartitioningEngineView::QSESolver']]],
+  ['utilityerror_4',['UtilityError',['../classgridfire_1_1exceptions_1_1_utility_error.html',1,'gridfire::exceptions']]]
 ];

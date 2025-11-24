@@ -124,7 +124,7 @@ Include dependency graph for engine_partitioning_trigger.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="engine__partitioning__trigger_8h__dep__incl.svg" width="408" height="171"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="engine__partitioning__trigger_8h__dep__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -154,9 +154,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a26555ea09be620dabc5f9644be8f9908" id="r_a26555ea09be620dabc5f9644be8f9908"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html#a26555ea09be620dabc5f9644be8f9908">gridfire::trigger::solver::CVODE::makeEnginePartitioningTrigger</a> (const double simulationTimeInterval, const double offDiagonalThreshold, const double timestepGrowthThreshold, const bool timestepGrowthRelative, const size_t timestepGrowthWindowSize)</td></tr>
-<tr class="memdesc:a26555ea09be620dabc5f9644be8f9908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
-<tr class="separator:a26555ea09be620dabc5f9644be8f9908"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2e951d13f36bb742fd27b83caa6d4d5" id="r_aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html#aa2e951d13f36bb742fd27b83caa6d4d5">gridfire::trigger::solver::CVODE::makeEnginePartitioningTrigger</a> (const double simulationTimeInterval, const double offDiagonalThreshold, const double timestepCollapseRatio, const size_t maxConvergenceFailures)</td></tr>
+<tr class="memdesc:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
+<tr class="separator:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>CVODE-specific triggers that decide when to (re)partition the reaction network engine. </p>

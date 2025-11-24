@@ -101,6 +101,7 @@ $(function(){initNavTree('logging_8h.html',''); initResizable(true); });
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">logging.h File Reference</div></div>
 </div><!--header-->
@@ -108,6 +109,7 @@ $(function(){initNavTree('logging_8h.html',''); initResizable(true); });
 <div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/composition/composition.h&quot;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for logging.h:</div>
 <div class="dyncontent">
@@ -116,7 +118,7 @@ Include dependency graph for logging.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="logging_8h__dep__incl.svg" width="376" height="126"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="logging_8h__dep__incl.svg" width="100%" height="472"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -126,11 +128,20 @@ Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1utils.html">gridfire::utils</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptgridfire_1_1utils_1_1_streamable.html">gridfire::utils::Streamable</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a05fda32d3fc4ab10060b8c4c251c2f3d" id="r_a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1utils.html#a05fda32d3fc4ab10060b8c4c251c2f3d">gridfire::utils::formatNuclearTimescaleLogString</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::composition::Composition &amp;composition, double T9, double rho)</td></tr>
-<tr class="memdesc:a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats a map of nuclear species timescales into a human-readable string.  <br /></td></tr>
-<tr class="separator:a05fda32d3fc4ab10060b8c4c251c2f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d0646bcc1a6fd8df22ac0c758bfd5c4" id="r_a3d0646bcc1a6fd8df22ac0c758bfd5c4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1utils.html#a3d0646bcc1a6fd8df22ac0c758bfd5c4">gridfire::utils::formatNuclearTimescaleLogString</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;engine, const fourdst::composition::Composition &amp;composition, double T9, double rho)</td></tr>
+<tr class="memdesc:a3d0646bcc1a6fd8df22ac0c758bfd5c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats a map of nuclear species timescales into a human-readable string.  <br /></td></tr>
+<tr class="separator:a3d0646bcc1a6fd8df22ac0c758bfd5c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a334828d5d2b5e67560638ea9b3c031a1" id="r_a334828d5d2b5e67560638ea9b3c031a1"><td class="memTemplParams" colspan="2">template&lt;std::ranges::input_range Container, typename Elem = std::ranges::range_reference_t&lt;Container&gt;, typename Transform = std::identity, typename Pred = bool(*)(const std::ranges::range_value_t&lt;Container&gt;&amp;)&gt; <br />
+requires std::invocable&lt;Transform, Elem&gt; &amp;&amp; Streamable&lt;std::invoke_result_t&lt;Transform, Elem&gt;&gt; &amp;&amp; std::predicate&lt;Pred, Elem&gt;</td></tr>
+<tr class="memitem:a334828d5d2b5e67560638ea9b3c031a1"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1utils.html#a334828d5d2b5e67560638ea9b3c031a1">gridfire::utils::iterable_to_delimited_string</a> (const Container &amp;container, const std::string_view delimiter=&quot;, &quot;, Transform transform={}, Pred pred=[](const auto &amp;){ return true;}) noexcept</td></tr>
+<tr class="separator:a334828d5d2b5e67560638ea9b3c031a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

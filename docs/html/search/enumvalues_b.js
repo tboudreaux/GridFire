@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['other_0',['Other',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_cache_stats.html#ac558e59f790508a5e8522c412be5b505a6311ae17c1ee52b36e68aaf4ad066387',1,'gridfire::MultiscalePartitioningEngineView::CacheStats']]]
+  ['none_0',['NONE',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693',1,'gridfire::engine']]],
+  ['not_5fpresent_1',['NOT_PRESENT',['../namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a4b8e04af593e6ce16901570c52fe5607',1,'gridfire::engine']]]
 ];

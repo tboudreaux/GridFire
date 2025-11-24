@@ -105,24 +105,34 @@ $(function(){initNavTree('namespacegridfire_1_1io_1_1gen.html',''); initResizabl
   <div class="headertitle"><div class="title">gridfire::io::gen Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Namespace for generative input/output functionalities.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1io_1_1gen_1_1_py_function_def.html">PyFunctionDef</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure representing a Python function definition.  <a href="structgridfire_1_1io_1_1gen_1_1_py_function_def.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aed61026cbd83e7a15565e4a0ad0849b9" id="r_aed61026cbd83e7a15565e4a0ad0849b9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1io_1_1gen_1_1_py_function_def.html">PyFunctionDef</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed61026cbd83e7a15565e4a0ad0849b9">exportReactionToPy</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction)</td></tr>
+<tr class="memdesc:aed61026cbd83e7a15565e4a0ad0849b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports a reaction to a Python function definition.  <br /></td></tr>
 <tr class="separator:aed61026cbd83e7a15565e4a0ad0849b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8969bfd2c29b0497886fbbee91cba49" id="r_ab8969bfd2c29b0497886fbbee91cba49"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8969bfd2c29b0497886fbbee91cba49">exportEngineToPy</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine)</td></tr>
-<tr class="separator:ab8969bfd2c29b0497886fbbee91cba49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae1daede9709cb8e4d5a8a086d5a94ea" id="r_aae1daede9709cb8e4d5a8a086d5a94ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae1daede9709cb8e4d5a8a086d5a94ea">exportEngineToPy</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::string &amp;fileName)</td></tr>
-<tr class="separator:aae1daede9709cb8e4d5a8a086d5a94ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a597ff691fb592f7306af96a269117631" id="r_a597ff691fb592f7306af96a269117631"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a597ff691fb592f7306af96a269117631">exportEngineToPy</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;engine)</td></tr>
+<tr class="memdesc:a597ff691fb592f7306af96a269117631"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports a dynamic engine to a Python script.  <br /></td></tr>
+<tr class="separator:a597ff691fb592f7306af96a269117631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac192d690214100bf8d938bffaeefbe64" id="r_ac192d690214100bf8d938bffaeefbe64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac192d690214100bf8d938bffaeefbe64">exportEngineToPy</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;engine, const std::string &amp;fileName)</td></tr>
+<tr class="memdesc:ac192d690214100bf8d938bffaeefbe64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports a dynamic engine to a Python file.  <br /></td></tr>
+<tr class="separator:ac192d690214100bf8d938bffaeefbe64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ab8969bfd2c29b0497886fbbee91cba49" name="ab8969bfd2c29b0497886fbbee91cba49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8969bfd2c29b0497886fbbee91cba49">&#9670;&#160;</a></span>exportEngineToPy() <span class="overload">[1/2]</span></h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Namespace for generative input/output functionalities. </p>
+<p>This namespace contains functions and structures related to exporting reactions and engines to Python code. It provides tools to convert internal representations of reactions and engines into Python functions and scripts that can be used for further analysis or integration with Python-based workflows. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a597ff691fb592f7306af96a269117631" name="a597ff691fb592f7306af96a269117631"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a597ff691fb592f7306af96a269117631">&#9670;&#160;</a></span>exportEngineToPy() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,16 +140,26 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::string gridfire::io::gen::exportEngineToPy </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Exports a dynamic engine to a Python script. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>The dynamic engine to export. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A string containing the Python script representation of the engine.</dd></dl>
+<p>This function converts the given dynamic engine into a Python script that can be used to recreate the engine's functionality in Python. </p>
+
 </div>
 </div>
-<a id="aae1daede9709cb8e4d5a8a086d5a94ea" name="aae1daede9709cb8e4d5a8a086d5a94ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae1daede9709cb8e4d5a8a086d5a94ea">&#9670;&#160;</a></span>exportEngineToPy() <span class="overload">[2/2]</span></h2>
+<a id="ac192d690214100bf8d938bffaeefbe64" name="ac192d690214100bf8d938bffaeefbe64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac192d690214100bf8d938bffaeefbe64">&#9670;&#160;</a></span>exportEngineToPy() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,7 +167,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void gridfire::io::gen::exportEngineToPy </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -156,6 +176,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Exports a dynamic engine to a Python file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>The dynamic engine to export. </td></tr>
+    <tr><td class="paramname">fileName</td><td>The name of the file to write the Python script to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This function writes the Python script representation of the given dynamic engine to the specified file. </p>
 
 </div>
 </div>
@@ -173,6 +203,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Exports a reaction to a Python function definition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reaction</td><td>The reaction to export. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="structgridfire_1_1io_1_1gen_1_1_py_function_def.html" title="Structure representing a Python function definition.">PyFunctionDef</a> structure containing the Python function representation of the reaction.</dd></dl>
+<p>This function converts the given reaction into a Python function definition, including the necessary code and module requirements. </p>
 
 </div>
 </div>

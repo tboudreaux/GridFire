@@ -147,26 +147,26 @@ var NAVTREE =
         [ "Typedefs", "globals_type.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
-    ] ],
-    [ "Examples", "examples.html", "examples" ]
+    ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"_2_users_2tboudreaux_2_programming_24_d_s_t_a_r_2_grid_fire_2src_2include_2gridfire_2engine_2engine_approx8_8h-example.html",
-"classgridfire_1_1_dynamic_engine.html#a25c040d3078f6ff2ef38f733eb68f1fa",
-"classgridfire_1_1_graph_engine.html#af147a6953dcbb70ba3cc93039ac21c35",
-"classgridfire_1_1_reaction_set.html#a62965c04447909462bb4f2112661ef44",
-"classgridfire_1_1partition_1_1_ground_state_partition_function.html#a8afa2aee993eb3ed8d01c887d39b57eb",
-"classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aefc75b3149bee2da878177279ad375da",
-"classgridfire_1_1reaction_1_1_reaction_set.html#a6a4836776f5dd00158d2336e5bcc3222",
-"classgridfire_1_1trigger_1_1_not_trigger.html#a5096cb7e70ea357f28e1b9fc8301c793",
-"classgridfire_1_1utils_1_1_column.html#a7d7e4f4cf6f8e03725afeb9f664321b8",
-"index.html#autotoc_md18",
-"namespacestd.html",
-"structgridfire_1_1_net_out.html#a51c16703132cf739ec2fd89eae7badd6",
-"structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html#aa2e81d295afba465427e46b36e1438e4"
+"_c_v_o_d_e__solver__strategy_8cpp.html",
+"classgridfire_1_1engine_1_1_dynamic_engine.html#a79423b9f67b4cac702547b4f1d8bd14c",
+"classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html#abaa48f3861797a4721ab8841424854d3",
+"classgridfire_1_1engine_1_1_reaction.html#a588a8c19970463d97f5aa333fcd312dc",
+"classgridfire_1_1partition_1_1_ground_state_partition_function.html#a49b18aae58eb6250aaa23d43d55f02bd",
+"classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html#ad70b081f8623fad207050c0f81f6a457",
+"classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#afe1b95bf9d81f7521b9f19bbd1305d01",
+"classgridfire_1_1screening_1_1_weak_screening_model.html",
+"classgridfire_1_1trigger_1_1_or_trigger.html#ac8be54d91e77ed16ae3cca2417d82e0a",
+"classgridfire_1_1utils_1_1_table_base.html#a0529d4130643358562e1c1d1f78c924f",
+"index.html#autotoc_md20",
+"partition_2bindings_8cpp.html#a2806baaec82e0e6d66b80348584e08fd",
+"structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html#a9b8fc949cc2cb1729c719cf20463e070",
+"structgridfire_1_1trigger_1_1_trigger_result.html#a372af12d705b623075c41872f3ec96e1"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

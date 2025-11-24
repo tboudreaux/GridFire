@@ -108,9 +108,9 @@ $(function(){initNavTree('dynamic__engine__diagnostics_8cpp.html',''); initResiz
 <div class="textblock"><code>#include &quot;<a class="el" href="dynamic__engine__diagnostics_8h.html">gridfire/engine/diagnostics/dynamic_engine_diagnostics.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="table__format_8h.html">gridfire/utils/table_format.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/atomic/species.h&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for dynamic_engine_diagnostics.cpp:</div>
@@ -122,17 +122,22 @@ Include dependency graph for dynamic_engine_diagnostics.cpp:</div>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1diagnostics.html">gridfire::diagnostics</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine_1_1diagnostics.html">gridfire::engine::diagnostics</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9d95a6c9c4a942d71ff4c8046fe4107a" id="r_a9d95a6c9c4a942d71ff4c8046fe4107a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1diagnostics.html#a9d95a6c9c4a942d71ff4c8046fe4107a">gridfire::diagnostics::report_limiting_species</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::vector&lt; double &gt; &amp;Y_full, const std::vector&lt; double &gt; &amp;E_full, const std::vector&lt; double &gt; &amp;dydt_full, double relTol, double absTol, size_t top_n=10)</td></tr>
-<tr class="separator:a9d95a6c9c4a942d71ff4c8046fe4107a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11c0d538e7244bee168d7f9217442128" id="r_a11c0d538e7244bee168d7f9217442128"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1diagnostics.html#a11c0d538e7244bee168d7f9217442128">gridfire::diagnostics::inspect_species_balance</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::string &amp;species_name, const fourdst::composition::Composition &amp;comp, double T9, double rho)</td></tr>
-<tr class="separator:a11c0d538e7244bee168d7f9217442128"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a066ee899bd259062716f25abae3890b0" id="r_a066ee899bd259062716f25abae3890b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1diagnostics.html#a066ee899bd259062716f25abae3890b0">gridfire::diagnostics::inspect_jacobian_stiffness</a> (const <a class="el" href="classgridfire_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::composition::Composition &amp;comp, double T9, double rho)</td></tr>
-<tr class="separator:a066ee899bd259062716f25abae3890b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad792baf3c6720fce34a5161c0ade3fc4" id="r_ad792baf3c6720fce34a5161c0ade3fc4"><td class="memItemLeft" align="right" valign="top">std::optional&lt; nlohmann::json &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine_1_1diagnostics.html#ad792baf3c6720fce34a5161c0ade3fc4">gridfire::engine::diagnostics::report_limiting_species</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::vector&lt; double &gt; &amp;Y_full, const std::vector&lt; double &gt; &amp;E_full, double relTol, double absTol, size_t top_n=10, bool json=false)</td></tr>
+<tr class="memdesc:ad792baf3c6720fce34a5161c0ade3fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Report the species that are limiting the accuracy of the integration. This is useful for identifying species that may be limiting the timestepping due to their high relative errors compared to the specified tolerances.  <br /></td></tr>
+<tr class="separator:ad792baf3c6720fce34a5161c0ade3fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac2570f6bc58b8825674f60f1634149b" id="r_aac2570f6bc58b8825674f60f1634149b"><td class="memItemLeft" align="right" valign="top">std::optional&lt; nlohmann::json &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine_1_1diagnostics.html#aac2570f6bc58b8825674f60f1634149b">gridfire::engine::diagnostics::inspect_species_balance</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const std::string &amp;species_name, const fourdst::composition::Composition &amp;comp, double T9, double rho, bool json)</td></tr>
+<tr class="memdesc:aac2570f6bc58b8825674f60f1634149b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inspect the production and destruction balance of a specific species in the reaction network. This function analyzes the reactions that create and destroy the specified species, providing insights into potential imbalances that may affect the accuracy of the simulation.  <br /></td></tr>
+<tr class="separator:aac2570f6bc58b8825674f60f1634149b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a42702b787f12988ae8fc7e1e6d8186" id="r_a8a42702b787f12988ae8fc7e1e6d8186"><td class="memItemLeft" align="right" valign="top">std::optional&lt; nlohmann::json &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine_1_1diagnostics.html#a8a42702b787f12988ae8fc7e1e6d8186">gridfire::engine::diagnostics::inspect_jacobian_stiffness</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::composition::Composition &amp;comp, double T9, double rho, bool json)</td></tr>
+<tr class="memdesc:a8a42702b787f12988ae8fc7e1e6d8186"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inspect the stiffness of the Jacobian matrix for the reaction network at the given temperature and density. This function evaluates the diagonal and off-diagonal elements of the Jacobian to identify potential numerical issues related to stiffness.  <br /></td></tr>
+<tr class="separator:a8a42702b787f12988ae8fc7e1e6d8186"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

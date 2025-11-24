@@ -5,6 +5,5 @@ var reaclib_8cpp =
     [ "gridfire::reaclib::initializeAllReaclibReactions", "namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276", null ],
     [ "gridfire::reaclib::operator<<", "namespacegridfire_1_1reaclib.html#a6bb94d5adc7bb9db5a67f770f7453e63", null ],
     [ "gridfire::reaclib::parseSpeciesString", "namespacegridfire_1_1reaclib.html#afc0deac6cbef076e8884e66fd3ab66e0", null ],
-    [ "trim_whitespace", "reaclib_8cpp.html#a2c6902cf3e699a1a65e871efa878a6ab", null ],
     [ "gridfire::reaclib::s_all_reaclib_reactions_ptr", "namespacegridfire_1_1reaclib.html#a1f75b17a44c23261a221f7558b1a63d9", null ]
 ];

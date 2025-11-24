@@ -47,7 +47,7 @@
   </g>
 </defs>
 <script type="application/ecmascript">
-var viewWidth = 708;
+var viewWidth = 738;
 var viewHeight = 238;
 var sectionId = 'dynsection-1';
 </script>
@@ -59,9 +59,9 @@ var sectionId = 'dynsection-1';
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">
-<polygon fill="#999999" stroke="#666666" points="700.25,-73.88 575.5,-73.88 575.5,-43.38 700.25,-43.38 700.25,-73.88"/>
-<text xml:space="preserve" text-anchor="start" x="583.5" y="-60.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
-<text xml:space="preserve" text-anchor="middle" x="637.88" y="-49.12" font-family="Helvetica,sans-Serif" font-size="10.00">::LogicalReaclibReaction</text>
+<polygon fill="#999999" stroke="#666666" points="729.5,-73.88 604.75,-73.88 604.75,-43.38 729.5,-43.38 729.5,-73.88"/>
+<text xml:space="preserve" text-anchor="start" x="612.75" y="-60.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
+<text xml:space="preserve" text-anchor="middle" x="667.12" y="-49.12" font-family="Helvetica,sans-Serif" font-size="10.00">::LogicalReaclibReaction</text>
 </a>
 </g>
 </g>
@@ -69,9 +69,9 @@ var sectionId = 'dynsection-1';
 <g id="Node000002" class="node">
 <title>Node2</title>
 <g id="a_Node000002"><a xlink:href="classgridfire_1_1reaction_1_1_reaclib_reaction.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="470.12,-134.88 376.12,-134.88 376.12,-104.38 470.12,-104.38 470.12,-134.88"/>
-<text xml:space="preserve" text-anchor="start" x="384.12" y="-121.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
-<text xml:space="preserve" text-anchor="middle" x="423.12" y="-110.12" font-family="Helvetica,sans-Serif" font-size="10.00">::ReaclibReaction</text>
+<polygon fill="white" stroke="#666666" points="499.38,-134.88 405.38,-134.88 405.38,-104.38 499.38,-104.38 499.38,-134.88"/>
+<text xml:space="preserve" text-anchor="start" x="413.38" y="-121.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
+<text xml:space="preserve" text-anchor="middle" x="452.38" y="-110.12" font-family="Helvetica,sans-Serif" font-size="10.00">::ReaclibReaction</text>
 </a>
 </g>
 </g>
@@ -79,8 +79,8 @@ var sectionId = 'dynsection-1';
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node2&#45;&gt;Node1</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M481.31,-103.23C512.66,-94.24 551.33,-83.15 582.27,-74.28"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="480.65,-99.78 472.01,-105.9 482.58,-106.5 480.65,-99.78"/>
+<path fill="none" stroke="#63b8ff" d="M510.56,-103.23C541.91,-94.24 580.58,-83.15 611.52,-74.28"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="509.9,-99.78 501.26,-105.9 511.83,-106.5 509.9,-99.78"/>
 </a>
 </g>
 </g>
@@ -88,9 +88,9 @@ var sectionId = 'dynsection-1';
 <g id="Node000003" class="node">
 <title>Node3</title>
 <g id="a_Node000003"><a xlink:href="classgridfire_1_1reaction_1_1_reaction.html" target="_top" xlink:title="Represents a single nuclear reaction from a specific data source.">
-<polygon fill="white" stroke="#666666" points="226.5,-229.88 140.75,-229.88 140.75,-199.38 226.5,-199.38 226.5,-229.88"/>
-<text xml:space="preserve" text-anchor="start" x="148.75" y="-216.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
-<text xml:space="preserve" text-anchor="middle" x="183.62" y="-205.12" font-family="Helvetica,sans-Serif" font-size="10.00">::Reaction</text>
+<polygon fill="white" stroke="#666666" points="241.12,-229.88 155.38,-229.88 155.38,-199.38 241.12,-199.38 241.12,-229.88"/>
+<text xml:space="preserve" text-anchor="start" x="163.38" y="-216.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
+<text xml:space="preserve" text-anchor="middle" x="198.25" y="-205.12" font-family="Helvetica,sans-Serif" font-size="10.00">::Reaction</text>
 </a>
 </g>
 </g>
@@ -98,8 +98,8 @@ var sectionId = 'dynsection-1';
 <g id="edge2_Node000002_Node000003" class="edge">
 <title>Node3&#45;&gt;Node2</title>
 <g id="a_edge2_Node000002_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M238.13,-216.08C269.1,-215.01 308.09,-210.28 339.75,-195.62 369.59,-181.81 395.93,-153.11 410.39,-135.21"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="238.13,-212.58 228.2,-216.3 238.28,-219.58 238.13,-212.58"/>
+<path fill="none" stroke="#63b8ff" d="M252.6,-217.05C287.22,-216.64 332.52,-212.28 369,-195.62 398.91,-181.97 425.23,-153.22 439.66,-135.26"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="252.81,-213.55 242.8,-217.05 252.8,-220.55 252.81,-213.55"/>
 </a>
 </g>
 </g>
@@ -107,8 +107,8 @@ var sectionId = 'dynsection-1';
 <g id="Node000004" class="node">
 <title>Node4</title>
 <g id="a_Node000004"><a xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="213.38,-175.25 153.88,-175.25 153.88,-156 213.38,-156 213.38,-175.25"/>
-<text xml:space="preserve" text-anchor="middle" x="183.62" y="-161.75" font-family="Helvetica,sans-Serif" font-size="10.00">std::string</text>
+<polygon fill="white" stroke="#666666" points="228,-178.25 168.5,-178.25 168.5,-159 228,-159 228,-178.25"/>
+<text xml:space="preserve" text-anchor="middle" x="198.25" y="-164.75" font-family="Helvetica,sans-Serif" font-size="10.00">std::string</text>
 </a>
 </g>
 </g>
@@ -116,21 +116,21 @@ var sectionId = 'dynsection-1';
 <g id="edge3_Node000002_Node000004" class="edge">
 <title>Node4&#45;&gt;Node2</title>
 <g id="a_edge3_Node000002_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M225.09,-161.49C256.56,-157.88 301.2,-151.93 339.75,-143.62 351.55,-141.08 364.12,-137.75 375.81,-134.38"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="224.78,-158 215.22,-162.58 225.55,-164.96 224.78,-158"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M239.36,-164.29C273.93,-160.18 325.07,-153.21 369,-143.62 380.79,-141.05 393.36,-137.71 405.05,-134.33"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="239.34,-160.77 229.81,-165.4 240.14,-167.73 239.34,-160.77"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-181.95" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_id</text>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-170.7" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_peName</text>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-159.45" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_sourceLabel</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-182.45" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_id</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-171.2" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_peName</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-159.95" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_sourceLabel</text>
 </g>
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
 <g id="a_Node000005"><a xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="94,-180.88 0,-180.88 0,-150.38 94,-150.38 94,-180.88"/>
-<text xml:space="preserve" text-anchor="start" x="8" y="-167.38" font-family="Helvetica,sans-Serif" font-size="10.00">std::basic_string&lt;</text>
-<text xml:space="preserve" text-anchor="middle" x="47" y="-156.12" font-family="Helvetica,sans-Serif" font-size="10.00"> Char &gt;</text>
+<polygon fill="white" stroke="#666666" points="94,-183.88 0,-183.88 0,-153.38 94,-153.38 94,-183.88"/>
+<text xml:space="preserve" text-anchor="start" x="8" y="-170.38" font-family="Helvetica,sans-Serif" font-size="10.00">std::basic_string&lt;</text>
+<text xml:space="preserve" text-anchor="middle" x="47" y="-159.12" font-family="Helvetica,sans-Serif" font-size="10.00"> Char &gt;</text>
 </a>
 </g>
 </g>
@@ -138,8 +138,8 @@ var sectionId = 'dynsection-1';
 <g id="edge4_Node000004_Node000005" class="edge">
 <title>Node5&#45;&gt;Node4</title>
 <g id="a_edge4_Node000004_Node000005"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M105.6,-165.62C122.13,-165.62 139.46,-165.62 153.48,-165.62"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="105.84,-162.13 95.84,-165.63 105.84,-169.13 105.84,-162.13"/>
+<path fill="none" stroke="#63b8ff" d="M105.71,-168.62C127.12,-168.62 150.48,-168.62 168.24,-168.62"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="105.92,-165.13 95.92,-168.63 105.92,-172.13 105.92,-165.13"/>
 </a>
 </g>
 </g>
@@ -147,9 +147,10 @@ var sectionId = 'dynsection-1';
 <g id="Node000006" class="node">
 <title>Node6</title>
 <g id="a_Node000006"><a xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="234.38,-134.88 132.88,-134.88 132.88,-104.38 234.38,-104.38 234.38,-134.88"/>
-<text xml:space="preserve" text-anchor="start" x="140.88" y="-121.38" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; fourdst</text>
-<text xml:space="preserve" text-anchor="middle" x="183.62" y="-110.12" font-family="Helvetica,sans-Serif" font-size="10.00">::atomic::Species &gt;</text>
+<polygon fill="white" stroke="#666666" points="265.5,-140.5 131,-140.5 131,-98.75 265.5,-98.75 265.5,-140.5"/>
+<text xml:space="preserve" text-anchor="start" x="139" y="-127" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_map</text>
+<text xml:space="preserve" text-anchor="start" x="139" y="-115.75" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; fourdst::atomic::Species,</text>
+<text xml:space="preserve" text-anchor="middle" x="198.25" y="-104.5" font-family="Helvetica,sans-Serif" font-size="10.00"> size_t &gt;</text>
 </a>
 </g>
 </g>
@@ -157,20 +158,20 @@ var sectionId = 'dynsection-1';
 <g id="edge5_Node000002_Node000006" class="edge">
 <title>Node6&#45;&gt;Node2</title>
 <g id="a_edge5_Node000002_Node000006"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M246.06,-119.62C286.54,-119.62 338.73,-119.62 375.74,-119.62"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="246.22,-116.13 236.22,-119.63 246.22,-123.13 246.22,-116.13"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M277.13,-119.62C319.09,-119.62 369.43,-119.62 405.18,-119.62"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="277.34,-116.13 267.34,-119.63 277.34,-123.13 277.34,-116.13"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-132.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_products</text>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-121.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_reactants</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-132.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_products</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-121.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">m_reactants</text>
 </g>
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
 <g id="a_Node000007"><a xlink:href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html" target="_top" xlink:title="Holds the seven coefficients for the REACLIB rate equation.">
-<polygon fill="white" stroke="#666666" points="236.25,-76.88 131,-76.88 131,-46.38 236.25,-46.38 236.25,-76.88"/>
-<text xml:space="preserve" text-anchor="start" x="139" y="-63.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
-<text xml:space="preserve" text-anchor="middle" x="183.62" y="-52.12" font-family="Helvetica,sans-Serif" font-size="10.00">::RateCoefficientSet</text>
+<polygon fill="white" stroke="#666666" points="250.88,-73.88 145.62,-73.88 145.62,-43.38 250.88,-43.38 250.88,-73.88"/>
+<text xml:space="preserve" text-anchor="start" x="153.62" y="-60.38" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::reaction</text>
+<text xml:space="preserve" text-anchor="middle" x="198.25" y="-49.12" font-family="Helvetica,sans-Serif" font-size="10.00">::RateCoefficientSet</text>
 </a>
 </g>
 </g>
@@ -178,20 +179,20 @@ var sectionId = 'dynsection-1';
 <g id="edge6_Node000002_Node000007" class="edge">
 <title>Node7&#45;&gt;Node2</title>
 <g id="a_edge6_Node000002_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M247.78,-77.05C288.02,-86.88 339.26,-99.39 375.75,-108.3"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="248.76,-73.68 238.22,-74.71 247.1,-80.48 248.76,-73.68"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M262.14,-73.84C306.48,-84.57 364.89,-98.7 405.02,-108.41"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="263.2,-70.5 252.66,-71.55 261.55,-77.3 263.2,-70.5"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-100.96" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_rateCoefficients</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-99.9" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_rateCoefficients</text>
 </g>
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
 <g id="a_Node000009"><a xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="488.5,-79.5 357.75,-79.5 357.75,-37.75 488.5,-37.75 488.5,-79.5"/>
-<text xml:space="preserve" text-anchor="start" x="365.75" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; gridfire</text>
-<text xml:space="preserve" text-anchor="start" x="365.75" y="-54.75" font-family="Helvetica,sans-Serif" font-size="10.00">::reaction::RateCoefficient</text>
-<text xml:space="preserve" text-anchor="middle" x="423.12" y="-43.5" font-family="Helvetica,sans-Serif" font-size="10.00">Set &gt;</text>
+<polygon fill="white" stroke="#666666" points="517.75,-79.5 387,-79.5 387,-37.75 517.75,-37.75 517.75,-79.5"/>
+<text xml:space="preserve" text-anchor="start" x="395" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; gridfire</text>
+<text xml:space="preserve" text-anchor="start" x="395" y="-54.75" font-family="Helvetica,sans-Serif" font-size="10.00">::reaction::RateCoefficient</text>
+<text xml:space="preserve" text-anchor="middle" x="452.38" y="-43.5" font-family="Helvetica,sans-Serif" font-size="10.00">Set &gt;</text>
 </a>
 </g>
 </g>
@@ -199,18 +200,18 @@ var sectionId = 'dynsection-1';
 <g id="edge9_Node000009_Node000007" class="edge">
 <title>Node7&#45;&gt;Node9</title>
 <g id="a_edge9_Node000009_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M248,-52.85C250.11,-52.67 252.19,-52.51 254.25,-52.38 288.3,-50.12 326.29,-51.24 357.51,-53.11"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="247.76,-49.35 238.14,-53.81 248.43,-56.32 247.76,-49.35"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M262.69,-53.41C269.71,-52.99 276.75,-52.62 283.5,-52.38 321.47,-50.97 331.03,-50.94 369,-52.38 374.73,-52.59 380.69,-52.89 386.65,-53.25"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="262.61,-49.91 252.86,-54.06 263.07,-56.9 262.61,-49.91"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="297" y="-54.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> elements</text>
+<text xml:space="preserve" text-anchor="middle" x="326.25" y="-54.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> elements</text>
 </g>
 <!-- Node8 -->
 <g id="Node000008" class="node">
 <title>Node8</title>
 <g id="a_Node000008"><a xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="485.12,-19.25 361.12,-19.25 361.12,0 485.12,0 485.12,-19.25"/>
-<text xml:space="preserve" text-anchor="middle" x="423.12" y="-5.75" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; std::string &gt;</text>
+<polygon fill="white" stroke="#666666" points="514.38,-19.25 390.38,-19.25 390.38,0 514.38,0 514.38,-19.25"/>
+<text xml:space="preserve" text-anchor="middle" x="452.38" y="-5.75" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; std::string &gt;</text>
 </a>
 </g>
 </g>
@@ -218,21 +219,21 @@ var sectionId = 'dynsection-1';
 <g id="edge7_Node000001_Node000008" class="edge">
 <title>Node8&#45;&gt;Node1</title>
 <g id="a_edge7_Node000001_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M478.89,-22.24C508.39,-29.03 544.88,-37.44 575.36,-44.46"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="479.95,-18.89 469.42,-20.06 478.38,-25.71 479.95,-18.89"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M508.14,-22.24C537.64,-29.03 574.13,-37.44 604.61,-44.46"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="509.2,-18.89 498.67,-20.06 507.63,-25.71 509.2,-18.89"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="532" y="-41.7" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_sources</text>
+<text xml:space="preserve" text-anchor="middle" x="561.25" y="-41.7" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_sources</text>
 </g>
 <!-- Node9&#45;&gt;Node1 -->
 <g id="edge8_Node000001_Node000009" class="edge">
 <title>Node9&#45;&gt;Node1</title>
 <g id="a_edge8_Node000001_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M500.28,-58.62C524.8,-58.62 551.67,-58.62 575.04,-58.62"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="500.34,-55.13 490.34,-58.63 500.34,-62.13 500.34,-55.13"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M529.53,-58.62C554.05,-58.62 580.92,-58.62 604.29,-58.62"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="529.59,-55.13 519.59,-58.63 529.59,-62.13 529.59,-55.13"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="532" y="-60.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_rates</text>
+<text xml:space="preserve" text-anchor="middle" x="561.25" y="-60.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> m_rates</text>
 </g>
 </g>
 </svg>

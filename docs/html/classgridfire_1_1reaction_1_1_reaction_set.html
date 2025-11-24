@@ -112,7 +112,7 @@ $(function(){initNavTree('classgridfire_1_1reaction_1_1_reaction_set.html',''); 
 <div class="dynheader">
 Collaboration diagram for gridfire::reaction::ReactionSet:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaction_set__coll__graph.svg" width="100%" height="445"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaction_set__coll__graph.svg" width="100%" height="494"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -151,6 +151,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af14cf34d7367cb6a6be5191724c2d4cf" id="r_af14cf34d7367cb6a6be5191724c2d4cf"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af14cf34d7367cb6a6be5191724c2d4cf">size</a> () const</td></tr>
 <tr class="memdesc:af14cf34d7367cb6a6be5191724c2d4cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of reactions in the set.  <br /></td></tr>
 <tr class="separator:af14cf34d7367cb6a6be5191724c2d4cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cfce57192993e71c8437a64030caa2d" id="r_a7cfce57192993e71c8437a64030caa2d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cfce57192993e71c8437a64030caa2d">empty</a> () const</td></tr>
+<tr class="separator:a7cfce57192993e71c8437a64030caa2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8e0d65aafc6e0320690b4906e1bf300" id="r_aa8e0d65aafc6e0320690b4906e1bf300"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8e0d65aafc6e0320690b4906e1bf300">clear</a> ()</td></tr>
 <tr class="memdesc:aa8e0d65aafc6e0320690b4906e1bf300"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes all reactions from the set.  <br /></td></tr>
 <tr class="separator:aa8e0d65aafc6e0320690b4906e1bf300"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,6 +205,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a62965c04447909462bb4f2112661ef44" id="r_a62965c04447909462bb4f2112661ef44"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62965c04447909462bb4f2112661ef44">m_reactionNameMap</a></td></tr>
 <tr class="memdesc:a62965c04447909462bb4f2112661ef44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps reaction IDs to <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> objects for quick lookup.  <br /></td></tr>
 <tr class="separator:a62965c04447909462bb4f2112661ef44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4200939ccf088dd83c3d264df171d568" id="r_a4200939ccf088dd83c3d264df171d568"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4200939ccf088dd83c3d264df171d568">m_reactionHashes</a></td></tr>
+<tr class="separator:a4200939ccf088dd83c3d264df171d568"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -597,6 +601,31 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the species is involved in any reaction. </dd></dl>
+
+</div>
+</div>
+<a id="a7cfce57192993e71c8437a64030caa2d" name="a7cfce57192993e71c8437a64030caa2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cfce57192993e71c8437a64030caa2d">&#9670;&#160;</a></span>empty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::reaction::ReactionSet::empty </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1027,6 +1056,28 @@ Friends</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">quill::Logger* gridfire::reaction::ReactionSet::m_logger = fourdst::logging::LogManager::getInstance().getLogger(&quot;log&quot;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4200939ccf088dd83c3d264df171d568" name="a4200939ccf088dd83c3d264df171d568"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4200939ccf088dd83c3d264df171d568">&#9670;&#160;</a></span>m_reactionHashes</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_set&lt;size_t&gt; gridfire::reaction::ReactionSet::m_reactionHashes</td>
         </tr>
       </table>
   </td>

@@ -1,11 +1,13 @@
 <map id="gridfire::exceptions::PolicyError" name="gridfire::exceptions::PolicyError">
-<area shape="rect" id="Node000001" title="Base class for all exceptions related to network policy operations." alt="" coords="157,71,288,111"/>
-<area shape="rect" id="Node000003" href="$classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html" title="Exception thrown when a required reaction is missing from the underlying database (e...." alt="" coords="336,5,520,46"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="302,63,361,44,362,49,304,68"/>
-<area shape="rect" id="Node000004" href="$classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html" title="Exception thrown when a constructed network fails to include a key reaction required by the policy." alt="" coords="340,71,517,111"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="303,88,339,88,339,94,303,94"/>
-<area shape="rect" id="Node000005" href="$classgridfire_1_1exceptions_1_1_missing_seed_species_error.html" title="Exception thrown when a required seed species is not found in the initial composition." alt="" coords="338,136,518,177"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="304,114,362,133,361,138,302,119"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,78,109,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,88,156,88,156,94,124,94"/>
+<area shape="rect" id="Node000001" title="Base class for all exceptions related to network policy operations." alt="" coords="336,71,467,111"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html" title="Exception thrown when a required reaction is missing from the underlying database (e...." alt="" coords="515,5,700,46"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="482,63,540,44,542,49,483,68"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html" title="Exception thrown when a constructed network fails to include a key reaction required by the policy." alt="" coords="519,71,696,111"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="483,88,518,88,518,94,483,94"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1exceptions_1_1_missing_seed_species_error.html" title="Exception thrown when a required seed species is not found in the initial composition." alt="" coords="518,136,697,177"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="483,114,542,133,540,138,482,119"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1exceptions_1_1_grid_fire_error.html" title="Base class for GridFire exceptions." alt="" coords="157,71,288,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="303,88,336,88,336,94,303,94"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,78,109,104"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="124,88,156,88,156,94,124,94"/>
 </map>

@@ -1,5 +1,7 @@
 <map id="gridfire::policy::CNOChainPolicy" name="gridfire::policy::CNOChainPolicy">
-<area shape="rect" id="Node000001" title="A ReactionChainPolicy for the Carbon&#45;Nitrogen&#45;Oxygen (CNO) cycle." alt="" coords="5,94,180,135"/>
-<area shape="rect" id="Node000002" href="$classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway." alt="" coords="11,5,174,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,62,95,94,90,94,90,62"/>
+<area shape="rect" id="Node000001" title="CNO Chain Policy." alt="" coords="13,183,188,223"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html" title="A ReactionChainPolicy composed of multiple child ReactionChainPolicy instances." alt="" coords="5,94,196,135"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,150,103,182,98,182,98,150"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway." alt="" coords="19,5,182,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="103,62,103,94,98,94,98,62"/>
 </map>

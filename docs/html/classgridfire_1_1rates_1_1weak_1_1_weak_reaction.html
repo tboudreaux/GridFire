@@ -109,7 +109,7 @@ $(function(){initNavTree('classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html'
 </div><!--header-->
 <div class="contents">
 
-<p>Concrete <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> representing a single weak process (beta±, e−/e+ capture).  
+<p>Concrete Reaction representing a single weak process (beta±, e−/e+ capture).  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;weak.h&gt;</code></p>
@@ -195,9 +195,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac2d5366d4b5766413db34558dbce3cb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logarithmic temperature sensitivity of the rate at the given state.  <br /></td></tr>
 <tr class="separator:ac2d5366d4b5766413db34558dbce3cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aade329265a26bdc005c0793ba7a36ab2" id="r_aade329265a26bdc005c0793ba7a36ab2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aade329265a26bdc005c0793ba7a36ab2">type</a> () const override</td></tr>
-<tr class="memdesc:aade329265a26bdc005c0793ba7a36ab2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> type tag for runtime dispatch.  <br /></td></tr>
+<tr class="memdesc:aade329265a26bdc005c0793ba7a36ab2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reaction type tag for runtime dispatch.  <br /></td></tr>
 <tr class="separator:aade329265a26bdc005c0793ba7a36ab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac10e1451d20876f6eab199e127f213c7" id="r_ac10e1451d20876f6eab199e127f213c7"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac10e1451d20876f6eab199e127f213c7">clone</a> () const override</td></tr>
+<tr class="memitem:ac10e1451d20876f6eab199e127f213c7" id="r_ac10e1451d20876f6eab199e127f213c7"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; Reaction &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac10e1451d20876f6eab199e127f213c7">clone</a> () const override</td></tr>
 <tr class="memdesc:ac10e1451d20876f6eab199e127f213c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polymorphic deep copy.  <br /></td></tr>
 <tr class="separator:ac10e1451d20876f6eab199e127f213c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90b62d922d91832859516450cf8e3876" id="r_a90b62d922d91832859516450cf8e3876"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90b62d922d91832859516450cf8e3876">is_reverse</a> () const override</td></tr>
@@ -208,6 +208,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aefc75b3149bee2da878177279ad375da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a768eed406cc08057ed09e5daf5494650" id="r_a768eed406cc08057ed09e5daf5494650"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">reaction::RateCoefficientSet</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a768eed406cc08057ed09e5daf5494650">getRateCoefficients</a> () const override</td></tr>
 <tr class="separator:a768eed406cc08057ed09e5daf5494650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfc3740ed0aa72986b2c1bc2666974d6" id="r_acfc3740ed0aa72986b2c1bc2666974d6"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfc3740ed0aa72986b2c1bc2666974d6">countReactantOccurrences</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="separator:acfc3740ed0aa72986b2c1bc2666974d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeba08ed8204fc4999dc0324076d67d2a" id="r_aeba08ed8204fc4999dc0324076d67d2a"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeba08ed8204fc4999dc0324076d67d2a">countProductOccurrences</a> (const fourdst::atomic::Species &amp;species) const override</td></tr>
+<tr class="separator:aeba08ed8204fc4999dc0324076d67d2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1reaction_1_1_reaction"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1reaction_1_1_reaction')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></td></tr>
 <tr class="memitem:ab1860df84843be70f97469761e11ab6a inherit pub_methods_classgridfire_1_1reaction_1_1_reaction" id="r_ab1860df84843be70f97469761e11ab6a"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#ab1860df84843be70f97469761e11ab6a">~Reaction</a> ()=default</td></tr>
 <tr class="memdesc:ab1860df84843be70f97469761e11ab6a inherit pub_methods_classgridfire_1_1reaction_1_1_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for correct polymorphic cleanup.  <br /></td></tr>
@@ -256,7 +260,7 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a4f2bf61b35566e439ac8a48da265d215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Concrete <a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> representing a single weak process (beta±, e−/e+ capture). </p>
+<div class="textblock"><p>Concrete Reaction representing a single weak process (beta±, e−/e+ capture). </p>
 <p>Wraps interpolation logic for tabulated weak rates and provides both scalar and AD interfaces for rate and energy generation. The reactants/products are the parent/daughter nuclei of the weak process.</p>
 <p>the product nucleus is resolved from (A,Z) and channel via simple charge-changing rules (β−: Z+1; β+: Z−1; e− capture: Z−1; e+ capture: Z+1). The reaction ID is formatted like "Parent(channel)Product" with ν/ν̄ decorations, and an internal CppAD atomic (<a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html" title="CppAD atomic that wraps weak-rate interpolation for AD evaluation.">AtomicWeakRate</a>) is prepared for AD energy calculations. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -606,7 +610,7 @@ Private Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> rate (1/s) as CppAD::AD&lt;double&gt; (currently 0.0). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reaction rate (1/s) as CppAD::AD&lt;double&gt; (currently 0.0). </dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">using </span>AD = CppAD::AD&lt;double&gt;;</div>
 <div class="line">AD lambda_ad = rxn.calculate_rate(AD(3.0), AD(1e7), AD(0.5), AD(2.0), {}, {});</div>
 </div><!-- fragment --> </dd></dl>
@@ -675,7 +679,7 @@ Private Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> rate (1/s). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reaction rate (1/s). </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::runtime_error</td><td>On interpolation failure. </td></tr>
@@ -753,7 +757,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> rate (1/s) as T. For double, performs table interpolation and returns 0 when the tabulated log10(rate) ≤ sentinel; for AD, calls the atomic and returns the first output. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reaction rate (1/s) as T. For double, performs table interpolation and returns 0 when the tabulated log10(rate) ≤ sentinel; for AD, calls the atomic and returns the first output. </dd></dl>
 <dl class="section pre"><dt>Precondition</dt><dd>T9 &gt; 0, rho &gt; 0, 0 &lt; Ye &lt;= 1. </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>No persistent state is modified. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
@@ -878,6 +882,60 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 <p>Check if a species is the reactant (parent). </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#ab28bf4f9417ecabcc8350bae449fedd5">gridfire::reaction::Reaction</a>.</p>
+
+</div>
+</div>
+<a id="aeba08ed8204fc4999dc0324076d67d2a" name="aeba08ed8204fc4999dc0324076d67d2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeba08ed8204fc4999dc0324076d67d2a">&#9670;&#160;</a></span>countProductOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t gridfire::rates::weak::WeakReaction::countProductOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a62fc82b29bacc10cfbceaa1571b14525">gridfire::reaction::Reaction</a>.</p>
+
+</div>
+</div>
+<a id="acfc3740ed0aa72986b2c1bc2666974d6" name="acfc3740ed0aa72986b2c1bc2666974d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfc3740ed0aa72986b2c1bc2666974d6">&#9670;&#160;</a></span>countReactantOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t gridfire::rates::weak::WeakReaction::countReactantOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a036773e4dc917facbf2308dbbe853633">gridfire::reaction::Reaction</a>.</p>
 
 </div>
 </div>
@@ -1335,7 +1393,7 @@ template&lt;IsArithmeticOrAD T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classgridfire_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> type tag for runtime dispatch. </p>
+<p>Reaction type tag for runtime dispatch. </p>
 
 <p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a7f2590eee9f0dfb7b73cd92170a844b7">gridfire::reaction::Reaction</a>.</p>
 

@@ -1,9 +1,8 @@
 var searchData=
 [
-  ['secondorder_0',['SecondOrder',['../namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a264572d66aed5373d19dc80c7cde1f46',1,'gridfire']]],
-  ['shallow_1',['Shallow',['../namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a928d0f1285ee7d36c1c2fa1b1b7a164c',1,'gridfire']]],
-  ['species_5fnot_5ffound_2',['SPECIES_NOT_FOUND',['../namespacegridfire_1_1rates_1_1weak.html#a15ca7b1a1951c131fddb9eb011d59550a3659baf2b06bba6c02bad8316d517761',1,'gridfire::rates::weak']]],
-  ['stale_3',['STALE',['../classgridfire_1_1_graph_engine.html#ac94adcb6d39f7633f326f038dca15ec6a4d855a061b3066dc14a3b12ed26b5456',1,'gridfire::GraphEngine::STALE'],['../namespacegridfire_1_1expectations.html#a926cb0409b1f38770eb028bcac70a87ca4d855a061b3066dc14a3b12ed26b5456',1,'gridfire::expectations::STALE']]],
-  ['strong_4',['STRONG',['../namespacegridfire.html#ad7f0577c2f88caaf0cec6cf80c04892ba3dfb3ae3cdaa322f0388f1a531c39520',1,'gridfire']]],
-  ['system_5fresized_5',['SYSTEM_RESIZED',['../namespacegridfire_1_1expectations.html#aef568e2802c03adef56dbcb6511d66c7a109aa03c8823fcc0ab193b7e48664cbf',1,'gridfire::expectations']]]
+  ['rauscherthielemann_0',['RauscherThielemann',['../namespacegridfire_1_1partition.html#ae931a76ba5efada4ca45ac93333e728ca4ca5b5dcd7343b06b860f05f3bc454b1',1,'gridfire::partition']]],
+  ['reaclib_1',['REACLIB',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220',1,'gridfire::engine::REACLIB'],['../namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220',1,'gridfire::reaction::REACLIB']]],
+  ['reaclib_5fweak_2',['REACLIB_WEAK',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692',1,'gridfire::engine']]],
+  ['ready_5fdense_3',['READY_DENSE',['../classgridfire_1_1engine_1_1_graph_engine.html#a19305dc4affde99bb84056c9eeda9f1ea162cb379760275c9685281ee27025cdb',1,'gridfire::engine::GraphEngine']]],
+  ['ready_5fsparse_4',['READY_SPARSE',['../classgridfire_1_1engine_1_1_graph_engine.html#a19305dc4affde99bb84056c9eeda9f1eabf43af1b1ac8bc6cb42296815a429ae3',1,'gridfire::engine::GraphEngine']]]
 ];

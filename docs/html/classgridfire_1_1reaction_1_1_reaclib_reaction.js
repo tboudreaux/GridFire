@@ -12,6 +12,8 @@ var classgridfire_1_1reaction_1_1_reaclib_reaction =
     [ "contains", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a171b690e1abaf23f11a94c39e9f8c944", null ],
     [ "contains_product", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a4e4811436d09afaa4a14c51d9af71f88", null ],
     [ "contains_reactant", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a65a12e5f6180873866cfaaf130fd1156", null ],
+    [ "countProductOccurrences", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#abe3ab72b2577cbe0f87436b063ce812c", null ],
+    [ "countReactantOccurrences", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a79928f9c52822202b3156bd145e35ad8", null ],
     [ "excess_energy", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a0b30c49925823c87980b4fca17c8282e", null ],
     [ "getRateCoefficients", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#aefd0436ae72880358214d5b79c9c79eb", null ],
     [ "hash", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a661dd461e51c37133f7f9931389fd3cc", null ],
@@ -36,10 +38,12 @@ var classgridfire_1_1reaction_1_1_reaclib_reaction =
     [ "m_id", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a8ca86e0f8f95ffb6d87ca295e44f14c5", null ],
     [ "m_logger", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#abab0ed78925789856ebb119d60c6a53d", null ],
     [ "m_peName", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a51f658789f34f96e0e6bd42cef5cbfe4", null ],
-    [ "m_products", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#ac350a26bdf19d7c1d20db55a226e6063", null ],
+    [ "m_products", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a4c6ba4d6355f33cbe2e72614fa72363f", null ],
+    [ "m_productsVec", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#ad89d4b413c507e850dba624e1b36b886", null ],
     [ "m_qValue", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a498c202a259cbc315997ec68a2cb8a59", null ],
     [ "m_rateCoefficients", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a8ea3de0412395b7b617c4b71cbc2ab68", null ],
-    [ "m_reactants", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a7cf403bc519ce39a1af886432a653826", null ],
+    [ "m_reactants", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a9ecfb28ccb32904a28217fe2eb0c659d", null ],
+    [ "m_reactantsVec", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#aae29f755030c51fc9c8f7db52a022f84", null ],
     [ "m_reverse", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#af52b42d940f6a09dba5d28898d2b0b1f", null ],
     [ "m_sourceLabel", "classgridfire_1_1reaction_1_1_reaclib_reaction.html#a7e79437a68947e176b8dd7dcbe27baab", null ]
 ];

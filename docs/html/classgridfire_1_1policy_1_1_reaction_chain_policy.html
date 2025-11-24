@@ -101,6 +101,7 @@ $(function(){initNavTree('classgridfire_1_1policy_1_1_reaction_chain_policy.html
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classgridfire_1_1policy_1_1_reaction_chain_policy-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">gridfire::policy::ReactionChainPolicy Class Reference<span class="mlabels"><span class="mlabel abstract">abstract</span></span></div></div>
 </div><!--header-->
@@ -113,7 +114,7 @@ $(function(){initNavTree('classgridfire_1_1policy_1_1_reaction_chain_policy.html
 <div class="dynheader">
 Inheritance diagram for gridfire::policy::ReactionChainPolicy:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1policy_1_1_reaction_chain_policy__inherit__graph.svg" width="100%" height="486"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1policy_1_1_reaction_chain_policy__inherit__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -121,16 +122,36 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa3e6c1e4844fe788aeb08d272070ae13" id="r_aa3e6c1e4844fe788aeb08d272070ae13"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3e6c1e4844fe788aeb08d272070ae13">~ReactionChainPolicy</a> ()=default</td></tr>
 <tr class="separator:aa3e6c1e4844fe788aeb08d272070ae13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8bccf78e7fc99d08387aec5015e8849" id="r_ad8bccf78e7fc99d08387aec5015e8849"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8bccf78e7fc99d08387aec5015e8849">get_reactions</a> () const =0</td></tr>
-<tr class="memdesc:ad8bccf78e7fc99d08387aec5015e8849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="classgridfire_1_1_reaction_set.html">ReactionSet</a> describing this chain.  <br /></td></tr>
+<tr class="memdesc:ad8bccf78e7fc99d08387aec5015e8849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the ReactionSet describing this chain.  <br /></td></tr>
 <tr class="separator:ad8bccf78e7fc99d08387aec5015e8849"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c9a42646920ac02c8d1e63dfe6f9461" id="r_a0c9a42646920ac02c8d1e63dfe6f9461"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c9a42646920ac02c8d1e63dfe6f9461">contains</a> (const std::string &amp;id) const =0</td></tr>
+<tr class="separator:a0c9a42646920ac02c8d1e63dfe6f9461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68239737ada169238251f1994680fc7e" id="r_a68239737ada169238251f1994680fc7e"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68239737ada169238251f1994680fc7e">contains</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) const =0</td></tr>
+<tr class="separator:a68239737ada169238251f1994680fc7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac24ff49b7715ad3eefea4bed1bf23686" id="r_ac24ff49b7715ad3eefea4bed1bf23686"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac24ff49b7715ad3eefea4bed1bf23686">clone</a> () const =0</td></tr>
+<tr class="separator:ac24ff49b7715ad3eefea4bed1bf23686"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41758d921a2d7e83f446aa4fec00d598" id="r_a41758d921a2d7e83f446aa4fec00d598"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41758d921a2d7e83f446aa4fec00d598">name</a> () const =0</td></tr>
+<tr class="separator:a41758d921a2d7e83f446aa4fec00d598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d1b5640d654f49399145f912e77c19b" id="r_a5d1b5640d654f49399145f912e77c19b"><td class="memItemLeft" align="right" valign="top">virtual uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d1b5640d654f49399145f912e77c19b">hash</a> (uint64_t seed) const =0</td></tr>
+<tr class="separator:a5d1b5640d654f49399145f912e77c19b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30420a3881779c822ab06c0405ea7b28" id="r_a30420a3881779c822ab06c0405ea7b28"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30420a3881779c822ab06c0405ea7b28">operator==</a> (const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;other) const =0</td></tr>
+<tr class="separator:a30420a3881779c822ab06c0405ea7b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac19e354a8bcd28f60783b70d8a761030" id="r_ac19e354a8bcd28f60783b70d8a761030"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac19e354a8bcd28f60783b70d8a761030">operator!=</a> (const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;other) const =0</td></tr>
+<tr class="separator:ac19e354a8bcd28f60783b70d8a761030"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a264e0d1d13c7d4d5f05bdda5d5ada5c0" id="r_a264e0d1d13c7d4d5f05bdda5d5ada5c0"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a264e0d1d13c7d4d5f05bdda5d5ada5c0">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;rcp)</td></tr>
+<tr class="separator:a264e0d1d13c7d4d5f05bdda5d5ada5c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract interface encapsulating a set of reactions representing a single chain or pathway. </p>
-<p><a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway.">ReactionChainPolicy</a> implementations (see <code><a class="el" href="chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains.">chains.h</a></code>) supply a <a class="el" href="classgridfire_1_1_reaction_set.html">ReactionSet</a> describing the reactions that comprise a nuclear reaction chain (for example the proton-proton chain, CNO cycle, etc.).</p>
+<p><a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway.">ReactionChainPolicy</a> implementations (see <code><a class="el" href="chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains.">chains.h</a></code>) supply a ReactionSet describing the reactions that comprise a nuclear reaction chain (for example the proton-proton chain, CNO cycle, etc.).</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><a class="code hl_class" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">ProtonProtonChainPolicy</a> pp;</div>
-<div class="line"><span class="keyword">const</span> <span class="keyword">auto</span> &amp;reacs = pp.<a class="code hl_function" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#a3c91d407767a8cb9bc1cc724996e40cd">get_reactions</a>();</div>
-<div class="ttc" id="aclassgridfire_1_1policy_1_1_proton_proton_chain_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">gridfire::policy::ProtonProtonChainPolicy</a></div><div class="ttdoc">A ReactionChainPolicy for the Proton-Proton (PP) chain.</div><div class="ttdef"><b>Definition</b> chains.h:40</div></div>
-<div class="ttc" id="aclassgridfire_1_1policy_1_1_proton_proton_chain_policy_html_a3c91d407767a8cb9bc1cc724996e40cd"><div class="ttname"><a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#a3c91d407767a8cb9bc1cc724996e40cd">gridfire::policy::ProtonProtonChainPolicy::get_reactions</a></div><div class="ttdeci">const reaction::ReactionSet &amp; get_reactions() const override</div><div class="ttdoc">Returns the set of reactions in the PP chain.</div><div class="ttdef"><b>Definition</b> chains.h:58</div></div>
+<div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a>&amp; reactions = pp.<a class="code hl_function" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae689a0dfeb36f85ddc6db5a8dc4f630a">get_reactions</a>();</div>
+<div class="ttc" id="aclassgridfire_1_1policy_1_1_multi_reaction_chain_policy_html_ae689a0dfeb36f85ddc6db5a8dc4f630a"><div class="ttname"><a href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae689a0dfeb36f85ddc6db5a8dc4f630a">gridfire::policy::MultiReactionChainPolicy::get_reactions</a></div><div class="ttdeci">const reaction::ReactionSet &amp; get_reactions() const override</div><div class="ttdoc">Returns the combined ReactionSet of all child chain policies.</div><div class="ttdef"><b>Definition</b> policy_logical.cpp:20</div></div>
+<div class="ttc" id="aclassgridfire_1_1policy_1_1_proton_proton_chain_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">gridfire::policy::ProtonProtonChainPolicy</a></div><div class="ttdoc">Proton-Proton Chain Policy.</div><div class="ttdef"><b>Definition</b> chains.h:197</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:794</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Concrete implementations may throw exceptions on construction if the underlying reaction database (e.g. REACLIB) does not include requested reactions. See <code><a class="el" href="chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains.">chains.h</a></code> for details. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -160,6 +181,87 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac24ff49b7715ad3eefea4bed1bf23686" name="ac24ff49b7715ad3eefea4bed1bf23686"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac24ff49b7715ad3eefea4bed1bf23686">&#9670;&#160;</a></span>clone()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &gt; gridfire::policy::ReactionChainPolicy::clone </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html#a83042f4626ec22810314fa5181d3392a">gridfire::policy::CNOIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html#ab3aa5daaf2d9274770f981d8f67ae20b">gridfire::policy::CNOIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html#a9c0e056615742b3d77f47b3eb676ff28">gridfire::policy::CNOIIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html#a35bef8035035eb85bb188ede6045556c">gridfire::policy::CNOIVChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html#ae70a448fdeee35e159784fd6a506dce7">gridfire::policy::HotCNOIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html#afeb9b237b70963715adc64ad68e11675">gridfire::policy::HotCNOIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html#a5d86341bb4370647762c889519793d41">gridfire::policy::HotCNOIIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ab3bbbf21164211a01c5398a0ee281bb2">gridfire::policy::MultiReactionChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html#affd234a60ba31decca25b3367c7ede5e">gridfire::policy::ProtonProtonIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html#ad70b081f8623fad207050c0f81f6a457">gridfire::policy::ProtonProtonIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html#ac84ab054fc0f600f783ea3282d6fd4f6">gridfire::policy::ProtonProtonIIIChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html#a447ff0d2de9df09400e63f0fc087efa3">gridfire::policy::TripleAlphaChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a68239737ada169238251f1994680fc7e" name="a68239737ada169238251f1994680fc7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68239737ada169238251f1994680fc7e">&#9670;&#160;</a></span>contains() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::policy::ReactionChainPolicy::contains </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#a864a00097e80db7b0f3838d696aa9f5d">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#a8984d58dee6865d4bd98aedf31bb445e">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a0c9a42646920ac02c8d1e63dfe6f9461" name="a0c9a42646920ac02c8d1e63dfe6f9461"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c9a42646920ac02c8d1e63dfe6f9461">&#9670;&#160;</a></span>contains() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::policy::ReactionChainPolicy::contains </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#a792cf0af8e5c365d0332cd585968dae1">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#a8869287d36b3ff143e7f84799ef35dd9">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
 <a id="ad8bccf78e7fc99d08387aec5015e8849" name="ad8bccf78e7fc99d08387aec5015e8849"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad8bccf78e7fc99d08387aec5015e8849">&#9670;&#160;</a></span>get_reactions()</h2>
 
@@ -183,12 +285,11 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns the <a class="el" href="classgridfire_1_1_reaction_set.html">ReactionSet</a> describing this chain. </p>
+<p>Returns the ReactionSet describing this chain. </p>
 <dl class="section return"><dt>Returns</dt><dd>const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&amp; reference to the chain's reactions.</dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;set = chainPolicy.get_reactions();</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Chain contains &quot;</span> &lt;&lt; set.<a class="code hl_function" href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">size</a>() &lt;&lt; <span class="stringliteral">&quot; reactions\n&quot;</span>;</div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:756</div></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:817</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:855</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -197,7 +298,145 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html#a670c22968a167508f80e7b44f6c06aee">gridfire::policy::CNOChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html#ae07b692a3b22a805e925f809fec6baaa">gridfire::policy::HotCNOChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_low_mass_main_sequence_reaction_chain_policy.html#a30dd355b6ef553ea4e978fbc7d19286f">gridfire::policy::LowMassMainSequenceReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#a3c91d407767a8cb9bc1cc724996e40cd">gridfire::policy::ProtonProtonChainPolicy</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae689a0dfeb36f85ddc6db5a8dc4f630a">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#ae93a5a2d753ddd32f2a4a5a750ef44b4">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a5d1b5640d654f49399145f912e77c19b" name="a5d1b5640d654f49399145f912e77c19b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d1b5640d654f49399145f912e77c19b">&#9670;&#160;</a></span>hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint64_t gridfire::policy::ReactionChainPolicy::hash </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae5ac6534ec96cfcdefcad2f9694efd36">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#a0b2c469f8e17ccba0f45632b19395731">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a41758d921a2d7e83f446aa4fec00d598" name="a41758d921a2d7e83f446aa4fec00d598"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41758d921a2d7e83f446aa4fec00d598">&#9670;&#160;</a></span>name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::string gridfire::policy::ReactionChainPolicy::name </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html#a66511726b37f0e114cba2dd15db42440">gridfire::policy::CNOChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html#ad3d4721e3046d792c0aa8e5c6c99aa2d">gridfire::policy::CNOIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html#a6bf1057d28cb37db4f9ffde9cb3815ed">gridfire::policy::CNOIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html#a96abfb16ec2b692c070da139444435e3">gridfire::policy::CNOIIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html#a101a884a8ead5d961fd5d43a0dbffde8">gridfire::policy::CNOIVChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html#a95e2f3c1a32b3f2dd5d5601c2a81f42f">gridfire::policy::HotCNOChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html#a13b2857d96e42f162888dcc294a27b9b">gridfire::policy::HotCNOIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html#a262a18dafbc68db925beefb14c43668f">gridfire::policy::HotCNOIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html#a59168da23f2d6b4d8667f5118153b514">gridfire::policy::HotCNOIIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html#a7411e9a885d7ebb79590d8e1c5834881">gridfire::policy::MainSequenceReactionChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ac21f837d0d452d32588451f48d5482e6">gridfire::policy::MultiReactionChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html#a2e818c9a269bc859b01985fea8423ac0">gridfire::policy::ProtonProtonChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html#ab9542fd71e87159216cdd51501b6d1d3">gridfire::policy::ProtonProtonIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html#a2782c6abea3596cf566a246239b96f80">gridfire::policy::ProtonProtonIIChainPolicy</a>, <a class="el" href="classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html#a06d103e970b19c9a40cbae8d52ef0d0c">gridfire::policy::ProtonProtonIIIChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html#a2d6543b9fa7f96b8b21d7e7545f9a22d">gridfire::policy::TripleAlphaChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="ac19e354a8bcd28f60783b70d8a761030" name="ac19e354a8bcd28f60783b70d8a761030"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac19e354a8bcd28f60783b70d8a761030">&#9670;&#160;</a></span>operator!=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::policy::ReactionChainPolicy::operator!= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#aa36844fe4417617175d31124e541da50">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#a264dc45c3410ab3ec49a340633aa5950">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a30420a3881779c822ab06c0405ea7b28" name="a30420a3881779c822ab06c0405ea7b28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30420a3881779c822ab06c0405ea7b28">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool gridfire::policy::ReactionChainPolicy::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#abc3ed7c255b3e6c06e292aee8ef7f46d">gridfire::policy::MultiReactionChainPolicy</a>, and <a class="el" href="classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html#add9c0230ad7c3e6e2cb182bdb4849c52">gridfire::policy::TemperatureDependentChainPolicy</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a264e0d1d13c7d4d5f05bdda5d5ada5c0" name="a264e0d1d13c7d4d5f05bdda5d5ada5c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a264e0d1d13c7d4d5f05bdda5d5ada5c0">&#9670;&#160;</a></span>operator&lt;&lt;</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1policy_1_1_reaction_chain_policy.html">ReactionChainPolicy</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rcp</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

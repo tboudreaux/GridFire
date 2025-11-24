@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['general_5fcomposition_2eh_0',['general_composition.h',['../general__composition_8h.html',1,'']]]
+  ['formatters_2eh_0',['formatters.h',['../formatters_8h.html',1,'']]]
 ];

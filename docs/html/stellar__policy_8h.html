@@ -113,13 +113,8 @@ $(function(){initNavTree('stellar__policy_8h.html',''); initResizable(true); });
 <code>#include &quot;<a class="el" href="policy__abstract_8h.html">gridfire/policy/policy_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="reaction_8h.html">gridfire/reaction/reaction.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="error__policy_8h.html">gridfire/exceptions/error_policy.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/composition/composition.h&quot;</code><br />
-<code>#include &quot;fourdst/composition/atomicSpecies.h&quot;</code><br />
-<code>#include &quot;fourdst/composition/exceptions/exceptions_composition.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__adaptive_8h.html">gridfire/engine/views/engine_adaptive.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="engine__multiscale_8h.html">gridfire/engine/views/engine_multiscale.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/atomic/atomicSpecies.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="partition__composite_8h.html">gridfire/partition/composite/partition_composite.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="chains_8h.html">gridfire/policy/chains.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -127,11 +122,16 @@ Include dependency graph for stellar_policy.h:</div>
 <div class="dyncontent">
 <div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="stellar__policy_8h__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="stellar__policy_8h__dep__incl.svg" width="296" height="230"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_low_mass_main_sequence_policy.html">gridfire::policy::LowMassMainSequencePolicy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html" title="Abstract interface for policies that construct DynamicEngine networks from a seed composition.">NetworkPolicy</a> for building reaction networks suitable for low-mass main-sequence stars.  <a href="classgridfire_1_1policy_1_1_low_mass_main_sequence_policy.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html" title="Abstract interface for policies that construct DynamicEngine networks from a seed composition.">NetworkPolicy</a> for building reaction networks suitable for low-mass main-sequence stars.  <a href="classgridfire_1_1policy_1_1_main_sequence_policy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -143,7 +143,7 @@ Namespaces</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>High-level concrete NetworkPolicy for specific stellar environments. </p>
-<p>This file defines the <code>LowMassMainSequencePolicy</code>, a concrete implementation of the <code>NetworkPolicy</code> interface. This policy is designed to construct a reaction network suitable for simulating nucleosynthesis in low-mass main-sequence stars (like the Sun).</p>
+<p>This file defines the <code>MainSequencePolicy</code>, a concrete implementation of the <code>NetworkPolicy</code> interface. This policy is designed to construct a reaction network suitable for simulating nucleosynthesis in low-mass main-sequence stars (like the Sun).</p>
 <p>It serves as a practical example of how to create a high-level policy by:</p><ol type="1">
 <li>Defining a set of required seed species.</li>
 <li>Composing lower-level <code>ReactionChainPolicy</code> instances (from <code><a class="el" href="chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains.">chains.h</a></code>) to specify the necessary reactions (e.g., PP-chain and CNO-cycle).</li>

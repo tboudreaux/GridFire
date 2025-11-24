@@ -14,6 +14,7 @@ var classgridfire_1_1reaction_1_1_reaction_set =
     [ "contains_product", "classgridfire_1_1reaction_1_1_reaction_set.html#a4bdf50219d686a6cbc0b3cc5365dc18e", null ],
     [ "contains_reactant", "classgridfire_1_1reaction_1_1_reaction_set.html#a256998eddf292f744d51cdc3e178d4c2", null ],
     [ "contains_species", "classgridfire_1_1reaction_1_1_reaction_set.html#a5b872a8519740a6d06cfaed03784826a", null ],
+    [ "empty", "classgridfire_1_1reaction_1_1_reaction_set.html#a7cfce57192993e71c8437a64030caa2d", null ],
     [ "end", "classgridfire_1_1reaction_1_1_reaction_set.html#abae9fbc4b4306479a6cd3173ac628987", null ],
     [ "end", "classgridfire_1_1reaction_1_1_reaction_set.html#a436f9c4b8f8a4e115b19728d57d8e105", null ],
     [ "extend", "classgridfire_1_1reaction_1_1_reaction_set.html#a6a4836776f5dd00158d2336e5bcc3222", null ],
@@ -30,6 +31,7 @@ var classgridfire_1_1reaction_1_1_reaction_set =
     [ "operator<<", "classgridfire_1_1reaction_1_1_reaction_set.html#a5a5e6ed364794f872c2c819536e24c20", null ],
     [ "m_id", "classgridfire_1_1reaction_1_1_reaction_set.html#af92e3003b2a3606b48ab857cdedc3111", null ],
     [ "m_logger", "classgridfire_1_1reaction_1_1_reaction_set.html#aff5ae284012009164d4b3033577709eb", null ],
+    [ "m_reactionHashes", "classgridfire_1_1reaction_1_1_reaction_set.html#a4200939ccf088dd83c3d264df171d568", null ],
     [ "m_reactionNameMap", "classgridfire_1_1reaction_1_1_reaction_set.html#a62965c04447909462bb4f2112661ef44", null ],
     [ "m_reactions", "classgridfire_1_1reaction_1_1_reaction_set.html#abd6feda1b3f65a6177904755581f6efe", null ]
 ];

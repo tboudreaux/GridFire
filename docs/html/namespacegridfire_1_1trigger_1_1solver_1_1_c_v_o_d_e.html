@@ -122,13 +122,13 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a26555ea09be620dabc5f9644be8f9908" id="r_a26555ea09be620dabc5f9644be8f9908"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26555ea09be620dabc5f9644be8f9908">makeEnginePartitioningTrigger</a> (const double simulationTimeInterval, const double offDiagonalThreshold, const double timestepGrowthThreshold, const bool timestepGrowthRelative, const size_t timestepGrowthWindowSize)</td></tr>
-<tr class="memdesc:a26555ea09be620dabc5f9644be8f9908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
-<tr class="separator:a26555ea09be620dabc5f9644be8f9908"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2e951d13f36bb742fd27b83caa6d4d5" id="r_aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2e951d13f36bb742fd27b83caa6d4d5">makeEnginePartitioningTrigger</a> (const double simulationTimeInterval, const double offDiagonalThreshold, const double timestepCollapseRatio, const size_t maxConvergenceFailures)</td></tr>
+<tr class="memdesc:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
+<tr class="separator:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a26555ea09be620dabc5f9644be8f9908" name="a26555ea09be620dabc5f9644be8f9908"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26555ea09be620dabc5f9644be8f9908">&#9670;&#160;</a></span>makeEnginePartitioningTrigger()</h2>
+<a id="aa2e951d13f36bb742fd27b83caa6d4d5" name="aa2e951d13f36bb742fd27b83caa6d4d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2e951d13f36bb742fd27b83caa6d4d5">&#9670;&#160;</a></span>makeEnginePartitioningTrigger()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,17 +146,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>timestepGrowthThreshold</em></span>, </td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>timestepCollapseRatio</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>timestepGrowthRelative</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>timestepGrowthWindowSize</em></span>&#160;)</td>
+          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>maxConvergenceFailures</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -171,9 +166,8 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">simulationTimeInterval</td><td>Interval used by <a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger.html" title="Triggers when the current simulation time advances by at least a fixed interval.">SimulationTimeTrigger</a> (&gt; 0). </td></tr>
     <tr><td class="paramname">offDiagonalThreshold</td><td>Off-diagonal Jacobian magnitude threshold (&gt;= 0). </td></tr>
-    <tr><td class="paramname">timestepGrowthThreshold</td><td>Threshold for timestep deviation (&gt;= 0, and &lt;= 1 when relative). </td></tr>
-    <tr><td class="paramname">timestepGrowthRelative</td><td>Whether deviation is measured relatively. </td></tr>
-    <tr><td class="paramname">timestepGrowthWindowSize</td><td>Window size for timestep averaging (&gt;= 1 recommended). </td></tr>
+    <tr><td class="paramname">timestepCollapseRatio</td><td>Threshold for timestep deviation (&gt;= 0, and &lt;= 1 when relative). </td></tr>
+    <tr><td class="paramname">maxConvergenceFailures</td><td>Window size for timestep averaging (&gt;= 1 recommended). </td></tr>
   </table>
   </dd>
 </dl>

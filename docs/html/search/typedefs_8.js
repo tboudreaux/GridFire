@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['outputtype_0',['OutputType',['../structgridfire_1_1_multiscale_partitioning_engine_view_1_1_eigen_functor.html#a4d597d16bd9f982d44512d5a6beddae0',1,'gridfire::MultiscalePartitioningEngineView::EigenFunctor']]]
+  ['rescueset_0',['RescueSet',['../classgridfire_1_1engine_1_1_adaptive_engine_view.html#a21367fa61169e6f5185bc91b40cc04be',1,'gridfire::engine::AdaptiveEngineView']]],
+  ['rowdatatable_1',['RowDataTable',['../classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html#afd3e0e1c5edaf12609b5fc81c379e3e5',1,'gridfire::rates::weak::WeakRateInterpolator']]]
 ];

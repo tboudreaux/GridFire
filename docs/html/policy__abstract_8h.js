@@ -2,7 +2,6 @@ var policy__abstract_8h =
 [
     [ "gridfire::policy::NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", "classgridfire_1_1policy_1_1_network_policy" ],
     [ "gridfire::policy::ReactionChainPolicy", "classgridfire_1_1policy_1_1_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_reaction_chain_policy" ],
-    [ "gridfire::policy::MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy" ],
     [ "gridfire::policy::NetworkPolicyStatus", "namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109", [
       [ "gridfire::policy::NetworkPolicyStatus::UNINITIALIZED", "namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109add652546039b18970b8dcf2cff824268", null ],
       [ "gridfire::policy::NetworkPolicyStatus::INITIALIZED_UNVERIFIED", "namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109af8392674ffb9a1455835c2cd5eb3f5ae", null ],

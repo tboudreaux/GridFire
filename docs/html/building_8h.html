@@ -106,6 +106,9 @@ $(function(){initNavTree('building_8h.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">building.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Defines types related to building reaction networks in the GridFire engine.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;variant&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for building.h:</div>
@@ -122,29 +125,34 @@ This graph shows which files directly or indirectly include this file:</div>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html">gridfire::engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a3b1f70dc7ff5b501809330a97079e4f6" id="r_a3b1f70dc7ff5b501809330a97079e4f6"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a3b1f70dc7ff5b501809330a97079e4f6">gridfire::BuildDepthType</a> = std::variant&lt;<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57">NetworkBuildDepth</a>, int&gt;</td></tr>
-<tr class="memdesc:a3b1f70dc7ff5b501809330a97079e4f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variant specifying either a predefined <a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57" title="Specifies supported depths for building the reaction network.">NetworkBuildDepth</a> or a custom integer depth.  <br /></td></tr>
-<tr class="separator:a3b1f70dc7ff5b501809330a97079e4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55cd7c313bbfafd5b6a1bcd6329ed99b" id="r_a55cd7c313bbfafd5b6a1bcd6329ed99b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a55cd7c313bbfafd5b6a1bcd6329ed99b">gridfire::engine::BuildDepthType</a> = std::variant&lt;<a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7">NetworkBuildDepth</a>, int&gt;</td></tr>
+<tr class="memdesc:a55cd7c313bbfafd5b6a1bcd6329ed99b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variant specifying either a predefined <a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7" title="Specifies supported depths for building the reaction network.">NetworkBuildDepth</a> or a custom integer depth.  <br /></td></tr>
+<tr class="separator:a55cd7c313bbfafd5b6a1bcd6329ed99b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a0210bd2e07538932135a56b62b8ddb57" id="r_a0210bd2e07538932135a56b62b8ddb57"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57">gridfire::NetworkBuildDepth</a> { <br />
-&#160;&#160;<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57abbd47109890259c0127154db1af26c75">gridfire::Full</a> = -1
-, <a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a928d0f1285ee7d36c1c2fa1b1b7a164c">gridfire::Shallow</a> = 1
-, <a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a264572d66aed5373d19dc80c7cde1f46">gridfire::SecondOrder</a> = 2
-, <a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a3fc719e07f9f63e7f11a3d4fb74b476f">gridfire::ThirdOrder</a> = 3
+<tr class="memitem:a782fbc9eca00df10e4a204ae6da733e7" id="r_a782fbc9eca00df10e4a204ae6da733e7"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7">gridfire::engine::NetworkBuildDepth</a> { <br />
+&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75">gridfire::engine::Full</a> = -1
+, <a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a928d0f1285ee7d36c1c2fa1b1b7a164c">gridfire::engine::Shallow</a> = 1
+, <a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a264572d66aed5373d19dc80c7cde1f46">gridfire::engine::SecondOrder</a> = 2
+, <a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a3fc719e07f9f63e7f11a3d4fb74b476f">gridfire::engine::ThirdOrder</a> = 3
 , <br />
-&#160;&#160;<a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a100e3bf0197221c19b222badf42aa964">gridfire::FourthOrder</a> = 4
-, <a class="el" href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57a5105376c2b90747e00bed5bf2953dd56">gridfire::FifthOrder</a> = 5
+&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a100e3bf0197221c19b222badf42aa964">gridfire::engine::FourthOrder</a> = 4
+, <a class="el" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a5105376c2b90747e00bed5bf2953dd56">gridfire::engine::FifthOrder</a> = 5
 <br />
  }</td></tr>
-<tr class="memdesc:a0210bd2e07538932135a56b62b8ddb57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specifies supported depths for building the reaction network.  <a href="namespacegridfire.html#a0210bd2e07538932135a56b62b8ddb57">More...</a><br /></td></tr>
-<tr class="separator:a0210bd2e07538932135a56b62b8ddb57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a782fbc9eca00df10e4a204ae6da733e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specifies supported depths for building the reaction network.  <a href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7">More...</a><br /></td></tr>
+<tr class="separator:a782fbc9eca00df10e4a204ae6da733e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Defines types related to building reaction networks in the GridFire engine. </p>
+<p>This file contains the enumeration and variant type used to specify the depth of reaction network construction within the GridFire simulation engine. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
