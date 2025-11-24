@@ -11,10 +11,13 @@
 
 #include "quill/Logger.h"
 #include "quill/Backend.h"
+#include "CLI/CLI.hpp"
 
 #include <clocale>
 
 #include <boost/json/src.hpp>
+
+#include "gridfire/reaction/reaclib.h"
 
 
 static std::terminate_handler g_previousHandler = nullptr;
@@ -251,13 +254,22 @@ void callback_main(const gridfire::solver::CVODESolverStrategy::TimestepContext&
     record_contribution_callback(ctx);
 }
 
-int main() {
+int main(int argc, char** argv) {
     using namespace gridfire;
 
-    constexpr double temp = 1.5e7;
-    constexpr double rho = 1.5e2;
-    constexpr double tMax = 3e17;
-    NetIn netIn = init(temp, rho, tMax);
+    CLI::App app{"GridFire Sandbox Application."};
+
+    double temp = 1.5e7;
+    double rho = 1.5e2;
+    double tMax = 3.1536e+17;
+
+    app.add_option("-t,--temp", temp, "Temperature in K (Default 1.5e7K)");
+    app.add_option("-r,--rho", rho, "Density in g/cm^3 (Default 1.5e2g/cm^3)");
+    app.add_option("--tmax", tMax, "Maximum simulation time in s (Default 3.1536e17s)");
+
+    CLI11_PARSE(app, argc, argv);
+
+    const NetIn netIn = init(temp, rho, tMax);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();
@@ -266,19 +278,8 @@ int main() {
     solver::CVODESolverStrategy solver(engine);
     solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
 
-    const NetOut netOut = solver.evaluate(netIn, true);
+    const NetOut netOut = solver.evaluate(netIn, false);
 
     log_results(netOut, netIn);
     log_callback_data(temp);
-
-    // LOG_TRACE_L1(LogManager::getInstance().getLogger("log"), "Performing final engine update for verification...");
-    //
-    //
-    // const std::vector<double> Y            = {0.2131, 1.991e-6, 0.1917, 6.310e-7, 3.296e-4, 9.62e-3, 1.62e-3, 5.16e-4};
-    // const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
-    //
-    // fourdst::composition::Composition manualLateComposition(symbols, Y);
-    // const fourdst::composition::Composition comp = engine.update(netIn);
-    // std::cout << comp.getMolarAbundance("H-2") << std::endl;
-
 }
