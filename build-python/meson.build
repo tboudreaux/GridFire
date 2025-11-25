@@ -31,7 +31,6 @@ py_mod = py_installation.extension_module(
         meson.project_source_root() + '/src/python/utils/bindings.cpp',
     ],
     dependencies : gridfire_py_deps,
-    cpp_args : ['-UNDEBUG'], # Example: Ensure assertions are enabled if needed
     install : true,
     subdir: 'gridfire',
 )
