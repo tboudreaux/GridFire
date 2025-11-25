@@ -1,5 +1,67 @@
+<p align="center">
+  <img src="https://github.com/4D-STAR/GridFire/blob/main/assets/logo/GridFire.png?raw=true" width="300" alt="OPAT Core Libraries Logo">
+</p>
 
-![GridFire Logo](https://github.com/4D-STAR/GridFire/blob/main/assets/logo/GridFire.png?raw=true)
+---
+![PyPI - Version](https://img.shields.io/pypi/v/gridfire?style=for-the-badge)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/gridfire?style=for-the-badge)
+
+![GitHub License](https://img.shields.io/github/license/4D-STAR/GridFire?style=for-the-badge)
+![ERC](https://img.shields.io/badge/Funded%20by-ERC-blue?style=for-the-badge&logo=europeancommission)
+
+![Dynamic Regex Badge](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fgithub.com%2F4D-STAR%2FGridFire%2Fblob%2Fmain%2Fmeson.build&search=version%3A%20'(%5B0-9a-zA-Z%5C.%5D%2B)'&style=for-the-badge&label=GitHub%20Main%20Branch)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/4D-STAR/GridFire?style=for-the-badge)
+
+
+---
+
+# Table of Contents
+- [Introduction](#introduction)
+  - [Design Philosophy and Workflow](#design-philosophy-and-workflow)
+  - [Funding](#funding)
+- [Usage](#usage)
+  - [Python installation](#python-installation)
+    - [pypi](#pypi)
+    - [source](#source)
+    - [source for developers](#source-for-developers)
+    - [patching shared object files](#patching-shared-object-files)
+  - [Automatic Build and Installation](#automatic-build-and-installation)
+    - [Script Build and Installation Instructions](#script-build-and-installation-instructions)
+    - [Currently, known good platforms](#currently-known-good-platforms)
+  - [Manual Build Instructions](#manual-build-instructions)
+    - [Prerequisites](#prerequisites)
+    - [Install Scripts](#install-scripts)
+    - [Dependency Installation on Common Platforms](#dependency-installation-on-common-platforms)
+    - [Building the C++ Library](#building-the-c-library)
+    - [Installing the Library](#installing-the-library)
+    - [Minimum compiler versions](#minimum-compiler-versions)
+- [Code Architecture and Logical Flow](#code-architecture-and-logical-flow)
+- [Engines](#engines)
+  - [GraphEngine](#graphengine)
+  - [GraphEngine Configuration Options](#graphengine-configuration-options)
+  - [Available Partition Functions](#available-partition-functions)
+  - [AutoDiff](#autodiff)
+- [Reaclib in GridFire](#reaclib-in-gridfire)
+- [Engine Views](#engine-views)
+  - [A Note about composability](#a-note-about-composability)
+- [Numerical Solver Strategies](#numerical-solver-strategies)
+  - [NetworkSolverStrategy&lt;EngineT&gt;](#networksolverstrategyenginet)
+  - [NetIn and NetOut](#netin-and-netout)
+  - [DirectNetworkSolver (Implicit Rosenbrock Method)](#directnetworksolver-implicit-rosenbrock-method)
+  - [Algorithmic Workflow in DirectNetworkSolver](#algorithmic-workflow-in-directnetworksolver)
+  - [Future Solver Implementations](#future-solver-implementations)
+- [Python Extensibility](#python-extensibility)
+- [Usage Examples](#usage-examples)
+  - [C++](#c)
+    - [GraphEngine Initialization](#graphengine-initialization)
+    - [Adaptive Network View](#adaptive-network-view)
+    - [Composition Initialization](#composition-initialization)
+    - [Common Workflow Example](#common-workflow-example)
+    - [Callback Example](#callback-example)
+  - [Python](#python)
+    - [Common Workflow Example](#common-workflow-example-1)
+    - [Python callbacks](#python-callbacks)
+- [Related Projects](#related-projects)
 
 # Introduction
 GridFire is a C++ library designed to perform general nuclear network
@@ -7,10 +69,10 @@ evolution. It is part of the larger SERiF project within the 4D-STAR
 collaboration. GridFire is primarily focused on modeling the most relevant
 burning stages for stellar evolution modeling. Currently, there is limited
 support for inverse reactions. Therefore, GridFire has a limited set of tools
-to evolves a fusing plasma in NSE; however, this is not the primary focus of
-the library and has therefor not had significant development. For those
+to evolve a fusing plasma in NSE; however, this is not the primary focus of
+the library and has therefore not had significant development. For those
 interested in modeling super nova, neutron star mergers, or other high-energy
-astrophysical phenomena, we **strongly** recomment using
+astrophysical phenomena, we **strongly** recommend using
 [SkyNet](https://bitbucket.org/jlippuner/skynet/src/master/).
 
 ## Design Philosophy and Workflow
@@ -45,23 +107,26 @@ By far the easiest way to install is with pip. This will install either
 pre-compiled wheels or, if your system has not had a wheel compiled for it, it
 will try to build locally (this may take **a long time**). The python bindings
 are just that and should maintain nearly the same speed as the C++ code. End
-users are strongly encourages to use the python module rather than the C++ code.
+users are strongly encouraged to use the python module rather than the C++ code.
 
 ### pypi
-Installing from pip is as simple as
+Installing from pip is as simple as.
 ```bash
 pip install gridfire
 ```
 
 These wheels have been compiled on many systems
 
-| Version | Platform | Architecture | CPython Versions                                           | PyPy Versions |
-|---------|----------|--------------|------------------------------------------------------------|---------------|
-| 0.5.0   | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0   | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0   | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| Version   | Platform | Architecture | CPython Versions                                           | PyPy Versions |
+|-----------|----------|--------------|------------------------------------------------------------|---------------|
+| 0.7.0_rc1 | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.7.0_rc1 | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.7.0_rc1 | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.5.0     | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.5.0     | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.5.0     | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 
-> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Do
+> **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Due
 > to that platform being phased out it is likely that there will never be
 > precompiled wheels or releases for it.
 
@@ -89,6 +154,8 @@ pip install .
 > **Note:** that if you do not have all system dependencies installed this will
 > fail, the steps in further sections address these in more detail.
 
+> **Note:** If you are using macos you should use the included `pip_install_mac_patch.sh` script instead of `pip install .` as this will automatically patch the build shared object libraries such that they can be loaded by the macos dynamic loader.
+
 ### source for developers
 If you are a developer and would like an editable and incremental python
 install `meson-python` makes this very easy
@@ -105,6 +172,31 @@ of these it does still take a few seconds to recompile regardless of how small
 a source code change you have made). It is **strongly** recommended that
 developers use this approach and end users *do not*.
 
+#### Patching Shared Object Files
+If you need to patch shared object files generated by meson-python directly you should first locate the shared object file
+these will be in the site-packages and site-packages/fourdst directories for your python environment.
+
+Look for files named
+
+- `site-packages/gridfire.cpython-3*-darwin.so`
+- `site-packages/fourdst/_phys.cpython-3*-darwin.so`
+
+then, for each of these files, run
+
+```bash
+otool -l <Path/to/file> | grep RPATH -A2
+```
+
+count the number of occurrences of duplicate RPATH entries (these should look like `@loaderpath/.gridfire.mesonpy.libs` or `@loaderpath/../.fourdst.mesonpy.libs`). Then use `install_name_tool` to remove **all but one of these** from each shared object file.
+
+If for example there are 4 occurrences of the path `@loader_path/../.fourdst.mesonpy.libs` in `_phys.cpython-3*-darwin.so` then you should run the following command 3 times
+```bash
+install_name_tool -delete_rpath @loader_path/../.fourdst.mesonpy.libs site-packages/fourdst/_phys.cpython-314-darwin.so
+```
+
+the same for the other shared object file (make sure to count the duplicate rpath entries for each separately as there may be a different number of duplicates in each shared object file).
+
+We also include a script at `pip_install_mac_patch.sh` which will do this automatically for you.
 
 ## Automatic Build and Installation
 ### Script Build and Installation Instructions
@@ -290,8 +382,13 @@ include:
   2000](https://www.sciencedirect.com/science/article/pii/S0092640X00908349?via%3Dihub]))
   to weight reaction rates based on nuclear properties.
 - **Solver Module:** Defines numerical integration strategies (e.g.,
-  `DirectNetworkSolver`) for solving the stiff ODE systems arising from reaction
+  `CVODESolverStrategy`) for solving the stiff ODE systems arising from reaction
   networks.
+- **io Module:** Defines shared interface for parsing network data from files
+- **trigger Module:** Defines interface for complex trigger logic so that repartitioning can be followed.
+- **Policy Module:** Contains "policies" which are small modular units of code that enforce certain contracts.
+  For example the `ProtonProtonReactionChainPolicy` enforces than an engine must include at least all the reactions
+  in the proton-proton chain. This module exposes the primary construction interface for users. I.e. select a policy (such as `MainSequencePolicy`), provide a composition, and get back an engine which satisfies that policy.
 - **Python Interface:** Exposes *almost* all C++ functionality to Python,
   allowing users to define compositions, configure engines, and run simulations
   directly from Python scripts.
@@ -308,7 +405,7 @@ abundances and diagnostics.
 ## Engines
 GridFire is, at its core, based on a series of `Engines`. These are constructs
 which know how to report information on series of ODEs which need to be solved
-to evolver abundances. The important thing to understand about `Engines` is
+to evolve abundances. The important thing to understand about `Engines` is
 that they contain all the detailed physics GridFire uses. For example a
 `Solver` takes an `Engine` but does not compute physics itself. Rather, it asks
 the `Engine` for stuff like the jacobian matrix, stoichiometry, nuclear energy
@@ -343,6 +440,7 @@ construction and rate evaluations:
     member of the `NetworkBuildDepth` enum or an integer.
   - `partition::PartitionFunction`: Partition function used when evaluating
     detailed balance for inverse rates.
+  - `NetworkConstructionFlags`: A bitwise flag telling the network how to construct itself. That is, what reaction types should be used in construction. For example one might use `NetworkConstructionFlags::STRONG | NetworkConstructionFlags::BETA_PLUS` to use all strong reactions and β+ decay. By Default this is set to use reaclib strong and reaclib weak (no WRL included by default due to current pathological stiffness issues).
 
 - **setPrecomputation(bool precompute):**
   - Enable/disable caching of reaction rates and stoichiometric data at initialization.
@@ -445,7 +543,7 @@ A `NetIn` struct contains
 - The composition to start the timestep at. (`NetIn::composition`)
 - The temperature in Kelvin (`NetIn::temperature`)
 - The density in g/cm^3 (`NetIn::density`)
-- The max time to evolve the network too  in seconds (`NetIn::tMax`)
+- The max time to evolve the network to in seconds (`NetIn::tMax`)
 - The initial timestep to use in seconds (`NetIn::dt0`)
 - The initial energy in the system in ergs (`NetIn::energy`)
 
@@ -472,48 +570,23 @@ A `NetOut` struct contains
 >**Note:** Currently `GraphEngine` only considers energy due to nuclear mass
 >defect and not neutrino loss.
 
+### CVODESolverStrategy
 
-### DirectNetworkSolver (Implicit Rosenbrock Method)
+We use the CVODE module from [SUNDIALS](https://computing.llnl.gov/projects/sundials/cvode) as our primary numerical
+solver. Specifically we use the BDF linear multistep method from that which includes advanced adaptive timestepping.
 
-- **Integrator:** Implicit Rosenbrock4 scheme (order 4) via `Boost.Odeint`’s
-  `rosenbrock4<double>`, optimized for stiff reaction networks with adaptive step
-  size control using configurable absolute and relative tolerances.
-- **Jacobian Assembly:** Asks the base engine for the Jacobian Matrix
-- **RHS Evaluation:** Asks the base engine for RHS of the abundance evolution
-  equations
-- **Linear Algebra:** Utilizes `Boost.uBLAS` for state vectors and dense Jacobian
-  matrices, with sparse access patterns supported via coordinate lists of nonzero
-  entries.
-- **Error Control and Logging:** Absolute and relative tolerance parameters
-  (`absTol`, `relTol`) are read from configuration; Quill loggers, which run in a
-  separate non blocking thread, capture integration diagnostics and step
-  statistics.
+Further, we use a trigger system to periodically repartition the network as the state of the network changes. This
+keeps the stiffness of the network tractable. The algorithm we use for that is
 
-### Algorithmic Workflow in DirectNetworkSolver
-1. **Initialization:** Convert input temperature to T9 units, retrieve
-   tolerances, and initialize state vector `Y` from equilibrated composition.
-2. **Integrator Setup:** Construct the controlled Rosenbrock4 stepper and bind
-   `RHSManager` and `JacobianFunctor`.
-3. **Adaptive Integration Loop:**
-   - Perform `integrate_adaptive` advancing until `tMax`, catching any
-     `StaleEngineTrigger` to repartition the network and update composition.
-   - On each substep, observe states and log via `RHSManager::observe`.
-4. **Finalization:** Assemble final mass fractions, compute accumulated energy,
-   and populate `NetOut` with updated composition and diagnostics.
+1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
+2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
+3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
+4. OR if the number of convergence failures grows more than 100% from one step to the next or exceeds 5 at any given step.
 
-### Future Solver Implementations
-- **Operator Splitting Solvers:** Strategies to decouple thermodynamics,
-  screening, and reaction substeps for performance on stiff, multiscale
-  networks.
-- **GPU-Accelerated Solvers:** Planned use of CUDA/OpenCL backends for
-  large-scale network integration.
-- **Callback observer support:** Currently we use an observer built into our
-  `RHSManager` (`RHSManager::observe`); however, we intend to include support for
-  custom, user defined, observer method.
-
-These strategies can be developed by inheriting from `NetworkSolverStrategy`
-and registering against the same engine types without modifying existing engine
-code.
+Moreover, callback functions can be registered in either python or C++ which will take a `const CVODESolverStrategy::TimestepContext&` struct
+as argument. This allows for more complex logging logic. Note that callbacks **do not** let you reach inside the
+solver and adjust the state of the network. They are only intended for investigation not extension of physics. If you
+wish to extend the physics this must be implemented at the engine or engine view level.
 
 ## Python Extensibility
 Through the Python bindings, users can subclass engine view classes directly in
@@ -554,21 +627,18 @@ int main(){
 ### Composition Initialization
 ```c++
 #include "fourdst/composition/composition.h"
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
 #include <vector>
 #include <string>
 
 #include <iostream>
 
 int main() {
-    fourdst::composition::Composition comp;
 
     std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
     std::vector<double> massFractions = {0.7, 0.29, 0.01};
-
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
-
-    comp.finalize(true);
+    
+    const fourdst::composition::Composition comp = fourdst::composition::buildCompositionFromMassFractions(symbols, massFractions);
 
     std::cout << comp << std::endl;
 }
@@ -580,21 +650,23 @@ A representative workflow often composes multiple engine views to balance
 accuracy, stability, and performance when integrating stiff nuclear networks:
 
 ```c++
-#include "gridfire/engine/engine.h" // Unified header for real usage
-#include "gridfire/solver/solver.h" // Unified header for solvers
+#include "gridfire/gridfire.h" // Unified header for real usage
+
 #include "fourdst/composition/composition.h"
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
 
 int main(){
     // 1. Define initial composition
-    fourdst::composition::Composition comp;
-
-    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> massFractions = {0.7, 0.29, 0.01};
-
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
-
-    comp.finalize(true);
+    std::unordered_map<std::string, double> initialMassFractions = {
+        {"H-1", 0.7},
+        {"He-4", 0.29},
+        {"C-12", 0.01}
+    };
+    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(initialMassFractions);
+    
+    // In this example we will not use the policy module (for sake of demonstration of what is happening under the hood)
+    //  however, for end users we **strongly** recommend using the policy module to construct engines. It will
+    //  ensure that you are not missing important reactions or seed species.
 
     // 2. Create base network engine (full reaction graph)
     gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
@@ -606,7 +678,7 @@ int main(){
     gridfire::AdaptiveEngineView adaptView(msView);
 
     // 5. Construct implicit solver (handles remaining stiffness)
-    gridfire::DirectNetworkSolver solver(adaptView);
+    gridfire::CVODESolverStrategey solver(adaptView);
 
     // 6. Prepare input conditions
     NetIn input{
@@ -623,35 +695,22 @@ int main(){
 }
 ```
 
-#### Workflow Components and Effects
-- **GraphEngine** constructs the full reaction network, capturing all species
-  and reactions.
-- **MultiscalePartitioningEngineView** segregates reactions by characteristic
-  timescales (Hix & Thielemann), reducing the effective stiffness by treating
-  fast processes separately.
-- **AdaptiveEngineView** prunes low-flux species/reactions at runtime,
-  decreasing dimensionality and improving computational efficiency.
-- **DirectNetworkSolver** employs an implicit Rosenbrock method to stably
-  integrate the remaining stiff system with adaptive step control.
-
-This layered approach enhances stability for stiff networks while maintaining
-accuracy and performance.
-
-### Callback Example
+### Callback and Policy Example
 Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide
 different context to the callback function, you should use the struct `gridfire::solver::<SolverName>::TimestepContext`
 as the argument type for the callback function. This struct contains all the information provided by that solver to
 the callback function.
 
 ```c++
-#include "gridfire/engine/engine.h" // Unified header for real usage
-#include "gridfire/solver/solver.h" // Unified header for solvers
-#include "fourdst/composition/composition.h"
-#include "fourdst/atomic/species.h"
+#include "gridfire/gridfire.h" // Unified header for real usage
+
+#include "fourdst/composition/composition.h" // for Composition
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
+#include "fourdst/atomic/species.h" // For strongly typed species
 
 #include <iostream>
 
-void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& context) {
+void callback(const gridfire::solver::CVODESolverStrategy::TimestepContext& context) {
     int H1Index = context.engine.getSpeciesIndex(fourdst::atomic::H_1);
     int He4Index = context.engine.getSpeciesIndex(fourdst::atomic::He_4);
 
@@ -659,32 +718,19 @@ void callback(const gridfire::solver::DirectNetworkSolver::TimestepContext& cont
 }
 
 int main(){
-    // 1. Define initial composition
-    fourdst::composition::Composition comp;
-
     std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> massFractions = {0.7, 0.29, 0.01};
+    std::vector<double> X = {0.7, 0.29, 0.01};
 
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
 
-    comp.finalize(true);
-
-    // 2. Create base network engine (full reaction graph)
-    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
-
-    // 3. Partition network into fast/slow subsets (reduces stiffness)
-    gridfire::MultiscalePartitioningEngineView msView(baseEngine);
-
-    // 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
-    gridfire::AdaptiveEngineView adaptView(msView);
-
-    // 5. Construct implicit solver (handles remaining stiffness)
-    gridfire::DirectNetworkSolver solver(adaptView);
+    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);
+    gridfire::policy::MainSequencePolicy stellarPolicy(netIn.composition);
+    gridfire::engine::DynamicEngine& engine = stellarPolicy.construct();
+    
+    gridfire::solver::CVODESolverStrategy solver(adaptView);
     solver.set_callback(callback);
 
     // 6. Prepare input conditions
-    NetIn input{
+    gridfire::NetIn input{
         comp,     // composition
         1.5e7,      // temperature [K]
         1.5e2,      // density [g/cm^3]
@@ -693,21 +739,38 @@ int main(){
     };
 
     // 7. Execute integration
-    NetOut output = solver.evaluate(input);
+    gridfire::NetOut output = solver.evaluate(input);
     std::cout << "Final results are: " << output << std::endl;
 }
 ```
+>**Note:** If you want to see exactly why each repartitioning stage was triggered in a human readable manner add the flag True to `solver.evaluate` (`solver.evaluate(input, true)`).
 
 >**Note:** A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.
 
 >**Note:** The order of species in the boost state vector (`ctx.state`) is **not guaranteed** to be any particular order run over run. Therefore, in order to reliably extract
 > values from it, you **must** use the `getSpeciesIndex` method of the engine to get the index of the species you are interested in (these will always be in the same order).
 
+If you wish to know what is provided by a solver context without investigating the code you can simply do
+
+```c++
+void callback(const gridfire::solver::SolverContextBase& context) {
+    for (const auto& [parameterName, description] : context.describe()) {
+        std::cout << parameterName << ": " << description << "\n";
+    }
+    std::cout << std::flush();
+    exit(0);
+}
+```
+
+If you set this as the callback (to any solver strategy) it will print out the available parameters and what they
+are and then close the code. This is useful when writing new callbacks.
+
+
 #### Callback Context
 
 Since each solver may provide different context to the callback function, and it may be frustrating to refer to the
 documentation every time, we also enforce that all solvers must implement a `descripe_callback_context` method which
-returns a vector of tuples<string, string> where the first element is the name of the field and the second is its 
+returns a vector of tuples<string, string> where the first element is the name of the field and the second is its
 datatype. It is on the developer to ensure that this information is accurate.
 
 ```c++
@@ -724,103 +787,114 @@ with imports of modules such that
 
 All GridFire C++ types have been bound and can be passed around as one would expect.
 
-### Common Workflow Example
-This example implements the same logic as the above C++ example
+
+### Python Example for End Users
+
+
+The syntax for registration is very similar to C++. There are a few things to note about this more robust example
+
+1. Note how I use a callback and a log object to store the state of the simulation at each timestep.
+2. If you have tools such as mypy installed you will see that the python bindings are strongly typed. This is
+   intentional to help users avoid mistakes when writing code.
 ```python
-from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import DirectNetworkSolver
-from gridfire.type import NetIn
-
 from fourdst.composition import Composition
+from gridfire.type import NetIn
+from gridfire.policy import MainSequencePolicy
+from gridfire.solver import CVODESolverStrategy
+from enum import Enum
+from typing import Dict, Union, SupportsFloat
+import json
+import dicttoxml
 
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
-X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+def init_composition() -> Composition:
+  Y = [7.0262E-01, 9.7479E-06, 6.8955E-02, 2.5000E-04, 7.8554E-05, 6.0144E-04, 8.1031E-05, 2.1513E-05] # Note these are molar abundances
+  S = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
+  return Composition(S, Y)
+
+def init_netIn(temp: float, rho: float, time: float, comp: Composition) -> NetIn:
+  netIn = NetIn()
+  netIn.temperature = temp
+  netIn.density = rho
+  netIn.tMax = time
+  netIn.dt0 = 1e-12
+  netIn.composition = comp
+  return netIn
+
+class StepData(Enum):
+  TIME = 0
+  DT = 1
+  COMP = 2
+  CONTRIB = 3
 
 
-comp = Composition()
-comp.registerSymbol(symbols)
-comp.setMassFraction(symbols, X)
-comp.finalize(True)
+class StepLogger:
+  def __init__(self):
+    self.num_steps: int = 0
+    self.step_data: Dict[int, Dict[StepData, Union[SupportsFloat, Dict[str, SupportsFloat]]]] = {}
 
-print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
+  def log_step(self, context):
+    engine = context.engine
+    self.step_data[self.num_steps] = {}
+    self.step_data[self.num_steps][StepData.TIME] = context.t
+    self.step_data[self.num_steps][StepData.DT] = context.dt
+    comp_data: Dict[str, SupportsFloat] = {}
+    for species in engine.getNetworkSpecies():
+      sid = engine.getSpeciesIndex(species)
+      comp_data[species.name()] = context.state[sid]
+    self.step_data[self.num_steps][StepData.COMP] = comp_data
+    self.num_steps += 1
 
-netIn = NetIn()
-netIn.composition = comp
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.tMax = 1e-9
-netIn.dt0 = 1e-12
+  def to_json (self, filename: str):
+    serializable_data = {
+      stepNum: {
+        StepData.TIME.name: step[StepData.TIME],
+        StepData.DT.name: step[StepData.DT],
+        StepData.COMP.name: step[StepData.COMP],
+      }
+      for stepNum, step in self.step_data.items()
+    }
+    with open(filename, 'w') as f:
+      json.dump(serializable_data, f, indent=4)
 
-baseEngine = GraphEngine(netIn.composition, 2)
-baseEngine.setUseReverseReactions(False)
+  def to_xml(self, filename: str):
+    serializable_data = {
+      stepNum: {
+        StepData.TIME.name: step[StepData.TIME],
+        StepData.DT.name: step[StepData.DT],
+        StepData.COMP.name: step[StepData.COMP],
+      }
+      for stepNum, step in self.step_data.items()
+    }
+    xml_data = dicttoxml.dicttoxml(serializable_data, custom_root='StepLog', attr_type=False)
+    with open(filename, 'wb') as f:
+      f.write(xml_data)
 
-qseEngine = MultiscalePartitioningEngineView(baseEngine)
+def main(temp: float, rho: float, time: float):
+  comp = init_composition()
+  netIn = init_netIn(temp, rho, time, comp)
 
-adaptiveEngine = AdaptiveEngineView(qseEngine)
+  policy = MainSequencePolicy(comp)
+  engine = policy.construct()
 
-solver = DirectNetworkSolver(adaptiveEngine)
+  solver = CVODESolverStrategy(engine)
 
-results = solver.evaluate(netIn)
+  step_logger = StepLogger()
+  solver.set_callback(lambda context: step_logger.log_step(context))
 
-print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
+  solver.evaluate(netIn, False)
+  step_logger.to_xml("log_data.xml")
+
+if __name__ == "__main__":
+  import argparse
+  parser = argparse.ArgumentParser(description="Simple python example of GridFire usage")
+  parser.add_argument("-t", "--temp", type=float, help="Temperature in K", default=1.5e7)
+  parser.add_argument("-r", "--rho", type=float, help="Density in g/cm^3", default=1.5e2)
+  parser.add_argument("--tMax", type=float, help="Time in s", default=3.1536 * 1e17)
+  args = parser.parse_args()
+  main(args.temp, args.rho, args.tMax)
+
 ```
 
-### Python callbacks
-
-Just like in C++, python users can register callbacks to be called at the end of each successful timestep. Note that
-these may slow down code significantly as the interpreter needs to jump up into the slower python code therefore these
-should likely only be used for debugging purposes.
-
-The syntax for registration is very similar to C++
-```python
-from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import DirectNetworkSolver
-from gridfire.type import NetIn
-
-from fourdst.composition import Composition
-from fourdst.atomic import species
-
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
-X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
-
-
-comp = Composition()
-comp.registerSymbol(symbols)
-comp.setMassFraction(symbols, X)
-comp.finalize(True)
-
-print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
-
-netIn = NetIn()
-netIn.composition = comp
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.tMax = 1e-9
-netIn.dt0 = 1e-12
-
-baseEngine = GraphEngine(netIn.composition, 2)
-baseEngine.setUseReverseReactions(False)
-
-qseEngine = MultiscalePartitioningEngineView(baseEngine)
-
-adaptiveEngine = AdaptiveEngineView(qseEngine)
-
-solver = DirectNetworkSolver(adaptiveEngine)
-
-
-def callback(context):
-    H1Index = context.engine.getSpeciesIndex(species["H-1"])
-    He4Index = context.engine.getSpeciesIndex(species["He-4"])
-    C12ndex = context.engine.getSpeciesIndex(species["C-12"])
-    Mgh24ndex = context.engine.getSpeciesIndex(species["Mg-24"])
-    print(f"Time: {context.t}, H-1: {context.state[H1Index]}, He-4: {context.state[He4Index]}, C-12: {context.state[C12ndex]}, Mg-24: {context.state[Mgh24ndex]}")
-
-solver.set_callback(callback)
-results = solver.evaluate(netIn)
-
-print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
-
-```
 
 
 # Related Projects
