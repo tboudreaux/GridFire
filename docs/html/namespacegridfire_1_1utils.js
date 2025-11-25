@@ -11,6 +11,7 @@ var namespacegridfire_1_1utils =
       [ "KINSOL", "namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04ea78689531838e490ef6bb41a3b5c43b7d", null ]
     ] ],
     [ "check_cvode_flag", "namespacegridfire_1_1utils.html#ab9d0cfc158090ca9ed09646d407b04f2", null ],
+    [ "check_sundials_flag", "namespacegridfire_1_1utils.html#a71be80c2e36e5436cddcad795d61a0d7", null ],
     [ "format_table", "namespacegridfire_1_1utils.html#a6451ba6762273b91a8281043cfaa5d2a", null ],
     [ "format_table", "namespacegridfire_1_1utils.html#a2eed085058abdb9d7fbbdb9647b98323", null ],
     [ "formatNuclearTimescaleLogString", "namespacegridfire_1_1utils.html#a3d0646bcc1a6fd8df22ac0c758bfd5c4", null ],

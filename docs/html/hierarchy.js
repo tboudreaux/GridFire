@@ -13,15 +13,11 @@ var hierarchy =
     [ "gridfire::rates::weak::WeakReaction::constants", "structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html", null ],
     [ "gridfire::solver::CVODESolverStrategy::CVODERHSOutputData", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_c_v_o_d_e_r_h_s_output_data.html", null ],
     [ "gridfire::solver::CVODESolverStrategy::CVODEUserData", "structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_c_v_o_d_e_user_data.html", null ],
-    [ "gridfire::DynamicEngine", null, [
-      [ "PyDynamicEngine", "class_py_dynamic_engine.html", null ]
-    ] ],
     [ "gridfire::engine::EnergyDerivatives", "structgridfire_1_1engine_1_1_energy_derivatives.html", null ],
-    [ "gridfire::Engine", null, [
-      [ "PyEngine", "class_py_engine.html", null ]
-    ] ],
     [ "gridfire::engine::Engine", "classgridfire_1_1engine_1_1_engine.html", [
+      [ "PyEngine", "class_py_engine.html", null ],
       [ "gridfire::engine::DynamicEngine", "classgridfire_1_1engine_1_1_dynamic_engine.html", [
+        [ "PyDynamicEngine", "class_py_dynamic_engine.html", null ],
         [ "gridfire::engine::AdaptiveEngineView", "classgridfire_1_1engine_1_1_adaptive_engine_view.html", null ],
         [ "gridfire::engine::DefinedEngineView", "classgridfire_1_1engine_1_1_defined_engine_view.html", [
           [ "gridfire::engine::FileDefinedEngineView", "classgridfire_1_1engine_1_1_file_defined_engine_view.html", null ],
@@ -32,14 +28,16 @@ var hierarchy =
       ] ]
     ] ],
     [ "gridfire::engine::EngineView< EngineT >", "classgridfire_1_1engine_1_1_engine_view.html", null ],
-    [ "gridfire::EngineView", null, [
-      [ "PyDynamicEngineView", "class_py_dynamic_engine_view.html", null ],
-      [ "PyEngineView", "class_py_engine_view.html", null ]
-    ] ],
     [ "gridfire::engine::EngineView< DynamicEngine >", "classgridfire_1_1engine_1_1_engine_view.html", [
       [ "gridfire::engine::AdaptiveEngineView", "classgridfire_1_1engine_1_1_adaptive_engine_view.html", null ],
       [ "gridfire::engine::DefinedEngineView", "classgridfire_1_1engine_1_1_defined_engine_view.html", null ],
       [ "gridfire::engine::MultiscalePartitioningEngineView", "classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html", null ]
+    ] ],
+    [ "gridfire::engine::EngineView< gridfire::engine::DynamicEngine >", "classgridfire_1_1engine_1_1_engine_view.html", [
+      [ "PyDynamicEngineView", "class_py_dynamic_engine_view.html", null ]
+    ] ],
+    [ "gridfire::engine::EngineView< gridfire::engine::Engine >", "classgridfire_1_1engine_1_1_engine_view.html", [
+      [ "PyEngineView", "class_py_engine_view.html", null ]
     ] ],
     [ "std::exception", null, [
       [ "gridfire::exceptions::GridFireError", "classgridfire_1_1exceptions_1_1_grid_fire_error.html", [
@@ -97,6 +95,7 @@ var hierarchy =
     ] ],
     [ "gridfire::engine::NetworkJacobian", "classgridfire_1_1engine_1_1_network_jacobian.html", null ],
     [ "gridfire::policy::NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", [
+      [ "PyNetworkPolicy", "class_py_network_policy.html", null ],
       [ "gridfire::policy::MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html", null ]
     ] ],
     [ "gridfire::solver::NetworkSolverStrategy< EngineT >", "classgridfire_1_1solver_1_1_network_solver_strategy.html", null ],
@@ -132,6 +131,7 @@ var hierarchy =
       [ "gridfire::reaction::ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", null ]
     ] ],
     [ "gridfire::policy::ReactionChainPolicy", "classgridfire_1_1policy_1_1_reaction_chain_policy.html", [
+      [ "PyReactionChainPolicy", "class_py_reaction_chain_policy.html", null ],
       [ "gridfire::policy::MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", [
         [ "gridfire::policy::CNOChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_chain_policy.html", null ],
         [ "gridfire::policy::HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", null ],

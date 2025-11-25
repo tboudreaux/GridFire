@@ -159,7 +159,9 @@ var annotated_dup =
     [ "PyEngine", "class_py_engine.html", "class_py_engine" ],
     [ "PyEngineView", "class_py_engine_view.html", "class_py_engine_view" ],
     [ "PyNetworkFileParser", "class_py_network_file_parser.html", "class_py_network_file_parser" ],
+    [ "PyNetworkPolicy", "class_py_network_policy.html", "class_py_network_policy" ],
     [ "PyPartitionFunction", "class_py_partition_function.html", "class_py_partition_function" ],
+    [ "PyReactionChainPolicy", "class_py_reaction_chain_policy.html", "class_py_reaction_chain_policy" ],
     [ "PyScreening", "class_py_screening.html", "class_py_screening" ],
     [ "PySolverContextBase", "class_py_solver_context_base.html", "class_py_solver_context_base" ],
     [ "SolverPluginInterface", "class_solver_plugin_interface.html", "class_solver_plugin_interface" ]

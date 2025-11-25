@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['bindings_2ecpp_0',['bindings.cpp',['../bindings_8cpp.html',1,'(Global Namespace)'],['../engine_2bindings_8cpp.html',1,'(Global Namespace)'],['../exceptions_2bindings_8cpp.html',1,'(Global Namespace)'],['../expectations_2bindings_8cpp.html',1,'(Global Namespace)'],['../io_2bindings_8cpp.html',1,'(Global Namespace)'],['../partition_2bindings_8cpp.html',1,'(Global Namespace)'],['../reaction_2bindings_8cpp.html',1,'(Global Namespace)'],['../screening_2bindings_8cpp.html',1,'(Global Namespace)'],['../solver_2bindings_8cpp.html',1,'(Global Namespace)'],['../types_2bindings_8cpp.html',1,'(Global Namespace)'],['../utils_2bindings_8cpp.html',1,'(Global Namespace)']]],
-  ['bindings_2eh_1',['bindings.h',['../engine_2bindings_8h.html',1,'(Global Namespace)'],['../exceptions_2bindings_8h.html',1,'(Global Namespace)'],['../expectations_2bindings_8h.html',1,'(Global Namespace)'],['../io_2bindings_8h.html',1,'(Global Namespace)'],['../partition_2bindings_8h.html',1,'(Global Namespace)'],['../reaction_2bindings_8h.html',1,'(Global Namespace)'],['../screening_2bindings_8h.html',1,'(Global Namespace)'],['../solver_2bindings_8h.html',1,'(Global Namespace)'],['../types_2bindings_8h.html',1,'(Global Namespace)'],['../utils_2bindings_8h.html',1,'(Global Namespace)']]],
-  ['building_2eh_2',['building.h',['../building_8h.html',1,'']]]
+  ['_5f_5finit_5f_5f_2epy_0',['__init__.py',['../____init_____8py.html',1,'']]]
 ];

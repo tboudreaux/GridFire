@@ -15,7 +15,9 @@ var searchData=
   ['pyengineview_12',['PyEngineView',['../class_py_engine_view.html',1,'']]],
   ['pyfunctiondef_13',['PyFunctionDef',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html',1,'gridfire::io::gen']]],
   ['pynetworkfileparser_14',['PyNetworkFileParser',['../class_py_network_file_parser.html',1,'']]],
-  ['pypartitionfunction_15',['PyPartitionFunction',['../class_py_partition_function.html',1,'']]],
-  ['pyscreening_16',['PyScreening',['../class_py_screening.html',1,'']]],
-  ['pysolvercontextbase_17',['PySolverContextBase',['../class_py_solver_context_base.html',1,'']]]
+  ['pynetworkpolicy_15',['PyNetworkPolicy',['../class_py_network_policy.html',1,'']]],
+  ['pypartitionfunction_16',['PyPartitionFunction',['../class_py_partition_function.html',1,'']]],
+  ['pyreactionchainpolicy_17',['PyReactionChainPolicy',['../class_py_reaction_chain_policy.html',1,'']]],
+  ['pyscreening_18',['PyScreening',['../class_py_screening.html',1,'']]],
+  ['pysolvercontextbase_19',['PySolverContextBase',['../class_py_solver_context_base.html',1,'']]]
 ];

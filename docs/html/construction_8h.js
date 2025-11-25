@@ -2,16 +2,15 @@ var construction_8h =
 [
     [ "gridfire::engine::NetworkConstructionFlags", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9", [
       [ "gridfire::engine::NetworkConstructionFlags::NONE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::STRONG", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::BETA_MINUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::BETA_PLUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::ELECTRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::POSITRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d", null ],
+      [ "gridfire::engine::NetworkConstructionFlags::REACLIB_STRONG", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1", null ],
+      [ "gridfire::engine::NetworkConstructionFlags::WRL_BETA_MINUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4", null ],
+      [ "gridfire::engine::NetworkConstructionFlags::WRL_BETA_PLUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a", null ],
+      [ "gridfire::engine::NetworkConstructionFlags::WRL_ELECTRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e", null ],
+      [ "gridfire::engine::NetworkConstructionFlags::WRL_POSITRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955", null ],
       [ "gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692", null ],
       [ "gridfire::engine::NetworkConstructionFlags::WRL_WEAK", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4", null ],
       [ "gridfire::engine::NetworkConstructionFlags::REACLIB", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::DEFAULT", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
-      [ "gridfire::engine::NetworkConstructionFlags::ALL", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d", null ]
+      [ "gridfire::engine::NetworkConstructionFlags::DEFAULT", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee", null ]
     ] ],
     [ "gridfire::engine::build_nuclear_network", "namespacegridfire_1_1engine.html#a7b64607db49cfc042cbee63be5351549", null ],
     [ "gridfire::engine::has_flag", "namespacegridfire_1_1engine.html#a7377e1152d165cfb9eadc16c5dc2f492", null ],

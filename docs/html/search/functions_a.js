@@ -10,9 +10,10 @@ var searchData=
   ['mapviewtofull_7',['mapViewToFull',['../classgridfire_1_1engine_1_1_defined_engine_view.html#aa352f3ba0e689d3f81711c17f4f67dfc',1,'gridfire::engine::DefinedEngineView']]],
   ['mapviewtofullreactionindex_8',['mapViewToFullReactionIndex',['../classgridfire_1_1engine_1_1_defined_engine_view.html#afa9aeb6d11645e4b9cecf56fb63b51ef',1,'gridfire::engine::DefinedEngineView']]],
   ['mapviewtofullspeciesindex_9',['mapViewToFullSpeciesIndex',['../classgridfire_1_1engine_1_1_defined_engine_view.html#ad6986fa5cda1d9ed9d4f54f444f402e8',1,'gridfire::engine::DefinedEngineView']]],
-  ['mesanetworkfileparser_10',['MESANetworkFileParser',['../classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ac5963d0da6780de753df996b490f8d2c',1,'gridfire::io::MESANetworkFileParser']]],
-  ['mix_5fspecies_11',['mix_species',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#a464d24a4cacff96a2be567ce461c8404',1,'gridfire::utils::hashing::reaction']]],
-  ['multireactionchainpolicy_12',['MultiReactionChainPolicy',['../classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ab0e3ba293b5e52d595dfa02db4fcbee7',1,'gridfire::policy::MultiReactionChainPolicy']]],
-  ['multiscalepartitioningengineview_13',['MultiscalePartitioningEngineView',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a0a500b19283ad3dd654ca4c4646b2604',1,'gridfire::engine::MultiscalePartitioningEngineView']]],
-  ['multiset_5fcombine_14',['multiset_combine',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#abd97bcaba4cc049e7f6974a4df5d824a',1,'gridfire::utils::hashing::reaction']]]
+  ['merge_5fcoupled_5fgroups_10',['merge_coupled_groups',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a4da0432598ecb0415b70b94d8300d3ef',1,'gridfire::engine::MultiscalePartitioningEngineView']]],
+  ['mesanetworkfileparser_11',['MESANetworkFileParser',['../classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html#ac5963d0da6780de753df996b490f8d2c',1,'gridfire::io::MESANetworkFileParser']]],
+  ['mix_5fspecies_12',['mix_species',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#a464d24a4cacff96a2be567ce461c8404',1,'gridfire::utils::hashing::reaction']]],
+  ['multireactionchainpolicy_13',['MultiReactionChainPolicy',['../classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ab0e3ba293b5e52d595dfa02db4fcbee7',1,'gridfire::policy::MultiReactionChainPolicy']]],
+  ['multiscalepartitioningengineview_14',['MultiscalePartitioningEngineView',['../classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a0a500b19283ad3dd654ca4c4646b2604',1,'gridfire::engine::MultiscalePartitioningEngineView']]],
+  ['multiset_5fcombine_15',['multiset_combine',['../namespacegridfire_1_1utils_1_1hashing_1_1reaction.html#abd97bcaba4cc049e7f6974a4df5d824a',1,'gridfire::utils::hashing::reaction']]]
 ];

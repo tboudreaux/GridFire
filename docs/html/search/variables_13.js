@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['z_0',['Z',['../structgridfire_1_1rates_1_1weak_1_1_rate_data_row.html#a318b62e183dcb49c04260832454fa721',1,'gridfire::rates::weak::RateDataRow']]],
-  ['z_1',['z',['../structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record.html#abb1416e2d8d4d27264c9eece547006b6',1,'gridfire::partition::record::RauscherThielemannPartitionDataRecord']]]
+  ['valid_5fgroups_0',['valid_groups',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html#a0eb57bc4fe8ca0c9b60b769c9e1fadba',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
+  ['validatedgroupreactions_1',['validatedGroupReactions',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html#a0e6e189fbd53ec2f47d2cef21b9a1792',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
+  ['value_2',['value',['../structgridfire_1_1trigger_1_1_trigger_result.html#a372af12d705b623075c41872f3ec96e1',1,'gridfire::trigger::TriggerResult']]]
 ];

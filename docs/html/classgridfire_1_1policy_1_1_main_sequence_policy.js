@@ -10,7 +10,7 @@ var classgridfire_1_1policy_1_1_main_sequence_policy =
     [ "get_partition_function", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a8dbef0e799968af4103e184b6e30c221", null ],
     [ "get_seed_reactions", "classgridfire_1_1policy_1_1_main_sequence_policy.html#adcefccb171b339350a9b4a61d89adbbc", null ],
     [ "get_seed_species", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a041b0a99120efdc6abae312c568a9e15", null ],
-    [ "getStatus", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a0d0c9018ae33bc795030d82e169a2e8d", null ],
+    [ "get_status", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a1ecfb6ea2e18e8cf55228f80ee5c50ed", null ],
     [ "name", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a6520ddfead2ba2700e2b1329774b4ff6", null ],
     [ "m_initializing_composition", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a9b55ccd1a059ede5127b07a18274f6e9", null ],
     [ "m_network_stack", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a0416e55a72362487212a92b3d18dfb14", null ],

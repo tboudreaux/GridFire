@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -113,7 +113,7 @@ $(function(){initNavTree('classgridfire_1_1engine_1_1_dynamic_engine.html',''); 
 <div class="dynheader">
 Inheritance diagram for gridfire::engine::DynamicEngine:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1engine_1_1_dynamic_engine__inherit__graph.svg" width="100%" height="474"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1engine_1_1_dynamic_engine__inherit__graph.svg" width="100%" height="511"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for gridfire::engine::DynamicEngine:</div>
@@ -255,7 +255,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html" title="Structure holding derivatives of energy generation rate with respect to T and rho.">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
 <p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a17bbc9c0d480a8533acb193cb9a46fea">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2a866a7ba9572d36efab8efe72a063f5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac7e4624ed6eee72e7a8df42381d098bb">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ac720fcea2f0304c3d7e7ba8a6dfb84da">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a17bbc9c0d480a8533acb193cb9a46fea">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2a866a7ba9572d36efab8efe72a063f5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac7e4624ed6eee72e7a8df42381d098bb">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ac720fcea2f0304c3d7e7ba8a6dfb84da">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6832a7898da51017a20f578e33cba729">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -309,7 +309,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
 <p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5bd0174105e836dd98c71ab495357e5b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2f0ad1febc467bce87b5c6ad29b059fb">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aaff9cdc04ca01e7c927d36476bcf5da4">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#af030c9bd6a95686a09429b4619ad188c">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5bd0174105e836dd98c71ab495357e5b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2f0ad1febc467bce87b5c6ad29b059fb">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aaff9cdc04ca01e7c927d36476bcf5da4">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#af030c9bd6a95686a09429b4619ad188c">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a8facba88b6df6e016ce53a0ff3cff125">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -359,7 +359,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>An updated composition which is a superset of comp. This may contain species which were culled, for example, by either QSE partitioning or reaction flow rate culling </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a77d4c08eecfad5cc414161d0fc8db946">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a25dc44af1a58561b665103b16abe9bbc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae9d4d99c791876c012697fe5a0ba06c8">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a97d9616558f681ad010ee452394f3519">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a77d4c08eecfad5cc414161d0fc8db946">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a25dc44af1a58561b665103b16abe9bbc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae9d4d99c791876c012697fe5a0ba06c8">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a97d9616558f681ad010ee452394f3519">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a239826d90cb5db236e68230f7ac84bcb">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -406,7 +406,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state. The matrix can then be accessed via getJacobianMatrixEntry(). </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a2a44dfae512b370bad6b977330e0636a">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4d90439d99da61107d95319b970760bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a9ca013f203d7a3ef9d1b9ee4b2982cb0">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a8950fb9c0c36684538805de4f0acf82e">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a2a44dfae512b370bad6b977330e0636a">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4d90439d99da61107d95319b970760bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a9ca013f203d7a3ef9d1b9ee4b2982cb0">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a8950fb9c0c36684538805de4f0acf82e">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a298f700c647d2c3973d2a35d370c823e">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -460,7 +460,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state using automatic differentiation, taking into account the provided sparsity pattern. The matrix can then be accessed via <code>getJacobianMatrixEntry()</code>.</p>
 <dl class="section see"><dt>See also</dt><dd>getJacobianMatrixEntry() </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ae894f46c67a8b8e02b8988a6b73dc9e5">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1de5867a0e633de0d0d96ac4fbb141e5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac4f9cd4e2304f681dd9af0f7b751cb81">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a64b6e7e5794cc42edf72899d348d15af">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ae894f46c67a8b8e02b8988a6b73dc9e5">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1de5867a0e633de0d0d96ac4fbb141e5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac4f9cd4e2304f681dd9af0f7b751cb81">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a64b6e7e5794cc42edf72899d348d15af">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a204643754cac3cf37c550ecd32f659fe">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -513,7 +513,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state, considering only the specified subset of active species. The matrix can then be accessed via getJacobianMatrixEntry(). </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a1b7b3b0b449d0859d57f99188cdd83d6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4966f8cbc859ce2a8a465516d0c0abd0">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc28ff627d46d8d4066a1acf830cbe27">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aae6c00cff4f7a992513d1e9481436f8f">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a1b7b3b0b449d0859d57f99188cdd83d6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4966f8cbc859ce2a8a465516d0c0abd0">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc28ff627d46d8d4066a1acf830cbe27">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aae6c00cff4f7a992513d1e9481436f8f">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2b1c054b250abccc2af9a7275c68df4a">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -543,7 +543,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Generate the stoichiometry matrix for the network. </p>
 <p>This method must compute and store the stoichiometry matrix, which encodes the net change of each species in each reaction. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a754445722193f11ae534b7c0afa9b8aa">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#af4049e5570bd143d41cab1d4005b6824">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a2221feee40542efa1c07f01225bd3828">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a552fa7e1f4e066fa577c55500e782014">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a754445722193f11ae534b7c0afa9b8aa">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#af4049e5570bd143d41cab1d4005b6824">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a2221feee40542efa1c07f01225bd3828">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a552fa7e1f4e066fa577c55500e782014">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2066649ca11a869c054079ea12d8d0e9">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -574,7 +574,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>The depth of the network, which may indicate the level of detail or complexity in the reaction network.</dd></dl>
 <p>This method is intended to provide information about the network's structure, such as how many layers of reactions or species are present. It can be useful for diagnostics and understanding the network's complexity. </p>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ab29d6c4a7c789cf3d75767833c80c658">gridfire::engine::GraphEngine</a>.</p>
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ab29d6c4a7c789cf3d75767833c80c658">gridfire::engine::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a541cf022fe3253279f8f1309c10556d7">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -604,7 +604,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Get the set of logical reactions in the network. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the LogicalReactionSet containing all reactions. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a722ea6e07d46f739c29ad681c7500f8c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a81732c1b2d08451849c1ddf833246892">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a749cc482a707cb3a38bdd5de894716e2">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a9dc9de4359beb704b94024f159ae619d">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a722ea6e07d46f739c29ad681c7500f8c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a81732c1b2d08451849c1ddf833246892">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a749cc482a707cb3a38bdd5de894716e2">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a9dc9de4359beb704b94024f159ae619d">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a1d5143640666631501cf229bc491516e">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -637,7 +637,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> screening_types.h:15</div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#acbd5b36262fa7d40f3274f4be6f0b8f6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a413b111f6a643d7aecbae01dd0f82640">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a62c6f3bebe931bcd412fb492deb634a5">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#accdd09720d44cc5efb1ee267706f0500">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#acbd5b36262fa7d40f3274f4be6f0b8f6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a413b111f6a643d7aecbae01dd0f82640">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a62c6f3bebe931bcd412fb492deb634a5">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#accdd09720d44cc5efb1ee267706f0500">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#ab4cfdca5e15957c5cef75ffa6dedeee5">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -685,7 +685,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>Map from Species to their destruction timescales (s).</dd></dl>
 <p>This method estimates the destruction timescale for each species, which can be useful for understanding reaction flows and equilibrium states. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a420666d17650736e20402514294f9a14">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab051d976dbecf325747d54efe7834d04">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae026bc87dc8b24fd78d412ac7e58b148">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a27d68f2e6c4572445cd94dc472470a01">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a420666d17650736e20402514294f9a14">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab051d976dbecf325747d54efe7834d04">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae026bc87dc8b24fd78d412ac7e58b148">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a27d68f2e6c4572445cd94dc472470a01">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a8d34faa3d6ea804a3467979858d33535">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -721,7 +721,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method allows querying the index of a specific species in the engine's internal representation. It is useful for accessing species data efficiently. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ad7a82578006e5c55ca7716e7ab7e710c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#afb3c67ce20746b9acb2766920b8f397b">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ad67b0022cc783e63ae1954a04c4a68e1">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ae0c02c830cf45568a7c4d35d4ed15e95">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ad7a82578006e5c55ca7716e7ab7e710c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#afb3c67ce20746b9acb2766920b8f397b">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ad67b0022cc783e63ae1954a04c4a68e1">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ae0c02c830cf45568a7c4d35d4ed15e95">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a95d10a7b240d543a1bc6c67ddf2dc8e0">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -758,7 +758,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3" title="Enumerates the status of a species in the simulation.">SpeciesStatus</a> indicating whether the species is active, inactive, or culled.</dd></dl>
 <p>This method allows querying the current status of a specific species within the engine's network. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5166197fd61060b2a9a445f707ee871b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a65af092785759559f4697c7e66bef2e3">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#afe93df16c69e7e10658c82874759dd2f">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aec5ebaccf625e39d0fa6c1330855d008">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5166197fd61060b2a9a445f707ee871b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a65af092785759559f4697c7e66bef2e3">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#afe93df16c69e7e10658c82874759dd2f">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aec5ebaccf625e39d0fa6c1330855d008">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2947824dca9662e113153de5c6516609">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -806,7 +806,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>Map from Species to their characteristic timescales (s).</dd></dl>
 <p>This method estimates the timescale for abundance change of each species, which can be used for timestep control, diagnostics, and reaction network culling. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ade5dad29a79209e677b259a9b28c5133">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1edda1a27247480660cf7a63410f5799">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a3c9b57d2842b6b5535313be845ca6175">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a86390e410db48addfe8dbd094743c38e">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ade5dad29a79209e677b259a9b28c5133">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1edda1a27247480660cf7a63410f5799">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a3c9b57d2842b6b5535313be845ca6175">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a86390e410db48addfe8dbd094743c38e">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a71678a567bb0cedd8a97aff9ceddd814">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -848,7 +848,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>Stoichiometric coefficient for the species in the reaction.</dd></dl>
 <p>The stoichiometry matrix must have been generated by <a class="el" href="#a5e2c45a3e415b53e41def8f743f93464" title="Generate the stoichiometry matrix for the network.">generateStoichiometryMatrix()</a>. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aae6d8bab169721f0b89682ce8c4b4f10">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a600dd38a6011089527024f1625130935">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aec867f0b43e74c8157f7d5085b55bb96">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a1372e7a823841c819f6c1a15d38217a6">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aae6d8bab169721f0b89682ce8c4b4f10">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a600dd38a6011089527024f1625130935">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aec867f0b43e74c8157f7d5085b55bb96">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a1372e7a823841c819f6c1a15d38217a6">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a3dd5cf419f25e76e144af35df15a2067">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -891,7 +891,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:27</div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6c08b4235996d12472d2a327eab8e984">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a6ef3052fce2d5e4fdaec6659df64c2bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a07acc57c1015903ce3d1b0d0b7f09358">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a10dd189ba40dbb604fdf55746b5d4b79">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6c08b4235996d12472d2a327eab8e984">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a6ef3052fce2d5e4fdaec6659df64c2bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a07acc57c1015903ce3d1b0d0b7f09358">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a10dd189ba40dbb604fdf55746b5d4b79">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a55bf19ed7534a312a36faf74753f7b14">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -928,7 +928,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>A vector of molar abundances corresponding to the species in the network.</dd></dl>
 <p>This method converts the input conditions into a vector of molar abundances, which can be used for further calculations or diagnostics. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a24cc7e1a7471d707707b4d44ebd81068">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#aa053696a7885b8e42562b2d22ee32d84">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a915602acb18a69f34076bea401ffb49d">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa839c3893ff9fb8e5a4187224dac7b47">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a24cc7e1a7471d707707b4d44ebd81068">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#aa053696a7885b8e42562b2d22ee32d84">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a915602acb18a69f34076bea401ffb49d">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa839c3893ff9fb8e5a4187224dac7b47">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a61bb4b430fe740cfb2c24e5cc673e4ac">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -965,7 +965,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html" title="Captures the result of a network priming operation.">PrimingReport</a> containing information about the priming process.</dd></dl>
 <p>This method is used to prepare the engine for calculations by setting up initial conditions, reactions, and species. It may involve compiling reaction rates, initializing internal data structures, and performing any necessary pre-computation. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a955a337f89a375637ac48071be45c54c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2bc32a84c9f5372587fca92f2da77595">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc7f7fb7f0ef96135e7bda4bb532792e">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#afabb6222bd6cbe3277b6c8639203be25">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a955a337f89a375637ac48071be45c54c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2bc32a84c9f5372587fca92f2da77595">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc7f7fb7f0ef96135e7bda4bb532792e">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#afabb6222bd6cbe3277b6c8639203be25">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6118af81e45d2850f7a2517891147274">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1006,7 +1006,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method is intended to allow dynamic adjustment of the network's depth, which may involve adding or removing species and reactions based on the specified depth. However, not all engines support this operation. </p>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c5245a27da1b45e10fb410518b79d4e">gridfire::engine::GraphEngine</a>.</p>
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c5245a27da1b45e10fb410518b79d4e">gridfire::engine::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a25e52496b36d731127603c31e9dcaa97">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1042,7 +1042,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method replaces the current set of reactions in the network with the provided set. It marks the engine as stale, requiring regeneration of matrices and recalculation of rates. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5dbfcafa606c3242dc4ced62c2494a2d">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ae89529e13f2b7fd2febcfa5af40d4666">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a90251650123d0d8ce0281e18c4476f45">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa378d0e0fa6018b989d83945daa47952">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5dbfcafa606c3242dc4ced62c2494a2d">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ae89529e13f2b7fd2febcfa5af40d4666">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a90251650123d0d8ce0281e18c4476f45">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa378d0e0fa6018b989d83945daa47952">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af469cba3be850d53f659ec173f0eb4e4">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1082,7 +1082,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The engine will use the specified screening model for subsequent rate calculations. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ab050409db954a3fa593633f9d2cd5d89">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a68bd0e51d3e127e5f9fd74fdb8180fd9">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#af842981deaf84a698b6cbfa66abcb715">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ad11aa1e168ec03d0c3ed90eeddcefe52">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ab050409db954a3fa593633f9d2cd5d89">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a68bd0e51d3e127e5f9fd74fdb8180fd9">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#af842981deaf84a698b6cbfa66abcb715">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ad11aa1e168ec03d0c3ed90eeddcefe52">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#afa3abfd612033336a656f092721c14ac">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1122,7 +1122,7 @@ These methods return an unfinalized composition which must then be finalized by 
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The internal state of the engine is updated to reflect the new conditions. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8db6ba52f454c136ee0a1335436fab6e">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1d99b55bf8e94bc2397715aa1f916733">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a7f6d98a9a4f22f1bbc015b1cbb8198e3">gridfire::engine::GraphEngine</a>, and <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a28c8ac1ec594cf55a297e3f9586e214a">gridfire::engine::MultiscalePartitioningEngineView</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8db6ba52f454c136ee0a1335436fab6e">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1d99b55bf8e94bc2397715aa1f916733">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a7f6d98a9a4f22f1bbc015b1cbb8198e3">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a28c8ac1ec594cf55a297e3f9586e214a">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af8e6a8cd44f278535d7bcc9a896d6da8">PyDynamicEngine</a>.</p>
 
 </div>
 </div>

@@ -1,29 +1,5 @@
 var searchData=
 [
-  ['engine_2eh_0',['engine.h',['../engine_8h.html',1,'']]],
-  ['engine_5fabstract_2eh_1',['engine_abstract.h',['../engine__abstract_8h.html',1,'']]],
-  ['engine_5fadaptive_2ecpp_2',['engine_adaptive.cpp',['../engine__adaptive_8cpp.html',1,'']]],
-  ['engine_5fadaptive_2eh_3',['engine_adaptive.h',['../engine__adaptive_8h.html',1,'']]],
-  ['engine_5fdefined_2ecpp_4',['engine_defined.cpp',['../engine__defined_8cpp.html',1,'']]],
-  ['engine_5fdefined_2eh_5',['engine_defined.h',['../engine__defined_8h.html',1,'']]],
-  ['engine_5fgraph_2ecpp_6',['engine_graph.cpp',['../engine__graph_8cpp.html',1,'']]],
-  ['engine_5fgraph_2eh_7',['engine_graph.h',['../engine__graph_8h.html',1,'']]],
-  ['engine_5fmultiscale_2ecpp_8',['engine_multiscale.cpp',['../engine__multiscale_8cpp.html',1,'']]],
-  ['engine_5fmultiscale_2eh_9',['engine_multiscale.h',['../engine__multiscale_8h.html',1,'']]],
-  ['engine_5fpartitioning_5ftrigger_2ecpp_10',['engine_partitioning_trigger.cpp',['../engine__partitioning__trigger_8cpp.html',1,'']]],
-  ['engine_5fpartitioning_5ftrigger_2eh_11',['engine_partitioning_trigger.h',['../engine__partitioning__trigger_8h.html',1,'']]],
-  ['engine_5fpriming_2ecpp_12',['engine_priming.cpp',['../engine__priming_8cpp.html',1,'']]],
-  ['engine_5fpriming_2eh_13',['engine_priming.h',['../engine__priming_8h.html',1,'']]],
-  ['engine_5fprocedures_2eh_14',['engine_procedures.h',['../engine__procedures_8h.html',1,'']]],
-  ['engine_5ftypes_2eh_15',['engine_types.h',['../engine__types_8h.html',1,'']]],
-  ['engine_5fview_5fabstract_2eh_16',['engine_view_abstract.h',['../engine__view__abstract_8h.html',1,'']]],
-  ['engine_5fviews_2eh_17',['engine_views.h',['../engine__views_8h.html',1,'']]],
-  ['error_5fdebug_2eh_18',['error_debug.h',['../error__debug_8h.html',1,'']]],
-  ['error_5fengine_2eh_19',['error_engine.h',['../error__engine_8h.html',1,'']]],
-  ['error_5fgridfire_2eh_20',['error_gridfire.h',['../error__gridfire_8h.html',1,'']]],
-  ['error_5fpolicy_2eh_21',['error_policy.h',['../error__policy_8h.html',1,'']]],
-  ['error_5freaction_2eh_22',['error_reaction.h',['../error__reaction_8h.html',1,'']]],
-  ['error_5fsolver_2eh_23',['error_solver.h',['../error__solver_8h.html',1,'']]],
-  ['error_5futils_2eh_24',['error_utils.h',['../error__utils_8h.html',1,'']]],
-  ['exceptions_2eh_25',['exceptions.h',['../exceptions_8h.html',1,'']]]
+  ['dynamic_5fengine_5fdiagnostics_2ecpp_0',['dynamic_engine_diagnostics.cpp',['../dynamic__engine__diagnostics_8cpp.html',1,'']]],
+  ['dynamic_5fengine_5fdiagnostics_2eh_1',['dynamic_engine_diagnostics.h',['../dynamic__engine__diagnostics_8h.html',1,'']]]
 ];

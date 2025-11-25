@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['primedcomposition_0',['primedComposition',['../structgridfire_1_1engine_1_1_priming_report.html#a73acbf3cbec59f5516e4c7aa3f6ca150',1,'gridfire::engine::PrimingReport']]],
-  ['primingreportstatusstrings_1',['PrimingReportStatusStrings',['../namespacegridfire_1_1engine.html#a1ec7640033e9b4418220e91f17bde16b',1,'gridfire::engine']]],
-  ['product_5fpowers_2',['product_powers',['../structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae0dce375a45959da6c75fec3ede46fea',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['products_5fstr_3',['products_str',['../structgridfire_1_1reaclib_1_1_reaction_record.html#af1b1d3b0308d965ef0697b247fcf9082',1,'gridfire::reaclib::ReactionRecord']]],
-  ['protonmassg_4',['protonMassG',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#abdb3124f6ef5ea294f402d30717fa208',1,'gridfire::rates::weak::WeakReaction::constants']]],
-  ['protonmassmev_5',['protonMassMeV',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a8a780d3937e60794f007ec65fe866a56',1,'gridfire::rates::weak::WeakReaction::constants']]]
+  ['na_0',['Na',['../structgridfire_1_1engine_1_1_graph_engine_1_1constants.html#a2c0d2b6bd300ccd419bf5b9f3757a6a4',1,'gridfire::engine::GraphEngine::constants']]],
+  ['name_1',['name',['../structgridfire_1_1trigger_1_1_trigger_result.html#a1f27dd6d5cca43956812ec78cfb7be2d',1,'gridfire::trigger::TriggerResult']]],
+  ['networkspecies_2',['networkSpecies',['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a75d7e32c9df3d8a047069fe2d64cd089',1,'gridfire::solver::CVODESolverStrategy::TimestepContext::networkSpecies'],['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_c_v_o_d_e_user_data.html#a41a5bc46358cb59373f62c791e1bc29c',1,'gridfire::solver::CVODESolverStrategy::CVODEUserData::networkSpecies']]],
+  ['neutronmassg_3',['neutronMassG',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a2d6c6d4eb9b54c050c266298611c1e44',1,'gridfire::rates::weak::WeakReaction::constants']]],
+  ['neutronmassmev_4',['neutronMassMeV',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a0629ea0e5d51166e400696a358b0045e',1,'gridfire::rates::weak::WeakReaction::constants']]],
+  ['normalized_5fg_5fvalues_5',['normalized_g_values',['../structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_isotope_data.html#aea71e9198606e0ba393321178f988fcc',1,'gridfire::partition::RauscherThielemannPartitionFunction::IsotopeData::normalized_g_values'],['../structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record.html#a64c1cef58c1bdeab1fcc7f9a30a71609',1,'gridfire::partition::record::RauscherThielemannPartitionDataRecord::normalized_g_values']]],
+  ['nuclearenergygenerationrate_6',['nuclearEnergyGenerationRate',['../structgridfire_1_1engine_1_1_step_derivatives.html#ab00be76673548db59c4097f19dc8be93',1,'gridfire::engine::StepDerivatives']]],
+  ['num_5fsteps_7',['num_steps',['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a51e86d2721053055d8479662b864e367',1,'gridfire::solver::CVODESolverStrategy::TimestepContext::num_steps'],['../structgridfire_1_1_net_out.html#a51c16703132cf739ec2fd89eae7badd6',1,'gridfire::NetOut::num_steps']]]
 ];

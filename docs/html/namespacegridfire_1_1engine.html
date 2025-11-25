@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -193,18 +193,17 @@ Enumerations</h2></td></tr>
 <tr class="separator:a4d057e41b489bf20744dfa8d2958ad5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a775506bb881280f73264db27cb8388f9" id="r_a775506bb881280f73264db27cb8388f9"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a775506bb881280f73264db27cb8388f9">NetworkConstructionFlags</a> : uint32_t { <br />
 &#160;&#160;<a class="el" href="#a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693">NONE</a> = 0
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520">STRONG</a> = 1 &lt;&lt; 0
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371">BETA_MINUS</a> = 1 &lt;&lt; 1
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7">BETA_PLUS</a> = 1 &lt;&lt; 2
+, <a class="el" href="#a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1">REACLIB_STRONG</a> = 1 &lt;&lt; 0
+, <a class="el" href="#a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4">WRL_BETA_MINUS</a> = 1 &lt;&lt; 1
+, <a class="el" href="#a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a">WRL_BETA_PLUS</a> = 1 &lt;&lt; 2
 , <br />
-&#160;&#160;<a class="el" href="#a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7">ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d">POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
+&#160;&#160;<a class="el" href="#a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e">WRL_ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
+, <a class="el" href="#a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955">WRL_POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
 , <a class="el" href="#a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692">REACLIB_WEAK</a> = 1 &lt;&lt; 5
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4">WRL_WEAK</a> = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE
+, <a class="el" href="#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4">WRL_WEAK</a> = WRL_BETA_MINUS | WRL_BETA_PLUS | WRL_ELECTRON_CAPTURE | WRL_POSITRON_CAPTURE
 , <br />
-&#160;&#160;<a class="el" href="#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220">REACLIB</a> = STRONG | REACLIB_WEAK
+&#160;&#160;<a class="el" href="#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220">REACLIB</a> = REACLIB_STRONG | REACLIB_WEAK
 , <a class="el" href="#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee">DEFAULT</a> = REACLIB
-, <a class="el" href="#a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d">ALL</a> = STRONG | WRL_WEAK
 <br />
  }</td></tr>
 <tr class="memdesc:a775506bb881280f73264db27cb8388f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags to specify which types of nuclear reactions to include when constructing a reaction network.  <a href="#a775506bb881280f73264db27cb8388f9">More...</a><br /></td></tr>
@@ -273,12 +272,6 @@ Functions</h2></td></tr>
 <tr class="memitem:aa6552165b4b36ea227479567880d8402" id="r_aa6552165b4b36ea227479567880d8402"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6552165b4b36ea227479567880d8402">primeNetwork</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
 <tr class="memdesc:aa6552165b4b36ea227479567880d8402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
 <tr class="separator:aa6552165b4b36ea227479567880d8402"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dc985b6bf1b86754f49b72dba478862" id="r_a9dc985b6bf1b86754f49b72dba478862"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9dc985b6bf1b86754f49b72dba478862">calculateDestructionRateConstant</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
-<tr class="memdesc:a9dc985b6bf1b86754f49b72dba478862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the destruction rate constant for a specific species.  <br /></td></tr>
-<tr class="separator:a9dc985b6bf1b86754f49b72dba478862"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb18048942c7af6debe9c0479a395a13" id="r_afb18048942c7af6debe9c0479a395a13"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb18048942c7af6debe9c0479a395a13">calculateCreationRate</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;engine, const fourdst::atomic::Species &amp;species, const fourdst::composition::Composition &amp;composition, double T9, double rho, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;reactionTypesToIgnore)</td></tr>
-<tr class="memdesc:afb18048942c7af6debe9c0479a395a13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the creation rate for a specific species.  <br /></td></tr>
-<tr class="separator:afb18048942c7af6debe9c0479a395a13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a589015f6509c051c16b3e4ebc7550dd2" id="r_a589015f6509c051c16b3e4ebc7550dd2"><td class="memItemLeft" align="right" valign="top">constexpr std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a589015f6509c051c16b3e4ebc7550dd2">engine_type_to_string</a> (const <a class="el" href="#a5387db1ec0b039955487fbc4c0034854">EngineTypes</a> type)</td></tr>
 <tr class="memdesc:a589015f6509c051c16b3e4ebc7550dd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an <a class="el" href="#a5387db1ec0b039955487fbc4c0034854" title="Enumeration of different engine types available in GridFire.">EngineTypes</a> enum value to its corresponding string representation.  <br /></td></tr>
 <tr class="separator:a589015f6509c051c16b3e4ebc7550dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -514,16 +507,15 @@ Variables</h2></td></tr>
 <p>These flags allow fine-grained control over the inclusion of strong and weak nuclear reactions (beta decay, electron/positron capture) from various sources (Reaclib, WRL) during network construction. They can be combined using bitwise operations to create custom reaction sets. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693" name="a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520" name="a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520"></a>STRONG&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371" name="a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371"></a>BETA_MINUS&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7" name="a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7"></a>BETA_PLUS&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7" name="a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7"></a>ELECTRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d" name="a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d"></a>POSITRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1" name="a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1"></a>REACLIB_STRONG&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4" name="a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4"></a>WRL_BETA_MINUS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a" name="a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a"></a>WRL_BETA_PLUS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e" name="a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e"></a>WRL_ELECTRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955" name="a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955"></a>WRL_POSITRON_CAPTURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692" name="a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692"></a>REACLIB_WEAK&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4" name="a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4"></a>WRL_WEAK&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220" name="a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220"></a>REACLIB&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee" name="a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee"></a>DEFAULT&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d" name="a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d"></a>ALL&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -656,122 +648,6 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="afb18048942c7af6debe9c0479a395a13" name="afb18048942c7af6debe9c0479a395a13"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb18048942c7af6debe9c0479a395a13">&#9670;&#160;</a></span>calculateCreationRate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::engine::calculateCreationRate </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Computes the creation rate for a specific species. </p>
-<p>Sums molar reaction flows for all reactions where the species appears as a product (positive stoichiometry).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">engine</td><td><a class="el" href="classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a> providing the current set of network reactions and flow calculations. </td></tr>
-    <tr><td class="paramname">species</td><td>The atomic species whose creation rate is computed. </td></tr>
-    <tr><td class="paramname">composition</td><td>Composition object containing current abundances. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density of the medium. </td></tr>
-    <tr><td class="paramname">reactionTypesToIgnore</td><td>types of reactions to ignore during calculation. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section pre"><dt>Precondition</dt><dd>Y.size() matches engine.getNetworkReactions().size() mapping species order. </dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>Returned creation rate is non-negative. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Sum of stoichiometry-weighted creation flows for the species. </dd></dl>
-
-</div>
-</div>
-<a id="a9dc985b6bf1b86754f49b72dba478862" name="a9dc985b6bf1b86754f49b72dba478862"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9dc985b6bf1b86754f49b72dba478862">&#9670;&#160;</a></span>calculateDestructionRateConstant()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double gridfire::engine::calculateDestructionRateConstant </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionTypesToIgnore</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Computes the destruction rate constant for a specific species. </p>
-<p>Calculates the sum of molar reaction flows for all reactions where the species is a reactant (negative stoichiometry) after scaling its abundance to unity.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">engine</td><td><a class="el" href="classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine.">Engine</a> providing the current set of network reactions and flow calculations. </td></tr>
-    <tr><td class="paramname">species</td><td>The atomic species whose destruction rate is computed. </td></tr>
-    <tr><td class="paramname">composition</td><td>Current composition providing abundances for all species. </td></tr>
-    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
-    <tr><td class="paramname">rho</td><td>Density of the medium. </td></tr>
-    <tr><td class="paramname">reactionTypesToIgnore</td><td>types of reactions to ignore during calculation. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section pre"><dt>Precondition</dt><dd>Y.size() matches engine.getNetworkReactions().size() mapping species order. </dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>Returned rate constant is non-negative. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Sum of absolute stoichiometry-weighted destruction flows for the species. </dd></dl>
 
 </div>
 </div>
