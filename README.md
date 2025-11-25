@@ -627,21 +627,18 @@ int main(){
 ### Composition Initialization
 ```c++
 #include "fourdst/composition/composition.h"
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
 #include <vector>
 #include <string>
 
 #include <iostream>
 
 int main() {
-    fourdst::composition::Composition comp;
 
     std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
     std::vector<double> massFractions = {0.7, 0.29, 0.01};
-
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
-
-    comp.finalize(true);
+    
+    const fourdst::composition::Composition comp = fourdst::composition::buildCompositionFromMassFractions(symbols, massFractions);
 
     std::cout << comp << std::endl;
 }
@@ -653,21 +650,23 @@ A representative workflow often composes multiple engine views to balance
 accuracy, stability, and performance when integrating stiff nuclear networks:
 
 ```c++
-#include "gridfire/engine/engine.h" // Unified header for real usage
-#include "gridfire/solver/solver.h" // Unified header for solvers
+#include "gridfire/gridfire.h" // Unified header for real usage
+
 #include "fourdst/composition/composition.h"
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
 
 int main(){
     // 1. Define initial composition
-    fourdst::composition::Composition comp;
-
-    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> massFractions = {0.7, 0.29, 0.01};
-
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
-
-    comp.finalize(true);
+    std::unordered_map<std::string, double> initialMassFractions = {
+        {"H-1", 0.7},
+        {"He-4", 0.29},
+        {"C-12", 0.01}
+    };
+    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(initialMassFractions);
+    
+    // In this example we will not use the policy module (for sake of demonstration of what is happening under the hood)
+    //  however, for end users we **strongly** recommend using the policy module to construct engines. It will
+    //  ensure that you are not missing important reactions or seed species.
 
     // 2. Create base network engine (full reaction graph)
     gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
@@ -696,17 +695,18 @@ int main(){
 }
 ```
 
-### Callback Example
+### Callback and Policy Example
 Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide
 different context to the callback function, you should use the struct `gridfire::solver::<SolverName>::TimestepContext`
 as the argument type for the callback function. This struct contains all the information provided by that solver to
 the callback function.
 
 ```c++
-#include "gridfire/engine/engine.h" // Unified header for real usage
-#include "gridfire/solver/solver.h" // Unified header for solvers
-#include "fourdst/composition/composition.h"
-#include "fourdst/atomic/species.h"
+#include "gridfire/gridfire.h" // Unified header for real usage
+
+#include "fourdst/composition/composition.h" // for Composition
+#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
+#include "fourdst/atomic/species.h" // For strongly typed species
 
 #include <iostream>
 
@@ -718,32 +718,19 @@ void callback(const gridfire::solver::CVODESolverStrategy::TimestepContext& cont
 }
 
 int main(){
-    // 1. Define initial composition
-    fourdst::composition::Composition comp;
-
     std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> massFractions = {0.7, 0.29, 0.01};
+    std::vector<double> X = {0.7, 0.29, 0.01};
 
-    comp.registerSymbols(symbols);
-    comp.setMassFraction(symbols, massFractions);
 
-    comp.finalize(true);
-
-    // 2. Create base network engine (full reaction graph)
-    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
-
-    // 3. Partition network into fast/slow subsets (reduces stiffness)
-    gridfire::MultiscalePartitioningEngineView msView(baseEngine);
-
-    // 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
-    gridfire::AdaptiveEngineView adaptView(msView);
-
-    // 5. Construct implicit solver (handles remaining stiffness)
-    gridfire::CVODESolverStrategy solver(adaptView);
+    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);
+    gridfire::policy::MainSequencePolicy stellarPolicy(netIn.composition);
+    gridfire::engine::DynamicEngine& engine = stellarPolicy.construct();
+    
+    gridfire::solver::CVODESolverStrategy solver(adaptView);
     solver.set_callback(callback);
 
     // 6. Prepare input conditions
-    NetIn input{
+    gridfire::NetIn input{
         comp,     // composition
         1.5e7,      // temperature [K]
         1.5e2,      // density [g/cm^3]
@@ -752,7 +739,7 @@ int main(){
     };
 
     // 7. Execute integration
-    NetOut output = solver.evaluate(input);
+    gridfire::NetOut output = solver.evaluate(input);
     std::cout << "Final results are: " << output << std::endl;
 }
 ```
@@ -800,105 +787,114 @@ with imports of modules such that
 
 All GridFire C++ types have been bound and can be passed around as one would expect.
 
-### Common Workflow Example
-This example implements the same logic as the above C++ example
+
+### Python Example for End Users
+
+
+The syntax for registration is very similar to C++. There are a few things to note about this more robust example
+
+ 1. Note how I use a callback and a log object to store the state of the simulation at each timestep.
+ 2. If you have tools such as mypy installed you will see that the python bindings are strongly typed. This is
+    intentional to help users avoid mistakes when writing code.
 ```python
-from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import CVODESolverStrategey
-from gridfire.type import NetIn
-
 from fourdst.composition import Composition
-
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
-X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
-
-
-comp = Composition()
-comp.registerSymbol(symbols)
-comp.setMassFraction(symbols, X)
-comp.finalize(True)
-
-print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
-
-netIn = NetIn()
-netIn.composition = comp
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.tMax = 1e-9
-netIn.dt0 = 1e-12
-
-baseEngine = GraphEngine(netIn.composition, 2)
-baseEngine.setUseReverseReactions(False)
-
-qseEngine = MultiscalePartitioningEngineView(baseEngine)
-
-adaptiveEngine = AdaptiveEngineView(qseEngine)
-
-solver = CVODESolverStrategey(adaptiveEngine)
-
-results = solver.evaluate(netIn)
-
-print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
-```
-
-### Python callbacks
-
-Just like in C++, python users can register callbacks to be called at the end of each successful timestep. Note that
-these may slow down code significantly as the interpreter needs to jump up into the slower python code therefore these
-should likely only be used for debugging purposes.
-
-The syntax for registration is very similar to C++
-```python
-from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import DirectNetworkSolver
 from gridfire.type import NetIn
+from gridfire.policy import MainSequencePolicy
+from gridfire.solver import CVODESolverStrategy
+from enum import Enum
+from typing import Dict, Union, SupportsFloat
+import json
+import dicttoxml
 
-from fourdst.composition import Composition
-from fourdst.atomic import species
+def init_composition() -> Composition:
+  Y = [7.0262E-01, 9.7479E-06, 6.8955E-02, 2.5000E-04, 7.8554E-05, 6.0144E-04, 8.1031E-05, 2.1513E-05] # Note these are molar abundances
+  S = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
+  return Composition(S, Y)
 
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
-X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+def init_netIn(temp: float, rho: float, time: float, comp: Composition) -> NetIn:
+  netIn = NetIn()
+  netIn.temperature = temp
+  netIn.density = rho
+  netIn.tMax = time
+  netIn.dt0 = 1e-12
+  netIn.composition = comp
+  return netIn
 
-
-comp = Composition()
-comp.registerSymbol(symbols)
-comp.setMassFraction(symbols, X)
-comp.finalize(True)
-
-print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
-
-netIn = NetIn()
-netIn.composition = comp
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.tMax = 1e-9
-netIn.dt0 = 1e-12
-
-baseEngine = GraphEngine(netIn.composition, 2)
-baseEngine.setUseReverseReactions(False)
-
-qseEngine = MultiscalePartitioningEngineView(baseEngine)
-
-adaptiveEngine = AdaptiveEngineView(qseEngine)
-
-solver = DirectNetworkSolver(adaptiveEngine)
+class StepData(Enum):
+  TIME = 0
+  DT = 1
+  COMP = 2
+  CONTRIB = 3
 
 
-data: List[Tuple[float, Dict[str, Tuple[float, float]]]] = []
-def callback(context):
+class StepLogger:
+  def __init__(self):
+    self.num_steps: int = 0
+    self.step_data: Dict[int, Dict[StepData, Union[SupportsFloat, Dict[str, SupportsFloat]]]] = {}
+
+  def log_step(self, context):
     engine = context.engine
-    abundances: Dict[str, Tuple[float, float]] = {}
+    self.step_data[self.num_steps] = {}
+    self.step_data[self.num_steps][StepData.TIME] = context.t
+    self.step_data[self.num_steps][StepData.DT] = context.dt
+    comp_data: Dict[str, SupportsFloat] = {}
     for species in engine.getNetworkSpecies():
-        sid = engine.getSpeciesIndex(species)
-        abundances[species.name()] = (species.mass(), context.state[sid])
-    data.append((context.t,abundances))
+      sid = engine.getSpeciesIndex(species)
+      comp_data[species.name()] = context.state[sid]
+    self.step_data[self.num_steps][StepData.COMP] = comp_data
+    self.num_steps += 1
 
-solver.set_callback(callback)
-results = solver.evaluate(netIn)
+  def to_json (self, filename: str):
+    serializable_data = {
+      stepNum: {
+        StepData.TIME.name: step[StepData.TIME],
+        StepData.DT.name: step[StepData.DT],
+        StepData.COMP.name: step[StepData.COMP],
+      }
+      for stepNum, step in self.step_data.items()
+    }
+    with open(filename, 'w') as f:
+      json.dump(serializable_data, f, indent=4)
 
-print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
+  def to_xml(self, filename: str):
+    serializable_data = {
+      stepNum: {
+        StepData.TIME.name: step[StepData.TIME],
+        StepData.DT.name: step[StepData.DT],
+        StepData.COMP.name: step[StepData.COMP],
+      }
+      for stepNum, step in self.step_data.items()
+    }
+    xml_data = dicttoxml.dicttoxml(serializable_data, custom_root='StepLog', attr_type=False)
+    with open(filename, 'wb') as f:
+      f.write(xml_data)
+
+def main(temp: float, rho: float, time: float):
+  comp = init_composition()
+  netIn = init_netIn(temp, rho, time, comp)
+
+  policy = MainSequencePolicy(comp)
+  engine = policy.construct()
+
+  solver = CVODESolverStrategy(engine)
+
+  step_logger = StepLogger()
+  solver.set_callback(lambda context: step_logger.log_step(context))
+
+  solver.evaluate(netIn, False)
+  step_logger.to_xml("log_data.xml")
+
+if __name__ == "__main__":
+  import argparse
+  parser = argparse.ArgumentParser(description="Simple python example of GridFire usage")
+  parser.add_argument("-t", "--temp", type=float, help="Temperature in K", default=1.5e7)
+  parser.add_argument("-r", "--rho", type=float, help="Density in g/cm^3", default=1.5e2)
+  parser.add_argument("--tMax", type=float, help="Time in s", default=3.1536 * 1e17)
+  args = parser.parse_args()
+  main(args.temp, args.rho, args.tMax)
 
 ```
+
 
 
 # Related Projects
