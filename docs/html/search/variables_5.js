@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['flowrate_0',['flowRate',['../structgridfire_1_1engine_1_1_adaptive_engine_view_1_1_reaction_flow.html#a66eed32c2126788d9511dfee2404b9f8',1,'gridfire::engine::AdaptiveEngineView::ReactionFlow']]],
-  ['func_5fcode_1',['func_code',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a7f54bd3e068a61b4e90de8d8f4d7207a',1,'gridfire::io::gen::PyFunctionDef']]],
-  ['func_5fname_2',['func_name',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a795d0022f7c645fc443781dc6bf35121',1,'gridfire::io::gen::PyFunctionDef']]]
+  ['electronmassg_0',['electronMassG',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a8998f5acb979463eeabb14da50fb6856',1,'gridfire::rates::weak::WeakReaction::constants']]],
+  ['electronmassmev_1',['electronMassMeV',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a24d6517e15c177fb8ca72f08f8eaf509',1,'gridfire::rates::weak::WeakReaction::constants']]],
+  ['energy_2',['energy',['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_c_v_o_d_e_user_data.html#a1fb4ca773aaad8d1d958a3a0e82d8edd',1,'gridfire::solver::CVODESolverStrategy::CVODEUserData::energy'],['../structgridfire_1_1_net_in.html#ae1fbce804bafa6ad2be4ac3470dac93b',1,'gridfire::NetIn::energy'],['../structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6',1,'gridfire::NetOut::energy']]],
+  ['engine_3',['engine',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html#a15347dc13bbe872c5d2ed222426750f4',1,'gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData::engine'],['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a5a457651dcb9d4a66ed219ddf7095313',1,'gridfire::solver::CVODESolverStrategy::TimestepContext::engine'],['../structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_c_v_o_d_e_user_data.html#a657f34d754521a6991351e29e0942ed6',1,'gridfire::solver::CVODESolverStrategy::CVODEUserData::engine']]],
+  ['evgrelation_4',['eVgRelation',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#af834029caff08f9d5f7ff3a817ade469',1,'gridfire::rates::weak::WeakReaction::constants']]]
 ];

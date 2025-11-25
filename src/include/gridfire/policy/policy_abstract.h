@@ -153,7 +153,7 @@ namespace gridfire::policy {
          * if (s != NetworkPolicyStatus::INITIALIZED_VERIFIED) { // handle error }
          * @endcode
          */
-        [[nodiscard]] virtual NetworkPolicyStatus getStatus() const = 0;
+        [[nodiscard]] virtual NetworkPolicyStatus get_status() const = 0;
 
         [[nodiscard]] virtual const std::vector<std::unique_ptr<engine::DynamicEngine>> &get_engine_stack() const = 0;
 

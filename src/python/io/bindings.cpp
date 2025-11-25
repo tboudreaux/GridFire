@@ -19,9 +19,4 @@ auto register_io_bindings(const py::module &m) -> void {
         .def("parse", &gridfire::io::SimpleReactionListFileParser::parse,
             py::arg("filename"),
             "Parse a simple reaction list file and return a ParsedNetworkData object.");
-
-    // py::class_<gridfire::io::MESANetworkFileParser, gridfire::io::NetworkFileParser>(m, "MESANetworkFileParser")
-    //     .def("parse", &gridfire::io::MESANetworkFileParser::parse,
-    //         py::arg("filename"),
-    //         "Parse a MESA network file and return a ParsedNetworkData object.");
 }

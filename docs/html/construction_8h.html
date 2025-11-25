@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -136,18 +136,17 @@ Namespaces</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:a775506bb881280f73264db27cb8388f9" id="r_a775506bb881280f73264db27cb8388f9"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9">gridfire::engine::NetworkConstructionFlags</a> : uint32_t { <br />
 &#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693">gridfire::engine::NONE</a> = 0
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520">gridfire::engine::STRONG</a> = 1 &lt;&lt; 0
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371">gridfire::engine::BETA_MINUS</a> = 1 &lt;&lt; 1
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7">gridfire::engine::BETA_PLUS</a> = 1 &lt;&lt; 2
+, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1">gridfire::engine::REACLIB_STRONG</a> = 1 &lt;&lt; 0
+, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4">gridfire::engine::WRL_BETA_MINUS</a> = 1 &lt;&lt; 1
+, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a">gridfire::engine::WRL_BETA_PLUS</a> = 1 &lt;&lt; 2
 , <br />
-&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7">gridfire::engine::ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d">gridfire::engine::POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
+&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e">gridfire::engine::WRL_ELECTRON_CAPTURE</a> = 1 &lt;&lt; 3
+, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955">gridfire::engine::WRL_POSITRON_CAPTURE</a> = 1 &lt;&lt; 4
 , <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692">gridfire::engine::REACLIB_WEAK</a> = 1 &lt;&lt; 5
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4">gridfire::engine::WRL_WEAK</a> = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE
+, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4">gridfire::engine::WRL_WEAK</a> = WRL_BETA_MINUS | WRL_BETA_PLUS | WRL_ELECTRON_CAPTURE | WRL_POSITRON_CAPTURE
 , <br />
-&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220">gridfire::engine::REACLIB</a> = STRONG | REACLIB_WEAK
+&#160;&#160;<a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220">gridfire::engine::REACLIB</a> = REACLIB_STRONG | REACLIB_WEAK
 , <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee">gridfire::engine::DEFAULT</a> = REACLIB
-, <a class="el" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d">gridfire::engine::ALL</a> = STRONG | WRL_WEAK
 <br />
  }</td></tr>
 <tr class="memdesc:a775506bb881280f73264db27cb8388f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags to specify which types of nuclear reactions to include when constructing a reaction network.  <a href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9">More...</a><br /></td></tr>

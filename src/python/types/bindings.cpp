@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-#include "gridfire/network.h"
+#include "gridfire/types/types.h"
 
 void register_type_bindings(const pybind11::module &m) {
     py::class_<gridfire::NetIn>(m, "NetIn")

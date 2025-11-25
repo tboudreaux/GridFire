@@ -3,7 +3,6 @@
 
 #include "types/bindings.h"
 #include "partition/bindings.h"
-#include "expectations/bindings.h"
 #include "engine/bindings.h"
 #include "exceptions/bindings.h"
 #include "io/bindings.h"
@@ -11,8 +10,9 @@
 #include "screening/bindings.h"
 #include "solver/bindings.h"
 #include "utils/bindings.h"
+#include "policy/bindings.h"
 
-PYBIND11_MODULE(gridfire, m) {
+PYBIND11_MODULE(_gridfire, m) {
     m.doc() = "Python bindings for the fourdst utility modules which are a part of the 4D-STAR project.";
 
     pybind11::module::import("fourdst.constants");
@@ -25,9 +25,6 @@ PYBIND11_MODULE(gridfire, m) {
 
     auto partitionMod  = m.def_submodule("partition", "GridFire partition function bindings");
     register_partition_bindings(partitionMod);
-
-    auto expectationMod  = m.def_submodule("expectations", "GridFire expectations bindings");
-    register_expectation_bindings(expectationMod);
 
     auto reactionMod  = m.def_submodule("reaction", "GridFire reaction bindings");
     register_reaction_bindings(reactionMod);
@@ -46,6 +43,9 @@ PYBIND11_MODULE(gridfire, m) {
 
     auto solverMod  = m.def_submodule("solver", "GridFire numerical solver bindings");
     register_solver_bindings(solverMod);
+
+    auto policyMod  = m.def_submodule("policy", "GridFire network policy bindings");
+    register_policy_bindings(policyMod);
 
     auto utilsMod  = m.def_submodule("utils", "GridFire utility method bindings");
     register_utils_bindings(utilsMod);

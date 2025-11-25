@@ -25,79 +25,77 @@
 var NAVTREE =
 [
   [ "GridFire", "index.html", [
-    [ "Introduction", "index.html#autotoc_md0", [
-      [ "Design Philosophy and Workflow", "index.html#autotoc_md1", null ],
-      [ "Funding", "index.html#autotoc_md2", null ]
+    [ "Table of Contents", "index.html#autotoc_md2", null ],
+    [ "Introduction", "index.html#autotoc_md3", [
+      [ "Design Philosophy and Workflow", "index.html#autotoc_md4", null ],
+      [ "Funding", "index.html#autotoc_md5", null ]
     ] ],
-    [ "Usage", "index.html#autotoc_md3", [
-      [ "Python installation", "index.html#autotoc_md4", [
-        [ "pypi", "index.html#autotoc_md5", null ],
-        [ "source", "index.html#autotoc_md6", null ],
-        [ "source for developers", "index.html#autotoc_md7", null ]
-      ] ],
-      [ "Automatic Build and Installation", "index.html#autotoc_md8", [
-        [ "Script Build and Installation Instructions", "index.html#autotoc_md9", null ],
-        [ "Currently, known good platforms", "index.html#autotoc_md10", null ]
-      ] ],
-      [ "Manual Build Instructions", "index.html#autotoc_md11", [
-        [ "Prerequisites", "index.html#autotoc_md12", [
-          [ "Required", "index.html#autotoc_md13", null ],
-          [ "Optional", "index.html#autotoc_md14", null ]
-        ] ],
-        [ "Install Scripts", "index.html#autotoc_md15", [
-          [ "Ease of Installation", "index.html#autotoc_md16", null ],
-          [ "Reproducibility", "index.html#autotoc_md17", null ],
-          [ "Examples", "index.html#autotoc_md18", [
-            [ "TUI config and saving", "index.html#autotoc_md19", null ],
-            [ "TUI config loading and meson setup", "index.html#autotoc_md20", null ],
-            [ "CLI config loading, setup, and build", "index.html#autotoc_md21", null ]
-          ] ]
-        ] ],
-        [ "Dependency Installation on Common Platforms", "index.html#autotoc_md22", null ],
-        [ "Building the C++ Library", "index.html#autotoc_md23", [
-          [ "Clang vs. GCC", "index.html#autotoc_md24", null ]
-        ] ],
-        [ "Installing the Library", "index.html#autotoc_md25", null ],
-        [ "Minimum compiler versions", "index.html#autotoc_md26", null ]
-      ] ],
-      [ "Code Architecture and Logical Flow", "index.html#autotoc_md27", null ],
-      [ "Engines", "index.html#autotoc_md28", [
-        [ "GraphEngine", "index.html#autotoc_md29", null ],
-        [ "GraphEngine Configuration Options", "index.html#autotoc_md30", null ],
-        [ "Available Partition Functions", "index.html#autotoc_md31", null ],
-        [ "AutoDiff", "index.html#autotoc_md32", null ]
-      ] ],
-      [ "Reaclib in GridFire", "index.html#autotoc_md33", null ],
-      [ "Engine Views", "index.html#autotoc_md34", [
-        [ "A Note about composability", "index.html#autotoc_md35", null ]
-      ] ],
-      [ "Numerical Solver Strategies", "index.html#autotoc_md36", [
-        [ "NetworkSolverStrategy<EngineT>:", "index.html#autotoc_md37", null ],
-        [ "NetIn and NetOut", "index.html#autotoc_md38", [
-          [ "NetIn", "index.html#autotoc_md39", null ],
-          [ "NetOut", "index.html#autotoc_md40", null ]
-        ] ],
-        [ "DirectNetworkSolver (Implicit Rosenbrock Method)", "index.html#autotoc_md41", null ],
-        [ "Algorithmic Workflow in DirectNetworkSolver", "index.html#autotoc_md42", null ],
-        [ "Future Solver Implementations", "index.html#autotoc_md43", null ]
-      ] ],
-      [ "Python Extensibility", "index.html#autotoc_md44", null ]
-    ] ],
-    [ "Usage Examples", "index.html#autotoc_md45", [
-      [ "C++", "index.html#autotoc_md46", [
-        [ "GraphEngine Initialization", "index.html#autotoc_md47", null ],
-        [ "Adaptive Network View", "index.html#autotoc_md48", null ],
-        [ "Composition Initialization", "index.html#autotoc_md49", null ],
-        [ "Common Workflow Example", "index.html#autotoc_md50", [
-          [ "Workflow Components and Effects", "index.html#autotoc_md51", null ]
-        ] ],
-        [ "Callback Example", "index.html#autotoc_md52", [
-          [ "Callback Context", "index.html#autotoc_md53", null ]
+    [ "Usage", "index.html#autotoc_md6", [
+      [ "Python installation", "index.html#autotoc_md7", [
+        [ "pypi", "index.html#autotoc_md8", null ],
+        [ "source", "index.html#autotoc_md9", null ],
+        [ "source for developers", "index.html#autotoc_md10", [
+          [ "Patching Shared Object Files", "index.html#autotoc_md11", null ]
         ] ]
       ] ],
-      [ "Python", "index.html#autotoc_md54", [
-        [ "Common Workflow Example", "index.html#autotoc_md55", null ],
-        [ "Python callbacks", "index.html#autotoc_md56", null ]
+      [ "Automatic Build and Installation", "index.html#autotoc_md12", [
+        [ "Script Build and Installation Instructions", "index.html#autotoc_md13", null ],
+        [ "Currently, known good platforms", "index.html#autotoc_md14", null ]
+      ] ],
+      [ "Manual Build Instructions", "index.html#autotoc_md15", [
+        [ "Prerequisites", "index.html#autotoc_md16", [
+          [ "Required", "index.html#autotoc_md17", null ],
+          [ "Optional", "index.html#autotoc_md18", null ]
+        ] ],
+        [ "Install Scripts", "index.html#autotoc_md19", [
+          [ "Ease of Installation", "index.html#autotoc_md20", null ],
+          [ "Reproducibility", "index.html#autotoc_md21", null ],
+          [ "Examples", "index.html#autotoc_md22", [
+            [ "TUI config and saving", "index.html#autotoc_md23", null ],
+            [ "TUI config loading and meson setup", "index.html#autotoc_md24", null ],
+            [ "CLI config loading, setup, and build", "index.html#autotoc_md25", null ]
+          ] ]
+        ] ],
+        [ "Dependency Installation on Common Platforms", "index.html#autotoc_md26", null ],
+        [ "Building the C++ Library", "index.html#autotoc_md27", [
+          [ "Clang vs. GCC", "index.html#autotoc_md28", null ]
+        ] ],
+        [ "Installing the Library", "index.html#autotoc_md29", null ],
+        [ "Minimum compiler versions", "index.html#autotoc_md30", null ]
+      ] ],
+      [ "Code Architecture and Logical Flow", "index.html#autotoc_md31", null ],
+      [ "Engines", "index.html#autotoc_md32", [
+        [ "GraphEngine", "index.html#autotoc_md33", null ],
+        [ "GraphEngine Configuration Options", "index.html#autotoc_md34", null ],
+        [ "Available Partition Functions", "index.html#autotoc_md35", null ],
+        [ "AutoDiff", "index.html#autotoc_md36", null ]
+      ] ],
+      [ "Reaclib in GridFire", "index.html#autotoc_md37", null ],
+      [ "Engine Views", "index.html#autotoc_md38", [
+        [ "A Note about composability", "index.html#autotoc_md39", null ]
+      ] ],
+      [ "Numerical Solver Strategies", "index.html#autotoc_md40", [
+        [ "NetworkSolverStrategy<EngineT>:", "index.html#autotoc_md41", null ],
+        [ "NetIn and NetOut", "index.html#autotoc_md42", [
+          [ "NetIn", "index.html#autotoc_md43", null ],
+          [ "NetOut", "index.html#autotoc_md44", null ]
+        ] ],
+        [ "CVODESolverStrategy", "index.html#autotoc_md45", null ]
+      ] ],
+      [ "Python Extensibility", "index.html#autotoc_md46", null ]
+    ] ],
+    [ "Usage Examples", "index.html#autotoc_md47", [
+      [ "C++", "index.html#autotoc_md48", [
+        [ "GraphEngine Initialization", "index.html#autotoc_md49", null ],
+        [ "Adaptive Network View", "index.html#autotoc_md50", null ],
+        [ "Composition Initialization", "index.html#autotoc_md51", null ],
+        [ "Common Workflow Example", "index.html#autotoc_md52", null ],
+        [ "Callback and Policy Example", "index.html#autotoc_md53", [
+          [ "Callback Context", "index.html#autotoc_md54", null ]
+        ] ]
+      ] ],
+      [ "Python", "index.html#autotoc_md55", [
+        [ "Python Example for End Users", "index.html#autotoc_md56", null ]
       ] ]
     ] ],
     [ "Related Projects", "index.html#autotoc_md57", null ],
@@ -153,20 +151,20 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_c_v_o_d_e__solver__strategy_8cpp.html",
-"classgridfire_1_1engine_1_1_dynamic_engine.html#a79423b9f67b4cac702547b4f1d8bd14c",
-"classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html#abaa48f3861797a4721ab8841424854d3",
-"classgridfire_1_1engine_1_1_reaction.html#a588a8c19970463d97f5aa333fcd312dc",
-"classgridfire_1_1partition_1_1_ground_state_partition_function.html#a49b18aae58eb6250aaa23d43d55f02bd",
-"classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html#ad70b081f8623fad207050c0f81f6a457",
-"classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#afe1b95bf9d81f7521b9f19bbd1305d01",
-"classgridfire_1_1screening_1_1_weak_screening_model.html",
-"classgridfire_1_1trigger_1_1_or_trigger.html#ac8be54d91e77ed16ae3cca2417d82e0a",
-"classgridfire_1_1utils_1_1_table_base.html#a0529d4130643358562e1c1d1f78c924f",
-"index.html#autotoc_md20",
-"partition_2bindings_8cpp.html#a2806baaec82e0e6d66b80348584e08fd",
-"structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html#a9b8fc949cc2cb1729c719cf20463e070",
-"structgridfire_1_1trigger_1_1_trigger_result.html#a372af12d705b623075c41872f3ec96e1"
+"____init_____8py.html",
+"classgridfire_1_1engine_1_1_dynamic_engine.html#a24103027a38e02d4342161164554d332",
+"classgridfire_1_1engine_1_1_graph_engine.html#af7dab9063bb92aac64b6dfa755074739",
+"classgridfire_1_1engine_1_1_reaction.html#a0c533797f18c2fe4945f1afb3fb06d5d",
+"classgridfire_1_1partition_1_1_composite_partition_function.html#a85aaac230e9de2fd50d4d453f6d5def8",
+"classgridfire_1_1policy_1_1_proton_proton_chain_policy.html",
+"classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a7e6d50f866be9239ac620607741280cc",
+"classgridfire_1_1screening_1_1_bare_screening_model.html#a51119d705267e0b415aae8b4881d8c96",
+"classgridfire_1_1trigger_1_1_or_trigger.html#a062af4f567dc48c088f1fcfb64cc79ec",
+"classgridfire_1_1utils_1_1_table.html#a51fb3691d40941c197f536c86cf9d59a",
+"generative_8h.html",
+"namespacegridfire_1_1utils.html#adfbe36ddda15b6e206d9726236d543ab",
+"structgridfire_1_1engine_1_1_priming_report.html#a73acbf3cbec59f5516e4c7aa3f6ca150",
+"structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#a0b39f0d207181840efacb64417b492ae"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

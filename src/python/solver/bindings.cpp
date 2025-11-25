@@ -1,11 +1,9 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/functional.h> // needed for std::function
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
 #include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
 #include <pybind11/numpy.h>
+#include <pybind11/functional.h>
 #include <functional>
-
-#include <boost/numeric/ublas/vector.hpp>
 
 #include "bindings.h"
 
@@ -37,7 +35,7 @@ void register_solver_bindings(const py::module &m) {
     py_cvode_timestep_context.def_readonly("currentNonlinearIterations", &gridfire::solver::CVODESolverStrategy::TimestepContext::currentNonlinearIterations);
     py_cvode_timestep_context.def_property_readonly(
         "engine",
-        [](const gridfire::solver::CVODESolverStrategy::TimestepContext& self) -> const gridfire::DynamicEngine& {
+        [](const gridfire::solver::CVODESolverStrategy::TimestepContext& self) -> const gridfire::engine::DynamicEngine& {
             return self.engine;
         }
     );
@@ -66,7 +64,7 @@ void register_solver_bindings(const py::module &m) {
     auto py_cvode_solver_strategy = py::class_<gridfire::solver::CVODESolverStrategy, gridfire::solver::DynamicNetworkSolverStrategy>(m, "CVODESolverStrategy");
 
     py_cvode_solver_strategy.def(
-        py::init<gridfire::DynamicEngine&>(),
+        py::init<gridfire::engine::DynamicEngine&>(),
         py::arg("engine"),
         "Initialize the CVODESolverStrategy object."
     );
@@ -75,7 +73,7 @@ void register_solver_bindings(const py::module &m) {
         "evaluate",
         py::overload_cast<const gridfire::NetIn&, bool>(&gridfire::solver::CVODESolverStrategy::evaluate),
         py::arg("netIn"),
-        py::arg("display_trigger"),
+        py::arg("display_trigger") = false,
         "evaluate the dynamic engine using the dynamic engine class"
     );
 
@@ -93,6 +91,32 @@ void register_solver_bindings(const py::module &m) {
     );
 
     py_cvode_solver_strategy.def(
+        "set_absTol",
+        &gridfire::solver::CVODESolverStrategy::set_absTol,
+        py::arg("absTol"),
+        "Set the absolute tolerance for the CVODE solver."
+    );
+
+    py_cvode_solver_strategy.def(
+        "set_relTol",
+        &gridfire::solver::CVODESolverStrategy::set_relTol,
+        py::arg("relTol"),
+        "Set the relative tolerance for the CVODE solver."
+    );
+
+    py_cvode_solver_strategy.def(
+        "get_absTol",
+        &gridfire::solver::CVODESolverStrategy::get_absTol,
+        "Get the absolute tolerance for the CVODE solver."
+    );
+
+    py_cvode_solver_strategy.def(
+        "get_relTol",
+        &gridfire::solver::CVODESolverStrategy::get_relTol,
+        "Get the relative tolerance for the CVODE solver."
+    );
+
+    py_cvode_solver_strategy.def(
     "set_callback",
     [](
         gridfire::solver::CVODESolverStrategy& self,
@@ -103,7 +127,5 @@ void register_solver_bindings(const py::module &m) {
     py::arg("cb"),
     "Set a callback function which will run at the end of every successful timestep"
     );
-
-
 }
 

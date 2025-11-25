@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0-alpha</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -161,6 +161,8 @@ requires std::invocable&lt;Transform, Elem&gt; &amp;&amp; Streamable&lt;std::inv
 <tr class="separator:ab9d0cfc158090ca9ed09646d407b04f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfbe36ddda15b6e206d9726236d543ab" id="r_adfbe36ddda15b6e206d9726236d543ab"><td class="memItemLeft" align="right" valign="top">N_Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfbe36ddda15b6e206d9726236d543ab">init_sun_vector</a> (uint64_t size, SUNContext sun_ctx)</td></tr>
 <tr class="separator:adfbe36ddda15b6e206d9726236d543ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71be80c2e36e5436cddcad795d61a0d7" id="r_a71be80c2e36e5436cddcad795d61a0d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71be80c2e36e5436cddcad795d61a0d7">check_sundials_flag</a> (const int flag, const std::string &amp;func_name, const <a class="el" href="#a7cea622c9311bfd0f0b9d7b6298ea04e">SUNDIALS_RET_CODE_TYPES</a> type)</td></tr>
+<tr class="separator:a71be80c2e36e5436cddcad795d61a0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9afa50593a895415d9314ad853806f3" id="r_ab9afa50593a895415d9314ad853806f3"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9afa50593a895415d9314ad853806f3">visual_width</a> (const std::string &amp;s)</td></tr>
 <tr class="separator:ab9afa50593a895415d9314ad853806f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6451ba6762273b91a8281043cfaa5d2a" id="r_a6451ba6762273b91a8281043cfaa5d2a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6451ba6762273b91a8281043cfaa5d2a">format_table</a> (const std::string &amp;tableName, const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1utils_1_1_column_base.html">ColumnBase</a> &gt; &gt; &amp;columns)</td></tr>
@@ -231,6 +233,40 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>func_name</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a71be80c2e36e5436cddcad795d61a0d7" name="a71be80c2e36e5436cddcad795d61a0d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71be80c2e36e5436cddcad795d61a0d7">&#9670;&#160;</a></span>check_sundials_flag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::utils::check_sundials_flag </td>
+          <td>(</td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>flag</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>func_name</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#a7cea622c9311bfd0f0b9d7b6298ea04e">SUNDIALS_RET_CODE_TYPES</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -761,20 +797,28 @@ requires std::invocable&lt;Transform, Elem&gt; &amp;&amp; Streamable&lt;std::inv
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">        {0, <span class="stringliteral">&quot;KIN_SUCCESS: The solver succeeded.&quot;</span>},</div>
-<div class="line">        {1, <span class="stringliteral">&quot;KIN_STEP_LT_STPTOL: The solver step size became less than the stopping tolerance.&quot;</span>},</div>
-<div class="line">        {2, <span class="stringliteral">&quot;KIN_RES_REPTD_ERR: The residual function repeatedly failed recoverably.&quot;</span>},</div>
-<div class="line">        {-1, <span class="stringliteral">&quot;KIN_MEM_NULL: The KINSOL memory structure is NULL.&quot;</span>},</div>
-<div class="line">        {-2, <span class="stringliteral">&quot;KIN_ILL_INPUT: An illegal input was detected.&quot;</span>},</div>
+<div class="line">        {1, <span class="stringliteral">&quot;KIN_INITIAL_GUESS_OKAY: The guess, u=u0, satisfied the system F(u) = 0 within the tolerances specified&quot;</span>},</div>
+<div class="line">        {2, <span class="stringliteral">&quot;KIN_STEP_LT_STPTOL: KINSOL stopped based on scaled step length. This means that the current iterate may be an approximate solution of the given nonlinear system, but it is also quite possible that the algorithm is “stalled” (making insufficient progress) near an invalid solution, or that the scalar, scsteptol, is too large.&quot;</span>},</div>
+<div class="line">        {99, <span class="stringliteral">&quot;KIN_WARNING: KINSOL succeeded but in an unusual way&quot;</span>},</div>
+<div class="line">        {-1, <span class="stringliteral">&quot;KIN_MEM_NULL: The KINSOL memory pointer is NULL.&quot;</span>},</div>
+<div class="line">        {-2, <span class="stringliteral">&quot;KIN_ILL_INPUT: An illegal value was specified for an input argument.&quot;</span>},</div>
 <div class="line">        {-3, <span class="stringliteral">&quot;KIN_NO_MALLOC: The KINSOL memory structure has not been allocated.&quot;</span>},</div>
-<div class="line">        {-4, <span class="stringliteral">&quot;KIN_MEM_FAIL: Memory allocation failed.&quot;</span>},</div>
-<div class="line">        {-5, <span class="stringliteral">&quot;KIN_LINIT_FAIL: The linear solver&#39;s initialization function failed.&quot;</span>},</div>
-<div class="line">        {-6, <span class="stringliteral">&quot;KIN_LSETUP_FAIL: The linear solver&#39;s setup function failed.&quot;</span>},</div>
-<div class="line">        {-7, <span class="stringliteral">&quot;KIN_LSOLVE_FAIL: The linear solver&#39;s solve function failed.&quot;</span>},</div>
-<div class="line">        {-8, <span class="stringliteral">&quot;KIN_RESFUNC_FAIL: The residual function failed in an unrecoverable manner.&quot;</span>},</div>
-<div class="line">        {-9, <span class="stringliteral">&quot;KIN_CONSTR_FAIL: The inequality constraint was violated and the solver was unable to recover.&quot;</span>},</div>
-<div class="line">        {-10, <span class="stringliteral">&quot;KIN_NLS_INIT_FAIL: The nonlinear solver&#39;s initialization function failed.&quot;</span>},</div>
-<div class="line">        {-11, <span class="stringliteral">&quot;KIN_NLS_SETUP_FAIL: The nonlinear solver&#39;s setup function failed.&quot;</span>},</div>
-<div class="line">        {-12, <span class="stringliteral">&quot;KIN_NLS_FAIL: The nonlinear solver&#39;s solve function failed.&quot;</span>}</div>
+<div class="line">        {-4, <span class="stringliteral">&quot;KIN_MEM_FAIL: A memory allocation failed.&quot;</span>},</div>
+<div class="line">        {-5, <span class="stringliteral">&quot;KIN_LINESEARCH_NONCONV: The line search algorithm was unable to find an iterate sufficiently distinct from the current iterate.&quot;</span>},</div>
+<div class="line">        {-6, <span class="stringliteral">&quot;KIN_MAXITER_REACHED: The maximum number of iterations was reached before convergence.&quot;</span>},</div>
+<div class="line">        {-7, <span class="stringliteral">&quot;KIN_MXNEWT_5X_EXCEEDED: Five consecutive steps have been taken that satisfy a scaled step length test.&quot;</span>},</div>
+<div class="line">        {-8, <span class="stringliteral">&quot;KIN_LINESEARCH_BCFAIL: The line search algorithm was unable to satisfy the beta-condition for nbcf fails iterations.&quot;</span>},</div>
+<div class="line">        {-9, <span class="stringliteral">&quot;KIN_LINSOLV_NO_RECOVERY: The linear solver&#39;s solve function failed recoverably, but the Jacobian data is already current.&quot;</span>},</div>
+<div class="line">        {-10, <span class="stringliteral">&quot;KIN_LINIT_FAIL: The linear solver&#39;s init routine failed.&quot;</span>},</div>
+<div class="line">        {-11, <span class="stringliteral">&quot;KIN_LSETUP_FAIL: The linear solver&#39;s setup function failed in an unrecoverable manner.&quot;</span>},</div>
+<div class="line">        {-12, <span class="stringliteral">&quot;KIN_LSOLVE_FAIL: The linear solver&#39;s solve function failed in an unrecoverable manner.&quot;</span>},</div>
+<div class="line">        {-13, <span class="stringliteral">&quot;KIN_SYSFUNC_FAIL: The system function failed in an unrecoverable manner.&quot;</span>},</div>
+<div class="line">        {-14, <span class="stringliteral">&quot;KIN_FIRST_SYSFUNC_ERR: The system function failed at the first call.&quot;</span>},</div>
+<div class="line">        {-15, <span class="stringliteral">&quot;KIN_REPTD_SYSFUNC_ERR: Unable to correct repeated recoverable system function errors.&quot;</span>},</div>
+<div class="line">        {-16, <span class="stringliteral">&quot;KIN_VECTOROP_ERR: A vector operation failed.&quot;</span>},</div>
+<div class="line">        {-17, <span class="stringliteral">&quot;KIN_CONTEXT_ERR: A context error occurred.&quot;</span>},</div>
+<div class="line">        {-18, <span class="stringliteral">&quot;KIN_DAMPING_FN_ERR: The damping function failed.&quot;</span>},</div>
+<div class="line">        {-19, <span class="stringliteral">&quot;KIN_DEPTH_FN_ERR: The depth function failed.&quot;</span>}</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>

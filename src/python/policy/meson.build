@@ -1,4 +1,6 @@
 # Define the library
+subdir('trampoline')
+
 bindings_sources = files('bindings.cpp')
 bindings_headers = files('bindings.h')
 
@@ -8,7 +10,7 @@ dependencies = [
     pybind11_dep,
 ]
 
-shared_module('py_gf_expectations',
+shared_module('py_gf_policy',
               bindings_sources,
               cpp_args: ['-fvisibility=default'],
               install : true,

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 namespace gridfire::engine {
     /**
      * @enum EngineTypes

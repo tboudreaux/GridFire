@@ -50,16 +50,15 @@ var namespacegridfire_1_1engine =
     ] ],
     [ "NetworkConstructionFlags", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9", [
       [ "NONE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab50339a10e1de285ac99d4c3990b8693", null ],
-      [ "STRONG", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a3dfb3ae3cdaa322f0388f1a531c39520", null ],
-      [ "BETA_MINUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a079cbe546b094a3228f3d2308de42371", null ],
-      [ "BETA_PLUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9aec3e428817690ce788dd410655d44ac7", null ],
-      [ "ELECTRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a26b6967eb578cb1b08373b342bf72ef7", null ],
-      [ "POSITRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ae0be5539e1cf1c424806baa62540aa9d", null ],
+      [ "REACLIB_STRONG", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a8211eaf8b0f0de1a6b0bf199da5975e1", null ],
+      [ "WRL_BETA_MINUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4", null ],
+      [ "WRL_BETA_PLUS", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a", null ],
+      [ "WRL_ELECTRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e", null ],
+      [ "WRL_POSITRON_CAPTURE", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955", null ],
       [ "REACLIB_WEAK", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9ab736eb13fff62c962f63232ec57f2692", null ],
       [ "WRL_WEAK", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4", null ],
       [ "REACLIB", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af9885ed04411bef7b70f78b643c6a220", null ],
-      [ "DEFAULT", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
-      [ "ALL", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5fb1f955b45e38e31789286a1790398d", null ]
+      [ "DEFAULT", "namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee", null ]
     ] ],
     [ "PrimingReportStatus", "namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1", [
       [ "SUCCESS", "namespacegridfire_1_1engine.html#ada706e6a92b733f6be85aa4425b135c1ad0749aaba8b833466dfcbb0428e4f89c", null ],
@@ -73,8 +72,6 @@ var namespacegridfire_1_1engine =
       [ "NOT_PRESENT", "namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a4b8e04af593e6ce16901570c52fe5607", null ]
     ] ],
     [ "build_nuclear_network", "namespacegridfire_1_1engine.html#a7b64607db49cfc042cbee63be5351549", null ],
-    [ "calculateCreationRate", "namespacegridfire_1_1engine.html#afb18048942c7af6debe9c0479a395a13", null ],
-    [ "calculateDestructionRateConstant", "namespacegridfire_1_1engine.html#a9dc985b6bf1b86754f49b72dba478862", null ],
     [ "engine_type_to_string", "namespacegridfire_1_1engine.html#a589015f6509c051c16b3e4ebc7550dd2", null ],
     [ "EngineStatus_to_string", "namespacegridfire_1_1engine.html#a006018e8e5f80ddb857009dbad962753", null ],
     [ "has_flag", "namespacegridfire_1_1engine.html#a7377e1152d165cfb9eadc16c5dc2f492", null ],

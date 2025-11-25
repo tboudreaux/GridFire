@@ -15,7 +15,7 @@ namespace gridfire::engine::diagnostics {
         const double relTol,
         const double absTol,
         const size_t top_n,
-        bool json
+        const bool json
     ) {
         struct SpeciesError {
             std::string name;
