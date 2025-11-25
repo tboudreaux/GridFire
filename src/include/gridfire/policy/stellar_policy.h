@@ -141,7 +141,7 @@ namespace gridfire::policy {
          * @brief Gets the current status of the policy.
          * @return NetworkPolicyStatus The construction and verification status.
          */
-        [[nodiscard]] NetworkPolicyStatus getStatus() const override;
+        [[nodiscard]] NetworkPolicyStatus get_status() const override;
 
         [[nodiscard]] const std::vector<std::unique_ptr<engine::DynamicEngine>> &get_engine_stack() const override;
 

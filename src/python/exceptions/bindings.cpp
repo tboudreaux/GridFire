@@ -7,48 +7,41 @@ namespace py = pybind11;
 #include "gridfire/exceptions/exceptions.h"
 
 void register_exception_bindings(const py::module &m) {
-    py::register_exception<gridfire::exceptions::EngineError>(m, "GridFireEngineError");
+    py::register_exception<gridfire::exceptions::GridFireError>(m, "GridFireError");
 
-    // TODO: Make it so that we can grab the stale state in python
-    // m.attr("StaleEngineTrigger") = py::register_exception<gridfire::exceptions::StaleEngineTrigger>(m, "StaleEngineTrigger", m.attr("GridFireEngineError"));
-    m.attr("StaleEngineError") = py::register_exception<gridfire::exceptions::StaleEngineError>(m, "StaleEngineError", m.attr("GridFireEngineError"));
-    m.attr("FailedToPartitionEngineError") = py::register_exception<gridfire::exceptions::FailedToPartitionEngineError>(m, "FailedToPartitionEngineError", m.attr("GridFireEngineError"));
-    m.attr("NetworkResizedError") = py::register_exception<gridfire::exceptions::NetworkResizedError>(m, "NetworkResizedError", m.attr("GridFireEngineError"));
-    m.attr("UnableToSetNetworkReactionsError") = py::register_exception<gridfire::exceptions::UnableToSetNetworkReactionsError>(m, "UnableToSetNetworkReactionsError", m.attr("GridFireEngineError"));
+    py::register_exception<gridfire::exceptions::DebugException>(m, "DebugException", m.attr("GridFireError"));
 
-    py::class_<gridfire::exceptions::StaleEngineTrigger::state>(m, "StaleEngineState")
-        .def(py::init<>())
-        .def_readwrite("T9", &gridfire::exceptions::StaleEngineTrigger::state::m_T9)
-        .def_readwrite("rho", &gridfire::exceptions::StaleEngineTrigger::state::m_rho)
-        .def_readwrite("Y", &gridfire::exceptions::StaleEngineTrigger::state::m_Y)
-        .def_readwrite("t", &gridfire::exceptions::StaleEngineTrigger::state::m_t)
-        .def_readwrite("total_steps", &gridfire::exceptions::StaleEngineTrigger::state::m_total_steps)
-        .def_readwrite("eps_nuc", &gridfire::exceptions::StaleEngineTrigger::state::m_eps_nuc);
+    py::register_exception<gridfire::exceptions::EngineError>(m, "EngineError", m.attr("GridFireError"));
 
-    py::class_<gridfire::exceptions::StaleEngineTrigger>(m, "StaleEngineTrigger")
-        .def(py::init<const gridfire::exceptions::StaleEngineTrigger::state &>())
-        .def("getState", &gridfire::exceptions::StaleEngineTrigger::getState)
-        .def("numSpecies", &gridfire::exceptions::StaleEngineTrigger::numSpecies)
-        .def("totalSteps", &gridfire::exceptions::StaleEngineTrigger::totalSteps)
-        .def("energy", &gridfire::exceptions::StaleEngineTrigger::energy)
-        .def("getMolarAbundance", &gridfire::exceptions::StaleEngineTrigger::getMolarAbundance)
-        .def("temperature", &gridfire::exceptions::StaleEngineTrigger::temperature)
-        .def("density", &gridfire::exceptions::StaleEngineTrigger::density)
-        .def("__repr__", [&](const gridfire::exceptions::StaleEngineTrigger& self) {
-           return self.what();
-        });
+    py::register_exception<gridfire::exceptions::FailedToPartitionEngineError>(m, "FailedToPartitionEngineError", m.attr("EngineError"));
+    py::register_exception<gridfire::exceptions::NetworkResizedError>(m, "NetworkResizedError", m.attr("EngineError"));
+    py::register_exception<gridfire::exceptions::UnableToSetNetworkReactionsError>(m, "UnableToSetNetworkReactionsError", m.attr("EngineError"));
+    py::register_exception<gridfire::exceptions::BadCollectionError>(m, "BadCollectionError", m.attr("EngineError"));
+    py::register_exception<gridfire::exceptions::InvalidQSESolutionError>(m, "InvalidQSESolutionError", m.attr("EngineError"));
+    py::register_exception<gridfire::exceptions::BadRHSEngineError>(m, "BadRHSEngineError", m.attr("EngineError"));
 
-    py::register_exception<gridfire::exceptions::FailedToPartitionEngineError>(m, "FailedToPartitionEngineError", m.attr("GridFireEngineError"));
-    py::register_exception<gridfire::exceptions::NetworkResizedError>(m, "NetworkResizedError", m.attr("GridFireEngineError"));
-    py::register_exception<gridfire::exceptions::UnableToSetNetworkReactionsError>(m, "UnableToSetNetworkReactionsError", m.attr("GridFireEngineError"));
-    py::register_exception<gridfire::exceptions::BadCollectionError>(m, "BadCollectionError", m.attr("GridFireEngineError"));
-
-    py::register_exception<gridfire::exceptions::JacobianError>(m, "JacobianError", m.attr("GridFireEngineError"));
+    py::register_exception<gridfire::exceptions::JacobianError>(m, "JacobianError", m.attr("EngineError"));
 
     py::register_exception<gridfire::exceptions::StaleJacobianError>(m, "StaleJacobianError", m.attr("JacobianError"));
     py::register_exception<gridfire::exceptions::UninitializedJacobianError>(m, "UninitializedJacobianError", m.attr("JacobianError"));
     py::register_exception<gridfire::exceptions::UnknownJacobianError>(m, "UnknownJacobianError", m.attr("JacobianError"));
 
-    py::register_exception<gridfire::exceptions::UtilityError>(m, "UtilityError");
+    py::register_exception<gridfire::exceptions::UtilityError>(m, "UtilityError", m.attr("GridFireError"));
     py::register_exception<gridfire::exceptions::HashingError>(m, "HashingError", m.attr("UtilityError"));
+
+    py::register_exception<gridfire::exceptions::PolicyError>(m, "PolicyError", m.attr("GridFireError"));
+    py::register_exception<gridfire::exceptions::MissingBaseReactionError>(m, "MissingBaseReactionError", m.attr("PolicyError"));
+    py::register_exception<gridfire::exceptions::MissingSeedSpeciesError>(m, "MissingSeedSpeciesError", m.attr("PolicyError"));
+    py::register_exception<gridfire::exceptions::MissingKeyReactionError>(m, "MissingKeyReactionError", m.attr("PolicyError"));
+
+    py::register_exception<gridfire::exceptions::ReactionError>(m, "ReactionError", m.attr("GridFireError"));
+    py::register_exception<gridfire::exceptions::ReactionParsingError>(m, "ReactionParsingError", m.attr("ReactionError"));
+
+    py::register_exception<gridfire::exceptions::SolverError>(m, "SolverError", m.attr("GridFireError"));
+    py::register_exception<gridfire::exceptions::SingularJacobianError>(m, "SingularJacobianError", m.attr("SolverError"));
+    py::register_exception<gridfire::exceptions::IllConditionedJacobianError>(m, "IllConditionedJacobianError", m.attr("SolverError"));
+    py::register_exception<gridfire::exceptions::SUNDIALSError>(m, "SUNDIALSError", m.attr("SolverError"));
+    py::register_exception<gridfire::exceptions::CVODESolverFailureError>(m, "CVODESolverFailureError", m.attr("SUNDIALSError"));
+    py::register_exception<gridfire::exceptions::KINSolSolverFailureError>(m, "KINSolSolverFailureError", m.attr("SUNDIALSError"));
+
 }

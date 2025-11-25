@@ -24,23 +24,21 @@ namespace gridfire::engine {
     enum class NetworkConstructionFlags : uint32_t {
         NONE = 0,
 
-        STRONG = 1 << 0, // 1
+        REACLIB_STRONG = 1 << 0, // 1
 
-        BETA_MINUS = 1 << 1, // 2
-        BETA_PLUS = 1 << 2, // 4
-        ELECTRON_CAPTURE = 1 << 3, // 8
-        POSITRON_CAPTURE = 1 << 4, // 16
+        WRL_BETA_MINUS = 1 << 1, // 2
+        WRL_BETA_PLUS = 1 << 2, // 4
+        WRL_ELECTRON_CAPTURE = 1 << 3, // 8
+        WRL_POSITRON_CAPTURE = 1 << 4, // 16
 
         REACLIB_WEAK = 1 << 5,
 
-        WRL_WEAK = BETA_MINUS | BETA_PLUS | ELECTRON_CAPTURE | POSITRON_CAPTURE,
+        WRL_WEAK = WRL_BETA_MINUS | WRL_BETA_PLUS | WRL_ELECTRON_CAPTURE | WRL_POSITRON_CAPTURE,
 
-        REACLIB = STRONG | REACLIB_WEAK,
+        REACLIB = REACLIB_STRONG | REACLIB_WEAK,
 
         // Currently we default to just reaclib reactions but include both their strong and weak set
         DEFAULT = REACLIB,
-
-        ALL = STRONG | WRL_WEAK
     };
 
     /** @brief Helper function to convert NetworkConstructionFlags to their underlying integer type.
@@ -103,20 +101,20 @@ namespace gridfire::engine {
     inline std::string NetworkConstructionFlagsToString(NetworkConstructionFlags flags) {
         std::stringstream ss;
         constexpr std::array<NetworkConstructionFlags, 6> bases_flags_array = {
-            NetworkConstructionFlags::STRONG,
-            NetworkConstructionFlags::BETA_MINUS,
-            NetworkConstructionFlags::BETA_PLUS,
-            NetworkConstructionFlags::ELECTRON_CAPTURE,
-            NetworkConstructionFlags::POSITRON_CAPTURE,
+            NetworkConstructionFlags::REACLIB_STRONG,
+            NetworkConstructionFlags::WRL_BETA_MINUS,
+            NetworkConstructionFlags::WRL_BETA_PLUS,
+            NetworkConstructionFlags::WRL_ELECTRON_CAPTURE,
+            NetworkConstructionFlags::WRL_POSITRON_CAPTURE,
             NetworkConstructionFlags::REACLIB_WEAK
         };
 
         const std::unordered_map<NetworkConstructionFlags, std::string> bases_string_map = {
-            {NetworkConstructionFlags::STRONG, "Strong"},
-            {NetworkConstructionFlags::BETA_MINUS, "BetaMinus"},
-            {NetworkConstructionFlags::BETA_PLUS, "BetaPlus"},
-            {NetworkConstructionFlags::ELECTRON_CAPTURE, "ElectronCapture"},
-            {NetworkConstructionFlags::POSITRON_CAPTURE, "PositronCapture"},
+            {NetworkConstructionFlags::REACLIB_STRONG, "Strong"},
+            {NetworkConstructionFlags::WRL_BETA_MINUS, "BetaMinus"},
+            {NetworkConstructionFlags::WRL_BETA_PLUS, "BetaPlus"},
+            {NetworkConstructionFlags::WRL_ELECTRON_CAPTURE, "ElectronCapture"},
+            {NetworkConstructionFlags::WRL_POSITRON_CAPTURE, "PositronCapture"},
             {NetworkConstructionFlags::REACLIB_WEAK, "ReaclibWeak"}
         };
 

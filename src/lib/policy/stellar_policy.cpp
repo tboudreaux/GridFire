@@ -92,7 +92,7 @@ namespace gridfire::policy {
         return std::make_unique<partition::CompositePartitionFunction>(partitionFunction);
     }
 
-    inline NetworkPolicyStatus MainSequencePolicy::getStatus() const {
+    inline NetworkPolicyStatus MainSequencePolicy::get_status() const {
         return m_status;
     }
 

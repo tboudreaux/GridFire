@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 # *********************************************************************** #
-project('GridFire', 'cpp', version: 'v0.7.0-alpha', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
+project('GridFire', 'cpp', version: 'v0.7.0_alpha_2025_10_25', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
 # Add default visibility for all C++ targets
 add_project_arguments('-fvisibility=default', language: 'cpp')

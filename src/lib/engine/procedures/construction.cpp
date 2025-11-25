@@ -63,7 +63,7 @@ namespace {
                 parent_species.z() - 1
             );
             if (downProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::BETA_PLUS)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::WRL_BETA_PLUS)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -72,7 +72,7 @@ namespace {
                         )
                     );
                 }
-                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::ELECTRON_CAPTURE)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::WRL_ELECTRON_CAPTURE)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -83,7 +83,7 @@ namespace {
                 }
             }
             if (upProduct.has_value()) { // Only add the reaction if the Species map contains the product
-                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::BETA_MINUS)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::WRL_BETA_MINUS)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -92,7 +92,7 @@ namespace {
                         )
                     );
                 }
-                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::POSITRON_CAPTURE)) {
+                if (has_flag(reactionTypes, gridfire::engine::NetworkConstructionFlags::WRL_POSITRON_CAPTURE)) {
                     weak_reaction_pool.add_reaction(
                         std::make_unique<gridfire::rates::weak::WeakReaction>(
                             parent_species,
@@ -111,7 +111,7 @@ namespace {
         const gridfire::engine::NetworkConstructionFlags reaction_types
     ) {
         gridfire::reaction::ReactionSet strong_reaction_pool;
-        if (has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::STRONG)) {
+        if (has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_STRONG)) {
             const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
             for (const auto& reaction : allReaclibReactions) {
                 const bool isWeakReaction = reaclib_reaction_is_weak(*reaction);
@@ -129,11 +129,11 @@ namespace {
     bool validate_unique_weak_set(gridfire::engine::NetworkConstructionFlags flag) {
         // This method ensures that weak reactions will only be fetched from either reaclib or the weak reaction library (WRL)
         // but not both
-        std::array<gridfire::engine::NetworkConstructionFlags, 4> WRL_Flags = {
-            gridfire::engine::NetworkConstructionFlags::BETA_PLUS,
-            gridfire::engine::NetworkConstructionFlags::ELECTRON_CAPTURE,
-            gridfire::engine::NetworkConstructionFlags::POSITRON_CAPTURE,
-            gridfire::engine::NetworkConstructionFlags::BETA_MINUS
+        const std::array<gridfire::engine::NetworkConstructionFlags, 4> WRL_Flags = {
+            gridfire::engine::NetworkConstructionFlags::WRL_BETA_PLUS,
+            gridfire::engine::NetworkConstructionFlags::WRL_ELECTRON_CAPTURE,
+            gridfire::engine::NetworkConstructionFlags::WRL_POSITRON_CAPTURE,
+            gridfire::engine::NetworkConstructionFlags::WRL_BETA_MINUS
         };
 
         if (!has_flag(flag, gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK)) {

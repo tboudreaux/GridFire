@@ -180,3 +180,4 @@
 #include "gridfire/engine/views/engine_views.h"
 #include "gridfire/engine/procedures/engine_procedures.h"
 #include "gridfire/engine/types/engine_types.h"
+#include "gridfire/engine/diagnostics/dynamic_engine_diagnostics.h"

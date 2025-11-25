@@ -20,7 +20,9 @@ void register_engine_construction_bindings(pybind11::module &m);
 void register_engine_priming_bindings(pybind11::module &m);
 
 void register_engine_type_bindings(pybind11::module &m);
-void register_engine_building_type_bindings(pybind11::module &m);
-void register_engine_reporting_type_bindings(pybind11::module &m);
+void register_engine_building_type_bindings(const pybind11::module &m);
+void register_engine_reporting_type_bindings(const pybind11::module &m);
+void register_engine_types_bindings(const pybind11::module &m);
+void register_jacobian_type_bindings(pybind11::module &m);
 
 

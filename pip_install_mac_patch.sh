@@ -67,10 +67,10 @@ echo ""
 echo -e "${GREEN}Step 3: Locating installed gridfire extension module...${NC}"
 
 # Find the .so file
-SO_FILE=$(find "$SITE_PACKAGES" -name "gridfire.cpython-*-darwin.so" 2>/dev/null | head -n 1)
+SO_FILE=$(find "$SITE_PACKAGES/gridfire" -name "_gridfire.cpython-*-darwin.so" 2>/dev/null | head -n 1)
 
 if [ -z "$SO_FILE" ]; then
-    echo -e "${RED}Error: Could not find gridfire.cpython-*-darwin.so in $SITE_PACKAGES/gridfire${NC}"
+    echo -e "${RED}Error: Could not find _gridfire.cpython-*-darwin.so in $SITE_PACKAGES/gridfire${NC}"
     echo "Installation may have failed or the file is in an unexpected location."
     exit 1
 fi

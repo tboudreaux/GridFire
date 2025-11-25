@@ -270,6 +270,10 @@ int main(int argc, char** argv) {
     CLI11_PARSE(app, argc, argv);
 
     const NetIn netIn = init(temp, rho, tMax);
+    std::println("Starting Integration with T = {} K, ρ = {} g/cm³, tMax = {} s", temp, rho, tMax);
+    std::println("Composition is: {}", utils::iterable_to_delimited_string(netIn.composition, ", ", [&netIn](std::pair<const fourdst::atomic::Species&, double> arg) {
+        return std::format("{:5}: {:10.4E}", arg.first.name(), arg.second);
+    }));
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();
