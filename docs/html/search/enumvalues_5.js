@@ -1,8 +1,22 @@
 var searchData=
 [
-  ['fifthorder_0',['FifthOrder',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a5105376c2b90747e00bed5bf2953dd56',1,'gridfire::engine']]],
-  ['file_5fdefined_5fengine_5fview_1',['FILE_DEFINED_ENGINE_VIEW',['../namespacegridfire_1_1engine.html#a5387db1ec0b039955487fbc4c0034854a048f6da02134ba0aedf95f8171611bf3',1,'gridfire::engine']]],
-  ['fourthorder_2',['FourthOrder',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a100e3bf0197221c19b222badf42aa964',1,'gridfire::engine']]],
-  ['front_3',['FRONT',['../classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html#a7002ebbef966f89b2426f5ea0df33329aa692ae3131928d57ddcd2408d6b44d71',1,'gridfire::partition::RauscherThielemannPartitionFunction']]],
-  ['full_4',['Full',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75',1,'gridfire::engine']]]
+  ['fdsse_5fcomposition_5ferror_0',['FDSSE_COMPOSITION_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040a6d4b28ab0fea21400884aa3b92094274',1,'gridfire_extern.h']]],
+  ['fdsse_5fcomposition_5ferror_1',['fdsse_composition_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147a6af8e4f88ac4de0a6713500ed47924a3',1,'gridfire_mod']]],
+  ['fdsse_5finvalid_5fcomposition_5ferror_2',['FDSSE_INVALID_COMPOSITION_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040a48fd73b0abbfb72296db39fb4f70f5ec',1,'gridfire_extern.h']]],
+  ['fdsse_5finvalid_5fcomposition_5ferror_3',['fdsse_invalid_composition_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147ade71d6ffeb5785f4a94dfb4957972c6b',1,'gridfire_mod']]],
+  ['fdsse_5fnon_5f4dstar_5ferror_4',['FDSSE_NON_4DSTAR_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040a76f3a3438cbcb1c380a616c270e66ee9',1,'gridfire_extern.h']]],
+  ['fdsse_5fnon_5f4dstar_5ferror_5',['fdsse_non_4dstar_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147af119a4af62898ce36809c39a9f3e2616',1,'gridfire_mod']]],
+  ['fdsse_5fspecies_5ferror_6',['FDSSE_SPECIES_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040a66249e99adfe5b4cddfb37f6541d9dd6',1,'gridfire_extern.h']]],
+  ['fdsse_5fspecies_5ferror_7',['fdsse_species_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147a9d6657b793d36330f0c9301452de425e',1,'gridfire_mod']]],
+  ['fdsse_5fsuccess_8',['FDSSE_SUCCESS',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040ab03d418deeabe5eb2e1978c29278f9c0',1,'gridfire_extern.h']]],
+  ['fdsse_5fsuccess_9',['fdsse_success',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147a76184b02b2a2947ae8628e091824b0b0',1,'gridfire_mod']]],
+  ['fdsse_5funknown_5ferror_10',['FDSSE_UNKNOWN_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040ae27be048c2b90a7bde7584fd10695524',1,'gridfire_extern.h']]],
+  ['fdsse_5funknown_5ferror_11',['fdsse_unknown_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147a2bd70933e1183dbae21d1754a301697b',1,'gridfire_mod']]],
+  ['fdsse_5funknown_5fsymbol_5ferror_12',['FDSSE_UNKNOWN_SYMBOL_ERROR',['../gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040ad0bbd6f5fd832830e8e16e022b154dd0',1,'gridfire_extern.h']]],
+  ['fdsse_5funknown_5fsymbol_5ferror_13',['fdsse_unknown_symbol_error',['../namespacegridfire__mod.html#a244769a94919381fd624416c41519147a5488d8506bf12a5bc573052dae0993da',1,'gridfire_mod']]],
+  ['fifthorder_14',['FifthOrder',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a5105376c2b90747e00bed5bf2953dd56',1,'gridfire::engine']]],
+  ['file_5fdefined_5fengine_5fview_15',['FILE_DEFINED_ENGINE_VIEW',['../namespacegridfire_1_1engine.html#a5387db1ec0b039955487fbc4c0034854a048f6da02134ba0aedf95f8171611bf3',1,'gridfire::engine']]],
+  ['fourthorder_16',['FourthOrder',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a100e3bf0197221c19b222badf42aa964',1,'gridfire::engine']]],
+  ['front_17',['FRONT',['../classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html#a7002ebbef966f89b2426f5ea0df33329aa692ae3131928d57ddcd2408d6b44d71',1,'gridfire::partition::RauscherThielemannPartitionFunction']]],
+  ['full_18',['Full',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75',1,'gridfire::engine']]]
 ];

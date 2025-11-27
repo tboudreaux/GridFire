@@ -86,7 +86,7 @@ extern "C" {
 
     int gf_evolve(
         void* ptr,
-        const double* Y,
+        const double* Y_in,
         const size_t num_species,
         const double T,
         const double rho,
@@ -95,12 +95,15 @@ extern "C" {
         double* Y_out,
         double* energy_out,
         double* dEps_dT,
-        double* dEps_dRho, double* mass_lost
+        double* dEps_dRho,
+        double* specific_neutrino_energy_loss,
+        double* specific_neutrino_flux,
+        double* mass_lost
     ) {
         auto* ctx = static_cast<GridFireContext*>(ptr);
         try {
             const int result = ctx->evolve(
-                Y,
+                Y_in,
                 num_species,
                 T,
                 rho,
@@ -109,7 +112,10 @@ extern "C" {
                 Y_out,
                 *energy_out,
                 *dEps_dT,
-                *dEps_dRho, *mass_lost
+                *dEps_dRho,
+                *specific_neutrino_energy_loss,
+                *specific_neutrino_flux,
+                *mass_lost
             );
             if (result != 0) {
                 return result;

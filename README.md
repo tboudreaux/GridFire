@@ -15,53 +15,6 @@
 
 ---
 
-# Table of Contents
-- [Introduction](#introduction)
-  - [Design Philosophy and Workflow](#design-philosophy-and-workflow)
-  - [Funding](#funding)
-- [Usage](#usage)
-  - [Python installation](#python-installation)
-    - [pypi](#pypi)
-    - [source](#source)
-    - [source for developers](#source-for-developers)
-    - [patching shared object files](#patching-shared-object-files)
-  - [Automatic Build and Installation](#automatic-build-and-installation)
-    - [Script Build and Installation Instructions](#script-build-and-installation-instructions)
-    - [Currently, known good platforms](#currently-known-good-platforms)
-  - [Manual Build Instructions](#manual-build-instructions)
-    - [Prerequisites](#prerequisites)
-    - [Install Scripts](#install-scripts)
-    - [Dependency Installation on Common Platforms](#dependency-installation-on-common-platforms)
-    - [Building the C++ Library](#building-the-c-library)
-    - [Installing the Library](#installing-the-library)
-    - [Minimum compiler versions](#minimum-compiler-versions)
-- [Code Architecture and Logical Flow](#code-architecture-and-logical-flow)
-- [Engines](#engines)
-  - [GraphEngine](#graphengine)
-  - [GraphEngine Configuration Options](#graphengine-configuration-options)
-  - [Available Partition Functions](#available-partition-functions)
-  - [AutoDiff](#autodiff)
-- [Reaclib in GridFire](#reaclib-in-gridfire)
-- [Engine Views](#engine-views)
-  - [A Note about composability](#a-note-about-composability)
-- [Numerical Solver Strategies](#numerical-solver-strategies)
-  - [NetworkSolverStrategy&lt;EngineT&gt;](#networksolverstrategyenginet)
-  - [NetIn and NetOut](#netin-and-netout)
-  - [DirectNetworkSolver (Implicit Rosenbrock Method)](#directnetworksolver-implicit-rosenbrock-method)
-  - [Algorithmic Workflow in DirectNetworkSolver](#algorithmic-workflow-in-directnetworksolver)
-  - [Future Solver Implementations](#future-solver-implementations)
-- [Python Extensibility](#python-extensibility)
-- [Usage Examples](#usage-examples)
-  - [C++](#c)
-    - [GraphEngine Initialization](#graphengine-initialization)
-    - [Adaptive Network View](#adaptive-network-view)
-    - [Composition Initialization](#composition-initialization)
-    - [Common Workflow Example](#common-workflow-example)
-    - [Callback Example](#callback-example)
-  - [Python](#python)
-    - [Common Workflow Example](#common-workflow-example-1)
-    - [Python callbacks](#python-callbacks)
-- [Related Projects](#related-projects)
 
 # Introduction
 GridFire is a C++ library designed to perform general nuclear network
@@ -119,7 +72,7 @@ These wheels have been compiled on many systems
 
 | Version   | Platform | Architecture | CPython Versions                                           | PyPy Versions |
 |-----------|----------|--------------|------------------------------------------------------------|---------------|
- | 0.7.0_rc1 | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
+| 0.7.0_rc1 | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.7.0_rc1 | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.7.0_rc1 | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 | 0.5.0     | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
@@ -179,7 +132,7 @@ these will be in the site-packages and site-packages/fourdst directories for you
 Look for files named
 
 - `site-packages/gridfire.cpython-3*-darwin.so`
-- `site-packages/fourdst/_phys.cpython-3*-darwin.so` 
+- `site-packages/fourdst/_phys.cpython-3*-darwin.so`
 
 then, for each of these files, run
 
@@ -386,9 +339,9 @@ include:
   networks.
 - **io Module:** Defines shared interface for parsing network data from files
 - **trigger Module:** Defines interface for complex trigger logic so that repartitioning can be followed.
-- **Policy Module:** Contains "policies" which are small modular units of code that enforce certain contracts. 
-For example the `ProtonProtonReactionChainPolicy` enforces than an engine must include at least all the reactions
-in the proton-proton chain. This module exposes the primary construction interface for users. I.e. select a policy (such as `MainSequencePolicy`), provide a composition, and get back an engine which satisfies that policy.
+- **Policy Module:** Contains "policies" which are small modular units of code that enforce certain contracts.
+  For example the `ProtonProtonReactionChainPolicy` enforces than an engine must include at least all the reactions
+  in the proton-proton chain. This module exposes the primary construction interface for users. I.e. select a policy (such as `MainSequencePolicy`), provide a composition, and get back an engine which satisfies that policy.
 - **Python Interface:** Exposes *almost* all C++ functionality to Python,
   allowing users to define compositions, configure engines, and run simulations
   directly from Python scripts.
@@ -434,25 +387,25 @@ GraphEngine exposes runtime configuration methods to tailor network
 construction and rate evaluations:
 
 - **Constructor Parameters:**
-    - `composition`: The initial seed composition to start network construction from.
-    - `BuildDepthType` (`Full`, `Shallow`, `SecondOrder`, etc...): controls
-      number of recursions used to construct the network topology. Can either be a
-      member of the `NetworkBuildDepth` enum or an integer.
-    - `partition::PartitionFunction`: Partition function used when evaluating
-      detailed balance for inverse rates.
-    - `NetworkConstructionFlags`: A bitwise flag telling the network how to construct itself. That is, what reaction types should be used in construction. For example one might use `NetworkConstructionFlags::STRONG | NetworkConstructionFlags::BETA_PLUS` to use all strong reactions and β+ decay. By Default this is set to use reaclib strong and reaclib weak (no WRL included by default due to current pathological stiffness issues).
+  - `composition`: The initial seed composition to start network construction from.
+  - `BuildDepthType` (`Full`, `Shallow`, `SecondOrder`, etc...): controls
+    number of recursions used to construct the network topology. Can either be a
+    member of the `NetworkBuildDepth` enum or an integer.
+  - `partition::PartitionFunction`: Partition function used when evaluating
+    detailed balance for inverse rates.
+  - `NetworkConstructionFlags`: A bitwise flag telling the network how to construct itself. That is, what reaction types should be used in construction. For example one might use `NetworkConstructionFlags::STRONG | NetworkConstructionFlags::BETA_PLUS` to use all strong reactions and β+ decay. By Default this is set to use reaclib strong and reaclib weak (no WRL included by default due to current pathological stiffness issues).
 
 - **setPrecomputation(bool precompute):**
-    - Enable/disable caching of reaction rates and stoichiometric data at initialization.
-    - *Effect:* Reduces per-step overhead; increases memory and setup time.
+  - Enable/disable caching of reaction rates and stoichiometric data at initialization.
+  - *Effect:* Reduces per-step overhead; increases memory and setup time.
 
 - **setScreeningModel(ScreeningType type):**
-    - Choose plasma screening (models: `BARE`, `WEAK`).
-    - *Effect:* Alters rate enhancement under dense/low-T conditions, impacting stiffness.
+  - Choose plasma screening (models: `BARE`, `WEAK`).
+  - *Effect:* Alters rate enhancement under dense/low-T conditions, impacting stiffness.
 
 - **setUseReverseReactions(bool useReverse):**
-    - Toggle inclusion of reverse (detailed balance) reactions.
-    - *Effect:* Improves equilibrium fidelity; increases network size and stiffness.
+  - Toggle inclusion of reverse (detailed balance) reactions.
+  - *Effect:* Improves equilibrium fidelity; increases network size and stiffness.
 
 ### Available Partition Functions
 
@@ -564,11 +517,11 @@ A `NetIn` struct contains
 A `NetOut` struct contains
 - The final composition after evolving to `tMax` (`NetOut::composition`)
 - The number of steps the solver took to evolve to `tmax` (`NetOut::num_steps`)
-- The final energy generated by the network while evolving to `tMax`
-  (`NetOut::energy`)
-
->**Note:** Currently `GraphEngine` only considers energy due to nuclear mass
->defect and not neutrino loss.
+- The final specific energy generated by the network while evolving to `tMax` (`NetOut::energy`) [erg/g]
+- The derivative of energy with respect to temperature at the end of the evolution (`NetOut::dEps_dT`)
+- The derivative of energy with respect to density at the end of the evolution (`NetOut::dEps_dRho`)
+- The total specific energy lost to neutrinos while evolving to `tMax` (`NetOut::total_neutrino_loss`) [erg/g]
+- The total flux of neutrinos while evolving to `tMax` (`NetOut::total_neutrino_flux`)
 
 ### CVODESolverStrategy
 
@@ -576,15 +529,15 @@ We use the CVODE module from [SUNDIALS](https://computing.llnl.gov/projects/sund
 solver. Specifically we use the BDF linear multistep method from that which includes advanced adaptive timestepping.
 
 Further, we use a trigger system to periodically repartition the network as the state of the network changes. This
-keeps the stiffness of the network tractable. The algorithm we use for that is 
+keeps the stiffness of the network tractable. The algorithm we use for that is
 
 1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
 2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
 3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
 4. OR if the number of convergence failures grows more than 100% from one step to the next or exceeds 5 at any given step.
 
-Moreover, callback functions can be registered in either python or C++ which will take a `const CVODESolverStrategy::TimestepContext&` struct 
-as argument. This allows for more complex logging logic. Note that callbacks **do not** let you reach inside the 
+Moreover, callback functions can be registered in either python or C++ which will take a `const CVODESolverStrategy::TimestepContext&` struct
+as argument. This allows for more complex logging logic. Note that callbacks **do not** let you reach inside the
 solver and adjust the state of the network. They are only intended for investigation not extension of physics. If you
 wish to extend the physics this must be implemented at the engine or engine view level.
 
@@ -793,9 +746,9 @@ All GridFire C++ types have been bound and can be passed around as one would exp
 
 The syntax for registration is very similar to C++. There are a few things to note about this more robust example
 
- 1. Note how I use a callback and a log object to store the state of the simulation at each timestep.
- 2. If you have tools such as mypy installed you will see that the python bindings are strongly typed. This is
-    intentional to help users avoid mistakes when writing code.
+1. Note how I use a callback and a log object to store the state of the simulation at each timestep.
+2. If you have tools such as mypy installed you will see that the python bindings are strongly typed. This is
+   intentional to help users avoid mistakes when writing code.
 ```python
 from fourdst.composition import Composition
 from gridfire.type import NetIn
@@ -910,7 +863,7 @@ from other languages.
 > **Note:** Because the C API does not pass the general Composition object a `mass_lost`
 > output parameter has been added to the evolve calls, this tracks the total mass in species which have not been registered with the C API GridFire by the caller
 ## C API Overview
-In general when using the C API the workflow is to 
+In general when using the C API the workflow is to
 
 1. create a `gf_context` pointer. This object holds the state of GridFire so that it does not need to be re-initialized for each call.
 2. call initialization routines on the context to set up the engine and solver you wish to use.
@@ -962,6 +915,8 @@ int main() {
     double energy_out;
     double dEps_dT;
     double dEps_dRho;
+    double neutrino_energy_loss;
+    double neutrino_flux;
     double mass_lost;
 
     ret = gf_evolve(
@@ -975,7 +930,10 @@ int main() {
         Y_out,
         &energy_out,
         &dEps_dT,
-        &dEps_dRho, &mass_lost
+        &dEps_dRho,
+        &neutrino_energy_loss,
+        &neutrino_flux,
+        &mass_lost
     );
 
     GF_CHECK_RET_CODE(ret, gf_context, "Evolution");
@@ -1000,7 +958,7 @@ int main() {
 ## Fortran API Overview
 
 GridFire makes use of the stable C API and Fortran 2003's `iso_c_bindings` to provide a Fortran interface for legacy
-code. The fortran interface is designed to be very similar to the C API and exposes the same functionality. 
+code. The fortran interface is designed to be very similar to the C API and exposes the same functionality.
 
 1. `GridFire%gff_init`: Initializes a GridFire context and returns a handle to it.
 2. `GridFire%register_species`: Registers species with the GridFire context.
@@ -1058,7 +1016,7 @@ program main
 
     ! Output buffers
     real(c_double), dimension(8) :: Y_out
-    real(c_double) :: energy_out, dedt, dedrho, dmass
+    real(c_double) :: energy_out, dedt, dedrho, nu_E_loss, nu_flux, dmass
 
     ! Thermodynamic Conditions (Solar Core-ish)
     real(c_double) :: T = 1.5e7      ! 15 Million K
@@ -1082,7 +1040,7 @@ program main
 
     ! --- 5. Evolve ---
     print *, "Evolving system (dt =", dt, "s)..."
-    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, dmass, ierr)
+    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, nu_E_loss, nu_flux, dmass, ierr)
 
     if (ierr /= 0) then
         print *, "Evolution Failed with error code: ", ierr

@@ -81,7 +81,10 @@ extern "C" {
         double* Y_out,
         double* energy_out,
         double* dEps_dT,
-        double* dEps_dRho, double* mass_lost
+        double* dEps_dRho,
+        double* specific_neutrino_energy_loss,
+        double* specific_neutrino_flux,
+        double* mass_lost
     );
 
 #ifdef __cplusplus

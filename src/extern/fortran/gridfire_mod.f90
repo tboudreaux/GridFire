@@ -102,7 +102,7 @@ module gridfire_mod
         end function
 
         ! int gf_evolve(...)
-        function gf_evolve(ptr, Y_in, num_species, T, rho, dt, Y_out, energy_out, dEps_dT, dEps_dRho, mass_lost) result(ierr) &
+        function gf_evolve(ptr, Y_in, num_species, T, rho, dt, Y_out, energy_out, dEps_dT, dEps_dRho, specific_neutrino_loss, specific_neutrino_flux, mass_lost) result(ierr) &
                 bind(C, name="gf_evolve")
             import
             type(c_ptr), value :: ptr
@@ -110,7 +110,7 @@ module gridfire_mod
             integer(c_size_t), value :: num_species
             real(c_double), value :: T, rho, dt
             real(c_double), dimension(*), intent(out) :: Y_out
-            real(c_double), intent(out) :: energy_out, dEps_dT, dEps_dRho, mass_lost
+            real(c_double), intent(out) :: energy_out, dEps_dT, dEps_dRho, specific_neutrino_loss, specific_neutrino_flux, mass_lost
             integer(c_int) :: ierr
         end function
     end interface
@@ -235,12 +235,12 @@ module gridfire_mod
             end if
         end subroutine setup_solver
 
-        subroutine evolve(self, Y_in, T, rho, dt, Y_out, energy, dedt, dedrho, mass_lost, ierr)
+        subroutine evolve(self, Y_in, T, rho, dt, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
             class(GridFire), intent(in) :: self
             real(c_double), dimension(:), intent(in) :: Y_in
             real(c_double), value :: T, rho, dt
             real(c_double), dimension(:), intent(out) :: Y_out
-            real(c_double), intent(out) :: energy, dedt, dedrho, mass_lost
+            real(c_double), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
             integer, intent(out) :: ierr
             integer(c_int) :: c_ierr
 
@@ -248,7 +248,7 @@ module gridfire_mod
                     Y_in, self%num_species, &
                     T, rho, dt, &
                     Y_out, &
-                    energy, dedt, dedrho, mass_lost)
+                    energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost)
 
             ierr = int(c_ierr)
             if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then

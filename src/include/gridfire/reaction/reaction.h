@@ -10,7 +10,6 @@
 #include <vector>
 #include <unordered_set>
 
-
 #include "cppad/cppad.hpp"
 #include "fourdst/composition/composition.h"
 
@@ -27,20 +26,28 @@ namespace gridfire::reaction {
     enum class ReactionType {
         WEAK,
         REACLIB,
+        REACLIB_WEAK,
         LOGICAL_REACLIB,
+        LOGICAL_REACLIB_WEAK,
     };
 
     static std::unordered_map<ReactionType, std::string> ReactionTypeNames = {
         {ReactionType::WEAK, "weak"},
         {ReactionType::REACLIB, "reaclib"},
+        {ReactionType::REACLIB_WEAK, "reaclib_weak"},
         {ReactionType::LOGICAL_REACLIB, "logical_reaclib"},
+        {ReactionType::LOGICAL_REACLIB_WEAK, "logical_reaclib_weak"},
+
     };
 
     static std::unordered_map<ReactionType, std::string> ReactionPhysicalTypeNames = {
         {ReactionType::WEAK, "Weak"},
         {ReactionType::REACLIB, "Strong"},
         {ReactionType::LOGICAL_REACLIB, "Strong"},
+        {ReactionType::REACLIB_WEAK, "Weak"},
+        {ReactionType::LOGICAL_REACLIB_WEAK, "Weak"},
     };
+
     /**
      * @struct RateCoefficientSet
      * @brief Holds the seven coefficients for the REACLIB rate equation.
@@ -351,6 +358,15 @@ namespace gridfire::reaction {
         [[nodiscard]] virtual std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const = 0;
 
     };
+
+    // Simple heuristic to check if a reaclib reaction is a strong or weak reaction
+    /*  A weak reaction is defined here as one where:
+        - The number of reactants is equal to the number of products
+        - There is only one reactant and one product
+        - The mass number (A) of the reactant is equal to the mass number (A) of the product
+    */
+    bool reaction_is_weak(const Reaction& reaction);
+
     class ReaclibReaction : public Reaction {
     public:
         ~ReaclibReaction() override = default;
@@ -363,7 +379,7 @@ namespace gridfire::reaction {
          * @param reactants A vector of reactant species.
          * @param products A vector of product species.
          * @param qValue The Q-value of the reaction in MeV.
-         * @param label The source label for the rate data (e.g., "wc12", "st08").
+         * @param label The sources label for the rate data (e.g., "wc12", "st08").
          * @param sets The set of rate coefficients.
          * @param reverse True if this is a reverse reaction rate.
          */
@@ -441,7 +457,12 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] std::string_view sourceLabel() const { return m_sourceLabel; }
 
-        [[nodiscard]] ReactionType type() const override { return ReactionType::REACLIB; }
+        [[nodiscard]] ReactionType type() const override {
+            if (reaction::reaction_is_weak(*this)) {
+                return ReactionType::REACLIB_WEAK;
+            }
+            return ReactionType::REACLIB;
+        }
 
         /**
          * @brief Gets the set of rate coefficients.
@@ -645,6 +666,27 @@ namespace gridfire::reaction {
         }
     };
 
+    class WeakReaclibReaction final : public ReaclibReaction {
+    public:
+        using ReaclibReaction::ReaclibReaction;
+
+        [[nodiscard]] ReactionType type() const override { return ReactionType::REACLIB_WEAK; }
+
+        [[nodiscard]] std::unique_ptr<Reaction> clone() const override {
+            return std::make_unique<WeakReaclibReaction>(
+                m_id,
+                m_peName,
+                m_chapter,
+                reactants(),
+                products(),
+                m_qValue,
+                m_sourceLabel,
+                m_rateCoefficients,
+                m_reverse
+            );
+        }
+    };
+
 
     /**
      * @class LogicalReaclibReaction
@@ -664,7 +706,7 @@ namespace gridfire::reaction {
          * @param reactions A vector of reactions that represent the same logical process.
          * @throws std::runtime_error if the provided reactions have inconsistent Q-values.
          */
-        explicit LogicalReaclibReaction(const std::vector<ReaclibReaction> &reactions);
+        explicit LogicalReaclibReaction(const std::vector<std::unique_ptr<ReaclibReaction>> &reactions);
 
         /**
          * @breif Constructs a LogicalReaction from a vector of `Reaction` objects and allows the user
@@ -673,7 +715,7 @@ namespace gridfire::reaction {
          * @param reverse A flag to control if this logical reaction is reverse or not
          * @returns std::runtime_error if the provided reactions have inconsistent Q-values.
          */
-        explicit LogicalReaclibReaction(const std::vector<ReaclibReaction> &reactions, bool reverse);
+        explicit LogicalReaclibReaction(const std::vector<std::unique_ptr<ReaclibReaction>> &reactions, bool reverse);
 
         /**
          * @brief Adds another `Reaction` source to this logical reaction.
@@ -718,7 +760,12 @@ namespace gridfire::reaction {
             double Ye, double mue, const fourdst::composition::Composition& comp
         ) const override;
 
-        [[nodiscard]] ReactionType type() const override { return ReactionType::LOGICAL_REACLIB; }
+        [[nodiscard]] ReactionType type() const override {
+            if (m_weak) {
+                return ReactionType::LOGICAL_REACLIB_WEAK;
+            }
+            return ReactionType::LOGICAL_REACLIB;
+        }
 
         [[nodiscard]] std::unique_ptr<Reaction> clone() const override;
 
@@ -760,6 +807,7 @@ namespace gridfire::reaction {
     private:
         std::vector<std::string> m_sources; ///< List of source labels.
         std::vector<RateCoefficientSet> m_rates; ///< List of rate coefficient sets from each source.
+        bool m_weak = false;
 
     private:
         /**

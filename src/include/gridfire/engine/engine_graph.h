@@ -778,6 +778,7 @@ namespace gridfire::engine {
             const double Na = Constants::getInstance().get("N_a").value; ///< Avogadro's number.
             const double c = Constants::getInstance().get("c").value; ///< Speed of light in cm/s.
             const double kB = Constants::getInstance().get("kB").value; ///< Boltzmann constant in erg/K.
+            const double MeV_to_erg = Constants::getInstance().get("MeV_to_erg").value; ///< Conversion factor from MeV to erg.
         };
 
         enum class JacobianMatrixState {

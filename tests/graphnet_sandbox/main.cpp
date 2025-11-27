@@ -95,6 +95,16 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
     delta.push_back(netOut.dEps_dRho);
     fractional.push_back(0.0);
 
+    initial.push_back(0.0);
+    final.push_back(netOut.specific_neutrino_energy_loss);
+    delta.push_back(netOut.specific_neutrino_energy_loss);
+    fractional.push_back(0.0);
+
+    initial.push_back(0.0);
+    final.push_back(netOut.specific_neutrino_flux);
+    delta.push_back(netOut.specific_neutrino_flux);
+    fractional.push_back(0.0);
+
     initial.push_back(netIn.composition.getMeanParticleMass());
     final.push_back(netOut.composition.getMeanParticleMass());
     delta.push_back(final.back() - initial.back());
@@ -108,6 +118,8 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
         labels.push_back("ε");
         labels.push_back("dε/dT");
         labels.push_back("dε/dρ");
+        labels.push_back("Eν");
+        labels.push_back("Fν");
         labels.push_back("<μ>");
         return labels;
     }();
@@ -270,10 +282,6 @@ int main(int argc, char** argv) {
     CLI11_PARSE(app, argc, argv);
 
     const NetIn netIn = init(temp, rho, tMax);
-    std::println("Starting Integration with T = {} K, ρ = {} g/cm³, tMax = {} s", temp, rho, tMax);
-    std::println("Composition is: {}", utils::iterable_to_delimited_string(netIn.composition, ", ", [&netIn](std::pair<const fourdst::atomic::Species&, double> arg) {
-        return std::format("{:5}: {:10.4E}", arg.first.name(), arg.second);
-    }));
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();

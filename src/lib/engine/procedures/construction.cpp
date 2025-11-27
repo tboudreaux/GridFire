@@ -18,32 +18,6 @@
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
 namespace {
-    // Simple heuristic to check if a reaclib reaction is a strong or weak reaction
-    /*  A weak reaction is defined here as one where:
-        - The number of reactants is equal to the number of products
-        - There is only one reactant and one product
-        - The mass number (A) of the reactant is equal to the mass number (A) of the product
-    */
-    bool reaclib_reaction_is_weak(const gridfire::reaction::Reaction& reaction) {
-        const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
-        const std::vector<fourdst::atomic::Species>& products = reaction.products();
-
-        if (reactants.size() != products.size()) {
-            return false;
-        }
-
-        if (reactants.size() != 1 || products.size() != 1) {
-            return false;
-        }
-
-        if (std::floor(reactants[0].a()) != std::floor(products[0].a())) {
-            return false;
-        }
-
-        return true;
-    }
-
-
     gridfire::reaction::ReactionSet register_weak_reactions(
         const gridfire::rates::weak::WeakRateInterpolator &weakInterpolator,
         const gridfire::engine::NetworkConstructionFlags reactionTypes
@@ -114,7 +88,7 @@ namespace {
         if (has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_STRONG)) {
             const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
             for (const auto& reaction : allReaclibReactions) {
-                const bool isWeakReaction = reaclib_reaction_is_weak(*reaction);
+                const bool isWeakReaction = gridfire::reaction::reaction_is_weak(*reaction);
                 const bool okayToUseReaclibWeakReaction = has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK);
 
                 const bool reaclibWeakOkay = !isWeakReaction || okayToUseReaclibWeakReaction;
@@ -126,10 +100,10 @@ namespace {
         return strong_reaction_pool;
     }
 
-    bool validate_unique_weak_set(gridfire::engine::NetworkConstructionFlags flag) {
+    bool validate_unique_weak_set(const gridfire::engine::NetworkConstructionFlags flag) {
         // This method ensures that weak reactions will only be fetched from either reaclib or the weak reaction library (WRL)
         // but not both
-        const std::array<gridfire::engine::NetworkConstructionFlags, 4> WRL_Flags = {
+        constexpr std::array<gridfire::engine::NetworkConstructionFlags, 4> WRL_Flags = {
             gridfire::engine::NetworkConstructionFlags::WRL_BETA_PLUS,
             gridfire::engine::NetworkConstructionFlags::WRL_ELECTRON_CAPTURE,
             gridfire::engine::NetworkConstructionFlags::WRL_POSITRON_CAPTURE,

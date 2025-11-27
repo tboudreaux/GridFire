@@ -54,6 +54,9 @@ namespace gridfire::engine {
         std::map<fourdst::atomic::Species, T> dydt{}; ///< Derivatives of abundances (dY/dt for each species).
         T nuclearEnergyGenerationRate = T(0.0); ///< Specific energy generation rate (e.g., erg/g/s).
         std::map<fourdst::atomic::Species, std::unordered_map<std::string, T>> reactionContributions{};
+        T neutrinoEnergyLossRate = T(0.0); // (erg/g/s)
+        T totalNeutrinoFlux = T(0.0);      // (neutrinos/g/s)
+
 
         StepDerivatives() : dydt(), nuclearEnergyGenerationRate(T(0.0)) {}
     };

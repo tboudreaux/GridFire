@@ -232,10 +232,14 @@ namespace gridfire::solver {
             const std::vector<fourdst::atomic::Species>* networkSpecies{};
             std::unique_ptr<exceptions::EngineError> captured_exception = nullptr;
             std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
+            double neutrino_energy_loss_rate = 0.0;
+            double total_neutrino_flux = 0.0;
         };
 
         struct CVODERHSOutputData {
             std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> reaction_contribution_map;
+            double neutrino_energy_loss_rate;
+            double total_neutrino_flux;
         };
 
     private:

@@ -15,5 +15,4 @@ namespace gridfire::reaclib {
      * @return A constant reference to the application-wide reaction set.
      */
     const reaction::ReactionSet &get_all_reaclib_reactions();
-
 } // namespace gridfire::reaclib

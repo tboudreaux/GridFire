@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -126,11 +126,11 @@ Collaboration diagram for gridfire::reaction::LogicalReaclibReaction:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ff112dca1f88070effb6700429b42b4" id="r_a0ff112dca1f88070effb6700429b42b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ff112dca1f88070effb6700429b42b4">LogicalReaclibReaction</a> (const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;reactions)</td></tr>
-<tr class="memdesc:a0ff112dca1f88070effb6700429b42b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects. Implicitly assumes that the logical reaction is for a forward (i.e. not reverse) reaction.  <br /></td></tr>
-<tr class="separator:a0ff112dca1f88070effb6700429b42b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e6d50f866be9239ac620607741280cc" id="r_a7e6d50f866be9239ac620607741280cc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e6d50f866be9239ac620607741280cc">LogicalReaclibReaction</a> (const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;reactions, bool reverse)</td></tr>
-<tr class="separator:a7e6d50f866be9239ac620607741280cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b38a9e8a4bdfc964ba76be3f718eab6" id="r_a2b38a9e8a4bdfc964ba76be3f718eab6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b38a9e8a4bdfc964ba76be3f718eab6">LogicalReaclibReaction</a> (const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &gt; &amp;reactions)</td></tr>
+<tr class="memdesc:a2b38a9e8a4bdfc964ba76be3f718eab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a LogicalReaction from a vector of <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> objects. Implicitly assumes that the logical reaction is for a forward (i.e. not reverse) reaction.  <br /></td></tr>
+<tr class="separator:a2b38a9e8a4bdfc964ba76be3f718eab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d96384887b5b7f0022d1bc43f6d45b5" id="r_a3d96384887b5b7f0022d1bc43f6d45b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d96384887b5b7f0022d1bc43f6d45b5">LogicalReaclibReaction</a> (const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &gt; &amp;reactions, bool reverse)</td></tr>
+<tr class="separator:a3d96384887b5b7f0022d1bc43f6d45b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69508797ca0793f6d3f58de4e0b97667" id="r_a69508797ca0793f6d3f58de4e0b97667"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69508797ca0793f6d3f58de4e0b97667">add_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &amp;reaction)</td></tr>
 <tr class="memdesc:a69508797ca0793f6d3f58de4e0b97667"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds another <code><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a></code> source to this logical reaction.  <br /></td></tr>
 <tr class="separator:a69508797ca0793f6d3f58de4e0b97667"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -287,6 +287,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:afe1b95bf9d81f7521b9f19bbd1305d01" id="r_afe1b95bf9d81f7521b9f19bbd1305d01"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1reaction_1_1_rate_coefficient_set.html">RateCoefficientSet</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe1b95bf9d81f7521b9f19bbd1305d01">m_rates</a></td></tr>
 <tr class="memdesc:afe1b95bf9d81f7521b9f19bbd1305d01"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of rate coefficient sets from each source.  <br /></td></tr>
 <tr class="separator:afe1b95bf9d81f7521b9f19bbd1305d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a853458f525bf3270b5ad826c6fd9e1ca" id="r_a853458f525bf3270b5ad826c6fd9e1ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a853458f525bf3270b5ad826c6fd9e1ca">m_weak</a> = false</td></tr>
+<tr class="separator:a853458f525bf3270b5ad826c6fd9e1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -334,8 +336,8 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><p>Represents a "logical" reaction that aggregates rates from multiple sources. </p>
 <p>A <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html" title="Represents a &quot;logical&quot; reaction that aggregates rates from multiple sources.">LogicalReaclibReaction</a> shares the same reactants and products but combines rates from different evaluations (e.g., "wc12" and "st08" for the same physical reaction). The total rate is the sum of the individual rates. It inherits from <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a>, using the properties of the first provided reaction as its base properties (reactants, products, Q-value, etc.). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0ff112dca1f88070effb6700429b42b4" name="a0ff112dca1f88070effb6700429b42b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ff112dca1f88070effb6700429b42b4">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[1/2]</span></h2>
+<a id="a2b38a9e8a4bdfc964ba76be3f718eab6" name="a2b38a9e8a4bdfc964ba76be3f718eab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b38a9e8a4bdfc964ba76be3f718eab6">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -346,7 +348,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">gridfire::reaction::LogicalReaclibReaction::LogicalReaclibReaction </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td class="paramtype">const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -373,8 +375,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7e6d50f866be9239ac620607741280cc" name="a7e6d50f866be9239ac620607741280cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e6d50f866be9239ac620607741280cc">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[2/2]</span></h2>
+<a id="a3d96384887b5b7f0022d1bc43f6d45b5" name="a3d96384887b5b7f0022d1bc43f6d45b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d96384887b5b7f0022d1bc43f6d45b5">&#9670;&#160;</a></span>LogicalReaclibReaction() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -385,7 +387,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">gridfire::reaction::LogicalReaclibReaction::LogicalReaclibReaction </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">ReaclibReaction</a> &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -994,6 +996,28 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>List of source labels. </p>
+
+</div>
+</div>
+<a id="a853458f525bf3270b5ad826c6fd9e1ca" name="a853458f525bf3270b5ad826c6fd9e1ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a853458f525bf3270b5ad826c6fd9e1ca">&#9670;&#160;</a></span>m_weak</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::reaction::LogicalReaclibReaction::m_weak = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

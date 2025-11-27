@@ -35,6 +35,8 @@ void register_type_bindings(const pybind11::module &m) {
         .def_readonly("energy", &gridfire::NetOut::energy)
         .def_readonly("dEps_dT", &gridfire::NetOut::dEps_dT)
         .def_readonly("dEps_dRho", &gridfire::NetOut::dEps_dRho)
+        .def_readonly("specific_neutrino_flux", &gridfire::NetOut::specific_neutrino_flux)
+        .def_readonly("specific_neutrino_energy_loss", &gridfire::NetOut::specific_neutrino_energy_loss)
         .def("__repr__", [](const gridfire::NetOut &netOut) {
             std::string repr = std::format(
                 "NetOut(<μ> = {} steps = {}, ε = {}, dε/dT = {}, dε/dρ = {})",

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -142,6 +142,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html">gridfire::reaction::ReaclibReaction</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html">gridfire::reaction::WeakReaclibReaction</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html">gridfire::reaction::LogicalReaclibReaction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a "logical" reaction that aggregates rates from multiple sources.  <a href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,14 +159,21 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a026997f11e811fa7754ac9121c4ba74e" id="r_a026997f11e811fa7754ac9121c4ba74e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">gridfire::reaction::ReactionType</a> { <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">gridfire::reaction::WEAK</a>
+<tr class="memitem:a026997f11e811fa7754ac9121c4ba74e" id="r_a026997f11e811fa7754ac9121c4ba74e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">gridfire::reaction::ReactionType</a> { <br />
+&#160;&#160;<a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">gridfire::reaction::WEAK</a>
 , <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">gridfire::reaction::REACLIB</a>
+, <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692">gridfire::reaction::REACLIB_WEAK</a>
 , <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">gridfire::reaction::LOGICAL_REACLIB</a>
+, <br />
+&#160;&#160;<a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c">gridfire::reaction::LOGICAL_REACLIB_WEAK</a>
+<br />
  }</td></tr>
 <tr class="separator:a026997f11e811fa7754ac9121c4ba74e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a5f8afcf8ff8dc0acdb510ae621d655be" id="r_a5f8afcf8ff8dc0acdb510ae621d655be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaction.html#a5f8afcf8ff8dc0acdb510ae621d655be">gridfire::reaction::reaction_is_weak</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
+<tr class="separator:a5f8afcf8ff8dc0acdb510ae621d655be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af34403cccdb4a091e979f0f895be2f8c" id="r_af34403cccdb4a091e979f0f895be2f8c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaction.html#af34403cccdb4a091e979f0f895be2f8c">gridfire::reaction::packReactionSet</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;reactionSet)</td></tr>
 <tr class="separator:af34403cccdb4a091e979f0f895be2f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
