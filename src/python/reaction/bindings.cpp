@@ -183,12 +183,12 @@ void register_reaction_bindings(py::module &m) {
 
     py::class_<gridfire::reaction::LogicalReaclibReaction, gridfire::reaction::ReaclibReaction>(m, "LogicalReaclibReaction")
         .def(
-            py::init<const std::vector<gridfire::reaction::ReaclibReaction>>(),
+            py::init<const std::vector<std::unique_ptr<gridfire::reaction::ReaclibReaction>>>(),
              py::arg("reactions"),
              "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."
         )
         .def(
-            py::init<const std::vector<gridfire::reaction::ReaclibReaction>, bool>(),
+            py::init<const std::vector<std::unique_ptr<gridfire::reaction::ReaclibReaction>>, bool>(),
              py::arg("reactions"),
              py::arg("is_reverse"),
              "Construct a LogicalReaclibReaction from a vector of ReaclibReaction objects."

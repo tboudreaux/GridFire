@@ -147,6 +147,9 @@ namespace gridfire::solver {
         m_num_steps = 0;
         double accumulated_energy = 0.0;
 
+        double accumulated_neutrino_energy_loss = 0.0;
+        double accumulated_total_neutrino_flux = 0.0;
+
         size_t total_convergence_failures = 0;
         size_t total_nonlinear_iterations = 0;
         size_t total_update_stages_triggered = 0;
@@ -187,6 +190,8 @@ namespace gridfire::solver {
 
             sunrealtype* y_data = N_VGetArrayPointer(m_Y);
             const double current_energy = y_data[numSpecies]; // Specific energy rate
+            accumulated_neutrino_energy_loss += user_data.neutrino_energy_loss_rate;
+            accumulated_total_neutrino_flux += user_data.total_neutrino_flux;
             size_t iter_diff = (total_nonlinear_iterations + nliters) - prev_nonlinear_iterations;
             size_t convFail_diff = (total_convergence_failures + nlcfails) - prev_convergence_failures;
             if (m_stdout_logging_enabled) {
@@ -503,6 +508,8 @@ namespace gridfire::solver {
 
         netOut.dEps_dT = dEps_dT;
         netOut.dEps_dRho = dEps_dRho;
+        netOut.neutrino_energy_loss_rate = accumulated_neutrino_energy_loss;
+        netOut.total_neutrino_flux = accumulated_total_neutrino_flux;
         LOG_TRACE_L2(m_logger, "Output data built!");
         LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 
@@ -561,8 +568,11 @@ namespace gridfire::solver {
 
         try {
             LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper called at time {}", t);
-            const auto [reaction_contribution_map] = instance->calculate_rhs(t, y, ydot, data);
-            data->reaction_contribution_map = reaction_contribution_map;
+            // ReSharper disable once CppUseStructuredBinding
+            const auto result = instance->calculate_rhs(t, y, ydot, data);
+            data->reaction_contribution_map = result.reaction_contribution_map;
+            data->neutrino_energy_loss_rate = result.neutrino_energy_loss_rate;
+            data->total_neutrino_flux = result.total_neutrino_flux;
             LOG_TRACE_L2(instance->m_logger, "CVODE RHS wrapper completed successfully at time {}", t);
             return 0;
         } catch (const exceptions::EngineError& e) {
@@ -724,7 +734,14 @@ namespace gridfire::solver {
         }
 
         sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-        const auto& [dydt, nuclearEnergyGenerationRate, reactionContributions] = result.value();
+        const auto& [
+            dydt,
+            nuclearEnergyGenerationRate,
+            reactionContributions,
+            neutrinoEnergyLossRate,
+            totalNeutrinoFlux
+        ] = result.value();
+
         LOG_TRACE_L2(m_logger, "Done calculating RHS at time {}, specific nuclear energy generation rate: {}", t, nuclearEnergyGenerationRate);
         LOG_TRACE_L2(m_logger, "RHS at time {} is {}", t, [&dydt]() -> std::string {
             std::stringstream ss;
@@ -745,7 +762,7 @@ namespace gridfire::solver {
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
 
-        return {reactionContributions};
+        return {reactionContributions, result.value().neutrinoEnergyLossRate, result.value().totalNeutrinoFlux};
     }
 
     void CVODESolverStrategy::initialize_cvode_integration_resources(

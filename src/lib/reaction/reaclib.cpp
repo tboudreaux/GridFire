@@ -223,4 +223,23 @@ namespace gridfire::reaclib {
         }
         return *s_all_reaclib_reactions_ptr;
     }
+
+    bool reaction_is_weak(const reaction::Reaction& reaction) {
+        const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
+        const std::vector<fourdst::atomic::Species>& products = reaction.products();
+
+        if (reactants.size() != products.size()) {
+            return false;
+        }
+
+        if (reactants.size() != 1 || products.size() != 1) {
+            return false;
+        }
+
+        if (std::floor(reactants[0].a()) != std::floor(products[0].a())) {
+            return false;
+        }
+
+        return true;
+    }
 } // namespace gridfire::reaclib

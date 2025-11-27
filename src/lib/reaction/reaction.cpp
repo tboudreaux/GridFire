@@ -13,13 +13,15 @@
 #include "fourdst/atomic/atomicSpecies.h"
 
 #include "xxhash64.h"
+#include "gridfire/exceptions/exceptions.h"
+#include "gridfire/reaction/reaclib.h"
 
 namespace {
-    std::string_view safe_check_reactant_id(const std::vector<gridfire::reaction::ReaclibReaction>& reactions) {
+    std::string_view safe_check_reactant_id(const std::vector<std::unique_ptr<gridfire::reaction::ReaclibReaction>>& reactions) {
         if (reactions.empty()) {
             throw std::runtime_error("No reactions found in the REACLIB reaction set.");
         }
-        return reactions.front().peName();
+        return reactions.front()->peName();
     }
 }
 
@@ -192,40 +194,59 @@ namespace gridfire::reaction {
 
 
     LogicalReaclibReaction::LogicalReaclibReaction(
-        const std::vector<ReaclibReaction>& reactions
+        const std::vector<std::unique_ptr<ReaclibReaction>>& reactions
     ) : LogicalReaclibReaction(reactions, false) {}
 
     LogicalReaclibReaction::LogicalReaclibReaction(
-        const std::vector<ReaclibReaction> &reactions,
+        const std::vector<std::unique_ptr<ReaclibReaction>> &reactions,
         const bool reverse
     ) :
     ReaclibReaction(
         safe_check_reactant_id(reactions),
-        reactions.front().peName(),
-        reactions.front().chapter(),
-        reactions.front().reactants(),
-        reactions.front().products(),
-        reactions.front().qValue(),
-        reactions.front().sourceLabel(),
-        reactions.front().rateCoefficients(),
+        reactions.front()->peName(),
+        reactions.front()->chapter(),
+        reactions.front()->reactants(),
+        reactions.front()->products(),
+        reactions.front()->qValue(),
+        reactions.front()->sourceLabel(),
+        reactions.front()->rateCoefficients(),
         reverse)
     {
         m_sources.reserve(reactions.size());
         m_rates.reserve(reactions.size());
         for (const auto& reaction : reactions) {
-            if (std::abs(reaction.qValue() - m_qValue) > 1e-6) {
+            if (std::abs(reaction->qValue() - m_qValue) > 1e-6) {
                 LOG_ERROR(
                     m_logger,
                     "LogicalReaclibReaction constructed with reactions having different Q-values. Expected {} got {}.",
                     m_qValue,
-                    reaction.qValue()
+                    reaction->qValue()
                 );
                 m_logger -> flush_log();
-                throw std::runtime_error("LogicalReaclibReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction.qValue()) + " (difference : " + std::to_string(std::abs(reaction.qValue() - m_qValue)) + ").");
+                throw std::runtime_error("LogicalReaclibReaction constructed with reactions having different Q-values. Expected " + std::to_string(m_qValue) + " got " + std::to_string(reaction->qValue()) + " (difference : " + std::to_string(std::abs(reaction->qValue() - m_qValue)) + ").");
             }
-            m_sources.emplace_back(reaction.sourceLabel());
-            m_rates.push_back(reaction.rateCoefficients());
+            m_sources.emplace_back(reaction->sourceLabel());
+            m_rates.push_back(reaction->rateCoefficients());
         }
+
+        std::unordered_set<bool> reaction_weak_types;
+        for (const auto& reaction : reactions) {
+            reaction_weak_types.insert(reaclib::reaction_is_weak(*reaction));
+        }
+
+        if (reaction_weak_types.size() != 1) {
+            LOG_ERROR(
+                m_logger,
+                "LogicalReaclibReaction constructed with reactions of mixed weak/strong types. Each LogicalReaclibReaction must contain only weak or only strong reactions."
+            );
+
+            throw exceptions::ReactionError(
+                "LogicalReaclibReaction constructed with reactions of mixed weak/strong types. Each LogicalReaclibReaction must contain only weak or only strong reactions.",
+                m_id
+            );
+        }
+
+        m_weak = *reaction_weak_types.begin();
     }
 
 
@@ -550,17 +571,21 @@ namespace gridfire::reaction {
     }
 
     ReactionSet packReactionSet(const ReactionSet& reactionSet) {
-        std::unordered_map<std::string, std::vector<ReaclibReaction>> groupedReaclibReactions;
+        std::unordered_map<std::string, std::vector<std::unique_ptr<ReaclibReaction>>> groupedReaclibReactions;
         ReactionSet finalReactionSet;
 
         for (const auto& reaction_ptr : reactionSet) {
             switch (reaction_ptr->type()) {
+                case ReactionType::REACLIB_WEAK:
+                    [[fallthrough]];
                 case ReactionType::REACLIB: {
                     const auto& reaclib_cast_reaction = static_cast<const ReaclibReaction&>(*reaction_ptr); // NOLINT(*-pro-type-static-cast-downcast)
                     std::string rid = std::format("{}{}", reaclib_cast_reaction.peName(), (reaclib_cast_reaction.is_reverse() ? "_r" : ""));
-                    groupedReaclibReactions[rid].push_back(reaclib_cast_reaction);
+                    groupedReaclibReactions[rid].push_back(std::make_unique<ReaclibReaction>(reaclib_cast_reaction));
                     break;
                 }
+                case ReactionType::LOGICAL_REACLIB_WEAK:
+                    [[fallthrough]];
                 case ReactionType::LOGICAL_REACLIB: {
                     // It doesn't make sense to pack an already-packed reaction.
                     throw std::runtime_error("packReactionSet: Cannot pack a LogicalReaclibReaction.");
@@ -573,22 +598,15 @@ namespace gridfire::reaction {
         }
 
         // Now, process the grouped REACLIB reactions
-        for (const auto &[key, reactionsGroup]: groupedReaclibReactions) {
+        for (const auto &reactionsGroup: groupedReaclibReactions | std::views::values) {
             if (reactionsGroup.empty()) {
                 continue;
             }
             if (reactionsGroup.size() == 1) {
-                finalReactionSet.add_reaction(reactionsGroup.front());
+                finalReactionSet.add_reaction(reactionsGroup.front()->clone());
             }
             else {
-                // Check that is_reverse is consistent across the group
-                assert(std::ranges::all_of(
-                    reactionsGroup,
-                    [&reactionsGroup](const ReaclibReaction& r) {
-                        return r.is_reverse() == reactionsGroup.front().is_reverse();
-                    }
-                ) && "Inconsistent is_reverse values in grouped REACLIB reactions.");
-                const auto logicalReaction = std::make_unique<LogicalReaclibReaction>(reactionsGroup, reactionsGroup.front().is_reverse());
+                const auto logicalReaction = std::make_unique<LogicalReaclibReaction>(reactionsGroup, reactionsGroup.front()->is_reverse());
                 finalReactionSet.add_reaction(logicalReaction->clone());
             }
         }

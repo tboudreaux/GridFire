@@ -32,6 +32,69 @@
 #include "cppad/utility/sparse_rcv.hpp"
 
 
+namespace {
+    enum class REACLIB_WEAK_TYPES {
+        BETA_PLUS_DECAY,
+        BETA_MINUS_DECAY,
+        ELECTRON_CAPTURE,
+        POSITRON_CAPTURE,
+        NONE
+    };
+
+    REACLIB_WEAK_TYPES get_weak_reaclib_reaction_type(const gridfire::reaction::Reaction& r) {
+        if (r.type() != gridfire::reaction::ReactionType::REACLIB_WEAK) {
+            return REACLIB_WEAK_TYPES::NONE;
+        }
+
+        // Get the () part of the id
+        const std::string_view id = r.id();
+        const size_t open_paren_pos = id.find('(');
+        const size_t close_paren_pos = id.find(')');
+        if (open_paren_pos == std::string_view::npos || close_paren_pos == std::string_view::npos || close_paren_pos <= open_paren_pos) {
+            throw gridfire::exceptions::ReactionParsingError("Invalid REACLIB weak reaction ID format.", std::string(id));
+        }
+
+        const std::string_view reaction_type_str = id.substr(open_paren_pos + 1, close_paren_pos - open_paren_pos - 1);
+
+        // Find the comma and extract the part to the left and right of it
+        const size_t reaction_type_pos = reaction_type_str.find(',');
+        if (reaction_type_pos == std::string_view::npos) {
+            throw gridfire::exceptions::ReactionParsingError("Invalid REACLIB weak reaction ID format: missing comma.", std::string(id));
+        }
+
+        const std::string_view projectiles_str = reaction_type_str.substr(0, reaction_type_pos);
+        const std::string_view ejectiles_str = reaction_type_str.substr(reaction_type_pos + 1);
+
+        // Check if the projectiles string has "e+" or "e-"
+        const bool has_captured_positron = (projectiles_str.find("e+") != std::string_view::npos);
+        const bool has_captured_electron = (projectiles_str.find("e-") != std::string_view::npos);
+
+        const bool has_ejected_electron = (ejectiles_str.find("e-") != std::string_view::npos);
+        const bool has_ejected_positron = (ejectiles_str.find("e+") != std::string_view::npos);
+
+        // Assert that only one of the four possibilities is true
+        const int true_count = static_cast<int>(has_captured_positron) +
+                         static_cast<int>(has_captured_electron) +
+                         static_cast<int>(has_ejected_electron) +
+                         static_cast<int>(has_ejected_positron);
+        if (true_count != 1) {
+            throw gridfire::exceptions::ReactionParsingError("Invalid REACLIB weak reaction ID format: must have exactly one of e+, e- in projectiles or ejectiles.", std::string(id));
+        }
+
+        if (has_ejected_positron) {
+            return REACLIB_WEAK_TYPES::BETA_PLUS_DECAY;
+        } if (has_ejected_electron) {
+            return REACLIB_WEAK_TYPES::BETA_MINUS_DECAY;
+        } if (has_captured_electron) {
+            return REACLIB_WEAK_TYPES::ELECTRON_CAPTURE;
+        } if (has_captured_positron) {
+            return REACLIB_WEAK_TYPES::POSITRON_CAPTURE;
+        }
+
+        return REACLIB_WEAK_TYPES::NONE;
+    }
+}
+
 namespace gridfire::engine {
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
@@ -82,7 +145,6 @@ namespace gridfire::engine {
     ) const {
         LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
-        const double mue = 0.0; // TODO: Remove
         if (m_usePrecomputation) {
             LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
@@ -92,7 +154,7 @@ namespace gridfire::engine {
 
             for (const auto& reaction: activeReactions) {
                 assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
-                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, mue, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
+                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
                 if (reaction->type() != reaction::ReactionType::WEAK) {
                     bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
                 }
@@ -109,7 +171,7 @@ namespace gridfire::engine {
                 T9,
                 rho,
                 Ye,
-                mue,
+                0.0,
                 [&comp](const fourdst::atomic::Species& species) -> std::optional<size_t> {
                     if (comp.contains(species)) {
                         return comp.getSpeciesIndex(species); // Return the index of the species in the composition
@@ -543,15 +605,6 @@ namespace gridfire::engine {
         fullNetIn.temperature = netIn.temperature;
         fullNetIn.density = netIn.density;
 
-        // Short circuit path if already primed
-        // if (m_has_been_primed) {
-        //     PrimingReport report;
-        //     report.primedComposition = composition;
-        //     report.success = true;
-        //     report.status = PrimingReportStatus::ALREADY_PRIMED;
-        //     return report;
-        // }
-
         std::optional<std::vector<reaction::ReactionType>> reactionTypesToIgnore = std::nullopt;
         if (!m_useReverseReactions) {
             reactionTypesToIgnore = {reaction::ReactionType::WEAK};
@@ -623,6 +676,7 @@ namespace gridfire::engine {
             rho
         );
 
+        StepDerivatives<double> result;
 
         // --- Optimized loop ---
         std::vector<double> molarReactionFlows;
@@ -672,6 +726,7 @@ namespace gridfire::engine {
                 throw exceptions::BadRHSEngineError("Non-finite forward molar reaction flow computed.");
             }
 
+
             // --- Reverse reaction flow ---
             // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
             double reverseMolarReactionFlow = 0.0;
@@ -693,13 +748,37 @@ namespace gridfire::engine {
             }
 
             molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
+
+            if (reaction->type() == reaction::ReactionType::REACLIB_WEAK) {
+                double q_abs = std::abs(reaction->qValue());
+                REACLIB_WEAK_TYPES weakType = get_weak_reaclib_reaction_type(*reaction);
+                double neutrino_loss_fraction = 0.0;
+                switch (weakType) {
+                    case REACLIB_WEAK_TYPES::BETA_PLUS_DECAY:
+                        [[fallthrough]];
+                    case REACLIB_WEAK_TYPES::BETA_MINUS_DECAY:
+                        neutrino_loss_fraction = 0.5; // Approximate 50% energy loss to neutrinos for beta decays
+                        break;
+                    case REACLIB_WEAK_TYPES::ELECTRON_CAPTURE:
+                        [[fallthrough]];
+                    case REACLIB_WEAK_TYPES::POSITRON_CAPTURE:
+                        neutrino_loss_fraction = 1.0;
+                        break;
+                    default: ;
+                }
+
+                double local_neutrino_loss =  molarReactionFlows.back() * q_abs * neutrino_loss_fraction * m_constants.Na * m_constants.MeV_to_erg;
+                double local_neutrino_flux = molarReactionFlows.back() * m_constants.Na;
+
+                result.totalNeutrinoFlux += local_neutrino_flux;
+                result.neutrinoEnergyLossRate += local_neutrino_loss;
+            }
             reactionCounter++;
         }
 
         LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         // --- Assemble molar abundance derivatives ---
-        StepDerivatives<double> result;
         for (const auto& species: m_networkSpecies) {
             result.dydt[species] = 0.0; // Initialize the change in abundance for each network species to 0
         }
@@ -724,34 +803,13 @@ namespace gridfire::engine {
             reactionCounter++;
         }
 
-        // std::vector<std::string> reactionIDs;
-        // for (const auto& reaction: activeReactions) {
-        //     reactionIDs.push_back(std::string(reaction->id()));
-        // }
-        //
-        // std::vector<std::unique_ptr<utils::ColumnBase>> columns;
-        // columns.push_back(std::make_unique<utils::Column<std::string>>("Reaction", reactionIDs));
-        // for (const auto& [species, contributions] : reactionContributions) {
-        //     std::vector<double> speciesData;
-        //     for (const auto& reactionID : reactionIDs) {
-        //         if (contributions.contains(reactionID)) {
-        //             speciesData.push_back(contributions.at(reactionID));
-        //         } else {
-        //             speciesData.push_back(0.0);
-        //         }
-        //     }
-        //     columns.push_back(std::make_unique<utils::Column<double>>(std::string(species.name()), speciesData));
-        // }
-
-        // utils::print_table("Contributions", columns);
-        // exit(0);
-
         // --- Calculate the nuclear energy generation rate ---
         double massProductionRate = 0.0; // [mol][s^-1]
         for (const auto & species : m_networkSpecies) {
             massProductionRate += result.dydt[species] * species.mass() * m_constants.u;
         }
         result.nuclearEnergyGenerationRate = -massProductionRate * m_constants.Na * m_constants.c * m_constants.c; // [erg][s^-1][g^-1]
+        result.nuclearEnergyGenerationRate -= result.neutrinoEnergyLossRate;
         return result;
 
     }
@@ -1130,7 +1188,7 @@ namespace gridfire::engine {
     ) const {
         const double Ye = comp.getElectronAbundance();
 
-        auto [dydt, _, __] = calculateAllDerivatives<double>(
+        auto result = calculateAllDerivatives<double>(
             comp.getMolarAbundanceVector(),
             T9,
             rho,
@@ -1146,6 +1204,8 @@ namespace gridfire::engine {
                 return activeReactions.contains(reaction);
             }
         );
+        const std::map<fourdst::atomic::Species, double>& dydt = result.dydt;
+
         std::unordered_map<fourdst::atomic::Species, double> speciesTimescales;
         speciesTimescales.reserve(m_networkSpecies.size());
         for (const auto& species : m_networkSpecies) {
@@ -1181,18 +1241,6 @@ namespace gridfire::engine {
             }
             return std::nullopt; // Species not present
         };
-
-        auto [dydt, _, __] = calculateAllDerivatives<double>(
-            Y,
-            T9,
-            rho,
-            Ye,
-            0.0,
-            speciesLookup,
-            [&activeReactions](const reaction::Reaction& reaction) -> bool {
-                return activeReactions.contains(reaction);
-            }
-        );
 
         std::unordered_map<fourdst::atomic::Species, double> speciesDestructionTimescales;
         speciesDestructionTimescales.reserve(m_networkSpecies.size());
@@ -1273,7 +1321,7 @@ namespace gridfire::engine {
 
         // 5. Call the actual templated function
         // We let T9 and rho be constant, so we pass them as fixed values.
-        auto [dydt, nuclearEnergyGenerationRate, _] = calculateAllDerivatives<CppAD::AD<double>>(
+        auto result = calculateAllDerivatives<CppAD::AD<double>>(
             adY,
             adT9,
             adRho,
@@ -1289,15 +1337,15 @@ namespace gridfire::engine {
 
         // Extract the raw vector from the associative map
         std::vector<CppAD::AD<double>> dependentVector;
-        dependentVector.reserve(dydt.size() + 1);
+        dependentVector.reserve(result.dydt.size() + 1);
         std::ranges::transform(
-            dydt,
+            result.dydt,
             std::back_inserter(dependentVector),
             [](const auto& kv) {
                 return kv.second;
             }
         );
-        dependentVector.push_back(nuclearEnergyGenerationRate);
+        dependentVector.push_back(result.nuclearEnergyGenerationRate);
 
         m_rhsADFun.Dependent(adInput, dependentVector);
 

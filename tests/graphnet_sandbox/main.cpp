@@ -95,6 +95,16 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
     delta.push_back(netOut.dEps_dRho);
     fractional.push_back(0.0);
 
+    initial.push_back(0.0);
+    final.push_back(netOut.neutrino_energy_loss_rate);
+    delta.push_back(netOut.neutrino_energy_loss_rate);
+    fractional.push_back(0.0);
+
+    initial.push_back(0.0);
+    final.push_back(netOut.total_neutrino_flux);
+    delta.push_back(netOut.total_neutrino_flux);
+    fractional.push_back(0.0);
+
     initial.push_back(netIn.composition.getMeanParticleMass());
     final.push_back(netOut.composition.getMeanParticleMass());
     delta.push_back(final.back() - initial.back());
@@ -108,6 +118,8 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
         labels.push_back("ε");
         labels.push_back("dε/dT");
         labels.push_back("dε/dρ");
+        labels.push_back("Eν");
+        labels.push_back("Fν");
         labels.push_back("<μ>");
         return labels;
     }();
