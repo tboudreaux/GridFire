@@ -40,8 +40,8 @@ namespace gridfire {
         double energy; ///< Energy in ergs after evaluation
         double dEps_dT; ///< Partial derivative of energy generation rate with respect to temperature
         double dEps_dRho; ///< Partial derivative of energy generation rate with respect to density
-        double neutrino_energy_loss_rate; ///< Neutrino energy loss rate in ergs/g/s
-        double total_neutrino_flux; ///< Total neutrino flux in neutrinos/g/s
+        double specific_neutrino_energy_loss; ///< Neutrino energy loss rate in ergs/g/s
+        double specific_neutrino_flux; ///< Total neutrino flux in neutrinos/g/s
 
         friend std::ostream& operator<<(std::ostream& os, const NetOut& netOut) {
             os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", ε=" << netOut.energy << ", dε/dT=" << netOut.dEps_dT << ", dε/dρ=" << netOut.dEps_dRho << ")";

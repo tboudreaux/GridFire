@@ -190,8 +190,11 @@ namespace gridfire::solver {
 
             sunrealtype* y_data = N_VGetArrayPointer(m_Y);
             const double current_energy = y_data[numSpecies]; // Specific energy rate
-            accumulated_neutrino_energy_loss += user_data.neutrino_energy_loss_rate;
-            accumulated_total_neutrino_flux += user_data.total_neutrino_flux;
+
+            // TODO: Accumulate neutrino loss through the state vector directly which will allow CVODE to properly integrate it
+            accumulated_neutrino_energy_loss += user_data.neutrino_energy_loss_rate * last_step_size;
+            accumulated_total_neutrino_flux += user_data.total_neutrino_flux * last_step_size;
+
             size_t iter_diff = (total_nonlinear_iterations + nliters) - prev_nonlinear_iterations;
             size_t convFail_diff = (total_convergence_failures + nlcfails) - prev_convergence_failures;
             if (m_stdout_logging_enabled) {
@@ -508,8 +511,8 @@ namespace gridfire::solver {
 
         netOut.dEps_dT = dEps_dT;
         netOut.dEps_dRho = dEps_dRho;
-        netOut.neutrino_energy_loss_rate = accumulated_neutrino_energy_loss;
-        netOut.total_neutrino_flux = accumulated_total_neutrino_flux;
+        netOut.specific_neutrino_energy_loss = accumulated_neutrino_energy_loss;
+        netOut.specific_neutrino_flux = accumulated_total_neutrino_flux;
         LOG_TRACE_L2(m_logger, "Output data built!");
         LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 

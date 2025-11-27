@@ -10,7 +10,6 @@
 #include <vector>
 #include <unordered_set>
 
-
 #include "cppad/cppad.hpp"
 #include "fourdst/composition/composition.h"
 
@@ -48,6 +47,7 @@ namespace gridfire::reaction {
         {ReactionType::REACLIB_WEAK, "Weak"},
         {ReactionType::LOGICAL_REACLIB_WEAK, "Weak"},
     };
+
     /**
      * @struct RateCoefficientSet
      * @brief Holds the seven coefficients for the REACLIB rate equation.
@@ -358,6 +358,15 @@ namespace gridfire::reaction {
         [[nodiscard]] virtual std::optional<std::vector<RateCoefficientSet>> getRateCoefficients() const = 0;
 
     };
+
+    // Simple heuristic to check if a reaclib reaction is a strong or weak reaction
+    /*  A weak reaction is defined here as one where:
+        - The number of reactants is equal to the number of products
+        - There is only one reactant and one product
+        - The mass number (A) of the reactant is equal to the mass number (A) of the product
+    */
+    bool reaction_is_weak(const Reaction& reaction);
+
     class ReaclibReaction : public Reaction {
     public:
         ~ReaclibReaction() override = default;
@@ -448,7 +457,12 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] std::string_view sourceLabel() const { return m_sourceLabel; }
 
-        [[nodiscard]] ReactionType type() const override { return ReactionType::REACLIB; }
+        [[nodiscard]] ReactionType type() const override {
+            if (reaction::reaction_is_weak(*this)) {
+                return ReactionType::REACLIB_WEAK;
+            }
+            return ReactionType::REACLIB;
+        }
 
         /**
          * @brief Gets the set of rate coefficients.

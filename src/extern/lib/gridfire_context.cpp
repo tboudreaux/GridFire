@@ -121,7 +121,10 @@ int GridFireContext::evolve(
     double* Y_out,
     double& energy_out,
     double& dEps_dT,
-    double& dEps_dRho, double& mass_lost
+    double& dEps_dRho,
+    double& specific_neutrino_energy_loss,
+    double& specific_neutrino_flux,
+    double& mass_lost
 ) {
     init_composition_from_abundance_vector(Y_in, num_species);
 
@@ -137,6 +140,8 @@ int GridFireContext::evolve(
     energy_out = result.energy;
     dEps_dT  = result.dEps_dT;
     dEps_dRho = result.dEps_dRho;
+    specific_neutrino_energy_loss = result.specific_neutrino_energy_loss;
+    specific_neutrino_flux = result.specific_neutrino_flux;
 
     std::set<fourdst::atomic::Species> seen_species;
     for (size_t i = 0; i < num_species; i++) {

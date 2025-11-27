@@ -231,7 +231,7 @@ namespace gridfire::reaction {
 
         std::unordered_set<bool> reaction_weak_types;
         for (const auto& reaction : reactions) {
-            reaction_weak_types.insert(reaclib::reaction_is_weak(*reaction));
+            reaction_weak_types.insert(reaction::reaction_is_weak(*reaction));
         }
 
         if (reaction_weak_types.size() != 1) {
@@ -611,8 +611,28 @@ namespace gridfire::reaction {
             }
         }
 
-    return finalReactionSet;
-}
+        return finalReactionSet;
+    }
+
+    bool reaction_is_weak(const reaction::Reaction& reaction) {
+        const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
+        const std::vector<fourdst::atomic::Species>& products = reaction.products();
+
+        if (reactants.size() != products.size()) {
+            return false;
+        }
+
+        if (reactants.size() != 1 || products.size() != 1) {
+            return false;
+        }
+
+        if (std::floor(reactants[0].a()) != std::floor(products[0].a())) {
+            return false;
+        }
+
+        return true;
+    }
+
 
 }
 

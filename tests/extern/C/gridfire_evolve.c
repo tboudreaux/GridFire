@@ -46,6 +46,8 @@ int main() {
     double energy_out;
     double dEps_dT;
     double dEps_dRho;
+    double specific_neutrino_energy_loss;
+    double specific_neutrino_flux;
     double mass_lost;
 
     ret = gf_evolve(
@@ -59,7 +61,10 @@ int main() {
         Y_out,
         &energy_out,
         &dEps_dT,
-        &dEps_dRho, &mass_lost
+        &dEps_dRho,
+        &specific_neutrino_energy_loss,
+        &specific_neutrino_flux,
+        &mass_lost
     );
 
     CHECK_RET_CODE(ret, ctx, "EVOLUTION");
@@ -72,6 +77,8 @@ int main() {
     printf("Energy output: %e\n", energy_out);
     printf("dEps/dT: %e\n", dEps_dT);
     printf("dEps/dRho: %e\n", dEps_dRho);
+    printf("Specific neutrino energy loss: %e\n", specific_neutrino_energy_loss);
+    printf("Specific neutrino flux: %e\n", specific_neutrino_flux);
     printf("Mass lost: %e\n", mass_lost);
 
     gf_free(ctx);

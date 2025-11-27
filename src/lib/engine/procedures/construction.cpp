@@ -88,7 +88,7 @@ namespace {
         if (has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_STRONG)) {
             const auto& allReaclibReactions = gridfire::reaclib::get_all_reaclib_reactions();
             for (const auto& reaction : allReaclibReactions) {
-                const bool isWeakReaction = gridfire::reaclib::reaction_is_weak(*reaction);
+                const bool isWeakReaction = gridfire::reaction::reaction_is_weak(*reaction);
                 const bool okayToUseReaclibWeakReaction = has_flag(reaction_types, gridfire::engine::NetworkConstructionFlags::REACLIB_WEAK);
 
                 const bool reaclibWeakOkay = !isWeakReaction || okayToUseReaclibWeakReaction;

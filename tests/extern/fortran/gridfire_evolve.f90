@@ -36,7 +36,7 @@ program main
 
     ! Output buffers
     real(c_double), dimension(8) :: Y_out
-    real(c_double) :: energy_out, dedt, dedrho, dmass
+    real(c_double) :: energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass
 
     ! Thermodynamic Conditions (Solar Core-ish)
     real(c_double) :: T = 1.5e7      ! 15 Million K
@@ -60,7 +60,7 @@ program main
 
     ! --- 5. Evolve ---
     print *, "Evolving system (dt =", dt, "s)..."
-    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, dmass, ierr)
+    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass, ierr)
 
     if (ierr /= 0) then
         print *, "Evolution Failed with error code: ", ierr
@@ -74,6 +74,9 @@ program main
     print *, "--- Results ---"
     print '(A, ES12.5, A)', "Energy Generation: ", energy_out, " erg/g/s"
     print '(A, ES12.5)',    "dEps/dT:           ", dedt
+    print '(A, ES12.5)',    "dEps/drho:         ", dedrho
+    print '(A, ES12.5)',    "Neutrino Energy Loss:      ", snu_e_loss
+    print '(A, ES12.5)',    "Neutrino Flux:          ", snu_flux
     print '(A, ES12.5)',    "Mass Change:       ", dmass
 
     print *, ""
