@@ -18,12 +18,16 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 # *********************************************************************** #
-project('GridFire', 'cpp', version: 'v0.7.0_rc1', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
+project('GridFire', ['c', 'cpp', 'fortran'], version: 'v0.7.0_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
 # Add default visibility for all C++ targets
 add_project_arguments('-fvisibility=default', language: 'cpp')
 
 message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
+message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
+message('C++ standard set to: ' + get_option('cpp_std'))
+message('Fortran standard set to: ' + get_option('fortran_std'))
+
 
 if meson.get_compiler('cpp').get_id() == 'clang'
     # We disable these because of CppAD

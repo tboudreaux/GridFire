@@ -5,3 +5,4 @@ gtest_nomain_dep = dependency('gtest', main: false, required : true)
 
 # Subdirectories for unit and integration tests
 subdir('graphnet_sandbox')
+subdir('extern')
