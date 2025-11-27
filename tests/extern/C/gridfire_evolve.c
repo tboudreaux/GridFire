@@ -22,7 +22,16 @@ int main() {
     species_names[5] = "O-16";
     species_names[6] = "Ne-20";
     species_names[7] = "Mg-24";
-    const double abundances[NUM_SPECIES] = {0.702616602672027, 9.74791583949078e-06, 0.06895512307276903, 0.00025, 7.855418029399437e-05, 0.0006014411598306529, 8.103062886768109e-05, 2.151340851063217e-05};
+    const double abundances[NUM_SPECIES] = {
+        0.702616602672027,
+        9.74791583949078e-06,
+        0.06895512307276903,
+        0.00025,
+        7.855418029399437e-05,
+        0.0006014411598306529,
+        8.103062886768109e-05,
+        2.151340851063217e-05
+    };
 
     int ret = gf_register_species(ctx, NUM_SPECIES, species_names);
     CHECK_RET_CODE(ret, ctx, "SPECIES");

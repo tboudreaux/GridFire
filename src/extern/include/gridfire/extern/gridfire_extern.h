@@ -62,7 +62,7 @@ extern "C" {
 
     void* gf_init();
 
-    int gf_free(void* ctx);
+    void gf_free(void* ctx);
 
     int gf_register_species(void* ptr, const int num_species, const char** species_names);
 

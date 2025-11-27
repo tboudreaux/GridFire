@@ -896,6 +896,220 @@ if __name__ == "__main__":
 ```
 
 
+# External Usage
+C++ does not have a stable ABI nor does it make any strong guarantees about stl container layouts between compiler versions.
+Therefore, GridFire includes a set of stable C bindings which can be used to interface with a limited subset of GridFire functionality
+from other languages.
+
+> **Note:** These bindings are not intended to allow GridFire to be extended from other languages; rather, they are intended to allow GridFire to be used as a
+> black-box library from other languages.
+
+> **Note:** One assumption for external usage is that the ordering of the species list will not change. That is to say that whatever order the array
+> used to register the species is will be assumed to always be the order used when passing abundance arrays to and from GridFire.
+
+> **Note:** Because the C API does not pass the general Composition object a `mass_lost`
+> output parameter has been added to the evolve calls, this tracks the total mass in species which have not been registered with the C API GridFire by the caller
+## C API Overview
+In general when using the C API the workflow is to 
+
+1. create a `gf_context` pointer. This object holds the state of GridFire so that it does not need to be re-initialized for each call.
+2. call initialization routines on the context to set up the engine and solver you wish to use.
+3. call the `gf_evolve` function to evolve a network over some time.
+4. At each state check the ret code of the function to ensure that no errors occurred. Valid ret-codes are 0 and 1. All other ret codes indicate an error.
+5. Finally, call `gf_free` to free the context and all associated memory.
+
+### C Example
+
+```c++
+#include "gridfire/extern/gridfire_extern.h"
+#include <stdio.h>
+
+#define NUM_SPECIES 8
+
+// Define a macro to check return codes
+#define GF_CHECK_RET_CODE(ret, ctx, msg) \
+    if (ret != 0 && ret != 1) { \
+        printf("Error %s: %s\n", msg, gf_get_last_error_message(ctx)); \
+        gf_free(ctx); \
+        return ret; \
+    }
+
+int main() {
+    void* gf_context = gf_init();
+
+    const char* species_names[NUM_SPECIES];
+    species_names[0] = "H-1";
+    species_names[1] = "He-3";
+    species_names[2] = "He-4";
+    species_names[3] = "C-12";
+    species_names[4] = "N-14";
+    species_names[5] = "O-16";
+    species_names[6] = "Ne-20";
+    species_names[7] = "Mg-24";
+    const double abundances[NUM_SPECIES] = {0.702616602672027, 9.74791583949078e-06, 0.06895512307276903, 0.00025, 7.855418029399437e-05, 0.0006014411598306529, 8.103062886768109e-05, 2.151340851063217e-05};
+
+    int ret = gf_register_species(gf_context, NUM_SPECIES, species_names);
+    GF_CHECK_RET_CODE(ret, gf_context, "Species Registration");
+
+    ret = gf_construct_engine_from_policy(gf_context, "MAIN_SEQUENCE_POLICY", abundances, NUM_SPECIES);
+    GF_CHECK_RET_CODE(ret, gf_context, "Policy and Engine Construction");
+
+    ret = gf_construct_solver_from_engine(gf_context, "CVODE");
+    GF_CHECK_RET_CODE(ret, gf_context, "Solver Construction");
+
+    // When using the C API it is assumed that the caller will ensure that the output arrays are large enough to hold the results.
+    double Y_out[NUM_SPECIES];
+    double energy_out;
+    double dEps_dT;
+    double dEps_dRho;
+    double mass_lost;
+
+    ret = gf_evolve(
+        gf_context,
+        abundances,
+        NUM_SPECIES,
+        1.5e7,    // Temperature in K
+        1.5e2,    // Density in g/cm^3
+        3e17,      // Time step in seconds
+        1e-12, // Initial time step in seconds
+        Y_out,
+        &energy_out,
+        &dEps_dT,
+        &dEps_dRho, &mass_lost
+    );
+
+    GF_CHECK_RET_CODE(ret, gf_context, "Evolution");
+
+
+    printf("Evolved abundances:\n");
+    for (size_t i = 0; i < NUM_SPECIES; i++) {
+        printf("Species %s: %e\n", species_names[i], Y_out[i]);
+    }
+    printf("Energy output: %e\n", energy_out);
+    printf("dEps/dT: %e\n", dEps_dT);
+    printf("dEps/dRho: %e\n", dEps_dRho);
+    printf("Mass lost: %e\n", mass_lost);
+
+    gf_free(gf_context);
+
+    return 0;
+}
+
+```
+
+## Fortran API Overview
+
+GridFire makes use of the stable C API and Fortran 2003's `iso_c_bindings` to provide a Fortran interface for legacy
+code. The fortran interface is designed to be very similar to the C API and exposes the same functionality. 
+
+1. `GridFire%gff_init`: Initializes a GridFire context and returns a handle to it.
+2. `GridFire%register_species`: Registers species with the GridFire context.
+3. `GridFire%setup_policy`: Configures the engine using a specified policy and initial abundances.
+4. `GridFire%setup_solver`: Sets up the solver for the engine.
+5. `GridFire%evolve`: Evolves the network over a specified time step.
+6. `GridFire%get_last_error`: Retrieves the last error message from the GridFire context.
+7. `GridFire%gff_free`: Frees the GridFire context and associated resources.
+
+> **Note:** You must instantiate a `GridFire` type object to access these methods.
+
+> **Note:** free and init have had the `gff_` prefix (GridFire Fortran) to avoid name clashes with common Fortran functions.
+
+When building GridFire a fortran module file `gridfire_mod.mod` is generated which contains all the necessary
+bindings to use GridFire from Fortran. You must also link your code against the C API library `libgridfire_extern`.
+
+### Fortran Example
+
+```fortran
+program main
+    use iso_c_binding
+    use gridfire_mod
+    implicit none
+
+    type(GridFire) :: net
+    integer(c_int) :: ierr
+    integer :: i
+
+    ! --- 1. Define Species and Initial Conditions ---
+    ! Note: String lengths must match or exceed the longest name.
+    ! We pad with spaces, which 'trim' handles inside the module.
+    character(len=5), dimension(8) :: species_names = [ &
+            "H-1  ", &
+            "He-3 ", &
+            "He-4 ", &
+            "C-12 ", &
+            "N-14 ", &
+            "O-16 ", &
+            "Ne-20", &
+            "Mg-24"  &
+        ]
+
+    ! Initial Mass Fractions (converted to Molar Abundances Y = X/A)
+    ! Standard solar-ish composition
+    real(c_double), dimension(8) :: Y_in = [ &
+        0.702616602672027,     &
+        9.74791583949078e-06,  &
+        0.06895512307276903,   &
+        0.00025,               &
+        7.855418029399437e-05, &
+        0.0006014411598306529, &
+        8.103062886768109e-05, &
+        2.151340851063217e-05  &
+        ]
+
+    ! Output buffers
+    real(c_double), dimension(8) :: Y_out
+    real(c_double) :: energy_out, dedt, dedrho, dmass
+
+    ! Thermodynamic Conditions (Solar Core-ish)
+    real(c_double) :: T = 1.5e7      ! 15 Million K
+    real(c_double) :: rho = 150.0e0  ! 150 g/cm^3
+    real(c_double) :: dt = 3.1536e17     ! ~10 Gyr timestep
+
+    ! --- 2. Initialize GridFire ---
+    print *, "Initializing GridFire..."
+    call net%gff_init()
+
+    ! --- 3. Register Species ---
+    print *, "Registering species..."
+    call net%register_species(species_names)
+
+    ! --- 4. Configure Engine & Solver ---
+    print *, "Setting up Main Sequence Policy..."
+    call net%setup_policy("MAIN_SEQUENCE_POLICY", Y_in)
+
+    print *, "Setting up CVODE Solver..."
+    call net%setup_solver("CVODE")
+
+    ! --- 5. Evolve ---
+    print *, "Evolving system (dt =", dt, "s)..."
+    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, dmass, ierr)
+
+    if (ierr /= 0) then
+        print *, "Evolution Failed with error code: ", ierr
+        print *, "Error Message: ", net%get_last_error()
+        call net%gff_free() ! Always cleanup
+        stop
+    end if
+
+    ! --- 6. Report Results ---
+    print *, ""
+    print *, "--- Results ---"
+    print '(A, ES12.5, A)', "Energy Generation: ", energy_out, " erg/g/s"
+    print '(A, ES12.5)',    "dEps/dT:           ", dedt
+    print '(A, ES12.5)',    "Mass Change:       ", dmass
+
+    print *, ""
+    print *, "Abundances:"
+    do i = 1, size(species_names)
+        print '(A, " : ", ES12.5, " -> ", ES12.5)', &
+                trim(species_names(i)), Y_in(i), Y_out(i)
+    end do
+
+    ! --- 7. Cleanup ---
+    call net%gff_free()
+
+end program main
+```
 
 # Related Projects
 
@@ -910,3 +1124,5 @@ GridFire integrates with and builds upon several key 4D-STAR libraries:
   utilities.
 - [liblogging](https://github.com/4D-STAR/liblogging): Flexible logging framework.
 - [libconstants](https://github.com/4D-STAR/libconstants): Physical constants
+- [libplugin](https://github.com/4D-STAR/libplugin): Dynamically loadable plugin
+  framework.

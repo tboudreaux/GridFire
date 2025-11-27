@@ -8,9 +8,8 @@ extern "C" {
         return new GridFireContext();
     }
 
-    int gf_free(void* ctx) {
+    void gf_free(void* ctx) {
         delete static_cast<GridFireContext*>(ctx);
-        return 0;
     }
 
     int gf_register_species(void* ptr, const int num_species, const char** species_names) {
