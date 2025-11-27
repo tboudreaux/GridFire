@@ -9,7 +9,7 @@
 ![GitHub License](https://img.shields.io/github/license/4D-STAR/GridFire?style=for-the-badge)
 ![ERC](https://img.shields.io/badge/Funded%20by-ERC-blue?style=for-the-badge&logo=europeancommission)
 
-![Dynamic Regex Badge](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fgithub.com%2F4D-STAR%2FGridFire%2Fblob%2Fmain%2Fmeson.build&search=version%3A%20'(%5B0-9a-zA-Z%5C.%5D%2B)'&style=for-the-badge&label=GitHub%20Main%20Branch)
+![Dynamic Regex Badge](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&search=version%3A%20'(.%2B)'%2C&style=for-the-badge&label=Main%20Branch%20Version)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/4D-STAR/GridFire?style=for-the-badge)
 
 
