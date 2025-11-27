@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -113,7 +113,7 @@ $(function(){initNavTree('classgridfire_1_1reaction_1_1_reaclib_reaction.html','
 <div class="dynheader">
 Inheritance diagram for gridfire::reaction::ReaclibReaction:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaclib_reaction__inherit__graph.svg" width="178" height="230"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaclib_reaction__inherit__graph.svg" width="514" height="118"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for gridfire::reaction::ReaclibReaction:</div>
@@ -363,7 +363,7 @@ Friends</h2></td></tr>
     <tr><td class="paramname">reactants</td><td>A vector of reactant species. </td></tr>
     <tr><td class="paramname">products</td><td>A vector of product species. </td></tr>
     <tr><td class="paramname">qValue</td><td>The Q-value of the reaction in MeV. </td></tr>
-    <tr><td class="paramname">label</td><td>The source label for the rate data (e.g., "wc12", "st08"). </td></tr>
+    <tr><td class="paramname">label</td><td>The sources label for the rate data (e.g., "wc12", "st08"). </td></tr>
     <tr><td class="paramname">sets</td><td>The set of rate coefficients. </td></tr>
     <tr><td class="paramname">reverse</td><td>True if this is a reverse reaction rate. </td></tr>
   </table>
@@ -691,6 +691,8 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>A std::unique_ptr owning a new <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> equal to this one. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#ab95ce7fb022a9432bdc77f14679221ee">gridfire::reaction::Reaction</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#ac3fc463a1cea6854ea989732e1e5f65a">gridfire::reaction::WeakReaclibReaction</a>.</p>
 
 </div>
 </div>
@@ -1433,6 +1435,8 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Enumerated reaction type for runtime dispatch and filtering. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a7f2590eee9f0dfb7b73cd92170a844b7">gridfire::reaction::Reaction</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#af191b4afdf41a9916ecf9647e88d8037">gridfire::reaction::WeakReaclibReaction</a>.</p>
 
 </div>
 </div>

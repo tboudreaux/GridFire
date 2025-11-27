@@ -1,36 +1,43 @@
 <map id="src/include/gridfire/solver/strategies/strategy_abstract.h" name="src/include/gridfire/solver/strategies/strategy_abstract.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="432,5,604,61"/>
-<area shape="rect" id="Node000002" href="$_c_v_o_d_e__solver__strategy_8h.html" title=" " alt="" coords="166,109,339,165"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="433,69,325,111,323,106,432,64"/>
-<area shape="rect" id="Node000003" href="$strategies_8h.html" title=" " alt="" coords="360,420,553,461"/>
-<area shape="poly" id="edge20_Node000001_Node000003" title=" " alt="" coords="577,67,658,126,699,163,736,203,765,245,781,288,783,310,781,332,773,353,760,374,746,385,727,396,676,412,615,424,554,433,553,428,615,419,675,407,725,391,743,381,756,370,768,351,776,330,778,310,776,289,760,247,732,206,696,167,654,130,574,72"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="214,177,176,220,144,270,134,297,130,323,134,347,147,370,160,381,179,392,232,408,296,420,360,429,359,434,295,426,231,413,177,396,157,386,142,374,129,349,125,323,129,295,139,268,172,217,210,174"/>
-<area shape="rect" id="Node000006" href="$priming_8cpp.html" title=" " alt="" coords="43,597,209,638"/>
-<area shape="poly" id="edge16_Node000002_Node000006" title=" " alt="" coords="192,175,150,206,111,245,95,267,82,291,74,316,71,343,71,442,76,486,88,529,117,596,113,598,83,531,71,487,66,442,66,343,69,315,78,289,91,264,107,242,147,202,189,171"/>
-<area shape="rect" id="Node000010" href="$solver_2bindings_8cpp.html" title=" " alt="" coords="24,694,222,719"/>
-<area shape="poly" id="edge19_Node000002_Node000010" title=" " alt="" coords="162,174,109,202,59,240,38,262,23,286,12,313,8,343,8,530,11,587,18,610,33,636,47,654,64,668,99,691,96,695,61,673,44,657,29,640,13,612,6,588,3,530,3,343,7,312,18,284,34,259,55,236,106,198,160,169"/>
-<area shape="rect" id="Node000011" href="$engine__partitioning__trigger_8h.html" title="CVODE&#45;specific triggers that decide when to (re)partition the reaction network engine." alt="" coords="327,213,514,268"/>
-<area shape="poly" id="edge11_Node000002_Node000011" title=" " alt="" coords="312,171,377,210,374,214,309,175"/>
-<area shape="rect" id="Node000013" href="$_c_v_o_d_e__solver__strategy_8cpp.html" title=" " alt="" coords="156,324,349,364"/>
-<area shape="poly" id="edge17_Node000002_Node000013" title=" " alt="" coords="255,180,255,323,250,323,250,180"/>
-<area shape="rect" id="Node000014" href="$engine__partitioning__trigger_8cpp.html" title=" " alt="" coords="565,316,745,372"/>
-<area shape="poly" id="edge18_Node000002_Node000014" title=" " alt="" coords="355,150,441,173,485,190,527,210,561,234,591,261,637,314,633,318,587,265,557,238,524,215,483,194,440,178,354,155"/>
-<area shape="rect" id="Node000004" href="$solver_8h.html" title=" " alt="" coords="393,509,520,549"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="459,476,459,508,454,508,454,476"/>
-<area shape="rect" id="Node000005" href="$gridfire_8h.html" title=" " alt="" coords="494,597,621,638"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="493,558,537,595,533,599,489,562"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="378,553,202,599,201,594,377,548"/>
-<area shape="rect" id="Node000007" href="$engine__priming_8cpp.html" title=" " alt="" coords="645,597,782,638"/>
-<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="530,552,656,594,654,599,528,557"/>
-<area shape="rect" id="Node000008" href="$py__solver_8cpp.html" title=" " alt="" coords="298,686,484,727"/>
-<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="454,566,446,601,434,639,407,687,402,685,429,637,441,600,449,564"/>
-<area shape="rect" id="Node000009" href="$py__solver_8h.html" title=" " alt="" coords="233,597,418,638"/>
-<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="416,560,357,599,354,595,413,556"/>
-<area shape="poly" id="edge10_Node000009_Node000008" title=" " alt="" coords="352,649,378,684,374,687,348,652"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="267,647,152,695,150,691,265,642"/>
-<area shape="rect" id="Node000012" href="$triggers_8h.html" title=" " alt="" coords="372,316,541,372"/>
-<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="438,282,449,315,444,317,433,284"/>
-<area shape="poly" id="edge14_Node000011_Node000013" title=" " alt="" coords="364,279,286,326,283,321,361,274"/>
-<area shape="poly" id="edge15_Node000011_Node000014" title=" " alt="" coords="498,272,593,313,591,318,496,277"/>
-<area shape="poly" id="edge13_Node000012_Node000003" title=" " alt="" coords="459,388,459,420,454,420,454,388"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="468,5,640,61"/>
+<area shape="rect" id="Node000002" href="$_c_v_o_d_e__solver__strategy_8h.html" title=" " alt="" coords="202,109,375,165"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="469,69,361,111,359,106,468,64"/>
+<area shape="rect" id="Node000003" href="$strategies_8h.html" title=" " alt="" coords="396,420,589,461"/>
+<area shape="poly" id="edge24_Node000001_Node000003" title=" " alt="" coords="613,67,694,126,735,163,772,203,801,245,817,288,819,310,817,332,809,353,796,374,783,385,763,396,712,412,652,424,590,433,589,428,651,419,711,407,761,391,779,381,792,370,804,351,812,330,814,310,812,289,796,247,768,206,732,167,690,130,610,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="250,177,212,220,180,270,170,297,166,323,170,347,183,370,196,381,215,392,268,408,332,420,396,429,395,434,331,426,267,413,213,396,193,386,178,374,165,349,161,323,165,295,175,268,208,217,246,174"/>
+<area shape="rect" id="Node000009" href="$priming_8cpp.html" title=" " alt="" coords="79,597,245,638"/>
+<area shape="poly" id="edge20_Node000002_Node000009" title=" " alt="" coords="228,175,187,206,147,245,131,267,118,291,110,316,107,343,107,442,112,486,124,529,153,596,149,598,119,531,107,487,102,442,102,343,105,315,114,289,127,264,143,242,183,202,225,171"/>
+<area shape="rect" id="Node000013" href="$solver_2bindings_8cpp.html" title=" " alt="" coords="5,701,204,727"/>
+<area shape="poly" id="edge23_Node000002_Node000013" title=" " alt="" coords="198,174,145,202,95,240,75,262,59,286,48,313,44,343,44,530,51,581,66,629,100,699,95,702,61,631,46,582,39,530,39,343,43,312,54,284,70,259,91,236,142,198,196,169"/>
+<area shape="rect" id="Node000014" href="$engine__partitioning__trigger_8h.html" title="CVODE&#45;specific triggers that decide when to (re)partition the reaction network engine." alt="" coords="363,213,550,268"/>
+<area shape="poly" id="edge15_Node000002_Node000014" title=" " alt="" coords="348,171,413,210,410,214,345,175"/>
+<area shape="rect" id="Node000016" href="$_c_v_o_d_e__solver__strategy_8cpp.html" title=" " alt="" coords="192,324,385,364"/>
+<area shape="poly" id="edge21_Node000002_Node000016" title=" " alt="" coords="291,180,291,323,286,323,286,180"/>
+<area shape="rect" id="Node000017" href="$engine__partitioning__trigger_8cpp.html" title=" " alt="" coords="601,316,781,372"/>
+<area shape="poly" id="edge22_Node000002_Node000017" title=" " alt="" coords="391,150,477,173,522,190,563,210,597,234,627,261,673,314,669,318,623,265,593,238,560,215,519,194,476,178,390,155"/>
+<area shape="rect" id="Node000004" href="$solver_8h.html" title=" " alt="" coords="429,509,556,549"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="495,476,495,508,490,508,490,476"/>
+<area shape="rect" id="Node000005" href="$gridfire_8h.html" title=" " alt="" coords="530,597,658,638"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="529,558,573,595,569,599,525,562"/>
+<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="414,553,238,599,237,594,413,548"/>
+<area shape="rect" id="Node000010" href="$engine__priming_8cpp.html" title=" " alt="" coords="681,597,818,638"/>
+<area shape="poly" id="edge10_Node000004_Node000010" title=" " alt="" coords="566,552,692,594,690,599,564,557"/>
+<area shape="rect" id="Node000011" href="$py__solver_8cpp.html" title=" " alt="" coords="280,694,465,734"/>
+<area shape="poly" id="edge11_Node000004_Node000011" title=" " alt="" coords="493,565,485,602,469,639,441,671,409,695,406,691,438,667,465,637,480,601,488,564"/>
+<area shape="rect" id="Node000012" href="$py__solver_8h.html" title=" " alt="" coords="269,597,454,638"/>
+<area shape="poly" id="edge12_Node000004_Node000012" title=" " alt="" coords="452,560,393,599,390,595,449,556"/>
+<area shape="rect" id="Node000006" href="$gridfire__context_8h.html" title=" " alt="" coords="510,686,657,742"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="593,654,589,686,584,685,587,653"/>
+<area shape="rect" id="Node000008" href="$gridfire__extern_8cpp.html" title=" " alt="" coords="624,790,764,830"/>
+<area shape="poly" id="edge8_Node000005_Node000008" title=" " alt="" coords="637,646,655,664,671,685,683,711,690,740,696,789,691,789,685,741,678,713,666,687,651,667,633,650"/>
+<area shape="rect" id="Node000007" href="$gridfire__context_8cpp.html" title=" " alt="" coords="460,790,600,830"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="563,757,543,791,539,788,558,754"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="629,750,672,787,669,791,625,754"/>
+<area shape="poly" id="edge14_Node000012_Node000011" title=" " alt="" coords="368,653,373,693,368,693,363,653"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="294,646,139,703,137,698,293,641"/>
+<area shape="rect" id="Node000015" href="$triggers_8h.html" title=" " alt="" coords="408,316,577,372"/>
+<area shape="poly" id="edge16_Node000014_Node000015" title=" " alt="" coords="474,282,485,315,480,317,469,284"/>
+<area shape="poly" id="edge18_Node000014_Node000016" title=" " alt="" coords="400,279,322,326,319,321,397,274"/>
+<area shape="poly" id="edge19_Node000014_Node000017" title=" " alt="" coords="534,272,629,313,627,318,532,277"/>
+<area shape="poly" id="edge17_Node000015_Node000003" title=" " alt="" coords="495,388,495,420,490,420,490,388"/>
 </map>

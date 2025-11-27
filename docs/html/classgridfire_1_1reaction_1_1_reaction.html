@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -114,7 +114,7 @@ $(function(){initNavTree('classgridfire_1_1reaction_1_1_reaction.html',''); init
 <div class="dynheader">
 Inheritance diagram for gridfire::reaction::Reaction:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaction__inherit__graph.svg" width="318" height="230"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_reaction__inherit__graph.svg" width="524" height="150"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -208,7 +208,7 @@ Friends</h2></td></tr>
 <div class="line">    <span class="stringliteral">&quot;H_1_H_1_to_H_2&quot;</span>, <span class="stringliteral">&quot;p(p,g)d&quot;</span>, 1, {H_1, H_1}, {H_2}, 5.493, <span class="stringliteral">&quot;st08&quot;</span>, rate_coeffs</div>
 <div class="line">);</div>
 <div class="line"><span class="keywordtype">double</span> rate = p_gamma_d.<a class="code hl_function" href="#a83c121480533593adfd68c4a67a649f1">calculate_rate</a>(0.1); <span class="comment">// T9 = 0.1</span></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> reaction.h:91</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction.html">gridfire::reaction::Reaction</a></div><div class="ttdoc">Represents a single nuclear reaction from a specific data source.</div><div class="ttdef"><b>Definition</b> reaction.h:98</div></div>
 <div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_html_a83c121480533593adfd68c4a67a649f1"><div class="ttname"><a href="#a83c121480533593adfd68c4a67a649f1">gridfire::reaction::Reaction::calculate_rate</a></div><div class="ttdeci">virtual double calculate_rate(double T9, double rho, double Ye, double mue, const std::vector&lt; double &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const =0</div><div class="ttdoc">Compute the temperature- and composition-dependent reaction rate.</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1860df84843be70f97469761e11ab6a" name="ab1860df84843be70f97469761e11ab6a"></a>
@@ -619,7 +619,7 @@ Friends</h2></td></tr>
 <p>Polymorphic deep copy. </p>
 <dl class="section return"><dt>Returns</dt><dd>A std::unique_ptr owning a new <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source.">Reaction</a> equal to this one. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#ac10e1451d20876f6eab199e127f213c7">gridfire::rates::weak::WeakReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ad113b9cb64c449f9449c4cce4fa64076">gridfire::reaction::LogicalReaclibReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a54fde02e7010e806136f976ab64b1740">gridfire::reaction::ReaclibReaction</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#ac10e1451d20876f6eab199e127f213c7">gridfire::rates::weak::WeakReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ad113b9cb64c449f9449c4cce4fa64076">gridfire::reaction::LogicalReaclibReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a54fde02e7010e806136f976ab64b1740">gridfire::reaction::ReaclibReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#ac3fc463a1cea6854ea989732e1e5f65a">gridfire::reaction::WeakReaclibReaction</a>.</p>
 
 </div>
 </div>
@@ -1180,7 +1180,7 @@ Friends</h2></td></tr>
 <p>Category of this reaction (e.g., REACLIB, WEAK, LOGICAL_REACLIB). </p>
 <dl class="section return"><dt>Returns</dt><dd>Enumerated reaction type for runtime dispatch and filtering. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aade329265a26bdc005c0793ba7a36ab2">gridfire::rates::weak::WeakReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#acbfa2d4e23dff6641be21cc1e754be15">gridfire::reaction::LogicalReaclibReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a3c0fbdd07f9a837bd031c5bdc58e0e8f">gridfire::reaction::ReaclibReaction</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html#aade329265a26bdc005c0793ba7a36ab2">gridfire::rates::weak::WeakReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#acbfa2d4e23dff6641be21cc1e754be15">gridfire::reaction::LogicalReaclibReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a3c0fbdd07f9a837bd031c5bdc58e0e8f">gridfire::reaction::ReaclibReaction</a>, and <a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#af191b4afdf41a9916ecf9647e88d8037">gridfire::reaction::WeakReaclibReaction</a>.</p>
 
 </div>
 </div>

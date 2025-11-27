@@ -1,47 +1,54 @@
 <map id="src/include/gridfire/partition/partition.h" name="src/include/gridfire/partition/partition.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="571,5,704,46"/>
-<area shape="rect" id="Node000002" href="$gridfire_8h.html" title=" " alt="" coords="7,537,134,578"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="556,35,398,51,307,65,217,82,135,105,69,132,43,147,24,164,12,182,8,202,8,382,14,426,27,469,60,536,56,538,22,471,8,427,3,382,3,201,7,180,20,161,40,143,66,127,134,99,216,77,306,59,398,46,556,30"/>
-<area shape="rect" id="Node000003" href="$policy__abstract_8h.html" title="Abstract policy interfaces used to construct reaction networks (DynamicEngine) from seed compositions..." alt="" coords="330,94,492,135"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="573,54,463,96,461,91,571,49"/>
-<area shape="rect" id="Node000014" href="$partition_2bindings_8cpp.html" title=" " alt="" coords="678,183,810,223"/>
-<area shape="poly" id="edge25_Node000001_Node000014" title=" " alt="" coords="642,61,650,97,665,133,687,159,713,180,710,184,683,163,660,136,645,99,637,62"/>
-<area shape="rect" id="Node000015" href="$py__partition_8cpp.html" title=" " alt="" coords="835,183,1016,223"/>
-<area shape="poly" id="edge26_Node000001_Node000015" title=" " alt="" coords="720,36,789,56,824,72,856,92,878,112,896,136,920,181,915,184,892,139,874,116,853,96,822,76,788,61,718,41"/>
-<area shape="rect" id="Node000016" href="$py__partition_8h.html" title=" " alt="" coords="675,94,842,135"/>
-<area shape="poly" id="edge27_Node000001_Node000016" title=" " alt="" coords="679,53,733,91,730,96,676,57"/>
-<area shape="rect" id="Node000004" href="$chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains." alt="" coords="403,271,530,312"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="430,148,444,182,457,229,466,270,461,271,452,231,439,184,425,150"/>
-<area shape="rect" id="Node000005" href="$policy_8h.html" title=" " alt="" coords="302,449,429,489"/>
-<area shape="poly" id="edge15_Node000003_Node000005" title=" " alt="" coords="315,124,275,132,235,144,196,161,162,185,143,204,134,223,123,272,117,310,118,342,130,370,155,399,188,423,226,441,265,452,302,460,301,465,264,458,224,446,185,428,152,403,126,373,113,343,111,310,117,271,129,221,139,201,158,181,194,157,233,139,274,127,314,119"/>
-<area shape="rect" id="Node000009" href="$stellar__policy_8h.html" title="High&#45;level concrete NetworkPolicy for specific stellar environments." alt="" coords="454,360,602,401"/>
-<area shape="poly" id="edge21_Node000003_Node000009" title=" " alt="" coords="449,143,502,198,527,232,545,270,550,294,549,318,539,360,534,359,544,318,545,295,540,272,522,235,498,201,445,147"/>
-<area shape="rect" id="Node000010" href="$stellar__policy_8cpp.html" title=" " alt="" coords="517,449,651,489"/>
-<area shape="poly" id="edge24_Node000003_Node000010" title=" " alt="" coords="469,140,497,158,523,181,561,224,585,262,602,304,617,359,620,380,617,401,609,427,598,450,593,447,604,425,612,400,615,380,612,361,597,306,581,264,557,227,519,185,494,163,466,145"/>
-<area shape="rect" id="Node000011" href="$chains_8cpp.html" title=" " alt="" coords="166,368,327,393"/>
-<area shape="poly" id="edge22_Node000003_Node000011" title=" " alt="" coords="316,140,263,160,212,188,167,225,149,247,134,272,129,292,134,311,148,329,167,344,207,365,205,369,164,348,145,333,130,313,123,292,130,270,144,244,163,221,209,183,261,155,314,135"/>
-<area shape="rect" id="Node000012" href="$policy__logical_8h.html" title=" " alt="" coords="277,183,430,223"/>
-<area shape="poly" id="edge16_Node000003_Node000012" title=" " alt="" coords="392,149,369,184,364,181,387,146"/>
-<area shape="rect" id="Node000013" href="$policy__logical_8cpp.html" title=" " alt="" coords="144,271,277,312"/>
-<area shape="poly" id="edge23_Node000003_Node000013" title=" " alt="" coords="333,143,298,161,267,185,250,205,236,228,219,272,214,270,232,226,246,202,263,181,295,157,330,138"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="450,327,379,450,374,447,446,324"/>
-<area shape="poly" id="edge11_Node000004_Node000009" title=" " alt="" coords="492,323,516,358,512,361,487,326"/>
-<area shape="poly" id="edge14_Node000004_Node000011" title=" " alt="" coords="404,321,278,369,276,365,402,316"/>
-<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="287,496,136,540,134,535,286,491"/>
-<area shape="rect" id="Node000006" href="$policy_2bindings_8cpp.html" title=" " alt="" coords="159,634,356,659"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="304,500,281,517,264,539,255,563,252,589,257,633,252,634,247,589,250,562,259,536,278,513,301,495"/>
-<area shape="rect" id="Node000007" href="$py__policy_8cpp.html" title=" " alt="" coords="390,626,575,667"/>
-<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="428,495,452,513,472,536,482,558,487,583,488,625,482,626,481,583,477,560,467,539,448,517,425,500"/>
-<area shape="rect" id="Node000008" href="$py__policy_8h.html" title=" " alt="" coords="273,537,458,578"/>
-<area shape="poly" id="edge8_Node000005_Node000008" title=" " alt="" coords="368,505,368,537,363,537,363,505"/>
-<area shape="poly" id="edge9_Node000008_Node000006" title=" " alt="" coords="331,590,274,635,270,631,328,586"/>
-<area shape="poly" id="edge10_Node000008_Node000007" title=" " alt="" coords="405,585,458,623,455,628,402,589"/>
-<area shape="poly" id="edge12_Node000009_Node000005" title=" " alt="" coords="479,411,403,451,401,446,476,406"/>
-<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="551,413,574,447,569,450,547,415"/>
-<area shape="poly" id="edge17_Node000012_Node000004" title=" " alt="" coords="393,231,443,269,439,273,389,235"/>
-<area shape="poly" id="edge18_Node000012_Node000005" title=" " alt="" coords="358,239,367,448,362,448,352,239"/>
-<area shape="poly" id="edge19_Node000012_Node000011" title=" " alt="" coords="337,238,292,313,257,369,252,366,287,311,332,235"/>
-<area shape="poly" id="edge20_Node000012_Node000013" title=" " alt="" coords="310,234,244,273,242,269,307,229"/>
-<area shape="poly" id="edge28_Node000016_Node000014" title=" " alt="" coords="755,151,750,183,745,182,750,150"/>
-<area shape="poly" id="edge29_Node000016_Node000015" title=" " alt="" coords="811,140,889,180,886,185,809,144"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="734,5,866,46"/>
+<area shape="rect" id="Node000002" href="$gridfire_8h.html" title=" " alt="" coords="115,537,243,578"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="719,35,561,51,470,65,380,82,298,105,232,132,206,147,187,164,175,182,171,202,171,382,174,468,180,537,174,537,169,469,166,382,166,201,170,180,183,161,203,143,229,127,297,99,379,77,469,59,561,46,719,30"/>
+<area shape="rect" id="Node000006" href="$policy__abstract_8h.html" title="Abstract policy interfaces used to construct reaction networks (DynamicEngine) from seed compositions..." alt="" coords="492,94,655,135"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="736,54,626,96,624,91,734,49"/>
+<area shape="rect" id="Node000017" href="$partition_2bindings_8cpp.html" title=" " alt="" coords="841,183,973,223"/>
+<area shape="poly" id="edge29_Node000001_Node000017" title=" " alt="" coords="805,61,813,97,828,133,850,159,876,180,873,184,846,163,823,136,808,99,800,62"/>
+<area shape="rect" id="Node000018" href="$py__partition_8cpp.html" title=" " alt="" coords="998,183,1179,223"/>
+<area shape="poly" id="edge30_Node000001_Node000018" title=" " alt="" coords="883,36,952,56,987,72,1019,92,1041,112,1059,136,1083,181,1078,184,1055,139,1037,116,1016,96,985,76,951,61,881,41"/>
+<area shape="rect" id="Node000019" href="$py__partition_8h.html" title=" " alt="" coords="838,94,1005,135"/>
+<area shape="poly" id="edge31_Node000001_Node000019" title=" " alt="" coords="842,53,896,91,893,96,839,57"/>
+<area shape="rect" id="Node000003" href="$gridfire__context_8h.html" title=" " alt="" coords="55,626,202,682"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="164,593,145,627,141,624,159,590"/>
+<area shape="rect" id="Node000005" href="$gridfire__extern_8cpp.html" title=" " alt="" coords="169,730,309,770"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="200,590,216,625,231,681,239,729,234,730,226,682,211,627,196,592"/>
+<area shape="rect" id="Node000004" href="$gridfire__context_8cpp.html" title=" " alt="" coords="5,730,145,770"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="108,697,88,731,84,728,103,694"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="174,690,218,727,214,731,170,694"/>
+<area shape="rect" id="Node000007" href="$chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains." alt="" coords="566,271,693,312"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="593,148,607,182,620,229,629,270,624,271,615,231,602,184,588,150"/>
+<area shape="rect" id="Node000008" href="$policy_8h.html" title=" " alt="" coords="465,449,592,489"/>
+<area shape="poly" id="edge19_Node000006_Node000008" title=" " alt="" coords="478,124,438,132,398,144,359,161,325,185,306,204,297,223,286,272,280,310,281,342,293,370,318,399,351,423,389,441,428,452,465,460,464,465,427,458,387,446,348,428,315,403,289,373,276,343,274,310,280,271,292,221,302,201,321,181,357,157,396,139,437,127,477,119"/>
+<area shape="rect" id="Node000012" href="$stellar__policy_8h.html" title="High&#45;level concrete NetworkPolicy for specific stellar environments." alt="" coords="617,360,765,401"/>
+<area shape="poly" id="edge25_Node000006_Node000012" title=" " alt="" coords="612,143,665,198,690,232,708,270,713,294,712,318,702,360,697,359,707,318,708,295,703,272,685,235,661,201,608,147"/>
+<area shape="rect" id="Node000013" href="$stellar__policy_8cpp.html" title=" " alt="" coords="680,449,814,489"/>
+<area shape="poly" id="edge28_Node000006_Node000013" title=" " alt="" coords="632,140,660,158,686,181,724,224,748,262,765,304,780,359,783,380,780,401,772,427,761,450,756,447,767,425,775,400,778,380,775,361,760,306,744,264,720,227,682,185,657,163,629,145"/>
+<area shape="rect" id="Node000014" href="$chains_8cpp.html" title=" " alt="" coords="329,368,490,393"/>
+<area shape="poly" id="edge26_Node000006_Node000014" title=" " alt="" coords="479,140,426,160,375,188,330,225,312,247,297,272,292,292,297,311,311,329,330,344,370,365,368,369,327,348,308,333,293,313,286,292,293,270,307,244,326,221,372,183,424,155,477,135"/>
+<area shape="rect" id="Node000015" href="$policy__logical_8h.html" title=" " alt="" coords="440,183,592,223"/>
+<area shape="poly" id="edge20_Node000006_Node000015" title=" " alt="" coords="555,149,532,184,527,181,550,146"/>
+<area shape="rect" id="Node000016" href="$policy__logical_8cpp.html" title=" " alt="" coords="308,271,440,312"/>
+<area shape="poly" id="edge27_Node000006_Node000016" title=" " alt="" coords="496,143,461,161,430,185,413,205,399,228,382,272,377,270,395,226,409,202,426,181,458,157,493,138"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="613,327,542,450,537,447,609,324"/>
+<area shape="poly" id="edge15_Node000007_Node000012" title=" " alt="" coords="655,323,679,358,675,361,650,326"/>
+<area shape="poly" id="edge18_Node000007_Node000014" title=" " alt="" coords="567,321,441,369,439,365,565,316"/>
+<area shape="poly" id="edge9_Node000008_Node000002" title=" " alt="" coords="450,492,244,543,243,538,449,487"/>
+<area shape="rect" id="Node000009" href="$policy_2bindings_8cpp.html" title=" " alt="" coords="315,641,512,667"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="468,500,445,517,427,539,416,565,412,593,414,640,409,640,407,593,411,563,422,536,441,513,465,495"/>
+<area shape="rect" id="Node000010" href="$py__policy_8cpp.html" title=" " alt="" coords="556,634,740,674"/>
+<area shape="poly" id="edge11_Node000008_Node000010" title=" " alt="" coords="591,495,615,513,635,536,646,560,652,587,653,633,648,633,646,587,641,562,630,539,611,517,588,500"/>
+<area shape="rect" id="Node000011" href="$py__policy_8h.html" title=" " alt="" coords="436,537,620,578"/>
+<area shape="poly" id="edge12_Node000008_Node000011" title=" " alt="" coords="531,505,531,537,526,537,526,505"/>
+<area shape="poly" id="edge13_Node000011_Node000009" title=" " alt="" coords="495,590,430,643,427,638,491,586"/>
+<area shape="poly" id="edge14_Node000011_Node000010" title=" " alt="" coords="567,585,625,631,622,635,563,590"/>
+<area shape="poly" id="edge16_Node000012_Node000008" title=" " alt="" coords="642,411,566,451,564,446,639,406"/>
+<area shape="poly" id="edge17_Node000012_Node000013" title=" " alt="" coords="714,413,737,447,732,450,710,415"/>
+<area shape="poly" id="edge21_Node000015_Node000007" title=" " alt="" coords="556,231,606,269,602,273,552,235"/>
+<area shape="poly" id="edge22_Node000015_Node000008" title=" " alt="" coords="521,239,530,448,525,448,515,239"/>
+<area shape="poly" id="edge23_Node000015_Node000014" title=" " alt="" coords="500,238,455,313,420,369,415,366,450,311,495,235"/>
+<area shape="poly" id="edge24_Node000015_Node000016" title=" " alt="" coords="473,234,407,273,405,269,470,229"/>
+<area shape="poly" id="edge32_Node000019_Node000017" title=" " alt="" coords="918,151,913,183,908,182,913,150"/>
+<area shape="poly" id="edge33_Node000019_Node000018" title=" " alt="" coords="974,140,1052,180,1049,185,972,144"/>
 </map>

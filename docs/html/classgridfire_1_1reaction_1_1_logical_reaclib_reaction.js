@@ -1,7 +1,7 @@
 var classgridfire_1_1reaction_1_1_logical_reaclib_reaction =
 [
-    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a0ff112dca1f88070effb6700429b42b4", null ],
-    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a7e6d50f866be9239ac620607741280cc", null ],
+    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a2b38a9e8a4bdfc964ba76be3f718eab6", null ],
+    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a3d96384887b5b7f0022d1bc43f6d45b5", null ],
     [ "add_reaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a69508797ca0793f6d3f58de4e0b97667", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a1353d7d2208497b38799bf69f574c275", null ],
     [ "begin", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a211b1332dc12a1fee942523dbc688272", null ],
@@ -18,5 +18,6 @@ var classgridfire_1_1reaction_1_1_logical_reaclib_reaction =
     [ "type", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#acbfa2d4e23dff6641be21cc1e754be15", null ],
     [ "operator<<", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a495ca800cc1dd224ce2a821a825afafd", null ],
     [ "m_rates", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#afe1b95bf9d81f7521b9f19bbd1305d01", null ],
-    [ "m_sources", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a8c6f12a01c6d1fdeba1f0cc73128731e", null ]
+    [ "m_sources", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a8c6f12a01c6d1fdeba1f0cc73128731e", null ],
+    [ "m_weak", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a853458f525bf3270b5ad826c6fd9e1ca", null ]
 ];

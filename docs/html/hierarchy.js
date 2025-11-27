@@ -78,6 +78,15 @@ var hierarchy =
     ] ],
     [ "gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult", "structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html", null ],
     [ "std::formatter< gridfire::engine::NetworkJacobian >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4.html", null ],
+    [ "gridfire_mod::gf_construct_engine_from_policy", "interfacegridfire__mod_1_1gf__construct__engine__from__policy.html", null ],
+    [ "gridfire_mod::gf_construct_solver_from_engine", "interfacegridfire__mod_1_1gf__construct__solver__from__engine.html", null ],
+    [ "gridfire_mod::gf_evolve", "interfacegridfire__mod_1_1gf__evolve.html", null ],
+    [ "gridfire_mod::gf_free", "interfacegridfire__mod_1_1gf__free.html", null ],
+    [ "gridfire_mod::gf_get_last_error_message", "interfacegridfire__mod_1_1gf__get__last__error__message.html", null ],
+    [ "gridfire_mod::gf_init", "interfacegridfire__mod_1_1gf__init.html", null ],
+    [ "gridfire_mod::gf_register_species", "interfacegridfire__mod_1_1gf__register__species.html", null ],
+    [ "gridfire_mod::gridfire", "structgridfire__mod_1_1gridfire.html", null ],
+    [ "GridFireContext", "struct_grid_fire_context.html", null ],
     [ "std::hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", null ],
     [ "std::hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", null ],
     [ "std::hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", null ],
@@ -123,7 +132,8 @@ var hierarchy =
     [ "gridfire::engine::Reaction", "classgridfire_1_1engine_1_1_reaction.html", [
       [ "gridfire::rates::weak::WeakReaction", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html", null ],
       [ "gridfire::reaction::ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", [
-        [ "gridfire::reaction::LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html", null ]
+        [ "gridfire::reaction::LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html", null ],
+        [ "gridfire::reaction::WeakReaclibReaction", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html", null ]
       ] ]
     ] ],
     [ "gridfire::reaction::Reaction", "classgridfire_1_1reaction_1_1_reaction.html", [

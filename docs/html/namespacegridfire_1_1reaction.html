@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc1</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -123,17 +123,26 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html">WeakReaclibReaction</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a026997f11e811fa7754ac9121c4ba74e" id="r_a026997f11e811fa7754ac9121c4ba74e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a> { <a class="el" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">WEAK</a>
+<tr class="memitem:a026997f11e811fa7754ac9121c4ba74e" id="r_a026997f11e811fa7754ac9121c4ba74e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a026997f11e811fa7754ac9121c4ba74e">ReactionType</a> { <br />
+&#160;&#160;<a class="el" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">WEAK</a>
 , <a class="el" href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">REACLIB</a>
+, <a class="el" href="#a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692">REACLIB_WEAK</a>
 , <a class="el" href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">LOGICAL_REACLIB</a>
+, <br />
+&#160;&#160;<a class="el" href="#a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c">LOGICAL_REACLIB_WEAK</a>
+<br />
  }</td></tr>
 <tr class="separator:a026997f11e811fa7754ac9121c4ba74e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a5f8afcf8ff8dc0acdb510ae621d655be" id="r_a5f8afcf8ff8dc0acdb510ae621d655be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f8afcf8ff8dc0acdb510ae621d655be">reaction_is_weak</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
+<tr class="separator:a5f8afcf8ff8dc0acdb510ae621d655be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af34403cccdb4a091e979f0f895be2f8c" id="r_af34403cccdb4a091e979f0f895be2f8c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af34403cccdb4a091e979f0f895be2f8c">packReactionSet</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;reactionSet)</td></tr>
 <tr class="separator:af34403cccdb4a091e979f0f895be2f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -167,7 +176,9 @@ Variables</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8" name="a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8"></a>WEAK&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220" name="a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220"></a>REACLIB&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692" name="a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692"></a>REACLIB_WEAK&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9" name="a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9"></a>LOGICAL_REACLIB&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c" name="a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c"></a>LOGICAL_REACLIB_WEAK&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -183,6 +194,23 @@ Variables</h2></td></tr>
           <td class="memname"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> gridfire::reaction::packReactionSet </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactionSet</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5f8afcf8ff8dc0acdb510ae621d655be" name="a5f8afcf8ff8dc0acdb510ae621d655be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f8afcf8ff8dc0acdb510ae621d655be">&#9670;&#160;</a></span>reaction_is_weak()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::reaction::reaction_is_weak </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -214,10 +242,14 @@ Variables</h2></td></tr>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">ReactionType::WEAK</a>, <span class="stringliteral">&quot;Weak&quot;</span>},</div>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">ReactionType::REACLIB</a>, <span class="stringliteral">&quot;Strong&quot;</span>},</div>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">ReactionType::LOGICAL_REACLIB</a>, <span class="stringliteral">&quot;Strong&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692">ReactionType::REACLIB_WEAK</a>, <span class="stringliteral">&quot;Weak&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c">ReactionType::LOGICAL_REACLIB_WEAK</a>, <span class="stringliteral">&quot;Weak&quot;</span>},</div>
 <div class="line">    }</div>
 <div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">gridfire::reaction::ReactionType::LOGICAL_REACLIB</a></div><div class="ttdeci">@ LOGICAL_REACLIB</div><div class="ttdef"><b>Definition</b> reaction.h:30</div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">gridfire::reaction::ReactionType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdef"><b>Definition</b> reaction.h:28</div></div>
-<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">gridfire::reaction::ReactionType::REACLIB</a></div><div class="ttdeci">@ REACLIB</div><div class="ttdef"><b>Definition</b> reaction.h:29</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">gridfire::reaction::ReactionType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdef"><b>Definition</b> reaction.h:27</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c">gridfire::reaction::ReactionType::LOGICAL_REACLIB_WEAK</a></div><div class="ttdeci">@ LOGICAL_REACLIB_WEAK</div><div class="ttdef"><b>Definition</b> reaction.h:31</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692">gridfire::reaction::ReactionType::REACLIB_WEAK</a></div><div class="ttdeci">@ REACLIB_WEAK</div><div class="ttdef"><b>Definition</b> reaction.h:29</div></div>
+<div class="ttc" id="anamespacegridfire_1_1reaction_html_a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220"><div class="ttname"><a href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">gridfire::reaction::ReactionType::REACLIB</a></div><div class="ttdeci">@ REACLIB</div><div class="ttdef"><b>Definition</b> reaction.h:28</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -243,7 +275,10 @@ Variables</h2></td></tr>
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8">ReactionType::WEAK</a>, <span class="stringliteral">&quot;weak&quot;</span>},</div>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220">ReactionType::REACLIB</a>, <span class="stringliteral">&quot;reaclib&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74eab736eb13fff62c962f63232ec57f2692">ReactionType::REACLIB_WEAK</a>, <span class="stringliteral">&quot;reaclib_weak&quot;</span>},</div>
 <div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea32b0fb6c82a2ec42865b2c823216baa9">ReactionType::LOGICAL_REACLIB</a>, <span class="stringliteral">&quot;logical_reaclib&quot;</span>},</div>
+<div class="line">        {<a class="code hl_enumvalue" href="#a026997f11e811fa7754ac9121c4ba74ea9259a6415351c8baa03c61926bdd5b0c">ReactionType::LOGICAL_REACLIB_WEAK</a>, <span class="stringliteral">&quot;logical_reaclib_weak&quot;</span>},</div>
+<div class="line"> </div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>

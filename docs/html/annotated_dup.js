@@ -108,7 +108,8 @@ var annotated_dup =
         [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1_rate_coefficient_set.html", "structgridfire_1_1reaction_1_1_rate_coefficient_set" ],
         [ "ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_reaclib_reaction" ],
         [ "Reaction", "classgridfire_1_1reaction_1_1_reaction.html", "classgridfire_1_1reaction_1_1_reaction" ],
-        [ "ReactionSet", "classgridfire_1_1reaction_1_1_reaction_set.html", "classgridfire_1_1reaction_1_1_reaction_set" ]
+        [ "ReactionSet", "classgridfire_1_1reaction_1_1_reaction_set.html", "classgridfire_1_1reaction_1_1_reaction_set" ],
+        [ "WeakReaclibReaction", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction" ]
       ] ],
       [ "screening", "namespacegridfire_1_1screening.html", [
         [ "BareScreeningModel", "classgridfire_1_1screening_1_1_bare_screening_model.html", "classgridfire_1_1screening_1_1_bare_screening_model" ],
@@ -147,12 +148,23 @@ var annotated_dup =
       [ "NetIn", "structgridfire_1_1_net_in.html", "structgridfire_1_1_net_in" ],
       [ "NetOut", "structgridfire_1_1_net_out.html", "structgridfire_1_1_net_out" ]
     ] ],
+    [ "gridfire_mod", "namespacegridfire__mod.html", [
+      [ "gf_construct_engine_from_policy", "interfacegridfire__mod_1_1gf__construct__engine__from__policy.html", "interfacegridfire__mod_1_1gf__construct__engine__from__policy" ],
+      [ "gf_construct_solver_from_engine", "interfacegridfire__mod_1_1gf__construct__solver__from__engine.html", "interfacegridfire__mod_1_1gf__construct__solver__from__engine" ],
+      [ "gf_evolve", "interfacegridfire__mod_1_1gf__evolve.html", "interfacegridfire__mod_1_1gf__evolve" ],
+      [ "gf_free", "interfacegridfire__mod_1_1gf__free.html", "interfacegridfire__mod_1_1gf__free" ],
+      [ "gf_get_last_error_message", "interfacegridfire__mod_1_1gf__get__last__error__message.html", "interfacegridfire__mod_1_1gf__get__last__error__message" ],
+      [ "gf_init", "interfacegridfire__mod_1_1gf__init.html", "interfacegridfire__mod_1_1gf__init" ],
+      [ "gf_register_species", "interfacegridfire__mod_1_1gf__register__species.html", "interfacegridfire__mod_1_1gf__register__species" ],
+      [ "gridfire", "structgridfire__mod_1_1gridfire.html", "structgridfire__mod_1_1gridfire" ]
+    ] ],
     [ "std", "namespacestd.html", [
       [ "formatter< gridfire::engine::NetworkJacobian >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4" ],
       [ "hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4" ],
       [ "hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4" ],
       [ "hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4" ]
     ] ],
+    [ "GridFireContext", "struct_grid_fire_context.html", "struct_grid_fire_context" ],
     [ "PyDynamicEngine", "class_py_dynamic_engine.html", "class_py_dynamic_engine" ],
     [ "PyDynamicEngineView", "class_py_dynamic_engine_view.html", "class_py_dynamic_engine_view" ],
     [ "PyDynamicNetworkSolverStrategy", "class_py_dynamic_network_solver_strategy.html", "class_py_dynamic_network_solver_strategy" ],
