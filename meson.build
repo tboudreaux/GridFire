@@ -39,12 +39,34 @@ if meson.get_compiler('cpp').get_id() == 'gcc'
     # We disable these because of boost notes about abi changes from C++10 -> C++17 make the build too noisey
     message('disabling psabi warnings for gcc')
     add_project_arguments('-Wno-psabi', language: 'cpp')
+    
+    if (meson.get_compiler('cpp').version().version_compare('<14.0'))
+      error('g++ version must be at least 14.0, found ' + meson.get_compiler('cpp').version())
+    endif
+endif
+
+build_fortran = get_option('build-fortran')
+if (build_fortran)
+  add_languages('fortran', native: true)
+  message('Building fortran module (gridfire_mod.mod)')
+  fc = meson.get_compiler('fortran')
+  if not get_option('unsafe-fortran')
+    if fc.get_id() != 'gcc'
+      error('The only supported fortran compiler for GridFire is gfortran (version >= 14.0), found ' + fc  + '. GridFire has not been tested with any other compilers. You can disable this check with the -Dunsafe-fortran=true flag to try other compilers')
+    endif
+  endif
+endif
+
+
+
+if (meson.get_compiler('fortran').version().version_compare('<14.0'))
+  error('gfortran version must be at least 14.0, found ' + meson.get_compiler('fortran').version())
 endif
 
 # For Eigen
 add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')
 
-llevel = get_option('log_level')
+llevel = get_option('log-level')
 
 logbase='QUILL_COMPILE_ACTIVE_LOG_LEVEL_'
 

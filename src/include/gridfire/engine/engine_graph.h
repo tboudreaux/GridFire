@@ -20,7 +20,6 @@
 #include <ranges>
 #include <functional>
 
-#include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
@@ -863,7 +862,6 @@ namespace gridfire::engine {
         std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
         std::unordered_map<size_t, fourdst::atomic::Species> m_indexToSpeciesMap; ///< Map from index to species in the stoichiometry matrix.
 
-        boost::numeric::ublas::compressed_matrix<int> m_stoichiometryMatrix; ///< Stoichiometry matrix (species x reactions).
 
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.

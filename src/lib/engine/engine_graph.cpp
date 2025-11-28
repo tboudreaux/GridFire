@@ -24,9 +24,6 @@
 #include <fstream>
 #include <ranges>
 
-#include <boost/numeric/odeint.hpp>
-#include <boost/numeric/ublas/matrix_sparse.hpp>
-
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/utility/sparse_rcv.hpp"
@@ -819,9 +816,9 @@ namespace gridfire::engine {
         LOG_TRACE_L1(m_logger, "Generating stoichiometry matrix...");
 
         // Task 1: Set dimensions and initialize the matrix
-        size_t numSpecies = m_networkSpecies.size();
-        size_t numReactions = m_reactions.size();
-        m_stoichiometryMatrix.resize(numSpecies, numReactions, false);
+        // size_t numSpecies = m_networkSpecies.size();
+        // size_t numReactions = m_reactions.size();
+        // m_stoichiometryMatrix.resize(numSpecies, numReactions, false);
 
         LOG_TRACE_L1(m_logger, "Stoichiometry matrix initialized with dimensions: {} rows (species) x {} columns (reactions).",
                  numSpecies, numReactions);
@@ -838,9 +835,9 @@ namespace gridfire::engine {
                 // Find the row index for this species
                 auto it = m_speciesToIndexMap.find(species);
                 if (it != m_speciesToIndexMap.end()) {
-                    const size_t speciesRowIndex = it->second;
+                    // const size_t speciesRowIndex = it->second;
                     // Set the matrix element. Boost.uBLAS handles sparse insertion.
-                    m_stoichiometryMatrix(speciesRowIndex, reactionColumnIndex) = coefficient;
+                    // m_stoichiometryMatrix(speciesRowIndex, reactionColumnIndex) = coefficient;
                 } else {
                     // This scenario should ideally not happen if m_networkSpeciesMap and m_speciesToIndexMap are correctly synced
                     LOG_ERROR(m_logger, "CRITICAL ERROR: Species '{}' from reaction '{}' stoichiometry not found in species to index map.",
@@ -852,8 +849,6 @@ namespace gridfire::engine {
             reactionColumnIndex++; // Move to the next column for the next reaction
         }
 
-        LOG_TRACE_L1(m_logger, "Stoichiometry matrix population complete. Number of non-zero elements: {}.",
-                 m_stoichiometryMatrix.nnz()); // Assuming nnz() exists for compressed_matrix
     }
 
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {

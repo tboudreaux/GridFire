@@ -77,10 +77,11 @@ subprojects/liblogging/
 subprojects/eigen-*/
 subprojects/fourdst/
 subprojects/libplugin/
-subprojects/minizip-ng-4.0.10/
+subprojects/minizip-ng-*/
 subprojects/cvode-*/
 subprojects/kinsol-*/
 subprojects/CLI11-*/
+subprojects/openssl-*/
 *.fbundle
 *.wraplock
 
@@ -95,6 +96,7 @@ libconfig.wrap
 libconstants.wrap
 liblogging.wrap
 minizip-ng.wrap
+openssl.wrap
 
 .vscode/
 

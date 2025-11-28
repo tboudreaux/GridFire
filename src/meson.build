@@ -31,7 +31,6 @@ gridfire_sources = files(
 
 
 gridfire_build_dependencies = [
-    boost_dep,
     const_dep,
     config_dep,
     composition_dep,

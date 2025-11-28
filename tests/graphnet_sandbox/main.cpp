@@ -15,16 +15,12 @@
 
 #include <clocale>
 
-#include <boost/json/src.hpp>
-
 #include "gridfire/reaction/reaclib.h"
 
 
 static std::terminate_handler g_previousHandler = nullptr;
-boost::json::object g_reaction_contribution_history;
 static std::vector<std::pair<double, std::unordered_map<std::string, std::pair<double, double>>>> g_callbackHistory;
 static bool s_wrote_abundance_history = false;
-static bool s_wrote_reaction_history = false;
 void quill_terminate_handler();
 
 gridfire::NetIn init(const double temp, const double rho, const double tMax) {
@@ -164,37 +160,6 @@ void record_abundance_history_callback(const gridfire::solver::CVODESolverStrate
     g_callbackHistory.emplace_back(ctx.t, abundances);
 }
 
-size_t g_iters = 0;
-void record_contribution_callback(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) {
-    s_wrote_reaction_history = true;
-    boost::json::object timestep;
-    boost::json::object reaction_contribution;
-    boost::json::object species_abundance;
-    std::set<fourdst::atomic::Species> activeSpecies(ctx.engine.getNetworkSpecies().begin(), ctx.engine.getNetworkSpecies().end());
-    for (const auto& [species, contributions] : ctx.reactionContributionMap) {
-        boost::json::object species_obj;
-        for (const auto& [reaction_id, contribution] : contributions) {
-            species_obj[reaction_id] = contribution;
-        }
-        reaction_contribution[std::string(species.name())] = species_obj;
-
-        double y;
-        if (activeSpecies.contains(species)) {
-            const size_t sid = ctx.engine.getSpeciesIndex(species);
-            y =  N_VGetArrayPointer(ctx.state)[sid];
-        } else {
-            y = 0.0;
-        }
-
-        species_abundance[std::string(species.name())] = y;
-    }
-    timestep["t"] = ctx.t;
-    timestep["dt"] = ctx.dt;
-    timestep["reaction_contribution"] = reaction_contribution;
-    timestep["species_abundance"] = species_abundance;
-    g_reaction_contribution_history[std::to_string(g_iters)] = timestep;
-    g_iters++;
-}
 
 void save_callback_data(const std::string_view filename) {
     std::set<std::string> unique_species;
@@ -243,12 +208,6 @@ void log_callback_data(const double temp) {
         save_callback_data("abundance_history_" + std::to_string(temp) + ".csv");
     }
 
-    if (s_wrote_reaction_history) {
-        std::cout << "Saving reaction history to reaction_contribution_history.json" << std::endl;
-        std::ofstream jsonFile("reaction_contribution_history_" + std::to_string(temp) + ".json", std::ios::out);
-        jsonFile << boost::json::serialize(g_reaction_contribution_history);
-        jsonFile.close();
-    }
 }
 
 void quill_terminate_handler()
@@ -263,7 +222,6 @@ void quill_terminate_handler()
 
 void callback_main(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) {
     record_abundance_history_callback(ctx);
-    record_contribution_callback(ctx);
 }
 
 int main(int argc, char** argv) {

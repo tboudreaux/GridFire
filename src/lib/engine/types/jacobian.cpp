@@ -15,7 +15,7 @@ namespace gridfire::engine {
         const Eigen::SparseMatrix<double>& jacobianMatrix,
         const std::function<fourdst::atomic::Species(size_t)> &indexToSpeciesFunc
     ): m_jacobianMatrix(jacobianMatrix) {
-        for (size_t i = 0; i < jacobianMatrix.rows(); ++i) {
+        for (long int i = 0; i < jacobianMatrix.rows(); ++i) {
             fourdst::atomic::Species species = indexToSpeciesFunc(i);
             m_speciesToIndexMap[species] = i;
         }
@@ -57,7 +57,7 @@ namespace gridfire::engine {
     }
 
     double NetworkJacobian::operator()(const size_t i, const size_t j) const {
-        if (i >= m_jacobianMatrix.rows() || j >= m_jacobianMatrix.cols()) {
+        if (i >= static_cast<size_t>(m_jacobianMatrix.rows()) || j >= static_cast<size_t>(m_jacobianMatrix.cols())) {
             throw std::out_of_range(std::format("Index ({}, {}) out of bounds in NetworkJacobian operator() for jacobian of shape ({}, {}).", i, j, m_jacobianMatrix.rows(), m_jacobianMatrix.cols()));
         }
         return m_jacobianMatrix.coeff(i, j);
@@ -73,7 +73,7 @@ namespace gridfire::engine {
     }
 
     void NetworkJacobian::set(const size_t i, const size_t j, const double value) {
-        if (i >= m_jacobianMatrix.rows() || j >= m_jacobianMatrix.cols()) {
+        if (i >= static_cast<size_t>(m_jacobianMatrix.rows()) || j >= static_cast<size_t>(m_jacobianMatrix.cols())) {
             throw std::out_of_range(std::format("Index ({}, {}) out of bounds in NetworkJacobian set() for jacobian of shape ({}, {}).", i, j, m_jacobianMatrix.rows(), m_jacobianMatrix.cols()));
         }
         m_jacobianMatrix.coeffRef(i, j) = value;
