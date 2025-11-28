@@ -59,6 +59,7 @@ gridfire_dep = declare_dependency(
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
+message('Configuring C API...')
 subdir('extern')
 
 if get_option('build-python')

@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 # *********************************************************************** #
-project('GridFire', ['c', 'cpp', 'fortran'], version: 'v0.7.2_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
+project('GridFire', ['c', 'cpp', 'fortran'], version: 'v0.7.3_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
 # Add default visibility for all C++ targets
 add_project_arguments('-fvisibility=default', language: 'cpp')
@@ -55,13 +55,13 @@ if (build_fortran)
       error('The only supported fortran compiler for GridFire is gfortran (version >= 14.0), found ' + fc  + '. GridFire has not been tested with any other compilers. You can disable this check with the -Dunsafe-fortran=true flag to try other compilers')
     endif
   endif
+  if (meson.get_compiler('fortran').version().version_compare('<14.0'))
+      error('gfortran version must be at least 14.0, found ' + meson.get_compiler('fortran').version())
+  endif
 endif
 
 
 
-if (meson.get_compiler('fortran').version().version_compare('<14.0'))
-  error('gfortran version must be at least 14.0, found ' + meson.get_compiler('fortran').version())
-endif
 
 # For Eigen
 add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')

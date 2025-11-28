@@ -27,7 +27,7 @@ git clone --depth 1 "${REPO_URL}" "${TMPDIR}/project"
 cd "${TMPDIR}/project"
 
 # --- macOS Build Configuration ---
-export MACOSX_DEPLOYMENT_TARGET=12.0
+export MACOSX_DEPLOYMENT_TARGET=15.0
 
 PYTHON_VERSIONS=("3.8.20" "3.9.23" "3.10.18" "3.11.13" "3.12.11" "3.13.5" "3.13.5t" "3.14.0rc1" "3.14.0rc1t" 'pypy3.10-7.3.19' "pypy3.11-7.3.20")
 
@@ -54,8 +54,29 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
     "$PY" -m pip install --upgrade pip setuptools wheel meson meson-python delocate
 
     CC=clang CXX=clang++ "$PY" -m pip wheel . \
-      --config-settings=setup-args=-Dunity=on \
       -w "${WHEEL_DIR}" -vv
+
+    echo "➤ Sanitizing RPATHs before delocation..."
+    
+    CURRENT_WHEEL=$(find "${WHEEL_DIR}" -name "*.whl" | head -n 1)
+    
+    if [ -f "$CURRENT_WHEEL" ]; then
+        "$PY" -m wheel unpack "$CURRENT_WHEEL" -d "${WHEEL_DIR}/unpacked"
+        
+        UNPACKED_ROOT=$(find "${WHEEL_DIR}/unpacked" -mindepth 1 -maxdepth 1 -type d)
+
+        find "$UNPACKED_ROOT" -name "*.so" | while read -r SO_FILE; do
+            echo "   Processing: $SO_FILE"
+            "$PY" "../../build-python/fix_rpaths.py" "$SO_FILE"
+        done
+
+        "$PY" -m wheel pack "$UNPACKED_ROOT" -d "${WHEEL_DIR}"
+        
+        rm -rf "${WHEEL_DIR}/unpacked"
+    else
+        echo "Error: No wheel found to sanitize!"
+        exit 1
+    fi
 
     echo "➤ Repairing wheel(s) with delocate"
     delocate-wheel -w "${FINAL_WHEEL_DIR}" "${WHEEL_DIR}"/*.whl

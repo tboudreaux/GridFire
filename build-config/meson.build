@@ -1,7 +1,6 @@
 cmake = import('cmake')
 
 subdir('fourdst')
-subdir('libplugin')
 
 subdir('sundials')
 
