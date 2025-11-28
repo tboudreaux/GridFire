@@ -4,3 +4,4 @@ option('build-python', type: 'boolean', value: false, description: 'build the py
 option('build-tests', type: 'boolean', value: true, description: 'build the test suite')
 option('build-fortran', type: 'boolean', value: false, description: 'build fortran module support')
 option('unsafe-fortran', type: 'boolean', value: false, description: 'Allow untested fortran compilers (compilers other than gfortran)')
+option('unity-safe', type: 'boolean', value: false, description: 'Enable safe unity builds for better compatibility across different compilers and platforms')

@@ -38,10 +38,13 @@ gridfire_build_dependencies = [
     log_dep,
     xxhash_dep,
     eigen_dep,
-    plugin_dep,
     sundials_dep,
     json_dep,
 ]
+
+if not get_option('unity-safe')
+    gridfire_build_dependencies += [plugin_dep]
+endif
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
 libgridfire = library('gridfire',
