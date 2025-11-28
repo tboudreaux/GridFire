@@ -12,9 +12,9 @@ var namespacegridfire =
     [ "solver", "namespacegridfire_1_1solver.html", "namespacegridfire_1_1solver" ],
     [ "trigger", "namespacegridfire_1_1trigger.html", "namespacegridfire_1_1trigger" ],
     [ "utils", "namespacegridfire_1_1utils.html", "namespacegridfire_1_1utils" ],
-    [ "NetIn", "structgridfire_1_1_net_in.html", "structgridfire_1_1_net_in" ],
-    [ "NetOut", "structgridfire_1_1_net_out.html", "structgridfire_1_1_net_out" ],
-    [ "IsArithmeticOrAD", "conceptgridfire_1_1_is_arithmetic_or_a_d.html", null ],
+    [ "NetIn", "structgridfire_1_1NetIn.html", "structgridfire_1_1NetIn" ],
+    [ "NetOut", "structgridfire_1_1NetOut.html", "structgridfire_1_1NetOut" ],
+    [ "IsArithmeticOrAD", "conceptgridfire_1_1IsArithmeticOrAD.html", null ],
     [ "__all__", "namespacegridfire.html#a2adfc910bd5466746bd71490d2cbdf1d", null ],
     [ "__version__", "namespacegridfire.html#a14116c4fbbb07c2fa95826dc543771a2", null ]
 ];

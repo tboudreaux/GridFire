@@ -1,3 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classgridfire_1_1solver_1_1_network_solver_strategy.html" title="Abstract base class for network solver strategies." alt="" coords="5,5,185,46"/>
+<area shape="rect" id="Node000000" href="$classgridfire_1_1trigger_1_1Trigger.html" title=" " alt="" coords="5,117,245,186"/>
+<area shape="rect" id="Node000001" href="$classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1ConvergenceFailureTrigger.html" title=" " alt="" coords="309,5,519,60"/>
+<area shape="poly" id="edge57_Node000000_Node000001" title=" " alt="" coords="205,108,292,69,323,58,324,63,294,74,207,113"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1OffDiagonalTrigger.html" title="Triggers when any off&#45;diagonal Jacobian entry magnitude exceeds a threshold." alt="" coords="313,84,515,139"/>
+<area shape="poly" id="edge58_Node000000_Node000002" title=" " alt="" coords="258,130,313,123,314,128,259,135"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1SimulationTimeTrigger.html" title="Triggers when the current simulation time advances by at least a fixed interval." alt="" coords="301,163,527,217"/>
+<area shape="poly" id="edge59_Node000000_Node000003" title=" " alt="" coords="259,167,301,172,300,177,258,172"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1TimestepCollapseTrigger.html" title="Triggers when the timestep deviates from its recent average beyond a threshold." alt="" coords="293,241,535,296"/>
+<area shape="poly" id="edge60_Node000000_Node000004" title=" " alt="" coords="210,189,294,226,328,239,326,244,292,231,208,194"/>
 </map>

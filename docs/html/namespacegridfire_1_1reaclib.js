@@ -1,6 +1,6 @@
 var namespacegridfire_1_1reaclib =
 [
-    [ "ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", "structgridfire_1_1reaclib_1_1_reaction_record" ],
+    [ "ReactionRecord", "structgridfire_1_1reaclib_1_1ReactionRecord.html", "structgridfire_1_1reaclib_1_1ReactionRecord" ],
     [ "get_all_reaclib_reactions", "namespacegridfire_1_1reaclib.html#a5f2326f2f76cb1895d6cf5daed9b030b", null ],
     [ "initializeAllReaclibReactions", "namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276", null ],
     [ "operator<<", "namespacegridfire_1_1reaclib.html#a6bb94d5adc7bb9db5a67f770f7453e63", null ],

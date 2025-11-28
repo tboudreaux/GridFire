@@ -49,11 +49,7 @@ var NAVTREE =
         [ "Install Scripts", "index.html#autotoc_md18", [
           [ "Ease of Installation", "index.html#autotoc_md19", null ],
           [ "Reproducibility", "index.html#autotoc_md20", null ],
-          [ "Examples", "index.html#autotoc_md21", [
-            [ "TUI config and saving", "index.html#autotoc_md22", null ],
-            [ "TUI config loading and meson setup", "index.html#autotoc_md23", null ],
-            [ "CLI config loading, setup, and build", "index.html#autotoc_md24", null ]
-          ] ]
+          [ "Examples", "index.html#autotoc_md21", null ]
         ] ],
         [ "Dependency Installation on Common Platforms", "index.html#autotoc_md25", null ],
         [ "Building the C++ Library", "index.html#autotoc_md26", [
@@ -98,23 +94,21 @@ var NAVTREE =
       ] ]
     ] ],
     [ "External Usage", "index.html#autotoc_md56", [
-      [ "C API Overview", "index.html#autotoc_md57", [
-        [ "C Example", "index.html#autotoc_md58", null ]
-      ] ],
-      [ "Fortran API Overview", "index.html#autotoc_md59", [
-        [ "Fortran Example", "index.html#autotoc_md60", null ]
+      [ "Fortran API Overview", "index.html#autotoc_md58", [
+        [ "C Example", "index.html#autotoc_md57", null ],
+        [ "Fortran Example", "index.html#autotoc_md59", null ]
       ] ]
     ] ],
-    [ "Related Projects", "index.html#autotoc_md61", null ],
+    [ "Related Projects", "index.html#autotoc_md60", null ],
     [ "GridFire Python Usage Guide", "md_docs_2static_2usage.html", [
-      [ "Installation", "md_docs_2static_2usage.html#autotoc_md64", [
-        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md65", null ],
-        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md66", null ]
+      [ "1. Installation", "md_docs_2static_2usage.html#autotoc_md63", [
+        [ "1.1 PyPI Release", "md_docs_2static_2usage.html#autotoc_md64", null ],
+        [ "1.2 Development from Source", "md_docs_2static_2usage.html#autotoc_md65", null ]
       ] ],
-      [ "Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md68", null ],
-      [ "Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md70", null ],
-      [ "Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md72", null ],
-      [ "Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md74", null ]
+      [ "2. Why These Engines and Views?", "md_docs_2static_2usage.html#autotoc_md67", null ],
+      [ "3. Step-by-Step Example", "md_docs_2static_2usage.html#autotoc_md69", null ],
+      [ "4. Visualizing Reaction Networks", "md_docs_2static_2usage.html#autotoc_md71", null ],
+      [ "5. Beyond the Basics", "md_docs_2static_2usage.html#autotoc_md73", null ]
     ] ],
     [ "Deprecated List", "deprecated.html", null ],
     [ "Namespaces", "namespaces.html", [
@@ -160,22 +154,22 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"____init_____8py.html",
-"classgridfire_1_1engine_1_1_dynamic_engine.html#a24103027a38e02d4342161164554d332",
-"classgridfire_1_1engine_1_1_graph_engine.html#af7dab9063bb92aac64b6dfa755074739",
-"classgridfire_1_1engine_1_1_reaction.html#a0c533797f18c2fe4945f1afb3fb06d5d",
-"classgridfire_1_1partition_1_1_composite_partition_function.html#a85aaac230e9de2fd50d4d453f6d5def8",
-"classgridfire_1_1policy_1_1_proton_proton_chain_policy.html",
-"classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a69508797ca0793f6d3f58de4e0b97667",
-"classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#ac3fc463a1cea6854ea989732e1e5f65a",
-"classgridfire_1_1trigger_1_1_not_trigger.html#ae453a72df20fdd416443ef7867f86b92",
-"classgridfire_1_1utils_1_1_column_base.html#ab6e4cb14c8a0ad7b6b9ad0fbde766cba",
-"functions_vars_i.html",
-"namespacegridfire_1_1engine.html#ace3a790fb57920fd12328fa9c5a3a1de",
-"structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1",
-"structgridfire_1_1rates_1_1weak_1_1_rate_data_row.html#ac08d42071950006ccf3c438253ef9ee9",
-"weak__types_8h.html"
+"CVODE__solver__strategy_8cpp.html",
+"classgridfire_1_1engine_1_1DefinedEngineView.html#af4049e5570bd143d41cab1d4005b6824",
+"classgridfire_1_1engine_1_1GraphEngine.html#aec867f0b43e74c8157f7d5085b55bb96",
+"classgridfire_1_1engine_1_1NetworkPrimingEngineView.html#ad4eec8af1ab1f918fd4e92fac47adaf4",
+"classgridfire_1_1policy_1_1CNOIVChainPolicy.html#a3a73e280dca833ff6517bef9b9193aa1",
+"classgridfire_1_1rates_1_1weak_1_1WeakReaction.html#a14555633289fc3822e927afca7401e49",
+"classgridfire_1_1reaction_1_1ReaclibReaction.html#afec5ccf7a8fb1ba56c8cc852ce858c5e",
+"classgridfire_1_1solver_1_1CVODESolverStrategy.html#afc6c55237df4af240c4c842305085d91",
+"classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1OffDiagonalTrigger.html#a0e1ad148f9f3232992a4b16e440c249a",
+"dir_b854c27c088682f074a57cfa949846df.html",
+"gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040",
+"namespacegridfire_1_1rates_1_1weak.html#aeddc9527afbf9755d4252f64ad5d70ca",
+"structgridfire_1_1NetIn.html#a0a8d820cfeaa92ee31f253795c57e0d1",
+"structgridfire_1_1rates_1_1weak_1_1RateDataRow.html#ac08d42071950006ccf3c438253ef9ee9",
+"trigger__procedures_8h.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronization';
-var SYNCOFFMSG = 'click to enable panel synchronization';
+var SYNCONMSG = 'click to disable panel synchronisation';
+var SYNCOFFMSG = 'click to enable panel synchronisation';

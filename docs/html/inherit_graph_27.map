@@ -1,3 +1,39 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record.html" title="Packed binary record of Rauscher&#45;Thielemann partition function data for an isotope." alt="" coords="5,5,202,61"/>
+<area shape="rect" id="Node000000" href="$classgridfire_1_1policy_1_1ReactionChainPolicy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway." alt="" coords="5,133,184,173"/>
+<area shape="rect" id="Node000001" href="$classPyReactionChainPolicy.html" title=" " alt="" coords="253,83,423,109"/>
+<area shape="poly" id="edge27_Node000000_Node000001" title=" " alt="" coords="193,128,283,106,284,111,194,133"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1policy_1_1MultiReactionChainPolicy.html" title="A ReactionChainPolicy composed of multiple child ReactionChainPolicy instances." alt="" coords="232,133,444,173"/>
+<area shape="poly" id="edge28_Node000000_Node000002" title=" " alt="" coords="198,151,232,151,232,156,198,156"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1policy_1_1TemperatureDependentChainPolicy.html" title="Base class for reaction chain policies that are active only within specific temperature ranges." alt="" coords="236,549,440,589"/>
+<area shape="poly" id="edge33_Node000000_Node000007" title=" " alt="" coords="117,184,327,548,323,550,112,187"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1policy_1_1CNOChainPolicy.html" title="CNO Chain Policy." alt="" coords="509,5,697,45"/>
+<area shape="poly" id="edge29_Node000002_Node000003" title=" " alt="" coords="431,125,442,118,457,103,466,87,474,71,490,55,513,43,515,48,494,59,478,74,470,90,462,106,446,122,433,130"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1policy_1_1HotCNOChainPolicy.html" title="Hot CNO Chain Policy." alt="" coords="498,69,709,109"/>
+<area shape="poly" id="edge30_Node000002_Node000004" title=" " alt="" coords="434,127,519,107,521,112,435,133"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1policy_1_1MainSequenceReactionChainPolicy.html" title="Main Sequence Reaction Chain Policy." alt="" coords="495,133,712,173"/>
+<area shape="poly" id="edge31_Node000002_Node000005" title=" " alt="" coords="458,151,495,151,495,156,458,156"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1policy_1_1ProtonProtonChainPolicy.html" title="Proton&#45;Proton Chain Policy." alt="" coords="521,197,685,237"/>
+<area shape="poly" id="edge32_Node000002_Node000006" title=" " alt="" coords="436,174,522,195,521,200,434,179"/>
+<area shape="rect" id="Node000008" href="$classgridfire_1_1policy_1_1CNOIChainPolicy.html" title="CNO I Chain Policy." alt="" coords="507,261,699,301"/>
+<area shape="poly" id="edge34_Node000007_Node000008" title=" " alt="" coords="347,536,367,486,397,425,438,364,463,336,490,311,510,299,513,304,494,315,467,340,442,367,402,428,372,488,352,538"/>
+<area shape="rect" id="Node000009" href="$classgridfire_1_1policy_1_1CNOIIChainPolicy.html" title="CNO II Chain Policy." alt="" coords="505,325,701,365"/>
+<area shape="poly" id="edge35_Node000007_Node000009" title=" " alt="" coords="354,536,377,498,408,455,446,412,491,375,513,363,515,368,493,380,450,416,412,458,382,501,359,538"/>
+<area shape="rect" id="Node000010" href="$classgridfire_1_1policy_1_1CNOIIIChainPolicy.html" title="CNO III Chain Policy." alt="" coords="503,389,703,429"/>
+<area shape="poly" id="edge36_Node000007_Node000010" title=" " alt="" coords="366,537,421,487,455,461,491,439,518,427,520,432,493,444,458,466,424,491,369,541"/>
+<area shape="rect" id="Node000011" href="$classgridfire_1_1policy_1_1CNOIVChainPolicy.html" title="CNO IV Chain Policy." alt="" coords="503,453,704,493"/>
+<area shape="poly" id="edge37_Node000007_Node000011" title=" " alt="" coords="395,541,491,503,528,491,530,496,493,508,397,546"/>
+<area shape="rect" id="Node000012" href="$classgridfire_1_1policy_1_1HotCNOIChainPolicy.html" title="Hot CNO I Chain Policy." alt="" coords="496,517,711,557"/>
+<area shape="poly" id="edge38_Node000007_Node000012" title=" " alt="" coords="453,553,495,548,496,553,454,558"/>
+<area shape="rect" id="Node000013" href="$classgridfire_1_1policy_1_1HotCNOIIChainPolicy.html" title="Hot CNO II Chain Policy." alt="" coords="494,581,713,621"/>
+<area shape="poly" id="edge39_Node000007_Node000013" title=" " alt="" coords="454,581,494,585,493,591,453,586"/>
+<area shape="rect" id="Node000014" href="$classgridfire_1_1policy_1_1HotCNOIIIChainPolicy.html" title="Hot CNO III Chain Policy." alt="" coords="492,645,715,685"/>
+<area shape="poly" id="edge40_Node000007_Node000014" title=" " alt="" coords="397,592,493,631,530,643,528,648,491,636,395,597"/>
+<area shape="rect" id="Node000015" href="$classgridfire_1_1policy_1_1ProtonProtonIChainPolicy.html" title="Proton&#45;Proton I Chain Policy." alt="" coords="521,709,685,749"/>
+<area shape="poly" id="edge41_Node000007_Node000015" title=" " alt="" coords="369,597,424,647,458,673,493,695,522,708,520,712,491,700,455,677,421,651,366,601"/>
+<area shape="rect" id="Node000016" href="$classgridfire_1_1policy_1_1ProtonProtonIIChainPolicy.html" title="Proton&#45;Proton II Chain Policy." alt="" coords="521,773,685,813"/>
+<area shape="poly" id="edge42_Node000007_Node000016" title=" " alt="" coords="359,600,382,637,412,680,450,723,493,759,522,774,520,779,491,764,446,727,408,684,377,640,354,603"/>
+<area shape="rect" id="Node000017" href="$classgridfire_1_1policy_1_1ProtonProtonIIIChainPolicy.html" title="Proton&#45;Proton III Chain Policy." alt="" coords="521,837,685,877"/>
+<area shape="poly" id="edge43_Node000007_Node000017" title=" " alt="" coords="352,601,372,651,402,711,442,772,467,799,494,823,522,839,520,844,490,828,463,803,438,775,397,713,367,653,347,603"/>
+<area shape="rect" id="Node000018" href="$classgridfire_1_1policy_1_1TripleAlphaChainPolicy.html" title="Triple&#45;Alpha Chain Policy." alt="" coords="525,901,682,941"/>
+<area shape="poly" id="edge44_Node000007_Node000018" title=" " alt="" coords="348,602,365,664,393,741,412,781,435,820,462,856,494,887,526,905,523,910,490,891,458,859,431,823,407,783,388,743,359,665,343,604"/>
 </map>

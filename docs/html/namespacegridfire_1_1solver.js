@@ -1,7 +1,7 @@
 var namespacegridfire_1_1solver =
 [
-    [ "CVODESolverStrategy", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy" ],
-    [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1_network_solver_strategy.html", "classgridfire_1_1solver_1_1_network_solver_strategy" ],
-    [ "SolverContextBase", "classgridfire_1_1solver_1_1_solver_context_base.html", "classgridfire_1_1solver_1_1_solver_context_base" ],
-    [ "DynamicNetworkSolverStrategy", "namespacegridfire_1_1solver.html#ade01aa38cf726210f9d2a8f8567d6633", null ]
+    [ "CVODESolverStrategy", "classgridfire_1_1solver_1_1CVODESolverStrategy.html", "classgridfire_1_1solver_1_1CVODESolverStrategy" ],
+    [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1NetworkSolverStrategy.html", "classgridfire_1_1solver_1_1NetworkSolverStrategy" ],
+    [ "SolverContextBase", "classgridfire_1_1solver_1_1SolverContextBase.html", "classgridfire_1_1solver_1_1SolverContextBase" ],
+    [ "DynamicNetworkSolverStrategy", "namespacegridfire_1_1solver.html#aa32e3cd33f25e8743556a54b6847cdc0", null ]
 ];

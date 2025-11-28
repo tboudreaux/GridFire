@@ -2,151 +2,149 @@ var annotated_dup =
 [
     [ "gridfire", "namespacegridfire.html", [
       [ "engine", "namespacegridfire_1_1engine.html", [
-        [ "AdaptiveEngineView", "classgridfire_1_1engine_1_1_adaptive_engine_view.html", "classgridfire_1_1engine_1_1_adaptive_engine_view" ],
-        [ "DefinedEngineView", "classgridfire_1_1engine_1_1_defined_engine_view.html", "classgridfire_1_1engine_1_1_defined_engine_view" ],
-        [ "DynamicEngine", "classgridfire_1_1engine_1_1_dynamic_engine.html", "classgridfire_1_1engine_1_1_dynamic_engine" ],
-        [ "EnergyDerivatives", "structgridfire_1_1engine_1_1_energy_derivatives.html", "structgridfire_1_1engine_1_1_energy_derivatives" ],
-        [ "Engine", "classgridfire_1_1engine_1_1_engine.html", "classgridfire_1_1engine_1_1_engine" ],
-        [ "EngineView", "classgridfire_1_1engine_1_1_engine_view.html", "classgridfire_1_1engine_1_1_engine_view" ],
-        [ "FileDefinedEngineView", "classgridfire_1_1engine_1_1_file_defined_engine_view.html", "classgridfire_1_1engine_1_1_file_defined_engine_view" ],
-        [ "GraphEngine", "classgridfire_1_1engine_1_1_graph_engine.html", "classgridfire_1_1engine_1_1_graph_engine" ],
-        [ "MultiscalePartitioningEngineView", "classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html", "classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view" ],
-        [ "NetworkJacobian", "classgridfire_1_1engine_1_1_network_jacobian.html", "classgridfire_1_1engine_1_1_network_jacobian" ],
-        [ "NetworkPrimingEngineView", "classgridfire_1_1engine_1_1_network_priming_engine_view.html", "classgridfire_1_1engine_1_1_network_priming_engine_view" ],
-        [ "PrimingReport", "structgridfire_1_1engine_1_1_priming_report.html", "structgridfire_1_1engine_1_1_priming_report" ],
-        [ "Reaction", "classgridfire_1_1engine_1_1_reaction.html", "classgridfire_1_1engine_1_1_reaction" ],
-        [ "ReactionSet", "classgridfire_1_1engine_1_1_reaction_set.html", "classgridfire_1_1engine_1_1_reaction_set" ],
-        [ "StepDerivatives", "structgridfire_1_1engine_1_1_step_derivatives.html", "structgridfire_1_1engine_1_1_step_derivatives" ]
+        [ "AdaptiveEngineView", "classgridfire_1_1engine_1_1AdaptiveEngineView.html", "classgridfire_1_1engine_1_1AdaptiveEngineView" ],
+        [ "DefinedEngineView", "classgridfire_1_1engine_1_1DefinedEngineView.html", "classgridfire_1_1engine_1_1DefinedEngineView" ],
+        [ "DynamicEngine", "classgridfire_1_1engine_1_1DynamicEngine.html", "classgridfire_1_1engine_1_1DynamicEngine" ],
+        [ "EnergyDerivatives", "structgridfire_1_1engine_1_1EnergyDerivatives.html", "structgridfire_1_1engine_1_1EnergyDerivatives" ],
+        [ "Engine", "classgridfire_1_1engine_1_1Engine.html", "classgridfire_1_1engine_1_1Engine" ],
+        [ "EngineView", "classgridfire_1_1engine_1_1EngineView.html", "classgridfire_1_1engine_1_1EngineView" ],
+        [ "FileDefinedEngineView", "classgridfire_1_1engine_1_1FileDefinedEngineView.html", "classgridfire_1_1engine_1_1FileDefinedEngineView" ],
+        [ "GraphEngine", "classgridfire_1_1engine_1_1GraphEngine.html", "classgridfire_1_1engine_1_1GraphEngine" ],
+        [ "MultiscalePartitioningEngineView", "classgridfire_1_1engine_1_1MultiscalePartitioningEngineView.html", "classgridfire_1_1engine_1_1MultiscalePartitioningEngineView" ],
+        [ "NetworkJacobian", "classgridfire_1_1engine_1_1NetworkJacobian.html", "classgridfire_1_1engine_1_1NetworkJacobian" ],
+        [ "NetworkPrimingEngineView", "classgridfire_1_1engine_1_1NetworkPrimingEngineView.html", "classgridfire_1_1engine_1_1NetworkPrimingEngineView" ],
+        [ "PrimingReport", "structgridfire_1_1engine_1_1PrimingReport.html", "structgridfire_1_1engine_1_1PrimingReport" ],
+        [ "StepDerivatives", "structgridfire_1_1engine_1_1StepDerivatives.html", "structgridfire_1_1engine_1_1StepDerivatives" ]
       ] ],
       [ "exceptions", "namespacegridfire_1_1exceptions.html", [
-        [ "BadCollectionError", "classgridfire_1_1exceptions_1_1_bad_collection_error.html", null ],
-        [ "BadRHSEngineError", "classgridfire_1_1exceptions_1_1_bad_r_h_s_engine_error.html", null ],
-        [ "CVODESolverFailureError", "classgridfire_1_1exceptions_1_1_c_v_o_d_e_solver_failure_error.html", null ],
-        [ "DebugException", "classgridfire_1_1exceptions_1_1_debug_exception.html", "classgridfire_1_1exceptions_1_1_debug_exception" ],
-        [ "EngineError", "classgridfire_1_1exceptions_1_1_engine_error.html", "classgridfire_1_1exceptions_1_1_engine_error" ],
-        [ "FailedToPartitionEngineError", "classgridfire_1_1exceptions_1_1_failed_to_partition_engine_error.html", null ],
-        [ "GridFireError", "classgridfire_1_1exceptions_1_1_grid_fire_error.html", "classgridfire_1_1exceptions_1_1_grid_fire_error" ],
-        [ "HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", null ],
-        [ "IllConditionedJacobianError", "classgridfire_1_1exceptions_1_1_ill_conditioned_jacobian_error.html", null ],
-        [ "InvalidQSESolutionError", "classgridfire_1_1exceptions_1_1_invalid_q_s_e_solution_error.html", null ],
-        [ "JacobianError", "classgridfire_1_1exceptions_1_1_jacobian_error.html", null ],
-        [ "KINSolSolverFailureError", "classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html", null ],
-        [ "MissingBaseReactionError", "classgridfire_1_1exceptions_1_1_missing_base_reaction_error.html", null ],
-        [ "MissingKeyReactionError", "classgridfire_1_1exceptions_1_1_missing_key_reaction_error.html", null ],
-        [ "MissingSeedSpeciesError", "classgridfire_1_1exceptions_1_1_missing_seed_species_error.html", null ],
-        [ "NetworkResizedError", "classgridfire_1_1exceptions_1_1_network_resized_error.html", null ],
-        [ "PolicyError", "classgridfire_1_1exceptions_1_1_policy_error.html", "classgridfire_1_1exceptions_1_1_policy_error" ],
-        [ "ReactionError", "classgridfire_1_1exceptions_1_1_reaction_error.html", "classgridfire_1_1exceptions_1_1_reaction_error" ],
-        [ "ReactionParsingError", "classgridfire_1_1exceptions_1_1_reaction_parsing_error.html", "classgridfire_1_1exceptions_1_1_reaction_parsing_error" ],
-        [ "SingularJacobianError", "classgridfire_1_1exceptions_1_1_singular_jacobian_error.html", null ],
-        [ "SolverError", "classgridfire_1_1exceptions_1_1_solver_error.html", "classgridfire_1_1exceptions_1_1_solver_error" ],
-        [ "StaleJacobianError", "classgridfire_1_1exceptions_1_1_stale_jacobian_error.html", null ],
-        [ "SUNDIALSError", "classgridfire_1_1exceptions_1_1_s_u_n_d_i_a_l_s_error.html", null ],
-        [ "UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", null ],
-        [ "UninitializedJacobianError", "classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html", null ],
-        [ "UnknownJacobianError", "classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html", null ],
-        [ "UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", "classgridfire_1_1exceptions_1_1_utility_error" ]
+        [ "BadCollectionError", "classgridfire_1_1exceptions_1_1BadCollectionError.html", null ],
+        [ "BadRHSEngineError", "classgridfire_1_1exceptions_1_1BadRHSEngineError.html", null ],
+        [ "CVODESolverFailureError", "classgridfire_1_1exceptions_1_1CVODESolverFailureError.html", null ],
+        [ "DebugException", "classgridfire_1_1exceptions_1_1DebugException.html", "classgridfire_1_1exceptions_1_1DebugException" ],
+        [ "EngineError", "classgridfire_1_1exceptions_1_1EngineError.html", "classgridfire_1_1exceptions_1_1EngineError" ],
+        [ "FailedToPartitionEngineError", "classgridfire_1_1exceptions_1_1FailedToPartitionEngineError.html", null ],
+        [ "GridFireError", "classgridfire_1_1exceptions_1_1GridFireError.html", "classgridfire_1_1exceptions_1_1GridFireError" ],
+        [ "HashingError", "classgridfire_1_1exceptions_1_1HashingError.html", null ],
+        [ "IllConditionedJacobianError", "classgridfire_1_1exceptions_1_1IllConditionedJacobianError.html", null ],
+        [ "InvalidQSESolutionError", "classgridfire_1_1exceptions_1_1InvalidQSESolutionError.html", null ],
+        [ "JacobianError", "classgridfire_1_1exceptions_1_1JacobianError.html", null ],
+        [ "KINSolSolverFailureError", "classgridfire_1_1exceptions_1_1KINSolSolverFailureError.html", null ],
+        [ "MissingBaseReactionError", "classgridfire_1_1exceptions_1_1MissingBaseReactionError.html", null ],
+        [ "MissingKeyReactionError", "classgridfire_1_1exceptions_1_1MissingKeyReactionError.html", null ],
+        [ "MissingSeedSpeciesError", "classgridfire_1_1exceptions_1_1MissingSeedSpeciesError.html", null ],
+        [ "NetworkResizedError", "classgridfire_1_1exceptions_1_1NetworkResizedError.html", null ],
+        [ "PolicyError", "classgridfire_1_1exceptions_1_1PolicyError.html", "classgridfire_1_1exceptions_1_1PolicyError" ],
+        [ "ReactionError", "classgridfire_1_1exceptions_1_1ReactionError.html", "classgridfire_1_1exceptions_1_1ReactionError" ],
+        [ "ReactionParsingError", "classgridfire_1_1exceptions_1_1ReactionParsingError.html", "classgridfire_1_1exceptions_1_1ReactionParsingError" ],
+        [ "SingularJacobianError", "classgridfire_1_1exceptions_1_1SingularJacobianError.html", null ],
+        [ "SolverError", "classgridfire_1_1exceptions_1_1SolverError.html", "classgridfire_1_1exceptions_1_1SolverError" ],
+        [ "StaleJacobianError", "classgridfire_1_1exceptions_1_1StaleJacobianError.html", null ],
+        [ "SUNDIALSError", "classgridfire_1_1exceptions_1_1SUNDIALSError.html", null ],
+        [ "UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1UnableToSetNetworkReactionsError.html", null ],
+        [ "UninitializedJacobianError", "classgridfire_1_1exceptions_1_1UninitializedJacobianError.html", null ],
+        [ "UnknownJacobianError", "classgridfire_1_1exceptions_1_1UnknownJacobianError.html", null ],
+        [ "UtilityError", "classgridfire_1_1exceptions_1_1UtilityError.html", "classgridfire_1_1exceptions_1_1UtilityError" ]
       ] ],
       [ "io", "namespacegridfire_1_1io.html", [
         [ "gen", "namespacegridfire_1_1io_1_1gen.html", [
-          [ "PyFunctionDef", "structgridfire_1_1io_1_1gen_1_1_py_function_def.html", "structgridfire_1_1io_1_1gen_1_1_py_function_def" ]
+          [ "PyFunctionDef", "structgridfire_1_1io_1_1gen_1_1PyFunctionDef.html", "structgridfire_1_1io_1_1gen_1_1PyFunctionDef" ]
         ] ],
-        [ "MESANetworkFileParser", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser.html", "classgridfire_1_1io_1_1_m_e_s_a_network_file_parser" ],
-        [ "NetworkFileParser", "classgridfire_1_1io_1_1_network_file_parser.html", "classgridfire_1_1io_1_1_network_file_parser" ],
-        [ "SimpleReactionListFileParser", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser.html", "classgridfire_1_1io_1_1_simple_reaction_list_file_parser" ]
+        [ "MESANetworkFileParser", "classgridfire_1_1io_1_1MESANetworkFileParser.html", "classgridfire_1_1io_1_1MESANetworkFileParser" ],
+        [ "NetworkFileParser", "classgridfire_1_1io_1_1NetworkFileParser.html", "classgridfire_1_1io_1_1NetworkFileParser" ],
+        [ "SimpleReactionListFileParser", "classgridfire_1_1io_1_1SimpleReactionListFileParser.html", "classgridfire_1_1io_1_1SimpleReactionListFileParser" ]
       ] ],
       [ "partition", "namespacegridfire_1_1partition.html", [
         [ "record", "namespacegridfire_1_1partition_1_1record.html", [
-          [ "RauscherThielemannPartitionDataRecord", "structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record.html", "structgridfire_1_1partition_1_1record_1_1_rauscher_thielemann_partition_data_record" ]
+          [ "RauscherThielemannPartitionDataRecord", "structgridfire_1_1partition_1_1record_1_1RauscherThielemannPartitionDataRecord.html", "structgridfire_1_1partition_1_1record_1_1RauscherThielemannPartitionDataRecord" ]
         ] ],
-        [ "CompositePartitionFunction", "classgridfire_1_1partition_1_1_composite_partition_function.html", "classgridfire_1_1partition_1_1_composite_partition_function" ],
-        [ "GroundStatePartitionFunction", "classgridfire_1_1partition_1_1_ground_state_partition_function.html", "classgridfire_1_1partition_1_1_ground_state_partition_function" ],
-        [ "PartitionFunction", "classgridfire_1_1partition_1_1_partition_function.html", "classgridfire_1_1partition_1_1_partition_function" ],
-        [ "RauscherThielemannPartitionFunction", "classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html", "classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function" ]
+        [ "CompositePartitionFunction", "classgridfire_1_1partition_1_1CompositePartitionFunction.html", "classgridfire_1_1partition_1_1CompositePartitionFunction" ],
+        [ "GroundStatePartitionFunction", "classgridfire_1_1partition_1_1GroundStatePartitionFunction.html", "classgridfire_1_1partition_1_1GroundStatePartitionFunction" ],
+        [ "PartitionFunction", "classgridfire_1_1partition_1_1PartitionFunction.html", "classgridfire_1_1partition_1_1PartitionFunction" ],
+        [ "RauscherThielemannPartitionFunction", "classgridfire_1_1partition_1_1RauscherThielemannPartitionFunction.html", "classgridfire_1_1partition_1_1RauscherThielemannPartitionFunction" ]
       ] ],
       [ "policy", "namespacegridfire_1_1policy.html", [
-        [ "CNOChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_chain_policy" ],
-        [ "CNOIChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_i_chain_policy" ],
-        [ "CNOIIChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy" ],
-        [ "CNOIIIChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy" ],
-        [ "CNOIVChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html", "classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy" ],
-        [ "HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy" ],
-        [ "HotCNOIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy" ],
-        [ "HotCNOIIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy" ],
-        [ "HotCNOIIIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy" ],
-        [ "MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html", "classgridfire_1_1policy_1_1_main_sequence_policy" ],
-        [ "MainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy" ],
-        [ "MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy" ],
-        [ "NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", "classgridfire_1_1policy_1_1_network_policy" ],
-        [ "ProtonProtonChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_chain_policy.html", "classgridfire_1_1policy_1_1_proton_proton_chain_policy" ],
-        [ "ProtonProtonIChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html", "classgridfire_1_1policy_1_1_proton_proton_i_chain_policy" ],
-        [ "ProtonProtonIIChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy" ],
-        [ "ProtonProtonIIIChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy" ],
-        [ "ReactionChainPolicy", "classgridfire_1_1policy_1_1_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_reaction_chain_policy" ],
-        [ "TemperatureDependentChainPolicy", "classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html", "classgridfire_1_1policy_1_1_temperature_dependent_chain_policy" ],
-        [ "TripleAlphaChainPolicy", "classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html", "classgridfire_1_1policy_1_1_triple_alpha_chain_policy" ]
+        [ "CNOChainPolicy", "classgridfire_1_1policy_1_1CNOChainPolicy.html", "classgridfire_1_1policy_1_1CNOChainPolicy" ],
+        [ "CNOIChainPolicy", "classgridfire_1_1policy_1_1CNOIChainPolicy.html", "classgridfire_1_1policy_1_1CNOIChainPolicy" ],
+        [ "CNOIIChainPolicy", "classgridfire_1_1policy_1_1CNOIIChainPolicy.html", "classgridfire_1_1policy_1_1CNOIIChainPolicy" ],
+        [ "CNOIIIChainPolicy", "classgridfire_1_1policy_1_1CNOIIIChainPolicy.html", "classgridfire_1_1policy_1_1CNOIIIChainPolicy" ],
+        [ "CNOIVChainPolicy", "classgridfire_1_1policy_1_1CNOIVChainPolicy.html", "classgridfire_1_1policy_1_1CNOIVChainPolicy" ],
+        [ "HotCNOChainPolicy", "classgridfire_1_1policy_1_1HotCNOChainPolicy.html", "classgridfire_1_1policy_1_1HotCNOChainPolicy" ],
+        [ "HotCNOIChainPolicy", "classgridfire_1_1policy_1_1HotCNOIChainPolicy.html", "classgridfire_1_1policy_1_1HotCNOIChainPolicy" ],
+        [ "HotCNOIIChainPolicy", "classgridfire_1_1policy_1_1HotCNOIIChainPolicy.html", "classgridfire_1_1policy_1_1HotCNOIIChainPolicy" ],
+        [ "HotCNOIIIChainPolicy", "classgridfire_1_1policy_1_1HotCNOIIIChainPolicy.html", "classgridfire_1_1policy_1_1HotCNOIIIChainPolicy" ],
+        [ "MainSequencePolicy", "classgridfire_1_1policy_1_1MainSequencePolicy.html", "classgridfire_1_1policy_1_1MainSequencePolicy" ],
+        [ "MainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1MainSequenceReactionChainPolicy.html", "classgridfire_1_1policy_1_1MainSequenceReactionChainPolicy" ],
+        [ "MultiReactionChainPolicy", "classgridfire_1_1policy_1_1MultiReactionChainPolicy.html", "classgridfire_1_1policy_1_1MultiReactionChainPolicy" ],
+        [ "NetworkPolicy", "classgridfire_1_1policy_1_1NetworkPolicy.html", "classgridfire_1_1policy_1_1NetworkPolicy" ],
+        [ "ProtonProtonChainPolicy", "classgridfire_1_1policy_1_1ProtonProtonChainPolicy.html", "classgridfire_1_1policy_1_1ProtonProtonChainPolicy" ],
+        [ "ProtonProtonIChainPolicy", "classgridfire_1_1policy_1_1ProtonProtonIChainPolicy.html", "classgridfire_1_1policy_1_1ProtonProtonIChainPolicy" ],
+        [ "ProtonProtonIIChainPolicy", "classgridfire_1_1policy_1_1ProtonProtonIIChainPolicy.html", "classgridfire_1_1policy_1_1ProtonProtonIIChainPolicy" ],
+        [ "ProtonProtonIIIChainPolicy", "classgridfire_1_1policy_1_1ProtonProtonIIIChainPolicy.html", "classgridfire_1_1policy_1_1ProtonProtonIIIChainPolicy" ],
+        [ "ReactionChainPolicy", "classgridfire_1_1policy_1_1ReactionChainPolicy.html", "classgridfire_1_1policy_1_1ReactionChainPolicy" ],
+        [ "TemperatureDependentChainPolicy", "classgridfire_1_1policy_1_1TemperatureDependentChainPolicy.html", "classgridfire_1_1policy_1_1TemperatureDependentChainPolicy" ],
+        [ "TripleAlphaChainPolicy", "classgridfire_1_1policy_1_1TripleAlphaChainPolicy.html", "classgridfire_1_1policy_1_1TripleAlphaChainPolicy" ]
       ] ],
       [ "rates", "namespacegridfire_1_1rates.html", [
         [ "weak", "namespacegridfire_1_1rates_1_1weak.html", [
-          [ "BoundsErrorInfo", "structgridfire_1_1rates_1_1weak_1_1_bounds_error_info.html", "structgridfire_1_1rates_1_1weak_1_1_bounds_error_info" ],
-          [ "InterpolationError", "structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html", "structgridfire_1_1rates_1_1weak_1_1_interpolation_error" ],
-          [ "IsotopeGrid", "structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html", "structgridfire_1_1rates_1_1weak_1_1_isotope_grid" ],
-          [ "RateDataRow", "structgridfire_1_1rates_1_1weak_1_1_rate_data_row.html", "structgridfire_1_1rates_1_1weak_1_1_rate_data_row" ],
-          [ "WeakRateDerivatives", "structgridfire_1_1rates_1_1weak_1_1_weak_rate_derivatives.html", "structgridfire_1_1rates_1_1weak_1_1_weak_rate_derivatives" ],
-          [ "WeakRateInterpolator", "classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html", "classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator" ],
-          [ "WeakRatePayload", "structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html", "structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload" ],
-          [ "WeakReaction", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction" ],
-          [ "WeakReactionEntry", "structgridfire_1_1rates_1_1weak_1_1_weak_reaction_entry.html", "structgridfire_1_1rates_1_1weak_1_1_weak_reaction_entry" ],
-          [ "WeakReactionMap", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map" ]
+          [ "BoundsErrorInfo", "structgridfire_1_1rates_1_1weak_1_1BoundsErrorInfo.html", "structgridfire_1_1rates_1_1weak_1_1BoundsErrorInfo" ],
+          [ "InterpolationError", "structgridfire_1_1rates_1_1weak_1_1InterpolationError.html", "structgridfire_1_1rates_1_1weak_1_1InterpolationError" ],
+          [ "IsotopeGrid", "structgridfire_1_1rates_1_1weak_1_1IsotopeGrid.html", "structgridfire_1_1rates_1_1weak_1_1IsotopeGrid" ],
+          [ "RateDataRow", "structgridfire_1_1rates_1_1weak_1_1RateDataRow.html", "structgridfire_1_1rates_1_1weak_1_1RateDataRow" ],
+          [ "WeakRateDerivatives", "structgridfire_1_1rates_1_1weak_1_1WeakRateDerivatives.html", "structgridfire_1_1rates_1_1weak_1_1WeakRateDerivatives" ],
+          [ "WeakRateInterpolator", "classgridfire_1_1rates_1_1weak_1_1WeakRateInterpolator.html", "classgridfire_1_1rates_1_1weak_1_1WeakRateInterpolator" ],
+          [ "WeakRatePayload", "structgridfire_1_1rates_1_1weak_1_1WeakRatePayload.html", "structgridfire_1_1rates_1_1weak_1_1WeakRatePayload" ],
+          [ "WeakReaction", "classgridfire_1_1rates_1_1weak_1_1WeakReaction.html", "classgridfire_1_1rates_1_1weak_1_1WeakReaction" ],
+          [ "WeakReactionEntry", "structgridfire_1_1rates_1_1weak_1_1WeakReactionEntry.html", "structgridfire_1_1rates_1_1weak_1_1WeakReactionEntry" ],
+          [ "WeakReactionMap", "classgridfire_1_1rates_1_1weak_1_1WeakReactionMap.html", "classgridfire_1_1rates_1_1weak_1_1WeakReactionMap" ]
         ] ]
       ] ],
       [ "reaclib", "namespacegridfire_1_1reaclib.html", [
-        [ "ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", "structgridfire_1_1reaclib_1_1_reaction_record" ]
+        [ "ReactionRecord", "structgridfire_1_1reaclib_1_1ReactionRecord.html", "structgridfire_1_1reaclib_1_1ReactionRecord" ]
       ] ],
       [ "reaction", "namespacegridfire_1_1reaction.html", [
-        [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction" ],
-        [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1_rate_coefficient_set.html", "structgridfire_1_1reaction_1_1_rate_coefficient_set" ],
-        [ "ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_reaclib_reaction" ],
-        [ "Reaction", "classgridfire_1_1reaction_1_1_reaction.html", "classgridfire_1_1reaction_1_1_reaction" ],
-        [ "ReactionSet", "classgridfire_1_1reaction_1_1_reaction_set.html", "classgridfire_1_1reaction_1_1_reaction_set" ],
-        [ "WeakReaclibReaction", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction" ]
+        [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1LogicalReaclibReaction.html", "classgridfire_1_1reaction_1_1LogicalReaclibReaction" ],
+        [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1RateCoefficientSet.html", "structgridfire_1_1reaction_1_1RateCoefficientSet" ],
+        [ "ReaclibReaction", "classgridfire_1_1reaction_1_1ReaclibReaction.html", "classgridfire_1_1reaction_1_1ReaclibReaction" ],
+        [ "Reaction", "classgridfire_1_1reaction_1_1Reaction.html", "classgridfire_1_1reaction_1_1Reaction" ],
+        [ "ReactionSet", "classgridfire_1_1reaction_1_1ReactionSet.html", "classgridfire_1_1reaction_1_1ReactionSet" ],
+        [ "WeakReaclibReaction", "classgridfire_1_1reaction_1_1WeakReaclibReaction.html", "classgridfire_1_1reaction_1_1WeakReaclibReaction" ]
       ] ],
       [ "screening", "namespacegridfire_1_1screening.html", [
-        [ "BareScreeningModel", "classgridfire_1_1screening_1_1_bare_screening_model.html", "classgridfire_1_1screening_1_1_bare_screening_model" ],
-        [ "IntermediateScreeningModel", "classgridfire_1_1screening_1_1_intermediate_screening_model.html", "classgridfire_1_1screening_1_1_intermediate_screening_model" ],
-        [ "ScreeningModel", "classgridfire_1_1screening_1_1_screening_model.html", "classgridfire_1_1screening_1_1_screening_model" ],
-        [ "WeakScreeningModel", "classgridfire_1_1screening_1_1_weak_screening_model.html", "classgridfire_1_1screening_1_1_weak_screening_model" ]
+        [ "BareScreeningModel", "classgridfire_1_1screening_1_1BareScreeningModel.html", "classgridfire_1_1screening_1_1BareScreeningModel" ],
+        [ "IntermediateScreeningModel", "classgridfire_1_1screening_1_1IntermediateScreeningModel.html", "classgridfire_1_1screening_1_1IntermediateScreeningModel" ],
+        [ "ScreeningModel", "classgridfire_1_1screening_1_1ScreeningModel.html", "classgridfire_1_1screening_1_1ScreeningModel" ],
+        [ "WeakScreeningModel", "classgridfire_1_1screening_1_1WeakScreeningModel.html", "classgridfire_1_1screening_1_1WeakScreeningModel" ]
       ] ],
       [ "solver", "namespacegridfire_1_1solver.html", [
-        [ "CVODESolverStrategy", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html", "classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy" ],
-        [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1_network_solver_strategy.html", "classgridfire_1_1solver_1_1_network_solver_strategy" ],
-        [ "SolverContextBase", "classgridfire_1_1solver_1_1_solver_context_base.html", "classgridfire_1_1solver_1_1_solver_context_base" ]
+        [ "CVODESolverStrategy", "classgridfire_1_1solver_1_1CVODESolverStrategy.html", "classgridfire_1_1solver_1_1CVODESolverStrategy" ],
+        [ "NetworkSolverStrategy", "classgridfire_1_1solver_1_1NetworkSolverStrategy.html", "classgridfire_1_1solver_1_1NetworkSolverStrategy" ],
+        [ "SolverContextBase", "classgridfire_1_1solver_1_1SolverContextBase.html", "classgridfire_1_1solver_1_1SolverContextBase" ]
       ] ],
       [ "trigger", "namespacegridfire_1_1trigger.html", [
         [ "solver", "namespacegridfire_1_1trigger_1_1solver.html", [
-          [ "CVODE", "namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html", [
-            [ "ConvergenceFailureTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger" ],
-            [ "OffDiagonalTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger" ],
-            [ "SimulationTimeTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger" ],
-            [ "TimestepCollapseTrigger", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger.html", "classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_timestep_collapse_trigger" ]
+          [ "CVODE", "namespacegridfire_1_1trigger_1_1solver_1_1CVODE.html", [
+            [ "ConvergenceFailureTrigger", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1ConvergenceFailureTrigger.html", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1ConvergenceFailureTrigger" ],
+            [ "OffDiagonalTrigger", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1OffDiagonalTrigger.html", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1OffDiagonalTrigger" ],
+            [ "SimulationTimeTrigger", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1SimulationTimeTrigger.html", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1SimulationTimeTrigger" ],
+            [ "TimestepCollapseTrigger", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1TimestepCollapseTrigger.html", "classgridfire_1_1trigger_1_1solver_1_1CVODE_1_1TimestepCollapseTrigger" ]
           ] ]
         ] ],
-        [ "AndTrigger", "classgridfire_1_1trigger_1_1_and_trigger.html", "classgridfire_1_1trigger_1_1_and_trigger" ],
-        [ "EveryNthTrigger", "classgridfire_1_1trigger_1_1_every_nth_trigger.html", "classgridfire_1_1trigger_1_1_every_nth_trigger" ],
-        [ "LogicalTrigger", "classgridfire_1_1trigger_1_1_logical_trigger.html", null ],
-        [ "NotTrigger", "classgridfire_1_1trigger_1_1_not_trigger.html", "classgridfire_1_1trigger_1_1_not_trigger" ],
-        [ "OrTrigger", "classgridfire_1_1trigger_1_1_or_trigger.html", "classgridfire_1_1trigger_1_1_or_trigger" ],
-        [ "Trigger", "classgridfire_1_1trigger_1_1_trigger.html", "classgridfire_1_1trigger_1_1_trigger" ],
-        [ "TriggerResult", "structgridfire_1_1trigger_1_1_trigger_result.html", "structgridfire_1_1trigger_1_1_trigger_result" ]
+        [ "AndTrigger", "classgridfire_1_1trigger_1_1AndTrigger.html", "classgridfire_1_1trigger_1_1AndTrigger" ],
+        [ "EveryNthTrigger", "classgridfire_1_1trigger_1_1EveryNthTrigger.html", "classgridfire_1_1trigger_1_1EveryNthTrigger" ],
+        [ "LogicalTrigger", "classgridfire_1_1trigger_1_1LogicalTrigger.html", null ],
+        [ "NotTrigger", "classgridfire_1_1trigger_1_1NotTrigger.html", "classgridfire_1_1trigger_1_1NotTrigger" ],
+        [ "OrTrigger", "classgridfire_1_1trigger_1_1OrTrigger.html", "classgridfire_1_1trigger_1_1OrTrigger" ],
+        [ "Trigger", "classgridfire_1_1trigger_1_1Trigger.html", "classgridfire_1_1trigger_1_1Trigger" ],
+        [ "TriggerResult", "structgridfire_1_1trigger_1_1TriggerResult.html", "structgridfire_1_1trigger_1_1TriggerResult" ]
       ] ],
       [ "utils", "namespacegridfire_1_1utils.html", [
-        [ "Column", "classgridfire_1_1utils_1_1_column.html", "classgridfire_1_1utils_1_1_column" ],
-        [ "ColumnBase", "classgridfire_1_1utils_1_1_column_base.html", "classgridfire_1_1utils_1_1_column_base" ],
-        [ "Table", "classgridfire_1_1utils_1_1_table.html", "classgridfire_1_1utils_1_1_table" ],
-        [ "TableBase", "classgridfire_1_1utils_1_1_table_base.html", "classgridfire_1_1utils_1_1_table_base" ]
+        [ "Column", "classgridfire_1_1utils_1_1Column.html", "classgridfire_1_1utils_1_1Column" ],
+        [ "ColumnBase", "classgridfire_1_1utils_1_1ColumnBase.html", "classgridfire_1_1utils_1_1ColumnBase" ],
+        [ "Table", "classgridfire_1_1utils_1_1Table.html", "classgridfire_1_1utils_1_1Table" ],
+        [ "TableBase", "classgridfire_1_1utils_1_1TableBase.html", "classgridfire_1_1utils_1_1TableBase" ]
       ] ],
-      [ "NetIn", "structgridfire_1_1_net_in.html", "structgridfire_1_1_net_in" ],
-      [ "NetOut", "structgridfire_1_1_net_out.html", "structgridfire_1_1_net_out" ]
+      [ "NetIn", "structgridfire_1_1NetIn.html", "structgridfire_1_1NetIn" ],
+      [ "NetOut", "structgridfire_1_1NetOut.html", "structgridfire_1_1NetOut" ]
     ] ],
     [ "gridfire_mod", "namespacegridfire__mod.html", [
       [ "gf_construct_engine_from_policy", "interfacegridfire__mod_1_1gf__construct__engine__from__policy.html", "interfacegridfire__mod_1_1gf__construct__engine__from__policy" ],
@@ -159,22 +157,22 @@ var annotated_dup =
       [ "gridfire", "structgridfire__mod_1_1gridfire.html", "structgridfire__mod_1_1gridfire" ]
     ] ],
     [ "std", "namespacestd.html", [
-      [ "formatter< gridfire::engine::NetworkJacobian >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4" ],
-      [ "hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4" ],
-      [ "hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4" ],
-      [ "hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4" ]
+      [ "formatter< gridfire::engine::NetworkJacobian >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1NetworkJacobian_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1NetworkJacobian_01_4" ],
+      [ "hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1TableAxes_01_4.html", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1TableAxes_01_4" ],
+      [ "hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1Reaction_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1Reaction_01_4" ],
+      [ "hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1ReactionSet_01_4.html", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1ReactionSet_01_4" ]
     ] ],
-    [ "GridFireContext", "struct_grid_fire_context.html", "struct_grid_fire_context" ],
-    [ "PyDynamicEngine", "class_py_dynamic_engine.html", "class_py_dynamic_engine" ],
-    [ "PyDynamicEngineView", "class_py_dynamic_engine_view.html", "class_py_dynamic_engine_view" ],
-    [ "PyDynamicNetworkSolverStrategy", "class_py_dynamic_network_solver_strategy.html", "class_py_dynamic_network_solver_strategy" ],
-    [ "PyEngine", "class_py_engine.html", "class_py_engine" ],
-    [ "PyEngineView", "class_py_engine_view.html", "class_py_engine_view" ],
-    [ "PyNetworkFileParser", "class_py_network_file_parser.html", "class_py_network_file_parser" ],
-    [ "PyNetworkPolicy", "class_py_network_policy.html", "class_py_network_policy" ],
-    [ "PyPartitionFunction", "class_py_partition_function.html", "class_py_partition_function" ],
-    [ "PyReactionChainPolicy", "class_py_reaction_chain_policy.html", "class_py_reaction_chain_policy" ],
-    [ "PyScreening", "class_py_screening.html", "class_py_screening" ],
-    [ "PySolverContextBase", "class_py_solver_context_base.html", "class_py_solver_context_base" ],
-    [ "SolverPluginInterface", "class_solver_plugin_interface.html", "class_solver_plugin_interface" ]
+    [ "GridFireContext", "structGridFireContext.html", "structGridFireContext" ],
+    [ "PyDynamicEngine", "classPyDynamicEngine.html", "classPyDynamicEngine" ],
+    [ "PyDynamicEngineView", "classPyDynamicEngineView.html", "classPyDynamicEngineView" ],
+    [ "PyDynamicNetworkSolverStrategy", "classPyDynamicNetworkSolverStrategy.html", "classPyDynamicNetworkSolverStrategy" ],
+    [ "PyEngine", "classPyEngine.html", "classPyEngine" ],
+    [ "PyEngineView", "classPyEngineView.html", "classPyEngineView" ],
+    [ "PyNetworkFileParser", "classPyNetworkFileParser.html", "classPyNetworkFileParser" ],
+    [ "PyNetworkPolicy", "classPyNetworkPolicy.html", "classPyNetworkPolicy" ],
+    [ "PyPartitionFunction", "classPyPartitionFunction.html", "classPyPartitionFunction" ],
+    [ "PyReactionChainPolicy", "classPyReactionChainPolicy.html", "classPyReactionChainPolicy" ],
+    [ "PyScreening", "classPyScreening.html", "classPyScreening" ],
+    [ "PySolverContextBase", "classPySolverContextBase.html", "classPySolverContextBase" ],
+    [ "SolverPluginInterface", "classSolverPluginInterface.html", "classSolverPluginInterface" ]
 ];

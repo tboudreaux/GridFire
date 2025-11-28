@@ -7,9 +7,9 @@ var searchData=
   ['gf_5fget_5flast_5ferror_5fmessage_4',['gf_get_last_error_message',['../interfacegridfire__mod_1_1gf__get__last__error__message.html',1,'gridfire_mod']]],
   ['gf_5finit_5',['gf_init',['../interfacegridfire__mod_1_1gf__init.html',1,'gridfire_mod']]],
   ['gf_5fregister_5fspecies_6',['gf_register_species',['../interfacegridfire__mod_1_1gf__register__species.html',1,'gridfire_mod']]],
-  ['graphengine_7',['GraphEngine',['../classgridfire_1_1engine_1_1_graph_engine.html',1,'gridfire::engine']]],
+  ['graphengine_7',['GraphEngine',['../classgridfire_1_1engine_1_1GraphEngine.html',1,'gridfire::engine']]],
   ['gridfire_8',['gridfire',['../structgridfire__mod_1_1gridfire.html',1,'gridfire_mod']]],
-  ['gridfirecontext_9',['GridFireContext',['../struct_grid_fire_context.html',1,'']]],
-  ['gridfireerror_10',['GridFireError',['../classgridfire_1_1exceptions_1_1_grid_fire_error.html',1,'gridfire::exceptions']]],
-  ['groundstatepartitionfunction_11',['GroundStatePartitionFunction',['../classgridfire_1_1partition_1_1_ground_state_partition_function.html',1,'gridfire::partition']]]
+  ['gridfirecontext_9',['GridFireContext',['../structGridFireContext.html',1,'']]],
+  ['gridfireerror_10',['GridFireError',['../classgridfire_1_1exceptions_1_1GridFireError.html',1,'gridfire::exceptions']]],
+  ['groundstatepartitionfunction_11',['GroundStatePartitionFunction',['../classgridfire_1_1partition_1_1GroundStatePartitionFunction.html',1,'gridfire::partition']]]
 ];

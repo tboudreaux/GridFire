@@ -1,11 +1,11 @@
 var namespacegridfire_1_1utils =
 [
     [ "hashing", "namespacegridfire_1_1utils_1_1hashing.html", "namespacegridfire_1_1utils_1_1hashing" ],
-    [ "Column", "classgridfire_1_1utils_1_1_column.html", "classgridfire_1_1utils_1_1_column" ],
-    [ "ColumnBase", "classgridfire_1_1utils_1_1_column_base.html", "classgridfire_1_1utils_1_1_column_base" ],
-    [ "Table", "classgridfire_1_1utils_1_1_table.html", "classgridfire_1_1utils_1_1_table" ],
-    [ "TableBase", "classgridfire_1_1utils_1_1_table_base.html", "classgridfire_1_1utils_1_1_table_base" ],
-    [ "Streamable", "conceptgridfire_1_1utils_1_1_streamable.html", null ],
+    [ "Column", "classgridfire_1_1utils_1_1Column.html", "classgridfire_1_1utils_1_1Column" ],
+    [ "ColumnBase", "classgridfire_1_1utils_1_1ColumnBase.html", "classgridfire_1_1utils_1_1ColumnBase" ],
+    [ "Table", "classgridfire_1_1utils_1_1Table.html", "classgridfire_1_1utils_1_1Table" ],
+    [ "TableBase", "classgridfire_1_1utils_1_1TableBase.html", "classgridfire_1_1utils_1_1TableBase" ],
+    [ "Streamable", "conceptgridfire_1_1utils_1_1Streamable.html", null ],
     [ "SUNDIALS_RET_CODE_TYPES", "namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04e", [
       [ "CVODE", "namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04eadd3b4add4b240136cb05dccdd9f74239", null ],
       [ "KINSOL", "namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04ea78689531838e490ef6bb41a3b5c43b7d", null ]
