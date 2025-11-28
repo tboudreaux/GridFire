@@ -16,5 +16,5 @@ sys.modules['gridfire.io'] = io
 
 __all__ = ['type', 'utils', 'engine', 'solver', 'exceptions', 'partition', 'reaction', 'screening', 'io', 'policy']
 
-__version__ = "v0.7.2_rc2"
+__version__ = "v0.7.3_rc2"
 
