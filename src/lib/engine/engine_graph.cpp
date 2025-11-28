@@ -813,42 +813,7 @@ namespace gridfire::engine {
 
     // --- Generate Stoichiometry Matrix ---
     void GraphEngine::generateStoichiometryMatrix() {
-        LOG_TRACE_L1(m_logger, "Generating stoichiometry matrix...");
-
-        // Task 1: Set dimensions and initialize the matrix
-        // size_t numSpecies = m_networkSpecies.size();
-        // size_t numReactions = m_reactions.size();
-        // m_stoichiometryMatrix.resize(numSpecies, numReactions, false);
-
-        LOG_TRACE_L1(m_logger, "Stoichiometry matrix initialized with dimensions: {} rows (species) x {} columns (reactions).",
-                 numSpecies, numReactions);
-
-        // Task 2: Populate the stoichiometry matrix
-        // Iterate through all reactions, assign them a column index, and fill in their stoichiometric coefficients.
-        size_t reactionColumnIndex = 0;
-        for (const auto& reaction : m_reactions) {
-            // Get the net stoichiometry for the current reaction
-            std::unordered_map<fourdst::atomic::Species, int> netStoichiometry = reaction->stoichiometry();
-
-            // Iterate through the species and their coefficients in the stoichiometry map
-            for (const auto& [species, coefficient] : netStoichiometry) {
-                // Find the row index for this species
-                auto it = m_speciesToIndexMap.find(species);
-                if (it != m_speciesToIndexMap.end()) {
-                    // const size_t speciesRowIndex = it->second;
-                    // Set the matrix element. Boost.uBLAS handles sparse insertion.
-                    // m_stoichiometryMatrix(speciesRowIndex, reactionColumnIndex) = coefficient;
-                } else {
-                    // This scenario should ideally not happen if m_networkSpeciesMap and m_speciesToIndexMap are correctly synced
-                    LOG_ERROR(m_logger, "CRITICAL ERROR: Species '{}' from reaction '{}' stoichiometry not found in species to index map.",
-                             species.name(), reaction->id());
-                    m_logger -> flush_log();
-                    throw std::runtime_error("Species not found in species to index map: " + std::string(species.name()));
-                }
-            }
-            reactionColumnIndex++; // Move to the next column for the next reaction
-        }
-
+        return; // Deprecated
     }
 
     void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
