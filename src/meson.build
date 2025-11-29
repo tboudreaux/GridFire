@@ -64,10 +64,10 @@ install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
 message('Configuring C API...')
 subdir('extern')
-
-if get_option('build-python')
-    message('Configuring Python bindings...')
-    subdir('python')
-else
-    message('Skipping Python bindings...')
-endif
+#
+#if get_option('build-python')
+#    message('Configuring Python bindings...')
+#    subdir('python')
+#else
+#    message('Skipping Python bindings...')
+#endif

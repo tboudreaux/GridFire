@@ -20,8 +20,11 @@
 # *********************************************************************** #
 project('GridFire', ['c', 'cpp', 'fortran'], version: 'v0.7.4_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
-# Add default visibility for all C++ targets
-add_project_arguments('-fvisibility=default', language: 'cpp')
+if get_option('build-python')
+    add_project_arguments('-fvisibility=hidden', language: 'cpp')
+else
+    add_project_arguments('-fvisibility=default', language: 'cpp')
+endif
 
 message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
 message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
