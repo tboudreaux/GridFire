@@ -1,2 +1,5 @@
 subdir('C')
-subdir('fortran')
+
+if get_option('build-fortran')
+  subdir('fortran')
+endif
