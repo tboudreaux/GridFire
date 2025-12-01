@@ -51,6 +51,7 @@ libgridfire = library('gridfire',
     gridfire_sources,
     include_directories: include_directories('include'),
     dependencies: gridfire_build_dependencies,
+    objects: [cvode_objs, kinsol_objs],
     install : true)
 
 gridfire_dep = declare_dependency(

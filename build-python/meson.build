@@ -1,7 +1,6 @@
-# --- Python Extension Setup ---
-py_installation = import('python').find_installation('python3', pure: false)
 
 gridfire_py_deps = [
+    py_dep,
     pybind11_dep,
     const_dep,
     config_dep,
@@ -9,9 +8,7 @@ gridfire_py_deps = [
     gridfire_dep
 ]
 
-py_mod = py_installation.extension_module(
-    '_gridfire', # Name of the generated .so/.pyd file (without extension)
-    sources: [
+py_sources =  [
         meson.project_source_root() + '/src/python/bindings.cpp',
         meson.project_source_root() + '/src/python/types/bindings.cpp',
         meson.project_source_root() + '/src/python/partition/bindings.cpp',
@@ -29,11 +26,28 @@ py_mod = py_installation.extension_module(
         meson.project_source_root() + '/src/python/policy/bindings.cpp',
         meson.project_source_root() + '/src/python/policy/trampoline/py_policy.cpp',
         meson.project_source_root() + '/src/python/utils/bindings.cpp',
-    ],
-    dependencies : gridfire_py_deps,
-    install : true,
-    subdir: 'gridfire',
-)
+    ]
+
+
+if meson.is_cross_build() and host_machine.system() == 'darwin'
+  py_mod = shared_module(
+    '_gridfire',
+    sources: py_sources,
+    dependencies: gridfire_py_deps,
+    name_prefix: '',
+    name_suffix: 'so',
+    install: true,
+    install_dir: py_installation.get_install_dir() + '/gridfire'
+    )
+else
+  py_mod = py_installation.extension_module(
+      '_gridfire', # Name of the generated .so/.pyd file (without extension)
+      sources: py_sources,
+      dependencies : gridfire_py_deps,
+      install : true,
+      subdir: 'gridfire',
+  )
+endif
 
 
 py_installation.install_sources(

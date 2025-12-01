@@ -30,6 +30,7 @@ message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
 message('C++ standard set to: ' + get_option('cpp_std'))
 
 cppc = meson.get_compiler('cpp')
+cc = meson.get_compiler('c')
 
 
 if cppc.get_id() == 'clang'
@@ -71,6 +72,11 @@ if not cppc.has_header('format')
     error('C++ standard library header <format> not found. Please ensure your compiler and standard library supports C++23. We have already validated your compiler version so this is likely an issue with your standard library installation.')
 endif
 
+
+ignore_unused_args = '-Wno-unused-command-line-argument'
+
+add_global_arguments(ignore_unused_args, language: 'cpp')
+add_global_arguments(ignore_unused_args, language: 'c')
 
 
 

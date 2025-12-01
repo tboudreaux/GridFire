@@ -5,3 +5,4 @@ option('build-tests', type: 'boolean', value: true, description: 'build the test
 option('build-fortran', type: 'boolean', value: false, description: 'build fortran module support')
 option('unsafe-fortran', type: 'boolean', value: false, description: 'Allow untested fortran compilers (compilers other than gfortran)')
 option('unity-safe', type: 'boolean', value: false, description: 'Enable safe unity builds for better compatibility across different compilers and platforms')
+option('python-target-version', type: 'string', value: '3.13', description: 'Target version for python compilation, only used for cross compilation')

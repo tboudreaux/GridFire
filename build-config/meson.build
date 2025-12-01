@@ -1,7 +1,8 @@
 cmake = import('cmake')
 
-subdir('fourdst')
 
+subdir('python')
+subdir('fourdst')
 subdir('sundials')
 
 subdir('cppad')
