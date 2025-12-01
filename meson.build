@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 # *********************************************************************** #
-project('GridFire', ['c', 'cpp', 'fortran'], version: 'v0.7.4_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
+project('GridFire', ['c', 'cpp'], version: 'v0.7.4_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
 if get_option('build-python')
     add_project_arguments('-fvisibility=hidden', language: 'cpp')
@@ -27,9 +27,7 @@ else
 endif
 
 message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
-message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
 message('C++ standard set to: ' + get_option('cpp_std'))
-message('Fortran standard set to: ' + get_option('fortran_std'))
 
 cppc = meson.get_compiler('cpp')
 
@@ -51,6 +49,8 @@ endif
 build_fortran = get_option('build-fortran')
 if (build_fortran)
   add_languages('fortran', native: true)
+  message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
+  message('Fortran standard set to: ' + get_option('fortran_std'))
   message('Building fortran module (gridfire_mod.mod)')
   fc = meson.get_compiler('fortran')
   if not get_option('unsafe-fortran')
