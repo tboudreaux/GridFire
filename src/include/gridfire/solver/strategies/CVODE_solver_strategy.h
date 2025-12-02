@@ -237,7 +237,7 @@ namespace gridfire::solver {
         };
 
         struct CVODERHSOutputData {
-            std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> reaction_contribution_map;
+            std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
             double neutrino_energy_loss_rate;
             double total_neutrino_flux;
         };

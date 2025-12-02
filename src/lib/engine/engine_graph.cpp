@@ -684,7 +684,7 @@ namespace gridfire::engine {
             // --- Efficient lookup of only the active reactions ---
             uint64_t reactionHash = utils::hash_reaction(*reaction);
             const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
-            PrecomputedReaction precomputedReaction = m_precomputedReactions[reactionIndex];
+            const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
 
             // --- Forward abundance product ---
             double forwardAbundanceProduct = 1.0;
@@ -697,12 +697,12 @@ namespace gridfire::engine {
                     forwardAbundanceProduct = 0.0;
                     break; // No need to continue if one of the reactants has zero abundance
                 }
-                double factor = std::pow(comp.getMolarAbundance(reactant), power);
+                const double factor = std::pow(comp.getMolarAbundance(reactant), power);
                 if (!std::isfinite(factor)) {
                     LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction->id());
                     throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
                 }
-                forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
+                forwardAbundanceProduct *= factor;
             }
 
             const double bare_rate = bare_rates.at(reactionCounter);
@@ -764,8 +764,8 @@ namespace gridfire::engine {
                     default: ;
                 }
 
-                double local_neutrino_loss =  molarReactionFlows.back() * q_abs * neutrino_loss_fraction * m_constants.Na * m_constants.MeV_to_erg;
-                double local_neutrino_flux = molarReactionFlows.back() * m_constants.Na;
+                const double local_neutrino_loss =  molarReactionFlows.back() * q_abs * neutrino_loss_fraction * m_constants.Na * m_constants.MeV_to_erg;
+                const double local_neutrino_flux = molarReactionFlows.back() * m_constants.Na;
 
                 result.totalNeutrinoFlux += local_neutrino_flux;
                 result.neutrinoEnergyLossRate += local_neutrino_loss;
@@ -782,7 +782,7 @@ namespace gridfire::engine {
 
         reactionCounter = 0;
         for (const auto& reaction: activeReactions) {
-            size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
+            const size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
             const auto& precomp = m_precomputedReactions[j];
             const double R_j = molarReactionFlows[reactionCounter];
 
@@ -793,9 +793,12 @@ namespace gridfire::engine {
                 const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
 
                 // Update the derivative for this species
-                double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
+                const double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
                 result.dydt.at(species) += dydt_increment;
-                result.reactionContributions[species][std::string(reaction->id())] = dydt_increment;
+
+                if (m_store_intermediate_reaction_contributions) {
+                    result.reactionContributions.value()[species][std::string(reaction->id())] = dydt_increment;
+                }
             }
             reactionCounter++;
         }

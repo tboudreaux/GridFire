@@ -753,6 +753,14 @@ namespace gridfire::engine {
         [[nodiscard]]
         SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
 
+        [[nodiscard]] bool get_store_intermediate_reaction_contributions() const {
+            return m_store_intermediate_reaction_contributions;
+        }
+
+        void set_store_intermediate_reaction_contributions(const bool value) {
+            m_store_intermediate_reaction_contributions = value;
+        }
+
 
     private:
         struct PrecomputedReaction {
@@ -879,6 +887,7 @@ namespace gridfire::engine {
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
         bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
+        bool m_store_intermediate_reaction_contributions = false; ///< Flag to enable or disable storing intermediate reaction contributions for debugging.
 
         BuildDepthType m_depth;
 
@@ -1207,7 +1216,10 @@ namespace gridfire::engine {
                 const T nu_ij = static_cast<T>(reaction.stoichiometry(species));
                 const T dydt_increment = threshold_flag * molarReactionFlow * nu_ij;
                 dydt_vec[speciesIdx] += dydt_increment;
-                result.reactionContributions[species][std::string(reaction.id())] = dydt_increment;
+
+                if (m_store_intermediate_reaction_contributions) {
+                    result.reactionContributions.value()[species][std::string(reaction.id())] = dydt_increment;
+                }
             }
 
         }
