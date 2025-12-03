@@ -6,7 +6,7 @@ cvode_cmake_options.add_cmake_defines({
     'CMAKE_C_FLAGS'     : '-Wno-deprecated-declarations',
     'BUILD_SHARED_LIBS' : 'OFF',
     'BUILD_STATIC_LIBS' : 'ON',
-    'EXAMPLES_ENABLE_C': 'OFF',
+    'EXAMPLES_ENABLE_C' : 'OFF',
     'CMAKE_POSITION_INDEPENDENT_CODE': true
 
 })
@@ -15,6 +15,15 @@ cvode_cmake_options.add_cmake_defines({
     'CMAKE_INSTALL_LIBDIR': get_option('libdir'),
     'CMAKE_INSTALL_INCLUDEDIR': get_option('includedir')
 })
+
+if meson.is_cross_build() and host_machine.system() == 'emscripten'
+  cvode_cmake_options.add_cmake_defines({
+      'CMAKE_C_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_CXX_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_SHARED_LINKER_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_EXE_LINKER_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1'
+  })
+endif
 
 cvode_sp = cmake.subproject(
     'cvode',

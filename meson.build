@@ -20,141 +20,25 @@
 # *********************************************************************** #
 project('GridFire', ['c', 'cpp'], version: 'v0.7.4_rc2', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
-if get_option('build-python')
-    add_project_arguments('-fvisibility=hidden', language: 'cpp')
-else
-    add_project_arguments('-fvisibility=default', language: 'cpp')
-endif
+# Start by running the code which validates the build environment
+subdir('build-check')
 
-message('Found CXX compiler: ' + meson.get_compiler('cpp').get_id())
-message('C++ standard set to: ' + get_option('cpp_std'))
+# Configure the logging level
+subdir('build-extra/log-level')
 
-cppc = meson.get_compiler('cpp')
-cc = meson.get_compiler('c')
-
-
-if cppc.get_id() == 'clang'
-    message('disabling bitwise-instead-of-logical warnings for clang')
-    add_project_arguments('-Wno-bitwise-instead-of-logical', language: 'cpp')
-endif
-
-if cppc.get_id() == 'gcc'
-    message('disabling psabi warnings for gcc')
-    add_project_arguments('-Wno-psabi', language: 'cpp')
-    
-    if (cppc.version().version_compare('<14.0'))
-      error('g++ version must be at least 14.0, found ' + cppc.version())
-    endif
-endif
-
-build_fortran = get_option('build-fortran')
-if (build_fortran)
-  add_languages('fortran', native: true)
-  message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
-  message('Fortran standard set to: ' + get_option('fortran_std'))
-  message('Building fortran module (gridfire_mod.mod)')
-  fc = meson.get_compiler('fortran')
-  if not get_option('unsafe-fortran')
-    if fc.get_id() != 'gcc'
-      error('The only supported fortran compiler for GridFire is gfortran (version >= 14.0), found ' + fc  + '. GridFire has not been tested with any other compilers. You can disable this check with the -Dunsafe-fortran=true flag to try other compilers')
-    endif
-  endif
-  if (fc.version().version_compare('<14.0'))
-      error('gfortran version must be at least 14.0, found ' + fc.version())
-  endif
-endif
-
-
-if not cppc.has_header('print')
-    error('C++ standard library header <print> not found. Please ensure your compiler and standard library supports C++23. We have already validated your compiler version so this is likely an issue with your standard library installation.')
-endif
-if not cppc.has_header('format')
-    error('C++ standard library header <format> not found. Please ensure your compiler and standard library supports C++23. We have already validated your compiler version so this is likely an issue with your standard library installation.')
-endif
-
-
-ignore_unused_args = '-Wno-unused-command-line-argument'
-
-add_global_arguments(ignore_unused_args, language: 'cpp')
-add_global_arguments(ignore_unused_args, language: 'c')
-
-
-
-# For Eigen
-add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')
-
-llevel = get_option('log-level')
-
-logbase='QUILL_COMPILE_ACTIVE_LOG_LEVEL_'
-
-if (llevel == 'traceL3')
-    message('Setting log level to TRACE_L3')
-    log_argument = logbase + 'TRACE_L3'
-elif (llevel == 'traceL2')
-    message('Setting log level to TRACE_L2')
-    log_argument = logbase + 'TRACE_L2'
-elif (llevel == 'traceL1')
-    message('Setting log level to TRACE_L1')
-    log_argument = logbase + 'TRACE_L1'
-elif (llevel == 'debug')
-    message('Setting log level to DEBUG')
-    log_argument = logbase + 'DEBUG'
-elif (llevel == 'info')
-    message('Setting log level to INFO')
-    log_argument = logbase + 'INFO'
-elif (llevel == 'warning')
-    message('Setting log level to WARNING')
-    log_argument = logbase + 'WARNING'
-elif (llevel == 'error')
-    message('Setting log level to ERROR')
-    log_argument = logbase + 'ERROR'
-elif (llevel == 'critical')
-    message('Setting log level to CRITICAL')
-    log_argument = logbase + 'CRITICAL'
-endif
-
-log_argument = '-DQUILL_COMPILE_ACTIVE_LOG_LEVEL=' + log_argument
-add_project_arguments(log_argument, language: 'cpp')
-
-cpp = meson.get_compiler('cpp')
-
+# Then build the external dependencies
 subdir('build-config')
 
+# Build the main source code
 subdir('src')
 
-if get_option('build-python')
-    message('Configuring Python bindings...')
-    subdir('build-python')
-else
-    message('Skipping Python bindings...')
-endif
+# Build the Python bindings
+subdir('build-python')
 
-if get_option('build-tests')
-    message('Setting up tests for GridFire...')
-    subdir('tests')
-else
-    message('Skipping tests for GridFire...')
-endif
+# Buil the test suite
+subdir('tests')
 
-
-if get_option('pkg-config')
-    message('Generating pkg-config file for GridFire...')
-    pkg = import('pkgconfig')
-    pkg.generate(
-        name: 'gridfire',
-        description: 'GridFire nuclear reaction network solver',
-        version: meson.project_version(),
-        libraries: [
-            libgridfire,
-            libcomposition,
-            libconfig,
-            libconst,
-            liblogging
-        ],
-        subdirs: ['gridfire'],
-        filebase: 'gridfire',
-        install_dir: join_paths(get_option('libdir'), 'pkgconfig')
-    )
-endif
+# Build the pkg-config file
+subdir('build-extra/pkg-config')
 
 

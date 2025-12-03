@@ -1,7 +1,9 @@
 cmake = import('cmake')
 
-
-subdir('python')
+if get_option('build_python')
+  subdir('python')
+  subdir('pybind')
+endif
 subdir('fourdst')
 subdir('sundials')
 
@@ -11,6 +13,5 @@ subdir('eigen')
 
 subdir('json')
 
-subdir('pybind')
 
 subdir('CLI11')

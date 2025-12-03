@@ -42,7 +42,7 @@ gridfire_build_dependencies = [
     json_dep,
 ]
 
-if not get_option('unity-safe')
+if get_option('plugin_support')
     gridfire_build_dependencies += [plugin_dep]
 endif
 
@@ -63,12 +63,11 @@ gridfire_dep = declare_dependency(
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
-message('Configuring C API...')
-subdir('extern')
-#
-#if get_option('build-python')
-#    message('Configuring Python bindings...')
-#    subdir('python')
-#else
-#    message('Skipping Python bindings...')
-#endif
+
+if not get_option('build_c_api') and get_option('build_fortran')
+  error('Cannot build fortran without C API. Set -Dbuild-c-api=true and -Dbuild-fortran=true')
+endif
+if get_option('build_c_api')
+  message('Configuring C API...')
+  subdir('extern')
+endif
