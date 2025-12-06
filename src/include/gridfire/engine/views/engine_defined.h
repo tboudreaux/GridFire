@@ -6,6 +6,8 @@
 #include "gridfire/io/network_file.h"
 #include "gridfire/types/types.h"
 
+#include "gridfire/config/config.h"
+
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
@@ -365,9 +367,9 @@ namespace gridfire::engine {
         [[nodiscard]] std::string getNetworkFile() const { return m_fileName; }
         [[nodiscard]] const io::NetworkFileParser& getParser() const { return m_parser; }
     private:
-        using Config = fourdst::config::Config;
-        using LogManager = fourdst::logging::LogManager;
-        Config& m_config = Config::getInstance();
+        using LogManager = LogManager;
+        Config<config::GridFireConfig> m_config;
+
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
         std::string m_fileName;
         ///< Parser for the network file.

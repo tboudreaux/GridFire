@@ -4,7 +4,6 @@
 #include "gridfire/gridfire.h"
 
 #include "fourdst/composition/composition.h"
-#include "fourdst/plugin/bundle/bundle.h"
 #include "fourdst/logging/logging.h"
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/utils.h"

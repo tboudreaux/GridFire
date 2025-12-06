@@ -38,16 +38,25 @@ gridfire_build_dependencies = [
     log_dep,
     xxhash_dep,
     eigen_dep,
-    plugin_dep,
     sundials_dep,
     json_dep,
 ]
+
+if get_option('plugin_support')
+    gridfire_build_dependencies += [plugin_dep]
+endif
+
+if get_option('openmp_support')
+    openmp_dep = dependency('openmp', required: true)
+    gridfire_build_dependencies += [openmp_dep]
+endif
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
 libgridfire = library('gridfire',
     gridfire_sources,
     include_directories: include_directories('include'),
     dependencies: gridfire_build_dependencies,
+    objects: [cvode_objs, kinsol_objs],
     install : true)
 
 gridfire_dep = declare_dependency(
@@ -59,12 +68,11 @@ gridfire_dep = declare_dependency(
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
-message('Configuring C API...')
-subdir('extern')
 
-if get_option('build-python')
-    message('Configuring Python bindings...')
-    subdir('python')
-else
-    message('Skipping Python bindings...')
+if not get_option('build_c_api') and get_option('build_fortran')
+  error('Cannot build fortran without C API. Set -Dbuild-c-api=true and -Dbuild-fortran=true')
+endif
+if get_option('build_c_api')
+  message('Configuring C API...')
+  subdir('extern')
 endif

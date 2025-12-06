@@ -82,6 +82,7 @@ subprojects/cvode-*/
 subprojects/kinsol-*/
 subprojects/CLI11-*/
 subprojects/openssl-*/
+subprojects/tomlplusplus-*/
 *.fbundle
 *.wraplock
 
@@ -98,6 +99,8 @@ liblogging.wrap
 libplugin.wrap
 minizip-ng.wrap
 openssl.wrap
+glaze.wrap
+tomlplusplus.wrap
 
 .vscode/
 
@@ -119,3 +122,7 @@ meson-boost-test/
 *.json
 *.xml
 *_pynucastro_network.py
+
+cross/python_includes
+
+*.whl

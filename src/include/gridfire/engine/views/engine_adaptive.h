@@ -4,6 +4,7 @@
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/types/types.h"
+#include "gridfire/config/config.h"
 
 #include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/config/config.h"
@@ -386,10 +387,10 @@ namespace gridfire::engine {
          */
         [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
     private:
-        using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
-        /** @brief A reference to the singleton Config instance, used for retrieving configuration parameters. */
-        Config& m_config = Config::getInstance();
+
+        fourdst::config::Config<config::GridFireConfig> m_config;
+
         /** @brief A pointer to the logger instance, used for logging messages. */
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 

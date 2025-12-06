@@ -809,6 +809,8 @@ namespace gridfire::reaction {
         std::vector<RateCoefficientSet> m_rates; ///< List of rate coefficient sets from each source.
         bool m_weak = false;
 
+        mutable std::unordered_map<double, double> m_cached_rates;
+
     private:
         /**
          * @brief Template implementation for calculating the total reaction rate.
@@ -875,6 +877,8 @@ namespace gridfire::reaction {
         void extend(const ReactionSet& other);
 
         [[nodiscard]] std::optional<std::unique_ptr<Reaction>> get(const std::string_view& id) const;
+
+        [[nodiscard]] std::unique_ptr<Reaction> get(size_t index) const;
 
         /**
          * @brief Removes a reaction from the set.

@@ -2,6 +2,7 @@
 
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
+#include "gridfire/config/config.h"
 
 #include "quill/Logger.h"
 
@@ -101,9 +102,8 @@ namespace gridfire::io {
          */
         [[nodiscard]] ParsedNetworkData parse(const std::string& filename) const override;
     private:
-        using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
-        Config& m_config = Config::getInstance();
+        fourdst::config::Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
     };
 
@@ -141,9 +141,8 @@ namespace gridfire::io {
          */
         [[nodiscard]] ParsedNetworkData parse(const std::string& filename) const override;
     private:
-        using Config = fourdst::config::Config;
         using LogManager = fourdst::logging::LogManager;
-        Config& m_config = Config::getInstance();
+        fourdst::config::Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
         std::string m_filename;

@@ -12,6 +12,7 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/config/config.h"
 
 #include <string>
 #include <unordered_map>
@@ -96,7 +97,7 @@ namespace gridfire::engine {
      *
      * @see engine_abstract.h
      */
-    class GraphEngine final : public DynamicEngine{
+    class GraphEngine final : public DynamicEngine {
     public:
         /**
          * @brief Constructs a GraphEngine from a composition.
@@ -753,6 +754,14 @@ namespace gridfire::engine {
         [[nodiscard]]
         SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
 
+        [[nodiscard]] bool get_store_intermediate_reaction_contributions() const {
+            return m_store_intermediate_reaction_contributions;
+        }
+
+        void set_store_intermediate_reaction_contributions(const bool value) {
+            m_store_intermediate_reaction_contributions = value;
+        }
+
 
     private:
         struct PrecomputedReaction {
@@ -846,8 +855,14 @@ namespace gridfire::engine {
             const reaction::Reaction& m_reaction;
             const GraphEngine& m_engine;
         };
+
+        struct PrecomputationKernelResults {
+            std::vector<double> dydt_vector;
+            double total_neutrino_energy_loss_rate{0.0};
+            double total_neutrino_flux{0.0};
+        };
     private:
-        Config& m_config = Config::getInstance();
+        Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
         constants m_constants;
@@ -866,6 +881,7 @@ namespace gridfire::engine {
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
+        mutable std::vector<double> m_local_abundance_cache;
 
         bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
 
@@ -879,6 +895,7 @@ namespace gridfire::engine {
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
         bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
+        bool m_store_intermediate_reaction_contributions = false; ///< Flag to enable or disable storing intermediate reaction contributions for debugging.
 
         BuildDepthType m_depth;
 
@@ -947,6 +964,42 @@ namespace gridfire::engine {
          * error message is logged and false is returned.
          */
         [[nodiscard]] bool validateConservation() const;
+
+        double compute_reaction_flow(
+            const std::vector<double> &local_abundances,
+            const std::vector<double> &screening_factors,
+            const std::vector<double> &bare_rates,
+            const std::vector<double> &bare_reverse_rates,
+            double rho,
+            size_t reactionCounter,
+            const reaction::Reaction &reaction,
+            size_t reactionIndex,
+            const PrecomputedReaction &precomputedReaction
+        ) const;
+
+        std::pair<double, double> compute_neutrino_fluxes(
+            double netFlow,
+            const reaction::Reaction &reaction) const;
+
+        PrecomputationKernelResults accumulate_flows_serial(
+            const std::vector<double>& local_abundances,
+            const std::vector<double>& screening_factors,
+            const std::vector<double>& bare_rates,
+            const std::vector<double>& bare_reverse_rates,
+            double rho,
+            const reaction::ReactionSet& activeReactions
+        ) const;
+
+#ifdef GRIDFIRE_USE_OPENMP
+        PrecomputationKernelResults accumulate_flows_parallel(
+            const std::vector<double>& local_abundances,
+            const std::vector<double>& screening_factors,
+            const std::vector<double>& bare_rates,
+            const std::vector<double>& bare_reverse_rates,
+            double rho,
+            const reaction::ReactionSet& activeReactions
+        ) const;
+#endif
 
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
@@ -1207,7 +1260,10 @@ namespace gridfire::engine {
                 const T nu_ij = static_cast<T>(reaction.stoichiometry(species));
                 const T dydt_increment = threshold_flag * molarReactionFlow * nu_ij;
                 dydt_vec[speciesIdx] += dydt_increment;
-                result.reactionContributions[species][std::string(reaction.id())] = dydt_increment;
+
+                if (m_store_intermediate_reaction_contributions) {
+                    result.reactionContributions.value()[species][std::string(reaction.id())] = dydt_increment;
+                }
             }
 
         }

@@ -4,8 +4,10 @@ cvode_cmake_options = cmake.subproject_options()
 cvode_cmake_options.add_cmake_defines({
     'CMAKE_CXX_FLAGS'   : '-Wno-deprecated-declarations',
     'CMAKE_C_FLAGS'     : '-Wno-deprecated-declarations',
-    'BUILD_SHARED_LIBS' : 'ON',
-    'BUILD_STATIC_LIBS' : 'OFF',
+    'BUILD_SHARED_LIBS' : 'OFF',
+    'BUILD_STATIC_LIBS' : 'ON',
+    'EXAMPLES_ENABLE_C' : 'OFF',
+    'CMAKE_POSITION_INDEPENDENT_CODE': true
 
 })
 
@@ -14,34 +16,70 @@ cvode_cmake_options.add_cmake_defines({
     'CMAKE_INSTALL_INCLUDEDIR': get_option('includedir')
 })
 
+if meson.is_cross_build() and host_machine.system() == 'emscripten'
+  cvode_cmake_options.add_cmake_defines({
+      'CMAKE_C_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_CXX_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_SHARED_LINKER_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1',
+      'CMAKE_EXE_LINKER_FLAGS': '-s MEMORY64=1 -s ALLOW_MEMORY_GROWTH=1'
+  })
+endif
+
 cvode_sp = cmake.subproject(
     'cvode',
     options: cvode_cmake_options,
 )
 
-# For the core SUNDIALS library (SUNContext, etc.)
-sundials_core_dep = cvode_sp.dependency('sundials_core_shared')
+sundials_core_tgt = cvode_sp.target('sundials_core_static')
+sundials_cvode_tgt = cvode_sp.target('sundials_cvode_static')
+sundials_nvecserial_tgt = cvode_sp.target('sundials_nvecserial_static')
+sundials_sunmatrixdense_tgt = cvode_sp.target('sundials_sunmatrixdense_static')
+sundials_sunlinsoldense_tgt = cvode_sp.target('sundials_sunlinsoldense_static')
 
-# For the CVODE integrator library
-sundials_cvode_dep = cvode_sp.dependency('sundials_cvode_shared')
+cvode_objs = [
+  sundials_core_tgt.extract_all_objects(recursive: true),
+  sundials_cvode_tgt.extract_all_objects(recursive: true),
+  sundials_nvecserial_tgt.extract_all_objects(recursive: true),
+  sundials_sunmatrixdense_tgt.extract_all_objects(recursive: true),
+  sundials_sunlinsoldense_tgt.extract_all_objects(recursive: true),
+]
 
-# For the serial NVector library
-sundials_nvecserial_dep = cvode_sp.dependency('sundials_nvecserial_shared')
+sundials_core_includes = cvode_sp.include_directories('sundials_core_static')
+sundials_cvode_includes = cvode_sp.include_directories('sundials_cvode_static')
+sundials_nvecserial_includes = cvode_sp.include_directories('sundials_nvecserial_static')
+sundials_sunmatrixdense_includes = cvode_sp.include_directories('sundials_sunmatrixdense_static')
+sundials_sunlinsoldense_includes = cvode_sp.include_directories('sundials_sunlinsoldense_static')
 
-# For the dense matrix library
-sundials_sunmatrixdense_dep = cvode_sp.dependency('sundials_sunmatrixdense_shared')
+cvode_includes = [
+  sundials_core_includes,
+  sundials_cvode_includes,
+  sundials_nvecserial_includes,
+  sundials_sunmatrixdense_includes,
+  sundials_sunlinsoldense_includes
+]
 
-# For the dense linear solver library
-sundials_sunlinsoldense_dep = cvode_sp.dependency('sundials_sunlinsoldense_shared')
+
+empty_cvode_file = configure_file(
+  output: 'cvode_dummy_ar.cpp',
+  command: ['echo'],
+  capture: true
+  )
+
+
+
+libcvode_static = static_library(
+   'cvode-static',
+   empty_cvode_file,
+   objects: cvode_objs,
+   include_directories: cvode_includes,
+   pic: true,
+   install: false
+)
+
 
 cvode_dep = declare_dependency(
-    dependencies: [
-        sundials_core_dep,
-        sundials_cvode_dep,
-        sundials_nvecserial_dep,
-        sundials_sunmatrixdense_dep,
-        sundials_sunlinsoldense_dep,
-    ],
+  link_with: libcvode_static,
+  include_directories: cvode_includes,
 )
 
 

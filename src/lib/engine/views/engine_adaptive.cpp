@@ -394,7 +394,9 @@ namespace gridfire::engine {
         const double maxFlow
     ) const {
         LOG_TRACE_L1(m_logger, "Culling reactions based on flow rates...");
-        const auto relative_culling_threshold = m_config.get<double>("gridfire:AdaptiveEngineView:RelativeCullingThreshold", 1e-75);
+
+        const auto relative_culling_threshold = m_config->engine.views.adaptiveEngineView.relativeCullingThreshold;
+
         double absoluteCullingThreshold = relative_culling_threshold * maxFlow;
         LOG_DEBUG(m_logger, "Relative culling threshold: {:7.3E} ({:7.3E})", relative_culling_threshold, absoluteCullingThreshold);
         std::vector<const reaction::Reaction*> culledReactions;

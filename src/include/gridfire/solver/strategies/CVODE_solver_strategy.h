@@ -4,6 +4,7 @@
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/exceptions.h"
+#include "gridfire/config/config.h"
 
 #include "fourdst/atomic/atomicSpecies.h"
 #include "fourdst/config/config.h"
@@ -237,13 +238,13 @@ namespace gridfire::solver {
         };
 
         struct CVODERHSOutputData {
-            std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> reaction_contribution_map;
+            std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
             double neutrino_energy_loss_rate;
             double total_neutrino_flux;
         };
 
     private:
-        fourdst::config::Config& m_config = fourdst::config::Config::getInstance();
+        fourdst::config::Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
         /**
          * @brief CVODE RHS C-wrapper that delegates to calculate_rhs and captures exceptions.

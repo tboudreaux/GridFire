@@ -78,7 +78,7 @@ def fix_rpaths(binary_path):
 
 def main():
     if len(sys.argv) != 2:
-        print(f"--- Error: Expected one argument (path to .so file), got {sys.argv}", file=sys.stderr)
+        print(f"--- Error: Expected one argument (path to .dylib/.so file), got {sys.argv}", file=sys.stderr)
         sys.exit(1)
 
     # Get the file path directly from the command line argument

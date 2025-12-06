@@ -23,7 +23,7 @@ gridfire_extern_dep = declare_dependency(
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))
 
-if get_option('build-fortran')
+if get_option('build_fortran')
     message('Configuring Fortran bindings...')
     subdir('fortran')
 endif

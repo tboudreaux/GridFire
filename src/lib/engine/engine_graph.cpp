@@ -28,6 +28,10 @@
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/utility/sparse_rcv.hpp"
 
+#ifdef GRIDFIRE_USE_OPENMP
+    #include <omp.h>
+#endif
+
 
 namespace {
     enum class REACLIB_WEAK_TYPES {
@@ -403,6 +407,167 @@ namespace gridfire::engine {
         return true; // All reactions passed the conservation check
     }
 
+    double GraphEngine::compute_reaction_flow(
+        const std::vector<double> &local_abundances,
+        const std::vector<double> &screening_factors,
+        const std::vector<double> &bare_rates,
+        const std::vector<double> &bare_reverse_rates,
+        const double rho,
+        const size_t reactionCounter,
+        const reaction::Reaction &reaction,
+        const size_t reactionIndex,
+        const PrecomputedReaction &precomputedReaction
+    ) const {
+        double forwardAbundanceProduct = 1.0;
+        for (size_t i = 0; i < precomputedReaction.unique_reactant_indices.size(); ++i) {
+            const size_t reactantIndex = precomputedReaction.unique_reactant_indices[i];
+            const int power = precomputedReaction.reactant_powers[i];
+
+            const double abundance = local_abundances[reactantIndex];
+
+            double factor;
+            if (power == 1) { factor = abundance; }
+            else if (power == 2)  { factor = abundance * abundance; }
+            else { factor = std::pow(abundance, power); }
+
+            if (!std::isfinite(factor)) {
+                LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction.id());
+                throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
+            }
+
+            forwardAbundanceProduct *= factor;
+        }
+
+        const double bare_rate = bare_rates.at(reactionCounter);
+
+        const double screeningFactor = screening_factors[reactionCounter];
+        const size_t numReactants = m_reactions[reactionIndex].reactants().size();
+        const size_t numProducts = m_reactions[reactionIndex].products().size();
+
+        const double forwardMolarReactionFlow = screeningFactor *
+                                   bare_rate *
+                                   precomputedReaction.symmetry_factor *
+                                   forwardAbundanceProduct *
+                                   std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
+        if (!std::isfinite(forwardMolarReactionFlow)) {
+            LOG_CRITICAL(m_logger, "Non-finite forward molar reaction flow computed for reaction '{}'. Check input abundances and rates for validity.", reaction.id());
+            throw exceptions::BadRHSEngineError("Non-finite forward molar reaction flow computed.");
+        }
+
+
+        double reverseMolarReactionFlow = 0.0;
+        if (precomputedReaction.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
+            const double bare_reverse_rate = bare_reverse_rates.at(reactionCounter);
+
+            double reverseAbundanceProduct = 1.0;
+            for (size_t i = 0; i < precomputedReaction.unique_product_indices.size(); ++i) {
+                const size_t productIndex = precomputedReaction.unique_product_indices[i];
+                reverseAbundanceProduct *= std::pow(local_abundances[productIndex], precomputedReaction.product_powers[i]);
+            }
+
+            reverseMolarReactionFlow = screeningFactor *
+                                       bare_reverse_rate *
+                                       precomputedReaction.reverse_symmetry_factor *
+                                       reverseAbundanceProduct *
+                                       std::pow(rho, numProducts > 1 ? static_cast<double>(numProducts) - 1 : 0.0);
+        }
+
+        return forwardMolarReactionFlow - reverseMolarReactionFlow;
+    }
+
+    std::pair<double, double> GraphEngine::compute_neutrino_fluxes(
+        const double netFlow,
+        const reaction::Reaction &reaction
+    ) const {
+        if (reaction.type() == reaction::ReactionType::REACLIB_WEAK) {
+            const double q_abs = std::abs(reaction.qValue());
+            const REACLIB_WEAK_TYPES weakType = get_weak_reaclib_reaction_type(reaction);
+            double neutrino_loss_fraction = 0.0;
+            switch (weakType) {
+                case REACLIB_WEAK_TYPES::BETA_PLUS_DECAY:
+                    [[fallthrough]];
+                case REACLIB_WEAK_TYPES::BETA_MINUS_DECAY:
+                    neutrino_loss_fraction = 0.5; // Approximate 50% energy loss to neutrinos for beta decays
+                    break;
+                case REACLIB_WEAK_TYPES::ELECTRON_CAPTURE:
+                    [[fallthrough]];
+                case REACLIB_WEAK_TYPES::POSITRON_CAPTURE:
+                    neutrino_loss_fraction = 1.0;
+                    break;
+                default: ;
+            }
+
+            const double local_neutrino_loss =  netFlow * q_abs * neutrino_loss_fraction * m_constants.Na * m_constants.MeV_to_erg;
+            const double local_neutrino_flux = netFlow * m_constants.Na;
+
+            return {local_neutrino_loss, local_neutrino_flux};
+        }
+        return {0.0, 0.0};
+    }
+
+    GraphEngine::PrecomputationKernelResults GraphEngine::accumulate_flows_serial(
+        const std::vector<double> &local_abundances,
+        const std::vector<double> &screening_factors,
+        const std::vector<double> &bare_rates,
+        const std::vector<double> &bare_reverse_rates,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        PrecomputationKernelResults results;
+        results.dydt_vector.resize(m_networkSpecies.size(), 0.0);
+
+        std::vector<double> molarReactionFlows;
+        molarReactionFlows.reserve(m_precomputedReactions.size());
+
+        size_t reactionCounter = 0;
+
+        for (const auto& reaction : activeReactions) {
+            uint64_t reactionHash = utils::hash_reaction(*reaction);
+            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
+            const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
+
+            double netFlow = compute_reaction_flow(
+                local_abundances,
+                screening_factors,
+                bare_rates,
+                bare_reverse_rates,
+                rho,
+                reactionCounter,
+                *reaction,
+                reactionIndex,
+                precomputedReaction);
+
+            molarReactionFlows.push_back(netFlow);
+
+            auto [local_neutrino_loss, local_neutrino_flux] = compute_neutrino_fluxes(netFlow, *reaction);
+            results.total_neutrino_energy_loss_rate += local_neutrino_loss;
+            results.total_neutrino_flux += local_neutrino_flux;
+
+            reactionCounter++;
+        }
+
+        LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
+
+        reactionCounter = 0;
+        for (const auto& reaction: activeReactions) {
+            const size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
+            const auto& precomp = m_precomputedReactions[j];
+            const double R_j = molarReactionFlows[reactionCounter];
+
+            for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
+                const size_t speciesIndex = precomp.affected_species_indices[i];
+
+                const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
+
+                const double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
+                results.dydt_vector[speciesIndex] += dydt_increment;
+            }
+            reactionCounter++;
+        }
+
+        return results;
+    }
+
     double GraphEngine::calculateReverseRate(
         const reaction::Reaction &reaction,
         const double T9,
@@ -655,6 +820,7 @@ namespace gridfire::engine {
 
     }
 
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
         const fourdst::composition::CompositionAbstract &comp,
         const std::vector<double> &bare_rates,
@@ -672,132 +838,43 @@ namespace gridfire::engine {
             T9,
             rho
         );
+        m_local_abundance_cache.clear();
+        for (const auto& species: m_networkSpecies) {
+            m_local_abundance_cache.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
+        }
 
         StepDerivatives<double> result;
+        std::vector<double> dydt_scratch(m_networkSpecies.size(), 0.0);
 
-        // --- Optimized loop ---
-        std::vector<double> molarReactionFlows;
-        molarReactionFlows.reserve(m_precomputedReactions.size());
+#ifndef GRIDFIRE_USE_OPENMP
+        const auto [dydt_vector, total_neutrino_energy_loss_rate, total_neutrino_flux] = accumulate_flows_serial(
+            m_local_abundance_cache,
+            screeningFactors,
+            bare_rates,
+            bare_reverse_rates,
+            rho,
+            activeReactions
+        );
+        dydt_scratch = dydt_vector;
+        result.neutrinoEnergyLossRate = total_neutrino_energy_loss_rate;
+        result.totalNeutrinoFlux = total_neutrino_flux;
+#else
+        const auto [dydt_vector, total_neutrino_energy_loss_rate, total_neutrino_flux] = accumulate_flows_parallel(
+            m_local_abundance_cache,
+            screeningFactors,
+            bare_rates,
+            bare_reverse_rates,
+            rho,
+            activeReactions
+        );
+        dydt_scratch = dydt_vector;
+        result.neutrinoEnergyLossRate = total_neutrino_energy_loss_rate;
+        result.totalNeutrinoFlux = total_neutrino_flux;
+#endif
 
-        size_t reactionCounter = 0;
-        for (const auto& reaction : activeReactions) {
-            // --- Efficient lookup of only the active reactions ---
-            uint64_t reactionHash = utils::hash_reaction(*reaction);
-            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
-            PrecomputedReaction precomputedReaction = m_precomputedReactions[reactionIndex];
-
-            // --- Forward abundance product ---
-            double forwardAbundanceProduct = 1.0;
-            for (size_t i = 0; i < precomputedReaction.unique_reactant_indices.size(); ++i) {
-                const size_t reactantIndex = precomputedReaction.unique_reactant_indices[i];
-                const fourdst::atomic::Species& reactant = m_networkSpecies[reactantIndex];
-                const int power = precomputedReaction.reactant_powers[i];
-
-                if (!comp.contains(reactant)) {
-                    forwardAbundanceProduct = 0.0;
-                    break; // No need to continue if one of the reactants has zero abundance
-                }
-                double factor = std::pow(comp.getMolarAbundance(reactant), power);
-                if (!std::isfinite(factor)) {
-                    LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction->id());
-                    throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
-                }
-                forwardAbundanceProduct *= std::pow(comp.getMolarAbundance(reactant), power);
-            }
-
-            const double bare_rate = bare_rates.at(reactionCounter);
-
-            const double screeningFactor = screeningFactors[reactionCounter];
-            const size_t numReactants = m_reactions[reactionIndex].reactants().size();
-            const size_t numProducts = m_reactions[reactionIndex].products().size();
-
-            // --- Forward reaction flow ---
-            const double forwardMolarReactionFlow =
-                    screeningFactor *
-                    bare_rate *
-                    precomputedReaction.symmetry_factor *
-                    forwardAbundanceProduct *
-                    std::pow(rho, numReactants >  1 ? static_cast<double>(numReactants) - 1 : 0.0);
-            if (!std::isfinite(forwardMolarReactionFlow)) {
-                LOG_CRITICAL(m_logger, "Non-finite forward molar reaction flow computed for reaction '{}'. Check input abundances and rates for validity.", reaction->id());
-                throw exceptions::BadRHSEngineError("Non-finite forward molar reaction flow computed.");
-            }
-
-
-            // --- Reverse reaction flow ---
-            // Only do this is the reaction has a non-zero reverse symmetry factor (i.e. is reversible)
-            double reverseMolarReactionFlow = 0.0;
-            if (precomputedReaction.reverse_symmetry_factor != 0.0 and m_useReverseReactions) {
-                const double bare_reverse_rate = bare_reverse_rates.at(reactionCounter);
-
-                double reverseAbundanceProduct = 1.0;
-                for (size_t i = 0; i < precomputedReaction.unique_product_indices.size(); ++i) {
-                    const size_t productIndex = precomputedReaction.unique_product_indices[i];
-                    const fourdst::atomic::Species& product = m_networkSpecies[productIndex];
-                    reverseAbundanceProduct *= std::pow(comp.getMolarAbundance(product), precomputedReaction.product_powers[i]);
-                }
-
-                reverseMolarReactionFlow = screeningFactor *
-                    bare_reverse_rate *
-                    precomputedReaction.reverse_symmetry_factor *
-                    reverseAbundanceProduct *
-                    std::pow(rho, numProducts > 1 ? static_cast<double>(numProducts) - 1 : 0.0);
-            }
-
-            molarReactionFlows.push_back(forwardMolarReactionFlow - reverseMolarReactionFlow);
-
-            if (reaction->type() == reaction::ReactionType::REACLIB_WEAK) {
-                double q_abs = std::abs(reaction->qValue());
-                REACLIB_WEAK_TYPES weakType = get_weak_reaclib_reaction_type(*reaction);
-                double neutrino_loss_fraction = 0.0;
-                switch (weakType) {
-                    case REACLIB_WEAK_TYPES::BETA_PLUS_DECAY:
-                        [[fallthrough]];
-                    case REACLIB_WEAK_TYPES::BETA_MINUS_DECAY:
-                        neutrino_loss_fraction = 0.5; // Approximate 50% energy loss to neutrinos for beta decays
-                        break;
-                    case REACLIB_WEAK_TYPES::ELECTRON_CAPTURE:
-                        [[fallthrough]];
-                    case REACLIB_WEAK_TYPES::POSITRON_CAPTURE:
-                        neutrino_loss_fraction = 1.0;
-                        break;
-                    default: ;
-                }
-
-                double local_neutrino_loss =  molarReactionFlows.back() * q_abs * neutrino_loss_fraction * m_constants.Na * m_constants.MeV_to_erg;
-                double local_neutrino_flux = molarReactionFlows.back() * m_constants.Na;
-
-                result.totalNeutrinoFlux += local_neutrino_flux;
-                result.neutrinoEnergyLossRate += local_neutrino_loss;
-            }
-            reactionCounter++;
-        }
-
-        LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
-
-        // --- Assemble molar abundance derivatives ---
-        for (const auto& species: m_networkSpecies) {
-            result.dydt[species] = 0.0; // Initialize the change in abundance for each network species to 0
-        }
-
-        reactionCounter = 0;
-        for (const auto& reaction: activeReactions) {
-            size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
-            const auto& precomp = m_precomputedReactions[j];
-            const double R_j = molarReactionFlows[reactionCounter];
-
-            for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
-                const size_t speciesIndex = precomp.affected_species_indices[i];
-                const fourdst::atomic::Species& species = m_networkSpecies[speciesIndex];
-
-                const int stoichiometricCoefficient = precomp.stoichiometric_coefficients[i];
-
-                // Update the derivative for this species
-                double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
-                result.dydt.at(species) += dydt_increment;
-                result.reactionContributions[species][std::string(reaction->id())] = dydt_increment;
-            }
-            reactionCounter++;
+        // load scratch into result.dydt
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            result.dydt[m_networkSpecies[i]] = dydt_scratch[i];
         }
 
         // --- Calculate the nuclear energy generation rate ---
@@ -1502,4 +1579,69 @@ namespace gridfire::engine {
 
         return true;
     }
+
+#ifdef GRIDFIRE_USE_OPENMP
+    GraphEngine::PrecomputationKernelResults GraphEngine::accumulate_flows_parallel(
+        const std::vector<double> &local_abundances,
+        const std::vector<double> &screening_factors,
+        const std::vector<double> &bare_rates,
+        const std::vector<double> &bare_reverse_rates,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        int n_threads = omp_get_max_threads();
+        std::vector<std::vector<double>> thread_local_dydt(n_threads, std::vector<double>(m_networkSpecies.size(), 0.0));
+
+        double total_neutrino_energy_loss_rate = 0.0;
+        double total_neutrino_flux = 0.0;
+
+        #pragma omp parallel for schedule(static) reduction(+:total_neutrino_energy_loss_rate, total_neutrino_flux)
+        for (size_t k = 0; k < activeReactions.size(); ++k) {
+            int t_id = omp_get_thread_num();
+            const auto& reaction = activeReactions[k];
+            const size_t reactionIndex = m_precomputedReactionIndexMap.at(utils::hash_reaction(reaction));
+            const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
+
+            double netFlow = compute_reaction_flow(
+                local_abundances,
+                screening_factors,
+                bare_rates,
+                bare_reverse_rates,
+                rho,
+                reactionIndex,
+                reaction,
+                reactionIndex,
+                precomputedReaction
+            );
+
+            auto [neutrinoEnergyLossRate, neutrinoFlux] = compute_neutrino_fluxes(
+                netFlow,
+                reaction
+            );
+
+            total_neutrino_energy_loss_rate += neutrinoEnergyLossRate;
+            total_neutrino_flux += neutrinoFlux;
+
+            for (size_t i = 0; i < precomputedReaction.affected_species_indices.size(); ++i) {
+                thread_local_dydt[t_id][precomputedReaction.affected_species_indices[i]] +=
+                    netFlow * precomputedReaction.stoichiometric_coefficients[i];
+            }
+
+        }
+        PrecomputationKernelResults results;
+        results.total_neutrino_energy_loss_rate = total_neutrino_energy_loss_rate;
+        results.total_neutrino_flux = total_neutrino_flux;
+
+        results.dydt_vector.resize(m_networkSpecies.size(), 0.0);
+        #pragma omp parallel for schedule(static)
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            double sum = 0.0;
+            for (int t = 0; t < n_threads; ++t) sum += thread_local_dydt[t][i];
+            results.dydt_vector[i] = sum;
+        }
+
+        return results;
+    }
+#endif
+
 }

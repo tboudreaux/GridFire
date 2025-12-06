@@ -1,0 +1,1 @@
+executable('gf_generate_config_file', 'generate_config_files.cpp', dependencies: [gridfire_dep, cli11_dep], install: true)
