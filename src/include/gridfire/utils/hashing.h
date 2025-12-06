@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 
+#include "fourdst/composition/utils/composition_hash.h"
 #include "gridfire/exceptions/exceptions.h"
 #include "gridfire/reaction/reaction.h"
 
@@ -68,5 +69,22 @@ namespace gridfire::utils {
         std::hash<T> hasher;
         seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;
+    }
+
+    inline std::size_t hash_state(
+        const fourdst::composition::CompositionAbstract& comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet& reactions
+    ) noexcept {
+        constexpr std::size_t seed = 0;
+        std::size_t comp_hash = fourdst::composition::utils::CompositionHash::hash_exact(comp);
+        for (const auto& reaction : reactions) {
+            comp_hash = hash_combine(comp_hash, hash_reaction(*reaction));
+        }
+        std::size_t hash = hash_combine(seed, comp_hash);
+        hash = hash_combine(hash, std::bit_cast<std::size_t>(T9));
+        hash = hash_combine(hash, std::bit_cast<std::size_t>(rho));
+        return hash;
     }
 }

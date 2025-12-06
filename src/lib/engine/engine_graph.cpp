@@ -147,6 +147,10 @@ namespace gridfire::engine {
         LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
         if (m_usePrecomputation) {
+            const std::size_t state_hash = utils::hash_state(comp, T9, rho, activeReactions);
+            if (m_stepDerivativesCache.contains(state_hash)) {
+                return m_stepDerivativesCache.at(state_hash);
+            }
             LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
@@ -164,7 +168,9 @@ namespace gridfire::engine {
             LOG_TRACE_L3(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
-            return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
+            StepDerivatives<double> result =  calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
+            m_stepDerivativesCache.insert(std::make_pair(state_hash, result));
+            return result;
         } else {
             LOG_TRACE_L2(m_logger, "Not using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             StepDerivatives<double> result = calculateAllDerivatives<double>(
