@@ -655,6 +655,7 @@ namespace gridfire::engine {
 
     }
 
+
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
         const fourdst::composition::CompositionAbstract &comp,
         const std::vector<double> &bare_rates,
@@ -672,8 +673,13 @@ namespace gridfire::engine {
             T9,
             rho
         );
+        m_local_abundance_cache.clear();
+        for (const auto& species: m_networkSpecies) {
+            m_local_abundance_cache.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
+        }
 
         StepDerivatives<double> result;
+        std::vector<double> dydt_scratch(m_networkSpecies.size(), 0.0);
 
         // --- Optimized loop ---
         std::vector<double> molarReactionFlows;
@@ -693,15 +699,18 @@ namespace gridfire::engine {
                 const fourdst::atomic::Species& reactant = m_networkSpecies[reactantIndex];
                 const int power = precomputedReaction.reactant_powers[i];
 
-                if (!comp.contains(reactant)) {
-                    forwardAbundanceProduct = 0.0;
-                    break; // No need to continue if one of the reactants has zero abundance
-                }
-                const double factor = std::pow(comp.getMolarAbundance(reactant), power);
+                const double abundance = m_local_abundance_cache[reactantIndex];
+
+                double factor;
+                if (power == 1) { factor = abundance; }
+                else if (power == 2)  { factor = abundance * abundance; }
+                else { factor = std::pow(abundance, power); }
+
                 if (!std::isfinite(factor)) {
                     LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction->id());
                     throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
                 }
+
                 forwardAbundanceProduct *= factor;
             }
 
@@ -794,13 +803,19 @@ namespace gridfire::engine {
 
                 // Update the derivative for this species
                 const double dydt_increment = static_cast<double>(stoichiometricCoefficient) * R_j;
-                result.dydt.at(species) += dydt_increment;
+                // result.dydt.at(species) += dydt_increment;
+                dydt_scratch[speciesIndex] += dydt_increment;
 
                 if (m_store_intermediate_reaction_contributions) {
                     result.reactionContributions.value()[species][std::string(reaction->id())] = dydt_increment;
                 }
             }
             reactionCounter++;
+        }
+
+        // load scratch into result.dydt
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            result.dydt[m_networkSpecies[i]] = dydt_scratch[i];
         }
 
         // --- Calculate the nuclear energy generation rate ---

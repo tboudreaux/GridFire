@@ -875,6 +875,7 @@ namespace gridfire::engine {
         mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
         mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
+        mutable std::vector<double> m_local_abundance_cache;
 
         bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
 
