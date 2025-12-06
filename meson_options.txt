@@ -8,3 +8,4 @@ option('unsafe_fortran', type: 'boolean', value: false, description: 'Allow unte
 option('plugin_support', type: 'boolean', value: false, description: 'Enable support for libplugin plugins')
 option('python_target_version', type: 'string', value: '3.13', description: 'Target version for python compilation, only used for cross compilation')
 option('build_c_api', type: 'boolean', value: true, description: 'compile the C API')
+option('build_tools', type: 'boolean', value: true, description: 'build the GridFire command line tools')

@@ -38,6 +38,8 @@ subdir('build-python')
 # Buil the test suite
 subdir('tests')
 
+subdir('tools')
+
 # Build the pkg-config file
 subdir('build-extra/pkg-config')
 

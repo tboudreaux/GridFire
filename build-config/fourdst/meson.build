@@ -30,7 +30,6 @@ endif
 
 libcomposition = fourdst_sp.get_variable('libcomposition')
 libconst = fourdst_sp.get_variable('libconst')
-libconfig = fourdst_sp.get_variable('libconfig')
 liblogging = fourdst_sp.get_variable('liblogging')
 
 if get_option('plugin_support')

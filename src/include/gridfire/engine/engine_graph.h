@@ -12,6 +12,7 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/config/config.h"
 
 #include <string>
 #include <unordered_map>
@@ -855,7 +856,7 @@ namespace gridfire::engine {
             const GraphEngine& m_engine;
         };
     private:
-        Config& m_config = Config::getInstance();
+        Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
         constants m_constants;

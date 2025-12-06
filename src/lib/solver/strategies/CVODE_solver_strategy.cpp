@@ -112,8 +112,8 @@ namespace gridfire::solver {
         //  2. If the user has set tolerances in code, those override the config
         //  3. If the user has not set tolerances in code and the config does not have them, use hardcoded defaults
 
-        auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
-        auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-5);
+        auto absTol = m_config->solver.cvode.absTol;
+        auto relTol = m_config->solver.cvode.relTol;
 
         if (m_absTol) {
             absTol = *m_absTol;
@@ -935,8 +935,8 @@ namespace gridfire::solver {
         sunrealtype *y_data = N_VGetArrayPointer(m_Y);
         sunrealtype *y_err_data = N_VGetArrayPointer(m_YErr);
 
-        const auto absTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:absTol", 1.0e-8);
-        const auto relTol = m_config.get<double>("gridfire:solver:CVODESolverStrategy:relTol", 1.0e-8);
+        const auto absTol = m_config->solver.cvode.absTol;
+        const auto relTol = m_config->solver.cvode.relTol;
 
         std::vector<double> err_ratios;
         const size_t num_components = N_VGetLength(m_Y);

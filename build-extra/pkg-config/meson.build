@@ -8,7 +8,6 @@ if get_option('pkg_config')
         libraries: [
             libgridfire,
             libcomposition,
-            libconfig,
             libconst,
             liblogging
         ],
