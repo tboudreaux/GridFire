@@ -878,6 +878,8 @@ namespace gridfire::reaction {
 
         [[nodiscard]] std::optional<std::unique_ptr<Reaction>> get(const std::string_view& id) const;
 
+        [[nodiscard]] std::unique_ptr<Reaction> get(size_t index) const;
+
         /**
          * @brief Removes a reaction from the set.
          * @param reaction The Reaction to remove.

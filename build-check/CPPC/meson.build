@@ -31,3 +31,7 @@ else
     message('enabling default visibility for C++ symbols')
     add_project_arguments('-fvisibility=default', language: 'cpp')
 endif
+
+if get_option('openmp_support')
+    add_project_arguments('-DGRIDFIRE_USE_OPENMP', language: 'cpp')
+endif

@@ -460,6 +460,10 @@ namespace gridfire::reaction {
         return std::make_optional(m_reactions[m_reactionNameMap.at(std::string(id))]->clone());
     }
 
+    std::unique_ptr<Reaction> ReactionSet::get(size_t index) const {
+        return m_reactions.at(index)->clone();
+    }
+
     void ReactionSet::remove_reaction(const Reaction& reaction) {
         const size_t rh = reaction.hash(0);
         if (!m_reactionHashes.contains(rh)) {

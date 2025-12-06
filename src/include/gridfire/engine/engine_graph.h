@@ -97,7 +97,7 @@ namespace gridfire::engine {
      *
      * @see engine_abstract.h
      */
-    class GraphEngine final : public DynamicEngine{
+    class GraphEngine final : public DynamicEngine {
     public:
         /**
          * @brief Constructs a GraphEngine from a composition.
@@ -855,6 +855,12 @@ namespace gridfire::engine {
             const reaction::Reaction& m_reaction;
             const GraphEngine& m_engine;
         };
+
+        struct PrecomputationKernelResults {
+            std::vector<double> dydt_vector;
+            double total_neutrino_energy_loss_rate{0.0};
+            double total_neutrino_flux{0.0};
+        };
     private:
         Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
@@ -958,6 +964,42 @@ namespace gridfire::engine {
          * error message is logged and false is returned.
          */
         [[nodiscard]] bool validateConservation() const;
+
+        double compute_reaction_flow(
+            const std::vector<double> &local_abundances,
+            const std::vector<double> &screening_factors,
+            const std::vector<double> &bare_rates,
+            const std::vector<double> &bare_reverse_rates,
+            double rho,
+            size_t reactionCounter,
+            const reaction::Reaction &reaction,
+            size_t reactionIndex,
+            const PrecomputedReaction &precomputedReaction
+        ) const;
+
+        std::pair<double, double> compute_neutrino_fluxes(
+            double netFlow,
+            const reaction::Reaction &reaction) const;
+
+        PrecomputationKernelResults accumulate_flows_serial(
+            const std::vector<double>& local_abundances,
+            const std::vector<double>& screening_factors,
+            const std::vector<double>& bare_rates,
+            const std::vector<double>& bare_reverse_rates,
+            double rho,
+            const reaction::ReactionSet& activeReactions
+        ) const;
+
+#ifdef GRIDFIRE_USE_OPENMP
+        PrecomputationKernelResults accumulate_flows_parallel(
+            const std::vector<double>& local_abundances,
+            const std::vector<double>& screening_factors,
+            const std::vector<double>& bare_rates,
+            const std::vector<double>& bare_reverse_rates,
+            double rho,
+            const reaction::ReactionSet& activeReactions
+        ) const;
+#endif
 
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(

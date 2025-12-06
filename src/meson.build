@@ -46,6 +46,11 @@ if get_option('plugin_support')
     gridfire_build_dependencies += [plugin_dep]
 endif
 
+if get_option('openmp_support')
+    openmp_dep = dependency('openmp', required: true)
+    gridfire_build_dependencies += [openmp_dep]
+endif
+
 # Define the libnetwork library so it can be linked against by other parts of the build system
 libgridfire = library('gridfire',
     gridfire_sources,
