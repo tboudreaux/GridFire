@@ -144,6 +144,7 @@ namespace gridfire::engine {
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
+         * @param trust If true, indicates that the engine should trust the passed composition has already been collected.
          * @return expected<StepDerivatives<double>> containing either dY/dt and energy generation rate or a stale engine
          * error indicating that the engine must be updated
          *
@@ -154,7 +155,8 @@ namespace gridfire::engine {
         [[nodiscard]] virtual std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
-            double rho
+            double rho,
+            bool trust
         ) const = 0;
     };
 

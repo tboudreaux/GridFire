@@ -97,6 +97,7 @@ namespace gridfire::engine {
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
+         * @param trust
          * @return A `std::expected` containing `StepDerivatives<double>` on success, or a
          *         `StaleEngineError` if the engine's QSE cache does not contain a solution
          *         for the given state.
@@ -121,7 +122,8 @@ namespace gridfire::engine {
         [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
-            double rho
+            double rho,
+            bool trust
         ) const override;
 
         /**
@@ -586,6 +588,7 @@ namespace gridfire::engine {
          * @param comp The input composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
+         * @param trust
          * @return A new `Composition` object with algebraic species set to their equilibrium values.
          *
          * @par Purpose
@@ -598,7 +601,7 @@ namespace gridfire::engine {
          * @pre The engine must have a valid QSE partition for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        fourdst::composition::Composition getNormalizedEquilibratedComposition(const fourdst::composition::CompositionAbstract& comp, double T9, double rho) const;
+        fourdst::composition::Composition getNormalizedEquilibratedComposition(const fourdst::composition::CompositionAbstract& comp, double T9, double rho, bool trust) const;
 
         /**
          * @brief Collect the composition from this and sub engines.

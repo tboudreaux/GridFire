@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <chrono>
+#include <thread>
 
 #include "gridfire/gridfire.h"
 
@@ -228,9 +230,10 @@ int main(int argc, char** argv) {
 
     CLI::App app{"GridFire Sandbox Application."};
 
+    constexpr size_t breaks = 100;
     double temp = 1.5e7;
     double rho = 1.5e2;
-    double tMax = 3.1536e+17;
+    double tMax = 3.1536e+17/breaks;
 
     app.add_option("-t,--temp", temp, "Temperature in K (Default 1.5e7K)");
     app.add_option("-r,--rho", rho, "Density in g/cm^3 (Default 1.5e2g/cm^3)");
@@ -238,17 +241,29 @@ int main(int argc, char** argv) {
 
     CLI11_PARSE(app, argc, argv);
 
-    const NetIn netIn = init(temp, rho, tMax);
+    NetIn netIn = init(temp, rho, tMax);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     stellarPolicy.construct();
     engine::DynamicEngine& engine = stellarPolicy.construct();
 
     solver::CVODESolverStrategy solver(engine);
-    solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
+    solver.set_stdout_logging_enabled(false);
+    // solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
 
-    const NetOut netOut = solver.evaluate(netIn, false);
+    fourdst::composition::Composition reinputComp = netIn.composition;
+    NetOut netOut;
+    const auto timer = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < breaks; ++i) {
+        NetIn in({.composition = reinputComp, .temperature = temp, .density = rho, .tMax = tMax, .dt0 = 1e-12});
+        netOut = solver.evaluate(in, false, false);
+        reinputComp = netOut.composition;
+    }
+    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - timer).count();
+    std::cout << "Average execution time over  run: " << duration/breaks << " ms" << std::endl;
+    std::cout << "Total execution time over " << breaks << " runs: " << duration << " ms" << std::endl;
+
 
     log_results(netOut, netIn);
-    log_callback_data(temp);
+    // log_callback_data(temp);
 }

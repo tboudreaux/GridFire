@@ -143,6 +143,7 @@ namespace gridfire::engine {
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
+         * @param trust
          * @return StepDerivatives<double> containing dY/dt and energy generation rate.
          *
          * This method calculates the time derivatives of all species and the
@@ -153,7 +154,8 @@ namespace gridfire::engine {
         [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
-            double rho
+            double rho,
+            bool trust
         ) const override;
 
         /**
@@ -883,6 +885,8 @@ namespace gridfire::engine {
         mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
         mutable std::vector<double> m_local_abundance_cache;
         mutable std::unordered_map<size_t, StepDerivatives<double>> m_stepDerivativesCache;
+        mutable std::unordered_map<size_t, CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>>> m_jacobianSubsetCache;
+        mutable std::unordered_map<size_t, CppAD::sparse_jac_work> m_jacWorkCache;
 
         bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
 
@@ -895,7 +899,7 @@ namespace gridfire::engine {
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
-        bool m_useReverseReactions = true; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
+        bool m_useReverseReactions = false; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
         bool m_store_intermediate_reaction_contributions = false; ///< Flag to enable or disable storing intermediate reaction contributions for debugging.
 
         BuildDepthType m_depth;

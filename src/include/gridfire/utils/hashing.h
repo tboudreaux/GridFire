@@ -71,20 +71,32 @@ namespace gridfire::utils {
         return seed;
     }
 
+    inline std::size_t fast_mix(std::size_t h) noexcept {
+        h ^= h >> 33;
+        h *= 0xff51afd7ed558ccdULL;
+        h ^= h >> 33;
+        h *= 0xc4ceb9fe1a85ec53ULL;
+        h ^= h >> 33;
+        return h;
+    }
+
     inline std::size_t hash_state(
         const fourdst::composition::CompositionAbstract& comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet& reactions
     ) noexcept {
-        constexpr std::size_t seed = 0;
-        std::size_t comp_hash = fourdst::composition::utils::CompositionHash::hash_exact(comp);
-        for (const auto& reaction : reactions) {
-            comp_hash = hash_combine(comp_hash, hash_reaction(*reaction));
-        }
-        std::size_t hash = hash_combine(seed, comp_hash);
-        hash = hash_combine(hash, std::bit_cast<std::size_t>(T9));
-        hash = hash_combine(hash, std::bit_cast<std::size_t>(rho));
+        std::size_t hash = comp.hash();
+        const std::size_t topology_hash = reactions.hash(0);
+
+        hash ^= topology_hash + 0x517cc1b727220a95 + (hash << 6) + (hash >> 2);
+
+        const std::uint64_t t9_bits = std::bit_cast<std::uint64_t>(T9);
+        const std::uint64_t rho_bits = std::bit_cast<std::uint64_t>(rho);
+
+        hash ^= fast_mix(t9_bits) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        hash ^= fast_mix(rho_bits) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+
         return hash;
     }
 }

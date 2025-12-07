@@ -637,6 +637,7 @@ namespace gridfire::reaction {
 
         mutable std::optional<std::vector<fourdst::atomic::Species>> m_reactantsVec;
         mutable std::optional<std::vector<fourdst::atomic::Species>> m_productsVec;
+        mutable std::optional<std::size_t> m_hashCache = std::nullopt; ///< Cached hash value for the reaction.
 
         std::string m_sourceLabel; ///< Source label for the rate data (e.g., "wc12w", "st08").
         RateCoefficientSet m_rateCoefficients; ///< The seven rate coefficients.
@@ -1006,6 +1007,7 @@ namespace gridfire::reaction {
         std::string m_id;
         std::unordered_map<std::string, size_t> m_reactionNameMap; ///< Maps reaction IDs to Reaction objects for quick lookup.
         std::unordered_set<size_t> m_reactionHashes;
+        mutable std::optional<uint64_t> m_hashCache = std::nullopt;
 
     };
 

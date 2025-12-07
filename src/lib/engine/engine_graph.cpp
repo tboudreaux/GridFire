@@ -133,7 +133,8 @@ namespace gridfire::engine {
     std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho,
+        bool trust
     ) const {
         return calculateRHSAndEnergy(comp, T9, rho, m_reactions);
     }
@@ -744,6 +745,7 @@ namespace gridfire::engine {
 
     void GraphEngine::setUseReverseReactions(const bool useReverse) {
         m_useReverseReactions = useReverse;
+        syncInternalMaps();
     }
 
     size_t GraphEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
@@ -1034,6 +1036,7 @@ namespace gridfire::engine {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
+        // --- Compute the intersection of the requested sparsity pattern with the full sparsity pattern ---
         SparsityPattern intersectionSparsityPattern;
         for (const auto& entry : sparsityPattern) {
             if (m_full_sparsity_set.contains(entry)) {
@@ -1044,10 +1047,6 @@ namespace gridfire::engine {
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
-        // const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
-        // for (size_t i = 0; i < numSpecies; ++i) {
-        //    x[i] = Y_dynamic[i];
-        // }
         size_t i = 0;
         for (const auto& species: m_networkSpecies) {
             double Yi = 0.0; // Small floor to avoid issues with zero abundances
@@ -1075,18 +1074,25 @@ namespace gridfire::engine {
         const size_t num_cols_jac = numSpecies + 2; // +2 for T9 and rho
 
         CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
+        std::size_t sparsity_hash = 0;
         for (size_t k = 0; k < nnz; ++k) {
+            size_t local_intersection_hash = utils::hash_combine(intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
+            sparsity_hash = utils::hash_combine(sparsity_hash, local_intersection_hash);
+
             CppAD_sparsity_pattern.set(k, intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
         }
 
-        CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
-
-        // PERF: one of *the* most pressing things that needs to be done is remove the need for this call every
-        //       time the jacobian is needed since coloring is expensive and we are throwing away the caching
-        //       power of CppAD by clearing the work vector each time. We do this since we make a new subset every
-        //       time. However, a better solution would be to make the subset stateful so it only changes if the requested
-        //       sparsity pattern changes. This way we could reuse the work vector.
-        m_jac_work.clear();
+        // --- Check cache for existing subset ---
+        if (!m_jacobianSubsetCache.contains(sparsity_hash)) {
+            m_jacobianSubsetCache.emplace(sparsity_hash, CppAD_sparsity_pattern);
+            m_jac_work.clear();
+        } else {
+            if (m_jacWorkCache.contains(sparsity_hash)) {
+                m_jac_work.clear();
+                m_jac_work = m_jacWorkCache.at(sparsity_hash);
+            }
+        }
+        auto& jac_subset = m_jacobianSubsetCache.at(sparsity_hash);
         m_rhsADFun.sparse_jac_rev(
             x,
             jac_subset, // Sparse Jacobian output
@@ -1094,6 +1100,11 @@ namespace gridfire::engine {
             "cppad",
             m_jac_work // Work vector for CppAD
         );
+
+        // --- Stash the now populated work vector in the cache if not already present ---
+        if (!m_jacWorkCache.contains(sparsity_hash)) {
+            m_jacWorkCache.emplace(sparsity_hash, m_jac_work);
+        }
 
         Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
         std::vector<Eigen::Triplet<double> > triplets;
@@ -1391,6 +1402,7 @@ namespace gridfire::engine {
         dependentVector.push_back(result.nuclearEnergyGenerationRate);
 
         m_rhsADFun.Dependent(adInput, dependentVector);
+        m_rhsADFun.optimize();
 
         LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.", adInput.size());
     }
@@ -1400,7 +1412,7 @@ namespace gridfire::engine {
         m_atomicReverseRates.reserve(m_reactions.size());
 
         for (const auto& reaction: m_reactions) {
-            if (reaction->qValue() != 0.0) {
+            if (reaction->qValue() != 0.0 and m_useReverseReactions) {
                 m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(*reaction, *this));
             } else {
                 m_atomicReverseRates.push_back(nullptr);

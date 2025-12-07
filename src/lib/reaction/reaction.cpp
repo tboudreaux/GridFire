@@ -185,7 +185,11 @@ namespace gridfire::reaction {
     }
 
     uint64_t ReaclibReaction::hash(const uint64_t seed) const {
-        return XXHash64::hash(m_id.data(), m_id.size(), seed);
+        if (m_hashCache.has_value()) {
+            return m_hashCache.value();
+        }
+        m_hashCache = XXHash64::hash(m_id.data(), m_id.size(), seed);
+        return m_hashCache.value();
     }
 
     std::unique_ptr<Reaction> ReaclibReaction::clone() const {
@@ -416,6 +420,7 @@ namespace gridfire::reaction {
             std::swap(m_reactions, temp.m_reactions);
             std::swap(m_reactionNameMap, temp.m_reactionNameMap);
         }
+        m_hashCache = std::nullopt;
         return *this;
     }
 
@@ -430,6 +435,7 @@ namespace gridfire::reaction {
         m_reactionNameMap.emplace(std::move(reaction_id), new_index);
 
         m_reactionHashes.insert(reaction.hash(0));
+        m_hashCache = std::nullopt;
     }
 
     void ReactionSet::add_reaction(std::unique_ptr<Reaction>&& reaction) {
@@ -445,6 +451,7 @@ namespace gridfire::reaction {
         m_reactionNameMap.emplace(std::move(reaction_id), new_index);
 
         m_reactionHashes.insert(reaction_hash);
+        m_hashCache = std::nullopt;
     }
 
     void ReactionSet::extend(const ReactionSet &other) {
@@ -482,6 +489,7 @@ namespace gridfire::reaction {
         }
 
         m_reactionHashes.erase(rh);
+        m_hashCache = std::nullopt;
     }
 
     bool ReactionSet::contains(const std::string_view& id) const {
@@ -496,6 +504,7 @@ namespace gridfire::reaction {
     void ReactionSet::clear() {
         m_reactions.clear();
         m_reactionNameMap.clear();
+        m_hashCache = std::nullopt;
     }
 
     bool ReactionSet::contains_species(const Species& species) const {
@@ -554,6 +563,9 @@ namespace gridfire::reaction {
     }
 
     uint64_t ReactionSet::hash(const uint64_t seed) const {
+        if (m_hashCache.has_value()) {
+            return m_hashCache.value();
+        }
         if (m_reactions.empty()) {
             return XXHash64::hash(nullptr, 0, seed);
         }
@@ -567,7 +579,8 @@ namespace gridfire::reaction {
 
         const auto data = static_cast<const void*>(individualReactionHashes.data());
         const size_t sizeInBytes = individualReactionHashes.size() * sizeof(uint64_t);
-        return XXHash64::hash(data, sizeInBytes, seed);
+        m_hashCache = XXHash64::hash(data, sizeInBytes, seed);
+        return m_hashCache.value();
     }
 
     std::unordered_set<Species> ReactionSet::getReactionSetSpecies() const {

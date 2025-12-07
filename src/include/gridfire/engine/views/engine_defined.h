@@ -39,6 +39,7 @@ namespace gridfire::engine {
          * @param comp A Composition object containing the current composition of the system
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
+         * @param trust
          * @return A StepDerivatives struct containing the derivatives of the active species and the
          *         nuclear energy generation rate.
          *
@@ -47,7 +48,8 @@ namespace gridfire::engine {
         [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
-            double rho
+            double rho,
+            bool trust
         ) const override;
 
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(

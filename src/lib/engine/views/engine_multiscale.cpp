@@ -216,7 +216,8 @@ namespace gridfire::engine {
     std::expected<StepDerivatives<double>, EngineStatus> MultiscalePartitioningEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho,
+        bool trust
     ) const {
         LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in MultiscalePartitioningEngineView at T9 = {}, rho = {}.", T9, rho);
         LOG_TRACE_L2(m_logger, "Input composition is {}", [&comp]() -> std::string {
@@ -231,7 +232,8 @@ namespace gridfire::engine {
             }
             return ss.str();
         }());
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        // TODO: Figure out why setting trust -> trust causes issues. The only place I think I am setting that to true is in AdaptiveEngineView which has just called getNormalizedEquilibratedComposition...
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         LOG_TRACE_L2(m_logger, "Equilibrated composition prior to calling base engine is {}", [&qseComposition, &comp]() -> std::string {
             std::stringstream ss;
             size_t i = 0;
@@ -248,7 +250,7 @@ namespace gridfire::engine {
             return ss.str();
         }());
 
-        const auto result = m_baseEngine.calculateRHSAndEnergy(qseComposition, T9, rho);
+        const auto result = m_baseEngine.calculateRHSAndEnergy(qseComposition, T9, rho, false);
         LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
@@ -271,7 +273,7 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         return m_baseEngine.calculateEpsDerivatives(qseComposition, T9, rho);
     }
 
@@ -280,7 +282,7 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, m_dynamic_species);
     }
 
@@ -318,7 +320,7 @@ namespace gridfire::engine {
             }
         }
 
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
 
         return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, dynamicActiveSpeciesIntersection);
     }
@@ -329,7 +331,7 @@ namespace gridfire::engine {
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         return m_baseEngine.generateJacobianMatrix(qseComposition, T9, rho, sparsityPattern);
     }
 
@@ -350,7 +352,7 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
 
         return m_baseEngine.calculateMolarReactionFlow(reaction, qseComposition, T9, rho);
     }
@@ -369,7 +371,7 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         const auto result  = m_baseEngine.getSpeciesTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
@@ -386,7 +388,7 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         const auto result = m_baseEngine.getSpeciesDestructionTimescales(qseComposition, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
@@ -803,7 +805,7 @@ namespace gridfire::engine {
         LOG_TRACE_L1(m_logger, "{} QSE solvers created.", m_qse_solvers.size());
 
         LOG_TRACE_L1(m_logger, "Calculating final equilibrated composition...");
-        fourdst::composition::Composition result = getNormalizedEquilibratedComposition(comp, T9, rho);
+        fourdst::composition::Composition result = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         LOG_TRACE_L1(m_logger, "Final equilibrated composition calculated...");
 
         return result;
@@ -836,7 +838,7 @@ namespace gridfire::engine {
             }
         }
 
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
         // Calculate reaction flows and find min/max for logarithmic scaling of transparency
         std::vector<double> reaction_flows;
         reaction_flows.reserve(all_reactions.size());
@@ -1072,8 +1074,12 @@ namespace gridfire::engine {
     fourdst::composition::Composition MultiscalePartitioningEngineView::getNormalizedEquilibratedComposition(
         const fourdst::composition::CompositionAbstract& comp,
         const double T9,
-        const double rho
+        const double rho,
+        const bool trust
     ) const {
+        if (trust) {
+            return fourdst::composition::Composition(comp);
+        }
         // Caching mechanism to avoid redundant QSE solves
         const std::array<uint64_t, 3> hashes = {
             fourdst::composition::utils::CompositionHash::hash_exact(comp),
@@ -1108,7 +1114,7 @@ namespace gridfire::engine {
     ) const {
         const fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
 
-        fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(result, T9, rho);
+        fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(result, T9, rho, false);
 
         return qseComposition;
     }
@@ -1893,7 +1899,7 @@ namespace gridfire::engine {
             scale_data[i] = 1.0 / Y;
         }
 
-        auto initial_rhs = m_engine.calculateRHSAndEnergy(result, T9, rho);
+        auto initial_rhs = m_engine.calculateRHSAndEnergy(result, T9, rho, false);
         if (!initial_rhs) {
             throw std::runtime_error("In QSE solver failed to calculate initial RHS");
         }
@@ -2068,7 +2074,7 @@ namespace gridfire::engine {
             data->comp.setMolarAbundance(species, y_data[index]);
         }
 
-        const auto result = data->engine.calculateRHSAndEnergy(data->comp, data->T9, data->rho);
+        const auto result = data->engine.calculateRHSAndEnergy(data->comp, data->T9, data->rho, false);
 
         if (!result) {
             return 1; // Potentially recoverable error

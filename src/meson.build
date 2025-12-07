@@ -42,6 +42,10 @@ gridfire_build_dependencies = [
     json_dep,
 ]
 
+if get_option('use_mimalloc')
+    gridfire_build_dependencies += [mimalloc_dep]
+endif
+
 if get_option('plugin_support')
     gridfire_build_dependencies += [plugin_dep]
 endif

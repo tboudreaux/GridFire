@@ -15,3 +15,7 @@ subdir('json')
 
 
 subdir('CLI11')
+
+if get_option('use_mimalloc')
+  subdir('mimalloc')
+endif

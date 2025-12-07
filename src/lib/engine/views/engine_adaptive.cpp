@@ -7,6 +7,7 @@
 
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_engine.h"
+#include "gridfire/utils/hashing.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
@@ -80,7 +81,7 @@ namespace gridfire::engine {
     std::expected<StepDerivatives<double>, EngineStatus> AdaptiveEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho, bool trust
     ) const {
         LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in AdaptiveEngineView at T9 = {}, rho = {}.", T9, rho);
         validateState();
@@ -99,7 +100,14 @@ namespace gridfire::engine {
                 }
                 return ss.str();
             }());
-        fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
+        fourdst::composition::Composition collectedComp;
+        std::size_t state_hash = utils::hash_state(comp, T9, rho, m_activeReactions);
+        if (m_collected_composition_cache.contains(state_hash)) {
+            collectedComp = m_collected_composition_cache.at(state_hash);
+        } else {
+            collectedComp = collectComposition(comp, T9, rho);
+            m_collected_composition_cache[state_hash] = collectedComp;
+        }
         LOG_TRACE_L2(
             m_logger,
             "Composition Collected prior to passing to base engine. Collected Composition: {}",
@@ -118,7 +126,7 @@ namespace gridfire::engine {
                 }
                 return ss.str();
             }());
-        auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho);
+        auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho, true);
         LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {

@@ -43,7 +43,7 @@ namespace gridfire::engine {
     std::expected<StepDerivatives<double>, EngineStatus> DefinedEngineView::calculateRHSAndEnergy(
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho, bool trust
     ) const {
         validateNetworkState();
 

@@ -126,6 +126,7 @@ namespace gridfire::solver {
          * @brief Call to evaluate which will let the user control if the trigger reasoning is displayed
          * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.
          * @param displayTrigger Boolean flag to control if trigger reasoning is displayed
+         * @param forceReinitialize Boolean flag to force reinitialization of CVODE resources at the start
          * @return NetOut containing final Composition, accumulated energy [erg/g], step count,
          *         and dEps/dT, dEps/dRho.
          * @throws std::runtime_error If any CVODE or SUNDIALS call fails (negative return codes),
@@ -133,7 +134,7 @@ namespace gridfire::solver {
          * @throws exceptions::StaleEngineTrigger Propagated if the engine signals a stale state
          *         during RHS evaluation (captured in the wrapper then rethrown here).
          */
-        NetOut evaluate(const NetIn& netIn, bool displayTrigger);
+        NetOut evaluate(const NetIn& netIn, bool displayTrigger, bool forceReinitialize = false);
 
         /**
          * @brief Install a timestep callback.
@@ -324,5 +325,9 @@ namespace gridfire::solver {
         std::optional<double> m_relTol;        ///< User-specified relative tolerance.
 
         bool m_detailed_step_logging = false;    ///< If true, log detailed step diagnostics (error ratios, Jacobian, species balance).
+
+        mutable size_t m_last_size = 0;
+        mutable size_t m_last_composition_hash = 0ULL;
+        mutable sunrealtype m_last_good_time_step = 0ULL;
     };
 }

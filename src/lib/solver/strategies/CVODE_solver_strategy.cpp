@@ -97,7 +97,8 @@ namespace gridfire::solver {
 
     NetOut CVODESolverStrategy::evaluate(
         const NetIn &netIn,
-        bool displayTrigger
+        bool displayTrigger,
+        bool forceReinitialize
     ) {
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
@@ -122,20 +123,54 @@ namespace gridfire::solver {
             relTol = *m_relTol;
         }
 
-        LOG_TRACE_L1(m_logger, "Starting engine update chain...");
-        fourdst::composition::Composition equilibratedComposition = m_engine.update(netIn);
-        LOG_TRACE_L1(m_logger, "Engine updated and equilibrated composition found!");
+        bool resourcesExist = (m_cvode_mem != nullptr) && (m_Y != nullptr);
+
+        bool inconsistentComposition = netIn.composition.hash() != m_last_composition_hash;
+        fourdst::composition::Composition equilibratedComposition;
+
+        if (forceReinitialize || !resourcesExist || inconsistentComposition) {
+            cleanup_cvode_resources(true);
+            LOG_INFO(
+                m_logger,
+                "Preforming full CVODE initialization (Reason: {})",
+                forceReinitialize ? "Forced reinitialization" :
+                        (!resourcesExist ? "CVODE resources do not exist" :
+                            "Input composition inconsistent with previous state"));
+            LOG_TRACE_L1(m_logger, "Starting engine update chain...");
+            equilibratedComposition = m_engine.update(netIn);
+            LOG_TRACE_L1(m_logger, "Engine updated and equilibrated composition found!");
+
+            size_t numSpecies = m_engine.getNetworkSpecies().size();
+            uint64_t N = numSpecies + 1;
+
+            LOG_TRACE_L1(m_logger, "Number of species: {} ({} independent variables)", numSpecies, N);
+            LOG_TRACE_L1(m_logger, "Initializing CVODE resources");
+            m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
+            utils::check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
+
+            initialize_cvode_integration_resources(N, numSpecies, 0.0, equilibratedComposition, absTol, relTol, 0.0);
+            m_last_size = N;
+        } else {
+            LOG_INFO(m_logger, "Reusing existing CVODE resources (size: {})", m_last_size);
+
+            const size_t numSpecies = m_engine.getNetworkSpecies().size();
+            sunrealtype *y_data = N_VGetArrayPointer(m_Y);
+            for (size_t i = 0; i < numSpecies; i++) {
+                const auto& species = m_engine.getNetworkSpecies()[i];
+                if (netIn.composition.contains(species)) {
+                    y_data[i] = netIn.composition.getMolarAbundance(species);
+                } else {
+                    y_data[i] = std::numeric_limits<double>::min();
+                }
+            }
+            y_data[numSpecies] = 0.0; // Reset energy accumulator
+            utils::check_cvode_flag(CVodeSStolerances(m_cvode_mem, relTol, absTol), "CVodeSStolerances");
+            utils::check_cvode_flag(CVodeReInit(m_cvode_mem, 0.0, m_Y), "CVodeReInit");
+
+            equilibratedComposition = netIn.composition; // Use the provided composition as-is if we already have validated CVODE resources and that the composition is consistent with the previous state
+        }
 
         size_t numSpecies = m_engine.getNetworkSpecies().size();
-        uint64_t N = numSpecies + 1;
-
-        LOG_TRACE_L1(m_logger, "Number of species: {} ({} independent variables)", numSpecies, N);
-        LOG_TRACE_L1(m_logger, "Initializing CVODE resources");
-        m_cvode_mem = CVodeCreate(CV_BDF, m_sun_ctx);
-        utils::check_cvode_flag(m_cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
-
-        initialize_cvode_integration_resources(N, numSpecies, 0.0, equilibratedComposition, absTol, relTol, 0.0);
-
         CVODEUserData user_data;
         user_data.solver_instance = this;
         user_data.engine = &m_engine;
@@ -217,16 +252,16 @@ namespace gridfire::solver {
                     postStep.setMolarAbundance(species, y_data[i]);
                 }
             }
-            fourdst::composition::Composition collectedComposition = m_engine.collectComposition(postStep, netIn.temperature/1e9, netIn.density);
-            for (size_t i = 0; i < numSpecies; ++i) {
-                y_data[i] = collectedComposition.getMolarAbundance(m_engine.getNetworkSpecies()[i]);
-            }
+            // fourdst::composition::Composition collectedComposition = m_engine.collectComposition(postStep, netIn.temperature/1e9, netIn.density);
+            // for (size_t i = 0; i < numSpecies; ++i) {
+            //     y_data[i] = collectedComposition.getMolarAbundance(m_engine.getNetworkSpecies()[i]);
+            // }
             LOG_INFO(m_logger, "Completed {:5} steps to time {:10.4E} [s] (dt = {:15.6E} [s]). Current specific energy: {:15.6E} [erg/g]", total_steps + n_steps, current_time, last_step_size, current_energy);
             LOG_DEBUG(m_logger, "Current composition (molar abundance): {}", [&]() -> std::string {
                 std::stringstream ss;
                 for (size_t i = 0; i < numSpecies; ++i) {
                     const auto& species = m_engine.getNetworkSpecies()[i];
-                    ss << species.name() << ": (y_data = " << y_data[i] << ", collected = " << collectedComposition.getMolarAbundance(species) << ")";
+                    ss << species.name() << ": (y_data = " << y_data[i] << ", collected = " << postStep.getMolarAbundance(species) << ")";
                     if (i < numSpecies - 1) {
                         ss << ", ";
                     }
@@ -428,7 +463,7 @@ namespace gridfire::solver {
                 );
 
                 numSpecies = m_engine.getNetworkSpecies().size();
-                N = numSpecies + 1;
+                size_t N = numSpecies + 1;
 
                 LOG_INFO(m_logger, "Starting CVODE reinitialization after engine update...");
                 cleanup_cvode_resources(true);
@@ -516,7 +551,9 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Output data built!");
         LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 
-
+        m_last_composition_hash = netOut.composition.hash();
+        m_last_size = netOut.composition.size() + 1;
+        CVodeGetLastStep(m_cvode_mem, &m_last_good_time_step);
         return netOut;
     }
 
@@ -730,7 +767,7 @@ namespace gridfire::solver {
         fourdst::composition::Composition composition(m_engine.getNetworkSpecies(), y_vec);
 
         LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition", t, composition.size());
-        const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho);
+        const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho, false);
         if (!result) {
             LOG_CRITICAL(m_logger, "Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error()));
             throw exceptions::BadRHSEngineError(std::format("Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error())));
