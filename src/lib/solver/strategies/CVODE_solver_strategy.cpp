@@ -74,7 +74,7 @@ namespace gridfire::solver {
     }
 
 
-    CVODESolverStrategy::CVODESolverStrategy(DynamicEngine &engine): NetworkSolverStrategy<DynamicEngine>(engine) {
+    CVODESolverStrategy::CVODESolverStrategy(DynamicEngine &engine): SingleZoneNetworkSolverStrategy<DynamicEngine>(engine) {
         // TODO: In order to support MPI this function must be changed
         const int flag = SUNContext_Create(SUN_COMM_NULL, &m_sun_ctx);
         if (flag < 0) {

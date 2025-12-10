@@ -85,47 +85,9 @@ namespace gridfire::engine {
     ) const {
         LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in AdaptiveEngineView at T9 = {}, rho = {}.", T9, rho);
         validateState();
-        LOG_TRACE_L2(
-            m_logger,
-            "Adaptive engine view state validated prior to composition collection. Input Composition: {}",
-            [&comp]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                for (const auto& [species, abundance] : comp) {
-                    ss << species.name() << ": " << abundance;
-                    if (i < comp.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                return ss.str();
-            }());
-        fourdst::composition::Composition collectedComp;
-        std::size_t state_hash = utils::hash_state(comp, T9, rho, m_activeReactions);
-        if (m_collected_composition_cache.contains(state_hash)) {
-            collectedComp = m_collected_composition_cache.at(state_hash);
-        } else {
-            collectedComp = collectComposition(comp, T9, rho);
-            m_collected_composition_cache[state_hash] = collectedComp;
-        }
-        LOG_TRACE_L2(
-            m_logger,
-            "Composition Collected prior to passing to base engine. Collected Composition: {}",
-            [&comp, &collectedComp]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                for (const auto& [species, abundance] : collectedComp) {
-                    ss << species.name() << ": " << abundance;
-                    if (comp.contains(species)) {
-                        ss << " (input: " << comp.getMolarAbundance(species) << ")";
-                    }
-                    if (i < collectedComp.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                return ss.str();
-            }());
+
+        const fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
+
         auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho, true);
         LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 

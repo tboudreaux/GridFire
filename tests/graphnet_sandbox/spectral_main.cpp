@@ -36,11 +36,12 @@ std::vector<double> linspace(const double start, const double end, const size_t 
     return result;
 }
 
-std::vector<gridfire::NetIn> init(const double tMin, const double tMax, const double rhoMin, const double rhoMax, const double nShells, const double tMax) {
+std::vector<gridfire::NetIn> init(const double tMin, const double tMax, const double rhoMin, const double rhoMax, const double nShells, const double evolveTime) {
     std::setlocale(LC_ALL, "");
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
     logger->set_log_level(quill::LogLevel::TraceL2);
+    LOG_INFO(logger, "Initializing GridFire Spectral Solver Sandbox...");
 
     using namespace gridfire;
     const std::vector<double> X            = {0.7081145999999999, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
@@ -57,7 +58,7 @@ std::vector<gridfire::NetIn> init(const double tMin, const double tMax, const do
         netIn.density = ρ;
         netIn.energy = 0;
 
-        netIn.tMax = tMax;
+        netIn.tMax = evolveTime;
         netIn.dt0 = 1e-12;
 
         netIns.push_back(netIn);
@@ -83,19 +84,19 @@ int main(int argc, char** argv) {
     double tMax = 2.5e7;
     double rhoMin = 1.0e2;
     double rhoMax = 1.0e4;
-    double nShells = 500;
-    double tMax = 3.1536e+16;
+    double nShells = 5;
+    double evolveTime = 3.1536e+16;
 
     app.add_option("--tMin", tMin, "Minimum time in seconds");
     app.add_option("--tMax", tMax, "Maximum time in seconds");
     app.add_option("--rhoMin", rhoMin, "Minimum density in g/cm^3");
     app.add_option("--rhoMax", rhoMax, "Maximum density in g/cm^3");
     app.add_option("--nShells", nShells, "Number of shells");
-    app.add_option("--tMax", tMax, "Maximum time in seconds");
+    app.add_option("--evolveTime", evolveTime, "Maximum time in seconds");
 
     CLI11_PARSE(app, argc, argv);
 
-    std::vector<NetIn> netIns = init(tMin, tMax, rhoMin, rhoMax, nShells, tMax);
+    const std::vector<NetIn> netIns = init(tMin, tMax, rhoMin, rhoMax, nShells, evolveTime);
 
     policy::MainSequencePolicy stellarPolicy(netIns[0].composition);
     stellarPolicy.construct();

@@ -232,8 +232,7 @@ namespace gridfire::engine {
             }
             return ss.str();
         }());
-        // TODO: Figure out why setting trust -> trust causes issues. The only place I think I am setting that to true is in AdaptiveEngineView which has just called getNormalizedEquilibratedComposition...
-        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, false);
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(comp, T9, rho, trust);
         LOG_TRACE_L2(m_logger, "Equilibrated composition prior to calling base engine is {}", [&qseComposition, &comp]() -> std::string {
             std::stringstream ss;
             size_t i = 0;
@@ -1095,13 +1094,8 @@ namespace gridfire::engine {
         LOG_TRACE_L3(m_logger, "Cache Miss in Multiscale Partitioning Engine View for composition at T9 = {}, rho = {}. Solving QSE abundances...", T9, rho);
 
         // Only solve if the composition and thermodynamic conditions have not been cached yet
-        fourdst::composition::Composition qseComposition = solveQSEAbundances(comp, T9, rho);
+        fourdst::composition::Composition qseComposition(solveQSEAbundances(comp, T9, rho));
 
-        for (const auto &[sp, y]: qseComposition) {
-            if (y < 0.0 && std::abs(y) < 1e-20) {
-                qseComposition.setMolarAbundance(sp, 0.0); // normalize small negative abundances to zero
-            }
-        }
         m_composition_cache[composite_hash] = qseComposition;
 
         return qseComposition;
@@ -1530,8 +1524,13 @@ namespace gridfire::engine {
 
         fourdst::composition::Composition outputComposition(comp);
 
+        std::vector<Species> species;
+        std::vector<double> abundances;
+        species.reserve(m_algebraic_species.size());
+        abundances.reserve(m_algebraic_species.size());
+
         for (const auto& [group, solver]: std::views::zip(m_qse_groups, m_qse_solvers)) {
-            const fourdst::composition::Composition groupResult = solver->solve(outputComposition, T9, rho);
+            const fourdst::composition::Composition& groupResult = solver->solve(outputComposition, T9, rho);
             for (const auto& [sp, y] : groupResult) {
                 if (!std::isfinite(y)) {
                     LOG_CRITICAL(m_logger, "Non-finite abundance {} computed for species {} in QSE group solve at T9 = {}, rho = {}.",
@@ -1539,10 +1538,16 @@ namespace gridfire::engine {
                     m_logger->flush_log();
                     throw exceptions::EngineError("Non-finite abundance computed for species " + std::string(sp.name()) + " in QSE group solve.");
                 }
-                outputComposition.setMolarAbundance(sp, y);
+                if (y < 0.0 && std::abs(y) < 1e-20) {
+                    abundances.push_back(0.0);
+                } else {
+                    abundances.push_back(y);
+                }
+                species.emplace_back(sp);
             }
-            solver->log_diagnostics(group, outputComposition);
+            // solver->log_diagnostics(group, outputComposition);
         }
+        outputComposition.setMolarAbundance(species, abundances);
         LOG_TRACE_L2(m_logger, "Done solving for QSE abundances!");
         return outputComposition;
     }
@@ -1821,7 +1826,7 @@ namespace gridfire::engine {
 
         utils::check_sundials_flag(KINSetMaxSetupCalls(m_kinsol_mem, 20), "KINSetMaxSetupCalls", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
-        utils::check_sundials_flag(KINSetFuncNormTol(m_kinsol_mem, 1e-6), "KINSetFuncNormTol", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
+        utils::check_sundials_flag(KINSetFuncNormTol(m_kinsol_mem, 1e-8), "KINSetFuncNormTol", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
         utils::check_sundials_flag(KINSetNumMaxIters(m_kinsol_mem, 200), "KINSetNumMaxIters", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
 
         utils::check_sundials_flag(KINSetScaledStepTol(m_kinsol_mem, 1e-10), "KINSetScaledStepTol", utils::SUNDIALS_RET_CODE_TYPES::KINSOL);
@@ -1899,15 +1904,22 @@ namespace gridfire::engine {
             scale_data[i] = 1.0 / Y;
         }
 
-        auto initial_rhs = m_engine.calculateRHSAndEnergy(result, T9, rho, false);
-        if (!initial_rhs) {
-            throw std::runtime_error("In QSE solver failed to calculate initial RHS");
+        StepDerivatives<double> rhsGuess;
+        auto cached_rhs = m_engine.getMostRecentRHSCalculation();
+        if (!cached_rhs) {
+            const auto initial_rhs = m_engine.calculateRHSAndEnergy(result, T9, rho, false);
+            if (!initial_rhs) {
+                throw std::runtime_error("In QSE solver failed to calculate initial RHS for caching");
+            }
+            rhsGuess = initial_rhs.value();
+        } else {
+            rhsGuess = cached_rhs.value();
         }
 
         sunrealtype* f_scale_data = N_VGetArrayPointer(m_f_scale);
         for (size_t i = 0; i < m_N; ++i) {
             const auto& species = m_species[i];
-            double dydt = std::abs(initial_rhs.value().dydt.at(species));
+            double dydt = std::abs(rhsGuess.dydt.at(species));
             f_scale_data[i] = 1.0 / (dydt + 1e-15);
         }
 

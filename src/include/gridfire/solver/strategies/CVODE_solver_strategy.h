@@ -37,7 +37,6 @@
 #ifdef SUNDIALS_HAVE_PTHREADS
     #include <nvector/nvector_pthreads.hh>
 #endif
-// Default to serial if no parallelism is enabled
 #ifndef SUNDIALS_HAVE_OPENMP
     #ifndef SUNDIALS_HAVE_PTHREADS
         #include <nvector/nvector_serial.h>
@@ -79,7 +78,7 @@ namespace gridfire::solver {
      * std::cout << "Final energy: " << out.energy << " erg/g\n";
      * @endcode
      */
-    class CVODESolverStrategy final : public DynamicNetworkSolverStrategy {
+    class CVODESolverStrategy final : public SingleZoneDynamicNetworkSolverStrategy {
     public:
         /**
          * @brief Construct the CVODE strategy and create a SUNDIALS context.

@@ -147,6 +147,7 @@ namespace gridfire::engine {
     ) const {
         LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
+        const std::vector<double> molarAbundances = comp.getMolarAbundanceVector();
         if (m_usePrecomputation) {
             const std::size_t state_hash = utils::hash_state(comp, T9, rho, activeReactions);
             if (m_stepDerivativesCache.contains(state_hash)) {
@@ -158,9 +159,10 @@ namespace gridfire::engine {
             bare_rates.reserve(activeReactions.size());
             bare_reverse_rates.reserve(activeReactions.size());
 
+
             for (const auto& reaction: activeReactions) {
                 assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
-                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
+                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
                 if (reaction->type() != reaction::ReactionType::WEAK) {
                     bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
                 }
@@ -171,11 +173,12 @@ namespace gridfire::engine {
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
             StepDerivatives<double> result =  calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
             m_stepDerivativesCache.insert(std::make_pair(state_hash, result));
+            m_most_recent_rhs_calculation = result;
             return result;
         } else {
             LOG_TRACE_L2(m_logger, "Not using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             StepDerivatives<double> result = calculateAllDerivatives<double>(
-                comp.getMolarAbundanceVector(),
+                molarAbundances,
                 T9,
                 rho,
                 Ye,
@@ -191,6 +194,7 @@ namespace gridfire::engine {
                     return false;
                 }
             );
+            m_most_recent_rhs_calculation = result;
             return result;
         }
     }
@@ -435,7 +439,8 @@ namespace gridfire::engine {
             double factor;
             if (power == 1) { factor = abundance; }
             else if (power == 2)  { factor = abundance * abundance; }
-            else { factor = std::pow(abundance, power); }
+            else if (power == 3)  { factor = abundance * abundance * abundance; }
+            else { factor = std::pow(abundance, static_cast<double>(power)); }
 
             if (!std::isfinite(factor)) {
                 LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction.id());
@@ -527,10 +532,13 @@ namespace gridfire::engine {
         molarReactionFlows.reserve(m_precomputedReactions.size());
 
         size_t reactionCounter = 0;
+        std::vector<size_t> reactionIndices;
+        reactionIndices.reserve(m_precomputedReactions.size());
 
         for (const auto& reaction : activeReactions) {
-            uint64_t reactionHash = utils::hash_reaction(*reaction);
+            uint64_t reactionHash = reaction->hash(0);
             const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
+            reactionIndices.push_back(reactionIndex);
             const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
 
             double netFlow = compute_reaction_flow(
@@ -556,8 +564,7 @@ namespace gridfire::engine {
         LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         reactionCounter = 0;
-        for (const auto& reaction: activeReactions) {
-            const size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
+        for (const auto& [reaction, j]: std::views::zip(activeReactions, reactionIndices)) {
             const auto& precomp = m_precomputedReactions[j];
             const double R_j = molarReactionFlows[reactionCounter];
 
@@ -826,6 +833,13 @@ namespace gridfire::engine {
         }
         return SpeciesStatus::NOT_PRESENT;
 
+    }
+
+    std::optional<StepDerivatives<double>> GraphEngine::getMostRecentRHSCalculation() const {
+        if (!m_most_recent_rhs_calculation.has_value()) {
+            return std::nullopt;
+        }
+        return m_most_recent_rhs_calculation.value();
     }
 
 
@@ -1439,7 +1453,7 @@ namespace gridfire::engine {
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
             precomp.reaction_type = reaction.type();
-            uint64_t reactionHash = utils::hash_reaction(reaction);
+            uint64_t reactionHash = reaction.hash(0);
 
             precomp.reaction_hash = reactionHash;
             m_precomputedReactionIndexMap[reactionHash] = i;
@@ -1617,7 +1631,7 @@ namespace gridfire::engine {
         for (size_t k = 0; k < activeReactions.size(); ++k) {
             int t_id = omp_get_thread_num();
             const auto& reaction = activeReactions[k];
-            const size_t reactionIndex = m_precomputedReactionIndexMap.at(utils::hash_reaction(reaction));
+            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reaction.hash(0));
             const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
 
             double netFlow = compute_reaction_flow(

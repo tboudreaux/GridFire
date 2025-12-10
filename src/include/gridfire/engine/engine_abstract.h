@@ -514,5 +514,9 @@ namespace gridfire::engine {
          */
         [[nodiscard]] virtual SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species& species) const = 0;
 
+        [[nodiscard]] virtual std::optional<StepDerivatives<double>> getMostRecentRHSCalculation() const {
+            return std::nullopt;
+        }
+
     };
 }

@@ -16,6 +16,7 @@ gridfire_sources = files(
     'lib/io/network_file.cpp',
     'lib/io/generative/python.cpp',
     'lib/solver/strategies/CVODE_solver_strategy.cpp',
+    'lib/solver/strategies/SpectralSolverStrategy.cpp',
     'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',
@@ -40,6 +41,7 @@ gridfire_build_dependencies = [
     eigen_dep,
     sundials_dep,
     json_dep,
+    uod_dep,
 ]
 
 if get_option('use_mimalloc')

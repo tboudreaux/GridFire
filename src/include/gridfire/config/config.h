@@ -8,8 +8,27 @@ namespace gridfire::config {
         double relTol = 1.0e-5;
     };
 
+
+    struct SpectralSolverConfig {
+        struct MonitorFunctionConfig {
+            double structure_weight = 1.0;
+            double abundance_weight = 10.0;
+            double alpha = 0.2;
+            double beta = 0.8;
+        };
+        struct BasisConfig {
+            size_t num_elements = 50;
+        };
+        double absTol = 1.0e-8;
+        double relTol = 1.0e-5;
+        size_t degree = 3;
+        MonitorFunctionConfig monitorFunction;
+        BasisConfig basis;
+    };
+
     struct SolverConfig {
         CVODESolverConfig cvode;
+        SpectralSolverConfig spectral;
     };
 
     struct AdaptiveEngineViewConfig {

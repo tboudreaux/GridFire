@@ -10,6 +10,9 @@
 #include <string>
 
 namespace gridfire::solver {
+    template <typename EngineT>
+    concept IsEngine = std::is_base_of_v<engine::Engine, EngineT>;
+
     /**
      * @struct SolverContextBase
      * @brief Base class for solver callback contexts.
@@ -34,7 +37,7 @@ namespace gridfire::solver {
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
     };
     /**
-     * @class NetworkSolverStrategy
+     * @class SingleZoneNetworkSolverStrategy
      * @brief Abstract base class for network solver strategies.
      *
      * This class defines the interface for network solver strategies, which are responsible
@@ -43,19 +46,19 @@ namespace gridfire::solver {
      *
      * @tparam EngineT The type of engine to use with this solver strategy.  Must inherit from Engine.
      */
-    template <typename EngineT>
-    class NetworkSolverStrategy {
+    template <IsEngine EngineT>
+    class SingleZoneNetworkSolverStrategy {
     public:
         /**
          * @brief Constructor for the NetworkSolverStrategy.
          * @param engine The engine to use for evaluating the network.
          */
-        explicit NetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
+        explicit SingleZoneNetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
 
         /**
          * @brief Virtual destructor.
          */
-        virtual ~NetworkSolverStrategy() = default;
+        virtual ~SingleZoneNetworkSolverStrategy() = default;
 
         /**
          * @brief Evaluates the network for a given timestep.
@@ -92,8 +95,25 @@ namespace gridfire::solver {
         EngineT& m_engine; ///< The engine used by this solver strategy.
     };
 
+    template <IsEngine EngineT>
+    class MultiZoneNetworkSolverStrategy {
+    public:
+        explicit MultiZoneNetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
+        virtual ~MultiZoneNetworkSolverStrategy() = default;
+
+        virtual std::vector<NetOut> evaluate(
+            const std::vector<NetIn>& netIns,
+            const std::vector<double>& mass_coords
+        ) = 0;
+        virtual void set_callback(const std::any& callback) = 0;
+        [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
+    protected:
+        EngineT& m_engine; ///< The engine used by this solver strategy.
+    };
+
     /**
      * @brief Type alias for a network solver strategy that uses a DynamicEngine.
      */
-    using DynamicNetworkSolverStrategy = NetworkSolverStrategy<engine::DynamicEngine>;
+    using SingleZoneDynamicNetworkSolverStrategy = SingleZoneNetworkSolverStrategy<engine::DynamicEngine>;
+    using MultiZoneDynamicNetworkSolverStrategy = MultiZoneNetworkSolverStrategy<engine::DynamicEngine>;
 }

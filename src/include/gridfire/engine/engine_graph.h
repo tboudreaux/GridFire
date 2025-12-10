@@ -14,6 +14,8 @@
 #include "gridfire/engine/procedures/construction.h"
 #include "gridfire/config/config.h"
 
+#include "ankerl/unordered_dense.h"
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -764,6 +766,8 @@ namespace gridfire::engine {
             m_store_intermediate_reaction_contributions = value;
         }
 
+        [[nodiscard]] std::optional<StepDerivatives<double>> getMostRecentRHSCalculation() const override;
+
 
     private:
         struct PrecomputedReaction {
@@ -887,6 +891,7 @@ namespace gridfire::engine {
         mutable std::unordered_map<size_t, StepDerivatives<double>> m_stepDerivativesCache;
         mutable std::unordered_map<size_t, CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>>> m_jacobianSubsetCache;
         mutable std::unordered_map<size_t, CppAD::sparse_jac_work> m_jacWorkCache;
+        mutable std::optional<StepDerivatives<double>> m_most_recent_rhs_calculation;
 
         bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
 

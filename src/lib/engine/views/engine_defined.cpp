@@ -15,8 +15,6 @@
 #include <unordered_map>
 #include <utility>
 
-#include "fourdst/composition/exceptions/exceptions_composition.h"
-
 namespace gridfire::engine {
     using fourdst::atomic::Species;
 
@@ -47,7 +45,7 @@ namespace gridfire::engine {
     ) const {
         validateNetworkState();
 
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
         const auto result = m_baseEngine.calculateRHSAndEnergy(masked, T9, rho, m_activeReactions);
 
         if (!result) {
@@ -64,7 +62,7 @@ namespace gridfire::engine {
     ) const {
         validateNetworkState();
 
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
 
         return m_baseEngine.calculateEpsDerivatives(masked, T9, rho, m_activeReactions);
     }
@@ -78,7 +76,7 @@ namespace gridfire::engine {
         if (!m_activeSpeciesVectorCache.has_value()) {
             m_activeSpeciesVectorCache = std::vector<Species>(m_activeSpecies.begin(), m_activeSpecies.end());
         }
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
         return m_baseEngine.generateJacobianMatrix(masked, T9, rho, m_activeSpeciesVectorCache.value());
     }
 
@@ -95,7 +93,7 @@ namespace gridfire::engine {
             activeSpecies.end()
         );
 
-        const fourdst::composition::MaskedComposition masked(comp, activeSpeciesSet);
+        const fourdst::composition::MaskedComposition masked(comp, activeSpeciesSet | std::ranges::to<std::vector>());
         return m_baseEngine.generateJacobianMatrix(masked, T9, rho, activeSpecies);
     }
 
@@ -106,7 +104,7 @@ namespace gridfire::engine {
         const SparsityPattern &sparsityPattern
     ) const {
         validateNetworkState();
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
         return m_baseEngine.generateJacobianMatrix(masked, T9, rho, sparsityPattern);
     }
 
@@ -151,7 +149,7 @@ namespace gridfire::engine {
             throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
         }
 
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
         return m_baseEngine.calculateMolarReactionFlow(reaction, masked, T9, rho);
     }
 
@@ -176,7 +174,7 @@ namespace gridfire::engine {
         const double rho
     ) const {
         validateNetworkState();
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
 
         const auto result = m_baseEngine.getSpeciesTimescales(masked, T9, rho, m_activeReactions);
         if (!result) {
@@ -199,7 +197,7 @@ namespace gridfire::engine {
         const double rho
     ) const {
         validateNetworkState();
-        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies);
+        const fourdst::composition::MaskedComposition masked(comp, m_activeSpecies | std::ranges::to<std::vector>());
 
         const auto result = m_baseEngine.getSpeciesDestructionTimescales(masked, T9, rho, m_activeReactions);
 
