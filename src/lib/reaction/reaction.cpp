@@ -282,11 +282,11 @@ namespace gridfire::reaction {
         double Ye,
         double mue, const std::vector<double> &Y, const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
-        if (m_cached_rates.contains(T9)) {
-            return m_cached_rates.at(T9);
-        }
+        // if (m_cached_rates.contains(T9)) {
+        //     return m_cached_rates.at(T9);
+        // }
         const double rate = calculate_rate<double>(T9);
-        m_cached_rates[T9] = rate;
+        // m_cached_rates[T9] = rate;
         return rate;
     }
 

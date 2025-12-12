@@ -33,5 +33,5 @@ else
 endif
 
 if get_option('openmp_support')
-    add_project_arguments('-DGRIDFIRE_USE_OPENMP', language: 'cpp')
+    add_project_arguments('-DGF_USE_OPENMP', language: 'cpp')
 endif

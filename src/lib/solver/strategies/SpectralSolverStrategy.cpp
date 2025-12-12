@@ -1,4 +1,6 @@
 #include "gridfire/solver/strategies/SpectralSolverStrategy.h"
+#include "gridfire/utils/macros.h"
+#include "gridfire/utils/table_format.h"
 
 #include <sunlinsol/sunlinsol_dense.h>
 
@@ -6,6 +8,11 @@
 
 #include "quill/LogMacros.h"
 #include "sunmatrix/sunmatrix_dense.h"
+#include <mutex>
+
+#include "gridfire/utils/gf_omp.h"
+#include "gridfire/utils/formatters/jacobian_format.h"
+#include "gridfire/utils/logging.h"
 
 namespace {
     std::pair<size_t, std::vector<double>> evaluate_bspline(
@@ -49,9 +56,13 @@ namespace {
     }
 }
 
+
+
 namespace gridfire::solver {
 
-    SpectralSolverStrategy::SpectralSolverStrategy(engine::DynamicEngine& engine) : MultiZoneNetworkSolverStrategy<engine::DynamicEngine> (engine) {
+    SpectralSolverStrategy::SpectralSolverStrategy(
+        const engine::DynamicEngine& engine
+    ) : MultiZoneNetworkSolver<engine::DynamicEngine> (engine) {
         LOG_INFO(m_logger, "Initializing SpectralSolverStrategy");
 
         utils::check_sundials_flag(SUNContext_Create(SUN_COMM_NULL, &m_sun_ctx), "SUNContext_Create", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
@@ -60,6 +71,8 @@ namespace gridfire::solver {
         m_relTol = m_config->solver.spectral.relTol;
 
         LOG_INFO(m_logger, "SpectralSolverStrategy initialized successfully");
+
+        GF_PAR_INIT()
     }
 
     SpectralSolverStrategy::~SpectralSolverStrategy() {
@@ -91,33 +104,105 @@ namespace gridfire::solver {
     /// Main Evaluation Loop
     /////////////////////////////////////////////////////////////////////////////////
 
-    std::vector<NetOut> SpectralSolverStrategy::evaluate(const std::vector<NetIn>& netIns, const std::vector<double>& mass_coords) {
+    std::vector<NetOut> SpectralSolverStrategy::evaluate(
+        const std::vector<NetIn>& netIns,
+        const std::vector<double>& mass_coords,
+        const engine::scratch::StateBlob &ctx_template
+    ) {
         LOG_INFO(m_logger, "Starting spectral solver evaluation for {} zones", netIns.size());
 
         assert(std::ranges::all_of(netIns, [&netIns](const NetIn& in) { return in.tMax == netIns[0].tMax; }) && "All NetIn entries must have the same tMax for spectral solver evaluation.");
 
         std::vector<NetIn> updatedNetIns = netIns;
-        for (auto& netIn : updatedNetIns) {
-            netIn.composition = m_engine.update(netIn);
+
+        std::vector<std::unique_ptr<engine::scratch::StateBlob>> workspaces;
+        workspaces.resize(updatedNetIns.size());
+
+        LOG_INFO(m_logger, "Building workspaces...");
+        GF_OMP(parallel for,)
+        for (size_t shellID = 0; shellID < updatedNetIns.size(); ++shellID) {
+            workspaces[shellID] = ctx_template.clone_structure();
         }
+        LOG_INFO(m_logger, "Workspaces built successfully.");
+
+        LOG_INFO(m_logger, "Projecting initial conditions onto engine network...");
+        GF_OMP(parallel for,)
+        for (size_t shellID = 0; shellID < updatedNetIns.size(); ++shellID) {
+            updatedNetIns[shellID].composition = m_engine.project(*workspaces[shellID], updatedNetIns[shellID]);
+        }
+        LOG_INFO(m_logger, "Initial conditions projected successfully.");
+
+        /////////////////////////////////////
+        /// Build the species union set   ///
+        /////////////////////////////////////
+
+        LOG_INFO(m_logger, "Collecting global species set from all zones...");
+        std::set<fourdst::atomic::Species> global_active_species;
+        for (const auto &updatedNetIn : updatedNetIns) {
+            const auto& local_species = updatedNetIn.composition.getRegisteredSpecies();
+            global_active_species.insert(local_species.begin(), local_species.end());
+        }
+        m_global_species_list.clear();
+        m_global_species_list.reserve(global_active_species.size());
+        m_global_species_list.insert(
+            m_global_species_list.end(),
+            global_active_species.begin(),
+            global_active_species.end()
+        );
+        LOG_INFO(m_logger, "Done collecting global species set. Total unique species: {}", m_global_species_list.size());
 
 
         /////////////////////////////////////
         /// Evaluate the monitor function ///
         /////////////////////////////////////
-
+        LOG_INFO(m_logger, "Evaluating monitor function...");
         const std::vector<double> monitor_function = evaluate_monitor_function(updatedNetIns);
-        m_current_basis = generate_basis_from_monitor(monitor_function, mass_coords);
+        LOG_INFO(m_logger, "Monitor function evaluated successfully...");
 
-        size_t num_basis_funcs = m_current_basis.knots.size() - m_current_basis.degree - 1;
+        /////////////////////////////////////////////
+        /// Determine number of quadratude nodes  ///
+        /////////////////////////////////////////////
+        const size_t num_nodes = nyquist_elements(
+            m_config->solver.spectral.basis.num_elements,
+            updatedNetIns.size()
+        );
+        LOG_INFO(m_logger, "Configuration requested {} quadrature nodes, actually using {} based on Nyquist criterion and number of zones.", m_config->solver.spectral.basis.num_elements, num_nodes);
+
+        /////////////////////////////////////
+        ///  Generate Quadrature Basis    ///
+        /////////////////////////////////////
+        LOG_INFO(m_logger, "Generating quadrature basis...");
+        m_current_basis = generate_basis_from_monitor(monitor_function, mass_coords, num_nodes);
+        LOG_INFO(m_logger, "Quadrature basis generated successfully with {} basis functions and {} quadrature nodes.", m_current_basis.knots.size() - m_current_basis.degree - 1, m_current_basis.quadrature_nodes.size());
+
+        /////////////////////////////////////////
+        /// Rebuild workspaces for only basis ///
+        /////////////////////////////////////////
+        LOG_INFO(m_logger, "Rebuilding workspaces for {} quadrature nodes...", m_current_basis.quadrature_nodes.size());
+        workspaces.clear();
+        workspaces.resize(m_current_basis.quadrature_nodes.size());
+        GF_OMP(parallel for,)
+        for (size_t shellID = 0; shellID < workspaces.size(); ++shellID) { // NOLINT(*-loop-convert)
+            workspaces[shellID] = ctx_template.clone_structure();
+        }
+
+        LOG_INFO(m_logger, "Workspaces rebuilt successfully.");
+
+        ////////////////////////////////////////
+        ///  Project Initial Conditions      ///
+        ////////////////////////////////////////
+        LOG_INFO(m_logger, "Projecting initial conditions onto quadrature nodes...");
+        const size_t num_basis_funcs = m_current_basis.knots.size() - m_current_basis.degree - 1;
 
         std::vector<BasisEval> shell_cache(updatedNetIns.size());
+
+        GF_OMP(parallel for,)
         for (size_t shellID = 0; shellID < shell_cache.size(); ++shellID) {
             auto [start, phi] = evaluate_bspline(mass_coords[shellID], m_current_basis);
             shell_cache[shellID] = {.start_idx=start, .phi=phi};
         }
 
-        DenseLinearSolver proj_solver(num_basis_funcs, m_sun_ctx);
+        const DenseLinearSolver proj_solver(num_basis_funcs, m_sun_ctx);
         proj_solver.init_from_cache(num_basis_funcs, shell_cache);
 
         if (m_T_coeffs) N_VDestroy(m_T_coeffs);
@@ -128,19 +213,20 @@ namespace gridfire::solver {
         m_rho_coeffs = N_VNew_Serial(static_cast<sunindextype>(num_basis_funcs), m_sun_ctx);
         project_specific_variable(updatedNetIns, mass_coords, shell_cache, proj_solver, m_rho_coeffs, 0, [](const NetIn& s) { return s.density; }, true);
 
-        size_t num_species = m_engine.getNetworkSpecies().size();
+        const size_t num_species = m_global_species_list.size();
         size_t current_offset = 0;
 
-        size_t total_coefficients = num_basis_funcs * (num_species + 1);
+        const size_t total_coefficients = num_basis_funcs * (num_species + 1);
 
         if (m_Y) N_VDestroy(m_Y);
         if (m_constraints) N_VDestroy(m_constraints);
 
         m_Y = N_VNew_Serial(static_cast<sunindextype>(total_coefficients), m_sun_ctx);
+        N_VConst(0.0, m_Y);
         m_constraints = N_VClone(m_Y);
         N_VConst(0.0, m_constraints); // For now no constraints on coefficients
 
-        for (const auto& sp : m_engine.getNetworkSpecies()) {
+        for (const auto& sp : m_global_species_list) {
             project_specific_variable(
                 updatedNetIns,
                 mass_coords,
@@ -148,7 +234,10 @@ namespace gridfire::solver {
                 proj_solver,
                 m_Y,
                 current_offset,
-                [&sp](const NetIn& s) { return s.composition.getMolarAbundance(sp); },
+                [&sp](const NetIn& s) {
+                    if (!s.composition.contains(sp)) return 0.0;
+                    return s.composition.getMolarAbundance(sp);
+                },
                 false
             );
             current_offset += num_basis_funcs;
@@ -162,6 +251,22 @@ namespace gridfire::solver {
         for (size_t i = 0; i < num_basis_funcs; ++i) {
             y_data[energy_offset + i] = 0.0;
         }
+        LOG_INFO(m_logger, "Done projecting initial conditions onto quadrature nodes.");
+
+        LOG_INFO(m_logger, "Projecting quadrature conditions onto workspaces");
+        for (size_t q = 0; q < m_current_basis.quadrature_nodes.size(); ++q) {
+            // ReSharper disable once CppUseStructuredBinding
+            GridPoint gp = reconstruct_at_quadrature(m_Y, q, m_current_basis);
+            NetIn quad_netin;
+            quad_netin.temperature = gp.T9 * 1e9;
+            quad_netin.density = gp.rho;
+            quad_netin.tMax = 1; // Not needed for projection
+            quad_netin.composition = gp.composition;
+
+            (void)m_engine.project(*workspaces[q], quad_netin); // We do not need to capture this output just do the projection
+        }
+        LOG_INFO(m_logger, "Done projecting initial conditions onto workspaces.");
+
 
         DenseLinearSolver mass_solver(num_basis_funcs, m_sun_ctx);
         mass_solver.init_from_basis(num_basis_funcs, m_current_basis);
@@ -170,11 +275,13 @@ namespace gridfire::solver {
         /// CVODE Initialization          ///
         /////////////////////////////////////
 
+        LOG_INFO(m_logger, "Initializing CVODE resources...");
         CVODEUserData data;
         data.solver_instance = this;
         data.engine = &m_engine;
         data.mass_matrix_solver_instance = &mass_solver;
         data.basis = &m_current_basis;
+        data.workspaces = &workspaces;
 
         const double absTol = m_absTol.value_or(1e-10);
         const double relTol = m_relTol.value_or(1e-6);
@@ -204,13 +311,15 @@ namespace gridfire::solver {
             m_LS = SUNLinSol_Dense(m_Y, m_J, m_sun_ctx);
             utils::check_sundials_flag(CVodeSetLinearSolver(m_cvode_mem, m_LS, m_J), "CVodeSetLinearSolver", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
 
-            // For now, we will not attach a Jacobian function, using finite differences
+            utils::check_sundials_flag(CVodeSetJacFn(m_cvode_mem, cvode_jac_wrapper), "CVodeSetJacFn", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
+
         } else {
             utils::check_sundials_flag(CVodeReInit(m_cvode_mem, 0.0, m_Y), "CVodeReInit", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
         }
 
         utils::check_sundials_flag(CVodeSStolerances(m_cvode_mem, relTol, absTol), "CVodeSStolerances", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
         utils::check_sundials_flag(CVodeSetUserData(m_cvode_mem, &data), "CVodeSetUserData", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
+        LOG_INFO(m_logger, "CVODE resources initialized successfully.");
 
         /////////////////////////////////////
         /// Time Integration Loop         ///
@@ -219,14 +328,18 @@ namespace gridfire::solver {
         const double target_time = updatedNetIns[0].tMax;
         double current_time = 0.0;
 
+        LOG_INFO(m_logger, "Beginning time integration to target time {:10.4e}...", target_time);
         while (current_time < target_time) {
             int flag = CVode(m_cvode_mem, target_time, m_Y, &current_time, CV_ONE_STEP);
             utils::check_sundials_flag(flag, "CVode", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
 
             std::println("Advanced to time: {:10.4e} / {:10.4e}", current_time, target_time);
+            LOG_INFO(m_logger, "Advanced to time: {:10.4e} / {:10.4e}", current_time, target_time);
         }
+        LOG_INFO(m_logger, "Time integration complete. Reconstructing solution...");
 
         std::vector<NetOut> results = reconstruct_solution(updatedNetIns, mass_coords, m_Y, m_current_basis, target_time);
+        LOG_INFO(m_logger, "Spectral solver evaluation complete for all zones.");
         return results;
     }
 
@@ -284,8 +397,7 @@ namespace gridfire::solver {
         const auto *instance = data->solver_instance;
 
         try {
-            LOG_WARNING_LIMIT_EVERY_N(1000, instance->m_logger, "Analytic Jacobian Generation not yet implemented, using finite difference approximation");
-            return 0;
+            return instance->calculate_jacobian(t, y, ydot, J, data, tmp1, tmp2, tmp3);
         } catch (const std::exception& e) {
             LOG_CRITICAL(instance->m_logger, "Uncaught exception in Spectral Solver Jacobian wrapper at time {}: {}", t, e.what());
             return -1;
@@ -299,6 +411,7 @@ namespace gridfire::solver {
     /// RHS implementation
     ////////////////////////////////////////////////////////////////////////////////
 
+    // ReSharper disable once CppDFAUnreachableFunctionCall
     int SpectralSolverStrategy::calculate_rhs(
         sunrealtype t,
         N_Vector y_coeffs,
@@ -307,53 +420,223 @@ namespace gridfire::solver {
     ) const {
         const auto& basis = m_current_basis;
         DenseLinearSolver* mass_solver = data->mass_matrix_solver_instance;
-        const auto& species_list = m_engine.getNetworkSpecies();
 
         const size_t num_basis_funcs = basis.knots.size() - basis.degree - 1;
-        const size_t num_species = species_list.size();
+        const size_t num_species = m_global_species_list.size();
 
-        sunrealtype* rhs_data = N_VGetArrayPointer(ydot_coeffs);
+        const size_t total_dofs = num_basis_funcs * (num_species + 1);
+
+        sunrealtype* global_rhs_data = N_VGetArrayPointer(ydot_coeffs);
         N_VConst(0.0, ydot_coeffs);
 
-        // PERF: In future we can use openMP to parallelize over these basis functions once we make the engines thread safe
-        for (size_t q = 0; q < basis.quadrature_nodes.size(); ++q) {
-            double w_q = basis.quadrature_weights[q];
+        std::atomic<bool> failure_flag{false};
 
-            const auto& [start_idx, phi] = basis.quad_evals[q];
+        GF_OMP(parallel,) {
+            std::vector<double> local_rhs(total_dofs, 0.0);
 
-            GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
-            std::expected<engine::StepDerivatives<double>, engine::EngineStatus> results = m_engine.calculateRHSAndEnergy(gp.composition, gp.T9, gp.rho, false);
+            GF_OMP(for nowait,)
+            for (size_t q = 0; q < basis.quadrature_nodes.size(); ++q) {
+                if (failure_flag.load(std::memory_order_relaxed)) continue;
 
-            // PERF: When switching to parallel execution, we will need to protect this section with a mutex or use atomic operations since we cannot throw safely from multiple threads
-            if (!results) {
-                LOG_CRITICAL(m_logger, "Engine failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(results.error()));
-                return -1;
-            }
+                double wq = basis.quadrature_weights[q];
+                const auto& [start_idx, phi] = basis.quad_evals[q];
 
-            const auto& [dydt, eps_nuc, contributions, nu_loss, nu_flux] = results.value();
+                GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
+                LOG_TRACE_L2(m_logger, "RHS Evaluation at time {}: Quad Node {}, T9 = {:10.4e}, rho = {:10.4e}", t, q, gp.T9, gp.rho);
+                auto results = m_engine.calculateRHSAndEnergy(
+                    *data->workspaces->at(q),
+                    gp.composition,
+                    gp.T9,
+                    gp.rho,
+                    false
+                );
+                if (!results) {
+                    failure_flag.store(true);
+                    LOG_CRITICAL(m_logger, "Engine failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(results.error()));
+                    GF_OMP(critical, {
+                        throw std::runtime_error("Engine failure during RHS calculation.");
+                    }) {
+                        std::fill_n(global_rhs_data, total_dofs, -1.0);
+                    }
+                    continue;
+                }
 
-            for (size_t s = 0; s < num_species; ++s) {
-                double rate = dydt.at(species_list[s]);
-                size_t species_offset = s * num_basis_funcs;
+                const auto& [dydt, eps_nuc, contributions, nu_loss, nu_flux] = results.value();
+                for (size_t s = 0; s < num_species; ++s) {
+                    const auto& sp = m_global_species_list[s];
+                    double rate = 0.0;
+                    if (dydt.contains(sp)) {
+                        rate = dydt.at(sp);
+                    }
+
+                    size_t species_offset = s * num_basis_funcs;
+
+                    for (size_t k  = 0; k < phi.size(); ++k) {
+                        size_t global_idx = species_offset + start_idx + k;
+                        local_rhs[global_idx] += wq * phi[k] * rate;
+                    }
+                }
+
+                size_t energy_offset = num_species * num_basis_funcs;
 
                 for (size_t k = 0; k < phi.size(); ++k) {
-                    size_t global_idx = species_offset + start_idx + k;
-                    rhs_data[global_idx] += w_q * phi[k] * rate;
+                    size_t global_idx = energy_offset + start_idx + k;
+                    local_rhs[global_idx] += eps_nuc * wq * phi[k];
                 }
             }
 
-            size_t energy_offset = num_species * num_basis_funcs;
-
-            for (size_t k = 0; k < phi.size(); ++k) {
-                size_t global_idx = energy_offset + start_idx + k;
-                rhs_data[global_idx] += eps_nuc * w_q * phi[k];
+            GF_OMP(critical,) {
+                if (!failure_flag.load(std::memory_order_relaxed)) {
+                    for (size_t i = 0; i < total_dofs; ++i) {
+                        global_rhs_data[i] += local_rhs[i];
+                    }
+                }
             }
         }
 
-        size_t total_vars = num_species + 1;
-        mass_solver->solve_inplace(ydot_coeffs, total_vars, num_basis_funcs);
+        if (failure_flag.load()) {
+            return -1;
+        }
 
+        size_t total_vars = num_species + 1;
+        mass_solver -> solve_inplace(ydot_coeffs, total_vars, num_basis_funcs);
         return 0;
+    }
+
+    int SpectralSolverStrategy::calculate_jacobian(
+        sunrealtype t,
+        N_Vector y_coeffs,
+        N_Vector ydot_coeffs,
+        SUNMatrix J,
+        const CVODEUserData *data,
+        N_Vector tmp1,
+        N_Vector tmp2,
+        N_Vector tmp3
+    ) const {
+        const auto& basis = m_current_basis;
+        DenseLinearSolver* mass_solver = data->mass_matrix_solver_instance;
+
+        const size_t num_basis_funcs = basis.knots.size() - basis.degree - 1;
+        const size_t num_species = m_global_species_list.size();
+        const size_t total_dofs = num_basis_funcs * (num_species + 1);
+
+        SUNMatZero(J);
+        sunrealtype* J_global_data = SUNDenseMatrix_Data(J);
+
+        std::atomic<bool> failure_flag(false);
+
+        GF_OMP(parallel,) {
+#if defined(GF_USE_OPENMP)
+            int thread_id = omp_get_thread_num();
+#else
+            int thread_id = 0;
+#endif
+            GF_OMP(for schedule(static) nowait,)
+            for (size_t q = 0; q < basis.quadrature_nodes.size(); ++q) {
+                if (failure_flag.load(std::memory_order_relaxed)) continue;
+
+                double wq = basis.quadrature_weights[q];
+                const auto& [start_idx, phi] = basis.quad_evals[q];
+
+                GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
+                try {
+                    engine::NetworkJacobian jac = m_engine.generateJacobianMatrix(
+                        *data->workspaces->at(q),
+                        gp.composition,
+                        gp.T9,
+                        gp.rho
+                    );
+
+                    auto accumulate_term = [&](size_t row_offset, size_t col_offset, double value) {
+                        if (std::abs(value) < 1e-100) return; // regularization
+
+                        const double w_val = wq * value;
+
+                        for (size_t k_col = 0; k_col < phi.size(); ++k_col) {
+                            const size_t global_col = col_offset + start_idx + k_col;
+                            const size_t col_data_idx = global_col * total_dofs;
+
+                            for (size_t k_row = 0; k_row < phi.size(); ++k_row) {
+                                const size_t global_row = row_offset + start_idx + k_row;
+                                const double contribution = w_val * phi[k_row] * phi[k_col];
+
+                                GF_OMP(atomic update,)
+                                J_global_data[global_row + col_data_idx] += contribution;
+                            }
+                        }
+                    };
+
+                    for (size_t s_row = 0; s_row < num_species; ++s_row) {
+                        const auto& sp_row = m_global_species_list[s_row];
+
+                        if (!gp.composition.contains(sp_row)) continue;
+
+                        for (size_t s_col = 0; s_col < num_species; ++s_col) {
+                            const auto& sp_col = m_global_species_list[s_col];
+
+                            if (!gp.composition.contains(sp_col)) continue;
+
+                            double val = jac(sp_row, sp_col);
+
+                            accumulate_term(s_row * num_basis_funcs, s_col * num_basis_funcs, val);
+                        }
+                    }
+                } catch (const exceptions::GridFireError &e) {
+                    failure_flag.store(true);
+                    std::string error_msg = std::format("Engine failed to calculate Jacobian, due to known internal GridFire error, at time {}: {}", t, e.what());
+                    LOG_CRITICAL(m_logger, "{}", error_msg);
+                    GF_OMP(critical, {
+                        throw std::runtime_error(error_msg);
+                    }) {
+                        SUNMatZero(J);
+                    }
+                    continue;
+                } catch (const std::exception &e) {
+                    failure_flag.store(true);
+                    std::string error_msg = std::format("Engine failed to calculate Jacobian, due to some known yet non GridFire error, at time {}: {}", t, e.what());
+                    LOG_CRITICAL(m_logger, "{}", error_msg);
+                    GF_OMP(critical, {
+                        throw std::runtime_error(error_msg);
+                    }) {
+                        SUNMatZero(J);
+                    }
+                    continue;
+                } catch (...) {
+                    failure_flag.store(true);
+                    std::string error_msg = std::format("Engine failed to calculate Jacobian, due to unknown error, at time {}.", t);
+                    LOG_CRITICAL(m_logger, "{}", error_msg);
+                    GF_OMP(critical, {
+                        throw std::runtime_error(error_msg);
+                    }) {
+                        SUNMatZero(J);
+                    }
+                    continue;
+                }
+            }
+        }
+
+        if (failure_flag.load()) { return -1; }
+        inspect_jacobian(J, "Physics Assembly (Pre-Mass-Matrix)");
+
+        GF_OMP(parallel for,)
+        for (size_t col = 0; col < total_dofs; ++col) {
+            sunrealtype* col_ptr = J_global_data + (col * total_dofs);
+            mass_solver->solve_inplace_ptr(col_ptr, num_species + 1, num_basis_funcs);
+        }
+        inspect_jacobian(J, "Final Jacobian (Post-Mass-Matrix)");
+        return 0;
+    }
+
+    size_t SpectralSolverStrategy::nyquist_elements(
+        const size_t requested_elements,
+        const size_t num_shells
+    ) {
+        size_t max_allowed_elements = std::max(size_t(1), num_shells/2);
+        size_t actual_elements = std::min(requested_elements, max_allowed_elements);
+        if (num_shells <= 5) {
+            actual_elements = 1;
+        }
+        return actual_elements;
     }
 
 
@@ -363,16 +646,21 @@ namespace gridfire::solver {
     ///     projection and reconstruction routines.
     ////////////////////////////////////////////////////////////////////////////////
 
-    std::vector<double> SpectralSolverStrategy::evaluate_monitor_function(const std::vector<NetIn>& current_shells) const {
+    std::vector<double> SpectralSolverStrategy::evaluate_monitor_function(
+        const std::vector<NetIn>& current_shells
+    ) const {
+        assert(!m_global_species_list.empty() && "Global species list must be initialized before evaluating monitor function.");
+        assert(!current_shells.empty() && "Current shells list must not be empty when evaluating monitor function.");
+
         const size_t n_shells = current_shells.size();
         if (n_shells < 3) {
             return std::vector<double>(n_shells, 1.0); // NOLINT(*-return-braced-init-list)
         }
 
         std::vector<double> M(n_shells, 1.0);
+        std::vector<double> data(n_shells);
 
         auto accumulate_variable = [&](auto getter, double weight, bool use_log) {
-            std::vector<double> data(n_shells);
             double min_val = std::numeric_limits<double>::max();
             double max_val = std::numeric_limits<double>::lowest();
 
@@ -410,13 +698,20 @@ namespace gridfire::solver {
             }
         };
 
+        auto safe_get_abundance = [](const NetIn& netIn, const fourdst::atomic::Species& sp) -> double {
+            if (netIn.composition.contains(sp)) {
+                return netIn.composition.getMolarAbundance(sp);
+            }
+            return 0.0;
+        };
+
         const double structure_weight = m_config->solver.spectral.monitorFunction.structure_weight;
         double abundance_weight = m_config->solver.spectral.monitorFunction.abundance_weight;
         accumulate_variable([](const NetIn& s) { return s.temperature; }, structure_weight, true);
         accumulate_variable([](const NetIn& s) { return s.density; }, structure_weight, true);
 
-        for (const auto& sp : m_engine.getNetworkSpecies()) {
-            accumulate_variable([&sp](const NetIn& s) { return s.composition.getMolarAbundance(sp); }, abundance_weight, false);
+        for (const auto& sp : m_global_species_list) {
+            accumulate_variable([&sp, &safe_get_abundance](const NetIn& s) { return safe_get_abundance(s, sp); }, abundance_weight, false);
         }
 
         //////////////////////////////
@@ -437,7 +732,8 @@ namespace gridfire::solver {
 
     SpectralSolverStrategy::SplineBasis SpectralSolverStrategy::generate_basis_from_monitor(
         const std::vector<double>& monitor_values,
-        const std::vector<double>& mass_coordinates
+        const std::vector<double>& mass_coordinates,
+        const size_t actual_elements
     ) const {
         SplineBasis basis;
         basis.degree = 3; // Cubic Spline
@@ -461,8 +757,7 @@ namespace gridfire::solver {
             I[i] /= total_integral;
         }
 
-        const size_t num_elements = m_config->solver.spectral.basis.num_elements;
-        basis.knots.reserve(num_elements + 1 + 2 * basis.degree);
+        basis.knots.reserve(actual_elements + 1 + 2 * basis.degree);
 
         // Note that these imply that mass_coordinates must be sorted in increasing order
         double min_mass = mass_coordinates.front();
@@ -472,8 +767,8 @@ namespace gridfire::solver {
             basis.knots.push_back(min_mass);
         }
 
-        for (size_t k = 1; k < num_elements; ++k) {
-            double target_I = static_cast<double>(k) / static_cast<double>(num_elements);
+        for (size_t k = 1; k < actual_elements; ++k) {
+            double target_I = static_cast<double>(k) / static_cast<double>(actual_elements);
 
             auto it = std::ranges::lower_bound(I, target_I);
             size_t idx = std::distance(I.begin(), it);
@@ -542,8 +837,7 @@ namespace gridfire::solver {
         const sunrealtype* y_data = N_VGetArrayPointer(y_coeffs);
 
         const size_t num_basis_funcs = basis.knots.size() - basis.degree - 1;
-        const std::vector<fourdst::atomic::Species>& species_list = m_engine.getNetworkSpecies();
-        const size_t num_species = species_list.size();
+        const size_t num_species = m_global_species_list.size();
 
         double logT = 0.0;
         double logRho = 0.0;
@@ -559,7 +853,8 @@ namespace gridfire::solver {
         result.rho = std::pow(10.0, logRho);
 
         for (size_t s = 0; s < num_species; ++s) {
-            const fourdst::atomic::Species& species = species_list[s];
+            const auto& species = m_global_species_list[s];
+
             double abundance = 0.0;
             const size_t offset = s * num_basis_funcs;
 
@@ -567,7 +862,6 @@ namespace gridfire::solver {
                 abundance += y_data[offset + start_idx + k] * vals[k];
             }
 
-            // Note: It is possible this will lead to a loss of mass conservation. In future we may want to implement a better way to handle this.
             if (abundance < 0.0) abundance = 0.0;
 
             result.composition.registerSpecies(species);
@@ -586,13 +880,14 @@ namespace gridfire::solver {
     ) const {
         const size_t n_shells = original_inputs.size();
         const size_t num_basis_funcs = basis.knots.size() - basis.degree - 1;
+        const size_t num_species = m_global_species_list.size();
 
-        std::vector<NetOut> outputs;
-        outputs.reserve(n_shells);
+        // Pre-allocate output vector so threads can write directly
+        std::vector<NetOut> outputs(n_shells);
 
         const sunrealtype* c_data = N_VGetArrayPointer(final_coeffs);
 
-        const auto& species_list = m_engine.getNetworkSpecies();
+        GF_OMP(parallel for,)
         for (size_t shellID = 0; shellID < n_shells; ++shellID) {
             const double x = mass_coordinates[shellID];
 
@@ -608,35 +903,33 @@ namespace gridfire::solver {
 
             fourdst::composition::Composition comp_new;
 
-            for (size_t s_idx = 0; s_idx < species_list.size(); ++s_idx) {
-                const fourdst::atomic::Species& sp = species_list[s_idx];
-                comp_new.registerSpecies(sp);
+            for (size_t s_idx = 0; s_idx < num_species; ++s_idx) {
+                const auto& sp = m_global_species_list[s_idx];
 
                 const size_t current_offset = s_idx * num_basis_funcs;
                 double Y_val = reconstruct_var(current_offset);
 
-                if (Y_val < 0.0 && Y_val > -1.0e-16) {
-                    Y_val = 0.0;
+                if (Y_val < 0.0 && Y_val >= -1e-16) {
+                     Y_val = 0.0;
                 }
 
-                if (Y_val < 0.0 && Y_val > -1e-16) Y_val = 0.0;
-                if (Y_val >= 0.0) {
-                    comp_new.setMolarAbundance(sp, Y_val);
-                }
+                comp_new.registerSpecies(sp);
+                comp_new.setMolarAbundance(sp, Y_val);
             }
 
-            const double energy = reconstruct_var(species_list.size() * num_basis_funcs);
+            const double energy = reconstruct_var(num_species * num_basis_funcs);
 
             NetOut netOut;
             netOut.composition = comp_new;
             netOut.energy = energy;
             netOut.num_steps = -1; // Not tracked in spectral solver
 
-            outputs.push_back(std::move(netOut));
+            outputs[shellID] = std::move(netOut);
         }
 
         return outputs;
     }
+
 
     void SpectralSolverStrategy::project_specific_variable(
         const std::vector<NetIn> &current_shells,
@@ -671,9 +964,121 @@ namespace gridfire::solver {
         sunrealtype* tmp_data = N_VGetArrayPointer(linear_solver.temp_vector);
         for (size_t i = 0; i < basis_size; ++i) tmp_data[i] = out_ptr[output_offset + i];
 
-        SUNLinSolSolve(linear_solver.LS, linear_solver.A, linear_solver.temp_vector, linear_solver.temp_vector, 0.0);
+        utils::check_sundials_flag(SUNLinSolSolve(linear_solver.LS, linear_solver.A, linear_solver.temp_vector, linear_solver.temp_vector, 0.0), "SUNLinSolSolve - Projection Solver", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
 
         for (size_t i = 0; i < basis_size; ++i) out_ptr[output_offset + i] = tmp_data[i];
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// Debugging Utilities
+    ///////////////////////////////////////////////////////////////////////////////////
+    void SpectralSolverStrategy::inspect_jacobian(SUNMatrix J, const std::string &context) const {
+        sunrealtype* data = SUNDenseMatrix_Data(J);
+        sunindextype rows = SUNDenseMatrix_Rows(J);
+        sunindextype cols = SUNDenseMatrix_Columns(J);
+
+        // --- 1. Gather Statistics ---
+        size_t nan_count = 0;
+        size_t inf_count = 0;
+        size_t zero_diag_count = 0;
+
+        double max_val = 0.0;
+        double min_val = 0.0;
+        double min_diag_val = std::numeric_limits<double>::max();
+        double max_diag_val = std::numeric_limits<double>::lowest();
+
+        bool matrix_is_empty = (rows == 0 || cols == 0);
+        bool non_zero_elements_found = false;
+
+        // Iterate Column-Major (standard for SUNDIALS)
+        for (sunindextype j = 0; j < cols; ++j) {
+            // Diagonal Check
+            if (j < rows) {
+                double diag = data[j * rows + j];
+                double abs_diag = std::abs(diag);
+
+                if (abs_diag < 1e-100) zero_diag_count++;
+
+                if (abs_diag < min_diag_val) min_diag_val = abs_diag;
+                if (abs_diag > max_diag_val) max_diag_val = abs_diag;
+            }
+
+            for (sunindextype i = 0; i < rows; ++i) {
+                double val = data[j * rows + i];
+
+                if (std::isnan(val)) {
+                    nan_count++;
+                } else if (std::isinf(val)) {
+                    inf_count++;
+                } else {
+                    double abs_val = std::abs(val);
+                    if (abs_val > 0.0) {
+                        if (!non_zero_elements_found) {
+                            // First non-zero element initializes the range
+                            max_val = abs_val;
+                            min_val = abs_val;
+                            non_zero_elements_found = true;
+                        } else {
+                            if (abs_val > max_val) max_val = abs_val;
+                            if (abs_val < min_val) min_val = abs_val;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!non_zero_elements_found) {
+            min_diag_val = 0.0;
+            max_diag_val = 0.0;
+        }
+
+        // --- 2. Build Data Vectors ---
+        std::vector<std::string> metrics = {
+            "Dimensions",
+            "NaN Count",
+            "Inf Count",
+            "Zero Diagonals",
+            "Global Range (abs)",
+            "Diagonal Range (abs)",
+            "Status"
+        };
+
+        std::vector<std::string> values;
+        values.reserve(metrics.size());
+
+        // Dimensions
+        values.push_back(std::format("{} x {}", rows, cols));
+
+        // Errors
+        values.push_back(std::to_string(nan_count));
+        values.push_back(std::to_string(inf_count));
+        values.push_back(std::to_string(zero_diag_count));
+
+        // Ranges
+        values.push_back(std::format("[{:.2e}, {:.2e}]", min_val, max_val));
+        values.push_back(std::format("[{:.2e}, {:.2e}]", min_diag_val, max_diag_val));
+
+        // Status
+        bool failed = (nan_count > 0 || inf_count > 0 || zero_diag_count > 0 || matrix_is_empty);
+        values.push_back(failed ? "FAIL" : "OK");
+
+        // --- 3. Construct Columns Manually ---
+        std::vector<std::unique_ptr<gridfire::utils::ColumnBase>> columns;
+
+        columns.push_back(std::make_unique<gridfire::utils::Column<std::string>>("Metric", metrics));
+        columns.push_back(std::make_unique<gridfire::utils::Column<std::string>>("Value", values));
+
+        // --- 4. Format and Log ---
+        std::string table_name = std::format("Jacobian Inspection: {}", context);
+        std::string report_str = gridfire::utils::format_table(table_name, columns);
+
+        if (failed) {
+            std::println("{}", report_str);
+            LOG_CRITICAL(m_logger, "\n{}", report_str);
+        } else {
+            std::println("{}", report_str);
+            LOG_INFO(m_logger, "\n{}", report_str);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -722,6 +1127,13 @@ namespace gridfire::solver {
                 }
             }
         }
+
+        // Apply a small diagonal perturbation for numerical stability
+        for (size_t i = 0; i < num_basis_funcs; ++i) {
+            constexpr double epsilon = 1e-14;
+            a_data[i * num_basis_funcs + i] += epsilon;
+        }
+
         setup();
     }
 
@@ -764,6 +1176,37 @@ namespace gridfire::solver {
 
             for (size_t i = 0; i < basis_size; ++i) {
                 x_data[offset + i] = tmp_data[i];
+            }
+        }
+    }
+
+    void SpectralSolverStrategy::DenseLinearSolver::solve_inplace_ptr(
+        sunrealtype *data_ptr,
+        const size_t num_vars,
+        const size_t basis_size
+    ) const {
+        sunrealtype* tmp_data = N_VGetArrayPointer(temp_vector);
+        for (size_t v = 0; v < num_vars; ++v) {
+            const size_t offset = v * basis_size;
+            sunrealtype* var_segment = data_ptr + offset;
+
+            for (size_t i = 0; i < basis_size; ++i) {
+                tmp_data[i] = var_segment[i];
+            }
+
+            const int flag = SUNLinSolSolve(LS, A, temp_vector, temp_vector, 0.0);
+
+            if (flag != 0) {
+                GF_OMP(critical,) {
+                    std::cerr << "Mass matrix inversion failed in SpectralSolverStrategy::DenseLinearSolver::solve_inplace_ptr. This is a critical error which cannot, at present, be recovered from. If you see this message discard any results reported after it and please report this to the GridFire developers." << flag << std::endl;
+                    std::abort();
+                }
+                // TODO: We cannot trivially throw here if this function fails since it may be run in parallel. For now we trust init_from_cache to not
+                //       generate a singular matrix; however, in the future we may want to implement a more robust error handling strategy.
+            }
+
+            for (size_t i = 0; i < basis_size; ++i) {
+                var_segment[i] = tmp_data[i];
             }
         }
     }

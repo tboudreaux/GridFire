@@ -105,23 +105,20 @@ namespace gridfire::solver {
     class MultiZoneNetworkSolver {
     public:
         explicit MultiZoneNetworkSolver(
-            const EngineT& engine,
-            const engine::scratch::StateBlob& ctx
+            const EngineT& engine
         ) :
-        m_engine(engine),
-        m_scratch_blob_structure(ctx.clone_structure()){};
+        m_engine(engine) {};
 
         virtual ~MultiZoneNetworkSolver() = default;
 
         virtual std::vector<NetOut> evaluate(
             const std::vector<NetIn>& netIns,
-            const std::vector<double>& mass_coords
+            const std::vector<double>& mass_coords, const engine::scratch::StateBlob &ctx_template
         ) = 0;
         virtual void set_callback(const std::any& callback) = 0;
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
     protected:
         const EngineT& m_engine; ///< The engine used by this solver strategy.
-        std::unique_ptr<engine::scratch::StateBlob> m_scratch_blob_structure;
     };
 
     /**

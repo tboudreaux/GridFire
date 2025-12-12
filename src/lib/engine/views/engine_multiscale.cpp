@@ -748,7 +748,7 @@ namespace gridfire::engine {
                 }
             }
         }
-        LOG_TRACE_L1(m_logger, "Algebraic species identified: {}", utils::iterable_to_delimited_string(m_algebraic_species));
+        LOG_TRACE_L1(m_logger, "Algebraic species identified: {}", utils::iterable_to_delimited_string(state->algebraic_species));
 
         LOG_INFO(
             m_logger,
@@ -773,7 +773,7 @@ namespace gridfire::engine {
                 state->dynamic_species.push_back(species);
             }
         }
-        LOG_TRACE_L1(m_logger, "Final dynamic species set: {}", utils::iterable_to_delimited_string(m_dynamic_species));
+        LOG_TRACE_L1(m_logger, "Final dynamic species set: {}", utils::iterable_to_delimited_string(state->dynamic_species));
 
         LOG_TRACE_L1(m_logger, "Creating QSE solvers for each identified QSE group...");
         for (const auto& group : state->qse_groups) {
@@ -783,7 +783,7 @@ namespace gridfire::engine {
             }
             state->qse_solvers.push_back(std::make_unique<QSESolver>(groupAlgebraicSpecies, m_baseEngine, state->sun_ctx));
         }
-        LOG_TRACE_L1(m_logger, "{} QSE solvers created.", m_qse_solvers.size());
+        LOG_TRACE_L1(m_logger, "{} QSE solvers created.", state->qse_solvers.size());
 
         LOG_TRACE_L1(m_logger, "Calculating final equilibrated composition...");
         fourdst::composition::Composition result = getNormalizedEquilibratedComposition(ctx, comp, T9, rho, false);
@@ -1949,7 +1949,7 @@ namespace gridfire::engine {
         LOG_TRACE_L2(
             getLogger(),
             "Starting KINSol QSE solver with initial state: {}",
-            [&comp, &initial_rhs, &data]() -> std::string {
+            [&comp, &rhsGuess, &data]() -> std::string {
                 std::ostringstream oss;
                 oss << "Solve species: <";
                 size_t count = 0;
@@ -1963,7 +1963,7 @@ namespace gridfire::engine {
                 oss << "> | Initial abundances and rates: ";
                 count = 0;
                 for (const auto& [species, abundance] : comp) {
-                    oss << species.name() << ": Y = " << abundance << ", dY/dt = " << initial_rhs.value().dydt.at(species);
+                    oss << species.name() << ": Y = " << abundance << ", dY/dt = " << rhsGuess.dydt.at(species);
                     if (count < comp.size() - 1) {
                         oss << ", ";
                     }

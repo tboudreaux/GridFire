@@ -60,7 +60,6 @@ std::vector<gridfire::NetIn> init(const double tMin, const double tMax, const do
 
         netIn.tMax = evolveTime;
         netIn.dt0 = 1e-12;
-
         netIns.push_back(netIn);
     }
 
@@ -80,11 +79,11 @@ int main(int argc, char** argv) {
 
     CLI::App app{"GridFire Sandbox Application."};
 
-    double tMin = 1.0e7;
-    double tMax = 2.5e7;
-    double rhoMin = 1.0e2;
-    double rhoMax = 1.0e4;
-    double nShells = 5;
+    double tMin = 1.5e7;
+    double tMax = 1.7e7;
+    double rhoMin = 1.5e2;
+    double rhoMax = 1.5e2;
+    double nShells = 15;
     double evolveTime = 3.1536e+16;
 
     app.add_option("--tMin", tMin, "Minimum time in seconds");
@@ -100,10 +99,10 @@ int main(int argc, char** argv) {
 
     policy::MainSequencePolicy stellarPolicy(netIns[0].composition);
     stellarPolicy.construct();
-    engine::DynamicEngine& engine = stellarPolicy.construct();
+    policy::ConstructionResults construct = stellarPolicy.construct();
 
-    solver::SpectralSolverStrategy solver(engine);
+    solver::SpectralSolverStrategy solver(construct.engine);
     std::vector<double> mass_coords = linspace(1e-5, 1.0, nShells);
 
-    std::vector<NetOut> results = solver.evaluate(netIns, mass_coords);
+    std::vector<NetOut> results = solver.evaluate(netIns, mass_coords, *construct.scratch_blob);
 }

@@ -129,8 +129,7 @@ namespace gridfire::engine {
         const double rho,
         const std::vector<Species> &activeSpecies
     ) const {
-        const auto *state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
-        return m_baseEngine.generateJacobianMatrix(ctx, comp, T9, rho, state->active_species);
+        return m_baseEngine.generateJacobianMatrix(ctx, comp, T9, rho, activeSpecies);
 
     }
 

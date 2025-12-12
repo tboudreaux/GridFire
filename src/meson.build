@@ -16,7 +16,7 @@ gridfire_sources = files(
     'lib/io/network_file.cpp',
     'lib/io/generative/python.cpp',
     'lib/solver/strategies/CVODE_solver_strategy.cpp',
-#    'lib/solver/strategies/SpectralSolverStrategy.cpp',
+    'lib/solver/strategies/SpectralSolverStrategy.cpp',
     'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',

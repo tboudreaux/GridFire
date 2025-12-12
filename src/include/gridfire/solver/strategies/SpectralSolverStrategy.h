@@ -25,14 +25,14 @@
 #endif
 
 namespace gridfire::solver {
-    class SpectralSolverStrategy final : public MultiZoneDynamicNetworkSolverStrategy {
+    class SpectralSolverStrategy final : public MultiZoneDynamicNetworkSolver {
     public:
-        explicit SpectralSolverStrategy(engine::DynamicEngine& engine);
+        explicit SpectralSolverStrategy(const engine::DynamicEngine& engine);
         ~SpectralSolverStrategy() override;
 
         std::vector<NetOut> evaluate(
             const std::vector<NetIn> &netIns,
-            const std::vector<double>& mass_coords
+            const std::vector<double>& mass_coords, const engine::scratch::StateBlob &ctx_template
         ) override;
 
         void set_callback(const std::any &callback) override;
@@ -83,6 +83,11 @@ namespace gridfire::solver {
         using TimestepCallback = std::function<void(const TimestepContext&)>;
     private:
 
+        enum class ParallelInitializationResult : uint8_t {
+            SUCCESS,
+            FAILURE
+        };
+
         struct SpectralCoefficients {
             size_t num_sets;
             size_t num_coefficients;
@@ -122,14 +127,16 @@ namespace gridfire::solver {
             void init_from_basis(size_t num_basis_funcs, const SplineBasis& basis) const;
 
             void solve_inplace(N_Vector x, size_t num_vars, size_t basis_size) const;
+            void solve_inplace_ptr(sunrealtype* data_ptr, size_t num_vars, size_t basis_size) const;
         };
 
         struct CVODEUserData {
             SpectralSolverStrategy* solver_instance{};
-            engine::DynamicEngine* engine;
+            const engine::DynamicEngine* engine{};
 
-            DenseLinearSolver* mass_matrix_solver_instance;
-            const SplineBasis* basis;
+            DenseLinearSolver* mass_matrix_solver_instance{};
+            const SplineBasis* basis{};
+            std::vector<std::unique_ptr<engine::scratch::StateBlob>>* workspaces;
         };
 
     private:
@@ -166,10 +173,12 @@ namespace gridfire::solver {
         N_Vector m_T_coeffs = nullptr;
         N_Vector m_rho_coeffs = nullptr;
 
+        std::vector<fourdst::atomic::Species> m_global_species_list;
+
 
     private:
         std::vector<double> evaluate_monitor_function(const std::vector<NetIn>& current_shells) const;
-        SplineBasis generate_basis_from_monitor(const std::vector<double>& monitor_values, const std::vector<double>& mass_coordinates) const;
+        SplineBasis generate_basis_from_monitor(const std::vector<double>& monitor_values, const std::vector<double>& mass_coordinates, size_t actual_elements) const;
 
         GridPoint reconstruct_at_quadrature(const N_Vector y_coeffs, size_t quad_index, const SplineBasis &basis) const;
 
@@ -179,6 +188,9 @@ namespace gridfire::solver {
         static int cvode_jac_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, SUNMatrix J, void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
         int calculate_rhs(sunrealtype t, N_Vector y_coeffs, N_Vector ydot_coeffs, CVODEUserData* data) const;
+        int calculate_jacobian(sunrealtype t, N_Vector y_coeffs, N_Vector ydot_coeffs, SUNMatrix J, const CVODEUserData *data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) const;
+
+        static size_t nyquist_elements(size_t requested_elements, size_t num_shells) ;
 
         static void project_specific_variable(
             const std::vector<NetIn>& current_shells,
@@ -191,6 +203,7 @@ namespace gridfire::solver {
             bool use_log
         );
 
+        void inspect_jacobian(SUNMatrix J, const std::string& context) const;
     };
 
 }

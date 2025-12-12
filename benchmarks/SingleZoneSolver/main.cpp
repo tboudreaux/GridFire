@@ -19,15 +19,7 @@
 #include <clocale>
 
 #include "gridfire/reaction/reaclib.h"
-#include <omp.h>
-
-unsigned long get_thread_id() {
-    return static_cast<unsigned long>(omp_get_thread_num());
-}
-
-bool in_parallel() {
-    return omp_in_parallel() != 0;
-}
+#include "gridfire/utils/gf_omp.h"
 
 gridfire::NetIn init(const double temp, const double rho, const double tMax) {
     std::setlocale(LC_ALL, "");
@@ -55,6 +47,7 @@ gridfire::NetIn init(const double temp, const double rho, const double tMax) {
 
 
 int main() {
+    GF_PAR_INIT()
     using namespace gridfire;
 
     constexpr size_t breaks = 1;
@@ -108,15 +101,6 @@ int main() {
     std::println("Total Time for {} runs: {:.6f} seconds", runs, elapsed.count());
     std::println("Final H-1 Abundances Serial: {}", serial_results[0].composition.getMolarAbundance(fourdst::atomic::H_1));
 
-    CppAD::thread_alloc::parallel_setup(
-        static_cast<size_t>(omp_get_max_threads()), // Max threads
-        []() -> bool { return in_parallel(); },                              // Function to get thread ID
-        []() -> size_t { return get_thread_id(); }                                 // Function to check parallel state
-    );
-
-    // OPTIONAL: Prevent CppAD from returning memory to the system
-    // during execution to reduce overhead (can speed up tight loops)
-    CppAD::thread_alloc::hold_memory(true);
 
     std::array<NetOut, runs> parallelResults;
     std::array<std::chrono::duration<double>, runs> setupTimes;
@@ -129,7 +113,8 @@ int main() {
 
     // Parallel runs
     startTime = std::chrono::high_resolution_clock::now();
-    #pragma omp parallel for
+
+    GF_OMP(parallel for,)
     for (size_t i = 0; i < runs; ++i) {
         auto start_setup_time = std::chrono::high_resolution_clock::now();
         solver::CVODESolverStrategy solver(construct.engine, *workspaces[i]);

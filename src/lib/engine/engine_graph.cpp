@@ -398,8 +398,10 @@ namespace gridfire::engine {
             else { factor = std::pow(abundance, static_cast<double>(power)); }
 
             if (!std::isfinite(factor)) {
-                LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction.id());
-                throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
+                const auto& sp = m_indexToSpeciesMap.at(reactantIndex);
+                std::string error_msg = std::format("Non-finite factor encountered in forward abundance product in reaction {} for species {} (Abundance: {}). Check input abundances for validity.", reaction.id(), sp.name(), abundance);
+                LOG_CRITICAL(m_logger, "{}", error_msg);
+                throw exceptions::BadRHSEngineError(error_msg);
             }
 
             forwardAbundanceProduct *= factor;
@@ -949,9 +951,6 @@ namespace gridfire::engine {
         const double rho,
         const std::vector<fourdst::atomic::Species> &activeSpecies
     ) const {
-        // PERF: For small k it may make sense to implement a purley forward mode AD computation,
-        //       some heuristic could be used to switch between the two methods based on k and
-        //       total network species
         const size_t k_active = activeSpecies.size();
 
         // --- 1. Get the list of global indices ---
@@ -1443,7 +1442,7 @@ namespace gridfire::engine {
 
             m_precomputed_reactions.push_back(std::move(precomp));
         }
-        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputedReactions.size());
+        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputed_reactions.size());
     }
 
     bool GraphEngine::AtomicReverseRate::forward(
