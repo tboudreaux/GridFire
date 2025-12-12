@@ -37,7 +37,7 @@ namespace gridfire::solver {
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
     };
     /**
-     * @class SingleZoneNetworkSolverStrategy
+     * @class SingleZoneNetworkSolver
      * @brief Abstract base class for network solver strategies.
      *
      * This class defines the interface for network solver strategies, which are responsible
@@ -47,18 +47,23 @@ namespace gridfire::solver {
      * @tparam EngineT The type of engine to use with this solver strategy.  Must inherit from Engine.
      */
     template <IsEngine EngineT>
-    class SingleZoneNetworkSolverStrategy {
+    class SingleZoneNetworkSolver {
     public:
         /**
          * @brief Constructor for the NetworkSolverStrategy.
          * @param engine The engine to use for evaluating the network.
          */
-        explicit SingleZoneNetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
+        explicit SingleZoneNetworkSolver(
+            const EngineT& engine,
+            const engine::scratch::StateBlob& ctx
+        ) :
+        m_engine(engine),
+        m_scratch_blob(ctx.clone_structure()) {};
 
         /**
          * @brief Virtual destructor.
          */
-        virtual ~SingleZoneNetworkSolverStrategy() = default;
+        virtual ~SingleZoneNetworkSolver() = default;
 
         /**
          * @brief Evaluates the network for a given timestep.
@@ -92,14 +97,21 @@ namespace gridfire::solver {
          */
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
     protected:
-        EngineT& m_engine; ///< The engine used by this solver strategy.
+        const EngineT& m_engine; ///< The engine used by this solver strategy.
+        std::unique_ptr<engine::scratch::StateBlob> m_scratch_blob;
     };
 
     template <IsEngine EngineT>
-    class MultiZoneNetworkSolverStrategy {
+    class MultiZoneNetworkSolver {
     public:
-        explicit MultiZoneNetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
-        virtual ~MultiZoneNetworkSolverStrategy() = default;
+        explicit MultiZoneNetworkSolver(
+            const EngineT& engine,
+            const engine::scratch::StateBlob& ctx
+        ) :
+        m_engine(engine),
+        m_scratch_blob_structure(ctx.clone_structure()){};
+
+        virtual ~MultiZoneNetworkSolver() = default;
 
         virtual std::vector<NetOut> evaluate(
             const std::vector<NetIn>& netIns,
@@ -108,12 +120,13 @@ namespace gridfire::solver {
         virtual void set_callback(const std::any& callback) = 0;
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
     protected:
-        EngineT& m_engine; ///< The engine used by this solver strategy.
+        const EngineT& m_engine; ///< The engine used by this solver strategy.
+        std::unique_ptr<engine::scratch::StateBlob> m_scratch_blob_structure;
     };
 
     /**
      * @brief Type alias for a network solver strategy that uses a DynamicEngine.
      */
-    using SingleZoneDynamicNetworkSolverStrategy = SingleZoneNetworkSolverStrategy<engine::DynamicEngine>;
-    using MultiZoneDynamicNetworkSolverStrategy = MultiZoneNetworkSolverStrategy<engine::DynamicEngine>;
+    using SingleZoneDynamicNetworkSolver = SingleZoneNetworkSolver<engine::DynamicEngine>;
+    using MultiZoneDynamicNetworkSolver = MultiZoneNetworkSolver<engine::DynamicEngine>;
 }

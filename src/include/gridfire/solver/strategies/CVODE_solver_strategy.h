@@ -78,14 +78,17 @@ namespace gridfire::solver {
      * std::cout << "Final energy: " << out.energy << " erg/g\n";
      * @endcode
      */
-    class CVODESolverStrategy final : public SingleZoneDynamicNetworkSolverStrategy {
+    class CVODESolverStrategy final : public SingleZoneDynamicNetworkSolver {
     public:
         /**
          * @brief Construct the CVODE strategy and create a SUNDIALS context.
          * @param engine DynamicEngine used for RHS/Jacobian evaluation and network access.
          * @throws std::runtime_error If SUNContext_Create fails.
          */
-        explicit CVODESolverStrategy(engine::DynamicEngine& engine);
+        explicit CVODESolverStrategy(
+            const engine::DynamicEngine& engine,
+            const engine::scratch::StateBlob& ctx
+        );
         /**
          * @brief Destructor: cleans CVODE/SUNDIALS resources and frees SUNContext.
          */
@@ -185,6 +188,7 @@ namespace gridfire::solver {
             const size_t currentConvergenceFailures; ///< Total number of convergence failures
             const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
             const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>& reactionContributionMap; ///< Map of reaction contributions for the current step
+            engine::scratch::StateBlob& state_ctx; ///< Reference to the engine scratch state blob
 
             /**
              * @brief Construct a context snapshot.
@@ -201,7 +205,8 @@ namespace gridfire::solver {
                 const std::vector<fourdst::atomic::Species>& networkSpecies,
                 size_t currentConvergenceFailure,
                 size_t currentNonlinearIterations,
-                const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap
+                const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap,
+                engine::scratch::StateBlob& state_ctx
             );
 
             /**
@@ -226,7 +231,8 @@ namespace gridfire::solver {
          */
         struct CVODEUserData {
             CVODESolverStrategy* solver_instance{}; // Pointer back to the class instance
-            engine::DynamicEngine* engine{};
+            engine::scratch::StateBlob& ctx;
+            const engine::DynamicEngine* engine{};
             double T9{};
             double rho{};
             double energy{};
@@ -302,7 +308,7 @@ namespace gridfire::solver {
          * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
-        void log_step_diagnostics(const CVODEUserData& user_data, bool displayJacobianStiffness, bool
+        void log_step_diagnostics(engine::scratch::StateBlob &ctx, const CVODEUserData& user_data, bool displayJacobianStiffness, bool
                                   displaySpeciesBalance, bool to_file, std::optional<std::string> filename) const;
     private:
         SUNContext m_sun_ctx = nullptr;   ///< SUNDIALS context (lifetime of the solver).

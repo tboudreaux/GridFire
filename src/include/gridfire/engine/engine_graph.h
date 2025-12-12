@@ -14,6 +14,8 @@
 #include "gridfire/engine/procedures/construction.h"
 #include "gridfire/config/config.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+
 #include "ankerl/unordered_dense.h"
 
 #include <string>
@@ -31,10 +33,6 @@
 #include "gridfire/reaction/weak/weak_interpolator.h"
 #include "gridfire/reaction/weak/weak_rate_library.h"
 
-// PERF: The function getNetReactionStoichiometry returns a map of species to their stoichiometric coefficients for a given reaction.
-//       this makes extra copies of the species, which is not ideal and could be optimized further.
-//       Even more relevant is the member m_reactionIDMap which makes copies of a REACLIBReaction for each reaction ID.
-//       REACLIBReactions are quite large data structures, so this could be a performance bottleneck.
 namespace gridfire::engine {
     /**
      * @brief Alias for CppAD AD type for double precision.
@@ -154,6 +152,7 @@ namespace gridfire::engine {
          * @see StepDerivatives
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -177,6 +176,7 @@ namespace gridfire::engine {
          * @see StepDerivatives
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergy(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract& comp,
             double T9,
             double rho,
@@ -198,6 +198,7 @@ namespace gridfire::engine {
          * @see EnergyDerivatives
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -222,11 +223,14 @@ namespace gridfire::engine {
          * @see EnergyDerivatives
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const reaction::ReactionSet &activeReactions
         ) const;
+
+        void generate_jacobian_sparsity_pattern();
 
         /**
          * @brief Generates the Jacobian matrix for the current state.
@@ -242,6 +246,7 @@ namespace gridfire::engine {
          * @see getJacobianMatrixEntry()
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -260,6 +265,7 @@ namespace gridfire::engine {
          * @see generateJacobianMatrix()
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -282,19 +288,12 @@ namespace gridfire::engine {
          * @see getJacobianMatrixEntry()
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
         ) const override;
-
-        /**
-         * @brief Generates the stoichiometry matrix for the network.
-         *
-         * This method computes and stores the stoichiometry matrix,
-         * which encodes the net change of each species in each reaction.
-         */
-        void generateStoichiometryMatrix() override;
 
         /**
          * @brief Calculates the molar reaction flow for a given reaction.
@@ -310,6 +309,7 @@ namespace gridfire::engine {
          *
          */
         [[nodiscard]] double calculateMolarReactionFlow(
+            scratch::StateBlob&,
             const reaction::Reaction& reaction,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -320,50 +320,18 @@ namespace gridfire::engine {
          * @brief Gets the list of species in the network.
          * @return Vector of Species objects representing all network species.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies(
+            scratch::StateBlob &ctx
+        ) const override;
 
         /**
          * @brief Gets the set of logical reactions in the network.
          * @return Reference to the LogicalReactionSet containing all reactions.
          */
-        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
-
-        /**
-         * @brief Sets the reactions for the network.
-         *
-         * @param reactions The set of reactions to use in the network.
-         *
-         * This method replaces the current set of reactions in the network
-         * with the provided set. It marks the engine as stale, requiring
-         * regeneration of matrices and recalculation of rates.
-         */
-        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
-
-        /**
-         * @brief Gets the net stoichiometry for a given reaction.
-         *
-         * @param reaction The reaction for which to get the stoichiometry.
-         * @return Map of species to their stoichiometric coefficients.
-         */
-        [[nodiscard]] static std::unordered_map<fourdst::atomic::Species, int> getNetReactionStoichiometry(
-            const reaction::Reaction& reaction
-        );
-
-        /**
-         * @brief Gets an entry from the stoichiometry matrix.
-         *
-         * @param species Species to look up stoichiometry for.
-         * @param reaction Reaction to find.
-         * @return Stoichiometric coefficient for the species in the reaction.
-         *
-         * The stoichiometry matrix must have been generated by `generateStoichiometryMatrix()`.
-         *
-         * @see generateStoichiometryMatrix()
-         */
-        [[nodiscard]] int getStoichiometryMatrixEntry(
-            const fourdst::atomic::Species& species,
-            const reaction::Reaction& reaction
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions(
+            scratch::StateBlob&
         ) const override;
+
 
         /**
          * @brief Computes timescales for all species in the network.
@@ -376,8 +344,8 @@ namespace gridfire::engine {
          * This method estimates the timescale for abundance change of each species,
          * which can be used for timestep control or diagnostics.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -397,6 +365,7 @@ namespace gridfire::engine {
          * calculations with different reaction sets without modifying the engine's internal state.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -415,8 +384,8 @@ namespace gridfire::engine {
          * This method estimates the destruction timescale for each species,
          * which can be useful for understanding reaction flows and equilibrium states.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
+            scratch::StateBlob&,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -436,6 +405,7 @@ namespace gridfire::engine {
          * calculations with different reaction sets without modifying the engine's internal state.
          */
         [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -452,24 +422,10 @@ namespace gridfire::engine {
          *
          * @return The updated composition that includes all species in the network.
          */
-        fourdst::composition::Composition update(
+        fourdst::composition::Composition project(
+            scratch::StateBlob& ctx,
             const NetIn &netIn
-        ) override;
-
-
-        /**
-         * @brief Checks if the engine view is stale and needs to be updated.
-         *
-         * @param netIn The current network input (unused).
-         * @return True if the view is stale, false otherwise.
-         *
-         * @deprecated This method is deprecated and will be removed in future versions.
-         *             Stale states are returned as part of the results of methods that
-         *             require the ability to report them.
-         */
-        [[deprecated]] bool isStale(
-            const NetIn &netIn
-        ) override;
+        ) const override;
 
         /**
          * @brief Checks if a given species is involved in the network.
@@ -478,6 +434,7 @@ namespace gridfire::engine {
          * @return True if the species is involved in the network, false otherwise.
          */
         [[nodiscard]] bool involvesSpecies(
+            scratch::StateBlob& ctx,
             const fourdst::atomic::Species& species
         ) const;
 
@@ -498,6 +455,7 @@ namespace gridfire::engine {
          * @endcode
          */
         void exportToDot(
+            scratch::StateBlob& ctx,
             const std::string& filename
         ) const;
 
@@ -518,21 +476,10 @@ namespace gridfire::engine {
          * @endcode
          */
         void exportToCSV(
+            scratch::StateBlob& ctx,
             const std::string& filename
         ) const;
 
-        /**
-         * @brief Sets the electron screening model for reaction rate calculations.
-         *
-         * @param model The type of screening model to use.
-         *
-         * This method allows changing the screening model at runtime. Screening corrections
-         * account for the electrostatic shielding of nuclei by electrons, which affects
-         * reaction rates in dense stellar plasmas.
-         */
-        void setScreeningModel(
-            screening::ScreeningType model
-        ) override;
 
         /**
          * @brief Gets the current electron screening model.
@@ -544,23 +491,9 @@ namespace gridfire::engine {
          * screening::ScreeningType currentModel = engine.getScreeningModel();
          * @endcode
          */
-        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
-
-        /**
-         * @brief Sets whether to precompute reaction rates.
-         *
-         * @param precompute True to enable precomputation, false to disable.
-         *
-         * This method allows enabling or disabling precomputation of reaction rates
-         * for performance optimization. When enabled, reaction rates are computed
-         * once and stored for later use.
-         *
-         * @post If precomputation is enabled, reaction rates will be precomputed and cached.
-         *       If disabled, reaction rates will be computed on-the-fly as needed.
-         */
-        void setPrecomputation(
-            bool precompute
-        );
+        [[nodiscard]] screening::ScreeningType getScreeningModel(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /**
          * @brief Checks if precomputation of reaction rates is enabled.
@@ -570,7 +503,9 @@ namespace gridfire::engine {
          * This method allows checking the current state of precomputation for
          * reaction rates in the engine.
          */
-        [[nodiscard]] bool isPrecomputationEnabled() const;
+        [[nodiscard]] bool isPrecomputationEnabled(
+            scratch::StateBlob& ctx
+        ) const;
 
         /**
          * @brief Gets the partition function used for reaction rate calculations.
@@ -580,7 +515,9 @@ namespace gridfire::engine {
          * This method provides access to the partition function used in the engine,
          * which is essential for calculating thermodynamic properties and reaction rates.
          */
-        [[nodiscard]] const partition::PartitionFunction& getPartitionFunction() const;
+        [[nodiscard]] const partition::PartitionFunction& getPartitionFunction(
+            scratch::StateBlob& ctx
+        ) const;
 
         /**
          * @brief Calculates the reverse rate for a given reaction.
@@ -648,23 +585,10 @@ namespace gridfire::engine {
          * This method allows checking whether the engine is configured to use
          * reverse reactions in its calculations.
          */
-        [[nodiscard]] bool isUsingReverseReactions() const;
+        [[nodiscard]] bool isUsingReverseReactions(
+            scratch::StateBlob& ctx
+        ) const;
 
-        /**
-         * @brief Sets whether to use reverse reactions in the engine.
-         *
-         * @param useReverse True to enable reverse reactions, false to disable.
-         *
-         * This method allows enabling or disabling reverse reactions in the engine.
-         * If disabled, only forward reactions will be considered in calculations.
-         *
-         * @post If reverse reactions are enabled, the engine will consider both
-         *       forward and reverse reactions in its calculations. If disabled,
-         *       only forward reactions will be considered.
-         */
-        void setUseReverseReactions(
-            bool useReverse
-        );
 
         /**
          * @brief Gets the index of a species in the network.
@@ -676,20 +600,8 @@ namespace gridfire::engine {
          * species vector. If the species is not found, it returns -1.
          */
         [[nodiscard]] size_t getSpeciesIndex(
+            scratch::StateBlob& ctx,
             const fourdst::atomic::Species &species
-        ) const override;
-
-        /**
-         * @brief Maps the NetIn object to a vector of molar abundances.
-         *
-         * @param netIn The NetIn object containing the input conditions.
-         * @return Vector of molar abundances corresponding to the species in the network.
-         *
-         * This method converts the NetIn object into a vector of molar abundances
-         * for each species in the network, which can be used for further calculations.
-         */
-        [[deprecated]] [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(
-            const NetIn &netIn
         ) const override;
 
         /**
@@ -702,32 +614,10 @@ namespace gridfire::engine {
          * setting up reactions, species, and precomputing necessary data.
          */
         [[nodiscard]] PrimingReport primeEngine(
+            scratch::StateBlob& ctx,
             const NetIn &netIn
-        ) override;
+        ) const override;
 
-        /**
-         * @brief Gets the depth of the network.
-         *
-         * @return The build depth of the network.
-         *
-         * This method returns the current build depth of the reaction network,
-         * which indicates how many levels of reactions are included in the network.
-         */
-        [[nodiscard]] BuildDepthType getDepth() const override;
-
-        /**
-         * @brief Rebuilds the reaction network based on a new composition.
-         *
-         * @param comp The new composition to use for rebuilding the network.
-         * @param depth The build depth to use for the network.
-         *
-         * This method rebuilds the reaction network using the provided composition
-         * and build depth. It updates all internal data structures accordingly.
-         */
-        void rebuild(
-            const fourdst::composition::CompositionAbstract &comp,
-            BuildDepthType depth
-        ) override;
 
         /**
          * @brief This will return the input comp with the molar abundances of any species not registered in that but
@@ -744,7 +634,12 @@ namespace gridfire::engine {
          * have a molar abundance set to 0.
          * @throws BadCollectionError If the input composition contains species not present in the network species set
          */
-        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+        fourdst::composition::Composition collectComposition(
+            scratch::StateBlob&,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
 
         /**
          * @brief Gets the status of a species in the network.
@@ -756,7 +651,10 @@ namespace gridfire::engine {
          * returns its status (e.g., Active, Inactive, NotFound).
          */
         [[nodiscard]]
-        SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
+        SpeciesStatus getSpeciesStatus(
+            scratch::StateBlob&,
+            const fourdst::atomic::Species &species
+        ) const override;
 
         [[nodiscard]] bool get_store_intermediate_reaction_contributions() const {
             return m_store_intermediate_reaction_contributions;
@@ -766,7 +664,11 @@ namespace gridfire::engine {
             m_store_intermediate_reaction_contributions = value;
         }
 
-        [[nodiscard]] std::optional<StepDerivatives<double>> getMostRecentRHSCalculation() const override;
+        [[nodiscard]] std::optional<StepDerivatives<double>> getMostRecentRHSCalculation(
+            scratch::StateBlob&
+        ) const override;
+
+        [[nodiscard]] const CppAD::ADFun<double>& getAuthoritativeADFun() const  { return m_authoritativeADFun; }
 
 
     private:
@@ -786,6 +688,7 @@ namespace gridfire::engine {
             std::vector<int> product_powers{}; ///< Powers of each unique product in the reverse reaction.
             double reverse_symmetry_factor{}; ///< Symmetry factor for reverse reactions.
         };
+
 
         struct constants {
             const double u = Constants::getInstance().get("u").value; ///< Atomic mass unit in g.
@@ -883,17 +786,7 @@ namespace gridfire::engine {
         std::unordered_map<fourdst::atomic::Species, size_t> m_speciesToIndexMap; ///< Map from species to their index in the stoichiometry matrix.
         std::unordered_map<size_t, fourdst::atomic::Species> m_indexToSpeciesMap; ///< Map from index to species in the stoichiometry matrix.
 
-
-        mutable CppAD::ADFun<double> m_rhsADFun; ///< CppAD function for the right-hand side of the ODE.
-        mutable CppAD::ADFun<double> m_epsADFun; ///< CppAD function for the energy generation rate.
-        mutable CppAD::sparse_jac_work m_jac_work; ///< Work object for sparse Jacobian calculations.
-        mutable std::vector<double> m_local_abundance_cache;
-        mutable std::unordered_map<size_t, StepDerivatives<double>> m_stepDerivativesCache;
-        mutable std::unordered_map<size_t, CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>>> m_jacobianSubsetCache;
-        mutable std::unordered_map<size_t, CppAD::sparse_jac_work> m_jacWorkCache;
-        mutable std::optional<StepDerivatives<double>> m_most_recent_rhs_calculation;
-
-        bool m_has_been_primed = false; ///< Flag indicating if the engine has been primed.
+        std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
 
         CppAD::sparse_rc<std::vector<size_t>> m_full_jacobian_sparsity_pattern; ///< Full sparsity pattern for the Jacobian matrix.
         std::set<std::pair<size_t, size_t>> m_full_sparsity_set; ///< For quick lookups of the base sparsity pattern
@@ -904,14 +797,17 @@ namespace gridfire::engine {
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
+        std::vector<PrecomputedReaction> m_precomputed_reactions;
+        std::unordered_map<uint64_t, size_t> m_precomputed_reaction_index_map;
+
         bool m_useReverseReactions = false; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
         bool m_store_intermediate_reaction_contributions = false; ///< Flag to enable or disable storing intermediate reaction contributions for debugging.
 
         BuildDepthType m_depth;
 
-        std::vector<PrecomputedReaction> m_precomputedReactions; ///< Precomputed reactions for efficiency.
-        std::unordered_map<uint64_t, size_t> m_precomputedReactionIndexMap; ///< Set of hashed precomputed reactions for quick lookup.
-        std::unique_ptr<partition::PartitionFunction> m_partitionFunction; ///< Partition function for the network.
+        CppAD::ADFun<double> m_authoritativeADFun;
+
+        const size_t m_state_blob_offset;
 
     private:
         /**
@@ -957,25 +853,14 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If there are no species in the network.
          */
-        void recordADTape() const;
+        void recordADTape();
 
         void collectAtomicReverseRateAtomicBases();
 
         void precomputeNetwork();
 
-
-        /**
-         * @brief Validates mass and charge conservation across all reactions.
-         *
-         * @return True if all reactions conserve mass and charge, false otherwise.
-         *
-         * This method checks that all reactions in the network conserve mass
-         * and charge. If any reaction does not conserve mass or charge, an
-         * error message is logged and false is returned.
-         */
-        [[nodiscard]] bool validateConservation() const;
-
         double compute_reaction_flow(
+            scratch::StateBlob& ctx,
             const std::vector<double> &local_abundances,
             const std::vector<double> &screening_factors,
             const std::vector<double> &bare_rates,
@@ -988,10 +873,12 @@ namespace gridfire::engine {
         ) const;
 
         std::pair<double, double> compute_neutrino_fluxes(
+            scratch::StateBlob& ctx,
             double netFlow,
             const reaction::Reaction &reaction) const;
 
         PrecomputationKernelResults accumulate_flows_serial(
+            scratch::StateBlob& ctx,
             const std::vector<double>& local_abundances,
             const std::vector<double>& screening_factors,
             const std::vector<double>& bare_rates,
@@ -999,20 +886,10 @@ namespace gridfire::engine {
             double rho,
             const reaction::ReactionSet& activeReactions
         ) const;
-
-#ifdef GRIDFIRE_USE_OPENMP
-        PrecomputationKernelResults accumulate_flows_parallel(
-            const std::vector<double>& local_abundances,
-            const std::vector<double>& screening_factors,
-            const std::vector<double>& bare_rates,
-            const std::vector<double>& bare_reverse_rates,
-            double rho,
-            const reaction::ReactionSet& activeReactions
-        ) const;
-#endif
 
 
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             const std::vector<double> &bare_rates,
             const std::vector<double> &bare_reverse_rates,
@@ -1308,7 +1185,7 @@ namespace gridfire::engine {
         const T k_reaction = reaction.calculate_rate(T9, rho, Ye, mue, Y, m_indexToSpeciesMap);
 
         // --- Cound the number of each reactant species to account for species multiplicity ---
-        std::unordered_map<fourdst::atomic::Species, int> reactant_counts;
+        std::unordered_map<fourdst::atomic::Species, size_t> reactant_counts;
         reactant_counts.reserve(reaction.reactants().size());
         for (const auto& reactant : reaction.reactants()) {
             reactant_counts[reactant] = reaction.countReactantOccurrences(reactant);

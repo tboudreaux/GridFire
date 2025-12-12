@@ -19,6 +19,7 @@
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/partition/partition.h"
+#include "gridfire/utils/logging.h"
 
 #include <string>
 #include <set>
@@ -41,6 +42,28 @@ namespace gridfire::policy {
         MISSING_KEY_REACTION,
         MISSING_KEY_SPECIES,
         INITIALIZED_VERIFIED
+    };
+
+    inline std::string NetworkPolicyStatusToString(NetworkPolicyStatus status) {
+        switch (status) {
+            case NetworkPolicyStatus::UNINITIALIZED:
+                return "UNINITIALIZED";
+            case NetworkPolicyStatus::INITIALIZED_UNVERIFIED:
+                return "INITIALIZED_UNVERIFIED";
+            case NetworkPolicyStatus::MISSING_KEY_REACTION:
+                return "MISSING_KEY_REACTION";
+            case NetworkPolicyStatus::MISSING_KEY_SPECIES:
+                return "MISSING_KEY_SPECIES";
+            case NetworkPolicyStatus::INITIALIZED_VERIFIED:
+                return "INITIALIZED_VERIFIED";
+            default:
+                return "UNKNOWN_STATUS";
+        }
+    }
+
+    struct ConstructionResults {
+        const engine::DynamicEngine& engine;
+        std::unique_ptr<engine::scratch::StateBlob> scratch_blob;
     };
 
     /**
@@ -139,7 +162,7 @@ namespace gridfire::policy {
          * NetOut out = solver.evaluate(netIn, true);
          * @endcode
          */
-        [[nodiscard]] virtual engine::DynamicEngine& construct() = 0;
+        [[nodiscard]] virtual ConstructionResults construct() = 0;
 
         /**
          * @brief Returns the current verification/construction status of the policy.
@@ -160,6 +183,8 @@ namespace gridfire::policy {
         [[nodiscard]] virtual std::vector<engine::EngineTypes> get_engine_types_stack() const = 0;
 
         [[nodiscard]] virtual const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const = 0;
+
+        [[nodiscard]] virtual std::unique_ptr<engine::scratch::StateBlob> get_stack_scratch_blob() const = 0;
     };
 
     /**
@@ -217,3 +242,27 @@ namespace gridfire::policy {
     };
 
 }
+// 1. Define the BASE specialization first
+template<>
+struct std::formatter<gridfire::policy::NetworkPolicy> {
+    static constexpr auto parse(const format_parse_context& ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const gridfire::policy::NetworkPolicy& policy, FormatContext& ctx) const {
+        std::vector<gridfire::engine::EngineTypes> engine_types = policy.get_engine_types_stack();
+        std::ranges::reverse(engine_types);
+
+        return format_to(
+            ctx.out(),
+            "{}(Status: {}, Engine Stack Size: {}, Engine Stack: <(TOP) [{}] (BOTTOM)>)",
+            policy.name(),
+            gridfire::policy::NetworkPolicyStatusToString(policy.get_status()),
+            policy.get_engine_stack().size(),
+             gridfire::utils::iterable_to_delimited_string(
+                 engine_types,
+                 " -> ",
+                 [](const auto& type) { return gridfire::engine::engine_type_to_string(type); }
+            )
+        );
+    }
+};

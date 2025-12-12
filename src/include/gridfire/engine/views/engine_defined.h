@@ -8,6 +8,8 @@
 
 #include "gridfire/config/config.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
@@ -30,7 +32,9 @@ namespace gridfire::engine {
          * @brief Gets the list of active species in the network defined by the file.
          * @return A const reference to the vector of active species.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getNetworkSpecies(
+            scratch::StateBlob& ctx
+        ) const override;
 
         // --- DynamicEngine Interface ---
         /**
@@ -45,7 +49,8 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If the view is stale (i.e., `update()` has not been called after `setNetworkFile()`).
          */
-        [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
+        [[nodiscard]] std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergy(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -53,6 +58,7 @@ namespace gridfire::engine {
         ) const override;
 
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -68,6 +74,7 @@ namespace gridfire::engine {
          * @throws std::runtime_error If the view is stale.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -84,6 +91,7 @@ namespace gridfire::engine {
          * @throws std::runtime_error If the view is stale.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -101,33 +109,13 @@ namespace gridfire::engine {
          * @throws std::runtime_error If the view is stale.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
         ) const override;
 
-        /**
-         * @brief Generates the stoichiometry matrix for the active reactions and species.
-         *
-         * @throws std::runtime_error If the view is stale.
-         */
-        void generateStoichiometryMatrix() override;
-
-        /**
-         * @brief Gets an entry from the stoichiometry matrix for the active species and reactions.
-         *
-         * @param species The species for which to get the stoichiometric coefficient.
-         * @param reaction The reaction for which to get the stoichiometric coefficient.
-         * @return The stoichiometric coefficient for the given species and reaction.
-         *
-         * @throws std::runtime_error If the view is stale.
-         * @throws std::out_of_range If an index is out of bounds.
-         */
-        [[nodiscard]] int getStoichiometryMatrixEntry(
-            const fourdst::atomic::Species& species,
-            const reaction::Reaction& reaction
-        ) const override;
         /**
          * @brief Calculates the molar reaction flow for a given reaction in the active network.
          *
@@ -140,6 +128,7 @@ namespace gridfire::engine {
          * @throws std::runtime_error If the view is stale or if the reaction is not in the active set.
          */
         [[nodiscard]] double calculateMolarReactionFlow(
+            scratch::StateBlob& ctx,
             const reaction::Reaction& reaction,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -152,16 +141,9 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If the view is stale.
          */
-        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions() const override;
-
-        /**
-         * @brief Sets the active reactions in the network.
-         *
-         * @param reactions The ReactionSet containing the reactions to set as active.
-         *
-         * @post The view is marked as stale and will need to be updated.
-         */
-        void setNetworkReactions(const reaction::ReactionSet& reactions) override;
+        [[nodiscard]] const reaction::ReactionSet& getNetworkReactions(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /**
          * @brief Computes timescales for all active species in the network.
@@ -173,8 +155,8 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If the view is stale.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus>getSpeciesTimescales(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -190,8 +172,8 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If the view is stale.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -208,29 +190,19 @@ namespace gridfire::engine {
          *
          * @post If the view was stale, it is rebuilt and is no longer stale.
          */
-        fourdst::composition::Composition update(const NetIn &netIn) override;
-
-        /**
-         * @brief Checks if the engine view is stale.
-         *
-         * @param netIn The current network input (unused).
-         * @return True if the view is stale and needs to be updated; false otherwise.
-         */
-        [[deprecated]] bool isStale(const NetIn& netIn) override;
-
-        /**
-         * @brief Sets the screening model for the base engine.
-         *
-         * @param model The screening model to set.
-         */
-        void setScreeningModel(screening::ScreeningType model) override;
+        fourdst::composition::Composition project(
+            scratch::StateBlob& ctx,
+            const NetIn &netIn
+        ) const override;
 
         /**
          * @brief Gets the screening model from the base engine.
          *
          * @return The current screening model type.
          */
-        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
+        [[nodiscard]] screening::ScreeningType getScreeningModel(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /** @brief Maps a species from the full network to its index in the defined active network.
          *
@@ -239,21 +211,20 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If the species is not in the active set.
          */
-        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
-
-        /**
-         * @brief Map from a NetIn object to a vector of molar abundances for the active species.
-         * @param netIn The NetIn object containing the full network abundances.
-         * @return A vector of molar abundances for the active species.
-         */
-        [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+        [[nodiscard]] size_t getSpeciesIndex(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        ) const override;
 
         /**
          * @brief Prime the engine view for calculations. This will delegate to the base engine.
          * @param netIn The current network input.
          * @return The PrimingReport from the base engine.
          */
-        [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+        [[nodiscard]] PrimingReport primeEngine(
+            scratch::StateBlob& ctx,
+            const NetIn &netIn
+        ) const override;
 
         /**
          * @brief Collects a Composition object from the base engine.
@@ -263,7 +234,12 @@ namespace gridfire::engine {
          * @param rho The density in g/cm^3.
          * @return A composition object representing the state of the engine stack and the current view.
          */
-        [[nodiscard]] fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+        [[nodiscard]] fourdst::composition::Composition collectComposition(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
 
         /**
          * @brief Gets the status of a species in the active network.
@@ -271,25 +247,19 @@ namespace gridfire::engine {
          * @param species The species for which to get the status.
          * @return The SpeciesStatus indicating if the species is active, inactive, or not present.
          */
-        [[nodiscard]] SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
+        [[nodiscard]] SpeciesStatus getSpeciesStatus(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        ) const override;
+
+        [[nodiscard]] std::optional<StepDerivatives<double>>getMostRecentRHSCalculation(
+            scratch::StateBlob &ctx
+        ) const override;
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;
     private:
-        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
-        ///< Active species in the defined engine.
-        std::set<fourdst::atomic::Species> m_activeSpecies;
-
-        ///< Cache for the active species vector to avoid dangling references.
-        mutable std::optional<std::vector<fourdst::atomic::Species>> m_activeSpeciesVectorCache = std::nullopt;
-
-        ///< Active reactions in the defined engine.
-        reaction::ReactionSet m_activeReactions;
-
-        ///< Maps indices of active species to indices in the full network.
-        std::vector<size_t> m_speciesIndexMap;
-        ///< Maps indices of active reactions to indices in the full network.
-        std::vector<size_t> m_reactionIndexMap;
+        quill::Logger* m_logger = LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
     private:
         /**
          * @brief Constructs the species index map.
@@ -301,7 +271,9 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If an active species is not found in the base engine's species list.
          */
-        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructSpeciesIndexMap(
+            scratch::StateBlob& ctx
+        ) const;
 
         /**
          * @brief Constructs the reaction index map.
@@ -313,7 +285,9 @@ namespace gridfire::engine {
          *
          * @throws std::runtime_error If an active reaction is not found in the base engine's reaction list.
          */
-        [[nodiscard]] std::vector<size_t> constructReactionIndexMap() const;
+        [[nodiscard]] std::vector<size_t> constructReactionIndexMap(
+            scratch::StateBlob& ctx
+        ) const;
 
         /**
          * @brief Maps a vector of culled abundances to a vector of full abundances.
@@ -322,7 +296,10 @@ namespace gridfire::engine {
          * @return A vector of abundances for the full network, with the abundances of the active
          *         species copied from the defined vector.
          */
-        [[nodiscard]] std::vector<double> mapViewToFull(const std::vector<double>& defined) const;
+        [[nodiscard]] std::vector<double> mapViewToFull(
+            scratch::StateBlob& ctx,
+            const std::vector<double>& defined
+        ) const;
 
         /**
          * @brief Maps a vector of full abundances to a vector of culled abundances.
@@ -331,7 +308,10 @@ namespace gridfire::engine {
          * @return A vector of abundances for the active species, with the abundances of the active
          *         species copied from the full vector.
          */
-        [[nodiscard]] std::vector<double> mapFullToView(const std::vector<double>& full) const;
+        [[nodiscard]] static std::vector<double> mapFullToView(
+            scratch::StateBlob& ctx,
+            const std::vector<double>& full
+        );
 
         /**
          * @brief Maps a culled species index to a full species index.
@@ -341,7 +321,10 @@ namespace gridfire::engine {
          *
          * @throws std::out_of_range If the defined index is out of bounds for the species index map.
          */
-        [[nodiscard]] size_t mapViewToFullSpeciesIndex(size_t definedSpeciesIndex) const;
+        [[nodiscard]] size_t mapViewToFullSpeciesIndex(
+            scratch::StateBlob& ctx,
+            size_t definedSpeciesIndex
+        ) const;
 
         /**
          * @brief Maps a culled reaction index to a full reaction index.
@@ -351,11 +334,15 @@ namespace gridfire::engine {
          *
          * @throws std::out_of_range If the defined index is out of bounds for the reaction index map.
          */
-        [[nodiscard]] size_t mapViewToFullReactionIndex(size_t definedReactionIndex) const;
+        [[nodiscard]] size_t mapViewToFullReactionIndex(
+            scratch::StateBlob& ctx,
+            size_t definedReactionIndex
+        ) const;
 
-        void validateNetworkState() const;
-
-        void collect(const std::vector<std::string>& peNames);
+        void collect(
+            scratch::StateBlob& ctx,
+            const std::vector<std::string>& peNames
+        ) const;
 
     };
 
@@ -368,6 +355,9 @@ namespace gridfire::engine {
         );
         [[nodiscard]] std::string getNetworkFile() const { return m_fileName; }
         [[nodiscard]] const io::NetworkFileParser& getParser() const { return m_parser; }
+
+
+
     private:
         using LogManager = LogManager;
         Config<config::GridFireConfig> m_config;

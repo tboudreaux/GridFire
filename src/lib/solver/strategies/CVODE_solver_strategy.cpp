@@ -19,7 +19,6 @@
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/engine/engine_graph.h"
-#include "gridfire/engine/types/engine_types.h"
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/exceptions/error_solver.h"
@@ -41,7 +40,8 @@ namespace gridfire::solver {
         const std::vector<fourdst::atomic::Species> &networkSpecies,
         const size_t currentConvergenceFailure,
         const size_t currentNonlinearIterations,
-        const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap
+        const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap,
+        scratch::StateBlob& ctx
     ) :
     t(t),
     state(state),
@@ -54,7 +54,8 @@ namespace gridfire::solver {
     networkSpecies(networkSpecies),
     currentConvergenceFailures(currentConvergenceFailure),
     currentNonlinearIterations(currentNonlinearIterations),
-    reactionContributionMap(reactionContributionMap)
+    reactionContributionMap(reactionContributionMap),
+    state_ctx(ctx)
     {}
 
     std::vector<std::tuple<std::string, std::string>> CVODESolverStrategy::TimestepContext::describe() const {
@@ -74,8 +75,11 @@ namespace gridfire::solver {
     }
 
 
-    CVODESolverStrategy::CVODESolverStrategy(DynamicEngine &engine): SingleZoneNetworkSolverStrategy<DynamicEngine>(engine) {
-        // TODO: In order to support MPI this function must be changed
+    CVODESolverStrategy::CVODESolverStrategy(
+        const DynamicEngine &engine,
+        const scratch::StateBlob& ctx
+    ): SingleZoneNetworkSolver<DynamicEngine>(engine, ctx) {
+        // PERF: In order to support MPI this function must be changed
         const int flag = SUNContext_Create(SUN_COMM_NULL, &m_sun_ctx);
         if (flag < 0) {
             throw std::runtime_error("Failed to create SUNDIALS context (SUNDIALS Errno: " + std::to_string(flag) + ")");
@@ -137,10 +141,10 @@ namespace gridfire::solver {
                         (!resourcesExist ? "CVODE resources do not exist" :
                             "Input composition inconsistent with previous state"));
             LOG_TRACE_L1(m_logger, "Starting engine update chain...");
-            equilibratedComposition = m_engine.update(netIn);
+            equilibratedComposition = m_engine.project(*m_scratch_blob, netIn);
             LOG_TRACE_L1(m_logger, "Engine updated and equilibrated composition found!");
 
-            size_t numSpecies = m_engine.getNetworkSpecies().size();
+            size_t numSpecies = m_engine.getNetworkSpecies(*m_scratch_blob).size();
             uint64_t N = numSpecies + 1;
 
             LOG_TRACE_L1(m_logger, "Number of species: {} ({} independent variables)", numSpecies, N);
@@ -153,10 +157,10 @@ namespace gridfire::solver {
         } else {
             LOG_INFO(m_logger, "Reusing existing CVODE resources (size: {})", m_last_size);
 
-            const size_t numSpecies = m_engine.getNetworkSpecies().size();
+            const size_t numSpecies = m_engine.getNetworkSpecies(*m_scratch_blob).size();
             sunrealtype *y_data = N_VGetArrayPointer(m_Y);
             for (size_t i = 0; i < numSpecies; i++) {
-                const auto& species = m_engine.getNetworkSpecies()[i];
+                const auto& species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
                 if (netIn.composition.contains(species)) {
                     y_data[i] = netIn.composition.getMolarAbundance(species);
                 } else {
@@ -170,10 +174,12 @@ namespace gridfire::solver {
             equilibratedComposition = netIn.composition; // Use the provided composition as-is if we already have validated CVODE resources and that the composition is consistent with the previous state
         }
 
-        size_t numSpecies = m_engine.getNetworkSpecies().size();
-        CVODEUserData user_data;
-        user_data.solver_instance = this;
-        user_data.engine = &m_engine;
+        size_t numSpecies = m_engine.getNetworkSpecies(*m_scratch_blob).size();
+        CVODEUserData user_data {
+            .solver_instance = this,
+            .ctx = *m_scratch_blob,
+            .engine = &m_engine,
+        };
         LOG_TRACE_L1(m_logger, "CVODE resources successfully initialized!");
 
         double current_time = 0;
@@ -199,7 +205,7 @@ namespace gridfire::solver {
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;
             user_data.rho = netIn.density;
-            user_data.networkSpecies = &m_engine.getNetworkSpecies();
+            user_data.networkSpecies = &m_engine.getNetworkSpecies(*m_scratch_blob);
             user_data.captured_exception.reset();
 
             utils::check_cvode_flag(CVodeSetUserData(m_cvode_mem, &user_data), "CVodeSetUserData");
@@ -247,7 +253,7 @@ namespace gridfire::solver {
                 );
             }
             for (size_t i = 0; i < numSpecies; ++i) {
-                const auto& species = m_engine.getNetworkSpecies()[i];
+                const auto& species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
                 if (y_data[i] > 0.0) {
                     postStep.setMolarAbundance(species, y_data[i]);
                 }
@@ -260,7 +266,7 @@ namespace gridfire::solver {
             LOG_DEBUG(m_logger, "Current composition (molar abundance): {}", [&]() -> std::string {
                 std::stringstream ss;
                 for (size_t i = 0; i < numSpecies; ++i) {
-                    const auto& species = m_engine.getNetworkSpecies()[i];
+                    const auto& species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
                     ss << species.name() << ": (y_data = " << y_data[i] << ", collected = " << postStep.getMolarAbundance(species) << ")";
                     if (i < numSpecies - 1) {
                         ss << ", ";
@@ -285,10 +291,11 @@ namespace gridfire::solver {
                 netIn.density,
                 n_steps,
                 m_engine,
-                m_engine.getNetworkSpecies(),
+                m_engine.getNetworkSpecies(*m_scratch_blob),
                 convFail_diff,
                 iter_diff,
-                rcMap
+                rcMap,
+                *m_scratch_blob
             );
 
             prev_nonlinear_iterations = nliters + total_nonlinear_iterations;
@@ -300,7 +307,7 @@ namespace gridfire::solver {
             trigger->step(ctx);
 
             if (m_detailed_step_logging) {
-                log_step_diagnostics(user_data, true, true, true, "step_" + std::to_string(total_steps + n_steps) + ".json");
+                log_step_diagnostics(*m_scratch_blob, user_data, true, true, true, "step_" + std::to_string(total_steps + n_steps) + ".json");
             }
 
             if (trigger->check(ctx)) {
@@ -326,7 +333,7 @@ namespace gridfire::solver {
 
                 fourdst::composition::Composition temp_comp;
                 std::vector<double> mass_fractions;
-                auto num_species_at_stop = static_cast<long int>(m_engine.getNetworkSpecies().size());
+                auto num_species_at_stop = static_cast<long int>(m_engine.getNetworkSpecies(*m_scratch_blob).size());
 
                 if (num_species_at_stop > m_Y->ops->nvgetlength(m_Y) - 1) {
                     LOG_ERROR(
@@ -338,8 +345,8 @@ namespace gridfire::solver {
                     throw std::runtime_error("Number of species at engine update exceeds the number of species in the CVODE solver. This should never happen.");
                 }
 
-                for (const auto& species: m_engine.getNetworkSpecies()) {
-                    const size_t sid = m_engine.getSpeciesIndex(species);
+                for (const auto& species: m_engine.getNetworkSpecies(*m_scratch_blob)) {
+                    const size_t sid = m_engine.getSpeciesIndex(*m_scratch_blob, species);
                     temp_comp.registerSpecies(species);
                     double y = end_of_step_abundances[sid];
                     if (y > 0.0) {
@@ -349,7 +356,7 @@ namespace gridfire::solver {
 
 #ifndef NDEBUG
                 for (long int i = 0; i < num_species_at_stop; ++i) {
-                    const auto& species = m_engine.getNetworkSpecies()[i];
+                    const auto& species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
                     if (std::abs(temp_comp.getMolarAbundance(species) - y_data[i]) > 1e-12) {
                         throw exceptions::UtilityError("Conversion from solver state to composition molar abundance failed verification.");
                     }
@@ -384,7 +391,7 @@ namespace gridfire::solver {
                     "Prior to Engine Update active reactions are: {}",
                     [&]() -> std::string {
                         std::stringstream ss;
-                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions();
+                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions(*m_scratch_blob);
                         size_t count = 0;
                         for (const auto& reaction : reactions) {
                             ss << reaction -> id();
@@ -396,7 +403,7 @@ namespace gridfire::solver {
                         return ss.str();
                     }()
                 );
-                fourdst::composition::Composition currentComposition = m_engine.update(netInTemp);
+                fourdst::composition::Composition currentComposition = m_engine.project(*m_scratch_blob, netInTemp);
                 LOG_DEBUG(
                     m_logger,
                     "After to Engine update composition is (molar abundance) {}",
@@ -443,7 +450,7 @@ namespace gridfire::solver {
                     "After Engine Update active reactions are: {}",
                     [&]() -> std::string {
                         std::stringstream ss;
-                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions();
+                        const gridfire::reaction::ReactionSet& reactions = m_engine.getNetworkReactions(*m_scratch_blob);
                         size_t count = 0;
                         for (const auto& reaction : reactions) {
                             ss << reaction -> id();
@@ -459,10 +466,10 @@ namespace gridfire::solver {
                     m_logger,
                     "Due to a triggered engine update the composition was updated from size {} to {} species.",
                     num_species_at_stop,
-                    m_engine.getNetworkSpecies().size()
+                    m_engine.getNetworkSpecies(*m_scratch_blob).size()
                 );
 
-                numSpecies = m_engine.getNetworkSpecies().size();
+                numSpecies = m_engine.getNetworkSpecies(*m_scratch_blob).size();
                 size_t N = numSpecies + 1;
 
                 LOG_INFO(m_logger, "Starting CVODE reinitialization after engine update...");
@@ -490,15 +497,15 @@ namespace gridfire::solver {
         accumulated_energy += y_data[numSpecies];
         std::vector<double> y_vec(y_data, y_data + numSpecies);
 
-        for (size_t i = 0; i < y_vec.size(); ++i) {
-            if (y_vec[i] < 0 && std::abs(y_vec[i]) < 1e-16) {
-                y_vec[i] = 0.0; // Regularize tiny negative abundances to zero
+        for (double & i : y_vec) {
+            if (i < 0 && std::abs(i) < 1e-16) {
+                i = 0.0; // Regularize tiny negative abundances to zero
             }
         }
 
         LOG_INFO(m_logger, "Constructing final composition= with {} species", numSpecies);
 
-        fourdst::composition::Composition topLevelComposition(m_engine.getNetworkSpecies(), y_vec);
+        fourdst::composition::Composition topLevelComposition(m_engine.getNetworkSpecies(*m_scratch_blob), y_vec);
         LOG_INFO(m_logger, "Final composition constructed from solver state successfully! ({})", [&topLevelComposition]() -> std::string {
             std::ostringstream ss;
             size_t i = 0;
@@ -513,7 +520,7 @@ namespace gridfire::solver {
         }());
 
         LOG_INFO(m_logger, "Collecting final composition...");
-        fourdst::composition::Composition outputComposition = m_engine.collectComposition(topLevelComposition, netIn.temperature/1e9, netIn.density);
+        fourdst::composition::Composition outputComposition = m_engine.collectComposition(*m_scratch_blob, topLevelComposition, netIn.temperature/1e9, netIn.density);
 
         assert(outputComposition.getRegisteredSymbols().size() == equilibratedComposition.getRegisteredSymbols().size());
 
@@ -538,6 +545,7 @@ namespace gridfire::solver {
 
         LOG_TRACE_L2(m_logger, "generating final nuclear energy generation rate derivatives...");
         auto [dEps_dT, dEps_dRho] = m_engine.calculateEpsDerivatives(
+            *m_scratch_blob,
             outputComposition,
             T9,
             netIn.density
@@ -640,7 +648,7 @@ namespace gridfire::solver {
         const auto* solver_instance = data->solver_instance;
 
         LOG_TRACE_L2(solver_instance->m_logger, "CVODE Jacobian wrapper starting");
-        const size_t numSpecies = engine->getNetworkSpecies().size();
+        const size_t numSpecies = engine->getNetworkSpecies(data->ctx).size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
 
@@ -653,7 +661,7 @@ namespace gridfire::solver {
             }
         }
         std::vector<double> y_vec(y_data, y_data + numSpecies);
-        fourdst::composition::Composition composition(engine->getNetworkSpecies(), y_vec);
+        fourdst::composition::Composition composition(engine->getNetworkSpecies(data->ctx), y_vec);
         LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {} with {} species in composition (mean molecular mass: {})", t, composition.size(), composition.getMeanParticleMass());
         LOG_TRACE_L2(solver_instance->m_logger, "Composition is {}", [&composition]() -> std::string {
             std::stringstream ss;
@@ -669,11 +677,11 @@ namespace gridfire::solver {
         }());
 
         LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {}", t);
-        NetworkJacobian jac = engine->generateJacobianMatrix(composition, data->T9, data->rho);
+        NetworkJacobian jac = engine->generateJacobianMatrix(data->ctx, composition, data->T9, data->rho);
         LOG_TRACE_L2(solver_instance->m_logger, "Regularizing Jacobian matrix at time {}", t);
         jac = regularize_jacobian(jac, composition, solver_instance->m_logger);
         LOG_TRACE_L2(solver_instance->m_logger, "Done regularizing Jacobian matrix at time {}", t);
-        if (jac.infs().size() != 0 || jac.nans().size() != 0) {
+        if (!jac.infs().empty() || !jac.nans().empty()) {
             auto infString = [&jac]() -> std::string {
                 std::stringstream ss;
                 size_t i = 0;
@@ -685,7 +693,7 @@ namespace gridfire::solver {
                     }
                     i++;
                 }
-                if (entries.size() == 0) {
+                if (entries.empty()) {
                     ss << "None";
                 }
                 return ss.str();
@@ -701,7 +709,7 @@ namespace gridfire::solver {
                     }
                     i++;
                 }
-                if (entries.size() == 0) {
+                if (entries.empty()) {
                     ss << "None";
                 }
                 return ss.str();
@@ -724,9 +732,9 @@ namespace gridfire::solver {
 
         LOG_TRACE_L2(solver_instance->m_logger, "Transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
         for (size_t j = 0; j < numSpecies; ++j) {
-            const fourdst::atomic::Species& species_j = engine->getNetworkSpecies()[j];
+            const fourdst::atomic::Species& species_j = engine->getNetworkSpecies(data->ctx)[j];
             for (size_t i = 0; i < numSpecies; ++i) {
-                const fourdst::atomic::Species& species_i = engine->getNetworkSpecies()[i];
+                const fourdst::atomic::Species& species_i = engine->getNetworkSpecies(data->ctx)[i];
                 // J(i,j) = d(f_i)/d(y_j)
                 // Column-major order format for SUNDenseMatrix: J_data[j*N + i] indexes J(i,j)
                 const double dYi_dt = jac(species_i, species_j);
@@ -752,7 +760,7 @@ namespace gridfire::solver {
         N_Vector ydot,
         const CVODEUserData *data
     ) const {
-        const size_t numSpecies = m_engine.getNetworkSpecies().size();
+        const size_t numSpecies = m_engine.getNetworkSpecies(data->ctx).size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
         // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
@@ -764,10 +772,10 @@ namespace gridfire::solver {
             }
         }
         std::vector<double> y_vec(y_data, y_data + numSpecies);
-        fourdst::composition::Composition composition(m_engine.getNetworkSpecies(), y_vec);
+        fourdst::composition::Composition composition(m_engine.getNetworkSpecies(*m_scratch_blob), y_vec);
 
         LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition", t, composition.size());
-        const auto result = m_engine.calculateRHSAndEnergy(composition, data->T9, data->rho, false);
+        const auto result = m_engine.calculateRHSAndEnergy(*m_scratch_blob, composition, data->T9, data->rho, false);
         if (!result) {
             LOG_CRITICAL(m_logger, "Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error()));
             throw exceptions::BadRHSEngineError(std::format("Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error())));
@@ -797,7 +805,7 @@ namespace gridfire::solver {
         }());
 
         for (size_t i = 0; i < numSpecies; ++i) {
-            fourdst::atomic::Species species = m_engine.getNetworkSpecies()[i];
+            fourdst::atomic::Species species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
             ydot_data[i] = dydt.at(species);
         }
         ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
@@ -822,7 +830,7 @@ namespace gridfire::solver {
 
         sunrealtype *y_data = N_VGetArrayPointer(m_Y);
         for (size_t i = 0; i < numSpecies; i++) {
-            const auto& species = m_engine.getNetworkSpecies()[i];
+            const auto& species = m_engine.getNetworkSpecies(*m_scratch_blob)[i];
             if (composition.contains(species)) {
                 y_data[i] = composition.getMolarAbundance(species);
             } else {
@@ -893,11 +901,11 @@ namespace gridfire::solver {
     }
 
     void CVODESolverStrategy::log_step_diagnostics(
+        scratch::StateBlob &ctx,
         const CVODEUserData &user_data,
         bool displayJacobianStiffness,
         bool displaySpeciesBalance,
-        bool to_file,
-        std::optional<std::string> filename
+        bool to_file, std::optional<std::string> filename
     ) const {
         if (to_file && !filename.has_value()) {
             LOG_ERROR(m_logger, "Filename must be provided when logging diagnostics to file.");
@@ -982,7 +990,7 @@ namespace gridfire::solver {
         std::vector<double> Y_full(y_data, y_data + num_components - 1);
         std::vector<double> E_full(y_err_data, y_err_data + num_components - 1);
 
-        auto result = diagnostics::report_limiting_species(*user_data.engine, Y_full, E_full, relTol, absTol, 10, to_file);
+        auto result = diagnostics::report_limiting_species(ctx, *user_data.engine, Y_full, E_full, relTol, absTol, 10, to_file);
         if (to_file && result.has_value()) {
             j["Limiting_Species"] = result.value();
         }
@@ -1005,11 +1013,11 @@ namespace gridfire::solver {
             err_ratios[i] = err_ratio;
         }
 
-        fourdst::composition::Composition composition(user_data.engine->getNetworkSpecies(), Y_full);
-        fourdst::composition::Composition collectedComposition = user_data.engine->collectComposition(composition, user_data.T9, user_data.rho);
+        fourdst::composition::Composition composition(user_data.engine->getNetworkSpecies(*m_scratch_blob), Y_full);
+        fourdst::composition::Composition collectedComposition = user_data.engine->collectComposition(*m_scratch_blob, composition, user_data.T9, user_data.rho);
 
-        auto destructionTimescales = user_data.engine->getSpeciesDestructionTimescales(collectedComposition, user_data.T9, user_data.rho);
-        auto netTimescales = user_data.engine->getSpeciesTimescales(collectedComposition, user_data.T9, user_data.rho);
+        auto destructionTimescales = user_data.engine->getSpeciesDestructionTimescales(*m_scratch_blob, collectedComposition, user_data.T9, user_data.rho);
+        auto netTimescales = user_data.engine->getSpeciesTimescales(*m_scratch_blob, collectedComposition, user_data.T9, user_data.rho);
 
         bool timescaleOkay = false;
         if (destructionTimescales && netTimescales) timescaleOkay = true;
@@ -1029,7 +1037,7 @@ namespace gridfire::solver {
                 if (destructionTimescales.value().contains(sp)) destructionTimescales_list.emplace_back(destructionTimescales.value().at(sp));
                 else destructionTimescales_list.emplace_back(std::numeric_limits<double>::infinity());
 
-                speciesStatus_list.push_back(SpeciesStatus_to_string(user_data.engine->getSpeciesStatus(sp)));
+                speciesStatus_list.push_back(SpeciesStatus_to_string(user_data.engine->getSpeciesStatus(*m_scratch_blob, sp)));
             }
 
             utils::Column<fourdst::atomic::Species> speciesColumn("Species", species_list);
@@ -1093,7 +1101,7 @@ namespace gridfire::solver {
 
         // --- 4. Call Your Jacobian and Balance Diagnostics ---
         if (displayJacobianStiffness) {
-            auto jStiff = diagnostics::inspect_jacobian_stiffness(*user_data.engine, composition, user_data.T9, user_data.rho, to_file);
+            auto jStiff = diagnostics::inspect_jacobian_stiffness(ctx, *user_data.engine, composition, user_data.T9, user_data.rho, to_file);
             if (to_file && jStiff.has_value()) {
                 j["Jacobian_Stiffness_Diagnostics"] = jStiff.value();
             }
@@ -1103,7 +1111,7 @@ namespace gridfire::solver {
             const size_t num_species_to_inspect = std::min(sorted_species.size(), static_cast<size_t>(5));
             for (size_t i = 0; i < num_species_to_inspect; ++i) {
                 const auto& species = sorted_species[i];
-                auto sbr = diagnostics::inspect_species_balance(*user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho, to_file);
+                auto sbr = diagnostics::inspect_species_balance(ctx, *user_data.engine, std::string(species.name()), composition, user_data.T9, user_data.rho, to_file);
                 if (to_file && sbr.has_value()) {
                     j[std::string("Species_Balance_Diagnostics_") + species.name().data()] = sbr.value();
                 }

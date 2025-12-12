@@ -9,6 +9,9 @@
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_solver.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+#include "gridfire/engine/scratchpads/engine_graph_scratchpad.h"
+
 #include "fourdst/logging/logging.h"
 #include "gridfire/solver/strategies/CVODE_solver_strategy.h"
 #include "quill/Logger.h"
@@ -20,12 +23,12 @@ namespace gridfire::engine {
     using fourdst::atomic::Species;
 
     PrimingReport primeNetwork(
-    const NetIn& netIn,
-    GraphEngine& engine,
-    const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
+        scratch::StateBlob &ctx,
+        const NetIn& netIn,
+        const GraphEngine& engine, const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
     ) {
         const auto logger = LogManager::getInstance().getLogger("log");
-        solver::CVODESolverStrategy integrator(engine);
+        solver::CVODESolverStrategy integrator(engine, ctx);
 
         // Do not need high precision for priming
         integrator.set_absTol(1e-3);
@@ -70,7 +73,7 @@ namespace gridfire::engine {
                     minAbundance = y;
                 }
             }
-            double abundanceForUnprimedSpecies = minAbundance / 1e10;
+            const double abundanceForUnprimedSpecies = minAbundance / 1e10;
             for (const auto& sp : unprimedSpecies) {
                 LOG_TRACE_L1(logger, "Clamping Species {}: initial abundance {}, primed abundance {} to {}", sp.name(), netIn.composition.getMolarAbundance(sp), report.primedComposition.getMolarAbundance(sp), abundanceForUnprimedSpecies);
                 report.primedComposition.setMolarAbundance(sp, abundanceForUnprimedSpecies);

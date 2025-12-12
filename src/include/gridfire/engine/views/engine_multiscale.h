@@ -4,6 +4,8 @@
 #include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/engine/engine_graph.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+
 #include "sundials/sundials_linearsolver.h"
 #include "sundials/sundials_matrix.h"
 #include "sundials/sundials_nvector.h"
@@ -81,19 +83,20 @@ namespace gridfire::engine {
          */
         explicit MultiscalePartitioningEngineView(DynamicEngine& baseEngine);
 
-        ~MultiscalePartitioningEngineView() override;
-
         /**
          * @brief Gets the list of species in the network.
          * @return A const reference to the vector of `Species` objects representing all species
          *         in the underlying base engine. This view does not alter the species list itself,
          *         only how their abundances are evolved.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species> & getNetworkSpecies() const override;
+        [[nodiscard]] const std::vector<fourdst::atomic::Species> & getNetworkSpecies(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -120,6 +123,7 @@ namespace gridfire::engine {
          *         (T9, rho, Y_full). This indicates `update()` was not called recently enough.
          */
         [[nodiscard]] std::expected<StepDerivatives<double>, engine::EngineStatus> calculateRHSAndEnergy(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -128,12 +132,14 @@ namespace gridfire::engine {
 
         /**
          * @brief Calculates the energy generation rate derivatives with respect to abundances.
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 The temperature in units of 10^9 K.
          * @param rho The density in g/cm^3.
          * @return The energy generation rate derivatives (dEps/dT and dEps/drho).
          */
         [[nodiscard]] EnergyDerivatives calculateEpsDerivatives(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -142,6 +148,7 @@ namespace gridfire::engine {
         /**
          * @brief Generates the Jacobian matrix for the current state.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -163,6 +170,7 @@ namespace gridfire::engine {
          *         without a valid partition.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -171,6 +179,7 @@ namespace gridfire::engine {
         /**
          * @brief Generates the Jacobian matrix for a subset of active species.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -192,6 +201,7 @@ namespace gridfire::engine {
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -201,6 +211,7 @@ namespace gridfire::engine {
         /**
          * @brief Generates the Jacobian matrix using a sparsity pattern.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -220,6 +231,7 @@ namespace gridfire::engine {
          * @throws exceptions::StaleEngineError If the QSE cache misses.
          */
         [[nodiscard]] NetworkJacobian generateJacobianMatrix(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho,
@@ -227,40 +239,9 @@ namespace gridfire::engine {
         ) const override;
 
         /**
-         * @brief Generates the stoichiometry matrix for the network.
-         *
-         * @par Purpose
-         * To prepare the stoichiometry matrix for later queries.
-         *
-         * @par How
-         * This method delegates directly to the base engine's `generateStoichiometryMatrix()`.
-         *      The stoichiometry is based on the full, unpartitioned network.
-         */
-        void generateStoichiometryMatrix() override;
-
-        /**
-         * @brief Gets an entry from the stoichiometry matrix.
-         *
-         * @param species Species to look up stoichiometry for.
-         * @param reaction Reaction to find.
-         * @return Stoichiometric coefficient for the species in the reaction.
-         *
-         * @par Purpose
-         * To query the stoichiometric relationship between a species and a reaction.
-         *
-         * @par How
-         * This method delegates directly to the base engine's `getStoichiometryMatrixEntry()`.
-         *
-         * @pre `generateStoichiometryMatrix()` must have been called.
-         */
-        [[nodiscard]] int getStoichiometryMatrixEntry(
-            const fourdst::atomic::Species& species,
-            const reaction::Reaction& reaction
-        ) const override;
-
-        /**
          * @brief Calculates the molar reaction flow for a given reaction.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param reaction The reaction for which to calculate the flow.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
@@ -281,6 +262,7 @@ namespace gridfire::engine {
          * @throws StaleEngineError If the QSE cache misses.
          */
         [[nodiscard]] double calculateMolarReactionFlow(
+            scratch::StateBlob& ctx,
             const reaction::Reaction &reaction,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
@@ -293,31 +275,14 @@ namespace gridfire::engine {
          * @return A const reference to the `LogicalReactionSet` from the base engine,
          *         containing all reactions in the full network.
          */
-        [[nodiscard]] const reaction::ReactionSet & getNetworkReactions() const override;
-
-        /**
-         * @brief Sets the set of logical reactions in the network.
-         *
-         * @param reactions The set of logical reactions to use.
-         *
-         * @par Purpose
-         * To modify the reaction network.
-         *
-         * @par How
-         * This operation is not supported by the `MultiscalePartitioningEngineView` as it
-         *      would invalidate the partitioning logic. It logs a critical error and throws an
-         *      exception. Network modifications should be done on the base engine before it is
-         *      wrapped by this view.
-         *
-         * @throws exceptions::UnableToSetNetworkReactionsError Always.
-         */
-        void setNetworkReactions(
-            const reaction::ReactionSet &reactions
-        ) override;
+        [[nodiscard]] const reaction::ReactionSet & getNetworkReactions(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /**
          * @brief Computes timescales for all species in the network.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -335,8 +300,8 @@ namespace gridfire::engine {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesTimescales(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -345,6 +310,7 @@ namespace gridfire::engine {
         /**
          * @brief Computes destruction timescales for all species in the network.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The current composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -362,8 +328,8 @@ namespace gridfire::engine {
          * @pre The engine must have a valid QSE cache entry for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, engine::EngineStatus>
-        getSpeciesDestructionTimescales(
+        [[nodiscard]] std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> getSpeciesDestructionTimescales(
+            scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
@@ -372,6 +338,7 @@ namespace gridfire::engine {
         /**
          * @brief Updates the internal state of the engine, performing partitioning and QSE equilibration.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param netIn A struct containing the current network input: temperature, density, and composition.
          * @return The new composition after QSE species have been brought to equilibrium.
          *
@@ -396,38 +363,11 @@ namespace gridfire::engine {
          *       The `m_qse_abundance_cache` is populated with the QSE solution for the given state.
          *       The returned composition reflects the new equilibrium.
          */
-        fourdst::composition::Composition update(
+        fourdst::composition::Composition project(
+            scratch::StateBlob& ctx,
             const NetIn &netIn
-        ) override;
+        ) const override;
 
-        /**
-         * @brief Checks if the engine's internal state is stale relative to the provided conditions.
-         *
-         * @param netIn A struct containing the current network input.
-         * @return `true` if the engine is stale, `false` otherwise.
-         *
-         * @par Purpose
-         * To determine if `update()` needs to be called.
-         *
-         * @par How
-         * It creates a `QSECacheKey` from the `netIn` data and checks for its
-         * existence in the `m_qse_abundance_cache`. A cache miss indicates the engine is
-         * stale because it does not have a valid QSE partition for the current conditions.
-         * It also queries the base engine's `isStale()` method.
-         */
-        bool isStale(const NetIn& netIn) override;
-
-        /**
-         * @brief Sets the electron screening model.
-         *
-         * @param model The type of screening model to use for reaction rate calculations.
-         *
-         * @par How
-         * This method delegates directly to the base engine's `setScreeningModel()`.
-         */
-        void setScreeningModel(
-            screening::ScreeningType model
-        ) override;
 
         /**
          * @brief Gets the current electron screening model.
@@ -437,20 +377,23 @@ namespace gridfire::engine {
          * @par How
          * This method delegates directly to the base engine's `getScreeningModel()`.
          */
-        [[nodiscard]] screening::ScreeningType getScreeningModel() const override;
+        [[nodiscard]] screening::ScreeningType getScreeningModel(
+            scratch::StateBlob& ctx
+        ) const override;
 
         /**
          * @brief Gets the base engine.
          *
          * @return A const reference to the base engine.
          */
-        const DynamicEngine & getBaseEngine() const override;
+        [[nodiscard]] const DynamicEngine & getBaseEngine() const override;
 
 
 
         /**
          * @brief Partitions the network based on timescales from a `NetIn` struct.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param netIn A struct containing the current network input.
          *
          * @par Purpose
@@ -461,12 +404,14 @@ namespace gridfire::engine {
          *      primary `partitionNetwork` method.
          */
         fourdst::composition::Composition partitionNetwork(
+            scratch::StateBlob& ctx,
             const NetIn &netIn
-        );
+        ) const;
 
         /**
          * @brief Exports the network to a DOT file for visualization.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param filename The name of the DOT file to create.
          * @param comp Composition object
          * @param T9 Temperature in units of 10^9 K.
@@ -480,6 +425,7 @@ namespace gridfire::engine {
          *      currently add any partitioning information to the output graph.
          */
         void exportToDot(
+            scratch::StateBlob &ctx,
             const std::string& filename,
             const fourdst::composition::Composition &comp,
             double T9,
@@ -489,24 +435,17 @@ namespace gridfire::engine {
         /**
          * @brief Gets the index of a species in the full network.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param species The species to get the index of.
          * @return The index of the species in the base engine's network.
          *
          * @par How
          * This method delegates directly to the base engine's `getSpeciesIndex()`.
          */
-        [[nodiscard]] size_t getSpeciesIndex(const fourdst::atomic::Species &species) const override;
-
-        /**
-         * @brief Maps a `NetIn` struct to a molar abundance vector for the full network.
-         *
-         * @param netIn A struct containing the current network input.
-         * @return A vector of molar abundances corresponding to the species order in the base engine.
-         *
-         * @par How
-         * This method delegates directly to the base engine's `mapNetInToMolarAbundanceVector()`.
-         */
-        [[nodiscard]] std::vector<double> mapNetInToMolarAbundanceVector(const NetIn &netIn) const override;
+        [[nodiscard]] size_t getSpeciesIndex(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        ) const override;
 
         /**
          * @brief Primes the engine with a specific species.
@@ -521,7 +460,10 @@ namespace gridfire::engine {
          * This method delegates directly to the base engine's `primeEngine()`. The
          *      multiscale view does not currently interact with the priming process.
          */
-        [[nodiscard]] PrimingReport primeEngine(const NetIn &netIn) override;
+        [[nodiscard]] PrimingReport primeEngine(
+            scratch::StateBlob& ctx,
+            const NetIn &netIn
+        ) const override;
 
         /**
          * @brief Gets the fast species in the network.
@@ -536,7 +478,10 @@ namespace gridfire::engine {
          *
          * @pre `partitionNetwork()` must have been called.
          */
-        [[nodiscard]] std::vector<fourdst::atomic::Species> getFastSpecies() const;
+        [[nodiscard]] std::vector<fourdst::atomic::Species> getFastSpecies(
+            scratch::StateBlob& ctx
+        ) const;
+
         /**
          * @brief Gets the dynamic species in the network.
          *
@@ -550,11 +495,14 @@ namespace gridfire::engine {
          *
          * @pre `partitionNetwork()` must have been called.
          */
-        [[nodiscard]] const std::vector<fourdst::atomic::Species>& getDynamicSpecies() const;
+        [[nodiscard]] static const std::vector<fourdst::atomic::Species>& getDynamicSpecies(
+            scratch::StateBlob& ctx
+        );
 
         /**
          * @brief Checks if a species is involved in the partitioned network.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param species The species to check.
          * @return `true` if the species is in either the dynamic or algebraic sets, `false` otherwise.
          *
@@ -566,25 +514,37 @@ namespace gridfire::engine {
          *
          * @pre `partitionNetwork()` must have been called.
          */
-        bool involvesSpecies(const fourdst::atomic::Species &species) const;
+        static bool involvesSpecies(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        );
 
         /**
          * @brief Check if a species is involved in the QSE (algebraic) set.
+         * @param ctx The scratch data for thread-local storage.
          * @param species The species to check.
          * @return Boolean indicating if the species is in the algebraic set.
          */
-        bool involvesSpeciesInQSE(const fourdst::atomic::Species &species) const;
+        static bool involvesSpeciesInQSE(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        );
 
         /**
          * @brief Check if a species is involved in the dynamic set.
+         * @param ctx The scratch data for thread-local storage.
          * @param species The species to check.
          * @return Boolean indicating if the species is in the dynamic set.
          */
-        bool involvesSpeciesInDynamic(const fourdst::atomic::Species &species) const;
+        static bool involvesSpeciesInDynamic(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        );
 
         /**
          * @brief Gets a normalized composition with QSE species equilibrated.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp The input composition.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -601,23 +561,36 @@ namespace gridfire::engine {
          * @pre The engine must have a valid QSE partition for the given state.
          * @throws StaleEngineError If the QSE cache misses.
          */
-        fourdst::composition::Composition getNormalizedEquilibratedComposition(const fourdst::composition::CompositionAbstract& comp, double T9, double rho, bool trust) const;
+        fourdst::composition::Composition getNormalizedEquilibratedComposition(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho,
+            bool trust
+        ) const;
 
         /**
          * @brief Collect the composition from this and sub engines.
          * @details This method operates by injecting the current equilibrium abundances for algebraic species into
          * the composition object so that they can be bubbled up to the caller.
+         * @param ctx The scratch data for thread-local storage.
          * @param comp Input Composition
          * @param T9
          * @param rho
          * @return New composition which is comp + any edits from lower levels + the equilibrium abundances of all algebraic species.
          * @throws BadCollectionError: if there is a species in the algebraic species set which does not show up in the reported composition from the base engine.:w
          */
-        fourdst::composition::Composition collectComposition(const fourdst::composition::CompositionAbstract &comp, double T9, double rho) const override;
+        fourdst::composition::Composition collectComposition(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
 
         /**
          * @brief Gets the status of a species in the network.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param species The species to query.
          * @return The `SpeciesStatus` indicating if the species is dynamic, algebraic, or not involved.
          *
@@ -630,9 +603,15 @@ namespace gridfire::engine {
          *
          * @pre `partitionNetwork()` must have been called.
          */
-        SpeciesStatus getSpeciesStatus(const fourdst::atomic::Species &species) const override;
+        SpeciesStatus getSpeciesStatus(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species &species
+        ) const override;
 
-    private:
+        [[nodiscard]] std::optional<StepDerivatives<double>>getMostRecentRHSCalculation(
+            scratch::StateBlob &
+        ) const override;
+    public:
         /**
          * @brief Struct representing a QSE group.
          *
@@ -678,9 +657,9 @@ namespace gridfire::engine {
                 return os;
             }
 
-            bool contains(const fourdst::atomic::Species& species) const;
-            bool containsAlgebraic(const fourdst::atomic::Species &species) const;
-            bool containsSeed(const fourdst::atomic::Species &species) const;
+            [[nodiscard]] bool contains(const fourdst::atomic::Species& species) const;
+            [[nodiscard]] bool containsAlgebraic(const fourdst::atomic::Species &species) const;
+            [[nodiscard]] bool containsSeed(const fourdst::atomic::Species &species) const;
         };
 
         class QSESolver {
@@ -701,6 +680,7 @@ namespace gridfire::engine {
             ~QSESolver();
 
             fourdst::composition::Composition solve(
+                scratch::StateBlob& ctx,
                 const fourdst::composition::Composition& comp,
                 double T9,
                 double rho
@@ -709,6 +689,9 @@ namespace gridfire::engine {
             size_t solves() const;
 
             void log_diagnostics(const QSEGroup &group, const fourdst::composition::Composition &comp) const;
+
+            std::unique_ptr<QSESolver> clone() const;
+            std::unique_ptr<QSESolver> clone(SUNContext sun_ctx) const;
         private:
 
             static int sys_func(
@@ -733,8 +716,7 @@ namespace gridfire::engine {
                 const std::unordered_map<fourdst::atomic::Species, size_t>& qse_solve_species_index_map;
                 const std::vector<fourdst::atomic::Species>& qse_solve_species;
                 const QSESolver& instance;
-                std::vector<double> row_scaling_factors;
-                const double initial_group_mass;
+                scratch::StateBlob& ctx;
             };
 
         private:
@@ -783,46 +765,12 @@ namespace gridfire::engine {
          * @brief The base engine to which this view delegates calculations.
          */
         DynamicEngine& m_baseEngine;
-        /**
-         * @brief The list of identified equilibrium groups.
-         */
-        std::vector<QSEGroup> m_qse_groups;
-
-        /**
-         * @brief A set of solvers, one for each QSE group
-         */
-        std::vector<std::unique_ptr<QSESolver>> m_qse_solvers;
-        /**
-         * @brief The simplified set of species presented to the solver (the "slow" species).
-         */
-        std::vector<fourdst::atomic::Species> m_dynamic_species;
-        /**
-         * @brief Species that are treated as algebraic (in QSE) in the QSE groups.
-         */
-        std::vector<fourdst::atomic::Species> m_algebraic_species;
-
-        /**
-         * @brief Map from species to their calculated abundances in the QSE state.
-         */
-        std::unordered_map<fourdst::atomic::Species, double> m_algebraic_abundances;
-
-        /**
-         * @brief Indices of all species considered active in the current partition (dynamic + algebraic).
-         */
-        std::vector<size_t> m_activeSpeciesIndices;
-        /**
-         * @brief Indices of all reactions involving only active species.
-         */
-        std::vector<size_t> m_activeReactionIndices;
-
-        mutable std::unordered_map<uint64_t, fourdst::composition::Composition> m_composition_cache;
-
-        SUNContext m_sun_ctx = nullptr;
 
     private:
         /**
          * @brief Partitions the network by timescale.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp Vector of current molar abundances for all species.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -839,12 +787,14 @@ namespace gridfire::engine {
          *      (e.g., a factor of 100).
          */
         std::vector<std::vector<fourdst::atomic::Species>> partitionByTimescale(
+            scratch::StateBlob& ctx,
             const fourdst::composition::Composition &comp,
             double T9,
             double rho
         ) const;
 
         std::pair<bool, reaction::ReactionSet> group_is_a_qse_cluster(
+            scratch::StateBlob& ctx,
             const fourdst::composition::Composition &comp,
             double T9,
             double rho,
@@ -852,6 +802,7 @@ namespace gridfire::engine {
         ) const;
 
         bool group_is_a_qse_pipeline(
+            scratch::StateBlob& ctx,
             const fourdst::composition::Composition &comp,
             double T9,
             double rho,
@@ -861,6 +812,7 @@ namespace gridfire::engine {
         /**
          * @brief Validates candidate QSE groups using flux analysis.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param candidate_groups A vector of candidate QSE groups.
          * @param comp Vector of current molar abundances for the full network.
          * @param T9 Temperature in units of 10^9 K.
@@ -879,6 +831,7 @@ namespace gridfire::engine {
          *      to the returned vector.
          */
         FluxValidationResult validateGroupsWithFluxAnalysis(
+            scratch::StateBlob& ctx,
             const std::vector<QSEGroup> &candidate_groups,
             const fourdst::composition::Composition &comp,
             double T9,
@@ -888,6 +841,7 @@ namespace gridfire::engine {
         /**
          * @brief Solves for the QSE abundances of the algebraic species in a given state.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param comp Vector of current molar abundances for all species in the base engine.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -905,15 +859,17 @@ namespace gridfire::engine {
          * @pre The input state (Y_full, T9, rho) must be a valid physical state.
          * @post The algebraic species in the QSE cache are updated with the new equilibrium abundances.
          */
-        fourdst::composition::Composition solveQSEAbundances(
+        auto solveQSEAbundances(
+            scratch::StateBlob &ctx,
             const fourdst::composition::CompositionAbstract &comp,
             double T9,
             double rho
-        ) const;
+        ) const -> fourdst::composition::Composition;
 
         /**
          * @brief Identifies the pool with the slowest mean timescale.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param pools A vector of vectors of species indices, where each inner vector represents a
          *              timescale pool.
          * @param comp Vector of current molar abundances for the full network.
@@ -929,6 +885,7 @@ namespace gridfire::engine {
          *      pool and returns the index of the pool with the maximum mean timescale.
          */
         size_t identifyMeanSlowestPool(
+            scratch::StateBlob& ctx,
             const std::vector<std::vector<fourdst::atomic::Species>>& pools,
             const fourdst::composition::Composition &comp,
             double T9,
@@ -938,6 +895,7 @@ namespace gridfire::engine {
         /**
          * @brief Builds a connectivity graph from a species pool.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param species_pool A vector of species indices representing a species pool.
          * @param comp
          * @param T9
@@ -954,13 +912,17 @@ namespace gridfire::engine {
          *      that reaction that are also in the pool.
          */
         std::unordered_map<fourdst::atomic::Species, std::vector<fourdst::atomic::Species>> buildConnectivityGraph(
-            const std::vector<fourdst::atomic::Species>& species_pool, const fourdst::composition::Composition &comp, double T9, double
-            rho
+            scratch::StateBlob& ctx,
+            const std::vector<fourdst::atomic::Species>& species_pool,
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
         ) const;
 
         /**
          * @brief Constructs candidate QSE groups from connected timescale pools.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param candidate_pools A vector of vectors of species indices, where each inner vector
          *                        represents a connected pool of species with similar fast timescales.
          * @param comp Vector of current molar abundances.
@@ -978,6 +940,7 @@ namespace gridfire::engine {
          * @post A list of candidate `QSEGroup` objects is returned.
          */
         std::vector<QSEGroup> constructCandidateGroups(
+            scratch::StateBlob& ctx,
             const std::vector<std::vector<fourdst::atomic::Species>>& candidate_pools,
             const fourdst::composition::Composition &comp,
             double T9,
@@ -987,6 +950,7 @@ namespace gridfire::engine {
         /**
          * @brief Analyzes the connectivity of timescale pools.
          *
+         * @param ctx The scratch data for thread-local storage.
          * @param timescale_pools A vector of vectors of species indices, where each inner vector
          *                        represents a timescale pool.
          * @param comp
@@ -1005,11 +969,15 @@ namespace gridfire::engine {
          *      The resulting components from all pools are collected and returned.
          */
         std::vector<std::vector<fourdst::atomic::Species>> analyzeTimescalePoolConnectivity(
-            const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools, const fourdst::composition::Composition &
-            comp, double T9, double rho
+            scratch::StateBlob& ctx,
+            const std::vector<std::vector<fourdst::atomic::Species>> &timescale_pools,
+            const fourdst::composition::Composition &comp,
+            double T9,
+            double rho
         ) const;
 
         std::vector<QSEGroup> pruneValidatedGroups(
+            scratch::StateBlob& ctx,
             const std::vector<QSEGroup> &groups,
             const std::vector<reaction::ReactionSet> &groupReactions,
             const fourdst::composition::Composition &comp,
@@ -1018,9 +986,13 @@ namespace gridfire::engine {
         ) const;
 
         static std::vector<QSEGroup> merge_coupled_groups(
+            scratch::StateBlob& ctx,
             const std::vector<QSEGroup> &groups,
             const std::vector<reaction::ReactionSet> &groupReactions
         );
+
+    public:
+
     };
 }
 

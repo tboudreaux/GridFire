@@ -29,6 +29,7 @@
 #pragma once
 
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 #include <vector>
 #include <string>
@@ -49,6 +50,7 @@ namespace gridfire::engine::diagnostics {
      * @return std::optional<nlohmann::json> JSON object containing the limiting species report if `json` is true; otherwise, std::nullopt.
      */
     std::optional<nlohmann::json> report_limiting_species(
+        scratch::StateBlob& ctx,
         const DynamicEngine &engine,
         const std::vector<double> &Y_full,
         const std::vector<double> &E_full,
@@ -71,6 +73,7 @@ namespace gridfire::engine::diagnostics {
      * @return std::optional<nlohmann::json> JSON object containing the species balance report if `json` is true; otherwise, std::nullopt.
      */
     std::optional<nlohmann::json> inspect_species_balance(
+        scratch::StateBlob& ctx,
         const DynamicEngine& engine,
         const std::string& species_name,
         const fourdst::composition::Composition &comp,
@@ -89,6 +92,7 @@ namespace gridfire::engine::diagnostics {
      * @return std::optional<nlohmann::json> JSON object containing the Jacobian stiffness report if `json` is true; otherwise, std::nullopt.
      */
     std::optional<nlohmann::json> inspect_jacobian_stiffness(
+        scratch::StateBlob& ctx,
         const DynamicEngine &engine,
         const fourdst::composition::Composition &comp,
         double T9,

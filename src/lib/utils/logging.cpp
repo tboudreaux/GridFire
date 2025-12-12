@@ -1,5 +1,6 @@
 #include "gridfire/utils/logging.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 #include <sstream>
 #include <iomanip>
@@ -9,12 +10,12 @@
 #include <string>
 
 std::string gridfire::utils::formatNuclearTimescaleLogString(
+    engine::scratch::StateBlob &ctx,
     const engine::DynamicEngine& engine,
     const fourdst::composition::Composition& composition,
-    const double T9,
-    const double rho
+    const double T9, const double rho
 ) {
-    auto const& result = engine.getSpeciesTimescales(composition, T9, rho);
+    auto const& result = engine.getSpeciesTimescales(ctx, composition, T9, rho);
     if (!result) {
         std::ostringstream ss;
         ss << "Failed to get species timescales: " << engine::EngineStatus_to_string(result.error());

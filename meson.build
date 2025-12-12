@@ -35,10 +35,14 @@ subdir('src')
 # Build the Python bindings
 subdir('build-python')
 
-# Buil the test suite
+# Build the test suite
 subdir('tests')
 
+# Build the tool suite
 subdir('tools')
+
+# Build the benchmark suite
+subdir('benchmarks')
 
 # Build the pkg-config file
 subdir('build-extra/pkg-config')

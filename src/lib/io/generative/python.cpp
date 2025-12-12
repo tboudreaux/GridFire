@@ -9,6 +9,7 @@
 #include <optional>
 
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 namespace {
     template <typename T>
@@ -137,8 +138,11 @@ namespace gridfire::io::gen {
 
     }
 
-    std::string exportEngineToPy(const engine::DynamicEngine& engine) {
-        auto reactions = engine.getNetworkReactions();
+    std::string exportEngineToPy(
+        engine::scratch::StateBlob& ctx,
+        const engine::DynamicEngine& engine
+    ) {
+        auto reactions = engine.getNetworkReactions(ctx);
         std::vector<std::string> functions;
         functions.emplace_back(R"(import numpy as np
 from typing import Dict, List, Tuple, Callable)");
@@ -150,8 +154,8 @@ from typing import Dict, List, Tuple, Callable)");
         return join<std::string>(functions, "\n\n");
     }
 
-    void exportEngineToPy(const engine::DynamicEngine &engine, const std::string &fileName) {
-        const std::string funcCode = exportEngineToPy(engine);
+    void exportEngineToPy(engine::scratch::StateBlob &ctx, const engine::DynamicEngine &engine, const std::string &fileName) {
+        const std::string funcCode = exportEngineToPy(ctx, engine);
         std::ofstream outFile(fileName);
         outFile << funcCode;
         outFile.close();

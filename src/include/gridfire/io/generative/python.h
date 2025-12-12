@@ -5,6 +5,7 @@
 
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 /**
  * @brief Namespace for generative input/output functionalities.
@@ -49,16 +50,17 @@ namespace gridfire::io::gen {
      * This function converts the given dynamic engine into a Python script
      * that can be used to recreate the engine's functionality in Python.
      */
-    std::string exportEngineToPy(const engine::DynamicEngine& engine);
+    std::string exportEngineToPy(engine::scratch::StateBlob& ctx, engine::DynamicEngine& engine);
 
     /**
      * @brief Exports a dynamic engine to a Python file.
      *
+     * @param ctx
      * @param engine The dynamic engine to export.
      * @param fileName The name of the file to write the Python script to.
      *
      * This function writes the Python script representation of the given
      * dynamic engine to the specified file.
      */
-    void exportEngineToPy(const engine::DynamicEngine& engine, const std::string& fileName);
+    void exportEngineToPy(engine::scratch::StateBlob &ctx, const engine::DynamicEngine& engine, const std::string& fileName);
 }
