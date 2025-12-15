@@ -5,6 +5,7 @@
 #include <sunlinsol/sunlinsol_dense.h>
 
 #include "gridfire/utils/sundials.h"
+#include "gridfire/solver/strategies/triggers/triggers.h"
 
 #include "quill/LogMacros.h"
 #include "sunmatrix/sunmatrix_dense.h"
@@ -16,13 +17,13 @@
 
 namespace {
     std::pair<size_t, std::vector<double>> evaluate_bspline(
-        double x,
+        const double x,
         const gridfire::solver::SpectralSolverStrategy::SplineBasis& basis
     ) {
         const int p = basis.degree;
         const std::vector<double>& t = basis.knots;
 
-        auto it = std::ranges::upper_bound(t, x);
+        const auto it = std::ranges::upper_bound(t, x);
         size_t i = std::distance(t.begin(), it) - 1;
 
         if (i < static_cast<size_t>(p)) i = p;
@@ -45,7 +46,7 @@ namespace {
             double saved = 0.0;
 
             for (int r = 0; r < j; ++r) {
-                double temp = N[r] / (right[r + 1] + left[j - r]);
+                const double temp = N[r] / (right[r + 1] + left[j - r]);
                 N[r] = saved + right[r + 1] * temp;
 
                 saved = left[j - r] * temp;
@@ -263,7 +264,7 @@ namespace gridfire::solver {
             quad_netin.tMax = 1; // Not needed for projection
             quad_netin.composition = gp.composition;
 
-            (void)m_engine.project(*workspaces[q], quad_netin); // We do not need to capture this output just do the projection
+            (void)m_engine.project(*workspaces[q], quad_netin); // We do not need to capture this output just do the projection. Since project is marked nodiscard we use a void cast to suppress warnings.
         }
         LOG_INFO(m_logger, "Done projecting initial conditions onto workspaces.");
 
@@ -281,7 +282,11 @@ namespace gridfire::solver {
         data.engine = &m_engine;
         data.mass_matrix_solver_instance = &mass_solver;
         data.basis = &m_current_basis;
-        data.workspaces = &workspaces;
+
+        data.workspaces.reserve(workspaces.size());
+        for (const auto& ws_ptr : workspaces) {
+            data.workspaces.emplace_back(*ws_ptr);
+        }
 
         const double absTol = m_absTol.value_or(1e-10);
         const double relTol = m_relTol.value_or(1e-6);
@@ -322,19 +327,91 @@ namespace gridfire::solver {
         LOG_INFO(m_logger, "CVODE resources initialized successfully.");
 
         /////////////////////////////////////
+        /// Setup Trigger                 ///
+        /////////////////////////////////////
+
+        LOG_INFO(m_logger, "Setting up projection trigger...");
+
+        const double simulationTimeInterval = m_config->solver.spectral.trigger.simulationTimeInterval;
+        const double offDiagonalThreshold = m_config->solver.spectral.trigger.offDiagonalThreshold;
+        const double timestepCollapseRatio = m_config->solver.spectral.trigger.timestepCollapseRatio;
+        const size_t maxConvergenceFailures = m_config->solver.spectral.trigger.maxConvergenceFailures;
+        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(
+            simulationTimeInterval,
+            offDiagonalThreshold,
+            timestepCollapseRatio,
+            maxConvergenceFailures
+        );
+        LOG_INFO(m_logger, "Projection trigger setup with parameters: simulationTimeInterval = {}, offDiagonalThreshold = {}, timestepCollapseRatio = {}, maxConvergenceFailures = {}",
+            simulationTimeInterval,
+            offDiagonalThreshold,
+            timestepCollapseRatio,
+            maxConvergenceFailures
+        );
+
+
+        /////////////////////////////////////
         /// Time Integration Loop         ///
         /////////////////////////////////////
 
         const double target_time = updatedNetIns[0].tMax;
         double current_time = 0.0;
 
-        LOG_INFO(m_logger, "Beginning time integration to target time {:10.4e}...", target_time);
+        double accumulated_energy = 0.0;
+        double accumulated_neutrino_energy_loss = 0.0;
+        double accumulated_total_neutrino_flux = 0.0;
+
+        size_t total_convergence_failures = 0;
+        size_t total_nonlinear_iterations = 0;
+        size_t total_update_stages_triggered = 0;
+
+        size_t prev_nonlinear_iterations = 0;
+        size_t prev_convergence_failures = 0;
+
+        size_t total_steps = 0;
+
+        LOG_INFO(m_logger, "Starting CVODE interation...", target_time);
         while (current_time < target_time) {
+            data.captured_exception.reset();
+
             int flag = CVode(m_cvode_mem, target_time, m_Y, &current_time, CV_ONE_STEP);
+            if (data.captured_exception) {
+                LOG_CRITICAL(m_logger, "An exception was captured during RHS evaluation ({}). Rethrowing...", data.captured_exception->what());
+                std::rethrow_exception(std::make_exception_ptr(*data.captured_exception));
+            }
             utils::check_sundials_flag(flag, "CVode", utils::SUNDIALS_RET_CODE_TYPES::CVODE);
 
-            std::println("Advanced to time: {:10.4e} / {:10.4e}", current_time, target_time);
-            LOG_INFO(m_logger, "Advanced to time: {:10.4e} / {:10.4e}", current_time, target_time);
+            long int n_steps;
+            double last_step_size;
+            CVodeGetNumSteps(m_cvode_mem, &n_steps);
+            CVodeGetLastStep(m_cvode_mem, &last_step_size);
+            long int nliters, nlcfails;
+            CVodeGetNumNonlinSolvIters(m_cvode_mem, &nliters);
+            CVodeGetNumNonlinSolvConvFails(m_cvode_mem, &nlcfails);
+
+            accumulated_neutrino_energy_loss += data.neutrino_energy_loss_rate * last_step_size;
+            accumulated_total_neutrino_flux += data.total_neutrino_flux * last_step_size;
+
+            size_t iter_diff = (total_nonlinear_iterations + nliters) - prev_nonlinear_iterations;
+            size_t convFail_diff = (total_convergence_failures + nlcfails) - prev_convergence_failures;
+
+            std::string out_msg = std::format(
+                "Step: {:6} | Updates: {:3} | Epoch Steps: {:4} | t: {:.3e} [s] | dt: {:15.6E} [s] | Iterations: {:6} (+{:2}) | Total Convergence Failures: {:2} (+{:2})",
+                total_steps + n_steps,
+                total_update_stages_triggered,
+                n_steps,
+                current_time,
+                last_step_size,
+                prev_nonlinear_iterations + nliters,
+                iter_diff,
+                prev_convergence_failures + nlcfails,
+                convFail_diff
+            );
+            prev_nonlinear_iterations = total_nonlinear_iterations + nliters;
+            prev_convergence_failures = total_convergence_failures + nlcfails;
+
+            std::println("{}", out_msg);
+            LOG_INFO(m_logger, "{}", out_msg);
         }
         LOG_INFO(m_logger, "Time integration complete. Reconstructing solution...");
 
@@ -444,7 +521,7 @@ namespace gridfire::solver {
                 GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
                 LOG_TRACE_L2(m_logger, "RHS Evaluation at time {}: Quad Node {}, T9 = {:10.4e}, rho = {:10.4e}", t, q, gp.T9, gp.rho);
                 auto results = m_engine.calculateRHSAndEnergy(
-                    *data->workspaces->at(q),
+                    data->workspaces[q],
                     gp.composition,
                     gp.T9,
                     gp.rho,
@@ -503,6 +580,7 @@ namespace gridfire::solver {
         return 0;
     }
 
+    // ReSharper disable once CppDFAUnreachableFunctionCall
     int SpectralSolverStrategy::calculate_jacobian(
         sunrealtype t,
         N_Vector y_coeffs,
@@ -529,7 +607,7 @@ namespace gridfire::solver {
 #if defined(GF_USE_OPENMP)
             int thread_id = omp_get_thread_num();
 #else
-            int thread_id = 0;
+            [[maybe_unused]] int thread_id = 0;
 #endif
             GF_OMP(for schedule(static) nowait,)
             for (size_t q = 0; q < basis.quadrature_nodes.size(); ++q) {
@@ -538,10 +616,10 @@ namespace gridfire::solver {
                 double wq = basis.quadrature_weights[q];
                 const auto& [start_idx, phi] = basis.quad_evals[q];
 
-                GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
+                const GridPoint gp = reconstruct_at_quadrature(y_coeffs, q, basis);
                 try {
                     engine::NetworkJacobian jac = m_engine.generateJacobianMatrix(
-                        *data->workspaces->at(q),
+                        data->workspaces[q],
                         gp.composition,
                         gp.T9,
                         gp.rho
@@ -631,7 +709,7 @@ namespace gridfire::solver {
         const size_t requested_elements,
         const size_t num_shells
     ) {
-        size_t max_allowed_elements = std::max(size_t(1), num_shells/2);
+        const size_t max_allowed_elements = std::max(1uz, num_shells/2);
         size_t actual_elements = std::min(requested_elements, max_allowed_elements);
         if (num_shells <= 5) {
             actual_elements = 1;
@@ -734,7 +812,7 @@ namespace gridfire::solver {
         const std::vector<double>& monitor_values,
         const std::vector<double>& mass_coordinates,
         const size_t actual_elements
-    ) const {
+    ) {
         SplineBasis basis;
         basis.degree = 3; // Cubic Spline
 
@@ -972,6 +1050,7 @@ namespace gridfire::solver {
     ///////////////////////////////////////////////////////////////////////////////////
     /// Debugging Utilities
     ///////////////////////////////////////////////////////////////////////////////////
+    // ReSharper disable once CppDFAUnreachableFunctionCall
     void SpectralSolverStrategy::inspect_jacobian(SUNMatrix J, const std::string &context) const {
         sunrealtype* data = SUNDenseMatrix_Data(J);
         sunindextype rows = SUNDenseMatrix_Rows(J);
@@ -987,15 +1066,15 @@ namespace gridfire::solver {
         double min_diag_val = std::numeric_limits<double>::max();
         double max_diag_val = std::numeric_limits<double>::lowest();
 
-        bool matrix_is_empty = (rows == 0 || cols == 0);
+        const bool matrix_is_empty = (rows == 0 || cols == 0);
         bool non_zero_elements_found = false;
 
         // Iterate Column-Major (standard for SUNDIALS)
         for (sunindextype j = 0; j < cols; ++j) {
             // Diagonal Check
             if (j < rows) {
-                double diag = data[j * rows + j];
-                double abs_diag = std::abs(diag);
+                const double diag = data[j * rows + j];
+                const double abs_diag = std::abs(diag);
 
                 if (abs_diag < 1e-100) zero_diag_count++;
 
@@ -1004,14 +1083,14 @@ namespace gridfire::solver {
             }
 
             for (sunindextype i = 0; i < rows; ++i) {
-                double val = data[j * rows + i];
+                const double val = data[j * rows + i];
 
                 if (std::isnan(val)) {
                     nan_count++;
                 } else if (std::isinf(val)) {
                     inf_count++;
                 } else {
-                    double abs_val = std::abs(val);
+                    const double abs_val = std::abs(val);
                     if (abs_val > 0.0) {
                         if (!non_zero_elements_found) {
                             // First non-zero element initializes the range
@@ -1059,8 +1138,8 @@ namespace gridfire::solver {
         values.push_back(std::format("[{:.2e}, {:.2e}]", min_diag_val, max_diag_val));
 
         // Status
-        bool failed = (nan_count > 0 || inf_count > 0 || zero_diag_count > 0 || matrix_is_empty);
-        values.push_back(failed ? "FAIL" : "OK");
+        const bool failed = (nan_count > 0 || inf_count > 0 || zero_diag_count > 0 || matrix_is_empty);
+        values.emplace_back(failed ? "FAIL" : "OK");
 
         // --- 3. Construct Columns Manually ---
         std::vector<std::unique_ptr<gridfire::utils::ColumnBase>> columns;
@@ -1086,11 +1165,11 @@ namespace gridfire::solver {
     ///////////////////////////////////////////////////////////////////////////////
 
     SpectralSolverStrategy::DenseLinearSolver::DenseLinearSolver(
-        size_t size,
-        SUNContext sun_ctx
+        const size_t size,
+        const SUNContext sun_ctx
     ) : ctx(sun_ctx) {
-        A = SUNDenseMatrix(size, size, sun_ctx);
-        temp_vector = N_VNew_Serial(size, sun_ctx);
+        A = SUNDenseMatrix(static_cast<long>(size), static_cast<long>(size), sun_ctx);
+        temp_vector = N_VNew_Serial(static_cast<long>(size), sun_ctx);
 
         LS = SUNLinSol_Dense(temp_vector, A, sun_ctx);
 
@@ -1143,14 +1222,14 @@ namespace gridfire::solver {
     ) const {
         sunrealtype* m_data = SUNDenseMatrix_Data(A);
         for (size_t q = 0; q < basis.quadrature_nodes.size(); ++q) {
-            double w_q = basis.quadrature_weights[q];
-            const auto& eval = basis.quad_evals[q];
+            const double w_q = basis.quadrature_weights[q];
+            const auto&[start_idx, phi] = basis.quad_evals[q];
 
-            for (size_t i = 0; i < eval.phi.size(); ++i) {
-                size_t row = eval.start_idx + i;
-                for (size_t j = 0; j < eval.phi.size(); ++j) {
-                    size_t col = eval.start_idx + j;
-                    m_data[col * num_basis_funcs + row] += w_q * eval.phi[j] * eval.phi[i];
+            for (size_t i = 0; i < phi.size(); ++i) {
+                const size_t row = start_idx + i;
+                for (size_t j = 0; j < phi.size(); ++j) {
+                    const size_t col = start_idx + j;
+                    m_data[col * num_basis_funcs + row] += w_q * phi[j] * phi[i];
                 }
             }
         }

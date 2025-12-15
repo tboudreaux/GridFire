@@ -10,6 +10,12 @@ namespace gridfire::config {
 
 
     struct SpectralSolverConfig {
+        struct Trigger {
+            double simulationTimeInterval = 1.0e12;
+            double offDiagonalThreshold = 1.0e10;
+            double timestepCollapseRatio = 0.5;
+            size_t maxConvergenceFailures = 2;
+        };
         struct MonitorFunctionConfig {
             double structure_weight = 1.0;
             double abundance_weight = 10.0;
@@ -24,6 +30,7 @@ namespace gridfire::config {
         size_t degree = 3;
         MonitorFunctionConfig monitorFunction;
         BasisConfig basis;
+        Trigger trigger;
     };
 
     struct SolverConfig {

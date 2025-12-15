@@ -200,7 +200,7 @@ namespace gridfire::solver {
 
         size_t total_steps = 0;
 
-        LOG_TRACE_L1(m_logger, "Starting CVODE iteration");
+        LOG_TRACE_L1(m_logger, "Starting CVODE iteration...");
         fourdst::composition::Composition postStep = equilibratedComposition;
         while (current_time < netIn.tMax) {
             user_data.T9 = T9;

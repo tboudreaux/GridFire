@@ -9,8 +9,11 @@
 #include "fourdst/constants/const.h"
 
 #include <vector>
+#include <functional>
 #include <cvode/cvode.h>
 #include <sundials/sundials_types.h>
+
+#include "gridfire/exceptions/error_engine.h"
 
 #ifdef SUNDIALS_HAVE_OPENMP
     #include <nvector/nvector_openmp.h>
@@ -132,11 +135,19 @@ namespace gridfire::solver {
 
         struct CVODEUserData {
             SpectralSolverStrategy* solver_instance{};
+            std::vector<std::reference_wrapper<engine::scratch::StateBlob>> workspaces;
             const engine::DynamicEngine* engine{};
+            std::unique_ptr<exceptions::EngineError> captured_exception{};
+
+            std::vector<double> T9{};
+            std::vector<double> rho{};
+            double energy{};
+
+            double neutrino_energy_loss_rate = 0.0;
+            double total_neutrino_flux = 0.0;
 
             DenseLinearSolver* mass_matrix_solver_instance{};
             const SplineBasis* basis{};
-            std::vector<std::unique_ptr<engine::scratch::StateBlob>>* workspaces;
         };
 
     private:
@@ -178,7 +189,8 @@ namespace gridfire::solver {
 
     private:
         std::vector<double> evaluate_monitor_function(const std::vector<NetIn>& current_shells) const;
-        SplineBasis generate_basis_from_monitor(const std::vector<double>& monitor_values, const std::vector<double>& mass_coordinates, size_t actual_elements) const;
+
+        static SplineBasis generate_basis_from_monitor(const std::vector<double>& monitor_values, const std::vector<double>& mass_coordinates, size_t actual_elements);
 
         GridPoint reconstruct_at_quadrature(const N_Vector y_coeffs, size_t quad_index, const SplineBasis &basis) const;
 
