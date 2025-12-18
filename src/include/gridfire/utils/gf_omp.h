@@ -30,6 +30,7 @@ namespace gridfire::omp {
         );
 
         CppAD::thread_alloc::hold_memory(true);
+        CppAD::CheckSimpleVector<double, std::vector<double>>(0, 1);
         s_par_mode_initialized = true;
     }
 }

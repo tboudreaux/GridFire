@@ -63,7 +63,7 @@ int main() {
     std::println("Scratch Blob State: {}", *construct.scratch_blob);
 
 
-    constexpr size_t runs = 1000;
+    constexpr size_t runs = 10;
     auto startTime = std::chrono::high_resolution_clock::now();
 
     // arrays to store timings
@@ -72,14 +72,15 @@ int main() {
     std::array<NetOut, runs> serial_results;
     for (size_t i = 0; i < runs; ++i) {
         auto start_setup_time = std::chrono::high_resolution_clock::now();
-        solver::CVODESolverStrategy solver(construct.engine, *construct.scratch_blob);
-        solver.set_stdout_logging_enabled(false);
+        solver::PointSolverContext solverCtx(*construct.scratch_blob);
+        solverCtx.set_stdout_logging(false);
+        solver::PointSolver solver(construct.engine);
         auto end_setup_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> setup_elapsed = end_setup_time - start_setup_time;
         setup_times[i] = setup_elapsed;
 
         auto start_eval_time = std::chrono::high_resolution_clock::now();
-        const NetOut netOut = solver.evaluate(netIn);
+        const NetOut netOut = solver.evaluate(solverCtx, netIn);
         auto end_eval_time = std::chrono::high_resolution_clock::now();
         serial_results[i] = netOut;
         std::chrono::duration<double> eval_elapsed = end_eval_time - start_eval_time;
@@ -99,7 +100,6 @@ int main() {
     std::println("Average Setup Time over {} runs: {:.6f} seconds", runs, total_setup_time / runs);
     std::println("Average Evaluation Time over {} runs: {:.6f} seconds", runs, total_eval_time / runs);
     std::println("Total Time for {} runs: {:.6f} seconds", runs, elapsed.count());
-    std::println("Final H-1 Abundances Serial: {}", serial_results[0].composition.getMolarAbundance(fourdst::atomic::H_1));
 
 
     std::array<NetOut, runs> parallelResults;
@@ -114,16 +114,16 @@ int main() {
     // Parallel runs
     startTime = std::chrono::high_resolution_clock::now();
 
-    GF_OMP(parallel for,)
-    for (size_t i = 0; i < runs; ++i) {
+    GF_OMP(parallel for, for (size_t i = 0; i < runs; ++i)) {
         auto start_setup_time = std::chrono::high_resolution_clock::now();
-        solver::CVODESolverStrategy solver(construct.engine, *workspaces[i]);
-        solver.set_stdout_logging_enabled(false);
+        solver::PointSolverContext solverCtx(*construct.scratch_blob);
+        solverCtx.set_stdout_logging(false);
+        solver::PointSolver solver(construct.engine);
         auto end_setup_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> setup_elapsed = end_setup_time - start_setup_time;
         setupTimes[i] = setup_elapsed;
         auto start_eval_time = std::chrono::high_resolution_clock::now();
-        parallelResults[i] = solver.evaluate(netIn);
+        parallelResults[i] = solver.evaluate(solverCtx, netIn);
         auto end_eval_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> eval_elapsed = end_eval_time - start_eval_time;
         evalTimes[i] = eval_elapsed;
@@ -143,10 +143,6 @@ int main() {
     std::println("Average Parallel Setup Time over {} runs: {:.6f} seconds", runs, total_setup_time / runs);
     std::println("Average Parallel Evaluation Time over {} runs: {:.6f} seconds", runs, total_eval_time / runs);
     std::println("Total Parallel Time for {} runs: {:.6f} seconds", runs, elapsed.count());
-
-    std::println("Final H-1 Abundances Parallel: {}", utils::iterable_to_delimited_string(parallelResults, ",", [](const auto& result) {
-        return result.composition.getMolarAbundance(fourdst::atomic::H_1);
-    }));
 
     std::println("========== Summary ==========");
     std::println("Serial Runs:");

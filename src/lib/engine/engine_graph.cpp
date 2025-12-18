@@ -118,8 +118,7 @@ namespace gridfire::engine {
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
     m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
     m_partitionFunction(partitionFunction.clone()),
-    m_depth(buildDepth),
-    m_state_blob_offset(0) // For a base engine the offset is always 0
+    m_depth(buildDepth)
     {
         syncInternalMaps();
     }
@@ -128,8 +127,7 @@ namespace gridfire::engine {
         const reaction::ReactionSet &reactions
     ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
-    m_reactions(reactions),
-    m_state_blob_offset(0)
+    m_reactions(reactions)
     {
         syncInternalMaps();
     }

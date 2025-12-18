@@ -2,7 +2,7 @@
 
 #include "gridfire/trigger/trigger_abstract.h"
 #include "gridfire/trigger/trigger_result.h"
-#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
+#include "gridfire/solver/strategies/PointSolver.h"
 #include "fourdst/logging/logging.h"
 
 #include <string>
@@ -47,7 +47,7 @@ namespace gridfire::trigger::solver::CVODE {
      *
      * See also: engine_partitioning_trigger.cpp for the concrete logic and logging.
      */
-    class SimulationTimeTrigger final : public Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext> {
+    class SimulationTimeTrigger final : public Trigger<gridfire::solver::PointSolverTimestepContext> {
     public:
         /**
          * @brief Construct with a positive time interval between firings.
@@ -62,7 +62,7 @@ namespace gridfire::trigger::solver::CVODE {
          *
          * @post increments hit/miss counters and may emit trace logs.
          */
-        bool check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        bool check(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /**
          * @brief Update internal state; if check(ctx) is true, advance last_trigger_time.
          * @param ctx CVODE timestep context.
@@ -70,9 +70,9 @@ namespace gridfire::trigger::solver::CVODE {
          * @note update() calls check(ctx) and, on success, records the overshoot delta
          * (ctx.t - last_trigger_time) - interval for diagnostics.
          */
-        void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void update(const gridfire::solver::PointSolverTimestepContext &ctx) override;
 
-        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void step(const gridfire::solver::PointSolverTimestepContext &ctx) override;
         /**
          * @brief Reset counters and last trigger bookkeeping (time and delta) to zero.
          */
@@ -85,7 +85,7 @@ namespace gridfire::trigger::solver::CVODE {
          * @param ctx CVODE timestep context.
          * @return TriggerResult including name, value, and description.
          */
-        TriggerResult why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        TriggerResult why(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /** @brief Textual description including configured interval. */
         std::string describe() const override;
         /** @brief Number of true evaluations since last reset. */
@@ -130,7 +130,7 @@ namespace gridfire::trigger::solver::CVODE {
      * @par See also
      *  - engine_partitioning_trigger.cpp for concrete logic and trace logging.
      */
-    class OffDiagonalTrigger final : public Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext> {
+    class OffDiagonalTrigger final : public Trigger<gridfire::solver::PointSolverTimestepContext> {
     public:
         /**
          * @brief Construct with a non-negative magnitude threshold.
@@ -145,13 +145,13 @@ namespace gridfire::trigger::solver::CVODE {
          *
          * @post increments hit/miss counters and may emit trace logs.
          */
-        bool check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        bool check(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /**
          * @brief Record an update; does not mutate any Jacobian-related state.
          * @param ctx CVODE timestep context (unused except for symmetry with interface).
          */
-        void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
-        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void update(const gridfire::solver::PointSolverTimestepContext &ctx) override;
+        void step(const gridfire::solver::PointSolverTimestepContext &ctx) override;
         /** @brief Reset counters to zero. */
         void reset() override;
 
@@ -161,7 +161,7 @@ namespace gridfire::trigger::solver::CVODE {
          * @brief Structured explanation of the evaluation outcome.
          * @param ctx CVODE timestep context.
          */
-        TriggerResult why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        TriggerResult why(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /** @brief Textual description including configured threshold. */
         std::string describe() const override;
         /** @brief Number of true evaluations since last reset. */
@@ -206,7 +206,7 @@ namespace gridfire::trigger::solver::CVODE {
      *
      * See also: engine_partitioning_trigger.cpp for exact logic and logging.
      */
-    class TimestepCollapseTrigger final : public Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext> {
+    class TimestepCollapseTrigger final : public Trigger<gridfire::solver::PointSolverTimestepContext> {
     public:
         /**
          * @brief Construct with threshold and relative/absolute mode; window size defaults to 1.
@@ -230,20 +230,20 @@ namespace gridfire::trigger::solver::CVODE {
          *
          * @post increments hit/miss counters and may emit trace logs.
          */
-        bool check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        bool check(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /**
          * @brief Update sliding window with the most recent dt and increment update counter.
          * @param ctx CVODE timestep context.
          */
-        void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
-        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void update(const gridfire::solver::PointSolverTimestepContext &ctx) override;
+        void step(const gridfire::solver::PointSolverTimestepContext &ctx) override;
         /** @brief Reset counters and clear the dt window. */
         void reset() override;
 
         /** @brief Stable human-readable name. */
         std::string name() const override;
         /** @brief Structured explanation of the evaluation outcome. */
-        TriggerResult why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        TriggerResult why(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
         /** @brief Textual description including threshold, mode, and window size. */
         std::string describe() const override;
         /** @brief Number of true evaluations since last reset. */
@@ -272,15 +272,15 @@ namespace gridfire::trigger::solver::CVODE {
         std::deque<double> m_timestep_window;
     };
 
-    class ConvergenceFailureTrigger final : public Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext> {
+    class ConvergenceFailureTrigger final : public Trigger<gridfire::solver::PointSolverTimestepContext> {
     public:
         explicit ConvergenceFailureTrigger(size_t totalFailures, float relativeFailureRate, size_t windowSize);
 
-        bool check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        bool check(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
 
-        void update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void update(const gridfire::solver::PointSolverTimestepContext &ctx) override;
 
-        void step(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) override;
+        void step(const gridfire::solver::PointSolverTimestepContext &ctx) override;
 
         void reset() override;
 
@@ -288,7 +288,7 @@ namespace gridfire::trigger::solver::CVODE {
 
         [[nodiscard]] std::string describe() const override;
 
-        [[nodiscard]] TriggerResult why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const override;
+        [[nodiscard]] TriggerResult why(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
 
         [[nodiscard]] size_t numTriggers() const override;
 
@@ -312,8 +312,8 @@ namespace gridfire::trigger::solver::CVODE {
 
     private:
         float current_mean() const;
-        bool abs_failure(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) const;
-        bool rel_failure(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) const;
+        bool abs_failure(const gridfire::solver::PointSolverTimestepContext& ctx) const;
+        bool rel_failure(const gridfire::solver::PointSolverTimestepContext& ctx) const;
     };
 
     /**
@@ -337,10 +337,10 @@ namespace gridfire::trigger::solver::CVODE {
      *
      * @note The exact policy is subject to change; this function centralizes that decision.
      */
-    std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
-        const double simulationTimeInterval,
-        const double offDiagonalThreshold,
-        const double timestepCollapseRatio,
-        const size_t maxConvergenceFailures
+    std::unique_ptr<Trigger<gridfire::solver::PointSolverTimestepContext>> makeEnginePartitioningTrigger(
+        double simulationTimeInterval,
+        double offDiagonalThreshold,
+        double timestepCollapseRatio,
+        size_t maxConvergenceFailures
     );
 }

@@ -27,6 +27,117 @@ static std::vector<std::pair<double, std::unordered_map<std::string, std::pair<d
 static bool s_wrote_abundance_history = false;
 void quill_terminate_handler();
 
+using namespace fourdst::composition;
+Composition rescale(const Composition& comp, double target_X, double target_Z) {
+    // 1. Validate inputs
+    if (target_X < 0.0 || target_Z < 0.0 || (target_X + target_Z) > 1.0 + 1e-14) {
+        throw std::invalid_argument("Target mass fractions X and Z must be non-negative and sum to <= 1.0");
+    }
+
+    // Force high precision for the target Y to ensure X+Y+Z = 1.0 exactly in our logic
+    long double ld_target_X = static_cast<long double>(target_X);
+    long double ld_target_Z = static_cast<long double>(target_Z);
+    long double ld_target_Y = 1.0L - ld_target_X - ld_target_Z;
+
+    // Clamp Y to 0 if it dipped slightly below due to precision (e.g. X+Z=1.0000000001)
+    if (ld_target_Y < 0.0L) ld_target_Y = 0.0L;
+
+    // 2. Manually calculate current Mass Totals (bypass getCanonicalComposition to avoid crashes)
+    long double total_mass_H = 0.0L;
+    long double total_mass_He = 0.0L;
+    long double total_mass_Z = 0.0L;
+
+    // We need to iterate and identify species types manually
+    // Standard definition: H (z=1), He (z=2), Metals (z>2)
+    // Note: We use long double accumulators to prevent summation drift
+    for (const auto& [spec, molar_abundance] : comp) {
+        // Retrieve atomic properties.
+        // Note: usage assumes fourdst::atomic::Species has .z() and .mass()
+        // consistent with the provided composition.cpp
+        int z = spec.z();
+        double a = spec.mass();
+
+        long double mass_contribution = static_cast<long double>(molar_abundance) * static_cast<long double>(a);
+
+        if (z == 1) {
+            total_mass_H += mass_contribution;
+        } else if (z == 2) {
+            total_mass_He += mass_contribution;
+        } else {
+            total_mass_Z += mass_contribution;
+        }
+    }
+
+    long double total_mass_current = total_mass_H + total_mass_He + total_mass_Z;
+
+    // Edge case: Empty composition
+    if (total_mass_current <= 0.0L) {
+         // Return empty or throw? If input was empty, return empty.
+         if (comp.size() == 0) return comp;
+         throw std::runtime_error("Input composition has zero total mass.");
+    }
+
+    // 3. Calculate Scaling Factors
+    // Factor = (Target_Mass_Fraction / Old_Mass_Fraction)
+    //        = (Target_Mass_Fraction) / (Old_Group_Mass / Total_Mass)
+    //        = (Target_Mass_Fraction * Total_Mass) / Old_Group_Mass
+
+    long double scale_H = 0.0L;
+    long double scale_He = 0.0L;
+    long double scale_Z = 0.0L;
+
+    if (ld_target_X > 1e-16L) {
+        if (total_mass_H <= 1e-19L) {
+             throw std::runtime_error("Cannot rescale Hydrogen to " + std::to_string(target_X) +
+                                     " because input has no Hydrogen.");
+        }
+        scale_H = (ld_target_X * total_mass_current) / total_mass_H;
+    }
+
+    if (ld_target_Y > 1e-16L) {
+        if (total_mass_He <= 1e-19L) {
+             throw std::runtime_error("Cannot rescale Helium to " + std::to_string((double)ld_target_Y) +
+                                     " because input has no Helium.");
+        }
+        scale_He = (ld_target_Y * total_mass_current) / total_mass_He;
+    }
+
+    if (ld_target_Z > 1e-16L) {
+        if (total_mass_Z <= 1e-19L) {
+             throw std::runtime_error("Cannot rescale Metals to " + std::to_string(target_Z) +
+                                     " because input has no Metals.");
+        }
+        scale_Z = (ld_target_Z * total_mass_current) / total_mass_Z;
+    }
+
+    // 4. Apply Scaling and Construct New Vectors
+    std::vector<fourdst::atomic::Species> new_species;
+    std::vector<double> new_abundances;
+    new_species.reserve(comp.size());
+    new_abundances.reserve(comp.size());
+
+    for (const auto& [spec, abundance] : comp) {
+        new_species.push_back(spec);
+
+        long double factor = 0.0L;
+        int z = spec.z();
+
+        if (z == 1) {
+            factor = scale_H;
+        } else if (z == 2) {
+            factor = scale_He;
+        } else {
+            factor = scale_Z;
+        }
+
+        // Calculate new abundance in long double then cast back
+        long double new_val_ld = static_cast<long double>(abundance) * factor;
+        new_abundances.push_back(static_cast<double>(new_val_ld));
+    }
+
+    return Composition(new_species, new_abundances);
+}
+
 gridfire::NetIn init(const double temp, const double rho, const double tMax) {
     std::setlocale(LC_ALL, "");
     g_previousHandler = std::set_terminate(quill_terminate_handler);
@@ -228,32 +339,35 @@ void callback_main(const gridfire::solver::PointSolverTimestepContext& ctx) {
     record_abundance_history_callback(ctx);
 }
 
-int main() {
+int main(int argc, char** argv) {
     GF_PAR_INIT();
     using namespace gridfire;
 
-    constexpr size_t breaks = 1;
     double temp = 1.5e7;
     double rho = 1.5e2;
-    double tMax = 3.1536e+16/breaks;
+    double tMax = 3.1536e+16;
+    double X = 0.7;
+    double Z = 0.02;
 
-    const NetIn netIn = init(temp, rho, tMax);
+
+    CLI::App app("GridFire Quick CLI Test");
+    // Add temp, rho, and tMax as options if desired
+    app.add_option("--temp", temp, "Initial Temperature")->default_val(std::format("{:5.2E}", temp));
+    app.add_option("--rho", rho, "Initial Density")->default_val(std::format("{:5.2E}", rho));
+    app.add_option("--tmax", tMax, "Maximum Time")->default_val(std::format("{:5.2E}", tMax));
+    // app.add_option("--X", X, "Target Hydrogen Mass Fraction")->default_val(std::format("{:5.2f}", X));
+    // app.add_option("--Z", Z, "Target Metal Mass Fraction")->default_val(std::format("{:5.2f}", Z));
+
+    CLI11_PARSE(app, argc, argv);
+    NetIn netIn = init(temp, rho, tMax);
+    // netIn.composition = rescale(netIn.composition, X, Z);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     auto [engine, ctx_template] = stellarPolicy.construct();
-    std::println("Sandbox Engine Stack: {}", stellarPolicy);
-    std::println("Scratch Blob State: {}", *ctx_template);
 
-    constexpr size_t nZones = 100;
-    std::array<NetIn, nZones> netIns;
-    for (size_t zone = 0; zone < nZones; ++zone) {
-        netIns[zone] = netIn;
-        netIns[zone].temperature = 1.0e7;
-    }
+    solver::PointSolverContext solver_context(*ctx_template);
+    solver::PointSolver solver(engine);
 
-    const solver::PointSolver localSolver(engine);
-    solver::GridSolverContext solverCtx(*ctx_template);
-    const solver::GridSolver gridSolver(engine, localSolver);
-
-    std::vector<NetOut> netOuts = gridSolver.evaluate(solverCtx, netIns | std::ranges::to<std::vector>());
+    NetOut result = solver.evaluate(solver_context, netIn);
+    log_results(result, netIn);
 }

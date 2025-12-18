@@ -44,8 +44,88 @@
 #endif
 
 namespace gridfire::solver {
+        struct PointSolverTimestepContext final : TimestepContextBase {
+            const double t;                 ///< Current integration time [s].
+            const N_Vector& state;          ///< Current CVODE state vector (N_Vector).
+            const double dt;                ///< Last step size [s].
+            const double last_step_time;    ///< Time at last callback [s].
+            const double T9;                ///< Temperature in GK.
+            const double rho;               ///< Density [g cm^-3].
+            const size_t num_steps;         ///< Number of CVODE steps taken so far.
+            const engine::DynamicEngine& engine;    ///< Reference to the engine.
+            const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
+            const size_t currentConvergenceFailures; ///< Total number of convergence failures
+            const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
+            const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>& reactionContributionMap; ///< Map of reaction contributions for the current step
+            engine::scratch::StateBlob& state_ctx; ///< Reference to the engine scratch state blob
+
+            PointSolverTimestepContext(
+                double t,
+                const N_Vector& state,
+                double dt,
+                double last_step_time,
+                double t9,
+                double rho,
+                size_t num_steps,
+                const engine::DynamicEngine& engine,
+                const std::vector<fourdst::atomic::Species>& networkSpecies,
+                size_t currentConvergenceFailure,
+                size_t currentNonlinearIterations,
+                const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap,
+                engine::scratch::StateBlob& state_ctx
+            );
+
+            [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
+        };
+
+    using TimestepCallback = std::function<void(const PointSolverTimestepContext& context)>; ///< Type alias for a timestep callback function.
+
+    struct PointSolverContext final : SolverContextBase {
+        SUNContext sun_ctx = nullptr;   ///< SUNDIALS context (lifetime of the solver).
+        void* cvode_mem = nullptr;      ///< CVODE memory block.
+        N_Vector Y = nullptr;           ///< CVODE state vector (species + energy accumulator).
+        N_Vector YErr = nullptr;        ///< Estimated local errors.
+        SUNMatrix J = nullptr;          ///< Dense Jacobian matrix.
+        SUNLinearSolver LS = nullptr;   ///< Dense linear solver.
+
+        std::unique_ptr<engine::scratch::StateBlob> engine_ctx;
+
+
+        std::optional<TimestepCallback> callback;      ///< Optional per-step callback.
+        int num_steps = 0;              ///< CVODE step counter (used for diagnostics and triggers).
+
+        bool stdout_logging = true; ///< If true, print per-step logs and use CV_ONE_STEP.
+
+        N_Vector constraints = nullptr; ///< CVODE constraints vector (>= 0 for species entries).
+
+        std::optional<double> abs_tol;        ///< User-specified absolute tolerance.
+        std::optional<double> rel_tol;        ///< User-specified relative tolerance.
+
+        bool detailed_step_logging = false;    ///< If true, log detailed step diagnostics (error ratios, Jacobian, species balance).
+
+        size_t last_size = 0;
+        size_t last_composition_hash = 0ULL;
+        sunrealtype last_good_time_step = 0ULL;
+
+        void init() override;
+        void set_stdout_logging(bool enable) override;
+        void set_detailed_logging(bool enable) override;
+
+        void reset_all();
+        void reset_user();
+        void reset_cvode();
+        void clear_context();
+        void init_context();
+
+        [[nodiscard]] bool has_context() const;
+
+        explicit PointSolverContext(const engine::scratch::StateBlob& engine_ctx);
+        ~PointSolverContext() override;
+
+    };
+
     /**
-     * @class CVODESolverStrategy
+     * @class PointSolver
      * @brief Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.
      *
      * Integrates the nuclear network abundances along with a final accumulator entry for specific
@@ -78,27 +158,16 @@ namespace gridfire::solver {
      * std::cout << "Final energy: " << out.energy << " erg/g\n";
      * @endcode
      */
-    class CVODESolverStrategy final : public SingleZoneDynamicNetworkSolver {
+    class PointSolver final : public SingleZoneDynamicNetworkSolver {
     public:
         /**
          * @brief Construct the CVODE strategy and create a SUNDIALS context.
          * @param engine DynamicEngine used for RHS/Jacobian evaluation and network access.
          * @throws std::runtime_error If SUNContext_Create fails.
          */
-        explicit CVODESolverStrategy(
-            const engine::DynamicEngine& engine,
-            const engine::scratch::StateBlob& ctx
+        explicit PointSolver(
+            const engine::DynamicEngine& engine
         );
-        /**
-         * @brief Destructor: cleans CVODE/SUNDIALS resources and frees SUNContext.
-         */
-        ~CVODESolverStrategy() override;
-
-        // Make the class non-copyable and non-movable to prevent shallow copies of CVODE pointers
-        CVODESolverStrategy(const CVODESolverStrategy&) = delete;
-        CVODESolverStrategy& operator=(const CVODESolverStrategy&) = delete;
-        CVODESolverStrategy(CVODESolverStrategy&&) = delete;
-        CVODESolverStrategy& operator=(CVODESolverStrategy&&) = delete;
 
         /**
          * @brief Integrate from t=0 to netIn.tMax and return final composition and energy.
@@ -114,6 +183,7 @@ namespace gridfire::solver {
          *  - At the end, converts molar abundances to mass fractions and assembles NetOut,
          *    including derivatives of energy w.r.t. T and rho from the engine.
          *
+         * @param solver_ctx
          * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.
          * @return NetOut containing final Composition, accumulated energy [erg/g], step count,
          *         and dEps/dT, dEps/dRho.
@@ -122,10 +192,14 @@ namespace gridfire::solver {
          * @throws exceptions::StaleEngineTrigger Propagated if the engine signals a stale state
          *         during RHS evaluation (captured in the wrapper then rethrown here).
          */
-        NetOut evaluate(const NetIn& netIn) override;
+        NetOut evaluate(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn
+        ) const override;
 
         /**
          * @brief Call to evaluate which will let the user control if the trigger reasoning is displayed
+         * @param solver_ctx
          * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.
          * @param displayTrigger Boolean flag to control if trigger reasoning is displayed
          * @param forceReinitialize Boolean flag to force reinitialization of CVODE resources at the start
@@ -136,89 +210,13 @@ namespace gridfire::solver {
          * @throws exceptions::StaleEngineTrigger Propagated if the engine signals a stale state
          *         during RHS evaluation (captured in the wrapper then rethrown here).
          */
-        NetOut evaluate(const NetIn& netIn, bool displayTrigger, bool forceReinitialize = false);
+        NetOut evaluate(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn,
+            bool displayTrigger,
+            bool forceReinitialize = false
+        ) const;
 
-        /**
-         * @brief Install a timestep callback.
-         * @param callback std::any containing TimestepCallback (std::function<void(const TimestepContext&)>).
-         * @throws std::bad_any_cast If callback is not of the expected type.
-         */
-        void set_callback(const std::any &callback) override;
-
-        /**
-         * @brief Whether per-step logs are printed to stdout and CVode is stepped with CV_ONE_STEP.
-         */
-        [[nodiscard]] bool get_stdout_logging_enabled() const;
-
-        /**
-         * @brief Enable/disable per-step stdout logging.
-         * @param logging_enabled Flag to control if a timestep summary is written to standard output or not
-         */
-        void set_stdout_logging_enabled(bool logging_enabled);
-
-        void set_absTol(double absTol);
-        void set_relTol(double relTol);
-
-        double get_absTol() const;
-        double get_relTol() const;
-
-        /**
-         * @brief Schema of fields exposed to the timestep callback context.
-         */
-        [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe_callback_context() const override;
-
-        /**
-         * @struct TimestepContext
-         * @brief Immutable view of the current integration state passed to callbacks.
-         *
-         * Fields capture CVODE time/state, step size, thermodynamic state, the engine reference,
-         * and the list of network species used to interpret the state vector layout.
-         */
-        struct TimestepContext final : public SolverContextBase {
-            // This struct can be identical to the one in DirectNetworkSolver
-            const double t;                 ///< Current integration time [s].
-            const N_Vector& state;          ///< Current CVODE state vector (N_Vector).
-            const double dt;                ///< Last step size [s].
-            const double last_step_time;    ///< Time at last callback [s].
-            const double T9;                ///< Temperature in GK.
-            const double rho;               ///< Density [g cm^-3].
-            const size_t num_steps;         ///< Number of CVODE steps taken so far.
-            const engine::DynamicEngine& engine;    ///< Reference to the engine.
-            const std::vector<fourdst::atomic::Species>& networkSpecies; ///< Species layout.
-            const size_t currentConvergenceFailures; ///< Total number of convergence failures
-            const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
-            const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>& reactionContributionMap; ///< Map of reaction contributions for the current step
-            engine::scratch::StateBlob& state_ctx; ///< Reference to the engine scratch state blob
-
-            /**
-             * @brief Construct a context snapshot.
-             */
-            TimestepContext(
-                double t,
-                const N_Vector& state,
-                double dt,
-                double last_step_time,
-                double t9,
-                double rho,
-                size_t num_steps,
-                const engine::DynamicEngine& engine,
-                const std::vector<fourdst::atomic::Species>& networkSpecies,
-                size_t currentConvergenceFailure,
-                size_t currentNonlinearIterations,
-                const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>> &reactionContributionMap,
-                engine::scratch::StateBlob& state_ctx
-            );
-
-            /**
-             * @brief Human-readable description of the context fields.
-             */
-            [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
-        };
-
-        /**
-         * @brief Type alias for a timestep callback.
-         */
-        using TimestepCallback = std::function<void(const TimestepContext& context)>; ///< Type alias for a timestep callback function.
     private:
         /**
          * @struct CVODEUserData
@@ -230,7 +228,8 @@ namespace gridfire::solver {
          * to CVODE, then the driver loop inspects and rethrows.
          */
         struct CVODEUserData {
-            CVODESolverStrategy* solver_instance{}; // Pointer back to the class instance
+            const PointSolver* solver_instance{}; // Pointer back to the class instance
+            PointSolverContext* sctx;    // Pointer to the solver context
             engine::scratch::StateBlob& ctx;
             const engine::DynamicEngine* engine{};
             double T9{};
@@ -283,6 +282,7 @@ namespace gridfire::solver {
          * step size, creates a dense matrix and dense linear solver, and registers the Jacobian.
          */
         void initialize_cvode_integration_resources(
+            PointSolverContext* ctx,
             uint64_t N,
             size_t numSpecies,
             double current_time,
@@ -290,15 +290,7 @@ namespace gridfire::solver {
             double absTol,
             double relTol,
             double accumulatedEnergy
-        );
-
-        /**
-         * @brief Destroy CVODE vectors/linear algebra and optionally the CVODE memory block.
-         * @param memFree If true, also calls CVodeFree on m_cvode_mem.
-         */
-        void cleanup_cvode_resources(bool memFree);
-
-        void set_detailed_step_logging(bool enabled);
+        ) const;
 
 
         /**
@@ -308,31 +300,13 @@ namespace gridfire::solver {
          * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
-        void log_step_diagnostics(engine::scratch::StateBlob &ctx, const CVODEUserData& user_data, bool displayJacobianStiffness, bool
-                                  displaySpeciesBalance, bool to_file, std::optional<std::string> filename) const;
-    private:
-        SUNContext m_sun_ctx = nullptr;   ///< SUNDIALS context (lifetime of the solver).
-        void* m_cvode_mem = nullptr;      ///< CVODE memory block.
-        N_Vector m_Y = nullptr;           ///< CVODE state vector (species + energy accumulator).
-        N_Vector m_YErr = nullptr;        ///< Estimated local errors.
-        SUNMatrix m_J = nullptr;          ///< Dense Jacobian matrix.
-        SUNLinearSolver m_LS = nullptr;   ///< Dense linear solver.
-
-
-        std::optional<TimestepCallback> m_callback;      ///< Optional per-step callback.
-        int m_num_steps = 0;              ///< CVODE step counter (used for diagnostics and triggers).
-
-        bool m_stdout_logging_enabled = true; ///< If true, print per-step logs and use CV_ONE_STEP.
-
-        N_Vector m_constraints = nullptr; ///< CVODE constraints vector (>= 0 for species entries).
-
-        std::optional<double> m_absTol;        ///< User-specified absolute tolerance.
-        std::optional<double> m_relTol;        ///< User-specified relative tolerance.
-
-        bool m_detailed_step_logging = false;    ///< If true, log detailed step diagnostics (error ratios, Jacobian, species balance).
-
-        mutable size_t m_last_size = 0;
-        mutable size_t m_last_composition_hash = 0ULL;
-        mutable sunrealtype m_last_good_time_step = 0ULL;
+        void log_step_diagnostics(
+            PointSolverContext* sctx_p,
+            engine::scratch::StateBlob &ctx,
+            const CVODEUserData& user_data,
+            bool displayJacobianStiffness,
+            bool displaySpeciesBalance,
+            bool to_file, std::optional<std::string> filename
+        ) const;
     };
 }

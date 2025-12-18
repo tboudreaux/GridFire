@@ -2005,7 +2005,32 @@ namespace gridfire::engine {
                 LOG_INFO(getLogger(), "KINSol failed to converge within the maximum number of iterations, but achieved acceptable accuracy with function norm {} < {}. Proceeding with solution.",
                     fnorm, ACCEPTABLE_FTOL);
             } else {
-                LOG_WARNING(getLogger(), "KINSol failed to converge while solving QSE abundances with flag {}. Error {}", utils::kinsol_ret_code_map.at(flag), fnorm);
+                LOG_CRITICAL(getLogger(), "KINSol failed to converge while solving QSE abundances with flag {}. Flag No.: {}, Error (fNorm): {}", utils::kinsol_ret_code_map.at(flag), flag, fnorm);
+                LOG_CRITICAL(getLogger(), "State prior to failure: {}",
+                    [&comp, &data]() -> std::string {
+                        std::ostringstream oss;
+                        oss << "Solve species: <";
+                        size_t count = 0;
+                        for (const auto& species : data.qse_solve_species) {
+                            oss << species.name();
+                            if (count < data.qse_solve_species.size() - 1) {
+                                oss << ", ";
+                            }
+                            count++;
+                        }
+                        oss << "> | Abundances and rates at failure: ";
+                        count = 0;
+                        for (const auto& [species, abundance] : comp) {
+                            oss << species.name() << ": Y = " << abundance;
+                            if (count < comp.size() - 1) {
+                                oss << ", ";
+                            }
+                            count++;
+                        }
+                        oss << " | Temperature: " << data.T9 << ", Density: " << data.rho;
+                        return oss.str();
+                    }()
+                );
                 throw exceptions::InvalidQSESolutionError("KINSol failed to converge while solving QSE abundances. " + utils::kinsol_ret_code_map.at(flag));
             }
         }

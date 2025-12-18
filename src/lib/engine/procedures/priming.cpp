@@ -2,7 +2,6 @@
 
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/utils.h"
-#include "gridfire/engine/views/engine_priming.h"
 #include "gridfire/solver/solver.h"
 
 #include "gridfire/engine/engine_abstract.h"
@@ -13,7 +12,7 @@
 #include "gridfire/engine/scratchpads/engine_graph_scratchpad.h"
 
 #include "fourdst/logging/logging.h"
-#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
+#include "gridfire/solver/strategies/PointSolver.h"
 #include "quill/Logger.h"
 #include "quill/LogMacros.h"
 
@@ -28,13 +27,12 @@ namespace gridfire::engine {
         const GraphEngine& engine, const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
     ) {
         const auto logger = LogManager::getInstance().getLogger("log");
-        solver::CVODESolverStrategy integrator(engine, ctx);
+        solver::PointSolver integrator(engine);
+        solver::PointSolverContext solverCtx(ctx);
+        solverCtx.abs_tol = 1e-3;
+        solverCtx.rel_tol = 1e-3;
+        solverCtx.stdout_logging = false;
 
-        // Do not need high precision for priming
-        integrator.set_absTol(1e-3);
-        integrator.set_relTol(1e-3);
-
-        integrator.set_stdout_logging_enabled(false);
         NetIn solverInput(netIn);
 
         solverInput.tMax = 1e-15;
@@ -43,7 +41,7 @@ namespace gridfire::engine {
         LOG_INFO(logger, "Short timescale ({}) network ignition started.", solverInput.tMax);
         PrimingReport report;
         try {
-            const NetOut netOut = integrator.evaluate(solverInput, false);
+            const NetOut netOut = integrator.evaluate(solverCtx, solverInput);
             LOG_INFO(logger, "Network ignition completed.");
             LOG_TRACE_L2(
                 logger,

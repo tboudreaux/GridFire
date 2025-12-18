@@ -807,8 +807,6 @@ namespace gridfire::engine {
 
         CppAD::ADFun<double> m_authoritativeADFun;
 
-        const size_t m_state_blob_offset;
-
     private:
         /**
          * @brief Synchronizes the internal maps.
