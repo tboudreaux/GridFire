@@ -6,6 +6,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    enum GF_TYPE {
+        SINGLE_ZONE = 0,
+        MULTI_ZONE = 1
+    };
+
+
     enum FDSSE_ERROR_CODES {
         FDSSE_NON_4DSTAR_ERROR = -102,
         FDSSE_UNKNOWN_ERROR = -101,
@@ -54,37 +60,49 @@ extern "C" {
         GF_DEBUG_ERROR = 30,
 
         GF_GRIDFIRE_ERROR = 31,
+        GF_UNINITIALIZED_INPUT_MEMORY_ERROR = 32,
+        GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR = 33,
+
+        GF_INVALID_NUM_SPECIES = 34,
+
+        GF_INVALID_TIMESTEPS = 35,
+        GF_UNKNOWN_FREE_TYPE = 36,
+
+        GF_INVALID_TYPE = 37,
     };
 
     char* gf_get_last_error_message(void* ptr);
 
     char* gf_error_code_to_string(int error_code);
 
-    void* gf_init();
+    void* gf_init(const enum GF_TYPE type);
 
-    void gf_free(void* ctx);
+    int gf_free(const enum GF_TYPE type, void *ctx);
+
+    int gf_set_num_zones(const enum GF_TYPE type, void* ptr, const size_t num_zones);
 
     int gf_register_species(void* ptr, const int num_species, const char** species_names);
 
     int gf_construct_engine_from_policy(void* ptr, const char* policy_name, const double *abundances, size_t num_species);
 
-    int gf_construct_solver_from_engine(void* ptr, const char* solver_name);
+    int gf_construct_solver_from_engine(void* ptr);
 
     int gf_evolve(
+        enum GF_TYPE type,
         void* ptr,
-        const double* Y_in,
+        const void* Y_in,
         size_t num_species,
-        double T,
-        double rho,
+        const void* T,
+        const void* rho,
         double tMax,
         double dt0,
-        double* Y_out,
-        double* energy_out,
-        double* dEps_dT,
-        double* dEps_dRho,
-        double* specific_neutrino_energy_loss,
-        double* specific_neutrino_flux,
-        double* mass_lost
+        void* Y_out,
+        void* energy_out,
+        void* dEps_dT,
+        void* dEps_dRho,
+        void* specific_neutrino_energy_loss,
+        void* specific_neutrino_flux,
+        void* mass_lost
     );
 
 #ifdef __cplusplus

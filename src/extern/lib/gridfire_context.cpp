@@ -3,11 +3,10 @@
 #include "fourdst/atomic/species.h"
 
 #include "fourdst/composition/exceptions/exceptions_composition.h"
+#include "gridfire/exceptions/error_policy.h"
+#include "gridfire/utils/logging.h"
 
-void GridFireContext::init_species_map(const std::vector<std::string> &species_names) {
-    for (const auto& name: species_names) {
-        working_comp.registerSymbol(name);
-    }
+void GFContext::init_species_map(const std::vector<std::string> &species_names) {
     this->speciesList.clear();
     this->speciesList.reserve(species_names.size());
 
@@ -24,8 +23,9 @@ void GridFireContext::init_species_map(const std::vector<std::string> &species_n
 
 }
 
-void GridFireContext::init_engine_from_policy(const std::string &policy_name, const double *abundances, const size_t num_species) {
-    init_composition_from_abundance_vector(abundances, num_species);
+void GFContext::init_engine_from_policy(const std::string &policy_name, const double *abundances, const size_t num_species) {
+    const std::vector<double> Y_scratch(abundances, abundances + num_species);
+    fourdst::composition::Composition comp = init_composition_from_abundance_vector(Y_scratch, num_species);
 
     enum class EnginePolicy {
         MAIN_SEQUENCE_POLICY
@@ -47,71 +47,53 @@ void GridFireContext::init_engine_from_policy(const std::string &policy_name, co
 
     switch (engine_map.at(policy_name)) {
         case EnginePolicy::MAIN_SEQUENCE_POLICY: {
-            this->policy = std::make_unique<gridfire::policy::MainSequencePolicy>(this->working_comp);
-            this->engine = &policy->construct();
+            this->policy = std::make_unique<gridfire::policy::MainSequencePolicy>(comp);
+            const auto& [e, ctx] = policy->construct();
+            this->engine = &e;
+            this->engine_ctx = ctx->clone_structure();
+
             break;
         }
         default:
             throw gridfire::exceptions::PolicyError(
-                "Unhandled engine policy in GridFireContext::init_engine_from_policy"
+                "Unhandled engine policy in GFPointContext::init_engine_from_policy"
             );
     }
 
 
 }
 
-void GridFireContext::init_solver_from_engine(const std::string &solver_name) {
-    enum class SolverType {
-        CVODE
-    };
-
-    static const std::unordered_map<std::string, SolverType> solver_map = {
-        {"CVODE", SolverType::CVODE}
-    };
-
-    if (!solver_map.contains(solver_name)) {
-        throw gridfire::exceptions::SolverError(
-            std::format(
-                "Solver {} is not recognized. Valid solvers are: {}",
-                solver_name,
-                gridfire::utils::iterable_to_delimited_string(solver_map, ", ", [](const auto& pair){ return pair.first; })
-            )
-        );
-    }
-
-    switch (solver_map.at(solver_name)) {
-        case SolverType::CVODE: {
-            this->solver = std::make_unique<gridfire::solver::CVODESolverStrategy>(*this->engine);
-            break;
-        }
-        default:
-            throw gridfire::exceptions::SolverError(
-                "Unhandled solver type in GridFireContext::init_solver_from_engine"
-            );
-    }
-
-}
-
-void GridFireContext::init_composition_from_abundance_vector(const double *abundances, size_t num_species) {
+fourdst::composition::Composition GFContext::init_composition_from_abundance_vector(const std::vector<double> &abundances, size_t num_species) const {
     if (num_species == 0) {
         throw fourdst::composition::exceptions::InvalidCompositionError("Cannot initialize composition with zero species.");
     }
-    if (num_species != working_comp.size()) {
+    if (num_species != speciesList.size()) {
         throw fourdst::composition::exceptions::InvalidCompositionError(
             std::format(
                 "Number of species provided ({}) does not match the registered species count ({}).",
                 num_species,
-                working_comp.size()
+                speciesList.size()
             )
         );
     }
 
+    fourdst::composition::Composition comp;
     for (size_t i = 0; i < num_species; i++) {
-        this->working_comp.setMolarAbundance(this->speciesList[i], abundances[i]);
+        comp.registerSpecies(this->speciesList[i]);
+        comp.setMolarAbundance(this->speciesList[i], abundances[i]);
     }
+
+    return comp;
 }
 
-int GridFireContext::evolve(
+
+void GFPointContext::init_solver_from_engine() {
+    this->solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine);
+    this->solver_ctx = std::make_unique<gridfire::solver::PointSolverContext>(*engine_ctx);
+}
+
+
+int GFPointContext::evolve(
     const double* Y_in,
     const size_t num_species,
     const double T,
@@ -125,17 +107,19 @@ int GridFireContext::evolve(
     double& specific_neutrino_energy_loss,
     double& specific_neutrino_flux,
     double& mass_lost
-) {
-    init_composition_from_abundance_vector(Y_in, num_species);
+) const {
+
+    const std::vector<double> Y_scratch(Y_in, Y_in + num_species);
+    const fourdst::composition::Composition comp = init_composition_from_abundance_vector(Y_scratch, num_species);
 
     gridfire::NetIn netIn;
     netIn.temperature = T;
     netIn.density = rho;
     netIn.dt0 = dt0;
     netIn.tMax = tMax;
-    netIn.composition = this->working_comp;
+    netIn.composition = comp;
 
-    const gridfire::NetOut result = this->solver->evaluate(netIn);
+    const gridfire::NetOut result = this->solver->evaluate(*solver_ctx, netIn);
 
     energy_out = result.energy;
     dEps_dT  = result.dEps_dT;
@@ -158,4 +142,100 @@ int GridFireContext::evolve(
     }
 
     return 0;
+}
+
+void GFGridContext::init_solver_from_engine() {
+    this->local_solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine);
+    this->solver = std::make_unique<gridfire::solver::GridSolver>(*this->engine, *this->local_solver);
+    this->solver_ctx = std::make_unique<gridfire::solver::GridSolverContext>(*engine_ctx);
+}
+
+int GFGridContext::evolve(
+    const double* Y_in,
+    size_t num_species,
+    const double *T,
+    const double *rho,
+    double tMax,
+    double dt0,
+    double *Y_out,
+    double *energy_out,
+    double *dEps_dT,
+    double *dEps_dRho,
+    double *specific_neutrino_energy_loss,
+    double *specific_neutrino_flux,
+    double *mass_lost
+) const {
+    if (this->get_zones() == 0) {
+        throw gridfire::exceptions::GridFireError("GFGridContext has zero zones configured for evolution.");
+    }
+
+    if (Y_in == nullptr || T == nullptr || rho == nullptr) {
+        throw gridfire::exceptions::GridFireError("Input abundance, temperature, or density pointers are null.");
+    }
+
+    if (Y_out == nullptr) {
+        throw gridfire::exceptions::GridFireError("Output abundance pointer is null.");
+    }
+
+    std::vector<fourdst::composition::Composition> zone_compositions;
+
+    zone_compositions.reserve(this->get_zones());
+
+    std::vector<double> Y_scratch;
+    Y_scratch.resize(num_species);
+
+    for (size_t i = 0; i < this->get_zones(); ++i) {
+        for (size_t j = 0; j < num_species; ++j) {
+            Y_scratch[j] = Y_in[i * num_species + j];
+        }
+        zone_compositions.push_back(init_composition_from_abundance_vector(Y_scratch, num_species));
+    }
+
+    std::vector<gridfire::NetIn> netIns;
+    netIns.reserve(this->get_zones());
+    for (size_t i = 0; i < this->get_zones(); ++i) {
+        gridfire::NetIn netIn;
+        netIn.temperature = T[i];
+        netIn.density = rho[i];
+        netIn.dt0 = dt0;
+        netIn.tMax = tMax;
+        netIn.composition = zone_compositions[i];
+        netIns.push_back(netIn);
+    }
+
+    std::vector<gridfire::NetOut> results = this->solver->evaluate(*this->solver_ctx, netIns);
+
+    for (size_t zone_idx = 0; zone_idx < this->get_zones(); ++zone_idx) {
+        const gridfire::NetOut& netOut = results[zone_idx];
+        energy_out[zone_idx] = netOut.energy;
+        dEps_dT[zone_idx] = netOut.dEps_dT;;
+        dEps_dRho[zone_idx] = netOut.dEps_dRho;
+        specific_neutrino_energy_loss[zone_idx] = netOut.specific_neutrino_energy_loss;
+        specific_neutrino_flux[zone_idx] = netOut.specific_neutrino_flux;
+
+        std::set<fourdst::atomic::Species> seen_species;
+        for (size_t i = 0; i < num_species; ++i) {
+            fourdst::atomic::Species species = this->speciesList[i];
+            Y_out[zone_idx * num_species + i] = netOut.composition.getMolarAbundance(species);
+            seen_species.insert(species);
+        }
+        mass_lost[zone_idx] = 0.0;
+        for (const auto& species : netOut.composition.getRegisteredSpecies()) {
+            if (!seen_species.contains(species)) {
+                mass_lost[zone_idx] += species.mass() * netOut.composition.getMolarAbundance(species);
+            }
+        }
+    }
+    return 0;
+}
+
+std::unique_ptr<GFContext> make_gf_context(const GFContextType &type) {
+    switch (type) {
+        case GFContextType::POINT:
+            return std::make_unique<GFPointContext>();
+        case GFContextType::GRID:
+            return std::make_unique<GFGridContext>();
+        default:
+            throw gridfire::exceptions::GridFireError("Unhandled GFContextType in make_gf_context");
+    }
 }

@@ -4,14 +4,14 @@
 
 // Define a macro to check return codes
 #define CHECK_RET_CODE(ret, ctx, msg) \
-    if (ret != 0 && ret != 1) { \
-        printf("Error %s: %s\n", msg, gf_get_last_error_message(ctx)); \
-        gf_free(ctx); \
+    if ((ret) != 0 && (ret) != 1) { \
+        printf("Error %s: %s [%s]\n", msg, gf_get_last_error_message(ctx), gf_error_code_to_string(ret)); \
+        gf_free(SINGLE_ZONE, ctx); \
         return 1; \
     }
 
 int main() {
-    void* ctx = gf_init();
+    void* ctx = gf_init(SINGLE_ZONE);
 
     const char* species_names[NUM_SPECIES];
     species_names[0] = "H-1";
@@ -39,7 +39,7 @@ int main() {
     ret = gf_construct_engine_from_policy(ctx, "MAIN_SEQUENCE_POLICY", abundances, NUM_SPECIES);
     CHECK_RET_CODE(ret, ctx, "MAIN_SEQUENCE_POLICY");
 
-    ret = gf_construct_solver_from_engine(ctx, "CVODE");
+    ret = gf_construct_solver_from_engine(ctx);
     CHECK_RET_CODE(ret, ctx, "CVODE");
 
     double Y_out[NUM_SPECIES];
@@ -50,21 +50,24 @@ int main() {
     double specific_neutrino_flux;
     double mass_lost;
 
+    const double T_in = 1.5e7; // Temperature in K
+    const double rho_in = 1.5e2; // Density in g/cm^3
+
     ret = gf_evolve(
+        SINGLE_ZONE,
         ctx,
         abundances,
         NUM_SPECIES,
-        1.5e7,    // Temperature in K
-        1.5e2,    // Density in g/cm^3
+        &T_in,    // Temperature in K
+        &rho_in,    // Density in g/cm^3
         3e17,      // Time step in seconds
-        1e-12, // Initial time step in seconds
+        1e-12,
         Y_out,
         &energy_out,
         &dEps_dT,
         &dEps_dRho,
         &specific_neutrino_energy_loss,
-        &specific_neutrino_flux,
-        &mass_lost
+        &specific_neutrino_flux, &mass_lost
     );
 
     CHECK_RET_CODE(ret, ctx, "EVOLUTION");
@@ -81,7 +84,7 @@ int main() {
     printf("Specific neutrino flux: %e\n", specific_neutrino_flux);
     printf("Mass lost: %e\n", mass_lost);
 
-    gf_free(ctx);
+    gf_free(SINGLE_ZONE, ctx);
 
     return 0;
 }

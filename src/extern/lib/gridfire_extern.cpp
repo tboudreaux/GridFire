@@ -3,120 +3,18 @@
 #include "gridfire/extern/gridfire_context.h"
 #include "gridfire/extern/gridfire_extern.h"
 
-extern "C" {
-    void* gf_init() {
-        return new GridFireContext();
-    }
+namespace {
 
-    void gf_free(void* ctx) {
-        delete static_cast<GridFireContext*>(ctx);
-    }
+    template<typename T>
+    concept ErrorTrackable = requires(T a) {
+        { a.last_error } -> std::convertible_to<std::string>;
+    };
 
-    int gf_register_species(void* ptr, const int num_species, const char** species_names) {
-        auto* ctx = static_cast<GridFireContext*>(ptr);
+    template <ErrorTrackable Context, typename Func>
+    int execute_guarded(Context* ctx, Func&& action) {
         try {
-            std::vector<std::string> names;
-            for(int i=0; i<num_species; ++i) {
-                names.emplace_back(species_names[i]);
-            }
-            ctx->init_species_map(names);
-            return FDSSE_SUCCESS;
-        } catch (const fourdst::composition::exceptions::UnknownSymbolError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_UNKNOWN_SYMBOL_ERROR;
-        } catch (const fourdst::composition::exceptions::SpeciesError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_SPECIES_ERROR;
-        } catch (const std::exception& e) {
-            ctx->last_error = e.what();
-            return FDSSE_NON_4DSTAR_ERROR;
-        } catch (...) {
-            ctx->last_error = "Unknown error occurred during species registration.";
-            return FDSSE_UNKNOWN_ERROR;
-        }
-    }
+            const int result = action();
 
-    int gf_construct_engine_from_policy(
-        void* ptr,
-        const char* policy_name,
-        const double *abundances,
-        const size_t num_species
-    ) {
-        auto* ctx = static_cast<GridFireContext*>(ptr);
-        try {
-            ctx->init_engine_from_policy(std::string(policy_name), abundances, num_species);
-            return GF_SUCCESS;
-        } catch (const gridfire::exceptions::MissingBaseReactionError& e) {
-            ctx->last_error = e.what();
-            return GF_MISSING_BASE_REACTION_ERROR;
-        } catch (const gridfire::exceptions::MissingSeedSpeciesError& e) {
-            ctx->last_error = e.what();
-            return GF_MISSING_SEED_SPECIES_ERROR;
-        }  catch (const gridfire::exceptions::MissingKeyReactionError& e) {
-            ctx->last_error = e.what();
-            return GF_MISSING_KEY_REACTION_ERROR;
-        } catch (const gridfire::exceptions::PolicyError& e) {
-            ctx->last_error = e.what();
-            return GF_POLICY_ERROR;
-        } catch (std::exception& e) {
-            ctx->last_error = e.what();
-            return GF_NON_GRIDFIRE_ERROR;
-        } catch (...) {
-            ctx->last_error = "Unknown error occurred during engine construction.";
-            return GF_UNKNOWN_ERROR;
-        }
-    }
-
-    int gf_construct_solver_from_engine(
-        void* ptr,
-        const char* solver_name
-    ) {
-        auto* ctx = static_cast<GridFireContext*>(ptr);
-        try {
-            ctx->init_solver_from_engine(std::string(solver_name));
-            return GF_SUCCESS;
-        } catch (std::exception& e) {
-            ctx->last_error = e.what();
-            return GF_NON_GRIDFIRE_ERROR;
-        } catch (...) {
-            ctx->last_error = "Unknown error occurred during solver construction.";
-            return GF_UNKNOWN_ERROR;
-        }
-    }
-
-    int gf_evolve(
-        void* ptr,
-        const double* Y_in,
-        const size_t num_species,
-        const double T,
-        const double rho,
-        const double tMax,
-        const double dt0,
-        double* Y_out,
-        double* energy_out,
-        double* dEps_dT,
-        double* dEps_dRho,
-        double* specific_neutrino_energy_loss,
-        double* specific_neutrino_flux,
-        double* mass_lost
-    ) {
-        auto* ctx = static_cast<GridFireContext*>(ptr);
-        try {
-            const int result = ctx->evolve(
-                Y_in,
-                num_species,
-                T,
-                rho,
-                tMax,
-                dt0,
-                Y_out,
-                *energy_out,
-                *dEps_dT,
-                *dEps_dRho,
-                *specific_neutrino_energy_loss,
-                *specific_neutrino_flux,
-                *mass_lost
-            );
             if (result != 0) {
                 return result;
             }
@@ -211,8 +109,218 @@ extern "C" {
         }
     }
 
+}
+
+extern "C" {
+
+
+    void* gf_init(const enum GF_TYPE type) {
+        if (type == MULTI_ZONE) {
+            return new GFGridContext();
+        }
+        if (type == SINGLE_ZONE) {
+            return new GFPointContext();
+        }
+        return nullptr;
+    }
+
+    int gf_free(const enum GF_TYPE type, void *ctx) {
+        if (!ctx) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (type == MULTI_ZONE) {
+            delete static_cast<GFGridContext*>(ctx);
+            return GF_SUCCESS;
+        }
+        if (type == SINGLE_ZONE) {
+            delete static_cast<GFPointContext*>(ctx);
+            return GF_SUCCESS;
+        }
+        return GF_UNKNOWN_FREE_TYPE;
+    }
+
+    int gf_set_num_zones(const enum GF_TYPE type, void* ptr, const size_t num_zones) {
+        if (type != MULTI_ZONE) {
+            return GF_INVALID_TYPE;
+        }
+
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+
+        auto* ctx = static_cast<GFGridContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->set_zones(num_zones);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_register_species(void* ptr, const int num_species, const char** species_names) {
+        if (num_species < 0) return GF_INVALID_NUM_SPECIES;
+
+        if (num_species == 0) return GF_SUCCESS;
+
+        if (!ptr || !species_names) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+
+        for (int i=0; i < num_species; ++i) {
+            if (!species_names[i]) {
+                return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+            }
+        }
+
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+           std::vector<std::string> names;
+            for (int i=0; i<num_species; ++i) {
+                names.emplace_back(species_names[i]);
+            }
+            ctx->init_species_map(names);
+            return FDSSE_SUCCESS;
+        });
+    }
+
+    int gf_construct_engine_from_policy(
+        void* ptr,
+        const char* policy_name,
+        const double *abundances,
+        const size_t num_species
+    ) {
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->init_engine_from_policy(std::string(policy_name), abundances, num_species);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_construct_solver_from_engine(
+        void* ptr
+    ) {
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->init_solver_from_engine();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_evolve(
+        const enum GF_TYPE type,
+        void* ptr,
+        const void* Y_in,
+        const size_t num_species,
+        const void* T,
+        const void* rho,
+        const double tMax,
+        const double dt0,
+        void* Y_out,
+        void* energy_out,
+        void* dEps_dT,
+        void* dEps_dRho,
+        void* specific_neutrino_energy_loss,
+        void* specific_neutrino_flux,
+        void* mass_lost
+    ) {
+
+        if (!ptr || !Y_in || !T || !rho) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+
+        if (!Y_out || !energy_out || !dEps_dT || !dEps_dRho || !specific_neutrino_energy_loss || !specific_neutrino_flux || !mass_lost) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+
+        if (tMax <= 0 || dt0 <= 0) {
+            return GF_INVALID_TIMESTEPS;
+        }
+
+        if (num_species <= 0) {
+            return GF_INVALID_NUM_SPECIES;
+        }
+
+        switch (type) {
+            case SINGLE_ZONE : {
+                auto* ctx = static_cast<GFPointContext*>(ptr);
+                const auto T_ptr = static_cast<const double*>(T);
+                const auto *rho_ptr = static_cast<const double*>(rho);
+
+                auto* Y_out_local = static_cast<double*>(Y_out);
+                auto* energy_out_local = static_cast<double*>(energy_out);
+                auto* dEps_dT_local = static_cast<double*>(dEps_dT);
+                auto* dEps_dRho_local = static_cast<double*>(dEps_dRho);
+                auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
+                auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
+                auto* mass_lost_local = static_cast<double*>(mass_lost);
+
+                return execute_guarded(ctx, [&]() {
+                    return ctx->evolve(
+                        static_cast<const double*>(Y_in),
+                        num_species,
+                        *T_ptr,
+                        *rho_ptr,
+                        tMax,
+                        dt0,
+                        Y_out_local,
+                        *energy_out_local,
+                        *dEps_dT_local,
+                        *dEps_dRho_local,
+                        *specific_neutrino_energy_loss_local,
+                        *specific_neutrino_flux_local,
+                        *mass_lost_local
+                    );
+                });
+            }
+            case MULTI_ZONE : {
+                auto* ctx = static_cast<GFGridContext*>(ptr);
+                const auto *T_ptr = static_cast<const double*>(T);
+                const auto *rho_ptr = static_cast<const double*>(rho);
+
+                auto* Y_out_local = static_cast<double*>(Y_out);
+                auto* energy_out_local = static_cast<double*>(energy_out);
+                auto* dEps_dT_local = static_cast<double*>(dEps_dT);
+                auto* dEps_dRho_local = static_cast<double*>(dEps_dRho);
+                auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
+                auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
+                auto* mass_lost_local = static_cast<double*>(mass_lost);
+
+                // for (size_t i = 0; i < ctx->get_zones(); ++i) {
+                //     if (!Y_out_local[i]) {
+                //         std::cerr << "Uninitialized memory for Y_out at zone " << i << std::endl;
+                //         return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+                //     }
+                // }
+
+                return execute_guarded(ctx, [&]() {
+                    return ctx->evolve(
+                        static_cast<const double*>(Y_in),
+                        num_species,
+                        T_ptr, // T pointer
+                        rho_ptr, // rho pointer
+                        tMax,
+                        dt0,
+                        Y_out_local,
+                        energy_out_local,
+                        dEps_dT_local,
+                        dEps_dRho_local,
+                        specific_neutrino_energy_loss_local,
+                        specific_neutrino_flux_local,
+                        mass_lost_local
+                    );
+                });
+            }
+            default :
+                return GF_UNKNOWN_ERROR;
+        }
+
+
+
+    }
+
     char* gf_get_last_error_message(void* ptr) {
-        const auto* ctx = static_cast<GridFireContext*>(ptr);
+        if (!ptr) {
+            return const_cast<char*>("GF_UNINITIALIZED_INPUT_MEMORY_ERROR");
+        }
+        const auto* ctx = static_cast<GFContext*>(ptr);
         return const_cast<char*>(ctx->last_error.c_str());
     }
 
@@ -278,6 +386,18 @@ extern "C" {
                 return const_cast<char*>("GF_DEBUG_ERROR");
             case GF_GRIDFIRE_ERROR:
                 return const_cast<char*>("GF_GRIDFIRE_ERROR");
+            case GF_UNINITIALIZED_INPUT_MEMORY_ERROR:
+                return const_cast<char*>("GF_UNINITIALIZED_INPUT_MEMORY_ERROR");
+            case GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR:
+                return const_cast<char*>("GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR");
+            case GF_INVALID_NUM_SPECIES:
+                return const_cast<char*>("GF_INVALID_NUM_SPECIES");
+            case GF_INVALID_TIMESTEPS:
+                return const_cast<char*>("GF_INVALID_TIMESTEPS");
+            case GF_UNKNOWN_FREE_TYPE:
+                return const_cast<char*>("GF_UNKNOWN_FREE_TYPE");
+            case GF_INVALID_TYPE:
+                return const_cast<char*>("GF_INVALID_TYPE");
             case FDSSE_NON_4DSTAR_ERROR:
                 return const_cast<char*>("FDSSE_NON_4DSTAR_ERROR");
             case FDSSE_UNKNOWN_ERROR:
