@@ -50,7 +50,7 @@ int main() {
     double specific_neutrino_flux;
     double mass_lost;
 
-    const double T_in = 1.5e7; // Temperature in K
+    const double T_in = 1e7; // Temperature in K
     const double rho_in = 1.5e2; // Density in g/cm^3
 
     ret = gf_evolve(

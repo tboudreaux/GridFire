@@ -1,5 +1,10 @@
 if get_option('build_fortran')
-  add_languages('fortran', native: true)
+  found_fortran = add_languages('fortran')
+    if not found_fortran
+      error('Fortran compiler not found, but build_fortran option is enabled.')
+    else
+        message('Fortran compiler found.')
+    endif
   message('Found FORTRAN compiler: ' + meson.get_compiler('fortran').get_id())
   message('Fortran standard set to: ' + get_option('fortran_std'))
   message('Building fortran module (gridfire_mod.mod)')

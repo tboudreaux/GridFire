@@ -2,6 +2,14 @@ module gridfire_mod
     use iso_c_binding
     implicit none
 
+    type, public :: GF_TYPE
+        integer(c_int) :: value
+    end type GF_TYPE
+
+    type(GF_TYPE), parameter, public :: &
+            SINGLE_ZONE   = GF_TYPE(1001), &
+            MULTI_ZONE    = GF_TYPE(1002)
+
     enum, bind (C)
         enumerator :: FDSSE_NON_4DSTAR_ERROR = -102
         enumerator :: FDSSE_UNKNOWN_ERROR = -101
@@ -50,24 +58,46 @@ module gridfire_mod
         enumerator :: GF_DEBUG_ERRROR = 30
 
         enumerator :: GF_GRIDFIRE_ERROR = 31
+        enumerator :: GF_UNINITIALIZED_INPUT_MEMORY_ERROR = 32
+        enumerator :: GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR = 33
+
+        enumerator :: GF_INVALD_NUM_SPECIES = 34
+        enumerator :: GF_INVALID_TIMESTEPS = 35
+        enumerator :: GF_UNKNONWN_FREE_TYPE = 36
+
+        enumerator :: GF_INVALID_TYPE = 37
+
+        enumerator :: GF_SINGLE_ZONE = 1001
+        enumerator :: GF_MULTI_ZONE = 1002
     end enum
 
     interface
         ! void* gf_init()
-        function gf_init() bind(C, name="gf_init")
-            import :: c_ptr
+        function gf_init(ctx_type) bind(C, name="gf_init")
+            import :: c_ptr, c_int
             type(c_ptr) :: gf_init
+            integer(c_int), value :: ctx_type
         end function gf_init
 
-        ! void gf_free(void* gf)
-        subroutine gf_free(gf) bind(C, name="gf_free")
-            import :: c_ptr
-            type(c_ptr), value :: gf
-        end subroutine gf_free
+        ! int gf_free(void* gf)
+        function gf_free(ctx_type, ptr) result(c_res) bind(C, name="gf_free")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            integer(c_int), value :: ctx_type
+            integer(c_int) :: c_res
+        end function gf_free
+
+        function gf_set_num_zones(ctx_type, ptr, num_zones) result(c_res) bind(C, name="gf_set_num_zones")
+            import :: c_ptr, c_int, c_size_t
+            type(c_ptr), value :: ptr
+            integer(c_int), value :: ctx_type
+            integer(c_size_t), value :: num_zones
+            integer(c_int) :: c_res
+        end function gf_set_num_zones
 
         ! char* gf_get_last_error_message(void* ptr);
         function gf_get_last_error_message(ptr) result(c_msg) bind(C, name="gf_get_last_error_message")
-            import
+            import :: c_ptr, c_int
             type(c_ptr), value :: ptr
             type(c_ptr) :: c_msg
         end function
@@ -102,49 +132,116 @@ module gridfire_mod
         end function
 
         ! int gf_evolve(...)
-        function gf_evolve(ptr, Y_in, num_species, T, rho, dt, Y_out, energy_out, dEps_dT, dEps_dRho, specific_neutrino_loss, specific_neutrino_flux, mass_lost) result(ierr) &
+        function gf_evolve_c_scalar(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
+                Y_out, energy, dedt, dedrho, &
+                nue_loss, nu_flux, mass_lost) result(ierr) &
                 bind(C, name="gf_evolve")
-            import
+            import :: c_ptr, c_int, c_double, c_size_t
             type(c_ptr), value :: ptr
-            real(c_double), dimension(*), intent(in) :: Y_in
+            integer(c_int), value :: ctx_type
             integer(c_size_t), value :: num_species
-            real(c_double), value :: T, rho, dt
+
+            ! Arrays
+            real(c_double), dimension(*), intent(in) :: Y_in
             real(c_double), dimension(*), intent(out) :: Y_out
-            real(c_double), intent(out) :: energy_out, dEps_dT, dEps_dRho, specific_neutrino_loss, specific_neutrino_flux, mass_lost
+
+            ! Scalars (Passed by Reference -> matches void*)
+            real(c_double), intent(in) :: T, rho
+            real(c_double), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
+
+            ! Scalars (Passed by Value)
+            real(c_double), value :: tMax, dt0
+
+            integer(c_int) :: ierr
+        end function
+
+        ! 2. Interface for Multi Zone (Arrays)
+        function gf_evolve_c_array(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
+                Y_out, energy, dedt, dedrho, &
+                nue_loss, nu_flux, mass_lost) result(ierr) &
+                bind(C, name="gf_evolve")
+            import :: c_ptr, c_int, c_double, c_size_t
+            type(c_ptr), value :: ptr
+            integer(c_int), value :: ctx_type
+            integer(c_size_t), value :: num_species
+
+            ! All Arrays (dimension(*))
+            real(c_double), dimension(*), intent(in) :: Y_in
+            real(c_double), dimension(*), intent(in) :: T, rho
+
+            real(c_double), dimension(*), intent(out) :: Y_out
+            real(c_double), dimension(*), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
+
+            ! Scalars (Passed by Value)
+            real(c_double), value :: tMax, dt0
+
             integer(c_int) :: ierr
         end function
     end interface
 
     type :: GridFire
         type(c_ptr) :: ctx = c_null_ptr
+        integer(c_int) :: ctx_type = SINGLE_ZONE%value
         integer(c_size_t) :: num_species = 0
+        integer(c_size_t) :: num_zones = 1
     contains
         procedure :: gff_init
         procedure :: gff_free
-        procedure :: register_species
-        procedure :: setup_policy
-        procedure :: setup_solver
-        procedure :: evolve
-        procedure :: get_last_error
+        procedure :: gff_register_species
+        procedure :: gff_setup_policy
+        procedure :: gff_setup_solver
+        procedure :: gff_get_last_error
+
+        procedure :: gff_evolve_single
+        procedure :: gff_evolve_multi
+
+        generic :: gff_evolve => gff_evolve_single, gff_evolve_multi
     end type GridFire
 
     contains
-        subroutine gff_init(self)
+        subroutine gff_init(self, type, zones)
             class(GridFire), intent(out) :: self
+            type(GF_TYPE), intent(in)    :: type
+            integer(c_size_t), intent(in), optional :: zones
+            integer(c_int) :: ierr
 
-            self%ctx = gf_init()
+            if (type%value==1002) then
+                if (.not. present(zones)) then
+                    print *, "GridFire Error: Multi-zone type requires number of zones to be specficied in the GridFire init method (i.e. GridFire(MULTI_ZONE, 10) for 10 zones)."
+                    error stop
+                end if
+
+                self%num_zones = zones
+            end if
+
+            self%ctx_type = type%value
+
+            self%ctx = gf_init(self%ctx_type)
+
+            if (type%value==1002) then
+                ierr = gf_set_num_zones(self%ctx_type, self%ctx, self%num_zones)
+                if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
+                    print *, "GridFire Multi-Zone Error: ", self%gff_get_last_error()
+                    error stop
+                end if
+            end if
         end subroutine gff_init
 
         subroutine gff_free(self)
             class(GridFire), intent(inout) :: self
+            integer(c_int) :: ierr
 
             if (c_associated(self%ctx)) then
-                call gf_free(self%ctx)
+                ierr = gf_free(self%ctx_type, self%ctx)
+                if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
+                    print *, "GridFire Free Error: ", self%gff_get_last_error()
+                    error stop
+                end if
                 self%ctx = c_null_ptr
             end if
         end subroutine gff_free
 
-        function get_last_error(self) result(msg)
+        function gff_get_last_error(self) result(msg)
             class(GridFire), intent(in) :: self
             character(len=:), allocatable :: msg
             type(c_ptr) :: c_msg_ptr
@@ -169,9 +266,9 @@ module gridfire_mod
             do i = 1, len_str
                 msg(i+10:i+10) = char_ptr(i)
             end do
-        end function get_last_error
+        end function gff_get_last_error
 
-        subroutine register_species(self, species_list)
+        subroutine gff_register_species(self, species_list)
             class(GridFire), intent(inout) :: self
             character(len=*), dimension(:), intent(in) :: species_list
 
@@ -179,7 +276,6 @@ module gridfire_mod
             character(kind=c_char, len=:), allocatable, target :: temp_strs(:)
             integer :: i, n, ierr
 
-            print *, "Registering ", size(species_list), " species."
             n = size(species_list)
             self%num_species = int(n, c_size_t)
 
@@ -191,17 +287,14 @@ module gridfire_mod
                 c_ptrs(i) = c_loc(temp_strs(i))
             end do
 
-            print *, "Calling gf_register_species..."
             ierr = gf_register_species(self%ctx, int(n, c_int), c_ptrs)
-            print *, "gf_register_species returned with code: ", ierr
-
             if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
-                print *, "GridFire: ", self%get_last_error()
+                print *, "GridFire: ", self%gff_get_last_error()
                 error stop
             end if
-        end subroutine register_species
+        end subroutine gff_register_species
 
-        subroutine setup_policy(self, policy_name, abundances)
+        subroutine gff_setup_policy(self, policy_name, abundances)
             class(GridFire), intent(in) :: self
             character(len=*), intent(in) :: policy_name
             real(c_double), dimension(:), intent(in) :: abundances
@@ -218,41 +311,59 @@ module gridfire_mod
                     self%num_species)
 
             if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
-                print *, "GridFire Policy Error: ", self%get_last_error()
+                print *, "GridFire Policy Error: ", self%gff_get_last_error()
                 error stop
             end if
-        end subroutine setup_policy
+        end subroutine gff_setup_policy
 
-        subroutine setup_solver(self, solver_name)
+        subroutine gff_setup_solver(self, solver_name)
             class(GridFire), intent(in) :: self
             character(len=*), intent(in) :: solver_name
             integer(c_int) :: ierr
 
             ierr = gf_construct_solver_from_engine(self%ctx, trim(solver_name) // c_null_char)
             if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
-                print *, "GridFire Solver Error: ", self%get_last_error()
+                print *, "GridFire Solver Error: ", self%gff_get_last_error()
                 error stop
             end if
-        end subroutine setup_solver
+        end subroutine gff_setup_solver
 
-        subroutine evolve(self, Y_in, T, rho, dt, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
+        subroutine gff_evolve_single(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
             class(GridFire), intent(in) :: self
             real(c_double), dimension(:), intent(in) :: Y_in
-            real(c_double), value :: T, rho, dt
+            real(c_double), intent(in) :: T, rho
+            real(c_double), value :: tMax, dt0
+
             real(c_double), dimension(:), intent(out) :: Y_out
             real(c_double), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
             integer, intent(out) :: ierr
             integer(c_int) :: c_ierr
 
-            c_ierr = gf_evolve(self%ctx, &
+            c_ierr = gf_evolve_c_scalar(self%ctx_type, self%ctx, &
                     Y_in, self%num_species, &
-                    T, rho, dt, &
+                    T, rho, tMax, dt0, &
                     Y_out, &
                     energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost)
-
             ierr = int(c_ierr)
-            if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
-                print *, "GridFire Evolve Error: ", self%get_last_error()
-            end if
-        end subroutine evolve
+        end subroutine gff_evolve_single
+
+        subroutine gff_evolve_multi(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:,:), intent(in) :: Y_in
+            real(c_double), dimension(:), intent(in) :: T, rho
+            real(c_double), value :: tMax, dt0
+
+            real(c_double), dimension(:,:), intent(out) :: Y_out
+            real(c_double), dimension(:), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
+            integer, intent(out) :: ierr
+            integer(c_int) :: c_ierr
+
+            c_ierr = gf_evolve_c_array(self%ctx_type, self%ctx, &
+                    Y_in, self%num_species, &
+                    T, rho, tMax, dt0, &
+                    Y_out, &
+                    energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost)
+            ierr = int(c_ierr)
+        end subroutine gff_evolve_multi
+
 end module gridfire_mod

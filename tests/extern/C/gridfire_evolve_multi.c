@@ -55,9 +55,11 @@ int main() {
     double Rhos[ZONES];
 
     for (size_t zone = 0; zone < ZONES; zone++) {
-        Temps[zone] = 1.0e7;
+        Temps[zone] = 1.0e7 + (double)zone * 1.0e5;  // From 10 million K to 20 million K
         Rhos[zone] = 1.5e2;
+        printf("Zone %zu - Temp: %e K, Rho: %e g/cm^3\n", zone, Temps[zone], Rhos[zone]);
     }
+    return 0;
 
     printf(" Registering species...");
     int ret = gf_register_species(ctx, NUM_SPECIES, species_names);

@@ -7,8 +7,8 @@
 extern "C" {
 #endif
     enum GF_TYPE {
-        SINGLE_ZONE = 0,
-        MULTI_ZONE = 1
+        SINGLE_ZONE = 1001,
+        MULTI_ZONE = 1002
     };
 
 

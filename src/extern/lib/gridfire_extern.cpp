@@ -222,6 +222,21 @@ extern "C" {
         void* mass_lost
     ) {
 
+        printf("In C Starting gf_evolve with type %d\n", type);
+        printf("In C num_species: %zu, tMax: %e, dt0: %e\n", num_species, tMax, dt0);
+        printf("In C Y_in ptr: %p, T ptr: %p, rho ptr: %p\n", Y_in, T, rho);
+        // values
+        printf("In C Y_in first 5 values: ");
+        const auto* Y_in_ptr = static_cast<const double*>(Y_in);
+        for (size_t i = 0; i < std::min(num_species, size_t(5)); ++i) {
+            printf("%e ", Y_in_ptr[i]);
+        }
+        printf("\n");
+        printf("In C T value: %e\n", *(static_cast<const double*>(T)));
+        printf("In C rho value: %e\n", *(static_cast<const double*>(rho)));
+        printf("In C tMax value: %e\n", tMax);
+        printf("In C dt0 value: %e\n", dt0);
+
         if (!ptr || !Y_in || !T || !rho) {
             return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
         }
@@ -251,6 +266,8 @@ extern "C" {
                 auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
                 auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
                 auto* mass_lost_local = static_cast<double*>(mass_lost);
+
+                printf("Evolving single zone with T = %e, rho = %e for tMax = %e and dt0 = %e\n", *T_ptr, *rho_ptr, tMax, dt0);
 
                 return execute_guarded(ctx, [&]() {
                     return ctx->evolve(
@@ -283,12 +300,7 @@ extern "C" {
                 auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
                 auto* mass_lost_local = static_cast<double*>(mass_lost);
 
-                // for (size_t i = 0; i < ctx->get_zones(); ++i) {
-                //     if (!Y_out_local[i]) {
-                //         std::cerr << "Uninitialized memory for Y_out at zone " << i << std::endl;
-                //         return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
-                //     }
-                // }
+                printf("Evolving multi zone for tMax = %e and dt0 = %e\n", tMax, dt0);
 
                 return execute_guarded(ctx, [&]() {
                     return ctx->evolve(

@@ -41,30 +41,31 @@ program main
     ! Thermodynamic Conditions (Solar Core-ish)
     real(c_double) :: T = 1.5e7      ! 15 Million K
     real(c_double) :: rho = 150.0e0  ! 150 g/cm^3
-    real(c_double) :: dt = 3.0e17     ! 1 second timestep
+    real(c_double) :: tMax = 3.0e17  ! 10 Gyr total time
+    real(c_double) :: dt0 = 1e-12    ! Starting Timestep
 
     ! --- 2. Initialize GridFire ---
     print *, "Initializing GridFire..."
-    call net%gff_init()
+    call net%gff_init(SINGLE_ZONE)
 
     ! --- 3. Register Species ---
     print *, "Registering species..."
-    call net%register_species(species_names)
+    call net%gff_register_species(species_names)
 
     ! --- 4. Configure Engine & Solver ---
     print *, "Setting up Main Sequence Policy..."
-    call net%setup_policy("MAIN_SEQUENCE_POLICY", Y_in)
+    call net%gff_setup_policy("MAIN_SEQUENCE_POLICY", Y_in)
 
     print *, "Setting up CVODE Solver..."
-    call net%setup_solver("CVODE")
+    call net%gff_setup_solver("CVODE")
 
     ! --- 5. Evolve ---
-    print *, "Evolving system (dt =", dt, "s)..."
-    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass, ierr)
+    print *, "Evolving system (t = ", tMax, "s dt =", dt0, "s)..."
+    call net%gff_evolve(Y_in, T, rho, tMax, dt0, Y_out, energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass, ierr)
 
     if (ierr /= 0) then
         print *, "Evolution Failed with error code: ", ierr
-        print *, "Error Message: ", net%get_last_error()
+        print *, "Error Message: ", net%gff_get_last_error()
         call net%gff_free() ! Always cleanup
         stop
     end if
