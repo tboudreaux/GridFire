@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 
+#include "fourdst/composition/utils/composition_hash.h"
 #include "gridfire/exceptions/exceptions.h"
 #include "gridfire/reaction/reaction.h"
 
@@ -68,5 +69,34 @@ namespace gridfire::utils {
         std::hash<T> hasher;
         seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;
+    }
+
+    inline std::size_t fast_mix(std::size_t h) noexcept {
+        h ^= h >> 33;
+        h *= 0xff51afd7ed558ccdULL;
+        h ^= h >> 33;
+        h *= 0xc4ceb9fe1a85ec53ULL;
+        h ^= h >> 33;
+        return h;
+    }
+
+    inline std::size_t hash_state(
+        const fourdst::composition::CompositionAbstract& comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet& reactions
+    ) noexcept {
+        std::size_t hash = comp.hash();
+        const std::size_t topology_hash = reactions.hash(0);
+
+        hash ^= topology_hash + 0x517cc1b727220a95 + (hash << 6) + (hash >> 2);
+
+        const std::uint64_t t9_bits = std::bit_cast<std::uint64_t>(T9);
+        const std::uint64_t rho_bits = std::bit_cast<std::uint64_t>(rho);
+
+        hash ^= fast_mix(t9_bits) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        hash ^= fast_mix(rho_bits) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+
+        return hash;
     }
 }

@@ -6,6 +6,8 @@
 
 #include "fourdst/atomic/atomicSpecies.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+
 
 namespace gridfire::engine {
 
@@ -18,6 +20,7 @@ namespace gridfire::engine {
      *
      * Refer to priming.cpp for implementation details on logging, algorithmic steps, and error handling.
      *
+     * @param ctx
      * @param netIn Input network data containing initial composition, temperature, and density.
      * @param engine DynamicEngine used to build and evaluate the reaction network.
      * @param ignoredReactionTypes Types of reactions to ignore during priming (e.g., weak reactions).
@@ -27,8 +30,8 @@ namespace gridfire::engine {
      * @return PrimingReport encapsulating the results of the priming operation.
      */
      PrimingReport primeNetwork(
+         scratch::StateBlob &ctx,
          const NetIn& netIn,
-         GraphEngine& engine,
-         const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
+         const GraphEngine& engine, const std::optional<std::vector<reaction::ReactionType>>& ignoredReactionTypes
      );
  }

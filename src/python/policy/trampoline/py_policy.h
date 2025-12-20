@@ -13,7 +13,7 @@ public:
 
     [[nodiscard]] const gridfire::reaction::ReactionSet& get_seed_reactions() const override;
 
-    [[nodiscard]] gridfire::engine::DynamicEngine& construct() override;
+    [[nodiscard]] gridfire::policy::ConstructionResults construct() override;
 
     [[nodiscard]] gridfire::policy::NetworkPolicyStatus get_status() const override;
 
@@ -22,6 +22,8 @@ public:
     [[nodiscard]] std::vector<gridfire::engine::EngineTypes> get_engine_types_stack() const override;
 
     [[nodiscard]] const std::unique_ptr<gridfire::partition::PartitionFunction>& get_partition_function() const override;
+
+    [[nodiscard]] std::unique_ptr<gridfire::engine::scratch::StateBlob> get_stack_scratch_blob() const override;
 };
 
 class PyReactionChainPolicy final : public gridfire::policy::ReactionChainPolicy {

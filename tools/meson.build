@@ -1,3 +1,5 @@
 if get_option('build_tools')
-    subdir('config')
+    subdir('gf_config')
+    subdir('gf_quick')
+    subdir('gf_multi')
 endif

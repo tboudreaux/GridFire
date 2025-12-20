@@ -15,7 +15,8 @@ gridfire_sources = files(
     'lib/reaction/weak/weak_interpolator.cpp',
     'lib/io/network_file.cpp',
     'lib/io/generative/python.cpp',
-    'lib/solver/strategies/CVODE_solver_strategy.cpp',
+    'lib/solver/strategies/PointSolver.cpp',
+    'lib/solver/strategies/GridSolver.cpp',
     'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',
@@ -40,7 +41,12 @@ gridfire_build_dependencies = [
     eigen_dep,
     sundials_dep,
     json_dep,
+    uod_dep,
 ]
+
+if get_option('use_mimalloc')
+    gridfire_build_dependencies += [mimalloc_dep]
+endif
 
 if get_option('plugin_support')
     gridfire_build_dependencies += [plugin_dep]
@@ -52,12 +58,21 @@ if get_option('openmp_support')
 endif
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
-libgridfire = library('gridfire',
-    gridfire_sources,
-    include_directories: include_directories('include'),
-    dependencies: gridfire_build_dependencies,
-    objects: [cvode_objs, kinsol_objs],
-    install : true)
+if get_option('build_python')
+    libgridfire = static_library('gridfire',
+        gridfire_sources,
+        include_directories: include_directories('include'),
+        dependencies: gridfire_build_dependencies,
+        objects: [cvode_objs, kinsol_objs],
+        install : false)
+else
+    libgridfire = library('gridfire',
+                          gridfire_sources,
+                          include_directories: include_directories('include'),
+                          dependencies: gridfire_build_dependencies,
+                          objects: [cvode_objs, kinsol_objs],
+                          install : true)
+endif
 
 gridfire_dep = declare_dependency(
     include_directories: include_directories('include'),

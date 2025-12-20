@@ -1,5 +1,5 @@
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
-#include "gridfire/solver/strategies/CVODE_solver_strategy.h"
+#include "gridfire/solver/strategies/PointSolver.h"
 
 #include "gridfire/trigger/trigger_logical.h"
 #include "gridfire/trigger/trigger_abstract.h"
@@ -28,7 +28,7 @@ namespace gridfire::trigger::solver::CVODE {
         }
     }
 
-    bool SimulationTimeTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    bool SimulationTimeTrigger::check(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         if (ctx.t - m_last_trigger_time >= m_interval) {
             m_hits++;
             LOG_TRACE_L2(m_logger, "SimulationTimeTrigger triggered at t = {}, last trigger time was {}, delta = {}", ctx.t, m_last_trigger_time, m_last_trigger_time_delta);
@@ -38,7 +38,7 @@ namespace gridfire::trigger::solver::CVODE {
         return false;
     }
 
-    void SimulationTimeTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
+    void SimulationTimeTrigger::update(const gridfire::solver::PointSolverTimestepContext &ctx) {
         if (check(ctx)) {
             m_last_trigger_time_delta = (ctx.t - m_last_trigger_time) - m_interval;
             m_last_trigger_time = ctx.t;
@@ -47,7 +47,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     void SimulationTimeTrigger::step(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) {
         // --- SimulationTimeTrigger::step does nothing and is intentionally left blank --- //
     }
@@ -65,7 +65,7 @@ namespace gridfire::trigger::solver::CVODE {
         return "Simulation Time Trigger";
     }
 
-    TriggerResult SimulationTimeTrigger::why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    TriggerResult SimulationTimeTrigger::why(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         TriggerResult result;
         result.name = name();
         if (check(ctx)) {
@@ -99,18 +99,18 @@ namespace gridfire::trigger::solver::CVODE {
         }
     }
 
-    bool OffDiagonalTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    bool OffDiagonalTrigger::check(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         //TODO : This currently does nothing
         return false;
     }
 
 
-    void OffDiagonalTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
+    void OffDiagonalTrigger::update(const gridfire::solver::PointSolverTimestepContext &ctx) {
         m_updates++;
     }
 
     void OffDiagonalTrigger::step(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) {
         // --- OffDiagonalTrigger::step does nothing and is intentionally left blank --- //
     }
@@ -126,7 +126,7 @@ namespace gridfire::trigger::solver::CVODE {
         return "Off-Diagonal Trigger";
     }
 
-    TriggerResult OffDiagonalTrigger::why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    TriggerResult OffDiagonalTrigger::why(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         TriggerResult result;
         result.name = name();
 
@@ -173,7 +173,7 @@ namespace gridfire::trigger::solver::CVODE {
         }
     }
 
-    bool TimestepCollapseTrigger::check(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    bool TimestepCollapseTrigger::check(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         if (m_timestep_window.size() < m_windowSize) {
             m_misses++;
             return false;
@@ -201,13 +201,13 @@ namespace gridfire::trigger::solver::CVODE {
         return false;
     }
 
-    void TimestepCollapseTrigger::update(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) {
+    void TimestepCollapseTrigger::update(const gridfire::solver::PointSolverTimestepContext &ctx) {
         m_updates++;
         m_timestep_window.clear();
     }
 
     void TimestepCollapseTrigger::step(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) {
         push_to_fixed_deque(m_timestep_window, ctx.dt, m_windowSize);
         // --- TimestepCollapseTrigger::step does nothing and is intentionally left blank --- //
@@ -226,7 +226,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     TriggerResult TimestepCollapseTrigger::why(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) const {
         TriggerResult result;
         result.name = name();
@@ -263,7 +263,7 @@ namespace gridfire::trigger::solver::CVODE {
     m_windowSize(windowSize) {}
 
     bool ConvergenceFailureTrigger::check(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) const {
         if (m_window.size() != m_windowSize) {
             m_misses++;
@@ -278,13 +278,13 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     void ConvergenceFailureTrigger::update(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) {
         m_window.clear();
     }
 
     void ConvergenceFailureTrigger::step(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) {
         push_to_fixed_deque(m_window, ctx.currentConvergenceFailures, m_windowSize);
         m_updates++;
@@ -306,7 +306,7 @@ namespace gridfire::trigger::solver::CVODE {
         return "ConvergenceFailureTrigger(abs_failure_threshold=" + std::to_string(m_totalFailures) + ", rel_failure_threshold=" + std::to_string(m_relativeFailureRate) + ", windowSize=" + std::to_string(m_windowSize) + ")";
     }
 
-    TriggerResult ConvergenceFailureTrigger::why(const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx) const {
+    TriggerResult ConvergenceFailureTrigger::why(const gridfire::solver::PointSolverTimestepContext &ctx) const {
         TriggerResult result;
         result.name = name();
 
@@ -348,7 +348,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool ConvergenceFailureTrigger::abs_failure(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) const {
         if (ctx.currentConvergenceFailures > m_totalFailures) {
             return true;
@@ -357,7 +357,7 @@ namespace gridfire::trigger::solver::CVODE {
     }
 
     bool ConvergenceFailureTrigger::rel_failure(
-        const gridfire::solver::CVODESolverStrategy::TimestepContext &ctx
+        const gridfire::solver::PointSolverTimestepContext &ctx
     ) const {
         const float mean = current_mean();
         if (mean < 10) {
@@ -369,13 +369,13 @@ namespace gridfire::trigger::solver::CVODE {
         return false;
     }
 
-    std::unique_ptr<Trigger<gridfire::solver::CVODESolverStrategy::TimestepContext>> makeEnginePartitioningTrigger(
+    std::unique_ptr<Trigger<gridfire::solver::PointSolverTimestepContext>> makeEnginePartitioningTrigger(
         const double simulationTimeInterval,
         const double offDiagonalThreshold,
         const double timestepCollapseRatio,
         const size_t maxConvergenceFailures
     ) {
-        using ctx_t = gridfire::solver::CVODESolverStrategy::TimestepContext;
+        using ctx_t = gridfire::solver::PointSolverTimestepContext;
 
         // 1. INSTABILITY TRIGGERS (High Priority)
         auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(

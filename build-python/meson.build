@@ -28,6 +28,8 @@ if get_option('build_python')
           meson.project_source_root() + '/src/python/policy/bindings.cpp',
           meson.project_source_root() + '/src/python/policy/trampoline/py_policy.cpp',
           meson.project_source_root() + '/src/python/utils/bindings.cpp',
+          meson.project_source_root() + '/src/python/config/bindings.cpp',
+          meson.project_source_root() + '/src/python/engine/scratchpads/bindings.cpp',
       ]
 
 
@@ -56,6 +58,7 @@ if get_option('build_python')
       files(
           meson.project_source_root() + '/src/python/gridfire/__init__.py',
           meson.project_source_root() + '/stubs/gridfire/_gridfire/__init__.pyi',
+          meson.project_source_root() + '/stubs/gridfire/_gridfire/config.pyi',
           meson.project_source_root() + '/stubs/gridfire/_gridfire/exceptions.pyi',
           meson.project_source_root() + '/stubs/gridfire/_gridfire/partition.pyi',
           meson.project_source_root() + '/stubs/gridfire/_gridfire/reaction.pyi',
@@ -72,6 +75,7 @@ if get_option('build_python')
       files(
           meson.project_source_root() + '/stubs/gridfire/_gridfire/engine/__init__.pyi',
           meson.project_source_root() + '/stubs/gridfire/_gridfire/engine/diagnostics.pyi',
+          meson.project_source_root() + '/stubs/gridfire/_gridfire/engine/scratchpads.pyi'
       ),
       subdir: 'gridfire/engine',
   )

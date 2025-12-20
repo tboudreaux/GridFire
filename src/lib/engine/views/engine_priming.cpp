@@ -1,5 +1,5 @@
 #include "gridfire/engine/views/engine_priming.h"
-#include "gridfire/solver/solver.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 #include "fourdst/atomic/species.h"
 
@@ -11,16 +11,17 @@
 #include <unordered_set>
 #include <unordered_map>
 
-
 namespace gridfire::engine {
     using fourdst::atomic::species;
 
     NetworkPrimingEngineView::NetworkPrimingEngineView(
+        scratch::StateBlob& ctx,
         const std::string &primingSymbol,
         GraphEngine &baseEngine
     ) :
     DefinedEngineView(
         constructPrimingReactionSet(
+            ctx,
             species.at(primingSymbol),
             baseEngine
         ),
@@ -29,26 +30,27 @@ namespace gridfire::engine {
     m_primingSpecies(species.at(primingSymbol)) {}
 
     NetworkPrimingEngineView::NetworkPrimingEngineView(
+        scratch::StateBlob& ctx,
         const fourdst::atomic::Species &primingSpecies,
         GraphEngine &baseEngine
     ) :
     DefinedEngineView(
         constructPrimingReactionSet(
+            ctx,
             primingSpecies,
             baseEngine
         ),
         baseEngine
     ),
-    m_primingSpecies(primingSpecies) {
-    }
-
+    m_primingSpecies(primingSpecies) {}
 
     std::vector<std::string> NetworkPrimingEngineView::constructPrimingReactionSet(
+        scratch::StateBlob& ctx,
         const fourdst::atomic::Species &primingSpecies,
         const GraphEngine &baseEngine
     ) const {
         std::unordered_set<std::string> primeReactions;
-        for (const auto &reaction : baseEngine.getNetworkReactions()) {
+        for (const auto &reaction : baseEngine.getNetworkReactions(ctx)) {
             if (reaction->contains(primingSpecies)) {
                 primeReactions.insert(std::string(reaction->id()));
             }

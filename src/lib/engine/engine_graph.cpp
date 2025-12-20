@@ -8,11 +8,16 @@
 #include "gridfire/utils/hashing.h"
 #include "gridfire/utils/table_format.h"
 
+#include "gridfire/engine/scratchpads/engine_graph_scratchpad.h"
+#include "gridfire/engine/scratchpads/blob.h"
+#include "gridfire/engine/scratchpads/utils.h"
+
 #include "fourdst/atomic/species.h"
 #include "fourdst/atomic/atomicSpecies.h"
 
 #include "quill/LogMacros.h"
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include <cstdint>
 #include <set>
 #include <stdexcept>
@@ -28,9 +33,6 @@
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/utility/sparse_rcv.hpp"
 
-#ifdef GRIDFIRE_USE_OPENMP
-    #include <omp.h>
-#endif
 
 
 namespace {
@@ -115,8 +117,8 @@ namespace gridfire::engine {
         const NetworkConstructionFlags reactionTypes ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
     m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
-    m_depth(buildDepth),
-    m_partitionFunction(partitionFunction.clone())
+    m_partitionFunction(partitionFunction.clone()),
+    m_depth(buildDepth)
     {
         syncInternalMaps();
     }
@@ -131,31 +133,41 @@ namespace gridfire::engine {
     }
 
     std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho,
+        bool trust
     ) const {
-        return calculateRHSAndEnergy(comp, T9, rho, m_reactions);
+        return calculateRHSAndEnergy(ctx, comp, T9, rho, m_reactions);
     }
 
     std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        auto* state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         LOG_TRACE_L3(m_logger, "Calculating RHS and Energy in GraphEngine at T9 = {}, rho = {}.", T9, rho);
         const double Ye = comp.getElectronAbundance();
+        const std::vector<double> molarAbundances = comp.getMolarAbundanceVector();
         if (m_usePrecomputation) {
+            const std::size_t state_hash = utils::hash_state(comp, T9, rho, activeReactions);
+            if (state->stepDerivativesCache.contains(state_hash)) {
+                return state->stepDerivativesCache.at(state_hash);
+            }
             LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
             bare_rates.reserve(activeReactions.size());
             bare_reverse_rates.reserve(activeReactions.size());
 
+
             for (const auto& reaction: activeReactions) {
                 assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
-                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, comp.getMolarAbundanceVector(), m_indexToSpeciesMap));
+                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
                 if (reaction->type() != reaction::ReactionType::WEAK) {
                     bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
                 }
@@ -164,11 +176,14 @@ namespace gridfire::engine {
             LOG_TRACE_L3(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
 
             // --- The public facing interface can always use the precomputed version since taping is done internally ---
-            return calculateAllDerivativesUsingPrecomputation(comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
+            StepDerivatives<double> result =  calculateAllDerivativesUsingPrecomputation(ctx, comp, bare_rates, bare_reverse_rates, T9, rho, activeReactions);
+            state->stepDerivativesCache.insert(std::make_pair(state_hash, result));
+            state->most_recent_rhs_calculation = result;
+            return result;
         } else {
             LOG_TRACE_L2(m_logger, "Not using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             StepDerivatives<double> result = calculateAllDerivatives<double>(
-                comp.getMolarAbundanceVector(),
+                molarAbundances,
                 T9,
                 rho,
                 Ye,
@@ -184,24 +199,28 @@ namespace gridfire::engine {
                     return false;
                 }
             );
+            state->most_recent_rhs_calculation = result;
             return result;
         }
     }
 
     EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        return calculateEpsDerivatives(comp, T9, rho, m_reactions);
+        return calculateEpsDerivatives(ctx, comp, T9, rho, m_reactions);
     }
 
     EnergyDerivatives GraphEngine::calculateEpsDerivatives(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        auto* state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         const size_t numSpecies = m_networkSpecies.size();
         const size_t numADInputs = numSpecies + 2; // +2 for T9 and rho
 
@@ -225,10 +244,11 @@ namespace gridfire::engine {
         w[numSpecies] = 1.0; // We want the derivative of the energy generation rate
 
         // Sweep the tape forward to record the function value at x
-        m_rhsADFun.Forward(0, x);
+        assert(state->rhsADFun.has_value() && "AD tape for energy derivatives has not been recorded.");
+        state->rhsADFun.value().Forward(0, x);
 
         // Extract the gradient at the previously evaluated point x using reverse mode
-        const std::vector<double> eps_derivatives = m_rhsADFun.Reverse(1, w);
+        const std::vector<double> eps_derivatives = state->rhsADFun.value().Reverse(1, w);
 
         const double dEps_dT9 = eps_derivatives[numSpecies];
         const double dEps_dRho = eps_derivatives[numSpecies + 1];
@@ -241,19 +261,8 @@ namespace gridfire::engine {
         return {dEps_dT, dEps_dRho};
     }
 
-    void GraphEngine::syncInternalMaps() {
-
-        LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
-        collectNetworkSpecies();
-        populateReactionIDMap();
-        populateSpeciesToIndexMap();
-        collectAtomicReverseRateAtomicBases();
-        generateStoichiometryMatrix();
-
-        recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
-
-        [[maybe_unused]] const size_t inputSize = m_rhsADFun.Domain();
-        const size_t outputSize = m_rhsADFun.Range();
+    void GraphEngine::generate_jacobian_sparsity_pattern() {
+        const size_t outputSize = m_authoritativeADFun.Range();
 
         // Create a range x range identity pattern
         CppAD::sparse_rc<std::vector<size_t>> patternIn(outputSize, outputSize, outputSize);
@@ -261,9 +270,8 @@ namespace gridfire::engine {
             patternIn.set(i, i, i);
         }
 
-        m_rhsADFun.rev_jac_sparsity(patternIn, false, false, false, m_full_jacobian_sparsity_pattern);
+        m_authoritativeADFun.rev_jac_sparsity(patternIn, false, false, false, m_full_jacobian_sparsity_pattern);
 
-        m_jac_work.clear();
         m_full_sparsity_set.clear();
         const auto& rows = m_full_jacobian_sparsity_pattern.row();
         const auto& cols = m_full_jacobian_sparsity_pattern.col();
@@ -274,6 +282,17 @@ namespace gridfire::engine {
                 m_full_sparsity_set.insert(std::make_pair(rows[k], cols[k]));
             }
         }
+    }
+
+    void GraphEngine::syncInternalMaps() {
+        LOG_INFO(m_logger, "Synchronizing internal maps for REACLIB graph network (serif::network::GraphNetwork)...");
+        collectNetworkSpecies();
+        populateReactionIDMap();
+        populateSpeciesToIndexMap();
+        collectAtomicReverseRateAtomicBases();
+
+        recordADTape(); // Record the AD tape for the RHS of the ODE (dY/di and dEps/di) for all independent variables i
+        generate_jacobian_sparsity_pattern();
 
         precomputeNetwork();
         LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
@@ -333,81 +352,26 @@ namespace gridfire::engine {
     }
 
     // --- Basic Accessors and Queries ---
-    const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies() const {
+    const std::vector<fourdst::atomic::Species>& GraphEngine::getNetworkSpecies(scratch::StateBlob &ctx) const {
         return m_networkSpecies;
     }
 
-    const reaction::ReactionSet& GraphEngine::getNetworkReactions() const {
+    const reaction::ReactionSet& GraphEngine::getNetworkReactions(
+        scratch::StateBlob& ctx
+    ) const {
         return m_reactions;
     }
 
-    void GraphEngine::setNetworkReactions(const reaction::ReactionSet &reactions) {
-        m_reactions = reactions;
-        syncInternalMaps();
-    }
-
-    bool GraphEngine::involvesSpecies(const fourdst::atomic::Species& species) const {
+    bool GraphEngine::involvesSpecies(
+        scratch::StateBlob& ctx,
+        const fourdst::atomic::Species& species
+    ) const {
         const bool found = m_networkSpeciesMap.contains(species.name());
         return found;
     }
 
-    // --- Validation Methods ---
-    bool GraphEngine::validateConservation() const {
-        LOG_TRACE_L1(m_logger, "Validating mass (A) and charge (Z) conservation across all reactions in the network.");
-
-        for (const auto& reaction : m_reactions) {
-            uint64_t totalReactantA = 0;
-            uint64_t totalReactantZ = 0;
-            uint64_t totalProductA = 0;
-            uint64_t totalProductZ = 0;
-
-            // Calculate total A and Z for reactants
-            for (const auto& reactant : reaction->reactants()) {
-                auto it = m_networkSpeciesMap.find(reactant.name());
-                if (it != m_networkSpeciesMap.end()) {
-                    totalReactantA += it->second.a();
-                    totalReactantZ += it->second.z();
-                } else {
-                    // This scenario indicates a severe data integrity issue:
-                    // a reactant is part of a reaction but not in the network's species map.
-                    LOG_ERROR(m_logger, "CRITICAL ERROR: Reactant species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             reactant.name(), reaction->id());
-                    return false;
-                }
-            }
-
-            // Calculate total A and Z for products
-            for (const auto& product : reaction->products()) {
-                auto it = m_networkSpeciesMap.find(product.name());
-                if (it != m_networkSpeciesMap.end()) {
-                    totalProductA += it->second.a();
-                    totalProductZ += it->second.z();
-                } else {
-                    // Similar critical error for product species
-                    LOG_ERROR(m_logger, "CRITICAL ERROR: Product species '{}' in reaction '{}' not found in network species map during conservation validation.",
-                             product.name(), reaction->id());
-                    return false;
-                }
-            }
-
-            // Compare totals for conservation
-            if (totalReactantA != totalProductA) {
-                LOG_ERROR(m_logger, "Mass number (A) not conserved for reaction '{}': Reactants A={} vs Products A={}.",
-                         reaction->id(), totalReactantA, totalProductA);
-                return false;
-            }
-            if (totalReactantZ != totalProductZ) {
-                LOG_ERROR(m_logger, "Atomic number (Z) not conserved for reaction '{}': Reactants Z={} vs Products Z={}.",
-                         reaction->id(), totalReactantZ, totalProductZ);
-                return false;
-            }
-        }
-
-        LOG_TRACE_L1(m_logger, "Mass (A) and charge (Z) conservation validated successfully for all reactions.");
-        return true; // All reactions passed the conservation check
-    }
-
     double GraphEngine::compute_reaction_flow(
+        scratch::StateBlob& ctx,
         const std::vector<double> &local_abundances,
         const std::vector<double> &screening_factors,
         const std::vector<double> &bare_rates,
@@ -428,11 +392,14 @@ namespace gridfire::engine {
             double factor;
             if (power == 1) { factor = abundance; }
             else if (power == 2)  { factor = abundance * abundance; }
-            else { factor = std::pow(abundance, power); }
+            else if (power == 3)  { factor = abundance * abundance * abundance; }
+            else { factor = std::pow(abundance, static_cast<double>(power)); }
 
             if (!std::isfinite(factor)) {
-                LOG_CRITICAL(m_logger, "Non-finite factor encountered in forward abundance product for reaction '{}'. Check input abundances for validity.", reaction.id());
-                throw exceptions::BadRHSEngineError("Non-finite factor encountered in forward abundance product.");
+                const auto& sp = m_indexToSpeciesMap.at(reactantIndex);
+                std::string error_msg = std::format("Non-finite factor encountered in forward abundance product in reaction {} for species {} (Abundance: {}). Check input abundances for validity.", reaction.id(), sp.name(), abundance);
+                LOG_CRITICAL(m_logger, "{}", error_msg);
+                throw exceptions::BadRHSEngineError(error_msg);
             }
 
             forwardAbundanceProduct *= factor;
@@ -476,6 +443,7 @@ namespace gridfire::engine {
     }
 
     std::pair<double, double> GraphEngine::compute_neutrino_fluxes(
+        scratch::StateBlob& ctx,
         const double netFlow,
         const reaction::Reaction &reaction
     ) const {
@@ -506,6 +474,7 @@ namespace gridfire::engine {
     }
 
     GraphEngine::PrecomputationKernelResults GraphEngine::accumulate_flows_serial(
+        scratch::StateBlob& ctx,
         const std::vector<double> &local_abundances,
         const std::vector<double> &screening_factors,
         const std::vector<double> &bare_rates,
@@ -517,16 +486,20 @@ namespace gridfire::engine {
         results.dydt_vector.resize(m_networkSpecies.size(), 0.0);
 
         std::vector<double> molarReactionFlows;
-        molarReactionFlows.reserve(m_precomputedReactions.size());
+        molarReactionFlows.reserve(m_precomputed_reactions.size());
 
         size_t reactionCounter = 0;
+        std::vector<size_t> reactionIndices;
+        reactionIndices.reserve(m_precomputed_reactions.size());
 
         for (const auto& reaction : activeReactions) {
-            uint64_t reactionHash = utils::hash_reaction(*reaction);
-            const size_t reactionIndex = m_precomputedReactionIndexMap.at(reactionHash);
-            const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
+            uint64_t reactionHash = reaction->hash(0);
+            const size_t reactionIndex = m_precomputed_reaction_index_map.at(reactionHash);
+            reactionIndices.push_back(reactionIndex);
+            const PrecomputedReaction& precomputedReaction = m_precomputed_reactions[reactionIndex];
 
             double netFlow = compute_reaction_flow(
+                ctx,
                 local_abundances,
                 screening_factors,
                 bare_rates,
@@ -539,7 +512,7 @@ namespace gridfire::engine {
 
             molarReactionFlows.push_back(netFlow);
 
-            auto [local_neutrino_loss, local_neutrino_flux] = compute_neutrino_fluxes(netFlow, *reaction);
+            auto [local_neutrino_loss, local_neutrino_flux] = compute_neutrino_fluxes(ctx, netFlow, *reaction);
             results.total_neutrino_energy_loss_rate += local_neutrino_loss;
             results.total_neutrino_flux += local_neutrino_flux;
 
@@ -549,9 +522,8 @@ namespace gridfire::engine {
         LOG_TRACE_L3(m_logger, "Computed {} molar reaction flows for active reactions. Assembling these into RHS", molarReactionFlows.size());
 
         reactionCounter = 0;
-        for (const auto& reaction: activeReactions) {
-            const size_t j = m_precomputedReactionIndexMap.at(utils::hash_reaction(*reaction));
-            const auto& precomp = m_precomputedReactions[j];
+        for (const auto& [reaction, j]: std::views::zip(activeReactions, reactionIndices)) {
+            const auto& precomp = m_precomputed_reactions[j];
             const double R_j = molarReactionFlows[reactionCounter];
 
             for (size_t i = 0; i < precomp.affected_species_indices.size(); ++i) {
@@ -732,27 +704,24 @@ namespace gridfire::engine {
 
     }
 
-    bool GraphEngine::isUsingReverseReactions() const {
+    bool GraphEngine::isUsingReverseReactions(
+        scratch::StateBlob& ctx
+    ) const {
         return m_useReverseReactions;
     }
 
-    void GraphEngine::setUseReverseReactions(const bool useReverse) {
-        m_useReverseReactions = useReverse;
-    }
-
-    size_t GraphEngine::getSpeciesIndex(const fourdst::atomic::Species &species) const {
+    size_t GraphEngine::getSpeciesIndex(
+        scratch::StateBlob& ctx,
+        const fourdst::atomic::Species &species
+    ) const {
         return m_speciesToIndexMap.at(species); // Returns the index of the species in the stoichiometry matrix
     }
 
-    std::vector<double> GraphEngine::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
-        std::vector<double> Y(m_networkSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [sp, y] : netIn.composition) {
-            Y[getSpeciesIndex(sp)] = y; // Map species to their molar abundance
-        }
-        return Y; // Return the vector of molar abundances
-    }
+    PrimingReport GraphEngine::primeEngine(
+        scratch::StateBlob& ctx,
+        const NetIn &netIn
+    ) const {
 
-    PrimingReport GraphEngine::primeEngine(const NetIn &netIn) {
         NetIn fullNetIn;
         fourdst::composition::Composition composition;
 
@@ -772,27 +741,13 @@ namespace gridfire::engine {
             reactionTypesToIgnore = {reaction::ReactionType::WEAK};
         }
 
-        auto primingReport = primeNetwork(fullNetIn, *this, reactionTypesToIgnore);
+        auto primingReport = primeNetwork(ctx, fullNetIn, *this, reactionTypesToIgnore);
 
-        m_has_been_primed = true;
         return primingReport;
     }
 
-    BuildDepthType GraphEngine::getDepth() const {
-        return m_depth;
-    }
-
-    void GraphEngine::rebuild(const fourdst::composition::CompositionAbstract &comp, const BuildDepthType depth) {
-        if (depth != m_depth) {
-            m_depth = depth;
-            m_reactions = build_nuclear_network(comp, m_weakRateInterpolator, m_depth);
-            syncInternalMaps(); // Resync internal maps after changing the depth
-        } else {
-            LOG_DEBUG(m_logger, "Rebuild requested with the same depth. No changes made to the network.");
-        }
-    }
-
     fourdst::composition::Composition GraphEngine::collectComposition(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         double T9,
         double rho
@@ -812,7 +767,10 @@ namespace gridfire::engine {
         return result;
     }
 
-    SpeciesStatus GraphEngine::getSpeciesStatus(const fourdst::atomic::Species &species) const {
+    SpeciesStatus GraphEngine::getSpeciesStatus(
+        scratch::StateBlob& ctx,
+        const fourdst::atomic::Species &species
+    ) const {
         if (m_networkSpeciesMap.contains(species.name())) {
             return SpeciesStatus::ACTIVE;
         }
@@ -820,8 +778,18 @@ namespace gridfire::engine {
 
     }
 
+    std::optional<StepDerivatives<double>> GraphEngine::getMostRecentRHSCalculation(
+        scratch::StateBlob& ctx
+    ) const {
+        const auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        if (!state->most_recent_rhs_calculation.has_value()) {
+            return std::nullopt;
+        }
+        return state->most_recent_rhs_calculation.value();
+    }
 
     StepDerivatives<double> GraphEngine::calculateAllDerivativesUsingPrecomputation(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const std::vector<double> &bare_rates,
         const std::vector<double> &bare_reverse_rates,
@@ -829,6 +797,7 @@ namespace gridfire::engine {
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         LOG_TRACE_L3(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
@@ -838,17 +807,17 @@ namespace gridfire::engine {
             T9,
             rho
         );
-        m_local_abundance_cache.clear();
+        state->local_abundance_cache.clear();
         for (const auto& species: m_networkSpecies) {
-            m_local_abundance_cache.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
+            state->local_abundance_cache.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
         }
 
         StepDerivatives<double> result;
         std::vector<double> dydt_scratch(m_networkSpecies.size(), 0.0);
 
-#ifndef GRIDFIRE_USE_OPENMP
         const auto [dydt_vector, total_neutrino_energy_loss_rate, total_neutrino_flux] = accumulate_flows_serial(
-            m_local_abundance_cache,
+            ctx,
+            state->local_abundance_cache,
             screeningFactors,
             bare_rates,
             bare_reverse_rates,
@@ -858,19 +827,6 @@ namespace gridfire::engine {
         dydt_scratch = dydt_vector;
         result.neutrinoEnergyLossRate = total_neutrino_energy_loss_rate;
         result.totalNeutrinoFlux = total_neutrino_flux;
-#else
-        const auto [dydt_vector, total_neutrino_energy_loss_rate, total_neutrino_flux] = accumulate_flows_parallel(
-            m_local_abundance_cache,
-            screeningFactors,
-            bare_rates,
-            bare_reverse_rates,
-            rho,
-            activeReactions
-        );
-        dydt_scratch = dydt_vector;
-        result.neutrinoEnergyLossRate = total_neutrino_energy_loss_rate;
-        result.totalNeutrinoFlux = total_neutrino_flux;
-#endif
 
         // load scratch into result.dydt
         for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
@@ -888,33 +844,26 @@ namespace gridfire::engine {
 
     }
 
-    // --- Generate Stoichiometry Matrix ---
-    void GraphEngine::generateStoichiometryMatrix() {
-        return; // Deprecated
-    }
-
-    void GraphEngine::setScreeningModel(const screening::ScreeningType model) {
-        m_screeningModel = screening::selectScreeningModel(model);
-        m_screeningType = model;
-    }
-
-    screening::ScreeningType GraphEngine::getScreeningModel() const {
+    screening::ScreeningType GraphEngine::getScreeningModel(
+        scratch::StateBlob& ctx
+    ) const {
         return m_screeningType;
     }
 
-    void GraphEngine::setPrecomputation(const bool precompute) {
-        m_usePrecomputation = precompute;
-    }
-
-    bool GraphEngine::isPrecomputationEnabled() const {
+    bool GraphEngine::isPrecomputationEnabled(
+        scratch::StateBlob& ctx
+    ) const {
         return m_usePrecomputation;
     }
 
-    const partition::PartitionFunction & GraphEngine::getPartitionFunction() const {
+    const partition::PartitionFunction & GraphEngine::getPartitionFunction(
+        scratch::StateBlob& ctx
+    ) const {
         return *m_partitionFunction;
     }
 
     double GraphEngine::calculateMolarReactionFlow(
+        scratch::StateBlob& ctx,
         const reaction::Reaction &reaction,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
@@ -940,10 +889,12 @@ namespace gridfire::engine {
     }
 
     NetworkJacobian GraphEngine::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
+        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         fourdst::composition::Composition mutableComp;
         for (const auto& species : m_networkSpecies) {
             mutableComp.registerSpecies(species);
@@ -964,10 +915,11 @@ namespace gridfire::engine {
         adInput[numSpecies + 1] = rho; // rho
 
         // 2. Calculate the full jacobian
-        const std::vector<double> dotY = m_rhsADFun.Jacobian(adInput);
+        assert(state->rhsADFun.has_value() && "RHS ADFun not recorded before Jacobian generation.");
+        const std::vector<double> dotY = state->rhsADFun.value().Jacobian(adInput);
 
         // 3. Pack jacobian vector into sparse matrix
-        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        Eigen::SparseMatrix<double> jacobianMatrix(static_cast<long>(numSpecies), static_cast<long>(numSpecies));
         std::vector<Eigen::Triplet<double> > triplets;
         for (size_t i = 0; i < numSpecies; ++i) {
             for (size_t j = 0; j < numSpecies; ++j) {
@@ -991,12 +943,12 @@ namespace gridfire::engine {
     }
 
     NetworkJacobian GraphEngine::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<fourdst::atomic::Species> &activeSpecies
     ) const {
-        // PERF: For small k it may make sense to implement a purley forward mode AD computation, some heuristic could be used to switch between the two methods based on k and total network species
         const size_t k_active = activeSpecies.size();
 
         // --- 1. Get the list of global indices ---
@@ -1004,8 +956,8 @@ namespace gridfire::engine {
         active_indices.reserve(k_active);
 
         for (const auto& species : activeSpecies) {
-            assert(involvesSpecies(species));
-            active_indices.push_back(getSpeciesIndex(species));
+            assert(involvesSpecies(ctx, species));
+            active_indices.push_back(getSpeciesIndex(ctx, species));
         }
 
         // --- 2. Build the k x k sparsity pattern ---
@@ -1019,15 +971,18 @@ namespace gridfire::engine {
         }
 
         // --- 3. Call the sparse reverse-mode implementation ---
-        return generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+        return generateJacobianMatrix(ctx, comp, T9, rho, sparsityPattern);
     }
 
     NetworkJacobian GraphEngine::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
+        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        // --- Compute the intersection of the requested sparsity pattern with the full sparsity pattern ---
         SparsityPattern intersectionSparsityPattern;
         for (const auto& entry : sparsityPattern) {
             if (m_full_sparsity_set.contains(entry)) {
@@ -1038,10 +993,6 @@ namespace gridfire::engine {
         // --- Pack the input variables into a vector for CppAD ---
         const size_t numSpecies = m_networkSpecies.size();
         std::vector<double> x(numSpecies + 2, 0.0);
-        // const std::vector<double>& Y_dynamic = comp.getMolarAbundanceVector();
-        // for (size_t i = 0; i < numSpecies; ++i) {
-        //    x[i] = Y_dynamic[i];
-        // }
         size_t i = 0;
         for (const auto& species: m_networkSpecies) {
             double Yi = 0.0; // Small floor to avoid issues with zero abundances
@@ -1069,27 +1020,41 @@ namespace gridfire::engine {
         const size_t num_cols_jac = numSpecies + 2; // +2 for T9 and rho
 
         CppAD::sparse_rc<std::vector<size_t>> CppAD_sparsity_pattern(num_rows_jac, num_cols_jac, nnz);
+        std::size_t sparsity_hash = 0;
         for (size_t k = 0; k < nnz; ++k) {
+            size_t local_intersection_hash = utils::hash_combine(intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
+            sparsity_hash = utils::hash_combine(sparsity_hash, local_intersection_hash);
+
             CppAD_sparsity_pattern.set(k, intersectionSparsityPattern[k].first, intersectionSparsityPattern[k].second);
         }
 
-        CppAD::sparse_rcv<std::vector<size_t>, std::vector<double>> jac_subset(CppAD_sparsity_pattern);
+        // --- Check cache for existing subset ---
+        if (!state->jacobianSubsetCache.contains(sparsity_hash)) {
+            state->jacobianSubsetCache.emplace(sparsity_hash, CppAD_sparsity_pattern);
+            state->jac_work.clear();
+        } else {
+            if (state->jacWorkCache.contains(sparsity_hash)) {
+                state->jac_work.clear();
+                state->jac_work = state->jacWorkCache.at(sparsity_hash);
+            }
+        }
+        auto& jac_subset = state->jacobianSubsetCache.at(sparsity_hash);
 
-        // PERF: one of *the* most pressing things that needs to be done is remove the need for this call every
-        //       time the jacobian is needed since coloring is expensive and we are throwing away the caching
-        //       power of CppAD by clearing the work vector each time. We do this since we make a new subset every
-        //       time. However, a better solution would be to make the subset stateful so it only changes if the requested
-        //       sparsity pattern changes. This way we could reuse the work vector.
-        m_jac_work.clear();
-        m_rhsADFun.sparse_jac_rev(
+        assert(state->rhsADFun.has_value() && "RHS ADFun not recorded before Jacobian generation.");
+        state->rhsADFun.value().sparse_jac_rev(
             x,
             jac_subset, // Sparse Jacobian output
             m_full_jacobian_sparsity_pattern,
             "cppad",
-            m_jac_work // Work vector for CppAD
+            state->jac_work // Work vector for CppAD
         );
 
-        Eigen::SparseMatrix<double> jacobianMatrix(numSpecies, numSpecies);
+        // --- Stash the now populated work vector in the cache if not already present ---
+        if (!state->jacWorkCache.contains(sparsity_hash)) {
+            state->jacWorkCache.emplace(sparsity_hash, state->jac_work);
+        }
+
+        Eigen::SparseMatrix<double> jacobianMatrix(static_cast<long>(numSpecies), static_cast<long>(numSpecies));
         std::vector<Eigen::Triplet<double> > triplets;
         for (size_t k = 0; k < nnz; ++k) {
             const size_t row = jac_subset.row()[k];
@@ -1111,20 +1076,10 @@ namespace gridfire::engine {
         return jac;
     }
 
-    std::unordered_map<fourdst::atomic::Species, int> GraphEngine::getNetReactionStoichiometry(
-        const reaction::Reaction &reaction
-    ) {
-        return reaction.stoichiometry();
-    }
-
-    int GraphEngine::getStoichiometryMatrixEntry(
-        const fourdst::atomic::Species& species,
-        const reaction::Reaction &reaction
+    void GraphEngine::exportToDot(
+        scratch::StateBlob& ctx,
+        const std::string &filename
     ) const {
-        return reaction.stoichiometry(species);
-    }
-
-    void GraphEngine::exportToDot(const std::string &filename) const {
         LOG_TRACE_L1(m_logger, "Exporting network graph to DOT file: {}", filename);
 
         std::ofstream dotFile(filename);
@@ -1172,7 +1127,10 @@ namespace gridfire::engine {
         LOG_TRACE_L1(m_logger, "Successfully exported network to {}", filename);
     }
 
-    void GraphEngine::exportToCSV(const std::string &filename) const {
+    void GraphEngine::exportToCSV(
+        scratch::StateBlob& ctx,
+        const std::string &filename
+    ) const {
         LOG_TRACE_L1(m_logger, "Exporting network graph to CSV file: {}", filename);
 
         std::ofstream csvFile(filename, std::ios::out | std::ios::trunc);
@@ -1210,14 +1168,16 @@ namespace gridfire::engine {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        return getSpeciesTimescales(comp, T9, rho, m_reactions);
+        return getSpeciesTimescales(ctx, comp, T9, rho, m_reactions);
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -1256,14 +1216,16 @@ namespace gridfire::engine {
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        return getSpeciesDestructionTimescales(comp, T9, rho, m_reactions);
+        return getSpeciesDestructionTimescales(ctx, comp, T9, rho, m_reactions);
     }
 
     std::expected<std::unordered_map<fourdst::atomic::Species, double>, EngineStatus> GraphEngine::getSpeciesDestructionTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
@@ -1306,7 +1268,10 @@ namespace gridfire::engine {
         return speciesDestructionTimescales;
     }
 
-    fourdst::composition::Composition GraphEngine::update(const NetIn &netIn) {
+    fourdst::composition::Composition GraphEngine::project(
+        scratch::StateBlob& ctx,
+        const NetIn &netIn
+    ) const {
         fourdst::composition::Composition baseUpdatedComposition = netIn.composition;
         for (const auto& species : m_networkSpecies) {
             if (!netIn.composition.contains(species)) {
@@ -1316,11 +1281,8 @@ namespace gridfire::engine {
         return baseUpdatedComposition;
     }
 
-    bool GraphEngine::isStale(const NetIn &netIn) {
-        return false;
-    }
+    void GraphEngine::recordADTape() {
 
-    void GraphEngine::recordADTape() const {
         LOG_TRACE_L1(m_logger, "Recording AD tape for the RHS calculation...");
 
         // Task 1: Set dimensions and initialize the matrix
@@ -1384,17 +1346,19 @@ namespace gridfire::engine {
         );
         dependentVector.push_back(result.nuclearEnergyGenerationRate);
 
-        m_rhsADFun.Dependent(adInput, dependentVector);
+        m_authoritativeADFun.Dependent(adInput, dependentVector);
+        m_authoritativeADFun.optimize();
 
         LOG_TRACE_L1(m_logger, "AD tape recorded successfully for the RHS and Eps calculation. Number of independent variables: {}.", adInput.size());
     }
 
-    void GraphEngine::collectAtomicReverseRateAtomicBases() {
+    void GraphEngine::collectAtomicReverseRateAtomicBases(
+    ) {
         m_atomicReverseRates.clear();
         m_atomicReverseRates.reserve(m_reactions.size());
 
         for (const auto& reaction: m_reactions) {
-            if (reaction->qValue() != 0.0) {
+            if (reaction->qValue() != 0.0 and m_useReverseReactions) {
                 m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(*reaction, *this));
             } else {
                 m_atomicReverseRates.push_back(nullptr);
@@ -1402,7 +1366,7 @@ namespace gridfire::engine {
         }
     }
 
-    void GraphEngine::precomputeNetwork() {
+    void GraphEngine::precomputeNetwork()  {
         LOG_TRACE_L1(m_logger, "Pre-computing constant components of GraphNetwork state...");
 
         // --- Reverse map for fast species lookups ---
@@ -1411,20 +1375,20 @@ namespace gridfire::engine {
             speciesIndexMap[m_networkSpecies[i]] = i;
         }
 
-        m_precomputedReactions.clear();
-        m_precomputedReactions.reserve(m_reactions.size());
-        m_precomputedReactionIndexMap.clear();
-        m_precomputedReactionIndexMap.reserve(m_reactions.size());
+        m_precomputed_reactions.clear();
+        m_precomputed_reactions.reserve(m_reactions.size());
+        m_precomputed_reaction_index_map.clear();
+        m_precomputed_reaction_index_map.reserve(m_reactions.size());
 
         for (size_t i = 0; i < m_reactions.size(); ++i) {
             const auto& reaction = m_reactions[i];
             PrecomputedReaction precomp;
             precomp.reaction_index = i;
             precomp.reaction_type = reaction.type();
-            uint64_t reactionHash = utils::hash_reaction(reaction);
+            uint64_t reactionHash = reaction.hash(0);
 
             precomp.reaction_hash = reactionHash;
-            m_precomputedReactionIndexMap[reactionHash] = i;
+            m_precomputed_reaction_index_map[reactionHash] = i;
 
             // --- Precompute forward reaction information ---
             // Count occurrences for each reactant to determine powers and symmetry
@@ -1474,9 +1438,9 @@ namespace gridfire::engine {
                 precomp.stoichiometric_coefficients.push_back(coeff);
             }
 
-            m_precomputedReactions.push_back(std::move(precomp));
+            m_precomputed_reactions.push_back(std::move(precomp));
         }
-        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputedReactions.size());
+        LOG_TRACE_L1(m_logger, "Pre-computation complete. Precomputed data for {} reactions.", m_precomputed_reactions.size());
     }
 
     bool GraphEngine::AtomicReverseRate::forward(
@@ -1490,6 +1454,7 @@ namespace gridfire::engine {
 
         if ( p != 0) { return false; }
         const double T9 = tx[0];
+
 
         // We can pass a dummy comp and rho because reverse rates should only be calculated for strong reactions whose
         // rates of progression do not depend on composition or density.
@@ -1579,69 +1544,5 @@ namespace gridfire::engine {
 
         return true;
     }
-
-#ifdef GRIDFIRE_USE_OPENMP
-    GraphEngine::PrecomputationKernelResults GraphEngine::accumulate_flows_parallel(
-        const std::vector<double> &local_abundances,
-        const std::vector<double> &screening_factors,
-        const std::vector<double> &bare_rates,
-        const std::vector<double> &bare_reverse_rates,
-        const double rho,
-        const reaction::ReactionSet &activeReactions
-    ) const {
-        int n_threads = omp_get_max_threads();
-        std::vector<std::vector<double>> thread_local_dydt(n_threads, std::vector<double>(m_networkSpecies.size(), 0.0));
-
-        double total_neutrino_energy_loss_rate = 0.0;
-        double total_neutrino_flux = 0.0;
-
-        #pragma omp parallel for schedule(static) reduction(+:total_neutrino_energy_loss_rate, total_neutrino_flux)
-        for (size_t k = 0; k < activeReactions.size(); ++k) {
-            int t_id = omp_get_thread_num();
-            const auto& reaction = activeReactions[k];
-            const size_t reactionIndex = m_precomputedReactionIndexMap.at(utils::hash_reaction(reaction));
-            const PrecomputedReaction& precomputedReaction = m_precomputedReactions[reactionIndex];
-
-            double netFlow = compute_reaction_flow(
-                local_abundances,
-                screening_factors,
-                bare_rates,
-                bare_reverse_rates,
-                rho,
-                reactionIndex,
-                reaction,
-                reactionIndex,
-                precomputedReaction
-            );
-
-            auto [neutrinoEnergyLossRate, neutrinoFlux] = compute_neutrino_fluxes(
-                netFlow,
-                reaction
-            );
-
-            total_neutrino_energy_loss_rate += neutrinoEnergyLossRate;
-            total_neutrino_flux += neutrinoFlux;
-
-            for (size_t i = 0; i < precomputedReaction.affected_species_indices.size(); ++i) {
-                thread_local_dydt[t_id][precomputedReaction.affected_species_indices[i]] +=
-                    netFlow * precomputedReaction.stoichiometric_coefficients[i];
-            }
-
-        }
-        PrecomputationKernelResults results;
-        results.total_neutrino_energy_loss_rate = total_neutrino_energy_loss_rate;
-        results.total_neutrino_flux = total_neutrino_flux;
-
-        results.dydt_vector.resize(m_networkSpecies.size(), 0.0);
-        #pragma omp parallel for schedule(static)
-        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
-            double sum = 0.0;
-            for (int t = 0; t < n_threads; ++t) sum += thread_local_dydt[t][i];
-            results.dydt_vector[i] = sum;
-        }
-
-        return results;
-    }
-#endif
 
 }

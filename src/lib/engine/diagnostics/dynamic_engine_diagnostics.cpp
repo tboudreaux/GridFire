@@ -3,12 +3,15 @@
 #include "gridfire/utils/table_format.h"
 #include "fourdst/atomic/species.h"
 
+#include "gridfire/engine/scratchpads/blob.h"
+
 #include <vector>
 #include <string>
 #include <algorithm>
 
 namespace gridfire::engine::diagnostics {
     std::optional<nlohmann::json> report_limiting_species(
+        scratch::StateBlob& ctx,
         const DynamicEngine &engine,
         const std::vector<double> &Y_full,
         const std::vector<double> &E_full,
@@ -24,7 +27,7 @@ namespace gridfire::engine::diagnostics {
             double abundance;
         };
 
-        const auto& species_list = engine.getNetworkSpecies();
+        const auto& species_list = engine.getNetworkSpecies(ctx);
         std::vector<SpeciesError> errors;
 
         for (size_t i = 0; i < species_list.size(); ++i) {
@@ -75,6 +78,7 @@ namespace gridfire::engine::diagnostics {
     }
 
     std::optional<nlohmann::json> inspect_species_balance(
+        scratch::StateBlob& ctx,
         const DynamicEngine& engine,
         const std::string& species_name,
         const fourdst::composition::Composition &comp,
@@ -90,11 +94,11 @@ namespace gridfire::engine::diagnostics {
         double total_creation_flow = 0.0;
         double total_destruction_flow = 0.0;
 
-        for (const auto& reaction : engine.getNetworkReactions()) {
+        for (const auto& reaction : engine.getNetworkReactions(ctx)) {
             const int stoichiometry = reaction->stoichiometry(species_obj);
             if (stoichiometry == 0) continue;
 
-            const double flow = engine.calculateMolarReactionFlow(*reaction, comp, T9, rho);
+            const double flow = engine.calculateMolarReactionFlow(ctx, *reaction, comp, T9, rho);
 
             if (stoichiometry > 0) {
                 creation_ids.emplace_back(reaction->id());
@@ -157,17 +161,18 @@ namespace gridfire::engine::diagnostics {
     }
 
     std::optional<nlohmann::json> inspect_jacobian_stiffness(
+        scratch::StateBlob& ctx,
         const DynamicEngine &engine,
         const fourdst::composition::Composition &comp,
         const double T9,
         const double rho,
         const bool json
     ) {
-        NetworkJacobian jac = engine.generateJacobianMatrix(comp, T9, rho);
+        NetworkJacobian jac = engine.generateJacobianMatrix(ctx, comp, T9, rho);
 
         jac = regularize_jacobian(jac, comp);
 
-        const auto& species_list = engine.getNetworkSpecies();
+        const auto& species_list = engine.getNetworkSpecies(ctx);
 
         double max_diag = 0.0;
         double max_off_diag = 0.0;

@@ -59,3 +59,26 @@ namespace gridfire {
     concept IsArithmeticOrAD = std::is_same_v<T, double> || std::is_same_v<T, CppAD::AD<double>>;
 
 } // namespace nuclearNetwork
+
+template<>
+struct std::formatter<gridfire::NetIn> : std::formatter<std::string> {
+    auto format(const gridfire::NetIn& netIn, auto& ctx) {
+        std::string output = "NetIn(, tMax=" + std::to_string(netIn.tMax) +
+                             ", dt0=" + std::to_string(netIn.dt0) +
+                             ", temperature=" + std::to_string(netIn.temperature) +
+                             ", density=" + std::to_string(netIn.density) +
+                             ", energy=" + std::to_string(netIn.energy) + ")";
+        return std::formatter<std::string>::format(output, ctx);
+    }
+};
+
+template <>
+struct std::formatter<gridfire::NetOut> : std::formatter<std::string> {
+    auto format(const gridfire::NetOut& netOut, auto& ctx) {
+        std::string output = "NetOut(, num_steps=" + std::to_string(netOut.num_steps) +
+                             ", energy=" + std::to_string(netOut.energy) +
+                             ", dEps_dT=" + std::to_string(netOut.dEps_dT) +
+                             ", dEps_dRho=" + std::to_string(netOut.dEps_dRho) + ")";
+        return std::formatter<std::string>::format(output, ctx);
+    }
+};

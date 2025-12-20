@@ -2,11 +2,14 @@ from abc import ABC, abstractmethod
 
 import fourdst.atomic
 import scipy.integrate
+import gridfire
 from fourdst.composition import Composition
-from gridfire.engine import DynamicEngine, GraphEngine
+from gridfire.engine import DynamicEngine, GraphEngine, AdaptiveEngineView, MultiscalePartitioningEngineView
+from gridfire.engine import EngineTypes
+from gridfire.policy import MainSequencePolicy
 from gridfire.type import NetIn, NetOut
 from gridfire.exceptions import GridFireError
-from gridfire.solver import CVODESolverStrategy
+from gridfire.solver import PointSolver, PointSolverContext
 from logger import StepLogger
 from typing import List
 import re
@@ -20,6 +23,12 @@ import sys
 import numpy as np
 import json
 import time
+
+EngineTypeLookup : Dict[EngineTypes, Any] = {
+    EngineTypes.ADAPTIVE_ENGINE_VIEW: AdaptiveEngineView,
+    EngineTypes.MULTISCALE_PARTITIONING_ENGINE_VIEW: MultiscalePartitioningEngineView,
+    EngineTypes.GRAPH_ENGINE: GraphEngine
+}
 
 def load_network_module(filepath):
     module_name = os.path.basename(filepath).replace(".py", "")
@@ -103,11 +112,15 @@ class TestSuite(ABC):
         self.composition : Composition = composition
         self.notes : str = notes
 
-    def evolve_pynucastro(self, engine: GraphEngine):
+    def evolve_pynucastro(self, engine: DynamicEngine):
         print("Evolution complete. Now building equivalent pynucastro network...")
         # Build equivalent pynucastro network for comparison
         reaclib_library : pyna.ReacLibLibrary = pyna.ReacLibLibrary()
         rate_names = [r.id().replace("e+","").replace("e-","").replace(", ", ",") for r in engine.getNetworkReactions()]
+
+        with open(f"{self.name}_rate_names_pynuc.txt", "w") as f:
+            for r_name in rate_names:
+                f.write(f"{r_name}\n")
 
         goodRates : List[pyna.rates.reaclib_rate.ReacLibRate] = []
         missingRates = []
@@ -156,7 +169,23 @@ class TestSuite(ABC):
             atol=1e-8
         )
         endTime = time.time()
+        initial_duration = endTime - startTime
         print("Pynucastro integration complete. Writing results to JSON...")
+        print("Running pynucastro a second time to account for any JIT compilation overhead...")
+        startTime = time.time()
+        sol = scipy.integrate.solve_ivp(
+            net.rhs,
+            [0, self.tMax],
+            Y0,
+            args=(self.density, self.temperature),
+            method="BDF",
+            jac=net.jacobian,
+            rtol=1e-5,
+            atol=1e-8
+        )
+        endTime = time.time()
+        final_duration = endTime - startTime
+        print(f"Pynucastro second integration complete. Initial run time: {initial_duration: .4f} s, Second run time: {final_duration: .4f} s")
 
         data: List[Dict[str, Union[float, Dict[str, float]]]] = []
 
@@ -182,7 +211,8 @@ class TestSuite(ABC):
                 "Temperature": self.temperature,
                 "Density": self.density,
                 "tMax": self.tMax,
-                "ElapsedTime": endTime - startTime,
+                "RunTime0": initial_duration,
+                "RunTime1": final_duration,
                 "DateCreated": datetime.now().isoformat()
             },
             "Steps": data
@@ -191,16 +221,16 @@ class TestSuite(ABC):
         with open(f"GridFireValidationSuite_{self.name}_pynucastro.json", "w") as f:
             json.dump(pynucastro_json, f, indent=4)
 
-    def evolve(self, engine: GraphEngine, netIn: NetIn, pynucastro_compare: bool = True):
-        solver : CVODESolverStrategy = CVODESolverStrategy(engine)
+    def evolve(self, engine: DynamicEngine, solver_ctx: PointSolverContext, netIn: NetIn, pynucastro_compare: bool = True, engine_type: EngineTypes | None = None):
+        solver : PointSolver = PointSolver(engine)
 
         stepLogger : StepLogger = StepLogger()
-        solver.set_callback(lambda ctx: stepLogger.log_step(ctx))
+        solver_ctx.callback(lambda ctx: stepLogger.log_step(ctx))
 
         startTime = time.time()
         try:
             startTime = time.time()
-            netOut : NetOut = solver.evaluate(netIn)
+            netOut : NetOut = solver.evaluate(solver_ctx, netIn)
             endTime = time.time()
             stepLogger.to_json(
                 f"GridFireValidationSuite_{self.name}_OKAY.json",
@@ -232,10 +262,23 @@ class TestSuite(ABC):
             )
 
         if pynucastro_compare:
-            self.evolve_pynucastro(engine)
-
+            if engine_type is not None:
+                if engine_type == EngineTypes.ADAPTIVE_ENGINE_VIEW:
+                    print("Pynucastro comparison using AdaptiveEngineView...")
+                    self.evolve_pynucastro(engine)
+                elif engine_type == EngineTypes.MULTISCALE_PARTITIONING_ENGINE_VIEW:
+                    print("Pynucastro comparison using MultiscalePartitioningEngineView...")
+                    graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
+                    multiScaleEngine : MultiscalePartitioningEngineView = MultiscalePartitioningEngineView(graphEngine)
+                    self.evolve_pynucastro(multiScaleEngine)
+                elif engine_type == EngineTypes.GRAPH_ENGINE:
+                    print("Pynucastro comparison using GraphEngine...")
+                    graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
+                    self.evolve_pynucastro(graphEngine)
+                else:
+                    print(f"Pynucastro comparison not implemented for engine type: {engine_type}")
 
 
     @abstractmethod
-    def __call__(self):
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
         pass

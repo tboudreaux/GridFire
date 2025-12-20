@@ -2,6 +2,7 @@
 
 #include "gridfire/engine/engine_abstract.h"
 #include "fourdst/composition/composition.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 #include <string>
 #include <functional>
@@ -15,6 +16,7 @@ namespace gridfire::utils {
      * It then formats this information into a neatly aligned ASCII table, which
      * is suitable for logging or printing to the console.
      *
+     * @param ctx
      * @param engine A constant reference to a `DynamicEngine` object, used to
      *               calculate the species timescales.
      * @param composition The current composition of the plasma
@@ -58,10 +60,10 @@ namespace gridfire::utils {
      * @endcode
      */
     std::string formatNuclearTimescaleLogString(
+        engine::scratch::StateBlob &ctx,
         const engine::DynamicEngine& engine,
         const fourdst::composition::Composition& composition,
-        double T9,
-        double rho
+        double T9, double rho
     );
 
     template <typename T>

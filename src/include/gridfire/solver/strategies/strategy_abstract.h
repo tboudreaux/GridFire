@@ -10,17 +10,27 @@
 #include <string>
 
 namespace gridfire::solver {
+    template <typename EngineT>
+    concept IsEngine = std::is_base_of_v<engine::Engine, EngineT>;
+
+    struct SolverContextBase {
+        virtual void init() = 0;
+        virtual void set_stdout_logging(bool enable) = 0;
+        virtual void set_detailed_logging(bool enable) = 0;
+        virtual ~SolverContextBase() = default;
+    };
+
     /**
-     * @struct SolverContextBase
+     * @struct TimestepContextBase
      * @brief Base class for solver callback contexts.
      *
      * This struct serves as a base class for contexts that can be passed to solver callbacks, it enforces
      * that derived classes implement a `describe` method that returns a vector of tuples describing
      * the context that a callback will receive when called.
      */
-    class SolverContextBase {
+    class TimestepContextBase {
     public:
-        virtual ~SolverContextBase() = default;
+        virtual ~TimestepContextBase() = default;
 
         /**
          * @brief Describe the context for callback functions.
@@ -34,7 +44,7 @@ namespace gridfire::solver {
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
     };
     /**
-     * @class NetworkSolverStrategy
+     * @class SingleZoneNetworkSolver
      * @brief Abstract base class for network solver strategies.
      *
      * This class defines the interface for network solver strategies, which are responsible
@@ -43,57 +53,63 @@ namespace gridfire::solver {
      *
      * @tparam EngineT The type of engine to use with this solver strategy.  Must inherit from Engine.
      */
-    template <typename EngineT>
-    class NetworkSolverStrategy {
+    template <IsEngine EngineT>
+    class SingleZoneNetworkSolver {
     public:
         /**
          * @brief Constructor for the NetworkSolverStrategy.
          * @param engine The engine to use for evaluating the network.
          */
-        explicit NetworkSolverStrategy(EngineT& engine) : m_engine(engine) {};
+        explicit SingleZoneNetworkSolver(
+            const EngineT& engine
+        ) :
+        m_engine(engine) {};
 
         /**
          * @brief Virtual destructor.
          */
-        virtual ~NetworkSolverStrategy() = default;
+        virtual ~SingleZoneNetworkSolver() = default;
 
         /**
          * @brief Evaluates the network for a given timestep.
+         * @param solver_ctx
+         * @param engine_ctx
          * @param netIn The input conditions for the network.
          * @return The output conditions after the timestep.
          */
-        virtual NetOut evaluate(const NetIn& netIn) = 0;
+        virtual NetOut evaluate(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn
+        ) const = 0;
 
-        /**
-         * @brief set the callback function to be called at the end of each timestep.
-         *
-         * This function allows the user to set a callback function that will be called at the end of each timestep.
-         * The callback function will receive a gridfire::solver::<SOMESOLVER>::TimestepContext object. Note that
-         * depending on the solver, this context may contain different information. Further, the exact
-         * signature of the callback function is left up to each solver. Every solver should provide a type or type alias
-         * TimestepCallback that defines the signature of the callback function so that the user can easily
-         * get that type information.
-         *
-         * @param callback The callback function to be called at the end of each timestep.
-         */
-        virtual void set_callback(const std::any& callback) = 0;
-
-        /**
-         * @brief Describe the context that will be passed to the callback function.
-         * @return A vector of tuples, each containing a string for the parameter's name and a string for its type.
-         *
-         * This method should be overridden by derived classes to provide a description of the context
-         * that will be passed to the callback function. The intent of this method is that an end user can investigate
-         * the context that will be passed to the callback function, and use this information to craft their own
-         * callback function.
-         */
-        [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe_callback_context() const = 0;
     protected:
-        EngineT& m_engine; ///< The engine used by this solver strategy.
+        const EngineT& m_engine; ///< The engine used by this solver strategy.
+    };
+
+    template <IsEngine EngineT>
+    class MultiZoneNetworkSolver {
+    public:
+        explicit MultiZoneNetworkSolver(
+            const EngineT& engine,
+            const SingleZoneNetworkSolver<EngineT>& solver
+        ) :
+        m_engine(engine),
+        m_solver(solver) {};
+
+        virtual ~MultiZoneNetworkSolver() = default;
+
+        virtual std::vector<NetOut> evaluate(
+            SolverContextBase& solver_ctx,
+            const std::vector<NetIn>& netIns
+        ) const = 0;
+    protected:
+        const EngineT& m_engine; ///< The engine used by this solver strategy.
+        const SingleZoneNetworkSolver<EngineT>& m_solver;
     };
 
     /**
      * @brief Type alias for a network solver strategy that uses a DynamicEngine.
      */
-    using DynamicNetworkSolverStrategy = NetworkSolverStrategy<engine::DynamicEngine>;
+    using SingleZoneDynamicNetworkSolver = SingleZoneNetworkSolver<engine::DynamicEngine>;
+    using MultiZoneDynamicNetworkSolver = MultiZoneNetworkSolver<engine::DynamicEngine>;
 }

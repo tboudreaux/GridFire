@@ -7,6 +7,11 @@
 
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_engine.h"
+#include "gridfire/utils/hashing.h"
+
+#include "gridfire/engine/scratchpads/blob.h"
+#include "gridfire/engine/scratchpads/utils.h"
+#include "gridfire/engine/scratchpads/engine_adaptive_scratchpad.h"
 
 #include "quill/LogMacros.h"
 #include "quill/Logger.h"
@@ -16,23 +21,24 @@ namespace gridfire::engine {
     AdaptiveEngineView::AdaptiveEngineView(
         DynamicEngine &baseEngine
     ) :
-    m_baseEngine(baseEngine),
-    m_activeSpecies(baseEngine.getNetworkSpecies()),
-    m_activeReactions(baseEngine.getNetworkReactions())
-    {}
+    m_baseEngine(baseEngine) {}
 
-    fourdst::composition::Composition AdaptiveEngineView::update(const NetIn &netIn) {
-        m_activeReactions.clear();
-        m_activeSpecies.clear();
+    fourdst::composition::Composition AdaptiveEngineView::project(
+        scratch::StateBlob& ctx,
+        const NetIn &netIn
+    ) const {
+        auto *state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        state->active_reactions.clear();
+        state->active_species.clear();
 
-        fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.update(netIn);
+        fourdst::composition::Composition baseUpdatedComposition = m_baseEngine.project(ctx, netIn);
         NetIn updatedNetIn = netIn;
 
         updatedNetIn.composition = baseUpdatedComposition;
 
         LOG_TRACE_L1(m_logger, "Updating AdaptiveEngineView with new network input...");
 
-        auto [allFlows, composition] = calculateAllReactionFlows(updatedNetIn);
+        auto [allFlows, composition] = calculateAllReactionFlows(ctx, updatedNetIn);
 
         double maxFlow = 0.0;
 
@@ -43,82 +49,50 @@ namespace gridfire::engine {
         }
         LOG_DEBUG(m_logger, "Maximum reaction flow rate in adaptive engine view: {:0.3E} [mol/s]", maxFlow);
 
-        const std::unordered_set<Species> reachableSpecies = findReachableSpecies(updatedNetIn);
+        const std::unordered_set<Species> reachableSpecies = findReachableSpecies(ctx, updatedNetIn);
         LOG_DEBUG(m_logger, "Found {} reachable species in adaptive engine view.", reachableSpecies.size());
 
-        const std::vector<const reaction::Reaction*> finalReactions = cullReactionsByFlow(allFlows, reachableSpecies, composition, maxFlow);
+        const std::vector<const reaction::Reaction*> finalReactions = cullReactionsByFlow(ctx, allFlows, reachableSpecies, composition, maxFlow);
 
-        finalizeActiveSet(finalReactions);
+        finalizeActiveSet(ctx, finalReactions);
 
-        auto [rescuedReactions, rescuedSpecies] = rescueEdgeSpeciesDestructionChannel(composition, netIn.temperature/1e9, netIn.density, m_activeSpecies, m_activeReactions);
+        auto [rescuedReactions, rescuedSpecies] = rescueEdgeSpeciesDestructionChannel(
+            ctx,
+            composition,
+            netIn.temperature/1e9,
+            netIn.density
+        );
 
         for (const auto& reactionPtr : rescuedReactions) {
-            m_activeReactions.add_reaction(*reactionPtr);
+            state->active_reactions.add_reaction(*reactionPtr);
         }
 
         for (const auto& species : rescuedSpecies) {
-            if (!std::ranges::contains(m_activeSpecies, species) && m_baseEngine.getSpeciesStatus(species) == SpeciesStatus::ACTIVE) {
-                m_activeSpecies.push_back(species);
+            if (!std::ranges::contains(state->active_species, species) && m_baseEngine.getSpeciesStatus(ctx, species) == SpeciesStatus::ACTIVE) {
+                state->active_species.push_back(species);
             }
         }
 
-        m_isStale = false;
-
-        LOG_INFO(m_logger, "AdaptiveEngineView updated successfully with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
+        LOG_INFO(m_logger, "AdaptiveEngineView updated successfully with {} active species and {} active reactions.", state->active_species.size(), state->active_reactions.size());
 
         return updatedNetIn.composition;
     }
 
-    bool AdaptiveEngineView::isStale(const NetIn &netIn) {
-        return m_isStale || m_baseEngine.isStale(netIn);
-    }
-
-    const std::vector<Species> & AdaptiveEngineView::getNetworkSpecies() const {
-        return m_activeSpecies;
+    const std::vector<Species> & AdaptiveEngineView::getNetworkSpecies(scratch::StateBlob& ctx) const {
+        return scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx)->active_species;
     }
 
     std::expected<StepDerivatives<double>, EngineStatus> AdaptiveEngineView::calculateRHSAndEnergy(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
-        const double rho
+        const double rho, bool trust
     ) const {
         LOG_TRACE_L2(m_logger, "Calculating RHS and Energy in AdaptiveEngineView at T9 = {}, rho = {}.", T9, rho);
-        validateState();
-        LOG_TRACE_L2(
-            m_logger,
-            "Adaptive engine view state validated prior to composition collection. Input Composition: {}",
-            [&comp]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                for (const auto& [species, abundance] : comp) {
-                    ss << species.name() << ": " << abundance;
-                    if (i < comp.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                return ss.str();
-            }());
-        fourdst::composition::Composition collectedComp = collectComposition(comp, T9, rho);
-        LOG_TRACE_L2(
-            m_logger,
-            "Composition Collected prior to passing to base engine. Collected Composition: {}",
-            [&comp, &collectedComp]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                for (const auto& [species, abundance] : collectedComp) {
-                    ss << species.name() << ": " << abundance;
-                    if (comp.contains(species)) {
-                        ss << " (input: " << comp.getMolarAbundance(species) << ")";
-                    }
-                    if (i < collectedComp.size() - 1) {
-                        ss << ", ";
-                    }
-                    i++;
-                }
-                return ss.str();
-            }());
-        auto result = m_baseEngine.calculateRHSAndEnergy(collectedComp, T9, rho);
+
+        const fourdst::composition::Composition collectedComp = collectComposition(ctx, comp, T9, rho);
+
+        auto result = m_baseEngine.calculateRHSAndEnergy(ctx, collectedComp, T9, rho, true);
         LOG_TRACE_L2(m_logger, "Base engine calculation of RHS and Energy complete.");
 
         if (!result) {
@@ -130,99 +104,88 @@ namespace gridfire::engine {
     }
 
     EnergyDerivatives AdaptiveEngineView::calculateEpsDerivatives(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        validateState();
-        return m_baseEngine.calculateEpsDerivatives(comp, T9, rho);
+        return m_baseEngine.calculateEpsDerivatives(ctx, comp, T9, rho);
     }
 
     NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        return generateJacobianMatrix(comp, T9, rho, m_activeSpecies);
+        const auto *state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        return generateJacobianMatrix(ctx, comp, T9, rho, state->active_species);
     }
 
     NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const std::vector<Species> &activeSpecies
     ) const {
-        validateState();
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, activeSpecies);
+        return m_baseEngine.generateJacobianMatrix(ctx, comp, T9, rho, activeSpecies);
 
     }
 
     NetworkJacobian AdaptiveEngineView::generateJacobianMatrix(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho,
         const SparsityPattern &sparsityPattern
     ) const {
-        validateState();
-        return m_baseEngine.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
-    }
-
-    void AdaptiveEngineView::generateStoichiometryMatrix() {
-        validateState();
-        m_baseEngine.generateStoichiometryMatrix();
-    }
-
-    int AdaptiveEngineView::getStoichiometryMatrixEntry(
-        const Species &species,
-        const reaction::Reaction& reaction
-    ) const {
-        validateState();
-        return m_baseEngine.getStoichiometryMatrixEntry(species, reaction);
+        return m_baseEngine.generateJacobianMatrix(ctx, comp, T9, rho, sparsityPattern);
     }
 
     double AdaptiveEngineView::calculateMolarReactionFlow(
+        scratch::StateBlob& ctx,
         const reaction::Reaction &reaction,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        validateState();
-        if (!m_activeReactions.contains(reaction)) {
+        const auto *state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        if (!state->active_reactions.contains(reaction)) {
             LOG_ERROR(m_logger, "Reaction '{}' is not part of the active reactions in the adaptive engine view.", reaction.id());
             m_logger -> flush_log();
             throw std::runtime_error("Reaction not found in active reactions: " + std::string(reaction.id()));
         }
 
-        return m_baseEngine.calculateMolarReactionFlow(reaction, comp, T9, rho);
+        return m_baseEngine.calculateMolarReactionFlow(ctx, reaction, comp, T9, rho);
     }
 
-    const reaction::ReactionSet & AdaptiveEngineView::getNetworkReactions() const {
-        return m_activeReactions;
-    }
-
-    void AdaptiveEngineView::setNetworkReactions(const reaction::ReactionSet &reactions) {
-        LOG_CRITICAL(m_logger, "AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
-        throw exceptions::UnableToSetNetworkReactionsError("AdaptiveEngineView does not support setting network reactions directly. Use update() with NetIn instead. Perhaps you meant to call this on the base engine?");
+    const reaction::ReactionSet & AdaptiveEngineView::getNetworkReactions(
+        scratch::StateBlob& ctx
+    ) const {
+        return scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx) -> active_reactions;
     }
 
     std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        validateState();
-        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+
+        const auto result = m_baseEngine.getSpeciesTimescales(ctx, comp, T9, rho);
 
         if (!result) {
             return std::unexpected{result.error()};
         }
 
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
         const std::unordered_map<Species, double>& fullTimescales = result.value();
 
 
         std::unordered_map<Species, double> culledTimescales;
-        culledTimescales.reserve(m_activeSpecies.size());
-        for (const auto& active_species : m_activeSpecies) {
+        culledTimescales.reserve(state->active_species.size());
+        for (const auto& active_species : state->active_species) {
             if (fullTimescales.contains(active_species)) {
                 culledTimescales[active_species] = fullTimescales.at(active_species);
             }
@@ -232,21 +195,23 @@ namespace gridfire::engine {
     }
 
     std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesDestructionTimescales(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        validateState();
 
-        const auto result = m_baseEngine.getSpeciesDestructionTimescales(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesDestructionTimescales(ctx, comp, T9, rho);
         if (!result) {
             return std::unexpected{result.error()};
         }
+
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
         const std::unordered_map<Species, double>& destructionTimescales = result.value();
 
         std::unordered_map<Species, double> culledTimescales;
-        culledTimescales.reserve(m_activeSpecies.size());
-        for (const auto& active_species : m_activeSpecies) {
+        culledTimescales.reserve(state->active_species.size());
+        for (const auto& active_species : state->active_species) {
             if (destructionTimescales.contains(active_species)) {
                 culledTimescales[active_species] = destructionTimescales.at(active_species);
             }
@@ -254,34 +219,29 @@ namespace gridfire::engine {
         return culledTimescales;
     }
 
-    void AdaptiveEngineView::setScreeningModel(const screening::ScreeningType model) {
-        m_baseEngine.setScreeningModel(model);
+    screening::ScreeningType AdaptiveEngineView::getScreeningModel(
+        scratch::StateBlob& ctx
+    ) const {
+        return m_baseEngine.getScreeningModel(ctx);
     }
 
-    screening::ScreeningType AdaptiveEngineView::getScreeningModel() const {
-        return m_baseEngine.getScreeningModel();
-    }
-
-    std::vector<double> AdaptiveEngineView::mapNetInToMolarAbundanceVector(const NetIn &netIn) const {
-        std::vector<double> Y(m_activeSpecies.size(), 0.0); // Initialize with zeros
-        for (const auto& [species, y] : netIn.composition) {
-            Y[getSpeciesIndex(species)] = y; // Map species to their molar abundance
-        }
-        return Y; // Return the vector of molar abundances
-    }
-
-    PrimingReport AdaptiveEngineView::primeEngine(const NetIn &netIn) {
-        return m_baseEngine.primeEngine(netIn);
+    PrimingReport AdaptiveEngineView::primeEngine(
+        scratch::StateBlob& ctx,
+        const NetIn &netIn
+    ) const {
+        return m_baseEngine.primeEngine(ctx, netIn);
     }
 
     fourdst::composition::Composition AdaptiveEngineView::collectComposition(
+        scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
         const double T9,
         const double rho
     ) const {
-        fourdst::composition::Composition result = m_baseEngine.collectComposition(comp, T9, rho);
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        fourdst::composition::Composition result = m_baseEngine.collectComposition(ctx, comp, T9, rho);
 
-        for (const auto& species : m_activeSpecies) {
+        for (const auto& species : state->active_species) {
             if (!result.contains(species)) {
                 result.registerSpecies(species);
             }
@@ -290,18 +250,32 @@ namespace gridfire::engine {
         return result;
     }
 
-    SpeciesStatus AdaptiveEngineView::getSpeciesStatus(const fourdst::atomic::Species &species) const {
-        const SpeciesStatus status = m_baseEngine.getSpeciesStatus(species);
-        if (status == SpeciesStatus::ACTIVE && std::ranges::find(m_activeSpecies, species) == m_activeSpecies.end()) {
+    SpeciesStatus AdaptiveEngineView::getSpeciesStatus(
+        scratch::StateBlob& ctx,
+        const Species &species
+    ) const {
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        const SpeciesStatus status = m_baseEngine.getSpeciesStatus(ctx, species);
+        if (status == SpeciesStatus::ACTIVE && std::ranges::find(state->active_species, species) == state->active_species.end()) {
             return SpeciesStatus::INACTIVE_FLOW;
         }
         return status;
     }
 
-    size_t AdaptiveEngineView::getSpeciesIndex(const fourdst::atomic::Species &species) const {
-        const auto it = std::ranges::find(m_activeSpecies, species);
-        if (it != m_activeSpecies.end()) {
-            return static_cast<int>(std::distance(m_activeSpecies.begin(), it));
+    std::optional<StepDerivatives<double>> AdaptiveEngineView::getMostRecentRHSCalculation(
+        scratch::StateBlob &ctx
+    ) const {
+        return m_baseEngine.getMostRecentRHSCalculation(ctx);
+    }
+
+    size_t AdaptiveEngineView::getSpeciesIndex(
+        scratch::StateBlob& ctx,
+        const Species &species
+    ) const {
+        const auto *state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        const auto it = std::ranges::find(state->active_species, species);
+        if (it != state->active_species.end()) {
+            return static_cast<int>(std::distance(state->active_species.begin(), it));
         } else {
             LOG_ERROR(m_logger, "Species '{}' not found in active species list.", species.name());
             m_logger->flush_log();
@@ -309,18 +283,11 @@ namespace gridfire::engine {
         }
     }
 
-    void AdaptiveEngineView::validateState() const {
-        if (m_isStale) {
-            LOG_ERROR(m_logger, "AdaptiveEngineView is stale. Please call update() before calculating RHS and energy.");
-            m_logger->flush_log();
-            throw std::runtime_error("AdaptiveEngineView is stale. Please call update() before calculating RHS and energy.");
-        }
-    }
-
     std::pair<std::vector<AdaptiveEngineView::ReactionFlow>, fourdst::composition::Composition> AdaptiveEngineView::calculateAllReactionFlows(
+        scratch::StateBlob& ctx,
         const NetIn &netIn
     ) const {
-        const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies();
+        const auto& fullSpeciesList = m_baseEngine.getNetworkSpecies(ctx);
         fourdst::composition::Composition composition = netIn.composition;
 
         for (const auto& species: fullSpeciesList) {
@@ -334,10 +301,10 @@ namespace gridfire::engine {
         const double rho = netIn.density; // Density in g/cm^3
 
         std::vector<ReactionFlow> reactionFlows;
-        const auto& fullReactionSet = m_baseEngine.getNetworkReactions();
+        const auto& fullReactionSet = m_baseEngine.getNetworkReactions(ctx);
         reactionFlows.reserve(fullReactionSet.size());
         for (const auto& reaction : fullReactionSet) {
-            const double flow = m_baseEngine.calculateMolarReactionFlow(*reaction, composition, T9, rho);
+            const double flow = m_baseEngine.calculateMolarReactionFlow(ctx, *reaction, composition, T9, rho);
             reactionFlows.push_back({reaction.get(), flow});
             LOG_TRACE_L3(m_logger, "Reaction '{}' has flow rate: {:0.3E} [mol/s/g]", reaction->id(), flow);
         }
@@ -345,13 +312,14 @@ namespace gridfire::engine {
     }
 
     std::unordered_set<Species> AdaptiveEngineView::findReachableSpecies(
+        scratch::StateBlob& ctx,
         const NetIn &netIn
     ) const {
         std::unordered_set<Species> reachable;
         std::queue<Species> to_vist;
 
         constexpr double ABUNDANCE_FLOOR = 1e-12; // Abundance floor for a species to be considered part of the initial fuel
-        for (const auto& species: m_baseEngine.getNetworkSpecies()) {
+        for (const auto& species: m_baseEngine.getNetworkSpecies(ctx)) {
             if (netIn.composition.contains(species) && netIn.composition.getMassFraction(std::string(species.name())) > ABUNDANCE_FLOOR) {
                 if (!reachable.contains(species)) {
                     to_vist.push(species);
@@ -364,7 +332,7 @@ namespace gridfire::engine {
         bool new_species_found_in_pass = true;
         while (new_species_found_in_pass) {
             new_species_found_in_pass = false;
-            for (const auto& reaction: m_baseEngine.getNetworkReactions()) {
+            for (const auto& reaction: m_baseEngine.getNetworkReactions(ctx)) {
                 bool all_reactants_reachable = true;
                 for (const auto& reactant: reaction->reactants()) {
                     if (!reachable.contains(reactant)) {
@@ -388,6 +356,7 @@ namespace gridfire::engine {
     }
 
     std::vector<const reaction::Reaction *> AdaptiveEngineView::cullReactionsByFlow(
+        scratch::StateBlob& ctx,
         const std::vector<ReactionFlow> &allFlows,
         const std::unordered_set<fourdst::atomic::Species> &reachableSpecies,
         const fourdst::composition::Composition &comp,
@@ -431,21 +400,22 @@ namespace gridfire::engine {
     }
 
     AdaptiveEngineView::RescueSet AdaptiveEngineView::rescueEdgeSpeciesDestructionChannel(
+        scratch::StateBlob& ctx,
         const fourdst::composition::Composition &comp,
         const double T9,
-        const double rho,
-        const std::vector<Species> &activeSpecies,
-        const reaction::ReactionSet &activeReactions
+        const double rho
     ) const {
-        const auto result = m_baseEngine.getSpeciesTimescales(comp, T9, rho);
+        const auto result = m_baseEngine.getSpeciesTimescales(ctx, comp, T9, rho);
         if (!result) {
             LOG_CRITICAL(m_logger, "Failed to get species timescales due to base engine failure");
             m_logger->flush_log();
             throw exceptions::EngineError("Failed to get species timescales due base engine failure");
         }
+
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
         std::unordered_map<Species, double> timescales = result.value();
         std::set<Species> onlyProducedSpecies;
-        for (const auto& reaction : activeReactions) {
+        for (const auto& reaction : state->active_reactions) {
             const std::vector<Species>& products = reaction->products();
             onlyProducedSpecies.insert(products.begin(), products.end());
         }
@@ -454,7 +424,7 @@ namespace gridfire::engine {
         std::erase_if(
             onlyProducedSpecies,
             [&](const Species &species) {
-                for (const auto& reaction : activeReactions) {
+                for (const auto& reaction : state->active_reactions) {
                     if (reaction->contains_reactant(species)) {
                         return true; // If any active reaction consumes the species then erase it from the set.
                     }
@@ -474,14 +444,14 @@ namespace gridfire::engine {
         std::unordered_map<Species, const reaction::Reaction*> reactionsToRescue;
         for (const auto& species : onlyProducedSpecies) {
             double maxSpeciesConsumptionRate = 0.0;
-            for (const auto& reaction : m_baseEngine.getNetworkReactions()) {
+            for (const auto& reaction : m_baseEngine.getNetworkReactions(ctx)) {
                 const bool speciesToCheckIsConsumed = reaction->contains_reactant(species);
                 if (!speciesToCheckIsConsumed) {
                     continue; // If the species is not consumed by this reaction, skip it.
                 }
                 bool allOtherReactantsAreAvailable = true;
                 for (const auto& reactant : reaction->reactants()) {
-                    const bool reactantIsAvailable = std::ranges::contains(activeSpecies, reactant);
+                    const bool reactantIsAvailable = std::ranges::contains(state->active_species, reactant);
                     if (!reactantIsAvailable && reactant != species) {
                         allOtherReactantsAreAvailable = false;
                     }
@@ -577,31 +547,33 @@ namespace gridfire::engine {
     }
 
     void AdaptiveEngineView::finalizeActiveSet(
+        scratch::StateBlob& ctx,
         const std::vector<const reaction::Reaction *> &finalReactions
-    ) {
+    ) const {
+        auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
         std::unordered_set<Species>finalSpeciesSet;
-        m_activeReactions.clear();
+        state->active_reactions.clear();
         for (const auto* reactionPtr: finalReactions) {
-            m_activeReactions.add_reaction(*reactionPtr);
+            state->active_reactions.add_reaction(*reactionPtr);
             for (const auto& reactant : reactionPtr->reactants()) {
-                const SpeciesStatus reactantStatus = m_baseEngine.getSpeciesStatus(reactant);
+                const SpeciesStatus reactantStatus = m_baseEngine.getSpeciesStatus(ctx, reactant);
                 if (!finalSpeciesSet.contains(reactant) && (reactantStatus == SpeciesStatus::ACTIVE || reactantStatus == SpeciesStatus::EQUILIBRIUM)) {
                     LOG_TRACE_L3(m_logger, "Adding reactant '{}' to active species set through reaction {}.", reactant.name(), reactionPtr->id());
                     finalSpeciesSet.insert(reactant);
                 }
             }
             for (const auto& product : reactionPtr->products()) {
-                const SpeciesStatus productStatus = m_baseEngine.getSpeciesStatus(product);
+                const SpeciesStatus productStatus = m_baseEngine.getSpeciesStatus(ctx, product);
                 if (!finalSpeciesSet.contains(product) && (productStatus == SpeciesStatus::ACTIVE || productStatus == SpeciesStatus::EQUILIBRIUM)) {
                     LOG_TRACE_L3(m_logger, "Adding product '{}' to active species set through reaction {}.", product.name(), reactionPtr->id());
                     finalSpeciesSet.insert(product);
                 }
             }
         }
-        m_activeSpecies.clear();
-        m_activeSpecies = std::vector<Species>(finalSpeciesSet.begin(), finalSpeciesSet.end());
+        state->active_species.clear();
+        state->active_species = std::vector<Species>(finalSpeciesSet.begin(), finalSpeciesSet.end());
         std::ranges::sort(
-            m_activeSpecies,
+            state->active_species,
             [](const Species &a, const Species &b) { return a.mass() < b.mass(); }
         );
     }

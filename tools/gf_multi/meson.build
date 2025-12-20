@@ -1,0 +1,1 @@
+executable('gf_multi', 'main.cpp', dependencies: [gridfire_dep, cli11_dep])

@@ -26,7 +26,6 @@
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/atomic/atomicSpecies.h"
-#include "gridfire/partition/composite/partition_composite.h"
 
 #include "gridfire/policy/chains.h"
 
@@ -135,7 +134,7 @@ namespace gridfire::policy {
          * // ... run solver ...
          * @endcode
          */
-        engine::DynamicEngine& construct() override;
+        ConstructionResults construct() override;
 
         /**
          * @brief Gets the current status of the policy.
@@ -148,6 +147,8 @@ namespace gridfire::policy {
         [[nodiscard]] std::vector<engine::EngineTypes> get_engine_types_stack() const override;
         [[nodiscard]] const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const override;
 
+        [[nodiscard]] std::unique_ptr<engine::scratch::StateBlob> get_stack_scratch_blob() const override;
+
     private:
         std::set<fourdst::atomic::Species> m_seed_species; ///< The set of seed species required by this policy. These are H-1, He-3, He-4, C-12, N-14, O-16, Ne-20, Mg-24.
 
@@ -159,12 +160,12 @@ namespace gridfire::policy {
         NetworkPolicyStatus m_status = NetworkPolicyStatus::UNINITIALIZED; ///< The current status of the policy.
     private:
         static std::unique_ptr<partition::PartitionFunction> build_partition_function();
-        [[nodiscard]] NetworkPolicyStatus check_status() const;
+        [[nodiscard]] NetworkPolicyStatus check_status(engine::scratch::StateBlob& ctx) const;
 
     public:
 
     };
-
-
-
 }
+
+template<>
+struct std::formatter<gridfire::policy::MainSequencePolicy> : std::formatter<gridfire::policy::NetworkPolicy> {};

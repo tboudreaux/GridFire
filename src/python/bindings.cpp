@@ -4,6 +4,7 @@
 #include "types/bindings.h"
 #include "partition/bindings.h"
 #include "engine/bindings.h"
+#include "engine/scratchpads/bindings.h"
 #include "exceptions/bindings.h"
 #include "io/bindings.h"
 #include "reaction/bindings.h"
@@ -11,6 +12,7 @@
 #include "solver/bindings.h"
 #include "utils/bindings.h"
 #include "policy/bindings.h"
+#include "config/bindings.h"
 
 PYBIND11_MODULE(_gridfire, m) {
     m.doc() = "Python bindings for the fourdst utility modules which are a part of the 4D-STAR project.";
@@ -19,6 +21,9 @@ PYBIND11_MODULE(_gridfire, m) {
     pybind11::module::import("fourdst.composition");
     pybind11::module::import("fourdst.config");
     pybind11::module::import("fourdst.atomic");
+
+    auto configMod  = m.def_submodule("config", "GridFire configuration bindings");
+    register_config_bindings(configMod);
 
     auto typeMod  = m.def_submodule("type", "GridFire type bindings");
     register_type_bindings(typeMod);
@@ -39,6 +44,12 @@ PYBIND11_MODULE(_gridfire, m) {
     register_exception_bindings(exceptionMod);
 
     auto engineMod  = m.def_submodule("engine", "Engine and Engine View bindings");
+    auto scratchpadMod = engineMod.def_submodule("scratchpads", "Engine ScratchPad bindings");
+
+    register_scratchpad_types_bindings(scratchpadMod);
+    register_scratchpad_bindings(scratchpadMod);
+    register_state_blob_bindings(scratchpadMod);
+
     register_engine_bindings(engineMod);
 
     auto solverMod  = m.def_submodule("solver", "GridFire numerical solver bindings");

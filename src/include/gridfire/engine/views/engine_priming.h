@@ -1,9 +1,12 @@
 #pragma once
 
 #include "gridfire/engine/views/engine_defined.h"
+#include "gridfire/engine/scratchpads/blob.h"
+
 
 #include "fourdst/logging/logging.h"
 #include "fourdst/atomic/atomicSpecies.h"
+
 
 #include "quill/Logger.h"
 
@@ -35,7 +38,11 @@ namespace gridfire::engine {
          * @throws std::out_of_range If primingSymbol is not found in the species registry.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const std::string& primingSymbol, GraphEngine& baseEngine);
+        NetworkPrimingEngineView(
+            scratch::StateBlob& ctx,
+            const std::string& primingSymbol,
+            GraphEngine& baseEngine
+        );
         /**
          * @brief Constructs the view using an existing Species object.
          *
@@ -45,7 +52,11 @@ namespace gridfire::engine {
          * @post The view will contain only reactions that involve the priming species.
          * @throws std::runtime_error If no reactions contain the priming species.
          */
-        NetworkPrimingEngineView(const fourdst::atomic::Species& primingSpecies, GraphEngine& baseEngine);
+        NetworkPrimingEngineView(
+            scratch::StateBlob& ctx,
+            const fourdst::atomic::Species& primingSpecies,
+            GraphEngine& baseEngine
+        );
 
 
     private:
@@ -63,6 +74,7 @@ namespace gridfire::engine {
          * @throws std::runtime_error If no reactions involve the priming species.
          */
         [[nodiscard]] std::vector<std::string> constructPrimingReactionSet(
+            scratch::StateBlob& ctx,
             const fourdst::atomic::Species& primingSpecies,
             const GraphEngine& baseEngine
         ) const;

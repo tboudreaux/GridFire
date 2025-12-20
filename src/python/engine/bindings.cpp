@@ -12,6 +12,7 @@
 
 
 namespace py = pybind11;
+namespace sp = gridfire::engine::scratch;
 
 namespace {
     template <typename T>
@@ -23,16 +24,18 @@ namespace {
             "calculateRHSAndEnergy",
             [](
                 const gridfire::engine::DynamicEngine& self,
+                sp::StateBlob& ctx,
                 const fourdst::composition::Composition& comp,
                 const double T9,
                 const double rho
             ) {
-                auto result = self.calculateRHSAndEnergy(comp, T9, rho);
+                auto result = self.calculateRHSAndEnergy(ctx, comp, T9, rho, false);
                 if (!result.has_value()) {
                     throw gridfire::exceptions::EngineError(std::format("calculateRHSAndEnergy returned a potentially recoverable error {}", gridfire::engine::EngineStatus_to_string(result.error())));
                 }
                 return result.value();
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
@@ -40,6 +43,7 @@ namespace {
         )
         .def("calculateEpsDerivatives",
             &gridfire::engine::DynamicEngine::calculateEpsDerivatives,
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
@@ -47,11 +51,13 @@ namespace {
         )
         .def("generateJacobianMatrix",
             [](const gridfire::engine::DynamicEngine& self,
+               sp::StateBlob& ctx,
                const fourdst::composition::Composition& comp,
                const double T9,
                const double rho) -> gridfire::engine::NetworkJacobian {
-                return self.generateJacobianMatrix(comp, T9, rho);
+                return self.generateJacobianMatrix(ctx, comp, T9, rho);
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
@@ -59,12 +65,14 @@ namespace {
         )
         .def("generateJacobianMatrix",
             [](const gridfire::engine::DynamicEngine& self,
+               sp::StateBlob& ctx,
                const fourdst::composition::Composition& comp,
                const double T9,
                const double rho,
                const std::vector<fourdst::atomic::Species>& activeSpecies) -> gridfire::engine::NetworkJacobian {
-                return self.generateJacobianMatrix(comp, T9, rho, activeSpecies);
+                return self.generateJacobianMatrix(ctx, comp, T9, rho, activeSpecies);
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
@@ -73,31 +81,32 @@ namespace {
         )
         .def("generateJacobianMatrix",
             [](const gridfire::engine::DynamicEngine& self,
+               sp::StateBlob& ctx,
                const fourdst::composition::Composition& comp,
                const double T9,
                const double rho,
                const gridfire::engine::SparsityPattern& sparsityPattern) -> gridfire::engine::NetworkJacobian {
-                return self.generateJacobianMatrix(comp, T9, rho, sparsityPattern);
+                return self.generateJacobianMatrix(ctx, comp, T9, rho, sparsityPattern);
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
             py::arg("sparsityPattern"),
             "Generate the jacobian matrix for the given sparsity pattern"
         )
-        .def("generateStoichiometryMatrix",
-            &T::generateStoichiometryMatrix
-        )
         .def("calculateMolarReactionFlow",
             [](
                 const gridfire::engine::DynamicEngine& self,
+                sp::StateBlob& ctx,
                 const gridfire::reaction::Reaction& reaction,
                 const fourdst::composition::Composition& comp,
                 const double T9,
                 const double rho
             ) -> double {
-                return self.calculateMolarReactionFlow(reaction, comp, T9, rho);
+                return self.calculateMolarReactionFlow(ctx, reaction, comp, T9, rho);
             },
+            py::arg("ctx"),
             py::arg("reaction"),
             py::arg("comp"),
             py::arg("T9"),
@@ -110,28 +119,21 @@ namespace {
         .def("getNetworkReactions", &T::getNetworkReactions,
             "Get the set of logical reactions in the network."
         )
-        .def ("setNetworkReactions", &T::setNetworkReactions,
-            py::arg("reactions"),
-            "Set the network reactions to a new set of reactions."
-        )
-        .def("getStoichiometryMatrixEntry", &T::getStoichiometryMatrixEntry,
-            py::arg("species"),
-            py::arg("reaction"),
-            "Get an entry from the stoichiometry matrix."
-        )
         .def("getSpeciesTimescales",
             [](
                 const gridfire::engine::DynamicEngine& self,
+                sp::StateBlob& ctx,
                 const fourdst::composition::Composition& comp,
                 const double T9,
                 const double rho
             ) -> std::unordered_map<fourdst::atomic::Species, double> {
-                const auto result = self.getSpeciesTimescales(comp, T9, rho);
+                const auto result = self.getSpeciesTimescales(ctx, comp, T9, rho);
                 if (!result.has_value()) {
                     throw gridfire::exceptions::EngineError(std::format("getSpeciesTimescales has returned a potentially recoverable error {}", gridfire::engine::EngineStatus_to_string(result.error())));
                 }
                 return result.value();
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
@@ -140,30 +142,28 @@ namespace {
         .def("getSpeciesDestructionTimescales",
             [](
                 const gridfire::engine::DynamicEngine& self,
+                sp::StateBlob& ctx,
                 const fourdst::composition::Composition& comp,
                 const double T9,
                 const double rho
             ) -> std::unordered_map<fourdst::atomic::Species, double> {
-                const auto result = self.getSpeciesDestructionTimescales(comp, T9, rho);
+                const auto result = self.getSpeciesDestructionTimescales(ctx, comp, T9, rho);
                 if (!result.has_value()) {
                     throw gridfire::exceptions::EngineError(std::format("getSpeciesDestructionTimescales has returned a potentially recoverable error {}", gridfire::engine::EngineStatus_to_string(result.error())));
                 }
                 return result.value();
             },
+            py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
             py::arg("rho"),
             "Get the destruction timescales for each species in the network."
         )
-        .def("update",
-            &T::update,
+        .def("project",
+            &T::project,
+            py::arg("ctx"),
             py::arg("netIn"),
             "Update the engine state based on the provided NetIn object."
-        )
-        .def("setScreeningModel",
-            &T::setScreeningModel,
-            py::arg("screeningModel"),
-            "Set the screening model for the engine."
         )
         .def("getScreeningModel",
             &T::getScreeningModel,
@@ -171,36 +171,19 @@ namespace {
         )
         .def("getSpeciesIndex",
             &T::getSpeciesIndex,
+            py::arg("ctx"),
             py::arg("species"),
             "Get the index of a species in the network."
         )
-        .def("mapNetInToMolarAbundanceVector",
-            &T::mapNetInToMolarAbundanceVector,
-            py::arg("netIn"),
-            "Map a NetIn object to a vector of molar abundances."
-        )
         .def("primeEngine",
             &T::primeEngine,
+            py::arg("ctx"),
             py::arg("netIn"),
             "Prime the engine with a NetIn object to prepare for calculations."
         )
-        .def("getDepth",
-            &T::getDepth,
-            "Get the current build depth of the engine."
-        )
-        .def("rebuild",
-            &T::rebuild,
-            py::arg("composition"),
-            py::arg("depth") = gridfire::engine::NetworkBuildDepth::Full,
-            "Rebuild the engine with a new composition and build depth."
-        )
-        .def("isStale",
-            &T::isStale,
-            py::arg("netIn"),
-            "Check if the engine is stale based on the provided NetIn object."
-        )
         .def("collectComposition",
             &T::collectComposition,
+            py::arg("ctx"),
             py::arg("composition"),
             py::arg("T9"),
             py::arg("rho"),
@@ -208,6 +191,7 @@ namespace {
         )
         .def("getSpeciesStatus",
             &T::getSpeciesStatus,
+            py::arg("ctx"),
             py::arg("species"),
             "Get the status of a species in the network."
         );
@@ -253,6 +237,7 @@ void register_engine_diagnostic_bindings(pybind11::module &m) {
     auto diagnostics = m.def_submodule("diagnostics", "A submodule for engine diagnostics");
     diagnostics.def("report_limiting_species",
         &gridfire::engine::diagnostics::report_limiting_species,
+        py::arg("ctx"),
         py::arg("engine"),
         py::arg("Y_full"),
         py::arg("E_full"),
@@ -264,6 +249,7 @@ void register_engine_diagnostic_bindings(pybind11::module &m) {
 
     diagnostics.def("inspect_species_balance",
         &gridfire::engine::diagnostics::inspect_species_balance,
+        py::arg("ctx"),
         py::arg("engine"),
         py::arg("species_name"),
         py::arg("comp"),
@@ -274,6 +260,7 @@ void register_engine_diagnostic_bindings(pybind11::module &m) {
 
     diagnostics.def("inspect_jacobian_stiffness",
         &gridfire::engine::diagnostics::inspect_jacobian_stiffness,
+        py::arg("ctx"),
         py::arg("engine"),
         py::arg("comp"),
         py::arg("T9"),
@@ -311,6 +298,7 @@ void register_engine_construction_bindings(pybind11::module &m) {
 void register_engine_priming_bindings(pybind11::module &m) {
     m.def("primeNetwork",
         &gridfire::engine::primeNetwork,
+        py::arg("ctx"),
         py::arg("netIn"),
         py::arg("engine"),
         py::arg("ignoredReactionTypes") = std::nullopt,
@@ -456,19 +444,16 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
         py::arg("reactions"),
         "Initialize GraphEngine with a set of reactions."
     );
-    py_graph_engine_bindings.def_static("getNetReactionStoichiometry",
-        &gridfire::engine::GraphEngine::getNetReactionStoichiometry,
-        py::arg("reaction"),
-        "Get the net stoichiometry for a given reaction."
-    );
     py_graph_engine_bindings.def("getSpeciesTimescales",
         [](const gridfire::engine::GraphEngine& self,
+           sp::StateBlob& ctx,
            const fourdst::composition::Composition& composition,
            const double T9,
            const double rho,
            const gridfire::reaction::ReactionSet& activeReactions) {
-            return self.getSpeciesTimescales(composition, T9, rho, activeReactions);
+            return self.getSpeciesTimescales(ctx, composition, T9, rho, activeReactions);
         },
+        py::arg("ctx"),
         py::arg("composition"),
         py::arg("T9"),
         py::arg("rho"),
@@ -476,12 +461,14 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
     );
     py_graph_engine_bindings.def("getSpeciesDestructionTimescales",
         [](const gridfire::engine::GraphEngine& self,
+           sp::StateBlob& ctx,
            const fourdst::composition::Composition& composition,
            const double T9,
            const double rho,
            const gridfire::reaction::ReactionSet& activeReactions) {
-            return self.getSpeciesDestructionTimescales(composition, T9, rho, activeReactions);
+            return self.getSpeciesDestructionTimescales(ctx, composition, T9, rho, activeReactions);
         },
+        py::arg("ctx"),
         py::arg("composition"),
         py::arg("T9"),
         py::arg("rho"),
@@ -489,23 +476,21 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
     );
     py_graph_engine_bindings.def("involvesSpecies",
         &gridfire::engine::GraphEngine::involvesSpecies,
+        py::arg("ctx"),
         py::arg("species"),
         "Check if a given species is involved in the network."
     );
     py_graph_engine_bindings.def("exportToDot",
         &gridfire::engine::GraphEngine::exportToDot,
+        py::arg("ctx"),
         py::arg("filename"),
         "Export the network to a DOT file for visualization."
     );
     py_graph_engine_bindings.def("exportToCSV",
         &gridfire::engine::GraphEngine::exportToCSV,
+        py::arg("ctx"),
         py::arg("filename"),
         "Export the network to a CSV file for analysis."
-    );
-    py_graph_engine_bindings.def("setPrecomputation",
-        &gridfire::engine::GraphEngine::setPrecomputation,
-        py::arg("precompute"),
-        "Enable or disable precomputation for the engine."
     );
     py_graph_engine_bindings.def("isPrecomputationEnabled",
         &gridfire::engine::GraphEngine::isPrecomputationEnabled,
@@ -543,11 +528,6 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
     py_graph_engine_bindings.def("isUsingReverseReactions",
         &gridfire::engine::GraphEngine::isUsingReverseReactions,
         "Check if the engine is using reverse reactions."
-    );
-    py_graph_engine_bindings.def("setUseReverseReactions",
-        &gridfire::engine::GraphEngine::setUseReverseReactions,
-        py::arg("useReverse"),
-        "Enable or disable the use of reverse reactions in the engine."
     );
 
     // Register the general dynamic engine bindings
@@ -587,11 +567,13 @@ void register_engine_view_bindings(const pybind11::module &m) {
     registerDynamicEngineDefs<gridfire::engine::FileDefinedEngineView, gridfire::engine::DefinedEngineView>(py_file_defined_engine_view_bindings);
 
     auto py_priming_engine_view_bindings = py::class_<gridfire::engine::NetworkPrimingEngineView, gridfire::engine::DefinedEngineView>(m, "NetworkPrimingEngineView");
-    py_priming_engine_view_bindings.def(py::init<const std::string&, gridfire::engine::GraphEngine&>(),
+    py_priming_engine_view_bindings.def(py::init<sp::StateBlob&, const std::string&, gridfire::engine::GraphEngine&>(),
+        py::arg("ctx"),
         py::arg("primingSymbol"),
         py::arg("baseEngine"),
         "Construct a priming engine view with a priming symbol and a base engine.");
-    py_priming_engine_view_bindings.def(py::init<const fourdst::atomic::Species&, gridfire::engine::GraphEngine&>(),
+    py_priming_engine_view_bindings.def(py::init<sp::StateBlob&, const fourdst::atomic::Species&, gridfire::engine::GraphEngine&>(),
+        py::arg("ctx"),
         py::arg("primingSpecies"),
         py::arg("baseEngine"),
         "Construct a priming engine view with a priming species and a base engine.");
@@ -622,15 +604,12 @@ void register_engine_view_bindings(const pybind11::module &m) {
     );
     py_multiscale_engine_view_bindings.def("partitionNetwork",
         &gridfire::engine::MultiscalePartitioningEngineView::partitionNetwork,
+        py::arg("ctx"),
         py::arg("netIn"),
         "Partition the network based on species timescales and connectivity.");
-    py_multiscale_engine_view_bindings.def("partitionNetwork",
-        py::overload_cast<const gridfire::NetIn&>(&gridfire::engine::MultiscalePartitioningEngineView::partitionNetwork),
-        py::arg("netIn"),
-        "Partition the network based on a NetIn object."
-    );
     py_multiscale_engine_view_bindings.def("exportToDot",
     &gridfire::engine::MultiscalePartitioningEngineView::exportToDot,
+        py::arg("ctx"),
         py::arg("filename"),
         py::arg("comp"),
         py::arg("T9"),
@@ -661,7 +640,16 @@ void register_engine_view_bindings(const pybind11::module &m) {
         "Check if a given species is involved in the network's dynamic set."
     );
     py_multiscale_engine_view_bindings.def("getNormalizedEquilibratedComposition",
-        &gridfire::engine::MultiscalePartitioningEngineView::getNormalizedEquilibratedComposition,
+        [](
+            const gridfire::engine::MultiscalePartitioningEngineView&  self,
+            sp::StateBlob& ctx,
+            const fourdst::composition::Composition& comp,
+            const double T9,
+            const double rho
+        ) {
+            return self.getNormalizedEquilibratedComposition(ctx, comp, T9, rho, false);
+        },
+        py::arg("ctx"),
         py::arg("comp"),
         py::arg("T9"),
         py::arg("rho"),

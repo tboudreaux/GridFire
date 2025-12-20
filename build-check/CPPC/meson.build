@@ -33,5 +33,18 @@ else
 endif
 
 if get_option('openmp_support')
-    add_project_arguments('-DGRIDFIRE_USE_OPENMP', language: 'cpp')
+    add_project_arguments('-DGF_USE_OPENMP', language: 'cpp')
+endif
+
+if get_option('asan') and get_option('buildtype') != 'debug' and get_option('buildtype') != 'debugoptimized'
+    error('AddressSanitizer (ASan) can only be enabled for debug or debugoptimized builds')
+endif
+
+if get_option('asan') and (get_option('buildtype') == 'debugoptimized' or get_option('buildtype') == 'debug')
+    message('enabling AddressSanitizer (ASan) support')
+    add_project_arguments('-fsanitize=address,undefined', language: 'cpp')
+    add_project_arguments('-fno-omit-frame-pointer', language: 'cpp')
+
+    add_project_link_arguments('-fsanitize=address,undefined', language: 'cpp')
+    add_project_link_arguments('-fno-omit-frame-pointer', language: 'cpp')
 endif

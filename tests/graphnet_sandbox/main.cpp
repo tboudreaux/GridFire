@@ -1,7 +1,12 @@
+// ReSharper disable CppUnusedIncludeDirective
 #include <iostream>
 #include <fstream>
+#include <chrono>
+#include <thread>
+#include <format>
 
 #include "gridfire/gridfire.h"
+#include <cppad/utility/thread_alloc.hpp> // Required for parallel_setup
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/logging/logging.h"
@@ -14,7 +19,7 @@
 
 #include <clocale>
 
-#include "gridfire/reaction/reaclib.h"
+#include "gridfire/utils/gf_omp.h"
 
 
 static std::terminate_handler g_previousHandler = nullptr;
@@ -26,7 +31,7 @@ gridfire::NetIn init(const double temp, const double rho, const double tMax) {
     std::setlocale(LC_ALL, "");
     g_previousHandler = std::set_terminate(quill_terminate_handler);
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL2);
+    logger->set_log_level(quill::LogLevel::Info);
 
     using namespace gridfire;
     const std::vector<double> X            = {0.7081145999999999, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
@@ -108,14 +113,14 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
     std::vector<std::string> rowLabels = [&]() -> std::vector<std::string> {
         std::vector<std::string> labels;
         for (const auto& species : logSpecies) {
-            labels.push_back(std::string(species.name()));
+            labels.emplace_back(species.name());
         }
-        labels.push_back("ε");
-        labels.push_back("dε/dT");
-        labels.push_back("dε/dρ");
-        labels.push_back("Eν");
-        labels.push_back("Fν");
-        labels.push_back("<μ>");
+        labels.emplace_back("ε");
+        labels.emplace_back("dε/dT");
+        labels.emplace_back("dε/dρ");
+        labels.emplace_back("Eν");
+        labels.emplace_back("Fν");
+        labels.emplace_back("<μ>");
         return labels;
     }();
 
@@ -138,18 +143,18 @@ void log_results(const gridfire::NetOut& netOut, const gridfire::NetIn& netIn) {
 }
 
 
-void record_abundance_history_callback(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) {
+void record_abundance_history_callback(const gridfire::solver::PointSolverTimestepContext& ctx) {
     s_wrote_abundance_history = true;
     const auto& engine = ctx.engine;
     // std::unordered_map<std::string, std::pair<double, double>> abundances;
     std::vector<double> Y;
-    for (const auto& species : engine.getNetworkSpecies()) {
-        const size_t sid = engine.getSpeciesIndex(species);
+    for (const auto& species : engine.getNetworkSpecies(ctx.state_ctx)) {
+        const size_t sid = engine.getSpeciesIndex(ctx.state_ctx, species);
         double y =  N_VGetArrayPointer(ctx.state)[sid];
         Y.push_back(y > 0.0 ? y : 0.0); // Regularize tiny negative abundances to zero
     }
 
-    fourdst::composition::Composition comp(engine.getNetworkSpecies(), Y);
+    fourdst::composition::Composition comp(engine.getNetworkSpecies(ctx.state_ctx), Y);
 
 
     std::unordered_map<std::string, std::pair<double, double>> abundances;
@@ -219,36 +224,36 @@ void quill_terminate_handler()
         std::abort();
 }
 
-void callback_main(const gridfire::solver::CVODESolverStrategy::TimestepContext& ctx) {
+void callback_main(const gridfire::solver::PointSolverTimestepContext& ctx) {
     record_abundance_history_callback(ctx);
 }
 
-int main(int argc, char** argv) {
+int main() {
+    GF_PAR_INIT();
     using namespace gridfire;
 
-    CLI::App app{"GridFire Sandbox Application."};
-
+    constexpr size_t breaks = 1;
     double temp = 1.5e7;
     double rho = 1.5e2;
-    double tMax = 3.1536e+17;
-
-    app.add_option("-t,--temp", temp, "Temperature in K (Default 1.5e7K)");
-    app.add_option("-r,--rho", rho, "Density in g/cm^3 (Default 1.5e2g/cm^3)");
-    app.add_option("--tmax", tMax, "Maximum simulation time in s (Default 3.1536e17s)");
-
-    CLI11_PARSE(app, argc, argv);
+    double tMax = 3.1536e+16/breaks;
 
     const NetIn netIn = init(temp, rho, tMax);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
-    stellarPolicy.construct();
-    engine::DynamicEngine& engine = stellarPolicy.construct();
+    auto [engine, ctx_template] = stellarPolicy.construct();
+    std::println("Sandbox Engine Stack: {}", stellarPolicy);
+    std::println("Scratch Blob State: {}", *ctx_template);
 
-    solver::CVODESolverStrategy solver(engine);
-    solver.set_callback(solver::CVODESolverStrategy::TimestepCallback(callback_main));
+    constexpr size_t nZones = 100;
+    std::array<NetIn, nZones> netIns;
+    for (size_t zone = 0; zone < nZones; ++zone) {
+        netIns[zone] = netIn;
+        netIns[zone].temperature = 1.0e7;
+    }
 
-    const NetOut netOut = solver.evaluate(netIn, false);
+    const solver::PointSolver localSolver(engine);
+    solver::GridSolverContext solverCtx(*ctx_template);
+    const solver::GridSolver gridSolver(engine, localSolver);
 
-    log_results(netOut, netIn);
-    log_callback_data(temp);
+    std::vector<NetOut> netOuts = gridSolver.evaluate(solverCtx, netIns | std::ranges::to<std::vector>());
 }
