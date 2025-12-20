@@ -31,18 +31,6 @@ cd "${TMPDIR}/project"
 # 3. Build Configuration
 export MACOSX_DEPLOYMENT_TARGET=15.0
 
-# Meson options passed to pip via config-settings
-# Note: We use an array to keep the command clean
-MESON_ARGS=(
-    "-Csetup-args=-Dunity=off"
-    "-Csetup-args=-Dbuild-python=true"
-    "-Csetup-args=-Dbuild-fortran=false"
-    "-Csetup-args=-Dbuild-tests=false"
-    "-Csetup-args=-Dpkg-config=false"
-    "-Csetup-args=-Dunity-safe=true"
-)
-
-PYTHON_VERSIONS=("3.8.20" "3.9.23" "3.10.18" "3.11.13" "3.12.11" "3.13.5" "3.13.5t" "3.14.0rc1" "3.14.0rc1t" 'pypy3.10-7.3.19' "pypy3.11-7.3.20")
 PYTHON_VERSIONS=("3.9.23" "3.10.18" "3.11.13" "3.12.11" "3.13.5" "3.13.5t" "3.14.0rc1" "3.14.0rc1t" 'pypy3.10-7.3.19' "pypy3.11-7.3.20")
 
 if ! command -v pyenv &> /dev/null; then
@@ -56,12 +44,6 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
   (
     set -e
 
-    # Check if version exists in pyenv
-    if ! pyenv versions --bare --filter="${PY_VERSION}" &>/dev/null; then
-        echo "⚠️  Python version matching '${PY_VERSION}' not found by pyenv. Skipping."
-        continue
-    fi
-    
     pyenv shell "${PY_VERSION}"
     PY="$(pyenv which python)"
     
@@ -72,12 +54,8 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
     # Install build deps explicitly so we can skip build isolation
     "$PY" -m pip install --upgrade pip setuptools wheel meson meson-python delocate
 
-    # PERF: --no-build-isolation prevents creating a fresh venv and reinstalling meson/ninja 
     # for every single build, saving significant I/O and network time.
-    CC="ccache clang" CXX="ccache clang++" "$PY" -m pip wheel . \
-      --no-build-isolation \
-      "${MESON_ARGS[@]}" \
-       -w "${WHEEL_DIR}" -vv
+    CC="ccache clang" CXX="ccache clang++" "$PY" -m pip wheel . --no-build-isolation -w "${WHEEL_DIR}" -v
 
     # We expect exactly one new wheel in the tmp dir per iteration
     CURRENT_WHEEL=$(find "${WHEEL_DIR}" -name "*.whl" | head -n 1)
