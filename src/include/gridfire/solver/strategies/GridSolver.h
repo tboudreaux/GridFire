@@ -20,6 +20,9 @@ namespace gridfire::solver {
         void set_callback(const std::function<void(const TimestepContextBase&)> &callback);
         void set_callback(const std::function<void(const TimestepContextBase&)> &callback, size_t zone_idx);
 
+        void clear_callback();
+        void clear_callback(size_t zone_idx);
+
         void set_stdout_logging(bool enable) override;
         void set_detailed_logging(bool enable) override;
 

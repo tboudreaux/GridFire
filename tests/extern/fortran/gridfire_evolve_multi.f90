@@ -14,16 +14,16 @@ program main_multi
     ! --- 1. Define Species ---
     character(len=5), dimension(NUM_SPECIES) :: species_names = [ &
             "H-1  ", &
-                    "He-3 ", &
-                    "He-4 ", &
-                    "C-12 ", &
-                    "N-14 ", &
-                    "O-16 ", &
-                    "Ne-20", &
-                    "Mg-24"  &
-            ]
+            "He-3 ", &
+            "He-4 ", &
+            "C-12 ", &
+            "N-14 ", &
+            "O-16 ", &
+            "Ne-20", &
+            "Mg-24"  &
+    ]
 
-    ! Initial Mass Fractions (converted to Molar Abundances Y = X/A)
+    ! Initial Mass Fractions
     ! Standard solar-ish composition template
     real(c_double), dimension(NUM_SPECIES) :: abundance_root = [ &
             0.702616602672027d0,     &
@@ -71,7 +71,6 @@ program main_multi
         T_arr(z) = 1.0d7 + dble(z-1) * 1.0d5
         rho_arr(z) = 1.5d2
 
-        ! Debug print for first few zones
         if (z <= 3) then
             print '(A, I0, A, ES12.5, A, ES12.5, A)', &
                     " Zone ", z-1, " - Temp: ", T_arr(z), " K, Rho: ", rho_arr(z), " g/cm^3"
@@ -98,8 +97,6 @@ program main_multi
     print *, "Evolving system..."
 
     ! Note: We pass the arrays T_arr and rho_arr.
-    ! Ensure your interface change (removing 'value' attribute) is applied
-    ! so these are passed by reference (address).
     call net%gff_evolve(Y_in, T_arr, rho_arr, tMax, dt0, &
             Y_out, energy_out, dedt, dedrho, &
             snu_e_loss, snu_flux, dmass, ierr)

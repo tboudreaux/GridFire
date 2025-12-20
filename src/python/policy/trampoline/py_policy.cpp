@@ -39,9 +39,9 @@ const gridfire::reaction::ReactionSet& PyNetworkPolicy::get_seed_reactions() con
     );
 }
 
-gridfire::engine::DynamicEngine& PyNetworkPolicy::construct() {
+gridfire::policy::ConstructionResults PyNetworkPolicy::construct() {
     PYBIND11_OVERRIDE_PURE(
-        gridfire::engine::DynamicEngine&,
+        gridfire::policy::ConstructionResults,
         gridfire::policy::NetworkPolicy,
         construct
     );
@@ -76,6 +76,14 @@ const std::unique_ptr<gridfire::partition::PartitionFunction>& PyNetworkPolicy::
         const std::unique_ptr<gridfire::partition::PartitionFunction>&,
         gridfire::policy::NetworkPolicy,
         get_partition_function
+    );
+}
+
+std::unique_ptr<gridfire::engine::scratch::StateBlob> PyNetworkPolicy::get_stack_scratch_blob() const {
+    PYBIND11_OVERRIDE_PURE(
+        std::unique_ptr<gridfire::engine::scratch::StateBlob>,
+        gridfire::policy::NetworkPolicy,
+        get_stack_scratch_blob
     );
 }
 

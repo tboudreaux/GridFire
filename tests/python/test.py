@@ -1,51 +1,73 @@
-from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView, AdaptiveEngineView
-from gridfire.solver import DirectNetworkSolver
+from gridfire.solver import PointSolver, PointSolverContext
+from gridfire.policy import MainSequencePolicy
+from fourdst.composition import Composition
+
+from fourdst.composition import CanonicalComposition
+from fourdst.atomic import Species
 from gridfire.type import NetIn
 
-from fourdst.composition import Composition
-from fourdst.atomic import species
+def rescale_composition(comp_ref : Composition, ZZs : float, Y_primordial : float = 0.248) -> Composition:
+    CC : CanonicalComposition  = comp_ref.getCanonicalComposition()
 
-symbols : list[str] = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
-X : list[float]     = [0.708, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4]
+    dY_dZ = (CC.Y - Y_primordial) / CC.Z
 
+    Z_new = CC.Z * (10**ZZs)
+    Y_bulk_new = Y_primordial + (dY_dZ * Z_new)
+    X_new = 1.0 - Z_new - Y_bulk_new
 
-comp = Composition()
-comp.registerSymbol(symbols)
-comp.setMassFraction(symbols, X)
-comp.finalize(True)
+    if X_new < 0: raise ValueError(f"ZZs={ZZs} yields unphysical composition (X < 0)")
 
-print(f"Initial H-1 mass fraction {comp.getMassFraction("H-1")}")
+    ratio_H  = X_new / CC.X if CC.X > 0 else 0
+    ratio_He = Y_bulk_new / CC.Y if CC.Y > 0 else 0
+    ratio_Z  = Z_new / CC.Z if CC.Z > 0 else 0
 
-netIn = NetIn()
-netIn.composition = comp
-netIn.temperature = 1.5e7
-netIn.density = 1.6e2
-netIn.tMax = 4e17
-netIn.dt0 = 1e-12
+    Y_new_list = []
+    newComp : Composition = Composition()
+    s: Species
+    for s  in comp_ref.getRegisteredSpecies():
+        Xi_ref = comp_ref.getMassFraction(s)
 
-baseEngine = GraphEngine(netIn.composition, 2)
-baseEngine.setUseReverseReactions(False)
+        if s.el() == "H":
+            Xi_new = Xi_ref * ratio_H
+        elif s.el() == "He":
+            Xi_new = Xi_ref * ratio_He
+        else:
+            Xi_new = Xi_ref * ratio_Z
 
-qseEngine = MultiscalePartitioningEngineView(baseEngine)
+        Y = Xi_new / s.mass()
+        newComp.registerSpecies(s)
+        newComp.setMolarAbundance(s, Y)
 
-adaptiveEngine = AdaptiveEngineView(qseEngine)
+    return newComp
 
-solver = DirectNetworkSolver(adaptiveEngine)
-
-
-def callback(context):
-    H1Index = context.engine.getSpeciesIndex(species["H-1"])
-    He4Index = context.engine.getSpeciesIndex(species["He-4"])
-    C12ndex = context.engine.getSpeciesIndex(species["C-12"])
-    Mgh24ndex = context.engine.getSpeciesIndex(species["Mg-24"])
-    print(f"Time: {context.t}, H-1: {context.state[H1Index]}, He-4: {context.state[He4Index]}, C-12: {context.state[C12ndex]}, Mg-24: {context.state[Mgh24ndex]}")
-
-# solver.set_callback(callback)
-results = solver.evaluate(netIn)
-
-print(f"Final H-1 mass fraction {results.composition.getMassFraction("H-1")}")
+def init_composition(ZZs : float = 0) -> Composition:
+    Y_solar = [7.0262E-01, 9.7479E-06, 6.8955E-02, 2.5000E-04, 7.8554E-05, 6.0144E-04, 8.1031E-05, 2.1513E-05]
+    S = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"]
+    return rescale_composition(Composition(S, Y_solar), ZZs)
 
 
+def init_netIn(temp: float, rho: float, time: float, comp: Composition) -> NetIn:
+    n : NetIn = NetIn()
+    n.temperature = temp
+    n.density = rho
+    n.tMax = time
+    n.dt0 = 1e-12
+    n.composition = comp
+    return n
+
+def years_to_seconds(years: float) -> float:
+    return years * 3.1536e7
 
 
+def main():
+    C = init_composition()
+    netIn = init_netIn(2.75e6, 1.5e1, years_to_seconds(10e9), C)
+    policy = MainSequencePolicy(C)
+    construct = policy.construct()
+    solver = PointSolver(construct.engine)
+    solver_ctx = PointSolverContext(construct.scratch_blob)
+    results = solver.evaluate(solver_ctx, netIn, False, False)
+    print(results)
 
+if __name__ == "__main__":
+    main()

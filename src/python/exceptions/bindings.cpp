@@ -2,6 +2,8 @@
 
 #include "bindings.h"
 
+#include "gridfire/exceptions/error_scratchpad.h"
+
 namespace py = pybind11;
 
 #include "gridfire/exceptions/exceptions.h"
@@ -43,5 +45,7 @@ void register_exception_bindings(const py::module &m) {
     py::register_exception<gridfire::exceptions::SUNDIALSError>(m, "SUNDIALSError", m.attr("SolverError"));
     py::register_exception<gridfire::exceptions::CVODESolverFailureError>(m, "CVODESolverFailureError", m.attr("SUNDIALSError"));
     py::register_exception<gridfire::exceptions::KINSolSolverFailureError>(m, "KINSolSolverFailureError", m.attr("SUNDIALSError"));
+
+    py::register_exception<gridfire::exceptions::ScratchPadError>(m, "ScratchPadError", m.attr("GridFireError"));
 
 }

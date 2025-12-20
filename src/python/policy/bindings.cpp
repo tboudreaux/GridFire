@@ -8,7 +8,6 @@
 
 #include "gridfire/policy/policy.h"
 
-PYBIND11_DECLARE_HOLDER_TYPE(T, std::unique_ptr<T>, true) // Declare unique_ptr as a holder type for pybind11
 
 namespace py = pybind11;
 
@@ -103,9 +102,30 @@ namespace {
         .def(
             "construct",
             &T::construct,
-            py::return_value_policy::reference,
             "Construct the network according to the policy."
 
+        )
+        .def(
+            "get_engine_stack",
+            [](const T &self) {
+                const auto& stack = self.get_engine_stack();
+                std::vector<gridfire::engine::DynamicEngine*> engine_ptrs;
+                engine_ptrs.reserve(stack.size());
+                for (const auto& engine_uptr : stack) {
+                    engine_ptrs.push_back(engine_uptr.get());
+                }
+
+                return engine_ptrs;
+            },
+            py::return_value_policy::reference_internal
+        )
+        .def(
+            "get_stack_scratch_blob",
+            &T::get_stack_scratch_blob
+        )
+        .def(
+            "get_partition_function",
+            &T::get_partition_function
         );
     }
 }
@@ -214,6 +234,26 @@ void register_network_policy_bindings(pybind11::module &m) {
         .value("MISSING_KEY_SPECIES", gridfire::policy::NetworkPolicyStatus::MISSING_KEY_SPECIES)
         .value("INITIALIZED_VERIFIED", gridfire::policy::NetworkPolicyStatus::INITIALIZED_VERIFIED)
         .export_values();
+
+    m.def("network_policy_status_to_string",
+        &gridfire::policy::NetworkPolicyStatusToString,
+        py::arg("status"),
+        "Convert a NetworkPolicyStatus enum value to its string representation."
+    );
+
+    py::class_<gridfire::policy::ConstructionResults>(m, "ConstructionResults")
+        .def_property_readonly("engine",
+            [](const gridfire::policy::ConstructionResults &self) -> const gridfire::engine::DynamicEngine& {
+                return self.engine;
+            },
+            py::return_value_policy::reference
+        )
+        .def_property_readonly("scratch_blob",
+            [](const gridfire::policy::ConstructionResults &self) {
+                return self.scratch_blob.get();
+            },
+            py::return_value_policy::reference_internal
+        );
 
     py::class_<gridfire::policy::NetworkPolicy, PyNetworkPolicy> py_networkPolicy(m, "NetworkPolicy");
     py::class_<gridfire::policy::MainSequencePolicy, gridfire::policy::NetworkPolicy> py_mainSeqPolicy(m, "MainSequencePolicy");

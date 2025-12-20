@@ -56,7 +56,7 @@ echo "Site packages: $SITE_PACKAGES"
 echo ""
 
 echo -e "${GREEN}Step 2: Installing fourdst with pip...${NC}"
-$PYTHON_BIN -m pip install . -v
+$PYTHON_BIN -m pip install . -v --no-build-isolation
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}Error: pip install failed${NC}"

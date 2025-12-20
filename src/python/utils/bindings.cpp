@@ -12,6 +12,7 @@ namespace py = pybind11;
 void register_utils_bindings(py::module &m) {
     m.def("formatNuclearTimescaleLogString",
           &gridfire::utils::formatNuclearTimescaleLogString,
+          py::arg("ctx"),
           py::arg("engine"),
           py::arg("Y"),
           py::arg("T9"),

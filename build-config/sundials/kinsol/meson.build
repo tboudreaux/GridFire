@@ -8,13 +8,16 @@ kinsol_cmake_options.add_cmake_defines({
     'BUILD_SHARED_LIBS' : 'OFF',
     'BUILD_STATIC_LIBS' : 'ON',
     'EXAMPLES_ENABLE_C' : 'OFF',
-    'CMAKE_POSITION_INDEPENDENT_CODE': true
+    'CMAKE_POSITION_INDEPENDENT_CODE': true,
+    'CMAKE_PLATFORM_NO_VERSIONED_SONAME': 'ON'
 })
 
 kinsol_cmake_options.add_cmake_defines({
     'CMAKE_INSTALL_LIBDIR': get_option('libdir'),
     'CMAKE_INSTALL_INCLUDEDIR': get_option('includedir')
 })
+
+kinsol_cmake_options.set_install(false)
 
 kinsol_sp = cmake.subproject(
     'kinsol',

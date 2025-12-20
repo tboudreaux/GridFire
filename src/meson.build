@@ -58,12 +58,21 @@ if get_option('openmp_support')
 endif
 
 # Define the libnetwork library so it can be linked against by other parts of the build system
-libgridfire = library('gridfire',
-    gridfire_sources,
-    include_directories: include_directories('include'),
-    dependencies: gridfire_build_dependencies,
-    objects: [cvode_objs, kinsol_objs],
-    install : true)
+if get_option('build_python')
+    libgridfire = static_library('gridfire',
+        gridfire_sources,
+        include_directories: include_directories('include'),
+        dependencies: gridfire_build_dependencies,
+        objects: [cvode_objs, kinsol_objs],
+        install : false)
+else
+    libgridfire = library('gridfire',
+                          gridfire_sources,
+                          include_directories: include_directories('include'),
+                          dependencies: gridfire_build_dependencies,
+                          objects: [cvode_objs, kinsol_objs],
+                          install : true)
+endif
 
 gridfire_dep = declare_dependency(
     include_directories: include_directories('include'),

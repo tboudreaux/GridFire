@@ -18,6 +18,8 @@ cppad_cmake_options.add_cmake_defines({
     'include_doc': 'false'
 })
 
+cppad_cmake_options.set_install(false)
+
 cppad_sp = cmake.subproject(
     'cppad',
     options: cppad_cmake_options,

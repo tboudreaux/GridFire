@@ -28,6 +28,19 @@ namespace gridfire::solver {
         timestep_callbacks[zone_idx] = callback;
     }
 
+    void GridSolverContext::clear_callback() {
+        for (auto &cb : timestep_callbacks) {
+            cb = nullptr;
+        }
+    }
+
+    void GridSolverContext::clear_callback(const size_t zone_idx) {
+        if (zone_idx >= timestep_callbacks.size()) {
+            throw exceptions::SolverError("GridSolverContext::clear_callback: zone_idx out of range.");
+        }
+        timestep_callbacks[zone_idx] = nullptr;
+    }
+
     void GridSolverContext::set_stdout_logging(const bool enable) {
         zone_stdout_logging = enable;
     }

@@ -25,6 +25,7 @@
 #include <set>
 
 #include "gridfire/engine/types/engine_types.h"
+#include "gridfire/engine/scratchpads/blob.h"
 
 
 namespace gridfire::policy {

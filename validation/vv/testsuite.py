@@ -9,7 +9,7 @@ from gridfire.engine import EngineTypes
 from gridfire.policy import MainSequencePolicy
 from gridfire.type import NetIn, NetOut
 from gridfire.exceptions import GridFireError
-from gridfire.solver import CVODESolverStrategy
+from gridfire.solver import PointSolver, PointSolverContext
 from logger import StepLogger
 from typing import List
 import re
@@ -221,16 +221,16 @@ class TestSuite(ABC):
         with open(f"GridFireValidationSuite_{self.name}_pynucastro.json", "w") as f:
             json.dump(pynucastro_json, f, indent=4)
 
-    def evolve(self, engine: DynamicEngine, netIn: NetIn, pynucastro_compare: bool = True, engine_type: EngineTypes | None = None):
-        solver : CVODESolverStrategy = CVODESolverStrategy(engine)
+    def evolve(self, engine: DynamicEngine, solver_ctx: PointSolverContext, netIn: NetIn, pynucastro_compare: bool = True, engine_type: EngineTypes | None = None):
+        solver : PointSolver = PointSolver(engine)
 
         stepLogger : StepLogger = StepLogger()
-        solver.set_callback(lambda ctx: stepLogger.log_step(ctx))
+        solver_ctx.callback(lambda ctx: stepLogger.log_step(ctx))
 
         startTime = time.time()
         try:
             startTime = time.time()
-            netOut : NetOut = solver.evaluate(netIn)
+            netOut : NetOut = solver.evaluate(solver_ctx, netIn)
             endTime = time.time()
             stepLogger.to_json(
                 f"GridFireValidationSuite_{self.name}_OKAY.json",

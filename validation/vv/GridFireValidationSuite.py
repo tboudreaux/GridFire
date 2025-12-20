@@ -103,7 +103,7 @@ if __name__ == "__main__":
     parser.add_argument('--suite', type=str, choices=[suite.name for suite in ValidationSuites], nargs="+", help="The validation suite to run.")
     parser.add_argument("--all", action="store_true", help="Run all validation suites.")
     parser.add_argument("--pynucastro-compare", action="store_true", help="Generate pynucastro comparison data.")
-    parser.add_argument("--pync-engine", type=str, choices=["GraphEngine", "MultiscalePartitioningEngineView", "AdaptiveEngineView"], default="AdaptiveEngineView", help="The GridFire engine to use to select the reactions for pyuncastro comparison.")
+    parser.add_argument("--pync-engine", type=str, choices=["GraphEngine", "MultiscalePartitioningEngineView", "AdaptiveEngineView"], default="AdaptiveEngineView", help="The GridFire engine to use to select the reactions for pynucastro comparison.")
     args = parser.parse_args()
 
     if args.all:
