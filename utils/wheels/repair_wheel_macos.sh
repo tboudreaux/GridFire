@@ -75,7 +75,7 @@ for WHEEL_PATH in "$WHEEL_DIR"/*.whl; do
     done < <(find "$TEMP_DIR" -name "*.so" -print0)
 
     echo -e "${GREEN}Step 4: Repackaging wheel...${NC}"
-    python -m wheel pack "$TEMP_DIR/gridfire-0.7.4rc2" -d "$REPAIRED_WHEELS_DIR"
+    python -m wheel pack "$TEMP_DIR/gridfire-0.7.5rc3" -d "$REPAIRED_WHEELS_DIR"
 
     REPAIRED_WHEEL_PATH="${REPAIRED_WHEELS_DIR}/${WHEEL_NAME}"
 

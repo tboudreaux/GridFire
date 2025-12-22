@@ -52,7 +52,11 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
     echo "----------------------------------------------------------------"
 
     # Install build deps explicitly so we can skip build isolation
-    "$PY" -m pip install --upgrade pip setuptools wheel meson meson-python delocate
+    "$PY" -m pip install --upgrade pip setuptools wheel meson-python delocate
+    "$PY" -m pip install meson==1.9.1
+
+    echo "➤ Building wheel with ccache enabled"
+    echo "➤ Found meson version $(meson --version)"
 
     # for every single build, saving significant I/O and network time.
     CC="ccache clang" CXX="ccache clang++" "$PY" -m pip wheel . --no-build-isolation -w "${WHEEL_DIR}" -v
