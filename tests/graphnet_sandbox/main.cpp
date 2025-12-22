@@ -248,7 +248,7 @@ int main() {
     std::array<NetIn, nZones> netIns;
     for (size_t zone = 0; zone < nZones; ++zone) {
         netIns[zone] = netIn;
-        netIns[zone].temperature = 1.0e7;
+        netIns[zone].temperature = 1.5e7;
     }
 
     const solver::PointSolver localSolver(engine);

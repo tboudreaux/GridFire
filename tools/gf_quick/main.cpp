@@ -346,25 +346,15 @@ int main(int argc, char** argv) {
     double temp = 1.5e7;
     double rho = 1.5e2;
     double tMax = 3.1536e+16;
-    double X = 0.7;
-    double Z = 0.02;
 
 
     CLI::App app("GridFire Quick CLI Test");
-    // Add temp, rho, and tMax as options if desired
     app.add_option("--temp", temp, "Initial Temperature")->default_val(std::format("{:5.2E}", temp));
     app.add_option("--rho", rho, "Initial Density")->default_val(std::format("{:5.2E}", rho));
     app.add_option("--tmax", tMax, "Maximum Time")->default_val(std::format("{:5.2E}", tMax));
-    // app.add_option("--X", X, "Target Hydrogen Mass Fraction")->default_val(std::format("{:5.2f}", X));
-    // app.add_option("--Z", Z, "Target Metal Mass Fraction")->default_val(std::format("{:5.2f}", Z));
 
     CLI11_PARSE(app, argc, argv);
     NetIn netIn = init(temp, rho, tMax);
-    for (const auto& [sp, y] : netIn.composition) {
-        std::println("Species: {}, Abundance: {}", sp.name(), y);
-    }
-    return 0;
-    // netIn.composition = rescale(netIn.composition, X, Z);
 
     policy::MainSequencePolicy stellarPolicy(netIn.composition);
     auto [engine, ctx_template] = stellarPolicy.construct();

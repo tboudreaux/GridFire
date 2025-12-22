@@ -359,7 +359,6 @@ namespace gridfire::engine {
 
 
     private:
-        using LogManager = LogManager;
         Config<config::GridFireConfig> m_config;
 
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
