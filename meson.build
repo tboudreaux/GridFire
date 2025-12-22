@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 # *********************************************************************** #
-project('GridFire', ['c', 'cpp'], version: 'v0.7.6rc3', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
+project('GridFire', ['c', 'cpp'], version: 'v0.7.6rc3.1', default_options: ['cpp_std=c++23'], meson_version: '>=1.5.0')
 
 # Start by running the code which validates the build environment
 subdir('build-check')
