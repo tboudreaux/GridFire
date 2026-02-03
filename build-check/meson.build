@@ -5,7 +5,7 @@ cc = meson.get_compiler('c')
 
 ignore_unused_args = '-Wno-unused-command-line-argument'
 
-if !meson.is_subproject()
+if not meson.is_subproject()
   add_global_arguments(ignore_unused_args, language: 'cpp')
   add_global_arguments(ignore_unused_args, language: 'c')
 endif
