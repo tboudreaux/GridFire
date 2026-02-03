@@ -1,0 +1,26 @@
+#pragma once
+
+#include <format>
+
+namespace gridfire {
+    struct version {
+        static constexpr int major = #STRINGIFY(GF_VERSION_MAJOR);
+        static constexpr int minor = #STRINGIFY(GF_VERSION_MINOR);
+        static constexpr int patch = #STRINGIFY(GF_VERSION_PATCH);
+
+        static constexpr const char* tag = #STRINGIFY(GF_VERSION_TAG);
+    };
+}
+
+template <>
+struct std::formatter<gridfire::version> : std::formatter<std::string> {
+    auto format(const gridfire::version& v, auto& ctx) {
+        std::string versionStr = std::to_string(v.major) + "." +
+                                 std::to_string(v.minor) + "." +
+                                 std::to_string(v.patch);
+        if (std::string(v.tag) != "") {
+            versionStr += "-" + std::string(v.tag);
+        }
+        return std::formatter<std::string>::format(versionStr, ctx);
+    }
+};
