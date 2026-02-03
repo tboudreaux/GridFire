@@ -33,7 +33,7 @@ else
 endif
 
 if get_option('openmp_support')
-    add_project_arguments('-DGF_USE_OPENMP', language: 'cpp')
+    gridfire_args += ['-DGF_USE_OPENMP']
 endif
 
 if get_option('asan') and get_option('buildtype') != 'debug' and get_option('buildtype') != 'debugoptimized'

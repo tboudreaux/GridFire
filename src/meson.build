@@ -1,4 +1,6 @@
 # Define the library
+subdir('include/gridfire/utils') # Generate the version header file first
+
 gridfire_sources = files(
     'lib/engine/engine_graph.cpp',
     'lib/engine/views/engine_adaptive.cpp',
@@ -63,6 +65,7 @@ if get_option('build_python')
         gridfire_sources,
         include_directories: include_directories('include'),
         dependencies: gridfire_build_dependencies,
+        cpp_args: gridfire_args,
         objects: [cvode_objs, kinsol_objs],
         install : false)
 else
@@ -71,6 +74,7 @@ else
                           include_directories: include_directories('include'),
                           dependencies: gridfire_build_dependencies,
                           objects: [cvode_objs, kinsol_objs],
+                          cpp_args: gridfire_args,
                           install : true)
 endif
 
@@ -79,6 +83,7 @@ gridfire_dep = declare_dependency(
     link_with: libgridfire,
     sources: gridfire_sources,
     dependencies: gridfire_build_dependencies,
+    compile_args: gridfire_args,
 )
 
 install_subdir('include/gridfire', install_dir: get_option('includedir'))

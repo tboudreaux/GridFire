@@ -34,3 +34,10 @@ cppad_dep = declare_dependency(
   link_with: libcppad_static,
   include_directories: cppad_incs
 )
+
+message('Installing CppAD headers to ' + get_option('includedir'))
+install_subdir(
+  'subprojects/CppAD-20250000.2/include',
+  install_dir: get_option('includedir'),
+  strip_directory: true
+)

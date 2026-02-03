@@ -29,4 +29,4 @@ elif (llevel == 'critical')
 endif
 
 log_argument = '-DQUILL_COMPILE_ACTIVE_LOG_LEVEL=' + log_argument
-add_project_arguments(log_argument, language: 'cpp')
+gridfire_args += [log_argument]

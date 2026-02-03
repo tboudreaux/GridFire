@@ -9,7 +9,11 @@ if get_option('pkg_config')
             libgridfire,
             libcomposition,
             libconst,
-            liblogging
+            liblogging,
+            libcppad_static,
+            libcvode_static,
+            libkinsol_static
+            
         ],
         subdirs: ['gridfire'],
         filebase: 'gridfire',
