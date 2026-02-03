@@ -415,29 +415,6 @@ namespace gridfire::engine {
             }
             state->active_reactions.add_reaction(*reaction);
         }
-        LOG_TRACE_L3(m_logger, "DefinedEngineView built with {} active species and {} active reactions.", m_activeSpecies.size(), m_activeReactions.size());
-        LOG_TRACE_L3(m_logger, "Active species: {}", [this]() -> std::string {
-            std::string result;
-            for (const auto& species : m_activeSpecies) {
-                result += std::string(species.name()) + ", ";
-            }
-            if (!result.empty()) {
-                result.pop_back(); // Remove last space
-                result.pop_back(); // Remove last comma
-            }
-            return result;
-        }());
-        LOG_TRACE_L3(m_logger, "Active reactions: {}", [this]() -> std::string {
-            std::string result;
-            for (const auto& reaction : m_activeReactions) {
-                result += std::string(reaction->id()) + ", ";
-            }
-            if (!result.empty()) {
-                result.pop_back(); // Remove last space
-                result.pop_back(); // Remove last comma
-            }
-            return result;
-        }());
         state->species_index_map = constructSpeciesIndexMap(ctx);
         state->reaction_index_map = constructReactionIndexMap(ctx);
     }
