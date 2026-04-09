@@ -1,14 +1,24 @@
 #pragma once
 
 #include <format>
+#include <string>
 
 namespace gridfire {
     struct version {
-        static constexpr int major = #STRINGIFY(GF_VERSION_MAJOR);
-        static constexpr int minor = #STRINGIFY(GF_VERSION_MINOR);
-        static constexpr int patch = #STRINGIFY(GF_VERSION_PATCH);
+        static constexpr int major = @GF_VERSION_MAJOR@;
+        static constexpr int minor = @GF_VERSION_MINOR@;
+        static constexpr int patch = @GF_VERSION_PATCH@;
+        static constexpr const char* tag = "@GF_VERSION_TAG@";
 
-        static constexpr const char* tag = #STRINGIFY(GF_VERSION_TAG);
+        static std::string toString() {
+            std::string versionStr = std::to_string(major) + "." +
+                                     std::to_string(minor) + "." +
+                                     std::to_string(patch);
+            if (std::string(tag) != "") {
+                versionStr += "-" + std::string(tag);
+            }
+            return versionStr;
+        }
     };
 }
 
