@@ -6,14 +6,14 @@
 namespace py = pybind11;
 
 void register_config_bindings(pybind11::module &m) {
-    py::class_<gridfire::config::CVODESolverConfig>(m, "CVODESolverConfig")
+    py::class_<gridfire::config::PointSolverConfig>(m, "PointSolverConfig")
         .def(py::init<>())
-        .def_readwrite("absTol", &gridfire::config::CVODESolverConfig::absTol)
-        .def_readwrite("relTol", &gridfire::config::CVODESolverConfig::relTol);
+        .def_readwrite("absTol", &gridfire::config::PointSolverConfig::absTol)
+        .def_readwrite("relTol", &gridfire::config::PointSolverConfig::relTol);
 
     py::class_<gridfire::config::SolverConfig>(m, "SolverConfig")
         .def(py::init<>())
-        .def_readwrite("cvode", &gridfire::config::SolverConfig::cvode);
+        .def_readwrite("pointSolver", &gridfire::config::SolverConfig::pointSolver);
 
     py::class_<gridfire::config::AdaptiveEngineViewConfig>(m, "AdaptiveEngineViewConfig")
         .def(py::init<>())
