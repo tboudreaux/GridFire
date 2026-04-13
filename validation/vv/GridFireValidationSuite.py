@@ -1,5 +1,6 @@
 from gridfire.policy import MainSequencePolicy, NetworkPolicy
 from gridfire.engine import DynamicEngine, GraphEngine, EngineTypes
+from gridfire.solver import PointSolverContext
 from gridfire.type import NetIn
 
 from typing import Dict
@@ -31,9 +32,10 @@ class SolarLikeStar_QSE_Suite(TestSuite):
 
     def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
         policy : MainSequencePolicy = MainSequencePolicy(self.composition)
-        engine : DynamicEngine = policy.construct()
+        construct= policy.construct()
+        context = PointSolverContext(construct.scratch_blob)
         netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
-        self.evolve(engine, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
+        self.evolve(construct.engine, context, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
 
 class MetalEnhancedSolarLikeStar_QSE_Suite(TestSuite):
     def __init__(self):
@@ -53,6 +55,7 @@ class MetalEnhancedSolarLikeStar_QSE_Suite(TestSuite):
         engine : GraphEngine = policy.construct()
         netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
         self.evolve(engine, netIn)
+
 class MetalDepletedSolarLikeStar_QSE_Suite(TestSuite):
     def __init__(self):
         initialComposition : Composition = init_composition(ZZs=-1)
@@ -90,12 +93,96 @@ class SolarLikeStar_No_QSE_Suite(TestSuite):
         netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
         self.evolve(engine, netIn)
 
+class HotStar_QSE_Suite(TestSuite):
+    def __init__(self):
+        initialComposition : Composition = init_composition()
+        super().__init__(
+            name="HotStar_QSE",
+            description="GridFire simulation of a hot star over 1Gyr with QSE enabled.",
+            temp=2.5e7,
+            density=15,
+            tMax=1e15,
+            composition=initialComposition,
+            notes="Thermodynamically Static, MultiscalePartitioning Engine View, B(ish) star conditions"
+        )
+
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
+        policy : MainSequencePolicy = MainSequencePolicy(self.composition)
+        construct= policy.construct()
+        context = PointSolverContext(construct.scratch_blob)
+        netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
+        self.evolve(construct.engine, context, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
+
+class CoolStar_QSE_Suite(TestSuite):
+    def __init__(self):
+        initialComposition : Composition = init_composition()
+        super().__init__(
+            name="CoolStar_QSE",
+            description="GridFire simulation of a hot star over 1Gyr with QSE enabled.",
+            temp=6e6,
+            density=750,
+            tMax=1e15,
+            composition=initialComposition,
+            notes="Thermodynamically Static, MultiscalePartitioning Engine View, M(ish) star conditions"
+        )
+
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
+        policy : MainSequencePolicy = MainSequencePolicy(self.composition)
+        construct= policy.construct()
+        context = PointSolverContext(construct.scratch_blob)
+        netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
+        self.evolve(construct.engine, context, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
+
+class VeryCoolStar_QSE_Suite(TestSuite):
+    def __init__(self):
+        initialComposition : Composition = init_composition()
+        super().__init__(
+            name="VeryCoolStar_QSE",
+            description="GridFire simulation of a hot star over 1Gyr with QSE enabled.",
+            temp=4e6,
+            density=1000,
+            tMax=1e15,
+            composition=initialComposition,
+            notes="Thermodynamically Static, MultiscalePartitioning Engine View, M(ish) star conditions"
+        )
+
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
+        policy : MainSequencePolicy = MainSequencePolicy(self.composition)
+        construct= policy.construct()
+        context = PointSolverContext(construct.scratch_blob)
+        netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
+        self.evolve(construct.engine, context, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
+
+class VeryHotStar_QSE_Suite(TestSuite):
+    def __init__(self):
+        initialComposition : Composition = init_composition()
+        super().__init__(
+            name="VeryHotStar_QSE",
+            description="GridFire simulation of a hot star over 1Gyr with QSE enabled.",
+            temp=4e7,
+            density=1,
+            tMax=1e15,
+            composition=initialComposition,
+            notes="Thermodynamically Static, MultiscalePartitioning Engine View, M(ish) star conditions"
+        )
+
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
+        policy : MainSequencePolicy = MainSequencePolicy(self.composition)
+        construct= policy.construct()
+        context = PointSolverContext(construct.scratch_blob)
+        netIn : NetIn = init_netIn(self.temperature, self.density, self.tMax, self.composition)
+        self.evolve(construct.engine, context, netIn, pynucastro_compare = pynucastro_compare, engine_type=EngineNameToType[pync_engine.lower()])
+
 
 class ValidationSuites(Enum):
     SolarLikeStar_QSE = SolarLikeStar_QSE_Suite
     SolarLikeStar_No_QSE = SolarLikeStar_No_QSE_Suite
     MetalDepletedSolarLikeStar_QSE = MetalDepletedSolarLikeStar_QSE_Suite
     MetalEnhancedSolarLikeStar_QSE = MetalEnhancedSolarLikeStar_QSE_Suite
+    HotStar_QSE = HotStar_QSE_Suite
+    CoolStar_QSE = CoolStar_QSE_Suite
+    VeryCoolStar_QSE = VeryCoolStar_QSE_Suite
+    VeryHotStar_QSE = VeryHotStar_QSE_Suite
 
 if __name__ == "__main__":
     import argparse

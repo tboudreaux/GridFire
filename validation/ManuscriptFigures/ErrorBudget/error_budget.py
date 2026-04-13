@@ -168,7 +168,7 @@ def main(save_show):
     solver_single = PointSolver(engine_graph)
 
     r_graph = solver_single.evaluate(solver_ctx_graph, netIn, False, False)
-    df_graph = stepLogger.df
+    df_graph : pd.DataFrame = stepLogger.df
     stepLogger.reset()
 
     QSE_engine = MultiscalePartitioningEngineView(engine_graph)

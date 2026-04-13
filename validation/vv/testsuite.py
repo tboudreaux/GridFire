@@ -112,11 +112,11 @@ class TestSuite(ABC):
         self.composition : Composition = composition
         self.notes : str = notes
 
-    def evolve_pynucastro(self, engine: DynamicEngine):
+    def evolve_pynucastro(self, engine: DynamicEngine, ctx: PointSolverContext):
         print("Evolution complete. Now building equivalent pynucastro network...")
         # Build equivalent pynucastro network for comparison
         reaclib_library : pyna.ReacLibLibrary = pyna.ReacLibLibrary()
-        rate_names = [r.id().replace("e+","").replace("e-","").replace(", ", ",") for r in engine.getNetworkReactions()]
+        rate_names = [r.id().replace("e+","").replace("e-","").replace(", ", ",") for r in engine.getNetworkReactions(ctx.engine_ctx)]
 
         with open(f"{self.name}_rate_names_pynuc.txt", "w") as f:
             for r_name in rate_names:
@@ -225,7 +225,7 @@ class TestSuite(ABC):
         solver : PointSolver = PointSolver(engine)
 
         stepLogger : StepLogger = StepLogger()
-        solver_ctx.callback(lambda ctx: stepLogger.log_step(ctx))
+        solver_ctx.callback = lambda ctx: stepLogger.log_step(ctx)
 
         startTime = time.time()
         try:
@@ -265,16 +265,16 @@ class TestSuite(ABC):
             if engine_type is not None:
                 if engine_type == EngineTypes.ADAPTIVE_ENGINE_VIEW:
                     print("Pynucastro comparison using AdaptiveEngineView...")
-                    self.evolve_pynucastro(engine)
+                    self.evolve_pynucastro(engine, solver_ctx)
                 elif engine_type == EngineTypes.MULTISCALE_PARTITIONING_ENGINE_VIEW:
                     print("Pynucastro comparison using MultiscalePartitioningEngineView...")
                     graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
                     multiScaleEngine : MultiscalePartitioningEngineView = MultiscalePartitioningEngineView(graphEngine)
-                    self.evolve_pynucastro(multiScaleEngine)
+                    self.evolve_pynucastro(multiScaleEngine, solver_ctx)
                 elif engine_type == EngineTypes.GRAPH_ENGINE:
                     print("Pynucastro comparison using GraphEngine...")
                     graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
-                    self.evolve_pynucastro(graphEngine)
+                    self.evolve_pynucastro(graphEngine, solver_ctx)
                 else:
                     print(f"Pynucastro comparison not implemented for engine type: {engine_type}")
 
