@@ -4,6 +4,8 @@ GridFire numerical solver bindings
 from __future__ import annotations
 import collections.abc
 import fourdst._phys.atomic
+import fourdst._phys.composition
+import gridfire._gridfire.config
 import gridfire._gridfire.engine
 import gridfire._gridfire.engine.scratchpads
 import gridfire._gridfire.type
@@ -47,15 +49,25 @@ class MultiZoneDynamicNetworkSolver:
         evaluate the dynamic engine using the dynamic engine class for multiple zones (using openmp if available)
         """
 class PointSolver(SingleZoneDynamicNetworkSolver):
+    @typing.overload
     def __init__(self, engine: gridfire._gridfire.engine.DynamicEngine) -> None:
         """
         Initialize the PointSolver object.
+        """
+    @typing.overload
+    def __init__(self, engine: gridfire._gridfire.engine.DynamicEngine, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Initialize the PointSolver object with a configuration set.
         """
     def evaluate(self, solver_ctx: SolverContextBase, netIn: gridfire._gridfire.type.NetIn, display_trigger: bool = False, force_reinitialization: bool = False) -> gridfire._gridfire.type.NetOut:
         """
         evaluate the dynamic engine using the dynamic engine class
         """
-class PointSolverContext:
+    def getConfig(self) -> gridfire._gridfire.config.GridFireConfig:
+        """
+        Get a copy of the config object
+        """
+class PointSolverContext(SolverContextBase):
     callback: collections.abc.Callable[[PointSolverTimestepContext], None] | None
     detailed_logging: bool
     stdout_logging: bool
@@ -114,6 +126,9 @@ class PointSolverContext:
 class PointSolverTimestepContext:
     @property
     def T9(self) -> float:
+        ...
+    @property
+    def composition(self) -> fourdst._phys.composition.Composition:
         ...
     @property
     def currentConvergenceFailures(self) -> int:

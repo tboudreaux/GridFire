@@ -37,6 +37,10 @@ class AdaptiveEngineView(DynamicEngine):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     @typing.overload
     def generateJacobianMatrix(self: DynamicEngine, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> NetworkJacobian:
         """
@@ -55,6 +59,10 @@ class AdaptiveEngineView(DynamicEngine):
     def getBaseEngine(self) -> DynamicEngine:
         """
         Get the base engine associated with this adaptive engine view.
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkReactions(self, arg0: scratchpads.StateBlob) -> gridfire._gridfire.reaction.ReactionSet:
         """
@@ -115,6 +123,10 @@ class DefinedEngineView(DynamicEngine):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     @typing.overload
     def generateJacobianMatrix(self: DynamicEngine, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> NetworkJacobian:
         """
@@ -133,6 +145,10 @@ class DefinedEngineView(DynamicEngine):
     def getBaseEngine(self) -> DynamicEngine:
         """
         Get the base engine associated with this defined engine view.
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkReactions(self, arg0: scratchpads.StateBlob) -> gridfire._gridfire.reaction.ReactionSet:
         """
@@ -250,6 +266,10 @@ class FileDefinedEngineView(DefinedEngineView):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     @typing.overload
     def generateJacobianMatrix(self: DynamicEngine, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> NetworkJacobian:
         """
@@ -268,6 +288,10 @@ class FileDefinedEngineView(DefinedEngineView):
     def getBaseEngine(self) -> DynamicEngine:
         """
         Get the base engine associated with this file defined engine view.
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkFile(self) -> str:
         """
@@ -329,6 +353,16 @@ class GraphEngine(DynamicEngine):
         """
         Initialize GraphEngine with a set of reactions.
         """
+    @typing.overload
+    def addReaction(self, reaction: ...) -> None:
+        """
+        Add a reaction to the engine's network manually.
+        """
+    @typing.overload
+    def addReaction(self, reaction_id: str) -> None:
+        """
+        Add a reaction to the engine's network manually using a reaction identifier string.
+        """
     def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
         """
         Calculate deps/dT and deps/drho
@@ -357,6 +391,10 @@ class GraphEngine(DynamicEngine):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     def exportToCSV(self, ctx: scratchpads.StateBlob, filename: str) -> None:
         """
         Export the network to a CSV file for analysis.
@@ -379,6 +417,10 @@ class GraphEngine(DynamicEngine):
     def generateJacobianMatrix(self: DynamicEngine, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat, sparsityPattern: collections.abc.Sequence[tuple[typing.SupportsInt, typing.SupportsInt]]) -> NetworkJacobian:
         """
         Generate the jacobian matrix for the given sparsity pattern
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkReactions(self, arg0: scratchpads.StateBlob) -> gridfire._gridfire.reaction.ReactionSet:
         """
@@ -461,6 +503,10 @@ class MultiscalePartitioningEngineView(DynamicEngine):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     def exportToDot(self, ctx: scratchpads.StateBlob, filename: str, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> None:
         """
         Export the network to a DOT file for visualization.
@@ -491,6 +537,10 @@ class MultiscalePartitioningEngineView(DynamicEngine):
     def getFastSpecies(self, arg0: scratchpads.StateBlob) -> list[fourdst._phys.atomic.Species]:
         """
         Get the list of fast species in the network.
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkReactions(self, arg0: scratchpads.StateBlob) -> gridfire._gridfire.reaction.ReactionSet:
         """
@@ -750,6 +800,10 @@ class NetworkPrimingEngineView(DefinedEngineView):
         """
         Recursively collect composition from current engine and any sub engines if they exist.
         """
+    def constructStateBlob(self, blob: scratchpads.StateBlob = None) -> scratchpads.StateBlob:
+        """
+        Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified
+        """
     @typing.overload
     def generateJacobianMatrix(self: DynamicEngine, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> NetworkJacobian:
         """
@@ -768,6 +822,10 @@ class NetworkPrimingEngineView(DefinedEngineView):
     def getBaseEngine(self) -> DynamicEngine:
         """
         Get the base engine associated with this priming engine view.
+        """
+    def getMostRecentRHSCalculation(self, ctx: scratchpads.StateBlob) -> gridfire._gridfire.engine.StepDerivatives | None:
+        """
+        Retrieve the most recent RHS calculation from the engine
         """
     def getNetworkReactions(self, arg0: scratchpads.StateBlob) -> gridfire._gridfire.reaction.ReactionSet:
         """

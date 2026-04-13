@@ -3,7 +3,7 @@ GridFire configuration bindings
 """
 from __future__ import annotations
 import typing
-__all__: list[str] = ['AdaptiveEngineViewConfig', 'CVODESolverConfig', 'EngineConfig', 'EngineViewConfig', 'GridFireConfig', 'SolverConfig']
+__all__: list[str] = ['AdaptiveEngineViewConfig', 'BoundaryFluxConfig', 'EngineConfig', 'EngineViewConfig', 'GridFireConfig', 'PointSolverConfig', 'SolverConfig', 'TriggerConfig']
 class AdaptiveEngineViewConfig:
     def __init__(self) -> None:
         ...
@@ -13,20 +13,20 @@ class AdaptiveEngineViewConfig:
     @relativeCullingThreshold.setter
     def relativeCullingThreshold(self, arg0: typing.SupportsFloat) -> None:
         ...
-class CVODESolverConfig:
+class BoundaryFluxConfig:
     def __init__(self) -> None:
         ...
     @property
-    def absTol(self) -> float:
+    def absoluteThreshold(self) -> float:
         ...
-    @absTol.setter
-    def absTol(self, arg0: typing.SupportsFloat) -> None:
+    @absoluteThreshold.setter
+    def absoluteThreshold(self, arg0: typing.SupportsFloat) -> None:
         ...
     @property
-    def relTol(self) -> float:
+    def relativeThreshold(self) -> float:
         ...
-    @relTol.setter
-    def relTol(self, arg0: typing.SupportsFloat) -> None:
+    @relativeThreshold.setter
+    def relativeThreshold(self, arg0: typing.SupportsFloat) -> None:
         ...
 class EngineConfig:
     views: EngineViewConfig
@@ -41,7 +41,45 @@ class GridFireConfig:
     solver: SolverConfig
     def __init__(self) -> None:
         ...
-class SolverConfig:
-    cvode: CVODESolverConfig
+class PointSolverConfig:
+    trigger: TriggerConfig
     def __init__(self) -> None:
+        ...
+    @property
+    def absTol(self) -> float:
+        ...
+    @absTol.setter
+    def absTol(self, arg0: typing.SupportsFloat) -> None:
+        ...
+    @property
+    def relTol(self) -> float:
+        ...
+    @relTol.setter
+    def relTol(self, arg0: typing.SupportsFloat) -> None:
+        ...
+class SolverConfig:
+    pointSolver: PointSolverConfig
+    def __init__(self) -> None:
+        ...
+class TriggerConfig:
+    boundaryFlux: BoundaryFluxConfig
+    def __init__(self) -> None:
+        ...
+    @property
+    def maxConvergenceFailures(self) -> float:
+        ...
+    @maxConvergenceFailures.setter
+    def maxConvergenceFailures(self, arg0: typing.SupportsFloat) -> None:
+        ...
+    @property
+    def offDiagonalThreshold(self) -> float:
+        ...
+    @offDiagonalThreshold.setter
+    def offDiagonalThreshold(self, arg0: typing.SupportsFloat) -> None:
+        ...
+    @property
+    def timestepCollapseRatio(self) -> float:
+        ...
+    @timestepCollapseRatio.setter
+    def timestepCollapseRatio(self, arg0: typing.SupportsFloat) -> None:
         ...
