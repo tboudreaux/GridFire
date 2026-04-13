@@ -107,6 +107,8 @@ glaze.wrap
 tomlplusplus.wrap
 
 .vscode/
+*.trace/
+conanfile.py
 
 *.log
 mpi-install-log.txt
