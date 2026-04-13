@@ -32,7 +32,8 @@
 #include "cppad/cppad.hpp"
 #include "cppad/utility/sparse_rc.hpp"
 #include "cppad/utility/sparse_rcv.hpp"
-
+#include "fourdst/composition/exceptions/exceptions_composition.h"
+#include "gridfire/reaction/reaclib.h"
 
 
 namespace {
@@ -130,6 +131,36 @@ namespace gridfire::engine {
     m_reactions(reactions)
     {
         syncInternalMaps();
+    }
+
+    void GraphEngine::addReaction(
+        const reaction::Reaction& reaction
+    ) {
+        m_reactions.add_reaction(reaction);
+        syncInternalMaps();
+    }
+
+    void GraphEngine::addReaction(
+        const std::string& reaction_id
+    ) {
+        const auto& allReaclibReactions = reaclib::get_all_reaclib_reactions();
+        const auto& reaction = allReaclibReactions.get(reaction_id);
+        if (reaction.has_value()) {
+            m_reactions.add_reaction(reaction.value()->clone());
+        } else {
+            throw exceptions::BadCollectionError(std::format("Unable to locate reaction with ID {} in reaclib set", reaction_id));
+        }
+    }
+
+    std::unique_ptr<scratch::StateBlob> GraphEngine::constructStateBlob(const scratch::StateBlob *blob) const {
+        if (blob) {
+            throw exceptions::ScratchPadError("GraphEngine does not support accepting an external StateBlob. The state blob for GraphEngine must be constructed internally to ensure it contains the correct scratchpad states.");
+        }
+        auto i_blob = std::make_unique<scratch::StateBlob>();
+        i_blob->enroll<engine::scratch::GraphEngineScratchPad>();
+        auto* state = scratch::get_state<scratch::GraphEngineScratchPad, false>(*i_blob);
+        state->initialize(*this);
+        return i_blob;
     }
 
     std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergy(
@@ -761,7 +792,14 @@ namespace gridfire::engine {
         for (const auto& species : m_networkSpecies ) {
             result.registerSpecies(species);
             if (comp.contains(species)) {
-                result.setMolarAbundance(species, comp.getMolarAbundance(species));
+                double Y = comp.getMolarAbundance(species);
+                if (Y < 0.0 && std::abs(Y) <= 1e-16) {
+                    result.setMolarAbundance(species, 0.0);
+                } else if (Y < 0.0 && std::abs(Y) >= 1e-16) {
+                    throw fourdst::composition::exceptions::InvalidCompositionError(std::format("Molar abundance for species {} is negative (Y = {}). GraphEngine does not support non-physical negative abundances, even if they are very small in magnitude (clamp is 1e-16). Check input composition for validity.", species.name(), Y));
+                } else {
+                    result.setMolarAbundance(species, Y);
+                }
             }
         }
         return result;
@@ -997,7 +1035,7 @@ namespace gridfire::engine {
         for (const auto& species: m_networkSpecies) {
             double Yi = 0.0; // Small floor to avoid issues with zero abundances
             if (comp.contains(species)) {
-                Yi = comp.getMolarAbundance(species);
+                Yi = std::max(comp.getMolarAbundance(species), 1e-30);
             }
             x[i] = Yi;
             i++;

@@ -255,6 +255,9 @@ namespace gridfire::engine {
         [[nodiscard]] std::optional<StepDerivatives<double>>getMostRecentRHSCalculation(
             scratch::StateBlob &ctx
         ) const override;
+
+        [[nodiscard]] std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const override;
+
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;
@@ -343,7 +346,6 @@ namespace gridfire::engine {
             scratch::StateBlob& ctx,
             const std::vector<std::string>& peNames
         ) const;
-
     };
 
     class FileDefinedEngineView final: public DefinedEngineView {

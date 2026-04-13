@@ -293,6 +293,16 @@ std::optional<gridfire::engine::StepDerivatives<double>> PyDynamicEngine::getMos
     );
 }
 
+std::unique_ptr<gridfire::engine::scratch::StateBlob> PyDynamicEngine::constructStateBlob(
+    const gridfire::engine::scratch::StateBlob *blob) const {
+    PYBIND11_OVERRIDE_PURE(
+        std::unique_ptr<gridfire::engine::scratch::StateBlob>,
+        gridfire::engine::DynamicEngine,
+        constructStateBlob,
+        blob
+    );
+}
+
 const gridfire::engine::Engine& PyEngineView::getBaseEngine() const {
     PYBIND11_OVERRIDE_PURE(
         const gridfire::engine::Engine&,

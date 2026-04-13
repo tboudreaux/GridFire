@@ -10,7 +10,6 @@
 #include "fourdst/config/config.h"
 #include "fourdst/logging/logging.h"
 
-#include "gridfire/engine/procedures/construction.h"
 #include "gridfire/engine/scratchpads/blob.h"
 
 #include "quill/Logger.h"
@@ -235,6 +234,26 @@ namespace gridfire::engine {
         ) const override;
 
         /**
+         * @brief Gets the set of inactive logical reactions in the network.
+         *
+         * @return ReactionSet containing all inactive reactions.
+         *
+         * This method returns the set of reactions that have been culled from the active
+         * network based on the adaptation criteria.
+         */
+        [[nodiscard]] reaction::ReactionSet getInactiveNetworkReactions(
+            scratch::StateBlob &ctx
+        ) const override;
+
+        [[nodiscard]] double getInactiveReactionMolarReactionFlow(
+            scratch::StateBlob& ctx,
+            const reaction::Reaction &reaction,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const override;
+
+        /**
          * @brief Computes timescales for all active species in the network.
          *
          * @param ctx The scratchpad context for storing thread-local data.
@@ -319,6 +338,7 @@ namespace gridfire::engine {
         /**
          * @brief Primes the engine with the given network input.
          *
+         * @param ctx The scratchpad context for storing thread-local data.
          * @param netIn The current network input, containing temperature, density, and composition.
          * @return A PrimingReport indicating the result of the priming operation.
          *
@@ -367,6 +387,8 @@ namespace gridfire::engine {
         [[nodiscard]] std::optional<StepDerivatives<double>>getMostRecentRHSCalculation(
             scratch::StateBlob &ctx
         ) const override;
+
+        [[nodiscard]] std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const override;
     private:
         using LogManager = fourdst::logging::LogManager;
 
@@ -399,7 +421,7 @@ namespace gridfire::engine {
          * @param netIn The current network input, containing temperature, density, and composition.
          * @return A pair with the first element a vector of ReactionFlow structs, each containing a pointer to a
          * reaction and its calculated flow rate and the second being a composition object where species which were not
-         * present in netIn but are present in the definition of the base engine are registered but have 0 mass fraction
+         * present in netIn but are present in the definition of the base engine are registered but have 0 mass fraction.
          *
          * @par Algorithm:
          * 1. Iterates through all species in the base engine's network.

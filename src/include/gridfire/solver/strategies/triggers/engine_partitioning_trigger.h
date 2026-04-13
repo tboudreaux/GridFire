@@ -4,6 +4,7 @@
 #include "gridfire/trigger/trigger_result.h"
 #include "gridfire/solver/strategies/PointSolver.h"
 #include "fourdst/logging/logging.h"
+#include "gridfire/config/config.h"
 
 #include <string>
 #include <deque>
@@ -316,6 +317,46 @@ namespace gridfire::trigger::solver::CVODE {
         bool rel_failure(const gridfire::solver::PointSolverTimestepContext& ctx) const;
     };
 
+    class BoundaryFluxTrigger final : public Trigger<gridfire::solver::PointSolverTimestepContext> {
+    public:
+        explicit BoundaryFluxTrigger(double relativeThreshold, double absoluteThreshold);
+        bool check(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
+        void update(const gridfire::solver::PointSolverTimestepContext &ctx) override;
+        void step(const gridfire::solver::PointSolverTimestepContext &ctx) override;
+        void reset() override;
+
+        std::string name() const override;
+        TriggerResult why(const gridfire::solver::PointSolverTimestepContext &ctx) const override;
+        std::string describe() const override;
+        size_t numTriggers() const override;
+        size_t numMisses() const override;
+    private:
+        enum class ReactionSetType : uint8_t {
+            ACTIVE,
+            INACTIVE
+        };
+
+        static double get_reaction_set_flow(
+            const reaction::ReactionSet& reactions,
+            const gridfire::solver::PointSolverTimestepContext& ctx,
+            const fourdst::composition::Composition& comp,
+            double T9,
+            double rho,
+            ReactionSetType type
+            );
+    private:
+        quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
+
+        mutable size_t m_hits = 0;
+        mutable size_t m_misses = 0;
+        mutable size_t m_updates = 0;
+        mutable size_t m_resets = 0;
+
+        double m_relativeThreshold;
+        double m_absoluteThreshold;
+
+    };
+
     /**
      * @brief Compose a trigger suitable for deciding engine re-partitioning during CVODE solves.
      *
@@ -329,18 +370,9 @@ namespace gridfire::trigger::solver::CVODE {
      * See engine_partitioning_trigger.cpp for construction details using OrTrigger and
      * EveryNthTrigger from trigger_logical.h.
      *
-     * @param simulationTimeInterval Interval used by SimulationTimeTrigger (> 0).
-     * @param offDiagonalThreshold Off-diagonal Jacobian magnitude threshold (>= 0).
-     * @param timestepCollapseRatio Threshold for timestep deviation (>= 0, and <= 1 when relative).
-     * @param maxConvergenceFailures Window size for timestep averaging (>= 1 recommended).
      * @return A unique_ptr to a composed Trigger<TimestepContext> implementing the policy above.
      *
      * @note The exact policy is subject to change; this function centralizes that decision.
      */
-    std::unique_ptr<Trigger<gridfire::solver::PointSolverTimestepContext>> makeEnginePartitioningTrigger(
-        double simulationTimeInterval,
-        double offDiagonalThreshold,
-        double timestepCollapseRatio,
-        size_t maxConvergenceFailures
-    );
+    std::unique_ptr<Trigger<gridfire::solver::PointSolverTimestepContext>> makeEnginePartitioningTrigger(const config::TriggerConfig& cfg);
 }

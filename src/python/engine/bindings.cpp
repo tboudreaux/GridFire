@@ -194,6 +194,25 @@ namespace {
             py::arg("ctx"),
             py::arg("species"),
             "Get the status of a species in the network."
+        )
+        .def("constructStateBlob",
+            &T::constructStateBlob,
+            py::arg("blob") = std::nullopt,
+            "Construct the state blob for this engine. Generally base engines (GraphEngine) can call this with no arguments whereas views should take an argument to an already constructed state blob which will be cloned and then the clone will be modified"
+        )
+        .def(
+            "getMostRecentRHSCalculation",
+            [](const T& self, sp::StateBlob& ctx) -> std::optional<gridfire::engine::StepDerivatives<double>> {
+                auto result =  self.getMostRecentRHSCalculation(ctx);
+                if (!result.has_value()) {
+                    return std::nullopt;
+                } else {
+                    return result.value();
+                }
+
+            },
+            py::arg("ctx"),
+            "Retrieve the most recent RHS calculation from the engine"
         );
 
     }
@@ -529,7 +548,18 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
         &gridfire::engine::GraphEngine::isUsingReverseReactions,
         "Check if the engine is using reverse reactions."
     );
-
+    py_graph_engine_bindings.def(
+        "addReaction",
+        py::overload_cast<const gridfire::reaction::Reaction&>(&gridfire::engine::GraphEngine::addReaction),
+        py::arg("reaction"),
+        "Add a reaction to the engine's network manually."
+    );
+    py_graph_engine_bindings.def(
+        "addReaction",
+        py::overload_cast<const std::string&>(&gridfire::engine::GraphEngine::addReaction),
+        py::arg("reaction_id"),
+        "Add a reaction to the engine's network manually using a reaction identifier string."
+    );
     // Register the general dynamic engine bindings
     registerDynamicEngineDefs<gridfire::engine::GraphEngine, gridfire::engine::DynamicEngine>(py_graph_engine_bindings);
 }

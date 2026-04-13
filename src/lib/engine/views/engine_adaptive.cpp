@@ -166,6 +166,35 @@ namespace gridfire::engine {
         return scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx) -> active_reactions;
     }
 
+    reaction::ReactionSet AdaptiveEngineView::getInactiveNetworkReactions(scratch::StateBlob &ctx) const {
+        const reaction::ReactionSet& baseEngineReactions = m_baseEngine.getNetworkReactions(ctx);
+        const reaction::ReactionSet baseEngineInactiveReactions = m_baseEngine.getInactiveNetworkReactions(ctx);
+
+
+        reaction::ReactionSet inactiveReactions = baseEngineInactiveReactions;
+        const auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, true>(ctx);
+        const reaction::ReactionSet& activeReactions = state->active_reactions;
+
+        for (const auto& active_reaction : baseEngineReactions) {
+            if (!inactiveReactions.contains(*active_reaction) && !activeReactions.contains(*active_reaction)) {
+                inactiveReactions.add_reaction(*active_reaction);
+            }
+        }
+
+        return inactiveReactions;
+
+    }
+
+    double AdaptiveEngineView::getInactiveReactionMolarReactionFlow(
+        scratch::StateBlob &ctx,
+        const reaction::Reaction &reaction,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        return m_baseEngine.calculateMolarReactionFlow(ctx, reaction, comp, T9, rho);
+    }
+
     std::expected<std::unordered_map<Species, double>, EngineStatus> AdaptiveEngineView::getSpeciesTimescales(
         scratch::StateBlob& ctx,
         const fourdst::composition::CompositionAbstract &comp,
@@ -266,6 +295,19 @@ namespace gridfire::engine {
         scratch::StateBlob &ctx
     ) const {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
+    }
+
+    std::unique_ptr<scratch::StateBlob> AdaptiveEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
+        std::unique_ptr<scratch::StateBlob> i_blob;
+        if (blob) {
+            i_blob = blob->clone_structure();
+        } else {
+            i_blob = std::make_unique<scratch::StateBlob>();
+        }
+        i_blob->enroll<scratch::AdaptiveEngineViewScratchPad>();
+        auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, false>(*i_blob);
+        state->initialize(*this);
+        return i_blob;
     }
 
     size_t AdaptiveEngineView::getSpeciesIndex(

@@ -130,6 +130,10 @@ public:
         gridfire::engine::scratch::StateBlob &ctx
     ) const override;
 
+    std::unique_ptr<gridfire::engine::scratch::StateBlob> constructStateBlob(
+        const gridfire::engine::scratch::StateBlob *blob
+    ) const override;
+
 private:
     mutable std::vector<fourdst::atomic::Species> m_species_cache;
 };

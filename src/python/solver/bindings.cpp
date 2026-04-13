@@ -51,6 +51,13 @@ void register_solver_bindings(const py::module &m) {
         },
         py::return_value_policy::reference_internal
     );
+    py_cvode_timestep_context.def_property_readonly(
+        "composition",
+        [](const gridfire::solver::PointSolverTimestepContext& self) -> fourdst::composition::Composition {
+            return self.getPhysicalComposition();
+        }
+    );
+
 
 
     auto py_solver_context_base = py::class_<gridfire::solver::SolverContextBase>(m, "SolverContextBase");
@@ -165,6 +172,20 @@ void register_solver_bindings(const py::module &m) {
         py::arg("engine"),
         "Initialize the PointSolver object."
     );
+
+    py_point_solver.def(
+        py::init<gridfire::engine::DynamicEngine&, gridfire::config::GridFireConfig&>(),
+        py::arg("engine"),
+        py::arg("config"),
+        "Initialize the PointSolver object with a configuration set."
+    );
+
+    py_point_solver.def(
+        "getConfig",
+        &gridfire::solver::PointSolver::getConfig,
+        "Get a copy of the config object"
+    );
+
 
     py_point_solver.def(
         "evaluate",

@@ -6,10 +6,24 @@
 namespace py = pybind11;
 
 void register_config_bindings(pybind11::module &m) {
+
+    py::class_<gridfire::config::BoundaryFluxConfig>(m, "BoundaryFluxConfig")
+        .def(py::init<>())
+        .def_readwrite("relativeThreshold", &gridfire::config::BoundaryFluxConfig::relativeThreshold)
+        .def_readwrite("absoluteThreshold", &gridfire::config::BoundaryFluxConfig::absoluteThreshold);
+
+    py::class_<gridfire::config::TriggerConfig>(m, "TriggerConfig")
+        .def(py::init<>())
+        .def_readwrite("offDiagonalThreshold", &gridfire::config::TriggerConfig::offDiagonalThreshold)
+        .def_readwrite("timestepCollapseRatio", &gridfire::config::TriggerConfig::timestepCollapseRatio)
+        .def_readwrite("maxConvergenceFailures", &gridfire::config::TriggerConfig::maxConvergenceFailures)
+        .def_readwrite("boundaryFlux", &gridfire::config::TriggerConfig::boundaryFlux);
+
     py::class_<gridfire::config::PointSolverConfig>(m, "PointSolverConfig")
         .def(py::init<>())
         .def_readwrite("absTol", &gridfire::config::PointSolverConfig::absTol)
-        .def_readwrite("relTol", &gridfire::config::PointSolverConfig::relTol);
+        .def_readwrite("relTol", &gridfire::config::PointSolverConfig::relTol)
+        .def_readwrite("trigger", &gridfire::config::PointSolverConfig::trigger);
 
     py::class_<gridfire::config::SolverConfig>(m, "SolverConfig")
         .def(py::init<>())

@@ -30,6 +30,7 @@
 #include "sunlinsol/sunlinsol_dense.h"
 
 #include  "xxhash64.h"
+#include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "fourdst/composition/utils/composition_hash.h"
 
 namespace {
@@ -1123,6 +1124,19 @@ namespace gridfire::engine {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
     }
 
+    std::unique_ptr<scratch::StateBlob> MultiscalePartitioningEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
+        std::unique_ptr<scratch::StateBlob> i_blob;
+        if (blob) {
+            i_blob = blob->clone_structure();
+        } else {
+            i_blob = std::make_unique<scratch::StateBlob>();
+        }
+        i_blob->enroll<scratch::MultiscalePartitioningEngineViewScratchPad>();
+        auto* state = scratch::get_state<scratch::MultiscalePartitioningEngineViewScratchPad, false>(*i_blob);
+        state->initialize();
+        return i_blob;
+    }
+
     size_t MultiscalePartitioningEngineView::getSpeciesIndex(
         scratch::StateBlob& ctx,
         const Species &species
@@ -1549,8 +1563,10 @@ namespace gridfire::engine {
                     m_logger->flush_log();
                     throw exceptions::EngineError("Non-finite abundance computed for species " + std::string(sp.name()) + " in QSE group solve.");
                 }
-                if (y < 0.0 && std::abs(y) < 1e-20) {
+                if (y < 0.0 && std::abs(y) < 1e-16) {
                     abundances.push_back(0.0);
+                } else if (y < 0 && std::abs(y) >= 1e-16) {
+                    throw fourdst::composition::exceptions::InvalidCompositionError(std::format("Computed negative and non-trivial abundance {} for species {} in QSE group solve at T9 = {}, rho = {}. This likely indicates a failure of the QSE solver to converge to a physical solution.", y, sp.name(), T9, rho));
                 } else {
                     abundances.push_back(y);
                 }

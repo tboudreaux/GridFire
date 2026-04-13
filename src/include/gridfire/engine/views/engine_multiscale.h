@@ -611,6 +611,8 @@ namespace gridfire::engine {
         [[nodiscard]] std::optional<StepDerivatives<double>>getMostRecentRHSCalculation(
             scratch::StateBlob &
         ) const override;
+
+        [[nodiscard]] std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const override;
     public:
         /**
          * @brief Struct representing a QSE group.
@@ -990,9 +992,6 @@ namespace gridfire::engine {
             const std::vector<QSEGroup> &groups,
             const std::vector<reaction::ReactionSet> &groupReactions
         );
-
-    public:
-
     };
 }
 

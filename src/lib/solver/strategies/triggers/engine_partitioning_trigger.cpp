@@ -4,11 +4,15 @@
 #include "gridfire/trigger/trigger_logical.h"
 #include "gridfire/trigger/trigger_abstract.h"
 
+#include "sundials/sundials_nvector.h"
+
 #include "quill/LogMacros.h"
 
 #include <memory>
 #include <deque>
 #include <string>
+
+#include "gridfire/utils/utils.h"
 
 namespace {
     template <typename T>
@@ -369,23 +373,195 @@ namespace gridfire::trigger::solver::CVODE {
         return false;
     }
 
+    BoundaryFluxTrigger::BoundaryFluxTrigger(
+        const double relativeThreshold,
+        const double absoluteThreshold
+    ) :
+    m_relativeThreshold(relativeThreshold),
+    m_absoluteThreshold(absoluteThreshold) {
+        if (m_relativeThreshold <= 0.0) {
+            throw exceptions::GridFireError(std::format("Relative threshold must be positive and non zero, currently it is {}", m_relativeThreshold));
+        }
+    }
+
+    void BoundaryFluxTrigger::step(const gridfire::solver::PointSolverTimestepContext &ctx) {
+        // Does nothing; not a stateful trigger
+    }
+
+
+    bool BoundaryFluxTrigger::check(const gridfire::solver::PointSolverTimestepContext &ctx) const {
+        // First get the current total flow through all active reactions
+        sunrealtype* y_data = N_VGetArrayPointer(ctx.state);
+        std::vector<double> Y(y_data, y_data + ctx.networkSpecies.size());
+        // Adjust any tiny negative abundances to zero using std::ranges
+        std::ranges::transform(
+            Y,
+            Y.begin(),
+            [](const double y) {
+                if (y < 0 && y > -1e-16) {
+                    return 0.0;
+                }
+                return y;
+            }
+        );
+        const fourdst::composition::Composition comp(ctx.networkSpecies, Y);
+
+        const double net_active_flow = get_reaction_set_flow(
+            ctx.engine.getNetworkReactions(ctx.state_ctx),
+            ctx,
+            comp,
+            ctx.T9,
+            ctx.rho,
+            ReactionSetType::ACTIVE
+        );
+
+        const reaction::ReactionSet inactiveReactions = ctx.engine.getInactiveNetworkReactions(ctx.state_ctx);
+        if (inactiveReactions.empty()) {
+            m_misses++;
+            return false; // No inactive reactions to consider
+        }
+
+        const double net_boundary_flow = get_reaction_set_flow(
+            inactiveReactions,
+            ctx,
+            comp,
+            ctx.T9,
+            ctx.rho,
+            ReactionSetType::INACTIVE
+        );
+
+
+        if (net_boundary_flow > m_absoluteThreshold) {
+            m_hits++;
+            return true;
+        }
+
+        const double relative_boundary_flow = net_boundary_flow / (net_active_flow + 1e-300); // Avoid division by zero
+        if (relative_boundary_flow >= m_relativeThreshold) {
+            m_hits++;
+            return true;
+        }
+
+        m_misses++;
+        return false;
+
+    }
+
+    void BoundaryFluxTrigger::update(const gridfire::solver::PointSolverTimestepContext &ctx) {
+        // No-op since this is a stateless trigger
+        m_updates++;
+    }
+
+    void BoundaryFluxTrigger::reset() {
+        m_hits = 0;
+        m_misses = 0;
+        m_updates = 0;
+        m_resets++;
+    }
+
+    std::string BoundaryFluxTrigger::name() const {
+        return "BoundaryFluxTrigger";
+    }
+
+    std::string BoundaryFluxTrigger::describe() const {
+        return std::format("BoundaryFluxTrigger(rel={}, abs={})", m_relativeThreshold, m_absoluteThreshold);
+    }
+
+    TriggerResult BoundaryFluxTrigger::why(const gridfire::solver::PointSolverTimestepContext &ctx) const {
+        sunrealtype* y_data = N_VGetArrayPointer(ctx.state);
+        const std::vector<double> Y(y_data, y_data + ctx.networkSpecies.size());
+        const fourdst::composition::Composition comp(ctx.networkSpecies, Y);
+
+        const double net_active_flow = get_reaction_set_flow(
+            ctx.engine.getNetworkReactions(ctx.state_ctx),
+            ctx,
+            comp,
+            ctx.T9,
+            ctx.rho,
+            ReactionSetType::ACTIVE
+        );
+        const reaction::ReactionSet inactiveReactions = ctx.engine.getInactiveNetworkReactions(ctx.state_ctx);
+        const double net_boundary_flow = get_reaction_set_flow(
+            inactiveReactions,
+            ctx,
+            comp,
+            ctx.T9,
+            ctx.rho,
+            ReactionSetType::INACTIVE
+        );
+
+        TriggerResult result;
+        result.name = name();
+        if (check(ctx)) {
+            result.value = true;
+            result.description = std::format(
+                "Triggered because boundary flux ({} mol/s) exceeded thresholds: absolute threshold = {} mol/s, relative threshold = {} (boundary flow = {} mol/s, active flow = {} mol/s)",
+                net_boundary_flow,
+                m_absoluteThreshold,
+                m_relativeThreshold,
+                net_boundary_flow,
+                net_active_flow
+            );
+        } else {
+            result.value = false;
+            result.description = std::format(
+                "Not triggered because boundary flux ({} mol/g/s) did not exceed thresholds: absolute threshold = {} mol/g/s, relative threshold = {} (boundary flow = {} mol/g/s, active flow = {} mol/g/s)",
+                net_boundary_flow,
+                m_absoluteThreshold,
+                m_relativeThreshold,
+                net_boundary_flow,
+                net_active_flow
+            );
+        }
+
+        return result;
+    }
+
+    size_t BoundaryFluxTrigger::numMisses() const {
+        return m_misses;
+    }
+
+    double BoundaryFluxTrigger::get_reaction_set_flow(
+        const reaction::ReactionSet &reactions,
+        const gridfire::solver::PointSolverTimestepContext &ctx,
+        const fourdst::composition::Composition &comp,
+        const double T9,
+        const double rho,
+        const ReactionSetType type
+    ) {
+        double flow = 0.0;
+        for (const auto& reaction: reactions) {
+            double rFlow = 0.0;
+            if (type == ReactionSetType::ACTIVE) {
+                rFlow = ctx.engine.calculateMolarReactionFlow(ctx.state_ctx, *reaction, comp, T9, rho);
+            } else {
+                rFlow = ctx.engine.getInactiveReactionMolarReactionFlow(ctx.state_ctx, *reaction, comp, T9, rho);
+            }
+            flow += std::abs(rFlow);
+        }
+
+        return flow;
+
+    }
+
+    size_t BoundaryFluxTrigger::numTriggers() const {
+        return m_hits;
+    }
+
     std::unique_ptr<Trigger<gridfire::solver::PointSolverTimestepContext>> makeEnginePartitioningTrigger(
-        const double simulationTimeInterval,
-        const double offDiagonalThreshold,
-        const double timestepCollapseRatio,
-        const size_t maxConvergenceFailures
+        const config::TriggerConfig& cfg
     ) {
         using ctx_t = gridfire::solver::PointSolverTimestepContext;
 
-        // 1. INSTABILITY TRIGGERS (High Priority)
+        // 1. INSTABILITY TRIGGERS
         auto convergenceFailureTrigger = std::make_unique<ConvergenceFailureTrigger>(
-            maxConvergenceFailures,
+            cfg.maxConvergenceFailures,
             1.0f,
             10
         );
 
         auto timestepCollapseTrigger = std::make_unique<TimestepCollapseTrigger>(
-            timestepCollapseRatio,
+            cfg.timestepCollapseRatio,
             true, // relative
             5
         );
@@ -396,12 +572,24 @@ namespace gridfire::trigger::solver::CVODE {
         );
 
         // 2. MAINTENANCE TRIGGERS
-        auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(offDiagonalThreshold);
+        auto offDiagTrigger = std::make_unique<OffDiagonalTrigger>(cfg.offDiagonalThreshold);
+
+        // 3. PREDICTIVE TRIGGERS
+        auto boundaryFluxTrigger = std::make_unique<BoundaryFluxTrigger>(
+            cfg.boundaryFlux.relativeThreshold,
+            cfg.boundaryFlux.absoluteThreshold
+        );
+
+        // Combine boundary flux into off-diagonal trigger
+        auto nonInstabilityGroup = std::make_unique<OrTrigger<ctx_t>>(
+            std::move(offDiagTrigger),
+            std::move(boundaryFluxTrigger)
+        );
 
         // Combine: (Instability) OR (Structure Change)
         return std::make_unique<OrTrigger<ctx_t>>(
             std::move(instabilityGroup),
-            std::move(offDiagTrigger)
+            std::move(nonInstabilityGroup)
         );
     }
 

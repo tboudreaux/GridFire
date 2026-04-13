@@ -8,6 +8,8 @@
 #include "gridfire/engine/types/reporting.h"
 #include "gridfire/engine/types/jacobian.h"
 
+#include "gridfire/exceptions/error_engine.h"
+
 #include "gridfire/engine/scratchpads/blob.h"
 
 #include "fourdst/composition/composition_abstract.h"
@@ -183,6 +185,7 @@ namespace gridfire::engine {
         /**
          * @brief Generate the Jacobian matrix for the current state.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -200,6 +203,7 @@ namespace gridfire::engine {
         /**
          * @brief Generate the Jacobian matrix for the current state using a subset of active species.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -221,6 +225,7 @@ namespace gridfire::engine {
         /**
          * @brief Generate the Jacobian matrix for the current state with a specified sparsity pattern.
          *
+         * @param ctx Get the scratchpad context for the current state.
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -245,6 +250,7 @@ namespace gridfire::engine {
         /**
          * @brief Calculate the molar reaction flow for a given reaction.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param reaction The reaction for which to calculate the flow.
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
@@ -289,6 +295,39 @@ namespace gridfire::engine {
             scratch::StateBlob& ctx
         ) const = 0;
 
+        /**
+         * @brief Get the set of inactive reactions in the network.
+         *
+         * @return ReactionSet containing all inactive reactions.
+         *
+         * By default, this method returns an empty set. Derived classes can override
+         * this method to provide the actual set of inactive reactions based on their
+         * internal logic (e.g., reaction flow culling, QSE partitioning).
+         */
+        [[nodiscard]] virtual reaction::ReactionSet getInactiveNetworkReactions(
+            scratch::StateBlob &ctx
+        ) const {
+            return reaction::ReactionSet{};
+        }
+
+        [[nodiscard]] virtual double getInactiveReactionMolarReactionFlow(
+            scratch::StateBlob& ctx,
+            const reaction::Reaction &reaction,
+            const fourdst::composition::CompositionAbstract &comp,
+            const double T9,
+            const double rho
+        ) const {
+            std::string warning_msg = std::format(
+                "[GridFire Warning ({}, {}, {})]: Engine of type '{}' does not implement getInactiveReactionMolarReactionFlow. Returning 0.0 flow for reaction '{}'.",
+                __FILE__,
+                __LINE__,
+                __FUNCTION__,
+                typeid(*this).name(),
+                reaction.id()
+            );
+            return 0.0;
+        }
+
 
         /**
          * @brief Compute timescales for all species in the network.
@@ -311,6 +350,7 @@ namespace gridfire::engine {
         /**
          * @brief Compute destruction timescales for all species in the network.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
@@ -329,6 +369,7 @@ namespace gridfire::engine {
         /**
          * @brief Update the thread local scratch pad state of a network.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param netIn A struct containing the current network input, such as
          *              temperature, density, and composition.
          *
@@ -354,6 +395,8 @@ namespace gridfire::engine {
         /**
          * @brief Get the current electron screening model.
          *
+         * @param ctx The scratchpad context for the current state.
+         *
          * @return The currently active screening model type.
          *
          * @par Usage Example:
@@ -368,6 +411,7 @@ namespace gridfire::engine {
         /**
          * @brief Get the index of a species in the network.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param species The species to look up.
          *
          * This method allows querying the index of a specific species in the
@@ -382,6 +426,7 @@ namespace gridfire::engine {
         /**
          * @brief Prime the engine with initial conditions.
          *
+         * @param ctx The scratchpad context for the current state.
          * @param netIn The input conditions for the network.
          * @return PrimingReport containing information about the priming process.
          *
@@ -403,6 +448,7 @@ namespace gridfire::engine {
          * from each sub engine.
          * @note It is up to each engine to decide how to handle filling in the return composition.
          * @note These methods return an unfinalized composition which must then be finalized by the caller
+         * @param ctx The scratchpad context for the current state.
          * @param comp Input composition to "normalize".
          * @param T9
          * @param rho
@@ -433,6 +479,8 @@ namespace gridfire::engine {
         [[nodiscard]] virtual std::optional<StepDerivatives<double>> getMostRecentRHSCalculation(
             scratch::StateBlob& ctx
         ) const = 0;
+
+        [[nodiscard]] virtual std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const = 0;
 
     };
 }

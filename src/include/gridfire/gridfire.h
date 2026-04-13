@@ -11,4 +11,4 @@
 #include "gridfire/trigger/trigger.h"
 #include "gridfire/utils/utils.h"
 
-#include "types/types.h"
+#include "gridfire/types/types.h"

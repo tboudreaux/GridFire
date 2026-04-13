@@ -31,6 +31,7 @@ namespace gridfire::engine {
         /**
          * @brief Constructs the view by looking up the priming species by symbol.
          *
+         * @param ctx State Blob containing Engine context
          * @param primingSymbol Symbol string of the species to prime.
          * @param baseEngine Reference to the base DynamicEngine to wrap.
          * @pre primingSymbol must correspond to a valid species in atomic::species registry.
@@ -46,6 +47,7 @@ namespace gridfire::engine {
         /**
          * @brief Constructs the view using an existing Species object.
          *
+         * @param ctx State Blob containing Engine context
          * @param primingSpecies The species object to prime.
          * @param baseEngine Reference to the base DynamicEngine to wrap.
          * @pre primingSpecies must be valid and present in the network of baseEngine.
@@ -66,6 +68,7 @@ namespace gridfire::engine {
         /**
          * @brief Constructs the set of reaction names that involve the priming species.
          *
+         * @param ctx State blob containing engine context
          * @param primingSpecies Species for which to collect priming reactions.
          * @param baseEngine Base engine containing the full network of reactions.
          * @pre baseEngine.getNetworkReactions() returns a valid iterable set of reactions.

@@ -267,6 +267,10 @@ namespace gridfire::engine {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
     }
 
+    std::unique_ptr<scratch::StateBlob> DefinedEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
+        throw exceptions::ScratchPadError("DefinedEngineView does not support StateBlob construction. This will be implemented in a future version.");
+    }
+
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap(
         scratch::StateBlob& ctx
     ) const {

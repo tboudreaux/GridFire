@@ -58,6 +58,8 @@ namespace gridfire::solver {
             const size_t currentNonlinearIterations; ///< Total number of non-linear iterations
             const std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>& reactionContributionMap; ///< Map of reaction contributions for the current step
             engine::scratch::StateBlob& state_ctx; ///< Reference to the engine scratch state blob
+            double current_total_energy = 0.0; ///< Current energy generation rate [erg/g/s]
+            double current_neutrino_energy_loss_rate = 0.0;   ///< Current neutrino energy loss rate [erg/g/s]
 
             PointSolverTimestepContext(
                 double t,
@@ -76,6 +78,8 @@ namespace gridfire::solver {
             );
 
             [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
+
+            [[nodiscard]] fourdst::composition::Composition getPhysicalComposition() const;
         };
 
     using TimestepCallback = std::function<void(const PointSolverTimestepContext& context)>; ///< Type alias for a timestep callback function.
@@ -169,6 +173,13 @@ namespace gridfire::solver {
             const engine::DynamicEngine& engine
         );
 
+        PointSolver(
+            const engine::DynamicEngine& engine,
+            const config::GridFireConfig& config
+        );
+
+
+        config::GridFireConfig getConfig() const { return *m_config; }
         /**
          * @brief Integrate from t=0 to netIn.tMax and return final composition and energy.
          *
@@ -264,6 +275,17 @@ namespace gridfire::solver {
          */
         static int cvode_jac_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, SUNMatrix J, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
+        /**
+         * @brief CVODE error handler that logs errors and warnings from SUNDIALS using the solver's logger.
+         * @param line
+         * @param func
+         * @param file
+         * @param msg
+         * @param err_code
+         * @param err_user_data
+         * @param sunctx
+         */
+        static void cvode_error_handler(int line, const char *func, const char *file, const char *msg, SUNErrCode err_code, void *err_user_data, SUNContext sunctx);
         /**
          * @brief Compute RHS into ydot at time t from the engine and current state y.
          *

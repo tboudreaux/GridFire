@@ -137,6 +137,18 @@ namespace gridfire::engine {
          */
         explicit GraphEngine(const reaction::ReactionSet &reactions);
 
+        void addReaction(
+            const reaction::Reaction& reaction
+        );
+
+        void addReaction(
+            const std::string& reaction_id
+        );
+
+        std::unique_ptr<scratch::StateBlob> constructStateBlob(
+            const scratch::StateBlob *blob = nullptr
+        ) const override;
+
         /**
          * @brief Calculates the right-hand side (dY/dt) and energy generation rate.
          *
@@ -203,6 +215,7 @@ namespace gridfire::engine {
             double T9,
             double rho
         ) const override;
+
 
         /**
          * @brief Calculates the derivatives of the energy generation rate with respect to temperature and density for a subset of reactions

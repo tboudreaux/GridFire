@@ -23,6 +23,7 @@
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/exceptions/error_solver.h"
 #include "gridfire/utils/sundials.h"
+#include "gridfire/config/config.h"
 
 
 namespace gridfire::solver {
@@ -72,6 +73,19 @@ namespace gridfire::solver {
         description.emplace_back("currentConvergenceFailures", "Number of convergence failures for the current step");
         description.emplace_back("currentNonLinearIterations", "Number of nonlinear iterations for the current step");
         return description;
+    }
+
+    fourdst::composition::Composition PointSolverTimestepContext::getPhysicalComposition() const {
+        sunrealtype* y_data = N_VGetArrayPointer(state);
+        std::vector<double> y_vec(y_data, y_data + networkSpecies.size());
+
+        for (int i = 0; i < y_vec.size(); i++) {
+            if (y_vec[i] < 0 && std::abs(y_vec[i]) <= 1e-16) {
+                y_vec[i] = 0.0; // clamp to 0 to avoid small numerical noise issues
+            }
+        }
+        const fourdst::composition::Composition base_comp(networkSpecies, y_vec);
+        return engine.collectComposition(state_ctx, base_comp, T9, rho);
     }
 
     void PointSolverContext::init() {
@@ -165,6 +179,15 @@ namespace gridfire::solver {
         const DynamicEngine &engine
     ): SingleZoneNetworkSolver(engine) {}
 
+    PointSolver::PointSolver(
+        const engine::DynamicEngine &engine,
+        const config::GridFireConfig &config
+    ) : SingleZoneNetworkSolver(engine) {
+        m_config.mutate([&config](auto& cfg) {
+            cfg = config;
+        });
+    }
+
     NetOut PointSolver::evaluate(
         SolverContextBase& solver_ctx,
         const NetIn& netIn
@@ -179,10 +202,13 @@ namespace gridfire::solver {
         bool forceReinitialize
     ) const {
         auto* sctx_p = dynamic_cast<PointSolverContext*>(&solver_ctx);
+        if (sctx_p == nullptr) {
+            throw exceptions::SolverError("Provided solver context is not of type PointSolverContext");
+        }
 
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
-        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(1e12, 1e10, 0.5, 2);
+        auto trigger = trigger::solver::CVODE::makeEnginePartitioningTrigger(m_config->solver.pointSolver.trigger);
         LOG_TRACE_L1(m_logger, "Engine update trigger built!");
 
 
@@ -194,10 +220,10 @@ namespace gridfire::solver {
         //  3. If the user has not set tolerances in code and the config does not have them, use hardcoded defaults
 
         if (!sctx_p->abs_tol.has_value()) {
-            sctx_p->abs_tol = m_config->solver.cvode.absTol;
+            sctx_p->abs_tol = m_config->solver.pointSolver.absTol;
         }
         if (!sctx_p->rel_tol.has_value()) {
-            sctx_p->rel_tol = m_config->solver.cvode.relTol;
+            sctx_p->rel_tol = m_config->solver.pointSolver.relTol;
         }
 
 
@@ -369,6 +395,8 @@ namespace gridfire::solver {
                 rcMap,
                 *sctx_p->engine_ctx
             );
+            ctx.current_total_energy = current_energy;
+            ctx.current_neutrino_energy_loss_rate = accumulated_neutrino_energy_loss;
 
             prev_nonlinear_iterations = nliters + total_nonlinear_iterations;
             prev_convergence_failures = nlcfails + total_convergence_failures;
@@ -395,7 +423,7 @@ namespace gridfire::solver {
                     trigger::printWhy(trigger->why(ctx));
                 }
                 trigger->update(ctx);
-                accumulated_energy += current_energy; // Add the specific energy rate to the accumulated energy
+                accumulated_energy = current_energy; // Add the specific energy rate to the accumulated energy
                 total_nonlinear_iterations += nliters;
                 total_convergence_failures += nlcfails;
                 total_steps += n_steps;
@@ -569,7 +597,7 @@ namespace gridfire::solver {
         LOG_INFO(m_logger, "CVODE iteration complete");
 
         sunrealtype* y_data = N_VGetArrayPointer(sctx_p->Y);
-        accumulated_energy += y_data[numSpecies];
+        accumulated_energy = y_data[numSpecies];
         std::vector<double> y_vec(y_data, y_data + numSpecies);
 
         for (double & i : y_vec) {
@@ -789,6 +817,16 @@ namespace gridfire::solver {
         return 0;
     }
 
+    void PointSolver::cvode_error_handler(int line, const char *func, const char *file, const char *msg, SUNErrCode err_code, void *err_user_data, SUNContext sunctx) {
+        auto* logger = static_cast<quill::Logger*>(err_user_data);
+        if (!logger) return;
+
+        if (err_code < 0) {
+            LOG_ERROR(logger, "[SUNDIALS ERROR] {} at {}:{}: {}", func, file, line, msg);
+        } else {
+            LOG_WARNING(logger, "[SUNDIALS WARNING] {} at {}:{}: {}", func, file, line, msg);
+        }
+    }
     PointSolver::CVODERHSOutputData PointSolver::calculate_rhs(
         const sunrealtype t,
         N_Vector y,
@@ -863,8 +901,11 @@ namespace gridfire::solver {
 
         sctx_p->cvode_mem = CVodeCreate(CV_BDF, sctx_p->sun_ctx);
         utils::check_cvode_flag(sctx_p->cvode_mem == nullptr ? -1 : 0, "CVodeCreate");
+
         sctx_p->Y = utils::init_sun_vector(N, sctx_p->sun_ctx);
         sctx_p->YErr = N_VClone(sctx_p->Y);
+
+        SUNContext_PushErrHandler(sctx_p->sun_ctx, cvode_error_handler, m_logger);
 
         sunrealtype *y_data = N_VGetArrayPointer(sctx_p->Y);
         for (size_t i = 0; i < numSpecies; i++) {
@@ -880,6 +921,7 @@ namespace gridfire::solver {
 
         utils::check_cvode_flag(CVodeInit(sctx_p->cvode_mem, cvode_rhs_wrapper, current_time, sctx_p->Y), "CVodeInit");
         utils::check_cvode_flag(CVodeSStolerances(sctx_p->cvode_mem, relTol, absTol), "CVodeSStolerances");
+        utils::check_cvode_flag(CVodeSetInitStep(sctx_p->cvode_mem, 1.0e-8), "CVodeSetInitStep");
 
         // Constraints
         // We constrain the solution vector using CVODE's built in constraint flags as outlines on page 53 of the CVODE manual
@@ -1003,10 +1045,10 @@ namespace gridfire::solver {
         std::vector<double> E_full(y_err_data, y_err_data + num_components - 1);
 
         if (!sctx_p->abs_tol.has_value()) {
-            sctx_p->abs_tol = m_config->solver.cvode.absTol;
+            sctx_p->abs_tol = m_config->solver.pointSolver.absTol;
         }
         if (!sctx_p->rel_tol.has_value()) {
-            sctx_p->rel_tol = m_config->solver.cvode.relTol;
+            sctx_p->rel_tol = m_config->solver.pointSolver.relTol;
         }
 
         auto result = diagnostics::report_limiting_species(ctx, *user_data.engine, Y_full, E_full, sctx_p->rel_tol.value(), sctx_p->abs_tol.value(), 10, to_file);
