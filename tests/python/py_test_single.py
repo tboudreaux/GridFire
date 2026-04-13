@@ -6,6 +6,8 @@ from fourdst.composition import CanonicalComposition
 from fourdst.atomic import Species
 from gridfire.type import NetIn
 
+from logger import StepLogger
+
 def rescale_composition(comp_ref : Composition, ZZs : float, Y_primordial : float = 0.248) -> Composition:
     CC : CanonicalComposition  = comp_ref.getCanonicalComposition()
 
@@ -61,13 +63,17 @@ def years_to_seconds(years: float) -> float:
 
 def main():
     C = init_composition()
-    netIn = init_netIn(2.75e6, 1.5e1, years_to_seconds(10e9), C)
+    netIn = init_netIn(1.5e7, 1.6e2, years_to_seconds(10e9), C)
     policy = MainSequencePolicy(C)
     construct = policy.construct()
     solver = PointSolver(construct.engine)
     solver_ctx = PointSolverContext(construct.scratch_blob)
-    results = solver.evaluate(solver_ctx, netIn, False, False)
-    print(results)
+
+    stepLogger = StepLogger()
+    solver_ctx.callback = lambda ctx: stepLogger.log_step(ctx);
+    solver.evaluate(solver_ctx, netIn, False, False)
+    stepLogger.to_json("test_single.json", TestName="test_single");
+
 
 if __name__ == "__main__":
     main()

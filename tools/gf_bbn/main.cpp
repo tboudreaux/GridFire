@@ -6,7 +6,6 @@
 #include <format>
 
 #include "gridfire/gridfire.h"
-#include <cppad/utility/thread_alloc.hpp> // Required for parallel_setup
 
 #include "fourdst/composition/composition.h"
 #include "fourdst/logging/logging.h"
@@ -18,21 +17,17 @@
 #include "CLI/CLI.hpp"
 
 #include <clocale>
+#include <cmath>
 
 #include "gridfire/utils/gf_omp.h"
 
 #include "nlohmann/json.hpp"
 
 struct IntermediateResult {
-    double time{};
+    double time;
     fourdst::composition::Composition comp;
-    gridfire::reaction::ReactionSet reactions;
-    std::vector<double> reaction_flows;
-    double current_energy{};
-    double current_neutrino_loss_rate{};
-
-    gridfire::reaction::ReactionSet inactive_reactions;
-    std::vector<double> inactive_reaction_flows;
+    double current_energy;
+    double current_neutrino_loss_rate;
 };
 
 static std::vector<IntermediateResult> g_callbackHistory;
@@ -40,11 +35,15 @@ static std::vector<IntermediateResult> g_callbackHistory;
 gridfire::NetIn init(const double temp, const double rho, const double tMax) {
     std::setlocale(LC_ALL, "");
     quill::Logger* logger = fourdst::logging::LogManager::getInstance().getLogger("log");
-    logger->set_log_level(quill::LogLevel::TraceL2);
+    logger->set_log_level(quill::LogLevel::Info);
 
     using namespace gridfire;
-    const std::vector<double> X            = {0.7081145999999999, 2.94e-5, 0.276, 0.003, 0.0011, 9.62e-3, 1.62e-3, 5.16e-4};
-    const std::vector<std::string> symbols = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
+    constexpr double XpXn = 7.17;
+    constexpr double Xn = 1.0 / (1.0 + XpXn);
+    constexpr double Xp = 1 - Xn;
+
+    const std::vector<double> X            = {Xp, Xn};
+    const std::vector<std::string> symbols = {"H-1", "n-1"};
 
 
     const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);
@@ -167,18 +166,6 @@ void record_abundance_history_callback(const gridfire::solver::PointSolverTimest
     stepResult.time = ctx.t;
     stepResult.current_energy = ctx.current_total_energy;
     stepResult.current_neutrino_loss_rate = ctx.current_neutrino_energy_loss_rate;
-    stepResult.reactions = engine.getNetworkReactions(ctx.state_ctx);
-
-    for (const auto& reactionPtr : stepResult.reactions) {
-        double flow = engine.calculateMolarReactionFlow(ctx.state_ctx, *reactionPtr, comp, ctx.T9, ctx.rho);
-        stepResult.reaction_flows.push_back(flow);
-    }
-
-    stepResult.inactive_reactions = engine.getInactiveNetworkReactions(ctx.state_ctx);
-    for (const auto& reactionPtr : stepResult.inactive_reactions) {
-        double flow = engine.getInactiveReactionMolarReactionFlow(ctx.state_ctx, *reactionPtr, comp, ctx.T9, ctx.rho);
-        stepResult.inactive_reaction_flows.push_back(flow);
-    }
     g_callbackHistory.push_back(stepResult);
 }
 
@@ -202,79 +189,110 @@ void save_callback(const std::string& filename) {
             comp_json[species.name()] = abundance;
         }
         entry["composition"] = comp_json;
-        entry["reactions"] = nlohmann::json::array();
-        for (const auto& [reaction, flow] : std::views::zip(record.reactions, record.reaction_flows)) {
-            nlohmann::json reaction_info;
-            reaction_info["id"] = reaction->id();
-            reaction_info["flow"] = flow;
-            reaction_info["species"] = nlohmann::json::array();
-            reaction_info["Q"] = reaction->qValue();
-            for (const auto& sp : reaction->all_species()) {
-                nlohmann::json species_info;
-                species_info["name"] = sp.name();
-                species_info["stoichiometry"] = reaction->stoichiometry(sp);
-                reaction_info["species"].push_back(species_info);
-            }
-            entry["reactions"].push_back(reaction_info);
-        }
-
-        entry["inactive_reactions"] = nlohmann::json::array();
-        for (const auto& [reaction, flow] : std::views::zip(record.inactive_reactions, record.inactive_reaction_flows)) {
-            nlohmann::json reaction_info;
-            reaction_info["id"] = reaction->id();
-            reaction_info["flow"] = flow;
-            reaction_info["species"] = nlohmann::json::array();
-            reaction_info["Q"] = reaction->qValue();
-            for (const auto& sp : reaction->all_species()) {
-                nlohmann::json species_info;
-                species_info["name"] = sp.name();
-                species_info["stoichiometry"] = reaction->stoichiometry(sp);
-                reaction_info["species"].push_back(species_info);
-            }
-            entry["inactive_reactions"].push_back(reaction_info);
-        }
         j.push_back(entry);
     }
     std::ofstream ofs(filename);
     ofs << j.dump(4);
 }
 
+double T9(const double age) {
+    return 10.0/std::sqrt(age);
+}
+
+double density(const double age) {
+    return 4e-5 * std::pow(T9(age), 3);
+}
+
 int main(int argc, char** argv) {
     GF_PAR_INIT();
     using namespace gridfire;
 
-    double temp = 1.5e7;
-    double rho = 1.5e2;
-    double tMax = 3.1536e+16;
-    bool save_intermediate_results = false;
-    bool display_trigger = false;
-    std::string output_filename = "abundance_history.json";
+    double tMax = 3600;
+    double h = 0.1;
 
-
-    CLI::App app("GridFire Quick CLI Test");
-    app.add_option("--temp", temp, "Initial Temperature")->default_val(std::format("{:5.2E}", temp));
-    app.add_option("--rho", rho, "Initial Density")->default_val(std::format("{:5.2E}", rho));
-    app.add_option("--tmax", tMax, "Maximum Time")->default_val(std::format("{:5.2E}", tMax));
-    app.add_option("--save_intermediate_results", save_intermediate_results, "Save Intermediate Results")->default_val("false");
-    app.add_option("--output", output_filename, "Output filename for intermediate results")->default_val("abundance_history.json");
-    app.add_option("--display_trigger_explanations", display_trigger, "Display trigger explanations during run")->default_val("false");
+    CLI::App app("GridFire Quick BBN Test");
+    app.add_option("--tmax", tMax, "Maximum Time in seconds")->default_val(std::format("{:5.2E}", tMax));
+    app.add_option("--s", h, "Geometric Timestep Scale Factor")->default_val(std::format("{:5.2f}", h));
 
     CLI11_PARSE(app, argc, argv);
-    NetIn netIn = init(temp, rho, tMax);
 
-    policy::MainSequencePolicy stellarPolicy(netIn.composition);
-    auto [engine, ctx_template] = stellarPolicy.construct();
+    NetIn netIn = init(0, 0, tMax);
+    const engine::GraphEngine engine(netIn.composition);
+    auto blob = std::make_unique<engine::scratch::StateBlob>();
+    blob->enroll<engine::scratch::GraphEngineScratchPad>();
+    auto* graph_engine_state = engine::scratch::get_state<engine::scratch::GraphEngineScratchPad, false>(*blob);
+    graph_engine_state->initialize(engine);
 
-    solver::PointSolverContext solver_context(*ctx_template);
+
+    solver::PointSolverContext solver_ctx(*blob);
     solver::PointSolver solver(engine);
-    if (save_intermediate_results) {
-        solver_context.callback = solver::TimestepCallback(callback_main);
-    }
+    solver_ctx.stdout_logging=false;
 
-    NetOut result = solver.evaluate(solver_context, netIn, display_trigger);
-    log_results(result, netIn);
+    double current_time = 180;
+    nlohmann::json j;
+    nlohmann::json meta;
 
-    if (save_intermediate_results) {
-        save_callback(output_filename);
+    meta["tMax"] = tMax;
+    meta["tStart"] = current_time;
+    meta["h"] = h;
+    j.push_back(meta);
+
+    nlohmann::json steps;
+
+    while (current_time < tMax) {
+        nlohmann::json entry;
+        double current_dt = h * current_time;
+        double next_time = current_time + current_dt;
+
+        netIn.tMax = current_dt;
+        double current_temp = T9(current_time) * 1e9;
+        double next_temp = T9(next_time) * 1e9;
+        double burn_temp = (current_temp + next_temp)/2.0;
+
+        double current_density = density(current_time);
+        double next_density = density(next_time);
+        double burn_density = (current_density + next_density)/2.0;
+
+        netIn.temperature = burn_temp;
+        netIn.density = burn_density;
+
+
+        fourdst::composition::Composition initial_comp = netIn.composition;
+
+        NetOut result = solver.evaluate(solver_ctx, netIn);
+        netIn.composition = result.composition;
+        std::println("Time: {:5.2E} (+{:5.2E}), Burn Temp: {:5.2E}, Burn Density: {:5.2E}", current_time, current_dt, burn_temp, burn_density);
+
+        const fourdst::composition::Composition& comp = result.composition;
+
+        auto Xi = [&](const std::string& symbol) -> double {
+            if (!initial_comp.contains(symbol)) {
+                return 0;
+            }
+            return initial_comp.getMassFraction(symbol);
+        };
+
+        entry["t"] = current_time;
+        entry["T"] = burn_temp;
+        entry["D"] = burn_density;
+        entry["mu"] = comp.getMeanParticleMass();
+        auto lifetimes = engine.getSpeciesTimescales(*blob, comp, burn_temp, burn_density);
+        if (lifetimes.has_value()) {
+            entry["tau_n"] = lifetimes.value().at(fourdst::atomic::n_1);
+        }
+
+        for (const auto& [sp, finalY] : comp) {
+            double initialY = Xi(std::string(sp.name()));
+            entry[std::format("{}_f", sp.name())] = finalY;
+            entry[std::format("{}_i", sp.name())] = initialY;
+        }
+
+        steps.push_back(entry);
+
+
+        current_time += current_dt;
     }
+    j.push_back(steps);
+    std::ofstream out("BBNResults.json");
+    out << j.dump(4);
 }

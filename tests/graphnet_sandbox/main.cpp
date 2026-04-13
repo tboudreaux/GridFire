@@ -5,10 +5,8 @@
 #include <thread>
 #include <format>
 
-#include "gridfire/gridfire.h"
 #include <cppad/utility/thread_alloc.hpp> // Required for parallel_setup
 
-#include "fourdst/composition/composition.h"
 #include "fourdst/logging/logging.h"
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/utils.h"
@@ -19,6 +17,8 @@
 
 #include <clocale>
 
+#include "gridfire/gridfire.h"
+#include "fourdst/composition/composition.h"
 #include "gridfire/utils/gf_omp.h"
 
 
@@ -229,31 +229,21 @@ void callback_main(const gridfire::solver::PointSolverTimestepContext& ctx) {
 }
 
 int main() {
-    GF_PAR_INIT();
     using namespace gridfire;
 
-    constexpr size_t breaks = 1;
-    double temp = 1.5e7;
-    double rho = 1.5e2;
-    double tMax = 3.1536e+16/breaks;
+    constexpr double temp = 1.5e7;
+    constexpr double rho = 1.6e2;
+    constexpr double tMax = 3e17;
 
     const NetIn netIn = init(temp, rho, tMax);
 
-    policy::MainSequencePolicy stellarPolicy(netIn.composition);
-    auto [engine, ctx_template] = stellarPolicy.construct();
-    std::println("Sandbox Engine Stack: {}", stellarPolicy);
-    std::println("Scratch Blob State: {}", *ctx_template);
 
-    constexpr size_t nZones = 100;
-    std::array<NetIn, nZones> netIns;
-    for (size_t zone = 0; zone < nZones; ++zone) {
-        netIns[zone] = netIn;
-        netIns[zone].temperature = 1.5e7;
-    }
+    auto engine = engine::GraphEngine(netIn.composition, engine::NetworkBuildDepth::Full);
+    auto blob = engine.constructStateBlob();
 
     const solver::PointSolver localSolver(engine);
-    solver::GridSolverContext solverCtx(*ctx_template);
-    const solver::GridSolver gridSolver(engine, localSolver);
+    solver::PointSolverContext solverCtx(*blob);
 
-    std::vector<NetOut> netOuts = gridSolver.evaluate(solverCtx, netIns | std::ranges::to<std::vector>());
+    auto result = localSolver.evaluate(solverCtx, netIn, false, false);
+    std::cout << result << std::endl;
 }
