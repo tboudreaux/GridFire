@@ -98,7 +98,7 @@ int main() {
     metadata["Compiler"] = "Unknown";
 #endif
 
-    metadata["Threads"] = omp_get_max_threads();
+    // metadata["Threads"] = omp_get_max_threads();
     metadata["Runs"] = runs;
     metadata["Temperature"] = temp;
     metadata["Density"] = rho;
