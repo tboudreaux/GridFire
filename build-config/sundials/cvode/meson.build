@@ -8,7 +8,8 @@ cvode_cmake_options.add_cmake_defines({
     'BUILD_STATIC_LIBS' : 'ON',
     'EXAMPLES_ENABLE_C' : 'OFF',
     'CMAKE_POSITION_INDEPENDENT_CODE': true,
-    'CMAKE_PLATFORM_NO_VERSIONED_SONAME': 'ON'
+    'CMAKE_PLATFORM_NO_VERSIONED_SONAME': 'ON',
+    'SUNDIALS_LOGGING_LEVEL': 1
 
 })
 

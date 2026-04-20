@@ -152,25 +152,6 @@ the same for the other shared object file (make sure to count the duplicate rpat
 We also include a script at `pip_install_mac_patch.sh` which will do this automatically for you.
 
 ## Automatic Build and Installation
-### Script Build and Installation Instructions
-
-The easiest way to build GridFire is using the `install.sh` or `install-tui.sh`
-scripts in the root directory. To use these scripts, simply run:
-
-```bash
-./install.sh
-# or
-./install-tui.sh
-```
-The regular installation script will select a standard "ideal" set of build
-options for you. If you want more control over the build options, you can use
-the `install-tui.sh` script, which will provide a text-based user interface to
-select the build options you want.
-
-Generally, both are intended to be easy to use and will prompt you
-automatically to install any missing dependencies.
-
-
 ### Currently, known good platforms
 The installation script has been tested and found to work on clean
 installations of the following platforms:
@@ -178,11 +159,6 @@ installations of the following platforms:
 - Fedora 42.0 (aarch64)
 - Ubuntu 25.04 (aarch64)
 - Ubuntu 22.04 (X86_64)
-
-> **Note:** On Ubuntu 22.04 the user needs to install boost libraries manually
-> as the versions in the Ubuntu repositories
-> are too old. The installer automatically detects this and will instruct the
-> user in how to do this.
 
 ## Manual Build Instructions
 
@@ -197,8 +173,6 @@ These only need to be manually installed if the user is not making use of the
 - CMake 3.20 or newer
 - ninja 1.10.0 or newer
 - Python packages: `meson-python>=0.15.0`
-- Boost libraries (>= 1.83.0) installed system-wide (or at least findable by
-  meson with pkg-config)
 
 #### Optional
 - dialog (used by the `install.sh` script, not needed if using pip or meson
@@ -206,14 +180,9 @@ These only need to be manually installed if the user is not making use of the
 - pip (used by the `install.sh` script or by calling pip directly, not needed
   if using meson directly)
 
-> **Note:** Boost is the only external library dependency used by GridFire directly.
-
 > **Note:** Windows is not supported at this time and *there are no plans to
 > support it in the future*. Windows users are encouraged to use WSL2 or a
 > Linux VM.
-
-> **Note:** If `install-tui.sh` is not able to find a usable version of boost
-> it will provide directions to fetch, compile, and install a usable version.
 
 ### Install Scripts
 GridFire ships with an installer (`install.sh`) which is intended to make the
@@ -447,7 +416,6 @@ likely to be one of adding new `EngineViews`.
 
 | View Name                        | Purpose                                                                           | Algorithm / Reference                                                                                      | When to Use                                                       |
 |----------------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| AdaptiveEngineView               | Dynamically culls low-flow species and reactions during runtime                   | Iterative flux thresholding to remove reactions below a flow threshold                                     | Large networks to reduce computational cost                       |
 | DefinedEngineView                | Restricts the network to a user-specified subset of species and reactions         | Static network masking based on user-provided species/reaction lists                                       | Targeted pathway studies or code-to-code comparisons              |
 | FileDefinedEngineView            | Load a defined engine view from a file using some parser                          | Same as DefinedEngineView but loads from a file                                                            | Same as DefinedEngineView                                         |
 | MultiscalePartitioningEngineView | Partitions the network into fast and slow subsets based on reaction timescales    | Network partitioning following Hix & Thielemann Silicon Burning I & II (DOI:10.1086/177016,10.1086/306692) | Stiff, multi-scale networks requiring tailored integration        |
@@ -523,7 +491,7 @@ A `NetOut` struct contains
 - The total specific energy lost to neutrinos while evolving to `tMax` (`NetOut::total_neutrino_loss`) [erg/g]
 - The total flux of neutrinos while evolving to `tMax` (`NetOut::total_neutrino_flux`)
 
-### CVODESolverStrategy
+### PointSolver
 
 We use the CVODE module from [SUNDIALS](https://computing.llnl.gov/projects/sundials/cvode) as our primary numerical
 solver. Specifically we use the BDF linear multistep method from that which includes advanced adaptive timestepping.

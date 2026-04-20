@@ -1337,7 +1337,8 @@ namespace gridfire::engine {
         const double rho,
         const QSEGroup &group
     ) const {
-        constexpr double FLUX_RATIO_THRESHOLD = 5;
+        auto* state = scratch::get_state<scratch::MultiscalePartitioningEngineViewScratchPad, true>(ctx);
+        double FLUX_RATIO_THRESHOLD = state->flux_coupling_threshold;
 
         const std::unordered_set<Species> algebraic_group_members(
             group.algebraic_species.begin(),
@@ -1484,8 +1485,8 @@ namespace gridfire::engine {
         const double diff_total = std::abs(total_prod - total_dest);
         bool total_balanced = (mean_total > 0) && ((diff_total / mean_total) < 0.05);
 
-        // Check 2: Charged-Particle Balance (The "Neutron-Exclusion" Check)
-        // Only valid if there IS charged flow (avoid 0/0 success)
+        // Check 2: Charged-Particle Balance
+        // Only valid if there IS charged flow
         const double mean_charged = (charged_prod + charged_dest) / 2.0;
         const double diff_charged = std::abs(charged_prod - charged_dest);
         bool charged_balanced = (mean_charged > 0) && ((diff_charged / mean_charged) < 0.05);

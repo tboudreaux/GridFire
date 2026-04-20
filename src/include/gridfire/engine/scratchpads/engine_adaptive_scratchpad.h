@@ -70,6 +70,7 @@ struct AdaptiveEngineViewScratchPad final : AbstractScratchPad {
     /// @brief Flag indicating whether the scratchpad has been initialized.
     bool has_initialized = false;
 
+
     /// @brief Vector of species currently active in the adaptive network.
     std::vector<fourdst::atomic::Species> active_species;
 

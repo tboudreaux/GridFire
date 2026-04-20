@@ -5,4 +5,5 @@
 
 # Subdirectories for unit and integration tests
 subdir('graphnet_sandbox')
+subdir('flux_coupling')
 subdir('extern')

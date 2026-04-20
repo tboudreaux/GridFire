@@ -37,5 +37,5 @@ configure_file(
     output : 'config.h',
     configuration : conf_data,
     install : do_install_version_file,
-    install_dir : get_option('includedir') / '/gridfire/utils'
+    install_dir : get_option('includedir') / 'gridfire/utils'
 )

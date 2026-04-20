@@ -103,6 +103,9 @@ struct MultiscalePartitioningEngineViewScratchPad final : AbstractScratchPad {
     /// @brief Flag indicating whether the scratchpad has been initialized.
     bool has_initialized = false;
 
+    /// @breif User configurable parameter to control flux coupling threshold used
+    double flux_coupling_threshold = 5.0;
+
     /// @brief Vector of QSE groups representing equilibrium clusters.
     std::vector<QSEGroup> qse_groups;
 

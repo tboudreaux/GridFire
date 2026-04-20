@@ -61,14 +61,7 @@ namespace gridfire::policy {
             std::make_unique<engine::GraphEngine>(m_initializing_composition, *m_partition_function, engine::NetworkBuildDepth::ThirdOrder, engine::NetworkConstructionFlags::DEFAULT)
         );
 
-        m_network_stack.emplace_back(
-            std::make_unique<engine::MultiscalePartitioningEngineView>(*m_network_stack.back().get())
-        );
-        m_network_stack.emplace_back(
-            std::make_unique<engine::AdaptiveEngineView>(*m_network_stack.back().get())
-        );
-
-        std::unique_ptr<engine::scratch::StateBlob> scratch_blob = get_stack_scratch_blob();
+        std::unique_ptr<engine::scratch::StateBlob> scratch_blob = m_network_stack.back()->constructStateBlob(nullptr);
         m_status = NetworkPolicyStatus::INITIALIZED_UNVERIFIED;
         m_status = check_status(*scratch_blob);
 
@@ -110,8 +103,6 @@ namespace gridfire::policy {
     std::vector<engine::EngineTypes> MainSequencePolicy::get_engine_types_stack() const {
         return {
             engine::EngineTypes::GRAPH_ENGINE,
-            engine::EngineTypes::MULTISCALE_PARTITIONING_ENGINE_VIEW,
-            engine::EngineTypes::ADAPTIVE_ENGINE_VIEW
         };
     }
 
@@ -125,32 +116,14 @@ namespace gridfire::policy {
         }
         auto blob = std::make_unique<engine::scratch::StateBlob>();
         blob->enroll<engine::scratch::GraphEngineScratchPad>();
-        blob->enroll<engine::scratch::AdaptiveEngineViewScratchPad>();
-        blob->enroll<engine::scratch::MultiscalePartitioningEngineViewScratchPad>();
-
 
         const engine::GraphEngine* graph_engine = dynamic_cast<engine::GraphEngine*>(m_network_stack.front().get());
         if (!graph_engine) {
             throw exceptions::PolicyError("Cannot get stack scratch blob from MainSequencePolicy: The base engine is not a GraphEngine. This indicates a serious internal inconsistency and should be reported to the GridFire developers, thank you.");
         }
 
-        const engine::MultiscalePartitioningEngineView* multiscale_engine = dynamic_cast<engine::MultiscalePartitioningEngineView*>(m_network_stack[1].get());
-        if (!multiscale_engine) {
-            throw exceptions::PolicyError("Cannot get stack scratch blob from MainSequencePolicy: The middle engine is not a MultiscalePartitioningEngineView. This indicates a serious internal inconsistency and should be reported to the GridFire developers, thank you.");
-        }
-
-        const engine::AdaptiveEngineView* adaptive_engine = dynamic_cast<engine::AdaptiveEngineView*>(m_network_stack.back().get());
-        if (!adaptive_engine) {
-            throw exceptions::PolicyError("Cannot get stack scratch blob from MainSequencePolicy: The top engine is not an AdaptiveEngineView. This indicates a serious internal inconsistency and should be reported to the GridFire developers, thank you.");
-        }
-
-
         auto* graph_engine_state = engine::scratch::get_state<engine::scratch::GraphEngineScratchPad, false>(*blob);
         graph_engine_state->initialize(*graph_engine);
-        auto* multiscale_engine_state = engine::scratch::get_state<engine::scratch::MultiscalePartitioningEngineViewScratchPad, false>(*blob);
-        multiscale_engine_state->initialize();
-        auto* adaptive_engine_state = engine::scratch::get_state<engine::scratch::AdaptiveEngineViewScratchPad, false>(*blob);
-        adaptive_engine_state->initialize(*adaptive_engine);
 
         return blob;
     }
