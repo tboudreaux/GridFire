@@ -58,6 +58,18 @@ those changes get upstreamed into this utility script. It is a key development g
 that all of our tools are well documented and easy for non `SERiF` developers
 to use.
 
+## Pynucastro rates
+If you have pynucastro installed you may use the `gen_rates.py` function to generate 
+a rate file dump. Currently this file filters by Z but you can update this with
+arbitrary internal logic. After generating this file run it through format.py with -f bin and -o reactions.bin 
+and then the bin to header script. 
+
+```bash
+python ../bin_to_header.py reactions.bin reactions_data.h raw_reaction_data
+```
+
+then copy the reactions_data.h files to `GridFire/src/include/gridfire/reactions`
+
 ## Citations
 REACLIB: 
  - Rauscher, T., Heger, A., Hoffman, R. D., & Woosley, S. E. 2010, ApJS, 189, 240.

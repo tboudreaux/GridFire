@@ -226,7 +226,7 @@ int main(int argc, char** argv) {
 
     solver::PointSolverContext solver_ctx(*blob);
     solver::PointSolver solver(engine);
-    solver_ctx.stdout_logging=false;
+    solver_ctx.stdout_logging=true;
 
     double current_time = 180;
     nlohmann::json j;
