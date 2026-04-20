@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;0.6.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -106,32 +106,25 @@ $(function(){initNavTree('structgridfire_1_1solver_1_1_solver_context_base.html'
 </div><!--header-->
 <div class="contents">
 
-<p>Base class for solver callback contexts.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;solver.h&gt;</code></p>
+<p><code>#include &lt;strategy_abstract.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gridfire::solver::SolverContextBase:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="structgridfire_1_1solver_1_1_solver_context_base.png" usemap="#gridfire::solver::SolverContextBase_map" alt=""/>
-  <map id="gridfire::solver::SolverContextBase_map" name="gridfire::solver::SolverContextBase_map">
-<area href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html" title="Immutable view of the current integration state passed to callbacks." alt="gridfire::solver::CVODESolverStrategy::TimestepContext" shape="rect" coords="0,56,326,80"/>
-  </map>
-</div></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1solver_1_1_solver_context_base__inherit__graph.svg" width="386" height="167"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae324568d7ca41599f1ea924f06284da0" id="r_ae324568d7ca41599f1ea924f06284da0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae324568d7ca41599f1ea924f06284da0">init</a> ()=0</td></tr>
+<tr class="separator:ae324568d7ca41599f1ea924f06284da0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a693d8ad4649456ff3cf956072614a2e7" id="r_a693d8ad4649456ff3cf956072614a2e7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a693d8ad4649456ff3cf956072614a2e7">set_stdout_logging</a> (bool enable)=0</td></tr>
+<tr class="separator:a693d8ad4649456ff3cf956072614a2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b8185f8b9d46d19d0b0c2bfba16391f" id="r_a4b8185f8b9d46d19d0b0c2bfba16391f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b8185f8b9d46d19d0b0c2bfba16391f">set_detailed_logging</a> (bool enable)=0</td></tr>
+<tr class="separator:a4b8185f8b9d46d19d0b0c2bfba16391f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1abf9e5ff7f53a6cebe5e00ea5fc0c8" id="r_ab1abf9e5ff7f53a6cebe5e00ea5fc0c8"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1abf9e5ff7f53a6cebe5e00ea5fc0c8">~SolverContextBase</a> ()=default</td></tr>
 <tr class="separator:ab1abf9e5ff7f53a6cebe5e00ea5fc0c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cbef3cabc8524e542613ee50d8860c6" id="r_a9cbef3cabc8524e542613ee50d8860c6"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cbef3cabc8524e542613ee50d8860c6">describe</a> () const =0</td></tr>
-<tr class="memdesc:a9cbef3cabc8524e542613ee50d8860c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe the context for callback functions.  <br /></td></tr>
-<tr class="separator:a9cbef3cabc8524e542613ee50d8860c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Base class for solver callback contexts. </p>
-<p>This struct serves as a base class for contexts that can be passed to solver callbacks, it enforces that derived classes implement a <code>describe</code> method that returns a vector of tuples describing the context that a callback will receive when called. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1abf9e5ff7f53a6cebe5e00ea5fc0c8" name="ab1abf9e5ff7f53a6cebe5e00ea5fc0c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1abf9e5ff7f53a6cebe5e00ea5fc0c8">&#9670;&#160;</a></span>~SolverContextBase()</h2>
 
@@ -158,8 +151,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9cbef3cabc8524e542613ee50d8860c6" name="a9cbef3cabc8524e542613ee50d8860c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9cbef3cabc8524e542613ee50d8860c6">&#9670;&#160;</a></span>describe()</h2>
+<a id="ae324568d7ca41599f1ea924f06284da0" name="ae324568d7ca41599f1ea924f06284da0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae324568d7ca41599f1ea924f06284da0">&#9670;&#160;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,29 +161,79 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt; gridfire::solver::SolverContextBase::describe </td>
+          <td class="memname">virtual void gridfire::solver::SolverContextBase::init </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Describe the context for callback functions. </p>
-<dl class="section return"><dt>Returns</dt><dd>A vector of tuples, each containing a string for the parameters name and a string for its type.</dd></dl>
-<p>This method should be overridden by derived classes to provide a description of the context that will be passed to the callback function. The intent of this method is that an end user can investigate the context that will be passed to the callback function, and use this information to craft their own callback function. </p>
+<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_grid_solver_context.html#a58a8e377f76fbb26f11da469411faaaa">gridfire::solver::GridSolverContext</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#af20bd86770e817a82babaf719b3b4003">gridfire::solver::PointSolverContext</a>, and <a class="el" href="class_py_solver_context_base.html#ac68080cd0e7aa2884ce628925e8cf932">PySolverContextBase</a>.</p>
 
-<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html#ae3c6320ce7a8f41c9ae36c42d62b4204">gridfire::solver::CVODESolverStrategy::TimestepContext</a>.</p>
+</div>
+</div>
+<a id="a4b8185f8b9d46d19d0b0c2bfba16391f" name="a4b8185f8b9d46d19d0b0c2bfba16391f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b8185f8b9d46d19d0b0c2bfba16391f">&#9670;&#160;</a></span>set_detailed_logging()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void gridfire::solver::SolverContextBase::set_detailed_logging </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>enable</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_grid_solver_context.html#a02215c68ebc4a488343aabb495791c77">gridfire::solver::GridSolverContext</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#ad78dbc3cf9da0a5e508f08343f2c6da5">gridfire::solver::PointSolverContext</a>, and <a class="el" href="class_py_solver_context_base.html#a2400e5ab20fe2e5c31a712cb9b24aebe">PySolverContextBase</a>.</p>
+
+</div>
+</div>
+<a id="a693d8ad4649456ff3cf956072614a2e7" name="a693d8ad4649456ff3cf956072614a2e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a693d8ad4649456ff3cf956072614a2e7">&#9670;&#160;</a></span>set_stdout_logging()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void gridfire::solver::SolverContextBase::set_stdout_logging </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>enable</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="structgridfire_1_1solver_1_1_grid_solver_context.html#af90f3a9d7f688b52cd3ee201af6b0b7f">gridfire::solver::GridSolverContext</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#aa9a3442738429f362a9f10fe92d5a1ea">gridfire::solver::PointSolverContext</a>, and <a class="el" href="class_py_solver_context_base.html#af8f861a94e0a6654a8f9b752a28ad0e7">PySolverContextBase</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/include/gridfire/solver/<a class="el" href="solver_8h.html">solver.h</a></li>
+<li>src/include/gridfire/solver/strategies/<a class="el" href="strategy__abstract_8h.html">strategy_abstract.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

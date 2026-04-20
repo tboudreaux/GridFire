@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -121,12 +121,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af0ea99416c28933d364a872fc6aff556" id="r_af0ea99416c28933d364a872fc6aff556"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0ea99416c28933d364a872fc6aff556">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:af0ea99416c28933d364a872fc6aff556"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
 <tr class="separator:af0ea99416c28933d364a872fc6aff556"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3263c3fde2509d5d8ec4da3b6e946c48" id="r_a3263c3fde2509d5d8ec4da3b6e946c48"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3263c3fde2509d5d8ec4da3b6e946c48">getNetworkSpecies</a> () const =0</td></tr>
-<tr class="memdesc:a3263c3fde2509d5d8ec4da3b6e946c48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
-<tr class="separator:a3263c3fde2509d5d8ec4da3b6e946c48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764fc091c72c12c8529105d7c96badb2" id="r_a764fc091c72c12c8529105d7c96badb2"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a764fc091c72c12c8529105d7c96badb2">calculateRHSAndEnergy</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:a764fc091c72c12c8529105d7c96badb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
-<tr class="separator:a764fc091c72c12c8529105d7c96badb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa8b1970e20f4bab61e4d31ead09f930" id="r_afa8b1970e20f4bab61e4d31ead09f930"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa8b1970e20f4bab61e4d31ead09f930">getNetworkSpecies</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const =0</td></tr>
+<tr class="memdesc:afa8b1970e20f4bab61e4d31ead09f930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
+<tr class="separator:afa8b1970e20f4bab61e4d31ead09f930"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c9ed5e0810799cd6af1d8ffbc8a918" id="r_a71c9ed5e0810799cd6af1d8ffbc8a918"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71c9ed5e0810799cd6af1d8ffbc8a918">calculateRHSAndEnergy</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, bool trust) const =0</td></tr>
+<tr class="memdesc:a71c9ed5e0810799cd6af1d8ffbc8a918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
+<tr class="separator:a71c9ed5e0810799cd6af1d8ffbc8a918"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract base class for a reaction network engine. </p>
@@ -164,8 +164,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a764fc091c72c12c8529105d7c96badb2" name="a764fc091c72c12c8529105d7c96badb2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a764fc091c72c12c8529105d7c96badb2">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
+<a id="a71c9ed5e0810799cd6af1d8ffbc8a918" name="a71c9ed5e0810799cd6af1d8ffbc8a918"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c9ed5e0810799cd6af1d8ffbc8a918">&#9670;&#160;</a></span>calculateRHSAndEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,6 +176,11 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt; gridfire::engine::Engine::calculateRHSAndEnergy </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -186,7 +191,12 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>trust</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -202,18 +212,19 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
+    <tr><td class="paramname">trust</td><td>If true, indicates that the engine should trust the passed composition has already been collected. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>expected&lt;StepDerivatives&lt;double&gt;&gt; containing either dY/dt and energy generation rate or a stale engine error indicating that the engine must be updated</dd></dl>
 <p>This function must be implemented by derived classes to compute the time derivatives of all species and the specific nuclear energy generation rate for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5de5211bc99a1995143307284be6df4a">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a82cbef591ef1aafcb9a42e01bf38fc38">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aee098a65f5cecded199d2c00422b398d">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa960005503d18066015aef280680d616">gridfire::engine::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#aac1f2005c0a58befc4e01627c9357924">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#abc26a86d4f93b37564d32814edbbac4d">PyEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a4c51bcc65f1bc6afdb9487546775ce79">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a297412202e82ab25b6fc0a8a27a433e7">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a474ba2ca2d24cb90ee73af042993dd14">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#add1058c32fbd02f5583cfda4cc60985c">gridfire::engine::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#a1331900141bb079e634151abdea075dc">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a63a2605b8d742d284924db397338da0b">PyEngine</a>.</p>
 
 </div>
 </div>
-<a id="a3263c3fde2509d5d8ec4da3b6e946c48" name="a3263c3fde2509d5d8ec4da3b6e946c48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3263c3fde2509d5d8ec4da3b6e946c48">&#9670;&#160;</a></span>getNetworkSpecies()</h2>
+<a id="afa8b1970e20f4bab61e4d31ead09f930" name="afa8b1970e20f4bab61e4d31ead09f930"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa8b1970e20f4bab61e4d31ead09f930">&#9670;&#160;</a></span>getNetworkSpecies()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -224,7 +235,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp; gridfire::engine::Engine::getNetworkSpecies </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -238,7 +249,7 @@ Public Member Functions</h2></td></tr>
 <p>Get the list of species in the network. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of Species objects representing all network species. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aaa2d47f44e5bb4d9660d7c017cc5085c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a0af3e1ac0314a485171f1dda39929cb4">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a8f5099bfda5f6d6e1494788beff9b7c8">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa7aa38cf054988d050c04c59f28efdaa">gridfire::engine::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#afc745e7ab5da5d8b3cf916044515cd7d">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a2d240423899e039c2ca688e96f8af1f2">PyEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a729b8f6846cbffa746085c038108ef29">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a8dfbe8792e112e33623cf5bf44696376">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6b7e2d8391114f25d74d986d919715c9">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a9a43b1fe2124333acd338acffeb2e8c7">gridfire::engine::MultiscalePartitioningEngineView</a>, <a class="el" href="class_py_dynamic_engine.html#a75450cd1eee0d9d79b23eafbf452aa02">PyDynamicEngine</a>, and <a class="el" href="class_py_engine.html#a5daac50566c2a15c65b8f94b1758b04e">PyEngine</a>.</p>
 
 </div>
 </div>

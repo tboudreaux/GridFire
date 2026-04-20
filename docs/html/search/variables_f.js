@@ -1,25 +1,4 @@
 var searchData=
 [
-  ['rauscher_5fthielemann_5fpartition_5fdata_0',['rauscher_thielemann_partition_data',['../rauscher__thielemann__partition__data_8h.html#a7b9a54e9c58848fe3205479acd770ffd',1,'rauscher_thielemann_partition_data.h']]],
-  ['rauscher_5fthielemann_5fpartition_5fdata_5flen_1',['rauscher_thielemann_partition_data_len',['../rauscher__thielemann__partition__data_8h.html#a5240736f3bdb43cf2cd63464c5835df1',1,'rauscher_thielemann_partition_data.h']]],
-  ['raw_5freactions_5fdata_2',['raw_reactions_data',['../reactions__data_8h.html#aeb44e2b3b67960dfd83ecd7136c7d38b',1,'reactions_data.h']]],
-  ['raw_5freactions_5fdata_5flen_3',['raw_reactions_data_len',['../reactions__data_8h.html#a32dea82d95667c3df395d58fb469ce2a',1,'reactions_data.h']]],
-  ['reactant_5fpowers_4',['reactant_powers',['../structgridfire_1_1engine_1_1GraphEngine_1_1PrecomputedReaction.html#a4360de7e2c518db798d97dac87bea252',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['reactants_5fstr_5',['reactants_str',['../structgridfire_1_1reaclib_1_1ReactionRecord.html#a67afc513db8dbcc43d79733e22ca8d39',1,'gridfire::reaclib::ReactionRecord']]],
-  ['reaction_5fcontribution_5fmap_6',['reaction_contribution_map',['../structgridfire_1_1solver_1_1CVODESolverStrategy_1_1CVODERHSOutputData.html#a4b4f0c0733813d6931eeb3b3c942ada9',1,'gridfire::solver::CVODESolverStrategy::CVODERHSOutputData::reaction_contribution_map'],['../structgridfire_1_1solver_1_1CVODESolverStrategy_1_1CVODEUserData.html#a7c0adecacbb007c513d1b6c82e30d165',1,'gridfire::solver::CVODESolverStrategy::CVODEUserData::reaction_contribution_map']]],
-  ['reaction_5fhash_7',['reaction_hash',['../structgridfire_1_1engine_1_1GraphEngine_1_1PrecomputedReaction.html#a2a63022b616788e377c804fcf1ccf847',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['reaction_5findex_8',['reaction_index',['../structgridfire_1_1engine_1_1GraphEngine_1_1PrecomputedReaction.html#ac6acad530a508ccb16ae103191490083',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['reaction_5ftype_9',['reaction_type',['../structgridfire_1_1engine_1_1GraphEngine_1_1PrecomputedReaction.html#aad61f7b0e307ef79e69833a04a857b30',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['reactioncontributionmap_10',['reactionContributionMap',['../structgridfire_1_1solver_1_1CVODESolverStrategy_1_1TimestepContext.html#aaad8a2e08769b629086133d3b079e3b1',1,'gridfire::solver::CVODESolverStrategy::TimestepContext']]],
-  ['reactioncontributions_11',['reactionContributions',['../structgridfire_1_1engine_1_1StepDerivatives.html#ac269799f25d23045bf60dd27376d4337',1,'gridfire::engine::StepDerivatives']]],
-  ['reactionphysicaltypenames_12',['ReactionPhysicalTypeNames',['../namespacegridfire_1_1reaction.html#a773ef58975dc959e4ae03e2e677ab54f',1,'gridfire::reaction']]],
-  ['reactionptr_13',['reactionPtr',['../structgridfire_1_1engine_1_1AdaptiveEngineView_1_1ReactionFlow.html#a10984b31880df00b0d78d76f55c0b143',1,'gridfire::engine::AdaptiveEngineView::ReactionFlow']]],
-  ['reactiontypenames_14',['ReactionTypeNames',['../namespacegridfire_1_1reaction.html#ac06a7c50ac58fb2f901d778fc30cd1cf',1,'gridfire::reaction']]],
-  ['reverse_15',['reverse',['../structgridfire_1_1reaclib_1_1ReactionRecord.html#aa1fd4f510d7c00d2e4197e9b9caf29fd',1,'gridfire::reaclib::ReactionRecord']]],
-  ['reverse_5fsymmetry_5ffactor_16',['reverse_symmetry_factor',['../structgridfire_1_1engine_1_1GraphEngine_1_1PrecomputedReaction.html#ae70bcf64f86170160d837abd5bdce873',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
-  ['rho_17',['rho',['../structgridfire_1_1engine_1_1MultiscalePartitioningEngineView_1_1QSESolver_1_1UserData.html#a7ff42828a485eabd21811a9775eb4d3c',1,'gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData::rho'],['../structgridfire_1_1solver_1_1CVODESolverStrategy_1_1CVODEUserData.html#afdc510f8160693806737c4ab517058b8',1,'gridfire::solver::CVODESolverStrategy::CVODEUserData::rho'],['../structgridfire_1_1solver_1_1CVODESolverStrategy_1_1TimestepContext.html#a4a25afbc9f8a907304992e144dfa3529',1,'gridfire::solver::CVODESolverStrategy::TimestepContext::rho']]],
-  ['rhoye_5faxis_18',['rhoYe_axis',['../structgridfire_1_1rates_1_1weak_1_1IsotopeGrid.html#a30362f5bb497ae74cf6a10fd701273a0',1,'gridfire::rates::weak::IsotopeGrid']]],
-  ['row_5fscaling_5ffactors_19',['row_scaling_factors',['../structgridfire_1_1engine_1_1MultiscalePartitioningEngineView_1_1QSESolver_1_1UserData.html#a37234e8eba103fd8b524d8bdacecf701',1,'gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData']]],
-  ['rpname_20',['rpName',['../structgridfire_1_1reaclib_1_1ReactionRecord.html#a523b7cfb0a6d8ddccd785aef2f425ad1',1,'gridfire::reaclib::ReactionRecord']]],
-  ['rt_5ftemperature_5fgrid_5ft9_21',['RT_TEMPERATURE_GRID_T9',['../namespacegridfire_1_1partition.html#a1e08a3c20c55bc6fa4a4ecdf7ea57b8f',1,'gridfire::partition']]]
+  ['offdiagonalthreshold_0',['offDiagonalThreshold',['../structgridfire_1_1config_1_1_trigger_config.html#a7f379a194fad29e7c40978918adb6e48',1,'gridfire::config::TriggerConfig']]]
 ];

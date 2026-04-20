@@ -1,0 +1,10 @@
+var engine_2scratchpads_2formatters_8h =
+[
+    [ "std::formatter< gridfire::engine::scratch::ScratchPadType >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_scratch_pad_type_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_scratch_pad_type_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::AbstractScratchPad >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::GraphEngineScratchPad >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::AdaptiveEngineViewScratchPad >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_adaptive_engine_view_scratch_pad_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_adaptive_engine_view_scratch_pad_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::MultiscalePartitioningEngineViewScratchPad >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_multiscale_partitioning_engine_view_scratch_pad_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_multiscale_partitioning_engine_view_scratch_pad_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::DefinedEngineViewScratchPad >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_defined_engine_view_scratch_pad_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_defined_engine_view_scratch_pad_01_4" ],
+    [ "std::formatter< gridfire::engine::scratch::StateBlob >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_state_blob_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_state_blob_01_4" ]
+];

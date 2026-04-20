@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -139,6 +139,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6a4836776f5dd00158d2336e5bcc3222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85314ee0dde7e12915f63237086b5eb6" id="r_a85314ee0dde7e12915f63237086b5eb6"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85314ee0dde7e12915f63237086b5eb6">get</a> (const std::string_view &amp;id) const</td></tr>
 <tr class="separator:a85314ee0dde7e12915f63237086b5eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58cc2f966674442a2afce377f11efd52" id="r_a58cc2f966674442a2afce377f11efd52"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58cc2f966674442a2afce377f11efd52">get</a> (size_t index) const</td></tr>
+<tr class="separator:a58cc2f966674442a2afce377f11efd52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1177193b1e46b4e5be630028883ab8dd" id="r_a1177193b1e46b4e5be630028883ab8dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1177193b1e46b4e5be630028883ab8dd">remove_reaction</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &amp;reaction)</td></tr>
 <tr class="memdesc:a1177193b1e46b4e5be630028883ab8dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a reaction from the set.  <br /></td></tr>
 <tr class="separator:a1177193b1e46b4e5be630028883ab8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,6 +209,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a62965c04447909462bb4f2112661ef44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4200939ccf088dd83c3d264df171d568" id="r_a4200939ccf088dd83c3d264df171d568"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4200939ccf088dd83c3d264df171d568">m_reactionHashes</a></td></tr>
 <tr class="separator:a4200939ccf088dd83c3d264df171d568"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a718f228a4b4abbfe4bbb35a8fb26d6b9" id="r_a718f228a4b4abbfe4bbb35a8fb26d6b9"><td class="memItemLeft" align="right" valign="top">std::optional&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a718f228a4b4abbfe4bbb35a8fb26d6b9">m_hashCache</a> = std::nullopt</td></tr>
+<tr class="separator:a718f228a4b4abbfe4bbb35a8fb26d6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -697,7 +701,7 @@ Friends</h2></td></tr>
 </div>
 </div>
 <a id="a85314ee0dde7e12915f63237086b5eb6" name="a85314ee0dde7e12915f63237086b5eb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85314ee0dde7e12915f63237086b5eb6">&#9670;&#160;</a></span>get()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a85314ee0dde7e12915f63237086b5eb6">&#9670;&#160;</a></span>get() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -709,6 +713,31 @@ Friends</h2></td></tr>
           <td class="memname">std::optional&lt; std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; &gt; gridfire::reaction::ReactionSet::get </td>
           <td>(</td>
           <td class="paramtype">const std::string_view &amp;</td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a58cc2f966674442a2afce377f11efd52" name="a58cc2f966674442a2afce377f11efd52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58cc2f966674442a2afce377f11efd52">&#9670;&#160;</a></span>get() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">Reaction</a> &gt; gridfire::reaction::ReactionSet::get </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -1023,6 +1052,28 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a718f228a4b4abbfe4bbb35a8fb26d6b9" name="a718f228a4b4abbfe4bbb35a8fb26d6b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a718f228a4b4abbfe4bbb35a8fb26d6b9">&#9670;&#160;</a></span>m_hashCache</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;uint64_t&gt; gridfire::reaction::ReactionSet::m_hashCache = std::nullopt</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="af92e3003b2a3606b48ab857cdedc3111" name="af92e3003b2a3606b48ab857cdedc3111"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af92e3003b2a3606b48ab857cdedc3111">&#9670;&#160;</a></span>m_id</h2>
 

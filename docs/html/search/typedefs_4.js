@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jacobianentry_0',['JacobianEntry',['../namespacegridfire_1_1engine.html#ac7974616b5fd465c4a42e3d882cdde6e',1,'gridfire::engine']]]
+  ['multizonedynamicnetworksolver_0',['MultiZoneDynamicNetworkSolver',['../namespacegridfire_1_1solver.html#a521165ce7610e3438607af6500f82fdd',1,'gridfire::solver']]]
 ];

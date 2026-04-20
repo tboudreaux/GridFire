@@ -39,14 +39,25 @@ var gridfire__extern_8h =
       [ "GF_HASHING_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a9a57ef6d36fcf8961b5a113673cf9087", null ],
       [ "GF_UTILITY_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828aed54d3f628971ab1bc7713a82bc834c3", null ],
       [ "GF_DEBUG_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a6ad462fe6e7b47aa4d77eda129dbe799", null ],
-      [ "GF_GRIDFIRE_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a63ccd4c867da53dd7b01673b295f8523", null ]
+      [ "GF_GRIDFIRE_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a63ccd4c867da53dd7b01673b295f8523", null ],
+      [ "GF_UNINITIALIZED_INPUT_MEMORY_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a325ae15214e3cfa068b67e39343619bf", null ],
+      [ "GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a24c2791f490c26fc6c56fc54d4fb659a", null ],
+      [ "GF_INVALID_NUM_SPECIES", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a2ea660d6f401acd8d088d0f1eec3009d", null ],
+      [ "GF_INVALID_TIMESTEPS", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a370a59544c9149a2cb8e68d2ef0a6704", null ],
+      [ "GF_UNKNOWN_FREE_TYPE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828aab79067da1d23257067b79d683a9e5e0", null ],
+      [ "GF_INVALID_TYPE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828ad4b502b385ec0751273cb37b0604b031", null ]
+    ] ],
+    [ "GF_TYPE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d", [
+      [ "SINGLE_ZONE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e", null ],
+      [ "MULTI_ZONE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42dad797211cef0edf4e738cf9e846a5b70d", null ]
     ] ],
     [ "gf_construct_engine_from_policy", "gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6", null ],
-    [ "gf_construct_solver_from_engine", "gridfire__extern_8h.html#a57d58696555e3402eddd043cea125f5e", null ],
+    [ "gf_construct_solver_from_engine", "gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd", null ],
     [ "gf_error_code_to_string", "gridfire__extern_8h.html#ac7089c7bad97d0ffe7c9445dcd0258f2", null ],
-    [ "gf_evolve", "gridfire__extern_8h.html#abde0ca38a62727d2f76f0bcd920bf124", null ],
-    [ "gf_free", "gridfire__extern_8h.html#a5ddf1a13fef574a435fd76a7fb1bb374", null ],
+    [ "gf_evolve", "gridfire__extern_8h.html#a807dc807fea7c92f328849aea7572af4", null ],
+    [ "gf_free", "gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5", null ],
     [ "gf_get_last_error_message", "gridfire__extern_8h.html#a851d8c23bdc73852988b870c5f409639", null ],
-    [ "gf_init", "gridfire__extern_8h.html#aa06d49e737afd147061f4f15e6e5afcc", null ],
-    [ "gf_register_species", "gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680", null ]
+    [ "gf_init", "gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034", null ],
+    [ "gf_register_species", "gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680", null ],
+    [ "gf_set_num_zones", "gridfire__extern_8h.html#a541a743ca349b42f627a357dff5a7d18", null ]
 ];

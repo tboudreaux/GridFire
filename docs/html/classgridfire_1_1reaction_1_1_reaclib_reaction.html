@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -252,6 +252,9 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:aae29f755030c51fc9c8f7db52a022f84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad89d4b413c507e850dba624e1b36b886" id="r_ad89d4b413c507e850dba624e1b36b886"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad89d4b413c507e850dba624e1b36b886">m_productsVec</a></td></tr>
 <tr class="separator:ad89d4b413c507e850dba624e1b36b886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3783c87393726976fc4253902e3b7b01" id="r_a3783c87393726976fc4253902e3b7b01"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3783c87393726976fc4253902e3b7b01">m_hashCache</a> = std::nullopt</td></tr>
+<tr class="memdesc:a3783c87393726976fc4253902e3b7b01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cached hash value for the reaction.  <br /></td></tr>
+<tr class="separator:a3783c87393726976fc4253902e3b7b01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e79437a68947e176b8dd7dcbe27baab" id="r_a7e79437a68947e176b8dd7dcbe27baab"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e79437a68947e176b8dd7dcbe27baab">m_sourceLabel</a></td></tr>
 <tr class="memdesc:a7e79437a68947e176b8dd7dcbe27baab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source label for the rate data (e.g., "wc12w", "st08").  <br /></td></tr>
 <tr class="separator:a7e79437a68947e176b8dd7dcbe27baab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1492,6 +1495,30 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>Chapter number from the REACLIB database, defining the reaction structure. </p>
+
+</div>
+</div>
+<a id="a3783c87393726976fc4253902e3b7b01" name="a3783c87393726976fc4253902e3b7b01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3783c87393726976fc4253902e3b7b01">&#9670;&#160;</a></span>m_hashCache</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;std::size_t&gt; gridfire::reaction::ReaclibReaction::m_hashCache = std::nullopt</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Cached hash value for the reaction. </p>
 
 </div>
 </div>

@@ -1,34 +1,10 @@
 <map id="gridfire::engine::MultiscalePartitioningEngineView" name="gridfire::engine::MultiscalePartitioningEngineView">
-<area shape="rect" id="Node000001" title="An engine view that partitions the reaction network into multiple groups based on timescales." alt="" coords="1583,294,1757,334"/>
-<area shape="rect" id="Node000002" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="216,184,382,225"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="397,202,614,202,1274,202,1356,201,1420,202,1483,211,1560,236,1609,261,1647,291,1644,295,1606,266,1558,240,1482,216,1420,207,1356,206,1275,207,614,207,397,207"/>
-<area shape="poly" id="edge4_Node000001_Node000002" title=" " alt="" coords="396,226,500,245,557,252,614,254,1275,254,1357,258,1439,267,1583,292,1582,297,1439,272,1356,263,1274,259,614,259,557,257,500,250,395,231"/>
-<area shape="rect" id="Node000010" href="$classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html" title=" " alt="" coords="528,88,702,143"/>
-<area shape="poly" id="edge11_Node000010_Node000002" title=" " alt="" coords="387,177,527,137,529,142,389,182"/>
-<area shape="rect" id="Node000003" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="5,192,160,218"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="175,202,215,202,215,207,175,207"/>
-<area shape="rect" id="Node000004" href="$classgridfire_1_1engine_1_1_engine_view.html" title=" " alt="" coords="1190,294,1356,334"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1372,311,1583,311,1583,317,1372,317"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="1174,358,1373,414"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="1388,363,1559,332,1582,327,1583,333,1560,337,1389,368"/>
-<area shape="rect" id="Node000006" href="$structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html" title="Struct representing a QSE group." alt="" coords="871,358,1044,414"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="1060,383,1173,383,1173,389,1060,389"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="551,366,679,406"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="694,383,871,383,871,389,694,389"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="1162,92,1384,163"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="1400,133,1482,150,1523,165,1561,184,1593,208,1621,237,1659,292,1655,295,1617,241,1589,212,1558,188,1520,170,1480,155,1399,138"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="858,90,1057,146"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="1072,119,1162,121,1162,127,1072,124"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="717,113,857,115,857,120,717,119"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="231,19,366,60"/>
-<area shape="poly" id="edge14_Node000001_Node000011" title=" " alt="" coords="382,35,614,33,1275,33,1360,34,1428,43,1460,52,1491,67,1561,115,1582,134,1601,157,1631,206,1653,254,1666,292,1660,294,1648,256,1627,209,1597,160,1578,138,1558,119,1489,72,1458,57,1427,48,1360,39,1274,38,614,38,382,40"/>
-<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="382,59,413,66,528,94,527,99,412,72,380,64"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="209,88,388,143"/>
-<area shape="poly" id="edge13_Node000010_Node000012" title=" " alt="" coords="404,113,528,113,528,118,404,118"/>
-<area shape="rect" id="Node000013" title=" " alt="" coords="1184,438,1363,494"/>
-<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="1377,439,1467,413,1558,379,1601,356,1638,333,1641,337,1603,361,1560,383,1468,418,1379,445"/>
-<area shape="rect" id="Node000014" title=" " alt="" coords="1202,518,1344,544"/>
-<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="1360,526,1408,519,1459,508,1511,491,1558,466,1592,436,1621,400,1643,364,1658,333,1662,336,1647,366,1625,403,1596,440,1561,470,1513,496,1461,513,1409,525,1361,531"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="1177,569,1369,624"/>
-<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="1385,595,1429,590,1474,579,1518,563,1558,539,1581,517,1601,491,1632,434,1652,378,1662,334,1668,335,1657,379,1637,436,1606,494,1585,521,1561,543,1521,568,1476,585,1430,595,1385,601"/>
+<area shape="rect" id="Node000001" title="An engine view that partitions the reaction network into multiple groups based on timescales." alt="" coords="46,184,219,225"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="5,80,172,121"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,133,110,159,122,184,117,183,105,161,97,138"/>
+<area shape="poly" id="edge4_Node000001_Node000002" title=" " alt="" coords="104,133,127,184,121,183,101,137"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="11,5,166,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,44,91,81,86,80,88,49"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1engine_1_1_engine_view.html" title=" " alt="" coords="196,80,362,121"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="249,130,210,162,171,186,169,181,207,158,244,132"/>
 </map>

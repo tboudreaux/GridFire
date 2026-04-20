@@ -17,6 +17,7 @@ var classgridfire_1_1reaction_1_1_logical_reaclib_reaction =
     [ "sources", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#ad4979f437dc787a5475c3a029804ed99", null ],
     [ "type", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#acbfa2d4e23dff6641be21cc1e754be15", null ],
     [ "operator<<", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a495ca800cc1dd224ce2a821a825afafd", null ],
+    [ "m_cached_rates", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a3e06c6f5aa41b08022fc5d8238c9356a", null ],
     [ "m_rates", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#afe1b95bf9d81f7521b9f19bbd1305d01", null ],
     [ "m_sources", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a8c6f12a01c6d1fdeba1f0cc73128731e", null ],
     [ "m_weak", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html#a853458f525bf3270b5ad826c6fd9e1ca", null ]

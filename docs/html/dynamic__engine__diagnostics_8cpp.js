@@ -1,6 +1,6 @@
 var dynamic__engine__diagnostics_8cpp =
 [
-    [ "inspect_jacobian_stiffness", "dynamic__engine__diagnostics_8cpp.html#a8a42702b787f12988ae8fc7e1e6d8186", null ],
-    [ "inspect_species_balance", "dynamic__engine__diagnostics_8cpp.html#aac2570f6bc58b8825674f60f1634149b", null ],
-    [ "report_limiting_species", "dynamic__engine__diagnostics_8cpp.html#ad792baf3c6720fce34a5161c0ade3fc4", null ]
+    [ "gridfire::engine::diagnostics::inspect_jacobian_stiffness", "namespacegridfire_1_1engine_1_1diagnostics.html#a08e04c4687a664fe359bb23a927cdd08", null ],
+    [ "gridfire::engine::diagnostics::inspect_species_balance", "namespacegridfire_1_1engine_1_1diagnostics.html#a2cfc177bd9ce02c82ca74e7157920a9f", null ],
+    [ "gridfire::engine::diagnostics::report_limiting_species", "namespacegridfire_1_1engine_1_1diagnostics.html#a2b0b9806c3825d2cc8d68c94a63ca1c6", null ]
 ];

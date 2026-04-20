@@ -1,4 +1,4 @@
 var solver__interfaces_8h =
 [
-    [ "SolverPluginInterface", "classSolverPluginInterface.html", "classSolverPluginInterface" ]
+    [ "SolverPluginInterface", "class_solver_plugin_interface.html", "class_solver_plugin_interface" ]
 ];

@@ -1,11 +1,11 @@
 var namespacegridfire_1_1reaction =
 [
-    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1LogicalReaclibReaction.html", "classgridfire_1_1reaction_1_1LogicalReaclibReaction" ],
-    [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1RateCoefficientSet.html", "structgridfire_1_1reaction_1_1RateCoefficientSet" ],
-    [ "ReaclibReaction", "classgridfire_1_1reaction_1_1ReaclibReaction.html", "classgridfire_1_1reaction_1_1ReaclibReaction" ],
-    [ "Reaction", "classgridfire_1_1reaction_1_1Reaction.html", "classgridfire_1_1reaction_1_1Reaction" ],
-    [ "ReactionSet", "classgridfire_1_1reaction_1_1ReactionSet.html", "classgridfire_1_1reaction_1_1ReactionSet" ],
-    [ "WeakReaclibReaction", "classgridfire_1_1reaction_1_1WeakReaclibReaction.html", "classgridfire_1_1reaction_1_1WeakReaclibReaction" ],
+    [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction" ],
+    [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1_rate_coefficient_set.html", "structgridfire_1_1reaction_1_1_rate_coefficient_set" ],
+    [ "ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_reaclib_reaction" ],
+    [ "Reaction", "classgridfire_1_1reaction_1_1_reaction.html", "classgridfire_1_1reaction_1_1_reaction" ],
+    [ "ReactionSet", "classgridfire_1_1reaction_1_1_reaction_set.html", "classgridfire_1_1reaction_1_1_reaction_set" ],
+    [ "WeakReaclibReaction", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_weak_reaclib_reaction" ],
     [ "ReactionType", "namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e", [
       [ "WEAK", "namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8", null ],
       [ "REACLIB", "namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74eaf9885ed04411bef7b70f78b643c6a220", null ],

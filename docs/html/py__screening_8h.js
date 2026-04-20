@@ -1,4 +1,4 @@
 var py__screening_8h =
 [
-    [ "PyScreening", "classPyScreening.html", "classPyScreening" ]
+    [ "PyScreening", "class_py_screening.html", "class_py_screening" ]
 ];

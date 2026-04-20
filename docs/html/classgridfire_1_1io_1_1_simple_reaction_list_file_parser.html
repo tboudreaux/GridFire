@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -138,15 +138,13 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:ad913155a5a2a36b29e4ce4ca8d71c036" id="r_ad913155a5a2a36b29e4ce4ca8d71c036"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad913155a5a2a36b29e4ce4ca8d71c036">Config</a> = fourdst::config::Config</td></tr>
-<tr class="separator:ad913155a5a2a36b29e4ce4ca8d71c036"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f8f9a1f54cd2be5ec66c3181be892de" id="r_a6f8f9a1f54cd2be5ec66c3181be892de"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f8f9a1f54cd2be5ec66c3181be892de">LogManager</a> = fourdst::logging::LogManager</td></tr>
 <tr class="separator:a6f8f9a1f54cd2be5ec66c3181be892de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a4061e99bd77a3de0d6d9e317bfc74874" id="r_a4061e99bd77a3de0d6d9e317bfc74874"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ad913155a5a2a36b29e4ce4ca8d71c036">Config</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4061e99bd77a3de0d6d9e317bfc74874">m_config</a> = Config::getInstance()</td></tr>
-<tr class="separator:a4061e99bd77a3de0d6d9e317bfc74874"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab63e6743c7e69681fbf5749dc0557132" id="r_ab63e6743c7e69681fbf5749dc0557132"><td class="memItemLeft" align="right" valign="top">fourdst::config::Config&lt; <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab63e6743c7e69681fbf5749dc0557132">m_config</a></td></tr>
+<tr class="separator:ab63e6743c7e69681fbf5749dc0557132"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acef7eafe3cbea159259f69c88d309b66" id="r_acef7eafe3cbea159259f69c88d309b66"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acef7eafe3cbea159259f69c88d309b66">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
 <tr class="separator:acef7eafe3cbea159259f69c88d309b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -154,28 +152,6 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><p>A parser for simple text files containing a list of reactions. </p>
 <p>This parser reads a file where each line contains a single reaction name. It supports comments (lines starting with '#') and ignores empty lines. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="ad913155a5a2a36b29e4ce4ca8d71c036" name="ad913155a5a2a36b29e4ce4ca8d71c036"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad913155a5a2a36b29e4ce4ca8d71c036">&#9670;&#160;</a></span>Config</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#ad913155a5a2a36b29e4ce4ca8d71c036">gridfire::io::SimpleReactionListFileParser::Config</a> = fourdst::config::Config</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a6f8f9a1f54cd2be5ec66c3181be892de" name="a6f8f9a1f54cd2be5ec66c3181be892de"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6f8f9a1f54cd2be5ec66c3181be892de">&#9670;&#160;</a></span>LogManager</h2>
 
@@ -278,15 +254,15 @@ Private Attributes</h2></td></tr>
 <div class="line"><a class="code hl_typedef" href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">ParsedNetworkData</a> data = parser.<a class="code hl_function" href="#a4df01e3a93e1291d2cde0458545325f8">parse</a>(<span class="stringliteral">&quot;reactions.txt&quot;</span>);</div>
 <div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_a4df01e3a93e1291d2cde0458545325f8"><div class="ttname"><a href="#a4df01e3a93e1291d2cde0458545325f8">gridfire::io::SimpleReactionListFileParser::parse</a></div><div class="ttdeci">ParsedNetworkData parse(const std::string &amp;filename) const override</div><div class="ttdoc">Parses a simple reaction list file.</div><div class="ttdef"><b>Definition</b> network_file.cpp:44</div></div>
 <div class="ttc" id="aclassgridfire_1_1io_1_1_simple_reaction_list_file_parser_html_afc8ed91e8c98205c505e3d9f0cff1993"><div class="ttname"><a href="#afc8ed91e8c98205c505e3d9f0cff1993">gridfire::io::SimpleReactionListFileParser::SimpleReactionListFileParser</a></div><div class="ttdeci">SimpleReactionListFileParser()</div><div class="ttdoc">Constructs a SimpleReactionListFileParser.</div></div>
-<div class="ttc" id="anamespacegridfire_1_1io_html_abcbdcbd13cfa8c9fbe1b48e8ee2cc352"><div class="ttname"><a href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">gridfire::io::ParsedNetworkData</a></div><div class="ttdeci">std::vector&lt; std::string &gt; ParsedNetworkData</div><div class="ttdef"><b>Definition</b> network_file.h:12</div></div>
+<div class="ttc" id="anamespacegridfire_1_1io_html_abcbdcbd13cfa8c9fbe1b48e8ee2cc352"><div class="ttname"><a href="namespacegridfire_1_1io.html#abcbdcbd13cfa8c9fbe1b48e8ee2cc352">gridfire::io::ParsedNetworkData</a></div><div class="ttdeci">std::vector&lt; std::string &gt; ParsedNetworkData</div><div class="ttdef"><b>Definition</b> network_file.h:13</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classgridfire_1_1io_1_1_network_file_parser.html#a66e8e724c903d6ef4dd1c8103276bdbf">gridfire::io::NetworkFileParser</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4061e99bd77a3de0d6d9e317bfc74874" name="a4061e99bd77a3de0d6d9e317bfc74874"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4061e99bd77a3de0d6d9e317bfc74874">&#9670;&#160;</a></span>m_config</h2>
+<a id="ab63e6743c7e69681fbf5749dc0557132" name="ab63e6743c7e69681fbf5749dc0557132"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab63e6743c7e69681fbf5749dc0557132">&#9670;&#160;</a></span>m_config</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -295,7 +271,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#ad913155a5a2a36b29e4ce4ca8d71c036">Config</a>&amp; gridfire::io::SimpleReactionListFileParser::m_config = Config::getInstance()</td>
+          <td class="memname">fourdst::config::Config&lt;<a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>&gt; gridfire::io::SimpleReactionListFileParser::m_config</td>
         </tr>
       </table>
   </td>

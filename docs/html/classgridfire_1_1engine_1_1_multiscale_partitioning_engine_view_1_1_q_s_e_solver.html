@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,6 +108,8 @@ $(function(){initNavTree('classgridfire_1_1engine_1_1_multiscale_partitioning_en
   <div class="headertitle"><div class="title">gridfire::engine::MultiscalePartitioningEngineView::QSESolver Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;engine_multiscale.h&gt;</code></p>
 <div class="dynheader">
 Collaboration diagram for gridfire::engine::MultiscalePartitioningEngineView::QSESolver:</div>
 <div class="dyncontent">
@@ -129,12 +131,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a338cd55e34af1286f0f4593b04be7508"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a308ee7b77cde2658ea0c1e43827cea49" id="r_a308ee7b77cde2658ea0c1e43827cea49"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a308ee7b77cde2658ea0c1e43827cea49">~QSESolver</a> ()</td></tr>
 <tr class="separator:a308ee7b77cde2658ea0c1e43827cea49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6f28cf2f5759efad7d428f6794cc151" id="r_aa6f28cf2f5759efad7d428f6794cc151"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6f28cf2f5759efad7d428f6794cc151">solve</a> (const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
-<tr class="separator:aa6f28cf2f5759efad7d428f6794cc151"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f6b5cedc410cb7b60ca757dc9855426" id="r_a2f6b5cedc410cb7b60ca757dc9855426"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f6b5cedc410cb7b60ca757dc9855426">solve</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::Composition &amp;comp, double T9, double rho) const</td></tr>
+<tr class="separator:a2f6b5cedc410cb7b60ca757dc9855426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a420ca8991dd60fac7a9d18fae0eda0c1" id="r_a420ca8991dd60fac7a9d18fae0eda0c1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a420ca8991dd60fac7a9d18fae0eda0c1">solves</a> () const</td></tr>
 <tr class="separator:a420ca8991dd60fac7a9d18fae0eda0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a616b818685cc51e0c1926a46435cbb68" id="r_a616b818685cc51e0c1926a46435cbb68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a616b818685cc51e0c1926a46435cbb68">log_diagnostics</a> (const <a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html">QSEGroup</a> &amp;group, const fourdst::composition::Composition &amp;comp) const</td></tr>
 <tr class="separator:a616b818685cc51e0c1926a46435cbb68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25d2fd5dc372c43afb1ffeafe08aa0fa" id="r_a25d2fd5dc372c43afb1ffeafe08aa0fa"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html">QSESolver</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25d2fd5dc372c43afb1ffeafe08aa0fa">clone</a> () const</td></tr>
+<tr class="separator:a25d2fd5dc372c43afb1ffeafe08aa0fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e5ab29b7bc65cfdb74adf0555733d41" id="r_a0e5ab29b7bc65cfdb74adf0555733d41"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html">QSESolver</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e5ab29b7bc65cfdb74adf0555733d41">clone</a> (SUNContext sun_ctx) const</td></tr>
+<tr class="separator:a0e5ab29b7bc65cfdb74adf0555733d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -248,6 +254,40 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a25d2fd5dc372c43afb1ffeafe08aa0fa" name="a25d2fd5dc372c43afb1ffeafe08aa0fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25d2fd5dc372c43afb1ffeafe08aa0fa">&#9670;&#160;</a></span>clone() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html">MultiscalePartitioningEngineView::QSESolver</a> &gt; gridfire::engine::MultiscalePartitioningEngineView::QSESolver::clone </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0e5ab29b7bc65cfdb74adf0555733d41" name="a0e5ab29b7bc65cfdb74adf0555733d41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e5ab29b7bc65cfdb74adf0555733d41">&#9670;&#160;</a></span>clone() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver.html">MultiscalePartitioningEngineView::QSESolver</a> &gt; gridfire::engine::MultiscalePartitioningEngineView::QSESolver::clone </td>
+          <td>(</td>
+          <td class="paramtype">SUNContext</td>          <td class="paramname"><span class="paramname"><em>sun_ctx</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a8759a711c25a587877fbccdebdb9ecd9" name="a8759a711c25a587877fbccdebdb9ecd9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8759a711c25a587877fbccdebdb9ecd9">&#9670;&#160;</a></span>getLogger()</h2>
 
@@ -319,8 +359,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa6f28cf2f5759efad7d428f6794cc151" name="aa6f28cf2f5759efad7d428f6794cc151"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6f28cf2f5759efad7d428f6794cc151">&#9670;&#160;</a></span>solve()</h2>
+<a id="a2f6b5cedc410cb7b60ca757dc9855426" name="a2f6b5cedc410cb7b60ca757dc9855426"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f6b5cedc410cb7b60ca757dc9855426">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -328,6 +368,11 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">fourdst::composition::Composition gridfire::engine::MultiscalePartitioningEngineView::QSESolver::solve </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>

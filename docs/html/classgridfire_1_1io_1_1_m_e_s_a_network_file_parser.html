@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -138,15 +138,13 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:af43ad8375abf1cedfdccc296b9958c2b" id="r_af43ad8375abf1cedfdccc296b9958c2b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af43ad8375abf1cedfdccc296b9958c2b">Config</a> = fourdst::config::Config</td></tr>
-<tr class="separator:af43ad8375abf1cedfdccc296b9958c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84aa6894a331ad57bdab1e1ab85d4055" id="r_a84aa6894a331ad57bdab1e1ab85d4055"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84aa6894a331ad57bdab1e1ab85d4055">LogManager</a> = fourdst::logging::LogManager</td></tr>
 <tr class="separator:a84aa6894a331ad57bdab1e1ab85d4055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:aea206c3a7600db8d657666fef88fa20d" id="r_aea206c3a7600db8d657666fef88fa20d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#af43ad8375abf1cedfdccc296b9958c2b">Config</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea206c3a7600db8d657666fef88fa20d">m_config</a> = Config::getInstance()</td></tr>
-<tr class="separator:aea206c3a7600db8d657666fef88fa20d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f3bcea25a875fad5450d9e30884e7d" id="r_a32f3bcea25a875fad5450d9e30884e7d"><td class="memItemLeft" align="right" valign="top">fourdst::config::Config&lt; <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32f3bcea25a875fad5450d9e30884e7d">m_config</a></td></tr>
+<tr class="separator:a32f3bcea25a875fad5450d9e30884e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9c683289d48e58edf06bf59215b4937" id="r_ab9c683289d48e58edf06bf59215b4937"><td class="memItemLeft" align="right" valign="top">quill::Logger *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9c683289d48e58edf06bf59215b4937">m_logger</a> = LogManager::getInstance().getLogger(&quot;log&quot;)</td></tr>
 <tr class="separator:ab9c683289d48e58edf06bf59215b4937"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7f82597abf17f16c401bcdf528bd099" id="r_ab7f82597abf17f16c401bcdf528bd099"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7f82597abf17f16c401bcdf528bd099">m_filename</a></td></tr>
@@ -156,28 +154,6 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><p>A parser for MESA-format network files. </p>
 <p>This class is designed to parse reaction network files that follow the format used by the MESA stellar evolution code. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="af43ad8375abf1cedfdccc296b9958c2b" name="af43ad8375abf1cedfdccc296b9958c2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af43ad8375abf1cedfdccc296b9958c2b">&#9670;&#160;</a></span>Config</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="#af43ad8375abf1cedfdccc296b9958c2b">gridfire::io::MESANetworkFileParser::Config</a> = fourdst::config::Config</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a84aa6894a331ad57bdab1e1ab85d4055" name="a84aa6894a331ad57bdab1e1ab85d4055"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a84aa6894a331ad57bdab1e1ab85d4055">&#9670;&#160;</a></span>LogManager</h2>
 
@@ -280,8 +256,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="aea206c3a7600db8d657666fef88fa20d" name="aea206c3a7600db8d657666fef88fa20d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea206c3a7600db8d657666fef88fa20d">&#9670;&#160;</a></span>m_config</h2>
+<a id="a32f3bcea25a875fad5450d9e30884e7d" name="a32f3bcea25a875fad5450d9e30884e7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32f3bcea25a875fad5450d9e30884e7d">&#9670;&#160;</a></span>m_config</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -290,7 +266,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#af43ad8375abf1cedfdccc296b9958c2b">Config</a>&amp; gridfire::io::MESANetworkFileParser::m_config = Config::getInstance()</td>
+          <td class="memname">fourdst::config::Config&lt;<a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>&gt; gridfire::io::MESANetworkFileParser::m_config</td>
         </tr>
       </table>
   </td>

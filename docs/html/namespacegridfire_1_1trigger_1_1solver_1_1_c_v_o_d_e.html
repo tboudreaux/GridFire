@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,6 +108,8 @@ $(function(){initNavTree('namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_boundary_flux_trigger.html">BoundaryFluxTrigger</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html">ConvergenceFailureTrigger</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_off_diagonal_trigger.html">OffDiagonalTrigger</a></td></tr>
@@ -122,36 +124,22 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa2e951d13f36bb742fd27b83caa6d4d5" id="r_aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2e951d13f36bb742fd27b83caa6d4d5">makeEnginePartitioningTrigger</a> (const double simulationTimeInterval, const double offDiagonalThreshold, const double timestepCollapseRatio, const size_t maxConvergenceFailures)</td></tr>
-<tr class="memdesc:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
-<tr class="separator:aa2e951d13f36bb742fd27b83caa6d4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e69d41f7cc0095b9bf7313ec436ab54" id="r_a0e69d41f7cc0095b9bf7313ec436ab54"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html">gridfire::solver::PointSolverTimestepContext</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e69d41f7cc0095b9bf7313ec436ab54">makeEnginePartitioningTrigger</a> (const <a class="el" href="structgridfire_1_1config_1_1_trigger_config.html">config::TriggerConfig</a> &amp;cfg)</td></tr>
+<tr class="memdesc:a0e69d41f7cc0095b9bf7313ec436ab54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose a trigger suitable for deciding engine re-partitioning during <a class="el" href="namespacegridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e.html">CVODE</a> solves.  <br /></td></tr>
+<tr class="separator:a0e69d41f7cc0095b9bf7313ec436ab54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aa2e951d13f36bb742fd27b83caa6d4d5" name="aa2e951d13f36bb742fd27b83caa6d4d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2e951d13f36bb742fd27b83caa6d4d5">&#9670;&#160;</a></span>makeEnginePartitioningTrigger()</h2>
+<a id="a0e69d41f7cc0095b9bf7313ec436ab54" name="a0e69d41f7cc0095b9bf7313ec436ab54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e69d41f7cc0095b9bf7313ec436ab54">&#9670;&#160;</a></span>makeEnginePartitioningTrigger()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_1_1_timestep_context.html">gridfire::solver::CVODESolverStrategy::TimestepContext</a> &gt; &gt; gridfire::trigger::solver::CVODE::makeEnginePartitioningTrigger </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html">Trigger</a>&lt; <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html">gridfire::solver::PointSolverTimestepContext</a> &gt; &gt; gridfire::trigger::solver::CVODE::makeEnginePartitioningTrigger </td>
           <td>(</td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>simulationTimeInterval</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_trigger_config.html">config::TriggerConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>offDiagonalThreshold</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>timestepCollapseRatio</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>maxConvergenceFailures</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -162,15 +150,6 @@ Functions</h2></td></tr>
       timestepGrowthRelative, timestepGrowthWindowSize)</li>
 </ul>
 <p>See <a class="el" href="engine__partitioning__trigger_8cpp.html">engine_partitioning_trigger.cpp</a> for construction details using <a class="el" href="classgridfire_1_1trigger_1_1_or_trigger.html" title="Logical disjunction of two triggers with short-circuit evaluation.">OrTrigger</a> and <a class="el" href="classgridfire_1_1trigger_1_1_every_nth_trigger.html" title="Pass-through trigger that fires every Nth time its child trigger is true.">EveryNthTrigger</a> from <a class="el" href="trigger__logical_8h.html" title="Combinators for composing triggers with boolean logic (AND/OR/NOT/EveryNth).">trigger_logical.h</a>.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">simulationTimeInterval</td><td>Interval used by <a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_simulation_time_trigger.html" title="Triggers when the current simulation time advances by at least a fixed interval.">SimulationTimeTrigger</a> (&gt; 0). </td></tr>
-    <tr><td class="paramname">offDiagonalThreshold</td><td>Off-diagonal Jacobian magnitude threshold (&gt;= 0). </td></tr>
-    <tr><td class="paramname">timestepCollapseRatio</td><td>Threshold for timestep deviation (&gt;= 0, and &lt;= 1 when relative). </td></tr>
-    <tr><td class="paramname">maxConvergenceFailures</td><td>Window size for timestep averaging (&gt;= 1 recommended). </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>A unique_ptr to a composed <a class="el" href="classgridfire_1_1trigger_1_1_trigger.html" title="Generic trigger interface for signaling events/conditions during integration.">Trigger&lt;TimestepContext&gt;</a> implementing the policy above.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The exact policy is subject to change; this function centralizes that decision. </dd></dl>
 

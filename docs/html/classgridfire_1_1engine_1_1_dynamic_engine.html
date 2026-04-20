@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -123,82 +123,67 @@ Collaboration diagram for gridfire::engine::DynamicEngine:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a53276f09346b531f8676db355e1219eb" id="r_a53276f09346b531f8676db355e1219eb"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53276f09346b531f8676db355e1219eb">generateJacobianMatrix</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:a53276f09346b531f8676db355e1219eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state.  <br /></td></tr>
-<tr class="separator:a53276f09346b531f8676db355e1219eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15d53dac8b622a3b7d0f928a3995dbde" id="r_a15d53dac8b622a3b7d0f928a3995dbde"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15d53dac8b622a3b7d0f928a3995dbde">generateJacobianMatrix</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const =0</td></tr>
-<tr class="memdesc:a15d53dac8b622a3b7d0f928a3995dbde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state using a subset of active species.  <br /></td></tr>
-<tr class="separator:a15d53dac8b622a3b7d0f928a3995dbde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51d55a21be28e372021b2b8e5ecdc551" id="r_a51d55a21be28e372021b2b8e5ecdc551"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51d55a21be28e372021b2b8e5ecdc551">generateJacobianMatrix</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire_1_1engine.html#a9de1791ec719c0a9b76b835703336870">SparsityPattern</a> &amp;sparsityPattern) const =0</td></tr>
-<tr class="memdesc:a51d55a21be28e372021b2b8e5ecdc551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state with a specified sparsity pattern.  <br /></td></tr>
-<tr class="separator:a51d55a21be28e372021b2b8e5ecdc551"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e2c45a3e415b53e41def8f743f93464" id="r_a5e2c45a3e415b53e41def8f743f93464"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e2c45a3e415b53e41def8f743f93464">generateStoichiometryMatrix</a> ()=0</td></tr>
-<tr class="memdesc:a5e2c45a3e415b53e41def8f743f93464"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the stoichiometry matrix for the network.  <br /></td></tr>
-<tr class="separator:a5e2c45a3e415b53e41def8f743f93464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ce6ff370e3f0964c6b2688fb3f4bb7e" id="r_a5ce6ff370e3f0964c6b2688fb3f4bb7e"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ce6ff370e3f0964c6b2688fb3f4bb7e">getStoichiometryMatrixEntry</a> (const fourdst::atomic::Species &amp;species, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction) const =0</td></tr>
-<tr class="memdesc:a5ce6ff370e3f0964c6b2688fb3f4bb7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an entry from the stoichiometry matrix.  <br /></td></tr>
-<tr class="separator:a5ce6ff370e3f0964c6b2688fb3f4bb7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa57fa5e58b98a03fba31bcddda8001d4" id="r_aa57fa5e58b98a03fba31bcddda8001d4"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa57fa5e58b98a03fba31bcddda8001d4">calculateMolarReactionFlow</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:aa57fa5e58b98a03fba31bcddda8001d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the molar reaction flow for a given reaction.  <br /></td></tr>
-<tr class="separator:aa57fa5e58b98a03fba31bcddda8001d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada6a1295a92c2aede841672ecae0cede" id="r_ada6a1295a92c2aede841672ecae0cede"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada6a1295a92c2aede841672ecae0cede">calculateEpsDerivatives</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:ada6a1295a92c2aede841672ecae0cede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the derivatives of the energy generation rate with respect to T and rho.  <br /></td></tr>
-<tr class="separator:ada6a1295a92c2aede841672ecae0cede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26b59a4c7622bf820c0eeec6a7522aa8" id="r_a26b59a4c7622bf820c0eeec6a7522aa8"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26b59a4c7622bf820c0eeec6a7522aa8">getNetworkReactions</a> () const =0</td></tr>
-<tr class="memdesc:a26b59a4c7622bf820c0eeec6a7522aa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the set of logical reactions in the network.  <br /></td></tr>
-<tr class="separator:a26b59a4c7622bf820c0eeec6a7522aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab321170954bffc53b1bedaf54f6976be" id="r_ab321170954bffc53b1bedaf54f6976be"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab321170954bffc53b1bedaf54f6976be">setNetworkReactions</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions)=0</td></tr>
-<tr class="memdesc:ab321170954bffc53b1bedaf54f6976be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the reactions for the network.  <br /></td></tr>
-<tr class="separator:ab321170954bffc53b1bedaf54f6976be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef6ed91d922c0b1733fd7835e99d0efe" id="r_aef6ed91d922c0b1733fd7835e99d0efe"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef6ed91d922c0b1733fd7835e99d0efe">getSpeciesTimescales</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:aef6ed91d922c0b1733fd7835e99d0efe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute timescales for all species in the network.  <br /></td></tr>
-<tr class="separator:aef6ed91d922c0b1733fd7835e99d0efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefc5d0f7842b27a108ba1e4ca346e9a0" id="r_aefc5d0f7842b27a108ba1e4ca346e9a0"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefc5d0f7842b27a108ba1e4ca346e9a0">getSpeciesDestructionTimescales</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:aefc5d0f7842b27a108ba1e4ca346e9a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute destruction timescales for all species in the network.  <br /></td></tr>
-<tr class="separator:aefc5d0f7842b27a108ba1e4ca346e9a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dd85442ec54f20d91743c72364e36ff" id="r_a8dd85442ec54f20d91743c72364e36ff"><td class="memItemLeft" align="right" valign="top">virtual fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8dd85442ec54f20d91743c72364e36ff">update</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)=0</td></tr>
-<tr class="memdesc:a8dd85442ec54f20d91743c72364e36ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the internal state of the engine.  <br /></td></tr>
-<tr class="separator:a8dd85442ec54f20d91743c72364e36ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79423b9f67b4cac702547b4f1d8bd14c" id="r_a79423b9f67b4cac702547b4f1d8bd14c"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79423b9f67b4cac702547b4f1d8bd14c">isStale</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)=0</td></tr>
-<tr class="memdesc:a79423b9f67b4cac702547b4f1d8bd14c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the engine's internal state is stale.  <br /></td></tr>
-<tr class="separator:a79423b9f67b4cac702547b4f1d8bd14c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50e76977d0dc3cc23d52b51842d35003" id="r_a50e76977d0dc3cc23d52b51842d35003"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50e76977d0dc3cc23d52b51842d35003">setScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> model)=0</td></tr>
-<tr class="memdesc:a50e76977d0dc3cc23d52b51842d35003"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the electron screening model.  <br /></td></tr>
-<tr class="separator:a50e76977d0dc3cc23d52b51842d35003"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24103027a38e02d4342161164554d332" id="r_a24103027a38e02d4342161164554d332"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24103027a38e02d4342161164554d332">getScreeningModel</a> () const =0</td></tr>
-<tr class="memdesc:a24103027a38e02d4342161164554d332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current electron screening model.  <br /></td></tr>
-<tr class="separator:a24103027a38e02d4342161164554d332"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0f40017603e8e6887b75dc7360d7c5e" id="r_ac0f40017603e8e6887b75dc7360d7c5e"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0f40017603e8e6887b75dc7360d7c5e">getSpeciesIndex</a> (const fourdst::atomic::Species &amp;species) const =0</td></tr>
-<tr class="memdesc:ac0f40017603e8e6887b75dc7360d7c5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of a species in the network.  <br /></td></tr>
-<tr class="separator:ac0f40017603e8e6887b75dc7360d7c5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9d55b81c1963113aad86aa60c19676f" id="r_aa9d55b81c1963113aad86aa60c19676f"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9d55b81c1963113aad86aa60c19676f">mapNetInToMolarAbundanceVector</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const =0</td></tr>
-<tr class="memdesc:aa9d55b81c1963113aad86aa60c19676f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> object to a vector of molar abundances.  <br /></td></tr>
-<tr class="separator:aa9d55b81c1963113aad86aa60c19676f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70e270bb50910c0055a75575c1ef1e95" id="r_a70e270bb50910c0055a75575c1ef1e95"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70e270bb50910c0055a75575c1ef1e95">primeEngine</a> (const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn)=0</td></tr>
-<tr class="memdesc:a70e270bb50910c0055a75575c1ef1e95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prime the engine with initial conditions.  <br /></td></tr>
-<tr class="separator:a70e270bb50910c0055a75575c1ef1e95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5a0def6b6af0bd93bf9057c25f048ff" id="r_ac5a0def6b6af0bd93bf9057c25f048ff"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1engine.html#a55cd7c313bbfafd5b6a1bcd6329ed99b">BuildDepthType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5a0def6b6af0bd93bf9057c25f048ff">getDepth</a> () const</td></tr>
-<tr class="memdesc:ac5a0def6b6af0bd93bf9057c25f048ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the depth of the network.  <br /></td></tr>
-<tr class="separator:ac5a0def6b6af0bd93bf9057c25f048ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2444b9ed3bc61920ce23c546444269e4" id="r_a2444b9ed3bc61920ce23c546444269e4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2444b9ed3bc61920ce23c546444269e4">rebuild</a> (const fourdst::composition::CompositionAbstract &amp;comp, <a class="el" href="namespacegridfire_1_1engine.html#a55cd7c313bbfafd5b6a1bcd6329ed99b">BuildDepthType</a> depth)</td></tr>
-<tr class="memdesc:a2444b9ed3bc61920ce23c546444269e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the network with a specified depth.  <br /></td></tr>
-<tr class="separator:a2444b9ed3bc61920ce23c546444269e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41877719ae5e8de53c1692c7cf9bfbfc" id="r_a41877719ae5e8de53c1692c7cf9bfbfc"><td class="memItemLeft" align="right" valign="top">virtual fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41877719ae5e8de53c1692c7cf9bfbfc">collectComposition</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:a41877719ae5e8de53c1692c7cf9bfbfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively collect composition from current engine and any sub engines if they exist.  <br /></td></tr>
-<tr class="separator:a41877719ae5e8de53c1692c7cf9bfbfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aebefad50c1aa34207e118e92d7ccf0" id="r_a8aebefad50c1aa34207e118e92d7ccf0"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">SpeciesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8aebefad50c1aa34207e118e92d7ccf0">getSpeciesStatus</a> (const fourdst::atomic::Species &amp;species) const =0</td></tr>
-<tr class="memdesc:a8aebefad50c1aa34207e118e92d7ccf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the status of a species in the network.  <br /></td></tr>
-<tr class="separator:a8aebefad50c1aa34207e118e92d7ccf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6d95491f017feb4c43d9fa05739fcd0" id="r_ab6d95491f017feb4c43d9fa05739fcd0"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6d95491f017feb4c43d9fa05739fcd0">generateJacobianMatrix</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:ab6d95491f017feb4c43d9fa05739fcd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state.  <br /></td></tr>
+<tr class="separator:ab6d95491f017feb4c43d9fa05739fcd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a983551b5fef4610799c062cb5be2b1c7" id="r_a983551b5fef4610799c062cb5be2b1c7"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a983551b5fef4610799c062cb5be2b1c7">generateJacobianMatrix</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, const std::vector&lt; fourdst::atomic::Species &gt; &amp;activeSpecies) const =0</td></tr>
+<tr class="memdesc:a983551b5fef4610799c062cb5be2b1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state using a subset of active species.  <br /></td></tr>
+<tr class="separator:a983551b5fef4610799c062cb5be2b1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78f7b315bfa0a1f34d8fd5ab652b6934" id="r_a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78f7b315bfa0a1f34d8fd5ab652b6934">generateJacobianMatrix</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire_1_1engine.html#a9de1791ec719c0a9b76b835703336870">SparsityPattern</a> &amp;sparsityPattern) const =0</td></tr>
+<tr class="memdesc:a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state with a specified sparsity pattern.  <br /></td></tr>
+<tr class="separator:a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf0f13b9eae66da6119e6fca826379e8" id="r_abf0f13b9eae66da6119e6fca826379e8"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf0f13b9eae66da6119e6fca826379e8">calculateMolarReactionFlow</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:abf0f13b9eae66da6119e6fca826379e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the molar reaction flow for a given reaction.  <br /></td></tr>
+<tr class="separator:abf0f13b9eae66da6119e6fca826379e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fd5d4f3c58d1790b7a517b5ef888eaf" id="r_a3fd5d4f3c58d1790b7a517b5ef888eaf"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fd5d4f3c58d1790b7a517b5ef888eaf">calculateEpsDerivatives</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:a3fd5d4f3c58d1790b7a517b5ef888eaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the derivatives of the energy generation rate with respect to T and rho.  <br /></td></tr>
+<tr class="separator:a3fd5d4f3c58d1790b7a517b5ef888eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77a889cbc3791beca4abb95cb663a4d6" id="r_a77a889cbc3791beca4abb95cb663a4d6"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77a889cbc3791beca4abb95cb663a4d6">getNetworkReactions</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const =0</td></tr>
+<tr class="memdesc:a77a889cbc3791beca4abb95cb663a4d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the set of logical reactions in the network.  <br /></td></tr>
+<tr class="separator:a77a889cbc3791beca4abb95cb663a4d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac87099ff654ca30a8d8224f4779e1a15" id="r_ac87099ff654ca30a8d8224f4779e1a15"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac87099ff654ca30a8d8224f4779e1a15">getInactiveNetworkReactions</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const</td></tr>
+<tr class="memdesc:ac87099ff654ca30a8d8224f4779e1a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the set of inactive reactions in the network.  <br /></td></tr>
+<tr class="separator:ac87099ff654ca30a8d8224f4779e1a15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc0a33fa6e9d8de3b433fef55f3a6972" id="r_adc0a33fa6e9d8de3b433fef55f3a6972"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc0a33fa6e9d8de3b433fef55f3a6972">getInactiveReactionMolarReactionFlow</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const fourdst::composition::CompositionAbstract &amp;comp, const double T9, const double rho) const</td></tr>
+<tr class="separator:adc0a33fa6e9d8de3b433fef55f3a6972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92be21f072b61fcf291559246045801f" id="r_a92be21f072b61fcf291559246045801f"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92be21f072b61fcf291559246045801f">getSpeciesTimescales</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:a92be21f072b61fcf291559246045801f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute timescales for all species in the network.  <br /></td></tr>
+<tr class="separator:a92be21f072b61fcf291559246045801f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a128dd0a7f738f93092c437eeda983fdf" id="r_a128dd0a7f738f93092c437eeda983fdf"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a128dd0a7f738f93092c437eeda983fdf">getSpeciesDestructionTimescales</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:a128dd0a7f738f93092c437eeda983fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute destruction timescales for all species in the network.  <br /></td></tr>
+<tr class="separator:a128dd0a7f738f93092c437eeda983fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a260d36cc1e14ca8eda0309745e9134d9" id="r_a260d36cc1e14ca8eda0309745e9134d9"><td class="memItemLeft" align="right" valign="top">virtual fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a260d36cc1e14ca8eda0309745e9134d9">project</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const =0</td></tr>
+<tr class="memdesc:a260d36cc1e14ca8eda0309745e9134d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the thread local scratch pad state of a network.  <br /></td></tr>
+<tr class="separator:a260d36cc1e14ca8eda0309745e9134d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60834e4bcfb2e4ec21a9cbf7bb9f7363" id="r_a60834e4bcfb2e4ec21a9cbf7bb9f7363"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60834e4bcfb2e4ec21a9cbf7bb9f7363">getScreeningModel</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const =0</td></tr>
+<tr class="memdesc:a60834e4bcfb2e4ec21a9cbf7bb9f7363"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current electron screening model.  <br /></td></tr>
+<tr class="separator:a60834e4bcfb2e4ec21a9cbf7bb9f7363"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16bd2fae51fa738da62f2a767f6875d2" id="r_a16bd2fae51fa738da62f2a767f6875d2"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16bd2fae51fa738da62f2a767f6875d2">getSpeciesIndex</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::atomic::Species &amp;species) const =0</td></tr>
+<tr class="memdesc:a16bd2fae51fa738da62f2a767f6875d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of a species in the network.  <br /></td></tr>
+<tr class="separator:a16bd2fae51fa738da62f2a767f6875d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30df09678c3de1a55b7c6ac5eae35004" id="r_a30df09678c3de1a55b7c6ac5eae35004"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30df09678c3de1a55b7c6ac5eae35004">primeEngine</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const =0</td></tr>
+<tr class="memdesc:a30df09678c3de1a55b7c6ac5eae35004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prime the engine with initial conditions.  <br /></td></tr>
+<tr class="separator:a30df09678c3de1a55b7c6ac5eae35004"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a078a16d21f2d7de9636c5bc6a05ddfec" id="r_a078a16d21f2d7de9636c5bc6a05ddfec"><td class="memItemLeft" align="right" valign="top">virtual fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a078a16d21f2d7de9636c5bc6a05ddfec">collectComposition</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
+<tr class="memdesc:a078a16d21f2d7de9636c5bc6a05ddfec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recursively collect composition from current engine and any sub engines if they exist.  <br /></td></tr>
+<tr class="separator:a078a16d21f2d7de9636c5bc6a05ddfec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fefd34491959f9936b7a065fc2d6274" id="r_a1fefd34491959f9936b7a065fc2d6274"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">SpeciesStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1fefd34491959f9936b7a065fc2d6274">getSpeciesStatus</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::atomic::Species &amp;species) const =0</td></tr>
+<tr class="memdesc:a1fefd34491959f9936b7a065fc2d6274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the status of a species in the network.  <br /></td></tr>
+<tr class="separator:a1fefd34491959f9936b7a065fc2d6274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30cc7809d53540bd3407d971de8eec48" id="r_a30cc7809d53540bd3407d971de8eec48"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30cc7809d53540bd3407d971de8eec48">getMostRecentRHSCalculation</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const =0</td></tr>
+<tr class="separator:a30cc7809d53540bd3407d971de8eec48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a675024091dc64f8784204a78bab46d90" id="r_a675024091dc64f8784204a78bab46d90"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a675024091dc64f8784204a78bab46d90">constructStateBlob</a> (const <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> *blob) const =0</td></tr>
+<tr class="separator:a675024091dc64f8784204a78bab46d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1engine_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1engine_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1engine_1_1_engine.html">gridfire::engine::Engine</a></td></tr>
 <tr class="memitem:af0ea99416c28933d364a872fc6aff556 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_af0ea99416c28933d364a872fc6aff556"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#af0ea99416c28933d364a872fc6aff556">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:af0ea99416c28933d364a872fc6aff556 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
 <tr class="separator:af0ea99416c28933d364a872fc6aff556 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3263c3fde2509d5d8ec4da3b6e946c48 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_a3263c3fde2509d5d8ec4da3b6e946c48"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#a3263c3fde2509d5d8ec4da3b6e946c48">getNetworkSpecies</a> () const =0</td></tr>
-<tr class="memdesc:a3263c3fde2509d5d8ec4da3b6e946c48 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
-<tr class="separator:a3263c3fde2509d5d8ec4da3b6e946c48 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764fc091c72c12c8529105d7c96badb2 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_a764fc091c72c12c8529105d7c96badb2"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#a764fc091c72c12c8529105d7c96badb2">calculateRHSAndEnergy</a> (const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
-<tr class="memdesc:a764fc091c72c12c8529105d7c96badb2 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
-<tr class="separator:a764fc091c72c12c8529105d7c96badb2 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa8b1970e20f4bab61e4d31ead09f930 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_afa8b1970e20f4bab61e4d31ead09f930"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#afa8b1970e20f4bab61e4d31ead09f930">getNetworkSpecies</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const =0</td></tr>
+<tr class="memdesc:afa8b1970e20f4bab61e4d31ead09f930 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of species in the network.  <br /></td></tr>
+<tr class="separator:afa8b1970e20f4bab61e4d31ead09f930 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c9ed5e0810799cd6af1d8ffbc8a918 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_a71c9ed5e0810799cd6af1d8ffbc8a918"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#a71c9ed5e0810799cd6af1d8ffbc8a918">calculateRHSAndEnergy</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, bool trust) const =0</td></tr>
+<tr class="memdesc:a71c9ed5e0810799cd6af1d8ffbc8a918 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the right-hand side (dY/dt) and energy generation.  <br /></td></tr>
+<tr class="separator:a71c9ed5e0810799cd6af1d8ffbc8a918 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract class for engines supporting Jacobian and stoichiometry operations. </p>
@@ -211,8 +196,8 @@ Public Member Functions</h2></td></tr>
 </ul>
 <p>Intended usage: Derive from this class to implement engines that support advanced solver features such as implicit integration, sensitivity analysis, QSE (Quasi-Steady-State Equilibrium) handling, and more. Generally this will be the main engine type </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ada6a1295a92c2aede841672ecae0cede" name="ada6a1295a92c2aede841672ecae0cede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada6a1295a92c2aede841672ecae0cede">&#9670;&#160;</a></span>calculateEpsDerivatives()</h2>
+<a id="a3fd5d4f3c58d1790b7a517b5ef888eaf" name="a3fd5d4f3c58d1790b7a517b5ef888eaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fd5d4f3c58d1790b7a517b5ef888eaf">&#9670;&#160;</a></span>calculateEpsDerivatives()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -223,6 +208,11 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual <a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a> gridfire::engine::DynamicEngine::calculateEpsDerivatives </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -255,12 +245,12 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html" title="Structure holding derivatives of energy generation rate with respect to T and rho.">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
 <p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a17bbc9c0d480a8533acb193cb9a46fea">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2a866a7ba9572d36efab8efe72a063f5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac7e4624ed6eee72e7a8df42381d098bb">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ac720fcea2f0304c3d7e7ba8a6dfb84da">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6832a7898da51017a20f578e33cba729">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8c12a3dd77c7f277a982b2e826de1b95">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab6e0458acf7855ff6472b96801048479">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aa265b90b5ec153e1e71acb2d0e8fad36">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a1e6fe11b37d5ef6da00ec36d06ebc957">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a01c0ea8802358c2cbc6d8571a145775a">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="aa57fa5e58b98a03fba31bcddda8001d4" name="aa57fa5e58b98a03fba31bcddda8001d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa57fa5e58b98a03fba31bcddda8001d4">&#9670;&#160;</a></span>calculateMolarReactionFlow()</h2>
+<a id="abf0f13b9eae66da6119e6fca826379e8" name="abf0f13b9eae66da6119e6fca826379e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf0f13b9eae66da6119e6fca826379e8">&#9670;&#160;</a></span>calculateMolarReactionFlow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -271,6 +261,11 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual double gridfire::engine::DynamicEngine::calculateMolarReactionFlow </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>, </td>
         </tr>
         <tr>
@@ -299,6 +294,7 @@ Public Member Functions</h2></td></tr>
 <p>Calculate the molar reaction flow for a given reaction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">reaction</td><td>The reaction for which to calculate the flow. </td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
@@ -309,12 +305,12 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
 <p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5bd0174105e836dd98c71ab495357e5b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2f0ad1febc467bce87b5c6ad29b059fb">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aaff9cdc04ca01e7c927d36476bcf5da4">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#af030c9bd6a95686a09429b4619ad188c">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a8facba88b6df6e016ce53a0ff3cff125">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aededeeeec7833c8f40b0aa27ff165833">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#afb78ba1245f5b61a29d6163c4548f6b6">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a154eda68e5df7f45b0e59b17761177b3">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a0ef7edd271cec2b1b0e74b828ee25dba">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2f723f732e9a83c24c1e654885ec7eea">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a41877719ae5e8de53c1692c7cf9bfbfc" name="a41877719ae5e8de53c1692c7cf9bfbfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41877719ae5e8de53c1692c7cf9bfbfc">&#9670;&#160;</a></span>collectComposition()</h2>
+<a id="a078a16d21f2d7de9636c5bc6a05ddfec" name="a078a16d21f2d7de9636c5bc6a05ddfec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a078a16d21f2d7de9636c5bc6a05ddfec">&#9670;&#160;</a></span>collectComposition()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -325,6 +321,11 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual fourdst::composition::Composition gridfire::engine::DynamicEngine::collectComposition </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -340,7 +341,7 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -351,6 +352,7 @@ Public Member Functions</h2></td></tr>
 These methods return an unfinalized composition which must then be finalized by the caller </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">comp</td><td>Input composition to "normalize". </td></tr>
     <tr><td class="paramname">T9</td><td></td></tr>
     <tr><td class="paramname">rho</td><td></td></tr>
@@ -359,12 +361,39 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>An updated composition which is a superset of comp. This may contain species which were culled, for example, by either QSE partitioning or reaction flow rate culling </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a77d4c08eecfad5cc414161d0fc8db946">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a25dc44af1a58561b665103b16abe9bbc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae9d4d99c791876c012697fe5a0ba06c8">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a97d9616558f681ad010ee452394f3519">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a239826d90cb5db236e68230f7ac84bcb">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a7d4d16693db712b1823377ad460f5144">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4002e188995b6c203dc391f381432e5b">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a1c977a772eedae1cceeb6b50d984fde4">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a5c7669454b986ed20db8387e5724b2b0">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a60445db14a6bfd0eeef7c0a62d458a60">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a53276f09346b531f8676db355e1219eb" name="a53276f09346b531f8676db355e1219eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53276f09346b531f8676db355e1219eb">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
+<a id="a675024091dc64f8784204a78bab46d90" name="a675024091dc64f8784204a78bab46d90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a675024091dc64f8784204a78bab46d90">&#9670;&#160;</a></span>constructStateBlob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &gt; gridfire::engine::DynamicEngine::constructStateBlob </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> *</td>          <td class="paramname"><span class="paramname"><em>blob</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a2e5d6985c84cc9c404080f8add5f5c18">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ac126bed6dcdfa6b2888efa3a769b4490">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acfe338ed3b10a4f116e58b2693a7fe10">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a80dc129ae2fc3dd2f1d82e123e7cda3f">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6dc693583383d7237b3cede639b41f5f">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="ab6d95491f017feb4c43d9fa05739fcd0" name="ab6d95491f017feb4c43d9fa05739fcd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6d95491f017feb4c43d9fa05739fcd0">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -375,6 +404,11 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a> gridfire::engine::DynamicEngine::generateJacobianMatrix </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -398,6 +432,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Generate the Jacobian matrix for the current state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
@@ -406,12 +441,12 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state. The matrix can then be accessed via getJacobianMatrixEntry(). </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a2a44dfae512b370bad6b977330e0636a">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4d90439d99da61107d95319b970760bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a9ca013f203d7a3ef9d1b9ee4b2982cb0">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a8950fb9c0c36684538805de4f0acf82e">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a298f700c647d2c3973d2a35d370c823e">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8d2ad2c011dede7b9abc508e0eead302">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#aa7d5c9288cfe23aa4435a89210280d83">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ab7efbe72c39d2828eeed4e20f319a2c8">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#adb4206971c774362ca4a92acae64c0a8">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a13b42a3a523e4c14e06820a43f15041b">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a51d55a21be28e372021b2b8e5ecdc551" name="a51d55a21be28e372021b2b8e5ecdc551"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51d55a21be28e372021b2b8e5ecdc551">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
+<a id="a78f7b315bfa0a1f34d8fd5ab652b6934" name="a78f7b315bfa0a1f34d8fd5ab652b6934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78f7b315bfa0a1f34d8fd5ab652b6934">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -422,6 +457,11 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a> gridfire::engine::DynamicEngine::generateJacobianMatrix </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -450,6 +490,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Generate the Jacobian matrix for the current state with a specified sparsity pattern. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>Get the scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
@@ -460,12 +501,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state using automatic differentiation, taking into account the provided sparsity pattern. The matrix can then be accessed via <code>getJacobianMatrixEntry()</code>.</p>
 <dl class="section see"><dt>See also</dt><dd>getJacobianMatrixEntry() </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ae894f46c67a8b8e02b8988a6b73dc9e5">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1de5867a0e633de0d0d96ac4fbb141e5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac4f9cd4e2304f681dd9af0f7b751cb81">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a64b6e7e5794cc42edf72899d348d15af">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a204643754cac3cf37c550ecd32f659fe">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a7ece1ddb7b891695b70566e29ed5ab8f">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a37ba76a5a0d0cb46d93df1982f196f11">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a7704e02c04de922ae6b01f4ba2b88148">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ad515fb9edfe551329ded487d43257745">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af9c4725bfc2cc8c85c63790e2385d55b">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a15d53dac8b622a3b7d0f928a3995dbde" name="a15d53dac8b622a3b7d0f928a3995dbde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15d53dac8b622a3b7d0f928a3995dbde">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
+<a id="a983551b5fef4610799c062cb5be2b1c7" name="a983551b5fef4610799c062cb5be2b1c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a983551b5fef4610799c062cb5be2b1c7">&#9670;&#160;</a></span>generateJacobianMatrix() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -476,6 +517,11 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a> gridfire::engine::DynamicEngine::generateJacobianMatrix </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -504,6 +550,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Generate the Jacobian matrix for the current state using a subset of active species. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
@@ -513,12 +560,12 @@ These methods return an unfinalized composition which must then be finalized by 
 </dl>
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state, considering only the specified subset of active species. The matrix can then be accessed via getJacobianMatrixEntry(). </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a1b7b3b0b449d0859d57f99188cdd83d6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a4966f8cbc859ce2a8a465516d0c0abd0">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc28ff627d46d8d4066a1acf830cbe27">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aae6c00cff4f7a992513d1e9481436f8f">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2b1c054b250abccc2af9a7275c68df4a">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6c279469be6f58b4213ea9f9cf9d07cc">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1457e3aa9caae5d2fba17adc62f47c79">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a72130974401a22155dfd9a2e68192d56">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ae8be625f7535f2957a5de7b525020388">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a5a2697b43cddeef2aeb40b604a0de933">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a5e2c45a3e415b53e41def8f743f93464" name="a5e2c45a3e415b53e41def8f743f93464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e2c45a3e415b53e41def8f743f93464">&#9670;&#160;</a></span>generateStoichiometryMatrix()</h2>
+<a id="ac87099ff654ca30a8d8224f4779e1a15" name="ac87099ff654ca30a8d8224f4779e1a15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac87099ff654ca30a8d8224f4779e1a15">&#9670;&#160;</a></span>getInactiveNetworkReactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -527,39 +574,9 @@ These methods return an unfinalized composition which must then be finalized by 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void gridfire::engine::DynamicEngine::generateStoichiometryMatrix </td>
+          <td class="memname">virtual <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> gridfire::engine::DynamicEngine::getInactiveNetworkReactions </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generate the stoichiometry matrix for the network. </p>
-<p>This method must compute and store the stoichiometry matrix, which encodes the net change of each species in each reaction. </p>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a754445722193f11ae534b7c0afa9b8aa">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#af4049e5570bd143d41cab1d4005b6824">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a2221feee40542efa1c07f01225bd3828">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a552fa7e1f4e066fa577c55500e782014">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2066649ca11a869c054079ea12d8d0e9">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="ac5a0def6b6af0bd93bf9057c25f048ff" name="ac5a0def6b6af0bd93bf9057c25f048ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5a0def6b6af0bd93bf9057c25f048ff">&#9670;&#160;</a></span>getDepth()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="namespacegridfire_1_1engine.html#a55cd7c313bbfafd5b6a1bcd6329ed99b">BuildDepthType</a> gridfire::engine::DynamicEngine::getDepth </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -570,16 +587,89 @@ These methods return an unfinalized composition which must then be finalized by 
 </table>
 </div><div class="memdoc">
 
-<p>Get the depth of the network. </p>
-<dl class="section return"><dt>Returns</dt><dd>The depth of the network, which may indicate the level of detail or complexity in the reaction network.</dd></dl>
-<p>This method is intended to provide information about the network's structure, such as how many layers of reactions or species are present. It can be useful for diagnostics and understanding the network's complexity. </p>
+<p>Get the set of inactive reactions in the network. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classgridfire_1_1engine_1_1_reaction_set.html">ReactionSet</a> containing all inactive reactions.</dd></dl>
+<p>By default, this method returns an empty set. Derived classes can override this method to provide the actual set of inactive reactions based on their internal logic (e.g., reaction flow culling, QSE partitioning). </p>
 
-<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ab29d6c4a7c789cf3d75767833c80c658">gridfire::engine::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a541cf022fe3253279f8f1309c10556d7">PyDynamicEngine</a>.</p>
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a03857da090f2efb6d725bdd176f3e37e">gridfire::engine::AdaptiveEngineView</a>.</p>
 
 </div>
 </div>
-<a id="a26b59a4c7622bf820c0eeec6a7522aa8" name="a26b59a4c7622bf820c0eeec6a7522aa8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26b59a4c7622bf820c0eeec6a7522aa8">&#9670;&#160;</a></span>getNetworkReactions()</h2>
+<a id="adc0a33fa6e9d8de3b433fef55f3a6972" name="adc0a33fa6e9d8de3b433fef55f3a6972"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc0a33fa6e9d8de3b433fef55f3a6972">&#9670;&#160;</a></span>getInactiveReactionMolarReactionFlow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double gridfire::engine::DynamicEngine::getInactiveReactionMolarReactionFlow </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a4a9d62261b218d85a4a59d3402104d9b">gridfire::engine::AdaptiveEngineView</a>.</p>
+
+</div>
+</div>
+<a id="a30cc7809d53540bd3407d971de8eec48" name="a30cc7809d53540bd3407d971de8eec48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30cc7809d53540bd3407d971de8eec48">&#9670;&#160;</a></span>getMostRecentRHSCalculation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; &gt; gridfire::engine::DynamicEngine::getMostRecentRHSCalculation </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#abbb82ee0db6a3c033019004ef48b1bff">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a8d2685b85a46c3979ca23db7eaa618b5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a0e484a5fcabc2ced4552e92078fcc03d">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a9eeedbcf35b6cb0341a51ba1dddc97fe">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6db6bfd45e74517f837c1b83a9919924">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a77a889cbc3791beca4abb95cb663a4d6" name="a77a889cbc3791beca4abb95cb663a4d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77a889cbc3791beca4abb95cb663a4d6">&#9670;&#160;</a></span>getNetworkReactions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -590,7 +680,7 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp; gridfire::engine::DynamicEngine::getNetworkReactions </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -604,12 +694,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Get the set of logical reactions in the network. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the LogicalReactionSet containing all reactions. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a722ea6e07d46f739c29ad681c7500f8c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a81732c1b2d08451849c1ddf833246892">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a749cc482a707cb3a38bdd5de894716e2">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a9dc9de4359beb704b94024f159ae619d">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a1d5143640666631501cf229bc491516e">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a14363a95a15d66893d3bec0c3f69b34f">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#acec78c23ab9a29c6fe930cb54388e6eb">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a90e87465ba1e80af7124c0e4614d433b">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ac2141220d0d504bb9c1cb31ce03d957e">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a78d0b8501591667f8593a929a5439692">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a24103027a38e02d4342161164554d332" name="a24103027a38e02d4342161164554d332"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24103027a38e02d4342161164554d332">&#9670;&#160;</a></span>getScreeningModel()</h2>
+<a id="a60834e4bcfb2e4ec21a9cbf7bb9f7363" name="a60834e4bcfb2e4ec21a9cbf7bb9f7363"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60834e4bcfb2e4ec21a9cbf7bb9f7363">&#9670;&#160;</a></span>getScreeningModel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -620,7 +710,7 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> gridfire::engine::DynamicEngine::getScreeningModel </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -632,17 +722,23 @@ These methods return an unfinalized composition which must then be finalized by 
 </div><div class="memdoc">
 
 <p>Get the current electron screening model. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>The currently active screening model type.</dd></dl>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> currentModel = myEngine.getScreeningModel();</div>
 <div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a></div><div class="ttdeci">ScreeningType</div><div class="ttdoc">Enumerates the available plasma screening models.</div><div class="ttdef"><b>Definition</b> screening_types.h:15</div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#acbd5b36262fa7d40f3274f4be6f0b8f6">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a413b111f6a643d7aecbae01dd0f82640">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a62c6f3bebe931bcd412fb492deb634a5">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#accdd09720d44cc5efb1ee267706f0500">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#ab4cfdca5e15957c5cef75ffa6dedeee5">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a58d208da3143807baac98484aa260bd2">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a112fa152ca631af4dfd053e8689af7f5">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a69b478b15844d145219c9c5a4e515e59">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#afab9ea03b2f6b97e9c40249ab8834107">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#ae36830f13ee730dccc3a5a8b3e4d603c">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="aefc5d0f7842b27a108ba1e4ca346e9a0" name="aefc5d0f7842b27a108ba1e4ca346e9a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefc5d0f7842b27a108ba1e4ca346e9a0">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
+<a id="a128dd0a7f738f93092c437eeda983fdf" name="a128dd0a7f738f93092c437eeda983fdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a128dd0a7f738f93092c437eeda983fdf">&#9670;&#160;</a></span>getSpeciesDestructionTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -653,6 +749,11 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt; gridfire::engine::DynamicEngine::getSpeciesDestructionTimescales </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -676,6 +777,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Compute destruction timescales for all species in the network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">comp</td><td>Composition object containing current abundances. </td></tr>
     <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
     <tr><td class="paramname">rho</td><td>Density in g/cm^3. </td></tr>
@@ -685,12 +787,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>Map from Species to their destruction timescales (s).</dd></dl>
 <p>This method estimates the destruction timescale for each species, which can be useful for understanding reaction flows and equilibrium states. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a420666d17650736e20402514294f9a14">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab051d976dbecf325747d54efe7834d04">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ae026bc87dc8b24fd78d412ac7e58b148">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a27d68f2e6c4572445cd94dc472470a01">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a8d34faa3d6ea804a3467979858d33535">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6fdf4ba999ca4ee089297380f3af9249">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a992c39d65298e3b58e529825889b7eea">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a32ab9175e93ae29f87b0903400cb3521">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a8e50f727ca6b42c27b9d5786e078ff6a">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af5f39c10cfc932d006c08e4bd1c1bcad">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="ac0f40017603e8e6887b75dc7360d7c5e" name="ac0f40017603e8e6887b75dc7360d7c5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0f40017603e8e6887b75dc7360d7c5e">&#9670;&#160;</a></span>getSpeciesIndex()</h2>
+<a id="a16bd2fae51fa738da62f2a767f6875d2" name="a16bd2fae51fa738da62f2a767f6875d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16bd2fae51fa738da62f2a767f6875d2">&#9670;&#160;</a></span>getSpeciesIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -701,8 +803,12 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual size_t gridfire::engine::DynamicEngine::getSpeciesIndex </td>
           <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -715,18 +821,19 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Get the index of a species in the network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">species</td><td>The species to look up.</td></tr>
   </table>
   </dd>
 </dl>
 <p>This method allows querying the index of a specific species in the engine's internal representation. It is useful for accessing species data efficiently. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ad7a82578006e5c55ca7716e7ab7e710c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#afb3c67ce20746b9acb2766920b8f397b">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ad67b0022cc783e63ae1954a04c4a68e1">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ae0c02c830cf45568a7c4d35d4ed15e95">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a95d10a7b240d543a1bc6c67ddf2dc8e0">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a46c20214859cb8e112cfffc46c54d232">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a318de224195e7c953922c9f9ccfb8652">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a4d339f84e5f44af004b14d69ce10ee21">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#acc2a6a05b5587ca4ae615bff79bc6a61">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#abd2f90dc6bd506c2fd92045ba2a9e6cf">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a8aebefad50c1aa34207e118e92d7ccf0" name="a8aebefad50c1aa34207e118e92d7ccf0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8aebefad50c1aa34207e118e92d7ccf0">&#9670;&#160;</a></span>getSpeciesStatus()</h2>
+<a id="a1fefd34491959f9936b7a065fc2d6274" name="a1fefd34491959f9936b7a065fc2d6274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fefd34491959f9936b7a065fc2d6274">&#9670;&#160;</a></span>getSpeciesStatus()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -737,8 +844,12 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3">SpeciesStatus</a> gridfire::engine::DynamicEngine::getSpeciesStatus </td>
           <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -758,12 +869,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3" title="Enumerates the status of a species in the simulation.">SpeciesStatus</a> indicating whether the species is active, inactive, or culled.</dd></dl>
 <p>This method allows querying the current status of a specific species within the engine's network. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5166197fd61060b2a9a445f707ee871b">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a65af092785759559f4697c7e66bef2e3">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#afe93df16c69e7e10658c82874759dd2f">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aec5ebaccf625e39d0fa6c1330855d008">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2947824dca9662e113153de5c6516609">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#af9de6a43920f64202c865d45ee131e10">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab8b22ee7d51ce5cc762759946967852c">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a763332410f64d2492785d2053bdad5fe">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a51abea9730a700dcffecdde9adbc0456">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#ac7232a79df901309c8f8b0b78788afe8">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="aef6ed91d922c0b1733fd7835e99d0efe" name="aef6ed91d922c0b1733fd7835e99d0efe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef6ed91d922c0b1733fd7835e99d0efe">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
+<a id="a92be21f072b61fcf291559246045801f" name="a92be21f072b61fcf291559246045801f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92be21f072b61fcf291559246045801f">&#9670;&#160;</a></span>getSpeciesTimescales()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -774,6 +885,11 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual std::expected&lt; std::unordered_map&lt; fourdst::atomic::Species, double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt; gridfire::engine::DynamicEngine::getSpeciesTimescales </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
         </tr>
         <tr>
@@ -806,134 +922,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd>Map from Species to their characteristic timescales (s).</dd></dl>
 <p>This method estimates the timescale for abundance change of each species, which can be used for timestep control, diagnostics, and reaction network culling. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ade5dad29a79209e677b259a9b28c5133">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1edda1a27247480660cf7a63410f5799">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a3c9b57d2842b6b5535313be845ca6175">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a86390e410db48addfe8dbd094743c38e">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a71678a567bb0cedd8a97aff9ceddd814">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aae66fd327dc4d0e1a0e54a6e05a77e47">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ae1d570486213d9bfc018a2f1ac3d4a21">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a88ee4feaa851d047d110cd0949ed845f">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#af40e016e8e0206462595ccf6281411ef">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a688269fb742d37ce15926ced80fa3f70">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a5ce6ff370e3f0964c6b2688fb3f4bb7e" name="a5ce6ff370e3f0964c6b2688fb3f4bb7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ce6ff370e3f0964c6b2688fb3f4bb7e">&#9670;&#160;</a></span>getStoichiometryMatrixEntry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual int gridfire::engine::DynamicEngine::getStoichiometryMatrixEntry </td>
-          <td>(</td>
-          <td class="paramtype">const fourdst::atomic::Species &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>&#160;) const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get an entry from the stoichiometry matrix. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">species</td><td>species to look up stoichiometry for. </td></tr>
-    <tr><td class="paramname">reaction</td><td>reaction to find </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Stoichiometric coefficient for the species in the reaction.</dd></dl>
-<p>The stoichiometry matrix must have been generated by <a class="el" href="#a5e2c45a3e415b53e41def8f743f93464" title="Generate the stoichiometry matrix for the network.">generateStoichiometryMatrix()</a>. </p>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aae6d8bab169721f0b89682ce8c4b4f10">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a600dd38a6011089527024f1625130935">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aec867f0b43e74c8157f7d5085b55bb96">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a1372e7a823841c819f6c1a15d38217a6">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a3dd5cf419f25e76e144af35df15a2067">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="a79423b9f67b4cac702547b4f1d8bd14c" name="a79423b9f67b4cac702547b4f1d8bd14c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79423b9f67b4cac702547b4f1d8bd14c">&#9670;&#160;</a></span>isStale()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual bool gridfire::engine::DynamicEngine::isStale </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Check if the engine's internal state is stale. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">netIn</td><td>A struct containing the current network input, such as temperature, density, and composition. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the engine's state is stale and needs to be updated; false otherwise.</dd></dl>
-<p>This method allows derived classes to determine if their internal state is out-of-date with respect to the provided network conditions. If the engine is stale, it may require a call to <code><a class="el" href="#a8dd85442ec54f20d91743c72364e36ff" title="Update the internal state of the engine.">update()</a></code> before performing calculations.</p>
-<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input = { ... };</div>
-<div class="line"><span class="keywordflow">if</span> (myEngine.isStale(input)) {</div>
-<div class="line">    <span class="comment">// Update the engine before proceeding</span></div>
-<div class="line">}</div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:27</div></div>
-</div><!-- fragment --> </dd></dl>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6c08b4235996d12472d2a327eab8e984">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a6ef3052fce2d5e4fdaec6659df64c2bc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a07acc57c1015903ce3d1b0d0b7f09358">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a10dd189ba40dbb604fdf55746b5d4b79">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a55bf19ed7534a312a36faf74753f7b14">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="aa9d55b81c1963113aad86aa60c19676f" name="aa9d55b81c1963113aad86aa60c19676f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9d55b81c1963113aad86aa60c19676f">&#9670;&#160;</a></span>mapNetInToMolarAbundanceVector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::vector&lt; double &gt; gridfire::engine::DynamicEngine::mapNetInToMolarAbundanceVector </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Map a <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> object to a vector of molar abundances. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of molar abundances corresponding to the species in the network.</dd></dl>
-<p>This method converts the input conditions into a vector of molar abundances, which can be used for further calculations or diagnostics. </p>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a24cc7e1a7471d707707b4d44ebd81068">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#aa053696a7885b8e42562b2d22ee32d84">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a915602acb18a69f34076bea401ffb49d">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa839c3893ff9fb8e5a4187224dac7b47">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a61bb4b430fe740cfb2c24e5cc673e4ac">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="a70e270bb50910c0055a75575c1ef1e95" name="a70e270bb50910c0055a75575c1ef1e95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70e270bb50910c0055a75575c1ef1e95">&#9670;&#160;</a></span>primeEngine()</h2>
+<a id="a30df09678c3de1a55b7c6ac5eae35004" name="a30df09678c3de1a55b7c6ac5eae35004"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30df09678c3de1a55b7c6ac5eae35004">&#9670;&#160;</a></span>primeEngine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -944,8 +938,12 @@ These methods return an unfinalized composition which must then be finalized by 
         <tr>
           <td class="memname">virtual <a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a> gridfire::engine::DynamicEngine::primeEngine </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -958,6 +956,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>Prime the engine with initial conditions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">netIn</td><td>The input conditions for the network. </td></tr>
   </table>
   </dd>
@@ -965,12 +964,12 @@ These methods return an unfinalized composition which must then be finalized by 
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html" title="Captures the result of a network priming operation.">PrimingReport</a> containing information about the priming process.</dd></dl>
 <p>This method is used to prepare the engine for calculations by setting up initial conditions, reactions, and species. It may involve compiling reaction rates, initializing internal data structures, and performing any necessary pre-computation. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a955a337f89a375637ac48071be45c54c">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a2bc32a84c9f5372587fca92f2da77595">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#acc7f7fb7f0ef96135e7bda4bb532792e">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#afabb6222bd6cbe3277b6c8639203be25">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a6118af81e45d2850f7a2517891147274">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a27bb70d1426d6030779d83247a87b4a5">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a25946bd58144c69152a7992dd2e093cc">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ab77179dadc7c41551f8eb4a3321283d4">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a5dff14dcced4b23c42a72108b796e783">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a25d827397e97c638cd87223684effebc">PyDynamicEngine</a>.</p>
 
 </div>
 </div>
-<a id="a2444b9ed3bc61920ce23c546444269e4" name="a2444b9ed3bc61920ce23c546444269e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2444b9ed3bc61920ce23c546444269e4">&#9670;&#160;</a></span>rebuild()</h2>
+<a id="a260d36cc1e14ca8eda0309745e9134d9" name="a260d36cc1e14ca8eda0309745e9134d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a260d36cc1e14ca8eda0309745e9134d9">&#9670;&#160;</a></span>project()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -979,139 +978,27 @@ These methods return an unfinalized composition which must then be finalized by 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void gridfire::engine::DynamicEngine::rebuild </td>
+          <td class="memname">virtual fourdst::composition::Composition gridfire::engine::DynamicEngine::project </td>
           <td>(</td>
-          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacegridfire_1_1engine.html#a55cd7c313bbfafd5b6a1bcd6329ed99b">BuildDepthType</a></td>          <td class="paramname"><span class="paramname"><em>depth</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Rebuild the network with a specified depth. </p>
+<p>Update the thread local scratch pad state of a network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">comp</td><td>The composition to rebuild the network with. </td></tr>
-    <tr><td class="paramname">depth</td><td>The desired depth of the network.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>This method is intended to allow dynamic adjustment of the network's depth, which may involve adding or removing species and reactions based on the specified depth. However, not all engines support this operation. </p>
-
-<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c5245a27da1b45e10fb410518b79d4e">gridfire::engine::GraphEngine</a>, and <a class="el" href="class_py_dynamic_engine.html#a25e52496b36d731127603c31e9dcaa97">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="ab321170954bffc53b1bedaf54f6976be" name="ab321170954bffc53b1bedaf54f6976be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab321170954bffc53b1bedaf54f6976be">&#9670;&#160;</a></span>setNetworkReactions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void gridfire::engine::DynamicEngine::setNetworkReactions </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set the reactions for the network. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">reactions</td><td>The set of reactions to use in the network.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>This method replaces the current set of reactions in the network with the provided set. It marks the engine as stale, requiring regeneration of matrices and recalculation of rates. </p>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a5dbfcafa606c3242dc4ced62c2494a2d">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ae89529e13f2b7fd2febcfa5af40d4666">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a90251650123d0d8ce0281e18c4476f45">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#aa378d0e0fa6018b989d83945daa47952">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af469cba3be850d53f659ec173f0eb4e4">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="a50e76977d0dc3cc23d52b51842d35003" name="a50e76977d0dc3cc23d52b51842d35003"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e76977d0dc3cc23d52b51842d35003">&#9670;&#160;</a></span>setScreeningModel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void gridfire::engine::DynamicEngine::setScreeningModel </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a></td>          <td class="paramname"><span class="paramname"><em>model</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set the electron screening model. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">model</td><td>The type of screening model to use for reaction rate calculations.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>This method allows changing the screening model at runtime. Screening corrections account for the electrostatic shielding of nuclei by electrons, which affects reaction rates in dense stellar plasmas.</p>
-<dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line">myEngine.setScreeningModel(<a class="code hl_enumvalue" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">screening::ScreeningType::WEAK</a>);</div>
-<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> screening_types.h:35</div></div>
-</div><!-- fragment --></dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>The engine will use the specified screening model for subsequent rate calculations. </dd></dl>
-
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#ab050409db954a3fa593633f9d2cd5d89">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a68bd0e51d3e127e5f9fd74fdb8180fd9">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#af842981deaf84a698b6cbfa66abcb715">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ad11aa1e168ec03d0c3ed90eeddcefe52">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#afa3abfd612033336a656f092721c14ac">PyDynamicEngine</a>.</p>
-
-</div>
-</div>
-<a id="a8dd85442ec54f20d91743c72364e36ff" name="a8dd85442ec54f20d91743c72364e36ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dd85442ec54f20d91743c72364e36ff">&#9670;&#160;</a></span>update()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual fourdst::composition::Composition gridfire::engine::DynamicEngine::update </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Update the internal state of the engine. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
     <tr><td class="paramname">netIn</td><td>A struct containing the current network input, such as temperature, density, and composition.</td></tr>
   </table>
   </dd>
@@ -1119,10 +1006,11 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>This method is intended to be implemented by derived classes to update their internal state based on the provided network conditions. For example, an adaptive engine might use this to re-evaluate which reactions and species are active. For other engines that do not support manually updating, this method might do nothing.</p>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input = { ... };</div>
 <div class="line">myEngine.update(input);</div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:27</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The internal state of the engine is updated to reflect the new conditions. </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8db6ba52f454c136ee0a1335436fab6e">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1d99b55bf8e94bc2397715aa1f916733">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a7f6d98a9a4f22f1bbc015b1cbb8198e3">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a28c8ac1ec594cf55a297e3f9586e214a">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#af8e6a8cd44f278535d7bcc9a896d6da8">PyDynamicEngine</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aa7b6561da6dd8513fef5c8c03737d433">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#af52e0ce2ce80f08642c9a6dbf0adc929">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a58221a92813e13e43de48525980301d4">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a063c097e6afdadabbb79fabd61b21d0b">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#abe31184ce7e63f7428b4a31ab39e7a8d">PyDynamicEngine</a>.</p>
 
 </div>
 </div>

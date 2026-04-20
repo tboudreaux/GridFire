@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -129,9 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa33fcee020f5acd8e14aadaf3758ad2f" id="r_aa33fcee020f5acd8e14aadaf3758ad2f"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa33fcee020f5acd8e14aadaf3758ad2f">get_seed_reactions</a> () const =0</td></tr>
 <tr class="memdesc:aa33fcee020f5acd8e14aadaf3758ad2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the set of seed reactions the policy requires.  <br /></td></tr>
 <tr class="separator:aa33fcee020f5acd8e14aadaf3758ad2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13cd74c967592392b01d8fe9a5b34d88" id="r_a13cd74c967592392b01d8fe9a5b34d88"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13cd74c967592392b01d8fe9a5b34d88">construct</a> ()=0</td></tr>
-<tr class="memdesc:a13cd74c967592392b01d8fe9a5b34d88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and return a DynamicEngine instance (or engine view stack) satisfying the policy.  <br /></td></tr>
-<tr class="separator:a13cd74c967592392b01d8fe9a5b34d88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ee276d40dfdfe1bf313b29436cbcfba" id="r_a1ee276d40dfdfe1bf313b29436cbcfba"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structgridfire_1_1policy_1_1_construction_results.html">ConstructionResults</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ee276d40dfdfe1bf313b29436cbcfba">construct</a> ()=0</td></tr>
+<tr class="memdesc:a1ee276d40dfdfe1bf313b29436cbcfba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and return a DynamicEngine instance (or engine view stack) satisfying the policy.  <br /></td></tr>
+<tr class="separator:a1ee276d40dfdfe1bf313b29436cbcfba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d0f2aee8ead71da4d421fb659fb30f7" id="r_a3d0f2aee8ead71da4d421fb659fb30f7"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">NetworkPolicyStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d0f2aee8ead71da4d421fb659fb30f7">get_status</a> () const =0</td></tr>
 <tr class="memdesc:a3d0f2aee8ead71da4d421fb659fb30f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current verification/construction status of the policy.  <br /></td></tr>
 <tr class="separator:a3d0f2aee8ead71da4d421fb659fb30f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,6 +141,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aac63625678d287d0ca36c98f51e86dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c395eb83b0bcf728db230e7772aabcf" id="r_a1c395eb83b0bcf728db230e7772aabcf"><td class="memItemLeft" align="right" valign="top">virtual const std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c395eb83b0bcf728db230e7772aabcf">get_partition_function</a> () const =0</td></tr>
 <tr class="separator:a1c395eb83b0bcf728db230e7772aabcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07ae9888263f627d8a3516ecf6a0cf9b" id="r_a07ae9888263f627d8a3516ecf6a0cf9b"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07ae9888263f627d8a3516ecf6a0cf9b">get_stack_scratch_blob</a> () const =0</td></tr>
+<tr class="separator:a07ae9888263f627d8a3516ecf6a0cf9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract interface for policies that construct DynamicEngine networks from a seed composition. </p>
@@ -184,8 +186,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a13cd74c967592392b01d8fe9a5b34d88" name="a13cd74c967592392b01d8fe9a5b34d88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13cd74c967592392b01d8fe9a5b34d88">&#9670;&#160;</a></span>construct()</h2>
+<a id="a1ee276d40dfdfe1bf313b29436cbcfba" name="a1ee276d40dfdfe1bf313b29436cbcfba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ee276d40dfdfe1bf313b29436cbcfba">&#9670;&#160;</a></span>construct()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +196,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp; gridfire::policy::NetworkPolicy::construct </td>
+          <td class="memname">virtual <a class="el" href="structgridfire_1_1policy_1_1_construction_results.html">ConstructionResults</a> gridfire::policy::NetworkPolicy::construct </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -219,16 +221,15 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">DynamicEngine &amp;<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a> = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.construct();</div>
-<div class="line"><a class="code hl_class" href="classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html">solver::CVODESolverStrategy</a> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>);</div>
+<div class="line">solver::CVODESolverStrategy <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>);</div>
 <div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_out.html">NetOut</a> out = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluate(netIn, <span class="keyword">true</span>);</div>
-<div class="ttc" id="aclassgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy_html"><div class="ttname"><a href="classgridfire_1_1solver_1_1_c_v_o_d_e_solver_strategy.html">gridfire::solver::CVODESolverStrategy</a></div><div class="ttdoc">Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.</div><div class="ttdef"><b>Definition</b> CVODE_solver_strategy.h:81</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:38</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:39</div></div>
 <div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:25</div></div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> CVODE_solver_strategy.h:46</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
 <div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:37</div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#aa9b4e39dacada73756bfd78885da60bd">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a6871d8aae79db9b784d40b05225b3445">PyNetworkPolicy</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#a3b600b9f02113d6ae3be22c556872ba9">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a685d2c695279edb3697d3552f9d3ba43">PyNetworkPolicy</a>.</p>
 
 </div>
 </div>
@@ -341,8 +342,8 @@ Public Member Functions</h2></td></tr>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.get_seed_reactions();</div>
 <div class="line"><span class="comment">// inspect reaction IDs or count</span></div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Policy requires &quot;</span> &lt;&lt; reactions.<a class="code hl_function" href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">size</a>() &lt;&lt; <span class="stringliteral">&quot; reactions&quot;</span> &lt;&lt; std::endl;</div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:842</div></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:903</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:845</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:908</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#adcefccb171b339350a9b4a61d89adbbc">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#af0b892e995f58375144bd5559cf2b4c9">PyNetworkPolicy</a>.</p>
@@ -383,6 +384,33 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a07ae9888263f627d8a3516ecf6a0cf9b" name="a07ae9888263f627d8a3516ecf6a0cf9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07ae9888263f627d8a3516ecf6a0cf9b">&#9670;&#160;</a></span>get_stack_scratch_blob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &gt; gridfire::policy::NetworkPolicy::get_stack_scratch_blob </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#ad0376d9982ee21d37d7a5fe60e408765">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a4d38691a737afcc0ae32fa3d80824c0b">PyNetworkPolicy</a>.</p>
+
+</div>
+</div>
 <a id="a3d0f2aee8ead71da4d421fb659fb30f7" name="a3d0f2aee8ead71da4d421fb659fb30f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3d0f2aee8ead71da4d421fb659fb30f7">&#9670;&#160;</a></span>get_status()</h2>
 
@@ -410,8 +438,8 @@ Public Member Functions</h2></td></tr>
 <p>The status reports whether the policy has been initialized and whether the constructed network satisfies the policy's key requirements.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">NetworkPolicyStatus</a> s = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.getStatus();</div>
 <div class="line"><span class="keywordflow">if</span> (s != <a class="code hl_enumvalue" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">NetworkPolicyStatus::INITIALIZED_VERIFIED</a>) { <span class="comment">// handle error }</span></div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">gridfire::policy::NetworkPolicyStatus</a></div><div class="ttdeci">NetworkPolicyStatus</div><div class="ttdoc">Lifecycle/verification status for a NetworkPolicy instance.</div><div class="ttdef"><b>Definition</b> policy_abstract.h:38</div></div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">gridfire::policy::NetworkPolicyStatus::INITIALIZED_VERIFIED</a></div><div class="ttdeci">@ INITIALIZED_VERIFIED</div><div class="ttdef"><b>Definition</b> policy_abstract.h:43</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">gridfire::policy::NetworkPolicyStatus</a></div><div class="ttdeci">NetworkPolicyStatus</div><div class="ttdoc">Lifecycle/verification status for a NetworkPolicy instance.</div><div class="ttdef"><b>Definition</b> policy_abstract.h:40</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">gridfire::policy::NetworkPolicyStatus::INITIALIZED_VERIFIED</a></div><div class="ttdeci">@ INITIALIZED_VERIFIED</div><div class="ttdef"><b>Definition</b> policy_abstract.h:45</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#a1ecfb6ea2e18e8cf55228f80ee5c50ed">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a8506a1f9c22d47c266abe1519ffb9bc0">PyNetworkPolicy</a>.</p>

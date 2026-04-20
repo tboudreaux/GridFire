@@ -1,8 +1,12 @@
 var namespacegridfire =
 [
+    [ "config", "namespacegridfire_1_1config.html", "namespacegridfire_1_1config" ],
     [ "engine", "namespacegridfire_1_1engine.html", "namespacegridfire_1_1engine" ],
     [ "exceptions", "namespacegridfire_1_1exceptions.html", "namespacegridfire_1_1exceptions" ],
     [ "io", "namespacegridfire_1_1io.html", "namespacegridfire_1_1io" ],
+    [ "omp", "namespacegridfire_1_1omp.html", [
+      [ "log_not_in_parallel_mode", "namespacegridfire_1_1omp.html#a6f67f48327b81e229d6d1e0dea68e12b", null ]
+    ] ],
     [ "partition", "namespacegridfire_1_1partition.html", "namespacegridfire_1_1partition" ],
     [ "policy", "namespacegridfire_1_1policy.html", "namespacegridfire_1_1policy" ],
     [ "rates", "namespacegridfire_1_1rates.html", "namespacegridfire_1_1rates" ],
@@ -12,9 +16,24 @@ var namespacegridfire =
     [ "solver", "namespacegridfire_1_1solver.html", "namespacegridfire_1_1solver" ],
     [ "trigger", "namespacegridfire_1_1trigger.html", "namespacegridfire_1_1trigger" ],
     [ "utils", "namespacegridfire_1_1utils.html", "namespacegridfire_1_1utils" ],
-    [ "NetIn", "structgridfire_1_1NetIn.html", "structgridfire_1_1NetIn" ],
-    [ "NetOut", "structgridfire_1_1NetOut.html", "structgridfire_1_1NetOut" ],
-    [ "IsArithmeticOrAD", "conceptgridfire_1_1IsArithmeticOrAD.html", null ],
+    [ "NetIn", "structgridfire_1_1_net_in.html", "structgridfire_1_1_net_in" ],
+    [ "NetOut", "structgridfire_1_1_net_out.html", "structgridfire_1_1_net_out" ],
+    [ "IsArithmeticOrAD", "conceptgridfire_1_1_is_arithmetic_or_a_d.html", null ],
+    [ "gf_author", "namespacegridfire.html#a1de3db5e65a2e834c55f458307cab68e", null ],
+    [ "gf_collaboration", "namespacegridfire.html#a454366ce631749963d3c6b387bcbc3e7", null ],
+    [ "gf_credits", "namespacegridfire.html#a787f9de5930793c2976d22426ae971b5", null ],
+    [ "gf_description", "namespacegridfire.html#afa60407432a1e563b9731ce298cf42bc", null ],
+    [ "gf_email", "namespacegridfire.html#ae6f8e40e5233e5c98c9c4290f518b72d", null ],
+    [ "gf_license", "namespacegridfire.html#a081c76fc9fbac9b5b380c8e4fa0e7be0", null ],
+    [ "gf_metadata", "namespacegridfire.html#a0ee5ace587287cdba8f9755a0ef0b498", null ],
+    [ "gf_url", "namespacegridfire.html#ae5ade7b2d801af88a79382441ec68277", null ],
+    [ "gf_version", "namespacegridfire.html#a45c5e5933ef14301b6f7ec2fff6a0966", null ],
     [ "__all__", "namespacegridfire.html#a2adfc910bd5466746bd71490d2cbdf1d", null ],
-    [ "__version__", "namespacegridfire.html#a14116c4fbbb07c2fa95826dc543771a2", null ]
+    [ "__author__", "namespacegridfire.html#a3535aedf8a24266670197a715d91229c", null ],
+    [ "__description__", "namespacegridfire.html#a62cc4eb0aa62cc209ee4583b8cc0df52", null ],
+    [ "__email__", "namespacegridfire.html#a2aa7da424bb571416c8cfa93147b27ed", null ],
+    [ "__license__", "namespacegridfire.html#a23f04b652e06ef7660bed6ce2f36def8", null ],
+    [ "__url__", "namespacegridfire.html#a75069cd30950ced7af0da9454e4cc921", null ],
+    [ "__version__", "namespacegridfire.html#a14116c4fbbb07c2fa95826dc543771a2", null ],
+    [ "_meta", "namespacegridfire.html#acb6c9c1b2920f0d1744a8e7198d2cf5b", null ]
 ];

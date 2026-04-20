@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['weak_0',['weak',['../namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74ea32c7d8943bec86a6d7d5e03598670ca8',1,'gridfire::reaction::WEAK'],['../namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8',1,'gridfire::screening::WEAK']]],
-  ['wrl_5fbeta_5fminus_1',['WRL_BETA_MINUS',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a08b95f789a0c024936e08b95c41865c4',1,'gridfire::engine']]],
-  ['wrl_5fbeta_5fplus_2',['WRL_BETA_PLUS',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a49e3e12f2ea5b0d29df72a8a36f18d4a',1,'gridfire::engine']]],
-  ['wrl_5felectron_5fcapture_3',['WRL_ELECTRON_CAPTURE',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9af3d03bd75d332304afee1ab36498223e',1,'gridfire::engine']]],
-  ['wrl_5fpositron_5fcapture_4',['WRL_POSITRON_CAPTURE',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a0712c13f98dca85d8d8bb9606283b955',1,'gridfire::engine']]],
-  ['wrl_5fweak_5',['WRL_WEAK',['../namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9afc9a7c10ff86192133ca7a280783bfe4',1,'gridfire::engine']]]
+  ['uninitialized_0',['UNINITIALIZED',['../classgridfire_1_1engine_1_1_graph_engine.html#a19305dc4affde99bb84056c9eeda9f1eadd652546039b18970b8dcf2cff824268',1,'gridfire::engine::GraphEngine::UNINITIALIZED'],['../namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109add652546039b18970b8dcf2cff824268',1,'gridfire::policy::UNINITIALIZED']]],
+  ['unknown_5ferror_1',['UNKNOWN_ERROR',['../namespacegridfire_1_1rates_1_1weak.html#a15ca7b1a1951c131fddb9eb011d59550a9a10f345b0f755d461a8673a5e9ef6b4',1,'gridfire::rates::weak::UNKNOWN_ERROR'],['../namespacegridfire_1_1rates_1_1weak.html#a3fc4243d5c894779b986110c3a1ee1d4a9a10f345b0f755d461a8673a5e9ef6b4',1,'gridfire::rates::weak::UNKNOWN_ERROR']]],
+  ['unknown_5fspecies_5ferror_2',['UNKNOWN_SPECIES_ERROR',['../namespacegridfire_1_1rates_1_1weak.html#a3fc4243d5c894779b986110c3a1ee1d4acc038b1c5dbfcede2eaa525fe0e2379d',1,'gridfire::rates::weak']]]
 ];

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -129,9 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af0b892e995f58375144bd5559cf2b4c9" id="r_af0b892e995f58375144bd5559cf2b4c9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0b892e995f58375144bd5559cf2b4c9">get_seed_reactions</a> () const override</td></tr>
 <tr class="memdesc:af0b892e995f58375144bd5559cf2b4c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the set of seed reactions the policy requires.  <br /></td></tr>
 <tr class="separator:af0b892e995f58375144bd5559cf2b4c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6871d8aae79db9b784d40b05225b3445" id="r_a6871d8aae79db9b784d40b05225b3445"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6871d8aae79db9b784d40b05225b3445">construct</a> () override</td></tr>
-<tr class="memdesc:a6871d8aae79db9b784d40b05225b3445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and return a DynamicEngine instance (or engine view stack) satisfying the policy.  <br /></td></tr>
-<tr class="separator:a6871d8aae79db9b784d40b05225b3445"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a685d2c695279edb3697d3552f9d3ba43" id="r_a685d2c695279edb3697d3552f9d3ba43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1policy_1_1_construction_results.html">gridfire::policy::ConstructionResults</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a685d2c695279edb3697d3552f9d3ba43">construct</a> () override</td></tr>
+<tr class="memdesc:a685d2c695279edb3697d3552f9d3ba43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and return a DynamicEngine instance (or engine view stack) satisfying the policy.  <br /></td></tr>
+<tr class="separator:a685d2c695279edb3697d3552f9d3ba43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8506a1f9c22d47c266abe1519ffb9bc0" id="r_a8506a1f9c22d47c266abe1519ffb9bc0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">gridfire::policy::NetworkPolicyStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8506a1f9c22d47c266abe1519ffb9bc0">get_status</a> () const override</td></tr>
 <tr class="memdesc:a8506a1f9c22d47c266abe1519ffb9bc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current verification/construction status of the policy.  <br /></td></tr>
 <tr class="separator:a8506a1f9c22d47c266abe1519ffb9bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,13 +141,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a62eed803e30afebbbc074a3bf334524b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86d85c133b7dba16f93e3a084201b931" id="r_a86d85c133b7dba16f93e3a084201b931"><td class="memItemLeft" align="right" valign="top">const std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">gridfire::partition::PartitionFunction</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86d85c133b7dba16f93e3a084201b931">get_partition_function</a> () const override</td></tr>
 <tr class="separator:a86d85c133b7dba16f93e3a084201b931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d38691a737afcc0ae32fa3d80824c0b" id="r_a4d38691a737afcc0ae32fa3d80824c0b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">gridfire::engine::scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d38691a737afcc0ae32fa3d80824c0b">get_stack_scratch_blob</a> () const override</td></tr>
+<tr class="separator:a4d38691a737afcc0ae32fa3d80824c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1policy_1_1_network_policy"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1policy_1_1_network_policy')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html">gridfire::policy::NetworkPolicy</a></td></tr>
 <tr class="memitem:a0d32c22a2d3794c328e8dd24d2cda2be inherit pub_methods_classgridfire_1_1policy_1_1_network_policy" id="r_a0d32c22a2d3794c328e8dd24d2cda2be"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#a0d32c22a2d3794c328e8dd24d2cda2be">~NetworkPolicy</a> ()=default</td></tr>
 <tr class="separator:a0d32c22a2d3794c328e8dd24d2cda2be inherit pub_methods_classgridfire_1_1policy_1_1_network_policy"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6871d8aae79db9b784d40b05225b3445" name="a6871d8aae79db9b784d40b05225b3445"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6871d8aae79db9b784d40b05225b3445">&#9670;&#160;</a></span>construct()</h2>
+<a id="a685d2c695279edb3697d3552f9d3ba43" name="a685d2c695279edb3697d3552f9d3ba43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a685d2c695279edb3697d3552f9d3ba43">&#9670;&#160;</a></span>construct()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,7 +158,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> &amp; PyNetworkPolicy::construct </td>
+          <td class="memname"><a class="el" href="structgridfire_1_1policy_1_1_construction_results.html">gridfire::policy::ConstructionResults</a> PyNetworkPolicy::construct </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -185,7 +187,7 @@ Public Member Functions</h2></td></tr>
 <div class="line">NetOut out = solver.evaluate(netIn, <span class="keyword">true</span>);</div>
 </div><!-- fragment --> </dd></dl>
 
-<p>Implements <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#a13cd74c967592392b01d8fe9a5b34d88">gridfire::policy::NetworkPolicy</a>.</p>
+<p>Implements <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#a1ee276d40dfdfe1bf313b29436cbcfba">gridfire::policy::NetworkPolicy</a>.</p>
 
 </div>
 </div>
@@ -335,6 +337,33 @@ Public Member Functions</h2></td></tr>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#afb599d76b423f7a39b322c967302b49b">gridfire::policy::NetworkPolicy</a>.</p>
+
+</div>
+</div>
+<a id="a4d38691a737afcc0ae32fa3d80824c0b" name="a4d38691a737afcc0ae32fa3d80824c0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d38691a737afcc0ae32fa3d80824c0b">&#9670;&#160;</a></span>get_stack_scratch_blob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">gridfire::engine::scratch::StateBlob</a> &gt; PyNetworkPolicy::get_stack_scratch_blob </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#a07ae9888263f627d8a3516ecf6a0cf9b">gridfire::policy::NetworkPolicy</a>.</p>
 
 </div>
 </div>

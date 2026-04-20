@@ -1,6 +1,30 @@
 var searchData=
 [
-  ['valid_5fgroups_0',['valid_groups',['../structgridfire_1_1engine_1_1MultiscalePartitioningEngineView_1_1FluxValidationResult.html#a0eb57bc4fe8ca0c9b60b769c9e1fadba',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
-  ['validatedgroupreactions_1',['validatedGroupReactions',['../structgridfire_1_1engine_1_1MultiscalePartitioningEngineView_1_1FluxValidationResult.html#a0e6e189fbd53ec2f47d2cef21b9a1792',1,'gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult']]],
-  ['value_2',['value',['../structgridfire_1_1trigger_1_1TriggerResult.html#a372af12d705b623075c41872f3ec96e1',1,'gridfire::trigger::TriggerResult']]]
+  ['s_5fall_5freaclib_5freactions_5fptr_0',['s_all_reaclib_reactions_ptr',['../namespacegridfire_1_1reaclib.html#a1f75b17a44c23261a221f7558b1a63d9',1,'gridfire::reaclib']]],
+  ['s_5finitialized_1',['s_initialized',['../namespacegridfire_1_1reaclib.html#af6ff0dfe7ffe34c73ba9acbab5ef8a66',1,'gridfire::reaclib']]],
+  ['scratch_5fblob_2',['scratch_blob',['../structgridfire_1_1policy_1_1_construction_results.html#a1d36074833fb53b63e7967193f1434b4',1,'gridfire::policy::ConstructionResults']]],
+  ['scratchpad_5fenrolled_5fflags_3',['scratchpad_enrolled_flags',['../classgridfire_1_1engine_1_1scratch_1_1_state_blob.html#a327081a9f42e5ff242adacbc304638b5',1,'gridfire::engine::scratch::StateBlob']]],
+  ['scratchpads_4',['scratchpads',['../classgridfire_1_1engine_1_1scratch_1_1_state_blob.html#a386785b28d25459a616812281bb2ced5',1,'gridfire::engine::scratch::StateBlob']]],
+  ['sctx_5',['sctx',['../structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a1797578ad8bed04e9a7e3f44fa49e532',1,'gridfire::solver::PointSolver::CVODEUserData']]],
+  ['seed_5fspecies_6',['seed_species',['../structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_group.html#a9434050b990ecfa0459feebff3047ee2',1,'gridfire::engine::MultiscalePartitioningEngineView::QSEGroup']]],
+  ['single_5fzone_7',['single_zone',['../namespacegridfire__mod.html#ace5f00c48b7d638def9833111aa65c38',1,'gridfire_mod']]],
+  ['solver_8',['solver',['../struct_g_f_point_context.html#a05d85e0dc718ba0c8854e831a574f6ac',1,'GFPointContext::solver'],['../struct_g_f_grid_context.html#a92cf3bc0d148eda660cccce86bffedc3',1,'GFGridContext::solver'],['../structgridfire_1_1config_1_1_grid_fire_config.html#add0dd0d5de97c55d8077558fdcf7f7b3',1,'gridfire::config::GridFireConfig::solver']]],
+  ['solver_5fctx_9',['solver_ctx',['../struct_g_f_point_context.html#a5158bd7c67f4a0e4395b78ce4009f275',1,'GFPointContext::solver_ctx'],['../struct_g_f_grid_context.html#a9e6229b2d28959adb9aae6524ed5f730',1,'GFGridContext::solver_ctx']]],
+  ['solver_5finstance_10',['solver_instance',['../structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a6a9e63ce74c9b26309097d8aeeb228ed',1,'gridfire::solver::PointSolver::CVODEUserData']]],
+  ['solver_5fworkspaces_11',['solver_workspaces',['../structgridfire_1_1solver_1_1_grid_solver_context.html#afe3a8b9630757cbbb4df07de04674e4c',1,'gridfire::solver::GridSolverContext']]],
+  ['species_5findex_5fmap_12',['species_index_map',['../structgridfire_1_1engine_1_1scratch_1_1_defined_engine_view_scratch_pad.html#a05c0fe3d8e07eabff28b719e7565fccb',1,'gridfire::engine::scratch::DefinedEngineViewScratchPad']]],
+  ['specieslist_13',['speciesList',['../struct_g_f_context.html#ad65d2f34696aa6368a49768fc5c0ebf7',1,'GFContext']]],
+  ['specific_5fneutrino_5fenergy_5floss_14',['specific_neutrino_energy_loss',['../structgridfire_1_1_net_out.html#a801b7bf34375fc56cc6e6cdaef77b070',1,'gridfire::NetOut']]],
+  ['specific_5fneutrino_5fflux_15',['specific_neutrino_flux',['../structgridfire_1_1_net_out.html#a84a4f64f5a6b7ff965c36b4f7f8aa8f6',1,'gridfire::NetOut']]],
+  ['speedoflight_16',['speedOfLight',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1constants.html#a016c3e02f622e21073f9110707177b76',1,'gridfire::rates::weak::WeakReaction::constants']]],
+  ['state_17',['state',['../structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae0cc0270ead108365f0345c94f97f175',1,'gridfire::solver::PointSolverTimestepContext']]],
+  ['state_5fctx_18',['state_ctx',['../structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a9a88f0368ec8e36c804799d0de7a76a0',1,'gridfire::solver::PointSolverTimestepContext']]],
+  ['status_19',['status',['../structgridfire_1_1engine_1_1_priming_report.html#ac3e0c141e56c7bc41dd89d5fc873fa41',1,'gridfire::engine::PrimingReport']]],
+  ['stdout_5flogging_20',['stdout_logging',['../structgridfire_1_1solver_1_1_point_solver_context.html#a3a342362afef5d3075e688ea7d0a68f1',1,'gridfire::solver::PointSolverContext']]],
+  ['stepderivativescache_21',['stepDerivativesCache',['../structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#abcadc5999eabeb91cc45887323da5cc1',1,'gridfire::engine::scratch::GraphEngineScratchPad']]],
+  ['stoichiometric_5fcoefficients_22',['stoichiometric_coefficients',['../structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a333e30364947d83549b20d857641d646',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]],
+  ['stringtobasepartitiontype_23',['stringToBasePartitionType',['../namespacegridfire_1_1partition.html#a84de6308486d35ce8bc1a9dea52dfa4a',1,'gridfire::partition']]],
+  ['success_24',['success',['../structgridfire_1_1engine_1_1_priming_report.html#a68aa5f346f5d9d598bf921e175c49239',1,'gridfire::engine::PrimingReport']]],
+  ['sun_5fctx_25',['sun_ctx',['../structgridfire_1_1engine_1_1scratch_1_1_multiscale_partitioning_engine_view_scratch_pad.html#a735335d563bb612f19b531107c89fab6',1,'gridfire::engine::scratch::MultiscalePartitioningEngineViewScratchPad::sun_ctx'],['../structgridfire_1_1solver_1_1_point_solver_context.html#a71ae0bd5dc85e83adc602a13fdf6bf3a',1,'gridfire::solver::PointSolverContext::sun_ctx']]],
+  ['symmetry_5ffactor_26',['symmetry_factor',['../structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#aa4ae79e03a28fd221759ea93bda389d5',1,'gridfire::engine::GraphEngine::PrecomputedReaction']]]
 ];

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.0_rc2</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -121,7 +121,7 @@ Inheritance diagram for gridfire::reaction::LogicalReaclibReaction:</div>
 <div class="dynheader">
 Collaboration diagram for gridfire::reaction::LogicalReaclibReaction:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_logical_reaclib_reaction__coll__graph.svg" width="100%" height="538"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1reaction_1_1_logical_reaclib_reaction__coll__graph.svg" width="100%" height="587"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -289,6 +289,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:afe1b95bf9d81f7521b9f19bbd1305d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a853458f525bf3270b5ad826c6fd9e1ca" id="r_a853458f525bf3270b5ad826c6fd9e1ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a853458f525bf3270b5ad826c6fd9e1ca">m_weak</a> = false</td></tr>
 <tr class="separator:a853458f525bf3270b5ad826c6fd9e1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e06c6f5aa41b08022fc5d8238c9356a" id="r_a3e06c6f5aa41b08022fc5d8238c9356a"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e06c6f5aa41b08022fc5d8238c9356a">m_cached_rates</a></td></tr>
+<tr class="separator:a3e06c6f5aa41b08022fc5d8238c9356a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -322,6 +324,9 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aae29f755030c51fc9c8f7db52a022f84 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad89d4b413c507e850dba624e1b36b886 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_ad89d4b413c507e850dba624e1b36b886"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; fourdst::atomic::Species &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#ad89d4b413c507e850dba624e1b36b886">m_productsVec</a></td></tr>
 <tr class="separator:ad89d4b413c507e850dba624e1b36b886 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3783c87393726976fc4253902e3b7b01 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_a3783c87393726976fc4253902e3b7b01"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a3783c87393726976fc4253902e3b7b01">m_hashCache</a> = std::nullopt</td></tr>
+<tr class="memdesc:a3783c87393726976fc4253902e3b7b01 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cached hash value for the reaction.  <br /></td></tr>
+<tr class="separator:a3783c87393726976fc4253902e3b7b01 inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e79437a68947e176b8dd7dcbe27baab inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction" id="r_a7e79437a68947e176b8dd7dcbe27baab"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a7e79437a68947e176b8dd7dcbe27baab">m_sourceLabel</a></td></tr>
 <tr class="memdesc:a7e79437a68947e176b8dd7dcbe27baab inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source label for the rate data (e.g., "wc12w", "st08").  <br /></td></tr>
 <tr class="separator:a7e79437a68947e176b8dd7dcbe27baab inherit pro_attribs_classgridfire_1_1reaction_1_1_reaclib_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -951,6 +956,28 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3e06c6f5aa41b08022fc5d8238c9356a" name="a3e06c6f5aa41b08022fc5d8238c9356a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e06c6f5aa41b08022fc5d8238c9356a">&#9670;&#160;</a></span>m_cached_rates</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;double, double&gt; gridfire::reaction::LogicalReaclibReaction::m_cached_rates</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="afe1b95bf9d81f7521b9f19bbd1305d01" name="afe1b95bf9d81f7521b9f19bbd1305d01"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe1b95bf9d81f7521b9f19bbd1305d01">&#9670;&#160;</a></span>m_rates</h2>
 
