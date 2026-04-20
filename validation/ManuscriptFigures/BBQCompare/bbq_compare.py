@@ -153,13 +153,15 @@ def quantify_engine_error(df_base, df_approx, r_base: NetOut, r_approx: NetOut, 
 
 def main(save_show):
     C = init_composition()
-    netIn = init_netIn(10**7.1760912591, 10**2.2041199827, 1e17, C)
+    netIn = init_netIn(10**7.1760912591, 10**2.2041199827, 1e18, C)
 
     stepLogger = StepLogger()
 
     engine_graph = GraphEngine(C, 4)
     blob = engine_graph.constructStateBlob()
     print(f"Gridfire Using: {len(engine_graph.getNetworkReactions(blob))} Reactions and {len(engine_graph.getNetworkSpecies(blob))} Species")
+    print(engine_graph.getNetworkReactions(blob))
+    print(engine_graph.getNetworkSpecies(blob))
 
     solver_ctx_graph = PointSolverContext(blob)
     solver_ctx_graph.stdout_logging = False

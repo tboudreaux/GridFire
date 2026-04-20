@@ -2,6 +2,7 @@ import numpy as np
 from IPython.core.pylabtools import figsize
 from gridfire.solver import PointSolver, PointSolverContext
 from gridfire.policy import MainSequencePolicy
+from gridfire.engine import GraphEngine, MultiscalePartitioningEngineView
 
 from scipy.signal import find_peaks
 
@@ -93,8 +94,10 @@ def years_to_seconds(years: float) -> float:
 def main(save_show):
     C = init_composition()
     netIn = init_netIn(1.5e7, 160, years_to_seconds(10e9), C)
-    policy = MainSequencePolicy(C)
-    construct = policy.construct()
+    enigne_graph = GraphEngine(C, 5)
+    graph_blob = enigne_graph.constructStateBlob()
+    qse_engine = MultiscalePartitioningEngineView(enigne_graph)
+    qse_blob = qse_engine.constructStateBlob(graph_blob)
 
     # 3e-8 and 1e-24 are the default tolerances we adopt as testing indicates it works well for
     # main sequence evolution. We encorage researchers to trial various relative and
@@ -104,8 +107,8 @@ def main(save_show):
     # config.solver.pointSolver.trigger.boundaryFlux.absoluteThreshold = 1e-24
     # solver = PointSolver(construct.engine, config)
 
-    solver = PointSolver(construct.engine)
-    solver_ctx = PointSolverContext(construct.scratch_blob)
+    solver = PointSolver(qse_engine)
+    solver_ctx = PointSolverContext(qse_blob)
 
     stepLogger = StepLogger()
     solver_ctx.callback = lambda ctx: stepLogger.log_step(ctx);
@@ -114,14 +117,14 @@ def main(save_show):
     df = stepLogger.df
 
 
-    fig, axs = plt.subplots(2, 1, figsize=(17, 10))
+    fig, axs = plt.subplots(2, 1, figsize=(17, 10), gridspec_kw={'hspace': 0, 'height_ratios': [1, 1]}, sharex=True)
 
     t = np.linspace(df.t.min(), df.t.max(), 1000)
 
     # Note we are not plotting Ne-20 as its molar abundance is so close to N-14 that it makes it hard to
     # distinguish that species
     PlottingSpecies = ["H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Mg-24"]
-    stable_index = 10
+    stable_index = 25
 
     for sp in PlottingSpecies:
         x = df.t[stable_index:]
@@ -141,11 +144,11 @@ def main(save_show):
     ax_eps.set_ylabel(r"$\epsilon$ [erg/g/s]", rotation=270, labelpad=25, fontsize=23)
     ax_deps.set_ylabel(r"$\frac{d\epsilon}{dt}$ [erg/g/s$^2$]", rotation=270, labelpad=25, fontsize=23)
 
-    ax_eps.axvline(1.008e+15, color='grey', linestyle='dashed')
-    ax_deps.axvline(1.008e+15, color='grey', linestyle='dashed')
+    ax_eps.axvline(2.276e17, color='grey', linestyle='dashed')
+    ax_deps.axvline(2.276e17, color='grey', linestyle='dashed')
 
     ax_eps.loglog(df.t[stable_index:], df.eps[stable_index:], color='red', linestyle='dashed')
-    ax_eps.text(df.t[stable_index:].iloc[0]*1.05, df.eps[stable_index:].iloc[0]*3, r"$\epsilon$", rotation=25, fontsize=20)
+    ax_eps.text(df.t[stable_index:].iloc[0], df.eps[stable_index:].iloc[0], r"$\epsilon$", fontsize=20)
 
     ax_deps.semilogx(df.t[stable_index:], np.gradient(df.eps[stable_index:], df.t[stable_index:]), color='red', linestyle='dashed')
 
@@ -160,63 +163,20 @@ def main(save_show):
     t = df.t.values
     eps = df.eps.values
 
-    # Use this plot to determine the index to test removal of
-    # fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    # ax.plot(np.gradient(eps, t))
-    # ax.grid()
-    # plt.show()
+    t1 = np.delete(t, [237])
+    eps1 = np.delete(eps, [237])
 
-    idx = 156
-    t1 = t
-    eps1 = eps
-
-    t2 = np.delete(t, idx)
-    eps2 = np.delete(eps, idx)
-
-    f_deps_1 = interp1d(t1, np.gradient(eps1, t1))
-    f_deps_2 = interp1d(t2, np.gradient(eps2, t2))
-
-    int_deps_1 = trapezoid(f_deps_1(t), t)
-    int_deps_2 = trapezoid(f_deps_2(t), t)
-
-    rel_err = (int_deps_1 - int_deps_2) / int_deps_2
-    print(f"Rel Error: {rel_err:+0.3E}")
-
-    window = 10
-    indices = np.arange(idx - window, idx + window + 1)
-    indices_no_gap = np.delete(indices, window)
-
-    clean_t = t[indices_no_gap]
-    clean_eps = eps[indices_no_gap]
-    spline = CubicSpline(clean_t, clean_eps)
-
-    eps_predicted = spline(t[idx])
-    eps_actual = eps[idx]
-
-    absolute_jump = np.abs(eps_actual - eps_predicted)
-    relative_jump = absolute_jump / eps_actual
-
-    print(f"Local Discontinuity at index {idx}: {relative_jump:.3%}")
-
-    E_actual = trapezoid(eps, t)
-
-    t_clean = np.delete(t, idx)
-    eps_clean_points = np.delete(eps, idx)
-    spline = CubicSpline(t_clean, eps_clean_points)
-
-    eps_smooth = np.copy(eps)
-    eps_smooth[idx] = spline(t[idx])
-
-    E_smooth = trapezoid(eps_smooth, t)
-
-    total_rel_error = (E_actual - E_smooth) / E_smooth
-    print(f"Total Relative Energy Error: {total_rel_error:+0.12E}")
+    f_discon = interp1d(t, eps, bounds_error=False, fill_value='extrapolate')
+    f_smooth = interp1d(t1, eps1, bounds_error=False, fill_value='extrapolate')
 
 
+    ti = np.logspace(np.log10(t.min()), np.log10(t.max()), 1000)
 
+    cum_discon = trapezoid(f_discon(ti), ti)
+    cum_smooth = trapezoid(f_smooth(ti), ti)
 
-
-
+    rel_err = (cum_discon - cum_smooth)  / cum_smooth
+    print(f"Relative Cummulative Energy Error: {rel_err:0.4E} ({cum_discon:0.4E} [erg/g] vs {cum_smooth:0.4E} [erg/g])")
 
 if __name__ == "__main__":
     import argparse

@@ -1,0 +1,56 @@
+&bbq
+
+    ! Physcis options
+    net_name = 'mesa_235.net'
+
+    ! Solver tolerances
+    max_steps = 1000000
+    eps = 1d-8
+    odescal = 1d-10
+    stptry = 0
+
+
+    ! What mode to run
+    use_hydrostatic=.true.
+    
+    write_iso_list = .true.
+    iso_list_filename = 'iso.list'
+
+/
+
+
+&sampling ! For both use_input_file and use_random_sampling
+
+/
+
+
+&profile ! For use_profile
+
+/
+
+&hydrostatic ! for use with use_hydrostatic
+
+    min_time = -8
+    max_time = 17
+    log_time =.true.
+    num_times = 300
+
+    logT = 7.1760912591
+    logRho = 2.2041199827
+
+    input_composition_filename = 'comp.txt'
+    output_filename = 'output.txt'
+
+/
+
+
+&eos
+
+/
+
+&nuclear
+/
+
+&controls 
+    screening_mode = ''
+/

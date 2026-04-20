@@ -1,0 +1,356 @@
+5,8c5,9
+< !   This program is free software: you can redistribute it and/or modify
+< !   it under the terms of the GNU Lesser General Public License
+< !   as published by the Free Software Foundation,
+< !   either version 3 of the License, or (at your option) any later version.
+---
+> !   MESA is free software; you can use it and/or modify
+> !   it under the combined terms and restrictions of the MESA MANIFESTO
+> !   and the GNU General Library Public License as published
+> !   by the Free Software Foundation; either version 2 of the License,
+> !   or (at your option) any later version.
+10c11,15
+< !   This program is distributed in the hope that it will be useful,
+---
+> !   You should have received a copy of the MESA MANIFESTO along with
+> !   this software; if not, it is available at the mesa website:
+> !   http://mesa.sourceforge.net/
+> !
+> !   MESA is distributed in the hope that it will be useful,
+13c18
+< !   See the GNU Lesser General Public License for more details.
+---
+> !   See the GNU Library General Public License for more details.
+15,16c20,22
+< !   You should have received a copy of the GNU Lesser General Public License
+< !   along with this program. If not, see <https://www.gnu.org/licenses/>.
+---
+> !   You should have received a copy of the GNU Library General Public License
+> !   along with this software; if not, write to the Free Software
+> !   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+21c27
+<       use const_def, only: dp, Qconv
+---
+>       use const_def
+24a31
+>          
+25a33
+>       
+28c36
+< 
+---
+>          
+30c38,39
+< 
+---
+>       
+>       
+33c42
+< 
+---
+>       
+36c45
+< 
+---
+>       
+40d48
+<       contains
+41a50,53
+>       
+> 
+>       contains
+>       
+55c67
+< 
+---
+>                   
+61c73
+< 
+---
+>          
+71c83
+< 
+---
+>          
+74c86
+< 
+---
+>       
+86c98
+<          use num_lib
+---
+>          use num_lib 
+94c106
+< 
+---
+>          
+98,101c110,113
+<          real(dp), intent(in) :: t_start, t_end, starting_x(:)  ! (species)
+<          integer, intent(in) :: ntimes  ! ending time is times(num_times); starting time is 0
+<          real(dp), pointer, intent(in) :: times(:)  ! (num_times)
+<          real(dp), pointer, intent(in) :: log10Ts_f1(:)
+---
+>          real(dp), intent(in) :: t_start, t_end, starting_x(:) ! (species)
+>          integer, intent(in) :: ntimes ! ending time is times(num_times); starting time is 0
+>          real(dp), pointer, intent(in) :: times(:) ! (num_times) 
+>          real(dp), pointer, intent(in) :: log10Ts_f1(:) 
+109c121
+<          real(dp), intent(in), pointer :: rate_factors(:)  ! (num_reactions)
+---
+>          real(dp), intent(in), pointer :: rate_factors(:) ! (num_reactions)
+111,113c123,125
+<          real(dp), pointer, intent(in) :: reaction_Qs(:)  ! (rates_reaction_id_max)
+<          real(dp), pointer, intent(in) :: reaction_neuQs(:)  ! (rates_reaction_id_max)
+<          integer, intent(in) :: screening_mode  ! see screen_def
+---
+>          real(dp), pointer, intent(in) :: reaction_Qs(:) ! (rates_reaction_id_max)
+>          real(dp), pointer, intent(in) :: reaction_neuQs(:) ! (rates_reaction_id_max)
+>          integer, intent(in) :: screening_mode ! see screen_def
+115,116c127,128
+<          integer, intent(in) :: max_steps  ! maximal number of allowed steps.
+<          real(dp), intent(in) :: eps, odescal  ! tolerances.  e.g., set both to 1d-6
+---
+>          integer, intent(in) :: max_steps ! maximal number of allowed steps.
+>          real(dp), intent(in) :: eps, odescal ! tolerances.  e.g., set both to 1d-6
+131c143
+< 
+---
+>          
+136c148
+< 
+---
+>          
+141c153
+< 
+---
+>                   
+150c162
+< 
+---
+>       
+152c164
+< 
+---
+>          
+154c166
+< 
+---
+>          
+156c168
+< 
+---
+>          
+158c170
+< 
+---
+>          
+161c173
+< 
+---
+>          
+171c183
+< 
+---
+>          
+173c185
+< 
+---
+>          
+181c193
+< 
+---
+>          
+193c205
+< 
+---
+>          
+198c210
+< 
+---
+>          
+204c216
+< 
+---
+>          
+214c226
+< 
+---
+>          
+218c230
+< 
+---
+>          
+220c232
+< 
+---
+>          
+227c239
+< 
+---
+>                   
+229c241
+<          call setup_net_info(n)
+---
+>          call setup_net_info(n) 
+231c243
+< 
+---
+>       
+267c279
+<             cid = g% chem_id(i)
+---
+>             cid = g% chem_id(i)             
+274c286
+< 
+---
+>       
+276c288
+< 
+---
+>          
+284c296
+<             real(dp) :: dxdt_sum, dxdt_sum_approx21, &
+---
+>             real(dp) :: dxdt_sum, dxdt_sum_aprox21, &
+291c303
+< 
+---
+>             
+293c305
+< 
+---
+>             
+298,299c310,311
+<             if (ierr /= 0) return
+< 
+---
+>             if (ierr /= 0) return            
+>          
+309c321
+< 
+---
+>             
+321c333
+< 
+---
+>                      
+332c344
+< 
+---
+>          
+336c348
+< 
+---
+>          
+342c354
+<             real(dp) :: d_eps_nuc_dx(species)
+---
+>             real(dp) :: d_eps_nuc_dx(species) 
+347c359
+< 
+---
+>             
+354c366
+< 
+---
+>             
+360a373,375
+>             character(len=255) :: env_val
+>             integer :: env_val_status, env_val_length
+>          
+362c377
+< 
+---
+>          
+367c382
+< 
+---
+>             
+371c386
+< 
+---
+>          
+373c388
+< 
+---
+>          
+376c391
+< 
+---
+>             
+378c393
+< 
+---
+>          
+394,395c409,410
+< 
+<             xsum = 0
+---
+>             
+>             xsum = 0 
+403c418
+<                end if
+---
+>                end if               
+412c427
+< 
+---
+>                 
+415a431
+>             
+416a433,446
+>             call get_environment_variable("BBQ_DISABLE_EOS", value=env_val, length=env_val_length, status=env_val_status)
+>             if (trim(env_val) == "False") then
+>                call eosDT_get( &
+>                   eos_handle, species, g% chem_id, g% net_iso, x, &
+>                   Rho, lgRho, T, lgT, &
+>                   res, d_dlnd, d_dlnT, d_dxa, ierr)
+>                if (ierr /= 0) then
+>                   if (report_ierr) write(*,*) 'failed in eosDT_get'
+>                   return
+>                end if
+>                eta = res(i_eta)
+>                d_eta_dlnT = d_dlnT(i_eta)
+>                d_eta_dlnRho = d_dlnd(i_eta)
+>             endif
+418,430c448
+<             call eosDT_get( &
+<                eos_handle, species, g% chem_id, g% net_iso, x, &
+<                Rho, lgRho, T, lgT, &
+<                res, d_dlnd, d_dlnT, d_dxa, ierr)
+<             if (ierr /= 0) then
+<                if (report_ierr) write(*,*) 'failed in eosDT_get'
+<                return
+<             end if
+<             eta = res(i_eta)
+<             d_eta_dlnT = d_dlnT(i_eta)
+<             d_eta_dlnRho = d_dlnd(i_eta)
+< 
+< 
+---
+>             
+433c451
+< 
+---
+>             
+446c464
+< 
+---
+>             
+470c488,489
+< 
+---
+>             
+>          
+471a491,493
+>          
+>          
+>          
+473a496,500
+>       
+> 
+> 
+> 
+> 
+475a503
+> 

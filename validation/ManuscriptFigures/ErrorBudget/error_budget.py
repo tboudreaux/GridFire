@@ -248,7 +248,7 @@ def main(save_show):
     ax.loglog(t, dex_dh_diff, color='black')
     # ax.semilogx(t, qse_h2(t)/qse_h1(t), color='green')
     ax.set_xlabel("Time [s]", fontsize=17)
-    ax.set_ylabel(r"$\left|\log_{10}\left(\frac{D}{H})\right)_{graph} - \log_{10}\left(\frac{D}{H}\right)_{qse}\right|$", fontsize=17)
+    ax.set_ylabel(r"$\left|\Delta\log_{10}\right|$ [dex]", fontsize=17)
 
     if save_show == ShowSave.SAVE:
         plt.savefig("DHErr.pdf")
@@ -285,7 +285,7 @@ def main(save_show):
             offset = np.log10(total_qse / total_graph)
         else:
             if z >= 14:
-                offset = np.nan # Disable these for visualization, they all have abundances so small (on the order of -100 it doesnt matter)
+                offset = np.nan 
             else:
                 offset = 0.0
 
@@ -300,8 +300,7 @@ def main(save_show):
     print(sorted_symbols)
     bars = ax.bar(sorted_symbols, sorted_dex, color='grey', edgecolor='grey', alpha=0.8)
 
-    # 3. Add styling and labels
-    ax.axhline(0, color='black', linewidth=0.8)  # Adds a clear baseline at 0 dex
+    ax.axhline(0, color='black', linewidth=0.8)
     ax.set_xlabel('Element', fontsize=25)
     ax.set_ylabel('Offset [dex]', fontsize=25)
 
@@ -317,7 +316,7 @@ def main(save_show):
     fig, ax = plt.subplots(1, 1, figsize=(10, 7))
     ax.semilogx(t, dex_eps_diff, color='black')
     ax.set_xlabel("Time [s]", fontsize=25)
-    ax.set_xlabel("Offset [dex]", fontsize=25)
+    ax.set_ylabel("Offset [dex]", fontsize=25)
 
     if save_show == ShowSave.SAVE:
         plt.savefig("DexEpsOffset.pdf")

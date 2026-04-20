@@ -1,0 +1,33 @@
+10a11,14
+>    !--- EMB (April 11, 2026. GridFire Comparison Timing) ---
+>    real(dp) :: total_eval_time
+>    !---
+> 
+22a27,29
+>       real :: t_start, t_end
+> 
+>       total_eval_time = 0.0d0
+40a48
+>          write(*,*) "Calling do_hydrostatic_burn ", j, "th time"
+41a50
+> 
+44a54,57
+>       write(*,*) "============================"
+>       write(*,*) "Network Evaluation Wall Time: ", total_eval_time
+>       write(*,*) "============================"
+> 
+130a144,146
+>       integer*8 :: count_start, count_end, count_rate
+>       real(dp) :: eval_time
+> 
+131a148,151
+> 
+>       call system_clock(count_rate=count_rate)
+> 
+>       call system_clock(count_start)
+132a153,154
+>       call system_clock(count_end)
+> 
+133a156,157
+> 
+>       total_eval_time = total_eval_time + out% nuc_eval_time

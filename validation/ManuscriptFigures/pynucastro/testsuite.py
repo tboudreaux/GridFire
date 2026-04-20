@@ -1,3 +1,4 @@
+import shutil
 from abc import ABC, abstractmethod
 
 import fourdst.atomic
@@ -112,7 +113,7 @@ class TestSuite(ABC):
         self.composition : Composition = composition
         self.notes : str = notes
 
-    def evolve_pynucastro(self, engine: DynamicEngine, ctx: PointSolverContext):
+    def evolve_pynucastro(self, engine: DynamicEngine, ctx: PointSolverContext, output: str = "pynucastro"):
         print("Evolution complete. Now building equivalent pynucastro network...")
         # Build equivalent pynucastro network for comparison
         reaclib_library : pyna.ReacLibLibrary = pyna.ReacLibLibrary()
@@ -213,27 +214,36 @@ class TestSuite(ABC):
                 "tMax": self.tMax,
                 "RunTime0": initial_duration,
                 "RunTime1": final_duration,
-                "DateCreated": datetime.now().isoformat()
+                "DateCreated": datetime.now().isoformat(),
+                "NumSpecies": net.nnuc
             },
             "Steps": data
         }
 
-        with open(f"GridFireValidationSuite_{self.name}_pynucastro.json", "w") as f:
+        filename: str = f"{self.name}_pynucastro.json"
+        filepath: str = os.path.join(output, filename)
+        with open(filepath, "w") as f:
             json.dump(pynucastro_json, f, indent=4)
 
-    def evolve(self, engine: DynamicEngine, solver_ctx: PointSolverContext, netIn: NetIn, pynucastro_compare: bool = True, engine_type: EngineTypes | None = None):
+    def evolve(self, engine: DynamicEngine, solver_ctx: PointSolverContext, netIn: NetIn, pynucastro_compare: bool = True, engine_type: EngineTypes | None = None, output: str = "output"):
         solver : PointSolver = PointSolver(engine)
 
         stepLogger : StepLogger = StepLogger()
         solver_ctx.callback = lambda ctx: stepLogger.log_step(ctx)
 
         startTime = time.time()
+        subdir: str = os.path.join(output, "GridFire")
+        os.makedirs(subdir, exist_ok=True)
         try:
             startTime = time.time()
             netOut : NetOut = solver.evaluate(solver_ctx, netIn)
             endTime = time.time()
+            filename: str = f"{self.name}_OKAY.json"
+            subdir2: str = os.path.join(subdir, "Ok")
+            os.makedirs(subdir2, exist_ok=True)
+            filepath: str = os.path.join(subdir2, filename)
             stepLogger.to_json(
-                f"GridFireValidationSuite_{self.name}_OKAY.json",
+                filepath,
                 Name = f"{self.name}_Success",
                 Description=self.description,
                 Status="Success",
@@ -244,12 +254,18 @@ class TestSuite(ABC):
                 FinalEps = netOut.energy,
                 FinaldEpsdT = netOut.dEps_dT,
                 FinaldEpsdRho = netOut.dEps_dRho,
-                ElapsedTime = endTime - startTime
+                ElapsedTime = endTime - startTime,
+                NumSpecies = engine.getNetworkSpecies(solver_ctx.engine_ctx).__len__(),
+                NumReactions = engine.getNetworkReactions(solver_ctx.engine_ctx).__len__()
             )
         except GridFireError as e:
             endTime = time.time()
+            filename : str = f"{self.name}_FAIL.json"
+            subdir2 : str = os.path.join(subdir, "Err")
+            os.makedirs(subdir2, exist_ok=True)
+            filepath = os.path.join(subdir2, filename)
             stepLogger.to_json(
-                f"GridFireValidationSuite_{self.name}_FAIL.json",
+                filepath,
                 Name = f"{self.name}_Failure",
                 Description=self.description,
                 Status=f"Error",
@@ -262,23 +278,22 @@ class TestSuite(ABC):
             )
 
         if pynucastro_compare:
+            pynuc_dir = os.path.join(output, "pynucastro")
+            os.makedirs(pynuc_dir, exist_ok=True)
             if engine_type is not None:
-                if engine_type == EngineTypes.ADAPTIVE_ENGINE_VIEW:
-                    print("Pynucastro comparison using AdaptiveEngineView...")
-                    self.evolve_pynucastro(engine, solver_ctx)
-                elif engine_type == EngineTypes.MULTISCALE_PARTITIONING_ENGINE_VIEW:
+                if engine_type == EngineTypes.MULTISCALE_PARTITIONING_ENGINE_VIEW:
                     print("Pynucastro comparison using MultiscalePartitioningEngineView...")
                     graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
                     multiScaleEngine : MultiscalePartitioningEngineView = MultiscalePartitioningEngineView(graphEngine)
-                    self.evolve_pynucastro(multiScaleEngine, solver_ctx)
+                    self.evolve_pynucastro(multiScaleEngine, solver_ctx, pynuc_dir)
                 elif engine_type == EngineTypes.GRAPH_ENGINE:
                     print("Pynucastro comparison using GraphEngine...")
                     graphEngine : GraphEngine = GraphEngine(self.composition, depth=3)
-                    self.evolve_pynucastro(graphEngine, solver_ctx)
+                    self.evolve_pynucastro(graphEngine, solver_ctx, pynuc_dir)
                 else:
                     print(f"Pynucastro comparison not implemented for engine type: {engine_type}")
 
 
     @abstractmethod
-    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "AdaptiveEngineView"):
+    def __call__(self, pynucastro_compare: bool = False, pync_engine: str = "GraphEngine", output: str = "output"):
         pass
