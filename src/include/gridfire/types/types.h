@@ -22,6 +22,7 @@
 
 #include "fourdst/composition/composition.h"
 #include "cppad/cppad.hpp"
+#include <format>
 
 namespace gridfire {
     struct NetIn {

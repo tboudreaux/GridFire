@@ -49,6 +49,9 @@
  */
 
 #pragma once
+
+#include <expected>
+
 #include "gridfire/engine/scratchpads/blob.h"
 #include "gridfire/exceptions/error_scratchpad.h"
 

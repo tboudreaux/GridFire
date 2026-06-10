@@ -22,6 +22,8 @@
 #include <memory>
 #include <ranges>
 #include <functional>
+#include <expected>
+#include <optional>
 
 
 #include "cppad/cppad.hpp"

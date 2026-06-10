@@ -21,6 +21,7 @@
 #include "gridfire/reaction/reaction.h"
 
 #include <memory>
+#include <optional>
 
 namespace gridfire::policy {
     /**

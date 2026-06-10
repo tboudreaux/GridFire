@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <unordered_set>
+#include <optional>
 
 #include "cppad/cppad.hpp"
 #include "fourdst/composition/composition.h"

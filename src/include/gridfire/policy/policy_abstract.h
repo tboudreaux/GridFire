@@ -23,6 +23,8 @@
 
 #include <string>
 #include <set>
+#include <format>
+#include <vector>
 
 #include "gridfire/engine/types/engine_types.h"
 #include "gridfire/engine/scratchpads/blob.h"

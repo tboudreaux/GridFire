@@ -28,6 +28,7 @@
 #include "fourdst/atomic/atomicSpecies.h"
 
 #include "gridfire/policy/chains.h"
+#include <format>
 
 namespace gridfire::policy {
     /**

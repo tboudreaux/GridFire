@@ -59,6 +59,7 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include <optional>
 
 namespace gridfire::engine::scratch {
 

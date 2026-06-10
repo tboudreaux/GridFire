@@ -8,6 +8,8 @@
 
 #include "gridfire/engine/scratchpads/blob.h"
 
+#include <optional>
+
 
 namespace gridfire::engine {
 

@@ -14,6 +14,9 @@
 
 #include "quill/Logger.h"
 
+#include <expected>
+#include <optional>
+
 namespace gridfire::engine {
     /**
      * @class AdaptiveEngineView

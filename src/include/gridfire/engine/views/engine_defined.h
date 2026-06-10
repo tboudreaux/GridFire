@@ -16,6 +16,8 @@
 #include "quill/Logger.h"
 
 #include <string>
+#include <expected>
+#include <optional>
 
 namespace gridfire::engine {
     class DefinedEngineView : public DynamicEngine, public EngineView<DynamicEngine> {

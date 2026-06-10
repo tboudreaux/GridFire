@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <utility>
 #include <expected>
+#include <optional>
+#include <format>
 
 /**
  * @file engine_abstract.h

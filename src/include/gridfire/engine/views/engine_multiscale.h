@@ -11,6 +11,9 @@
 #include "sundials/sundials_nvector.h"
 #include "sundials/sundials_types.h"
 
+#include <expected>
+#include <optional>
+
 namespace gridfire::engine {
     /**
      * @class MultiscalePartitioningEngineView
