@@ -157,101 +157,54 @@ The installation script has been tested and found to work on clean
 installations of the following platforms:
 - MacOS 15.3.2 (Apple Silicon + brew installed)
 - Fedora 42.0 (aarch64)
-- Ubuntu 25.04 (aarch64)
-- Ubuntu 22.04 (X86_64)
+- Ubuntu 24.04 (X86_64)
 
 ## Manual Build Instructions
 
-### Prerequisites
-These only need to be manually installed if the user is not making use of the
-`install.sh` or `install-tui.sh`
-
 #### Required
 - C++ compiler supporting C++23 standard
+  - clang >= 17.0.0
+  - gcc >= 14.0
 - Meson build system (>= 1.5.0)
 - Python 3.8 or newer
 - CMake 3.20 or newer
 - ninja 1.10.0 or newer
 - Python packages: `meson-python>=0.15.0`
 
-#### Optional
-- dialog (used by the `install.sh` script, not needed if using pip or meson
-  directly)
-- pip (used by the `install.sh` script or by calling pip directly, not needed
-  if using meson directly)
-
 > **Note:** Windows is not supported at this time and *there are no plans to
 > support it in the future*. Windows users are encouraged to use WSL2 or a
 > Linux VM.
 
-### Install Scripts
-GridFire ships with an installer (`install.sh`) which is intended to make the
-process of installation both easier and more repeatable.
-
-#### Ease of Installation
-Both scripts are intended to automate installation more or less completely. This
-includes dependency checking. In the event that a dependency cannot be found
-they try to install (after explicitly asking for user permission). If that does
-not work they will provide a clear message as to what went wrong.
-
-#### Reproducibility
-The TUI mode provides easy modification of meson build system and compiler
-settings which can then be saved to a config file. This config file can then be
-loaded by either tui mode or cli mode (with the `--config`) flag meaning that
-build configurations can be made and reused. Note that this is **not** a
-deterministically reproducible build system as it does not interact with any
-system dependencies or settings, only meson and compiler settings.
-
-#### Examples
-
-##### TUI config and saving
-[![asciicast](https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW.svg)](https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW)
-
-##### TUI config loading and meson setup
-[![asciicast](https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK.svg)](https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK)
-
-##### CLI config loading, setup, and build
-[![asciicast](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC.svg)](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC)
-
-
-> **Note:** `install-tui.sh` is simply a script which calls `install.sh` with
-> the `--tui` flag. You can get the exact same results by running `install.sh
-> --tui`.
-
-> **Note:** Call `install.sh` with the `--help` or `--h` flag to see command
-> line options
-
-> **Note:** `clang` tends to compile GridFire much faster than `gcc` thus why I
-> select it in the above asciinema recording.
 
 ### Dependency Installation on Common Platforms
 
 - **Ubuntu/Debian:**
 ```bash
 sudo apt-get update
-sudo apt-get install -y build-essential meson python3 python3-pip libboost-all-dev
+sudo apt install pipx pkg-config gcc-14 g++-14
+pipx install meson ninja cmake
+pipx ensurepath
 ```
-
-> **Note:** Depending on the ubuntu version you have the libboost-all-dev
-> libraries may be too old. If this is the case refer to the boost
-> documentation for how to download and install a version `>=1.83.0`
-
-> **Note:** On recent versions of ubuntu python has switched to being
-> externally managed by the system. We **strongly** recommend that if you
-> install manually all python packages are installed inside some kind of
-> virtual environment (e.g. `pyenv`, `conda`, `python-venv`, etc...). When using
-> the installer script this is handled automatically using `python-venv`.
+> Note: Ubuntu tends to ship with older versions of compilers, you may need to adjust the specific compiler name
+> or add additional repositories if you are running a version of ubuntu older than 24.04 LTS
 
 - **Fedora/CentOS/RHEL:**
 ```bash
-sudo dnf install -y gcc-c++ meson python3 python3-pip boost-devel
+sudo dnf install pkgconf-pkg-config meson ninja-build cmake
+```
+
+- **Arch:**
+```bash
+sudo pacman -Syu pkgconf meson ninja cmake
 ```
 
 - **macOS (Homebrew):**
 ```bash
 brew update
-brew install boost meson python
+brew install pkg-config meson ninja cmake gcc
 ```
+
+> Note: macos >= 15.2.0 ships with a version of clang which works for compilation (and therefore you dont need gcc. I have not tested on versions of macos prior to this).
 
 ### Building the C++ Library
 ```bash
@@ -259,10 +212,19 @@ meson setup build
 meson compile -C build
 ```
 
+> Note: On Ubuntu (or any system which does not have a supported version of the compiler as the default) you should use
+> ```bash
+> CC=gcc-14 CXX=g++-14 meson setup build
+> meson compile -C build
+> ```
+
 #### Clang vs. GCC
 As noted above `clang` tends to compile GridFire much faster than `gcc`. If
 your system has both `clang` and `gcc` installed you may force meson to use
 clang via environmental variables
+
+> Note: There is an issue I have not resolved on ubuntu 24.04 where clang++-18 fails to find the expected header
+> therefore we reccomend the use of gcc-14 and g++-14 on ubuntu 24.04
 
 ```bash
 CC=clang CXX=clang++ meson setup build_clang
@@ -277,7 +239,7 @@ meson install -C build
 ### Minimum compiler versions
 GridFire uses C++23 features and therefore only compilers and standard library
 implementations which support C++23 are supported. Generally we have found that
-`gcc >= 13.0.0` or `clang >= 16.0.0` work well.
+`gcc >= 14.0.0` or `clang >= 17.0.0` work well.
 
 
 ## Code Architecture and Logical Flow
