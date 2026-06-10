@@ -240,7 +240,10 @@ probe_cxx23() {
 #include <print>
 #include <format>
 #include <expected>
-int main() { std::println("ok {}", 23); }
+int main() {
+  std::println("ok {}", 23);
+  std::expected<int, int> test;
+}
 EOF
   "$cxx" -std=c++23 "$src" -o "$out" >/dev/null 2>&1
   rc=$?
