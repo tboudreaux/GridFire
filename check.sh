@@ -239,6 +239,7 @@ probe_cxx23() {
   cat > "$src" <<'EOF'
 #include <print>
 #include <format>
+#include <expected>
 int main() { std::println("ok {}", 23); }
 EOF
   "$cxx" -std=c++23 "$src" -o "$out" >/dev/null 2>&1
