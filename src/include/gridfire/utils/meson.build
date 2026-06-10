@@ -26,16 +26,10 @@ message('  Minor: ' + ver_parts[1])
 message('  Patch: ' + ver_parts[2])
 message('  Tag:   ' + ver_parts[3])
 
-do_install_version_file = true
-if get_option('build_python')
-    message('Not installing version file since we are building the Python extension. The version information will be included in the Python module instead.')
-    do_install_version_file = false
-endif
-
 configure_file(
     input : 'config.h.in',
     output : 'config.h',
     configuration : conf_data,
-    install : do_install_version_file,
-    install_dir : get_option('includedir') / 'gridfire/utils'
+    install : true,
+    install_dir : gridfire_includedir / 'gridfire/utils'
 )

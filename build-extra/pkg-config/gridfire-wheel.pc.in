@@ -1,0 +1,9 @@
+prefix=${pcfiledir}/../..
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: gridfire
+Description: GridFire nuclear reaction network solver (bundled with the gridfire Python wheel)
+Version: @VERSION@
+Cflags: -I${includedir} -I${includedir}/gridfire/vendor -I${includedir}/fourdst/vendor
+Libs: -L${libdir} -lgridfire -Wl,-rpath,${libdir}

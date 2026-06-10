@@ -1,7 +1,7 @@
 #include "gridfire/engine/procedures/priming.h"
 
 #include "fourdst/atomic/species.h"
-#include "fourdst/composition/utils.h"
+#include "fourdst/composition/utils/utils.h"
 #include "gridfire/solver/solver.h"
 
 #include "gridfire/engine/engine_abstract.h"

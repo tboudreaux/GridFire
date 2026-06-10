@@ -1,5 +1,5 @@
 #!/bin/bash
-# pip_install_mac.sh - Temporary workaround for meson-python duplicate RPATH bug on macOS
+# pip_install_mac_patch.sh - Workaround for meson-python duplicate RPATH bug on macOS
 
 set -e
 
@@ -9,26 +9,30 @@ YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+# Returns 0 if the Mach-O binary at $1 has duplicate LC_RPATH entries.
+has_duplicate_rpaths() {
+    local binary="$1"
+    local rpaths dup
+    rpaths=$(otool -l "$binary" | awk '/cmd LC_RPATH/{getline; getline; print $2}')
+    dup=$(printf '%s\n' "$rpaths" | sort | uniq -d)
+    [ -n "$dup" ]
+}
+
 echo -e "${YELLOW}"
 echo "========================================================================="
-echo "                    TEMPORARY INSTALLATION WORKAROUND"
+echo "          INSTALLATION + DUPLICATE-RPATH SAFETY NET (macOS)"
 echo "========================================================================="
 echo -e "${NC}"
 echo ""
-echo -e "${YELLOW}WARNING:${NC} This script applies a temporary patch to fix a known issue with"
-echo "meson-python that causes duplicate RPATH entries in built Python extensions"
-echo "on macOS, preventing module imports."
+echo "This script installs gridfire with pip and then checks the installed"
+echo "extension modules for duplicate LC_RPATH entries (a meson-python bug"
+echo "exposed by macOS 26.1, see:"
+echo "  https://github.com/mesonbuild/meson-python/issues/813 )."
 echo ""
-echo "This workaround will:"
-echo "  1. Install fourdst using pip"
-echo "  2. Locate the installed extension module"
-echo "  3. Remove duplicate RPATH entries using install_name_tool"
+echo "With the current self-contained wheel layout the bug should not"
+echo "trigger; binaries are only patched if duplicates are actually found."
 echo ""
-echo "This is a temporary solution while the meson-python team resolves the"
-echo "duplicate RPATH bug. For more information, see:"
-echo "  https://github.com/mesonbuild/meson-python/issues/813"
-echo ""
-echo -e "${YELLOW}Do you understand and wish to continue? [y/N]${NC} "
+echo -e "${YELLOW}Continue? [y/N]${NC} "
 read -r response
 
 if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -39,7 +43,6 @@ fi
 echo ""
 echo -e "${GREEN}Step 1: Finding current Python environment...${NC}"
 
-# Get the current Python executable
 PYTHON_BIN=$(which python3)
 if [ -z "$PYTHON_BIN" ]; then
     echo -e "${RED}Error: python3 not found in PATH${NC}"
@@ -50,12 +53,11 @@ echo "Using Python: $PYTHON_BIN"
 PYTHON_VERSION=$($PYTHON_BIN --version)
 echo "Python version: $PYTHON_VERSION"
 
-# Get site-packages directory
 SITE_PACKAGES=$($PYTHON_BIN -c "import site; print(site.getsitepackages()[0])")
 echo "Site packages: $SITE_PACKAGES"
 echo ""
 
-echo -e "${GREEN}Step 2: Installing fourdst with pip...${NC}"
+echo -e "${GREEN}Step 2: Installing gridfire with pip...${NC}"
 $PYTHON_BIN -m pip install . -v --no-build-isolation
 
 if [ $? -ne 0 ]; then
@@ -64,80 +66,43 @@ if [ $? -ne 0 ]; then
 fi
 echo ""
 
-echo -e "${GREEN}Step 3: Locating installed gridfire extension module...${NC}"
-
-# Find the .so file
-SO_FILE=$(find "$SITE_PACKAGES/gridfire" -name "_gridfire.cpython-*-darwin.so" 2>/dev/null | head -n 1)
-
-if [ -z "$SO_FILE" ]; then
-    echo -e "${RED}Error: Could not find _gridfire.cpython-*-darwin.so in $SITE_PACKAGES/gridfire${NC}"
-    echo "Installation may have failed or the file is in an unexpected location."
-    exit 1
-fi
-
-echo "Found gridfire extension module: $SO_FILE"
-echo ""
-
-echo -e "${GREEN}Step 4: Running RPATH fix script for gridfire extension module...${NC}"
-
-# Check if fix_rpath.py exists
 FIX_SCRIPT="build-python/fix_rpaths.py"
-if [ ! -f "$FIX_SCRIPT" ]; then
-    echo -e "${RED}Error: $FIX_SCRIPT not found${NC}"
-    echo "Please ensure you're running this script from the project root directory."
-    exit 1
-fi
 
-# Run the fix script
-$PYTHON_BIN "$FIX_SCRIPT" "$SO_FILE"
+check_and_fix() {
+    local label="$1" so_file="$2"
 
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Error: RPATH fix script failed for gridfire extension module${NC}"
-    exit 1
-fi
+    if [ -z "$so_file" ]; then
+        echo -e "${YELLOW}Skipping ${label}: extension module not found (package may not be installed).${NC}"
+        return 0
+    fi
 
-echo -e "${GREEN}Step 5: Locating installed fourdst extension module...${NC}"
+    echo "Found ${label} extension module: $so_file"
+    if has_duplicate_rpaths "$so_file"; then
+        echo -e "${YELLOW}Duplicate LC_RPATH entries detected in ${label}; applying fix...${NC}"
+        if [ ! -f "$FIX_SCRIPT" ]; then
+            echo -e "${RED}Error: $FIX_SCRIPT not found${NC}"
+            echo "Please run this script from the project root directory."
+            exit 1
+        fi
+        $PYTHON_BIN "$FIX_SCRIPT" "$so_file"
+    else
+        echo -e "${GREEN}No duplicate LC_RPATH entries in ${label}; no patch needed.${NC}"
+    fi
+    echo ""
+}
 
-# Find the .so file
-SO_FILE=$(find "$SITE_PACKAGES/fourdst" -name "_phys.cpython-*-darwin.so" 2>/dev/null | head -n 1)
+echo -e "${GREEN}Step 3: Checking installed extension modules...${NC}"
 
-if [ -z "$SO_FILE" ]; then
-    echo -e "${RED}Error: Could not find _phys.cpython-*-darwin.so in $SITE_PACKAGES/fourdst${NC}"
-    echo "Installation may have failed or the file is in an unexpected location."
-    exit 1
-fi
+GRIDFIRE_SO=$(find "$SITE_PACKAGES/gridfire" -name "_gridfire.cpython-*-darwin.so" 2>/dev/null | head -n 1)
+check_and_fix "gridfire" "$GRIDFIRE_SO"
 
-echo "Found fourdst extension module: $SO_FILE"
-echo ""
+FOURDST_SO=$(find "$SITE_PACKAGES/fourdst" -name "_phys.cpython-*-darwin.so" 2>/dev/null | head -n 1)
+check_and_fix "fourdst" "$FOURDST_SO"
 
-echo -e "${GREEN}Step 6: Running RPATH fix script for fourdst extension module...${NC}"
-
-# Check if fix_rpath.py exists
-FIX_SCRIPT="build-python/fix_rpaths.py"
-if [ ! -f "$FIX_SCRIPT" ]; then
-    echo -e "${RED}Error: $FIX_SCRIPT not found${NC}"
-    echo "Please ensure you're running this script from the project root directory."
-    exit 1
-fi
-
-# Run the fix script
-$PYTHON_BIN "$FIX_SCRIPT" "$SO_FILE"
-
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Error: RPATH fix script failed for fourdst extension module${NC}"
-    exit 1
-fi
-
-echo ""
 echo -e "${GREEN}=========================================================================${NC}"
 echo -e "${GREEN}                    Installation Complete!${NC}"
 echo -e "${GREEN}=========================================================================${NC}"
 echo ""
-echo "You can now use fourdst in your Python environment."
-echo ""
 echo "Test the installation with:"
 echo "  $PYTHON_BIN -c 'import gridfire; print(gridfire.__version__)'"
-echo ""
-echo -e "${YELLOW}Note:${NC} If you reinstall or upgrade fourdst, you will need to run this"
-echo "script again to apply the RPATH fix."
 echo ""

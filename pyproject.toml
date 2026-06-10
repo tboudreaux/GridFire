@@ -1,17 +1,17 @@
 [build-system]
 requires = [
-    "meson-python>=0.15.0", # Use a recent version
-    "meson==1.9.1",        # Specify your Meson version requirement
-    "pybind11>=2.10"       # pybind11 headers needed at build time
+    "meson-python>=0.19.0",
+    "meson>=1.9.1",
+    "pybind11>=2.10"
 ]
 build-backend = "mesonpy"
 
 [project]
-name = "gridfire"  # Choose your Python package name
-version = "v0.7.6rc4.2" # Your project's version
+name = "gridfire"
+version = "v0.7.6rc4.2"
 description = "Python interface to the GridFire nuclear network code"
 readme = "README.md"
-license = { file = "LICENSE.txt" } # Reference your license file [cite: 2]
+license = { file = "LICENSE.txt" }
 
 authors = [
     {name = "Emily M. Boudreaux", email = "emily@boudreauxmail.com"},
@@ -22,4 +22,20 @@ maintainers = [
 ]
 
 [tool.meson-python.args]
-setup = ['-Dpkg_config=false', '-Dbuildtype=release', '-Dopenmp_support=true', '-Dasan=false', '-Dlog_level=error', '-Dbuild_tests=false', '-Dbuild_c_api=false', '-Dbuild_examples=false', '-Dbuild_benchmarks=false', '-Dbuild_tools=false', '-Dplugin_support=false', '-Duse_mimalloc=false', '-Dbuild_python=true']
+setup = [
+    '-Ddefault_library=static',
+    '-Dpkg_config=false',
+    '-Dbuildtype=release',
+    '-Dopenmp_support=true',
+    '-Dasan=false',
+    '-Dlog_level=error',
+    '-Dbuild_tests=false',
+    '-Dbuild_c_api=false',
+    '-Dbuild_examples=false',
+    '-Dbuild_benchmarks=false',
+    '-Dbuild_tools=false',
+    '-Dplugin_support=false',
+    '-Duse_mimalloc=false',
+    '-Dbuild_python=true'
+]
+install = ['--skip-subprojects']

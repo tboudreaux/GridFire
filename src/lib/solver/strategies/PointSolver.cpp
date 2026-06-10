@@ -88,6 +88,28 @@ namespace gridfire::solver {
         return engine.collectComposition(state_ctx, base_comp, T9, rho);
     }
 
+    static_assert(std::is_same_v<sunrealtype, double>, "PointSolverTimestepContext accessors assume SUNDIALS is built with double precision");
+    std::span<const double> PointSolverTimestepContext::rawState() const {
+        return { N_VGetArrayPointer(state),
+                 static_cast<std::size_t>(N_VGetLength(state)) };
+    }
+
+    double PointSolverTimestepContext::abundance(const size_t species_index) const {
+        return N_VGetArrayPointer(state)[species_index];
+    }
+
+    std::optional<double> PointSolverTimestepContext::abundance(const fourdst::atomic::Species& sp) const {
+        const auto& species = engine.getNetworkSpecies(state_ctx);
+        if (std::ranges::find(species, sp) == species.end()) {
+            return std::nullopt;
+        }
+        return abundance(engine.getSpeciesIndex(state_ctx, sp));
+    }
+
+    double PointSolverTimestepContext::accumulatedSpecificEnergy() const {
+        return N_VGetArrayPointer(state)[networkSpecies.size()];
+    }
+
     void PointSolverContext::init() {
         reset_all();
         init_context();

@@ -1,13 +1,12 @@
 cppad_cmake_options = cmake.subproject_options()
 
 cppad_cmake_options.add_cmake_defines({
-    'cppad_static_lib': 'true',
-    'cpp_mas_num_threads': '10',
-    'cppad_debug_and_release': 'false',
-    'include_doc': 'false',
-    'CMAKE_POSITION_INDEPENDENT_CODE': true
-})
-
+                                          'cppad_static_lib': 'true',
+                                          'cpp_mas_num_threads': '10',
+                                          'cppad_debug_and_release': 'false',
+                                          'include_doc': 'false',
+                                          'CMAKE_POSITION_INDEPENDENT_CODE': true
+                                      })
 cppad_cmake_options.set_install(false)
 
 cppad_sp = cmake.subproject(
@@ -22,22 +21,28 @@ cppad_incs = cppad_sp.include_directories('cppad_lib')
 empty_cppad_file = configure_file(output: 'cppad_dummy_ar.cpp', command: ['echo'], capture: true)
 
 libcppad_static = static_library(
-  'cppad-static',
-  empty_cppad_file,
-  objects: cppad_objs,
-  include_directories: cppad_incs,
-  pic: true,
-  install: false
+    'cppad-static',
+    empty_cppad_file,
+    objects: cppad_objs,
+    include_directories: cppad_incs,
+    pic: true,
+    install: false
 )
 
 cppad_dep = declare_dependency(
-  link_with: libcppad_static,
-  include_directories: cppad_incs
+    include_directories: cppad_incs
 )
 
-message('Installing CppAD headers to ' + get_option('includedir'))
-install_subdir(
-  'subprojects/CppAD-20250000.2/include',
-  install_dir: get_option('includedir'),
-  strip_directory: true
+message('Staging vendored CppAD headers for ' + gridfire_vendor_includedir)
+
+custom_target(
+    'vendor_cppad_headers',
+    command: copytree_cmd + [
+        meson.project_source_root() / 'subprojects' / 'CppAD-20250000.2' / 'include' / 'cppad',
+        '@OUTPUT@',
+    ],
+    output: 'cppad',
+    depends: libcppad_static,
+    install: true,
+    install_dir: gridfire_vendor_includedir,
 )

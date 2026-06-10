@@ -14,7 +14,7 @@
 #include "gridfire/engine/scratchpads/engine_multiscale_scratchpad.h"
 
 #include "fourdst/atomic/species.h"
-#include "fourdst/composition/utils.h"
+#include "fourdst/composition/utils/utils.h"
 
 namespace {
     std::set<fourdst::atomic::Species> initialize_seed_species() {

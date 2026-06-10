@@ -16,8 +16,6 @@
 
 #include "gridfire/engine/scratchpads/blob.h"
 
-#include "ankerl/unordered_dense.h"
-
 #include <string>
 #include <unordered_map>
 #include <vector>

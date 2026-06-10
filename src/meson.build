@@ -1,5 +1,6 @@
-# Define the library
-subdir('include/gridfire/utils') # Generate the version header file first
+subdir('include/gridfire/utils')
+
+cpp = meson.get_compiler('cpp')
 
 gridfire_sources = files(
     'lib/engine/engine_graph.cpp',
@@ -44,7 +45,6 @@ gridfire_build_dependencies = [
     eigen_dep,
     sundials_dep,
     json_dep,
-    uod_dep,
 ]
 
 if get_option('use_mimalloc')
@@ -60,40 +60,70 @@ if get_option('openmp_support')
     gridfire_build_dependencies += [openmp_dep]
 endif
 
-# Define the libnetwork library so it can be linked against by other parts of the build system
+gridfire_link_whole = [libcvode_static, libkinsol_static, libcppad_static]
+
+gridfire_link_args = cpp.get_supported_link_arguments(
+    '-Wl,--exclude-libs,libcvode-static.a:libkinsol_static.a'
+)
+
 if get_option('build_python')
-    libgridfire = static_library('gridfire',
-        gridfire_sources,
-        include_directories: include_directories('include'),
-        dependencies: gridfire_build_dependencies,
-        cpp_args: gridfire_args,
-        objects: [cvode_objs, kinsol_objs],
-        install : false)
+    gridfire_link_whole += [libcomposition, libconst, liblogging]
+    if get_option('plugin_support')
+        gridfire_link_whole += [libplugin]
+    endif
+    libgridfire = shared_library('gridfire',
+                                 gridfire_sources,
+                                 include_directories: include_directories('include'),
+                                 dependencies: gridfire_build_dependencies,
+                                 cpp_args: gridfire_args,
+                                 link_whole: gridfire_link_whole,
+                                 link_args: gridfire_link_args,
+                                 install: true,
+                                 install_dir: gridfire_libdir)
 else
     libgridfire = library('gridfire',
                           gridfire_sources,
                           include_directories: include_directories('include'),
                           dependencies: gridfire_build_dependencies,
-                          objects: [cvode_objs, kinsol_objs],
+                          link_whole: gridfire_link_whole,
+                          link_args: gridfire_link_args,
                           cpp_args: gridfire_args,
                           install : true)
 endif
 
-gridfire_dep = declare_dependency(
-    include_directories: include_directories('include'),
-    link_with: libgridfire,
-    sources: gridfire_sources,
-    dependencies: gridfire_build_dependencies,
-    compile_args: gridfire_args,
-)
+if get_option('build_python')
+    gridfire_iface_deps = []
+    foreach d : gridfire_build_dependencies
+        gridfire_iface_deps += d.partial_dependency(compile_args: true, includes: true)
+    endforeach
+    gridfire_dep = declare_dependency(
+        include_directories: include_directories('include'),
+        link_with: libgridfire,
+        dependencies: gridfire_iface_deps,
+        compile_args: gridfire_args,
+    )
+else
+    gridfire_dep = declare_dependency(
+        include_directories: include_directories('include'),
+        link_with: libgridfire,
+        dependencies: gridfire_build_dependencies,
+        compile_args: gridfire_args,
+    )
+endif
 
-install_subdir('include/gridfire', install_dir: get_option('includedir'))
+meson.override_dependency('gridfire', gridfire_dep)
+
+install_subdir('include/gridfire',
+               install_dir: gridfire_includedir,
+               exclude_files: ['utils/config.h.in'],
+)
 
 
 if not get_option('build_c_api') and get_option('build_fortran')
-  error('Cannot build fortran without C API. Set -Dbuild-c-api=true and -Dbuild-fortran=true')
+    error('Cannot build fortran without C API. Set -Dbuild-c-api=true and -Dbuild-fortran=true')
 endif
 if get_option('build_c_api')
-  message('Configuring C API...')
-  subdir('extern')
+    message('Configuring C API...')
+    subdir('extern')
 endif
+

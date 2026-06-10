@@ -11,7 +11,7 @@
 #include "fourdst/composition/composition.h"
 #include "fourdst/logging/logging.h"
 #include "fourdst/atomic/species.h"
-#include "fourdst/composition/utils.h"
+#include "fourdst/composition/utils/utils.h"
 
 #include "quill/Logger.h"
 #include "quill/Backend.h"
@@ -157,10 +157,9 @@ void record_abundance_history_callback(const gridfire::solver::PointSolverTimest
     std::vector<double> Y;
     for (const auto& species : engine.getNetworkSpecies(ctx.state_ctx)) {
         const size_t sid = engine.getSpeciesIndex(ctx.state_ctx, species);
-        double y =  N_VGetArrayPointer(ctx.state)[sid];
-        Y.push_back(y > 0.0 ? y : 0.0); // Regularize tiny negative abundances to zero
+        const double y = ctx.abundance(sid);
+        Y.push_back(y > 0.0 ? y : 0.0);
     }
-
     const fourdst::composition::Composition comp(engine.getNetworkSpecies(ctx.state_ctx), Y);
     IntermediateResult stepResult;
     stepResult.comp = comp;

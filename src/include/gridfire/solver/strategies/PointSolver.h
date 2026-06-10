@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <span>
+#include <optional>
 
 // SUNDIALS/CVODE headers
 #include <cvode/cvode.h>
@@ -80,6 +82,24 @@ namespace gridfire::solver {
             [[nodiscard]] std::vector<std::tuple<std::string, std::string>> describe() const override;
 
             [[nodiscard]] fourdst::composition::Composition getPhysicalComposition() const;
+
+            /**
+             * @brief Zero-copy view of the raw solver state vector.
+             *
+             * Layout: [y_0, ..., y_{N-1}, eps] where y_i are molar abundances in
+             * networkSpecies order and eps is the accumulated specific energy.
+             * The view is only valid for the duration of the callback.
+             */
+            [[nodiscard]] std::span<const double> rawState() const;
+
+            /// Abundance of the species at @p species_index (solver state indexing).
+            [[nodiscard]] double abundance(size_t species_index) const;
+
+            /// Abundance of @p sp, or std::nullopt if it is not in the active network.
+            [[nodiscard]] std::optional<double> abundance(const fourdst::atomic::Species& sp) const;
+
+            /// Accumulated specific energy [erg/g] (the trailing state entry).
+            [[nodiscard]] double accumulatedSpecificEnergy() const;
         };
 
     using TimestepCallback = std::function<void(const PointSolverTimestepContext& context)>; ///< Type alias for a timestep callback function.

@@ -9,7 +9,7 @@
 
 #include "fourdst/logging/logging.h"
 #include "fourdst/atomic/species.h"
-#include "fourdst/composition/utils.h"
+#include "fourdst/composition/utils/utils.h"
 
 #include "quill/Logger.h"
 #include "quill/Backend.h"
