@@ -13,17 +13,12 @@ elif get_option('pkg_config')
     message('Generating pkg-config file for GridFire...')
     pkg = import('pkgconfig')
     pkg.generate(
-        libgridfire,
         name: 'gridfire',
         description: 'GridFire nuclear reaction network solver',
         filebase: 'gridfire',
         subdirs: ['gridfire'],
-        requires: [
-            'fourdst_composition',
-            'fourdst_config',
-            'fourdst_constants',
-            'fourdst_logging',
-        ],
+        libraries: [libgridfire, '-Wl,-rpath,${libdir}'],
+        requires: ['fourdst_composition', 'fourdst_config', 'fourdst_constants', 'fourdst_logging'],
         extra_cflags: ['-I${includedir}' / 'gridfire' / 'vendor'],
     )
 endif
