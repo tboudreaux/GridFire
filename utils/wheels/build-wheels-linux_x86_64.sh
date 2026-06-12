@@ -34,12 +34,8 @@ do
     /bin/bash -eux -c '
       cd /io/project
 
-      # Does this project link against the fourdst wheel? Single source of
-      # truth: the pin in pyproject.toml.
       FOURDST_PIN="$(grep -oE "fourdst==[0-9][0-9a-zA-Z.]*" pyproject.toml | head -n1 || true)"
 
-      # If a local fourdst wheel dir was mounted, let pip (including the
-      # isolated build env) resolve fourdst from it.
       if [ -d /io/fourdst-wheels ]; then
         export PIP_FIND_LINKS=/io/fourdst-wheels
       fi
@@ -47,21 +43,14 @@ do
       for PY in /opt/python/*/bin/python; do
         "$PY" -m pip install --upgrade pip setuptools wheel meson meson-python
 
-        # Build into a per-iteration temp dir so we repair exactly the
-        # wheel we just built (the old glob re-repaired every accumulated
-        # wheel on every loop iteration).
         BUILD_WHEEL_DIR="$(mktemp -d)"
         CC=clang CXX=clang++ "$PY" -m pip wheel . \
-          --config-settings=setup-args=-Dunity=on \
+          --no-deps --config-settings=setup-args=-Dunity=on \
           -w "$BUILD_WHEEL_DIR" -vv
 
         CURRENT_WHEEL="$(find "$BUILD_WHEEL_DIR" -name "*.whl" | head -n1)"
 
         if [ -n "$FOURDST_PIN" ]; then
-          # Install fourdst for THIS interpreter so auditwheel can resolve
-          # the libraries it must NOT graft. Excluding them keeps fourdst a
-          # runtime dependency: grafting copies would break cross-package
-          # pybind11 type compatibility.
           "$PY" -m pip install --force-reinstall "$FOURDST_PIN"
           FOURDST_LIB_PATH="$("$PY" -c "import fourdst, os; print(os.pathsep.join(fourdst.get_lib_dirs()))")"
           LD_LIBRARY_PATH="$FOURDST_LIB_PATH" auditwheel repair \
@@ -71,7 +60,6 @@ do
             --exclude "libreflect_cpp.so*" \
             -w /io/wheels "$CURRENT_WHEEL"
 
-          # Post-repair sanity check: no vendored fourdst libs.
           REPAIRED="$(ls -t /io/wheels/*.whl | head -n1)"
           if unzip -l "$REPAIRED" | grep -E "libcomposition|liblogging|libconst[^a-z]|libreflect_cpp"; then
             echo "ERROR: repaired wheel contains vendored fourdst libraries"
@@ -84,6 +72,6 @@ do
         rm -rf "$BUILD_WHEEL_DIR"
       done
 
-      echo "✅ Linux wheels ready in /io/wheels"
+      echo "Linux wheels ready in /io/wheels"
     '
 done

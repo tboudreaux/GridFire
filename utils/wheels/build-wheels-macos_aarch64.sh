@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 1. Validation
 if [[ $(uname -m) != "arm64" ]]; then
   echo "Error: This script is intended to run on an Apple Silicon (arm64) Mac."
   exit 1
@@ -14,7 +13,13 @@ if [[ $# -lt 1 ]]; then
   exit 1
 fi
 
-# 2. Setup Directories
+for TOOL in pyenv cmake git; do
+  if ! command -v "$TOOL" &> /dev/null; then
+    echo "Error: ${TOOL} not found."
+    exit 1
+  fi
+done
+
 REPO_URL="$1"
 LOCAL_FOURDST_WHEELS="${2:-}"
 WORK_DIR="$(pwd)"
@@ -25,32 +30,61 @@ echo "➤ Creating wheel output directories"
 mkdir -p "${WHEEL_DIR}"
 mkdir -p "${FINAL_WHEEL_DIR}"
 
+export MACOSX_DEPLOYMENT_TARGET=15.0
+
+LLVM_VER="17.0.6"
+LIBOMP_PREFIX="${WORK_DIR}/libomp-${MACOSX_DEPLOYMENT_TARGET}-${LLVM_VER}"
+
+if [[ ! -f "${LIBOMP_PREFIX}/lib/libomp.dylib" ]]; then
+  echo "➤ Building libomp ${LLVM_VER} for macOS ${MACOSX_DEPLOYMENT_TARGET} → ${LIBOMP_PREFIX}"
+  LIBOMP_SRC_DIR="$(mktemp -d)"
+  pushd "${LIBOMP_SRC_DIR}" > /dev/null
+
+  curl -fLO "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/openmp-${LLVM_VER}.src.tar.xz"
+  curl -fLO "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/cmake-${LLVM_VER}.src.tar.xz"
+  tar xf "openmp-${LLVM_VER}.src.tar.xz"
+  tar xf "cmake-${LLVM_VER}.src.tar.xz"
+  mv "cmake-${LLVM_VER}.src" cmake
+
+  cmake -S "openmp-${LLVM_VER}.src" -B libomp-build \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
+    -DCMAKE_OSX_ARCHITECTURES=arm64 \
+    -DCMAKE_INSTALL_PREFIX="${LIBOMP_PREFIX}" \
+    -DLIBOMP_INSTALL_ALIASES=OFF
+  cmake --build libomp-build -j "$(sysctl -n hw.ncpu)"
+  cmake --install libomp-build
+
+  popd > /dev/null
+  rm -rf "${LIBOMP_SRC_DIR}"
+fi
+
+LIBOMP_MINOS="$(otool -l "${LIBOMP_PREFIX}/lib/libomp.dylib" | awk '/minos/ {print $2; exit}')"
+if [[ "${LIBOMP_MINOS}" != "${MACOSX_DEPLOYMENT_TARGET}"* ]]; then
+  echo "Error: cached libomp at ${LIBOMP_PREFIX} targets macOS ${LIBOMP_MINOS}," \
+       "expected ${MACOSX_DEPLOYMENT_TARGET}. Delete the directory and re-run."
+  exit 1
+fi
+echo "➤ Using libomp ${LLVM_VER} (min macOS ${LIBOMP_MINOS}) from ${LIBOMP_PREFIX}"
+
+export CPPFLAGS="-I${LIBOMP_PREFIX}/include ${CPPFLAGS:-}"
+export LDFLAGS="-L${LIBOMP_PREFIX}/lib ${LDFLAGS:-}"
+export LIBRARY_PATH="${LIBOMP_PREFIX}/lib${LIBRARY_PATH:+:${LIBRARY_PATH}}"
+
 TMPDIR="$(mktemp -d)"
 echo "➤ Cloning ${REPO_URL} → ${TMPDIR}/project"
 git clone --depth 1 "${REPO_URL}" "${TMPDIR}/project"
 cd "${TMPDIR}/project"
 
-# 3. Build Configuration
-# NOTE: must match the value used to build the fourdst wheels — the two
-# packages are one ABI unit.
-export MACOSX_DEPLOYMENT_TARGET=15.0
-
-# Does this project link against the fourdst wheel? Derive the pin from
-# pyproject.toml so there is a single source of truth.
 FOURDST_PIN="$(grep -oE 'fourdst==[0-9][0-9a-zA-Z.]*' pyproject.toml | head -n1 || true)"
 if [[ -n "${FOURDST_PIN}" ]]; then
   echo "➤ Project depends on ${FOURDST_PIN}; wheel repair will exclude fourdst libraries"
 fi
 
-PYTHON_VERSIONS=("3.9.23" "3.10.18" "3.11.13" "3.12.11" "3.13.5" "3.13.5t" "3.14.0rc1" "3.14.0rc1t" 'pypy3.10-7.3.19' "pypy3.11-7.3.20")
+PYTHON_VERSIONS=("3.9.23" "3.10.18" "3.11.13" "3.12.11" "3.13.5" "3.14.0rc1" "3.14.0rc1t")
 
-if ! command -v pyenv &> /dev/null; then
-    echo "Error: pyenv not found. Please install it to manage Python versions."
-    exit 1
-fi
 eval "$(pyenv init -)"
 
-# 4. Build Loop
 for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
   (
     set -e
@@ -62,10 +96,6 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
     echo "➤ Building for $($PY --version) on macOS arm64"
     echo "----------------------------------------------------------------"
 
-    # Install build deps explicitly so we can skip build isolation.
-    # IMPORTANT: with --no-build-isolation, EVERYTHING in
-    # build-system.requires must be installed here by hand — including
-    # fourdst, otherwise the meson probe (`import fourdst`) fails.
     "$PY" -m pip install --upgrade pip setuptools wheel meson-python delocate
     "$PY" -m pip install meson==1.9.1
 
@@ -82,37 +112,47 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
     echo "➤ Found meson version $(meson --version)"
 
     CC="ccache clang" CXX="ccache clang++" \
-      "$PY" -m pip wheel . --no-build-isolation -w "${WHEEL_DIR}" -v
-
-    # We expect exactly one new wheel in the tmp dir per iteration
+      "$PY" -m pip wheel . --no-deps --no-build-isolation \
+        --config-settings=setup-args="-Dlibomp_prefix=${LIBOMP_PREFIX}" \
+        -w "${WHEEL_DIR}" -v
     CURRENT_WHEEL=$(find "${WHEEL_DIR}" -name "*.whl" | head -n 1)
 
     echo "➤ Repairing wheel with delocate"
+    DELOCATE_DYLD_PATH="${LIBOMP_PREFIX}/lib"
     if [[ -n "${FOURDST_PIN}" ]]; then
-      # Resolve @rpath references against the installed fourdst wheel,
-      # but EXCLUDE its libraries from being grafted into this wheel:
-      # they must stay a runtime dependency, or cross-package pybind11
-      # type compatibility breaks.
       FOURDST_LIB_PATH="$("$PY" -c 'import fourdst, os; print(os.pathsep.join(fourdst.get_lib_dirs()))')"
-      DYLD_LIBRARY_PATH="${FOURDST_LIB_PATH}" \
+      DELOCATE_DYLD_PATH="${FOURDST_LIB_PATH}:${DELOCATE_DYLD_PATH}"
+      DYLD_LIBRARY_PATH="${DELOCATE_DYLD_PATH}" \
         delocate-wheel --require-archs arm64 \
           -e composition -e logging -e const -e reflect_cpp \
           -w "${FINAL_WHEEL_DIR}" -v "$CURRENT_WHEEL"
     else
-      delocate-wheel --require-archs arm64 -w "${FINAL_WHEEL_DIR}" -v "$CURRENT_WHEEL"
+      DYLD_LIBRARY_PATH="${DELOCATE_DYLD_PATH}" \
+        delocate-wheel --require-archs arm64 \
+          -w "${FINAL_WHEEL_DIR}" -v "$CURRENT_WHEEL"
     fi
 
-    # Post-repair sanity check: import the wheel in a throwaway env and
-    # make sure no fourdst library snuck back in.
+    REPAIRED_WHEEL="${FINAL_WHEEL_DIR}/$(basename "$CURRENT_WHEEL")"
+
     if [[ -n "${FOURDST_PIN}" ]]; then
-      REPAIRED_WHEEL=$(find "${FINAL_WHEEL_DIR}" -name "*.whl" -newer "$CURRENT_WHEEL" | head -n 1)
-      if [[ -n "${REPAIRED_WHEEL}" ]] && unzip -l "${REPAIRED_WHEEL}" | grep -E 'libcomposition|liblogging|libconst|libreflect_cpp' ; then
+      if unzip -l "${REPAIRED_WHEEL}" | grep -E 'libcomposition|liblogging|libconst|libreflect_cpp'; then
         echo "ERROR: repaired wheel contains vendored fourdst libraries"
         exit 1
       fi
     fi
+    if unzip -l "${REPAIRED_WHEEL}" | grep -q 'libomp.dylib'; then
+      CHECK_DIR="$(mktemp -d)"
+      unzip -q "${REPAIRED_WHEEL}" '*/libomp.dylib' -d "${CHECK_DIR}" || true
+      BUNDLED_OMP="$(find "${CHECK_DIR}" -name 'libomp.dylib' | head -n1)"
+      BUNDLED_MINOS="$(otool -l "${BUNDLED_OMP}" | awk '/minos/ {print $2; exit}')"
+      rm -rf "${CHECK_DIR}"
+      if [[ "${BUNDLED_MINOS}" != "${MACOSX_DEPLOYMENT_TARGET}"* ]]; then
+        echo "ERROR: bundled libomp targets macOS ${BUNDLED_MINOS}, expected ${MACOSX_DEPLOYMENT_TARGET}"
+        exit 1
+      fi
+      echo "➤ Bundled libomp targets macOS ${BUNDLED_MINOS} ✓"
+    fi
 
-    # Clean up the intermediate wheel from this iteration so it doesn't confuse the next
     rm "$CURRENT_WHEEL"
   )
 done
