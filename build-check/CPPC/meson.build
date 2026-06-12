@@ -61,7 +61,6 @@ version_sufficient = required_min == '' ? true : compiler_version.version_compar
 
 # --- failure analysis and reporting ----------------------------------------
 if toolchain_functional and not version_sufficient
-    # Works in practice; don't break a functioning setup over a number.
     warning(toolchain_desc + ' is below the minimum GridFire tests against ('
             + required_min + '), but all C++23 capability probes passed. '
             + 'Proceeding; if you hit compiler errors deep in the build, '
@@ -69,7 +68,6 @@ if toolchain_functional and not version_sufficient
 endif
 
 if not toolchain_functional
-    # 1) Name the failure precisely.
     failure_detail = ''
     if not have_print_hdr
         failure_detail += '\n  * C++ standard library header <print> not found.'
@@ -83,14 +81,11 @@ if not toolchain_functional
     if not version_sufficient
         failure_detail += '\n  * ' + toolchain_desc + ' is below the required minimum (' + required_min + ').'
     elif compiler_id == 'clang' and not is_apple_clang
-        # New-enough clang but probes failed: almost always the C++ stdlib
-        # underneath it, not clang itself.
         failure_detail += ('\n  * clang itself is new enough; on Linux clang uses the system '
             + 'libstdc++, so the GNU C++ runtime is likely too old. Install GCC >= '
             + gridfire_gcc_min + ' (clang will pick up its libstdc++), or use -Dcpp_args=-stdlib=libc++ with libc++ >= 17 installed.')
     endif
 
-    # 2) Search for a suitable already-installed alternate.
     candidate_names = []
     if compiler_id == 'gcc'
         candidate_names += ['g++-16', 'g++-15', 'g++-14', 'clang++-21', 'clang++-20', 'clang++-19', 'clang++-18', 'clang++-17']
@@ -110,7 +105,6 @@ if not toolchain_functional
         p = find_program(cand, required: false)
         if p.found()
             cand_ver = p.version()
-            # Decide the applicable minimum from the candidate's family.
             cand_min = cand.contains('clang') ? gridfire_clang_min : gridfire_gcc_min
             if cand_ver != 'unknown' and cand_ver.version_compare('>=' + cand_min)
                 candidates_report += '\n  [OK]       ' + p.full_path() + '  (version ' + cand_ver + ')'
@@ -123,7 +117,6 @@ if not toolchain_functional
         endif
     endforeach
 
-    # 3) OS-specific install guidance.
     os_help = ''
     if host_machine.system() == 'darwin'
         os_help = '''
@@ -160,7 +153,6 @@ How to get a suitable compiler on Linux:''' + distro_hint + '''
         os_help = '\nInstall GCC >= ' + gridfire_gcc_min + ' or LLVM clang >= ' + gridfire_clang_min + ' for your platform.'
     endif
 
-    # 4) Assemble the verdict.
     if suitable_cxx != ''
         action = ('\nA suitable compiler IS already installed. Meson cannot switch compilers '
             + 'after configuration starts, so re-run setup pointing at it:\n\n'
@@ -181,18 +173,9 @@ How to get a suitable compiler on Linux:''' + distro_hint + '''
           + action)
 endif
 
-# --- everything below unchanged from the original check ---------------------
 
-# For Eigen
 add_project_arguments('-Wno-deprecated-declarations', language: 'cpp')
-
-if get_option('build_python')
-    message('enabling hidden visibility for C++ symbols when building Python extension. This reduces the size of the resulting shared library.')
-    add_project_arguments('-fvisibility=hidden', language: 'cpp')
-else
-    message('enabling default visibility for C++ symbols')
-    add_project_arguments('-fvisibility=default', language: 'cpp')
-endif
+add_project_arguments('-fvisibility=default', language: 'cpp')
 
 if get_option('openmp_support')
     gridfire_args += ['-DGF_USE_OPENMP']

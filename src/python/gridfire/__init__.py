@@ -1,3 +1,13 @@
+try:
+    import fourdst as fst
+except ImportError as e:
+    raise ImportError(
+        "gridfire requires the fourdst package (its C++ types and shared "
+        "libraries come from there). pip install fourdst."
+    ) from e
+
+from ._gridfire import *
+
 from ._gridfire import *
 import sys
 
@@ -71,3 +81,48 @@ def gf_credits():
         "Aaron Dotter - Co-Developer",
         "4D-STAR Collaboration - Contributors"
     ]
+
+import os
+from pathlib import Path
+from typing import List
+
+_PACKAGE_DIR = Path(__file__).resolve().parent
+def gf_get_include_dirs():
+    return [
+        os.fspath(_PACKAGE_DIR / "include"),
+        os.fspath(_PACKAGE_DIR / "include" / "gridfire" / "vendor"),
+    ]
+
+def gf_get_lib_dirs():
+    return [
+        os.fspath(_PACKAGE_DIR / "lib"),
+    ]
+
+def gf_get_rpath_flags() -> List[str]:
+    return ["-Wl,-rpath," + os.fspath(_PACKAGE_DIR / "lib")]
+
+
+def gf_get_lib_flags() -> List[str]:
+    flags = ["-L" + d for d in gf_get_lib_dirs()]
+    flags += ["-lgridfire"]
+    return flags
+
+def gf_get_include_flags() -> List[str]:
+    return ["-I" + d for d in gf_get_include_dirs()]
+
+def gf_get_extra_flags() -> List[str]:
+    return ['--std=c++23', '-fPIC']
+def gf_compiler_flags(just_gridfire=False):
+    flags = []
+    if not just_gridfire:
+        flags.extend(fourdst_flags = fst.get_compiler_flags())
+    flags.extend(gf_get_rpath_flags())
+    flags.extend(gf_get_lib_flags())
+    flags.extend(gf_get_include_flags())
+    flags.extend(gf_get_extra_flags())
+    return flags
+
+def gf_get_compiler_flags_formatted(just_gridfire=False) -> int:
+    flags = gf_compiler_flags(just_gridfire)
+    print(" ".join(flags))
+    return 0

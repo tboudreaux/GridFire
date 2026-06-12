@@ -17,14 +17,6 @@ namespace py = pybind11;
 void register_solver_bindings(const py::module &m) {
     auto py_cvode_timestep_context = py::class_<gridfire::solver::PointSolverTimestepContext>(m, "PointSolverTimestepContext");
     py_cvode_timestep_context.def_readonly("t", &gridfire::solver::PointSolverTimestepContext::t);
-    py_cvode_timestep_context.def_property_readonly(
-        "state",
-        [](const gridfire::solver::PointSolverTimestepContext& self) -> std::vector<double> {
-            const sunrealtype* nvec_data = N_VGetArrayPointer(self.state);
-            const sunindextype length = N_VGetLength(self.state);
-            return {nvec_data, nvec_data + length};
-        }
-    );
     py_cvode_timestep_context.def_readonly("dt", &gridfire::solver::PointSolverTimestepContext::dt);
     py_cvode_timestep_context.def_readonly("last_step_time", &gridfire::solver::PointSolverTimestepContext::last_step_time);
     py_cvode_timestep_context.def_readonly("T9", &gridfire::solver::PointSolverTimestepContext::T9);
@@ -57,6 +49,20 @@ void register_solver_bindings(const py::module &m) {
             return self.getPhysicalComposition();
         }
     );
+    py_cvode_timestep_context.def_property_readonly(
+        "rawState",
+        [](const gridfire::solver::PointSolverTimestepContext& self) -> std::vector<double> {
+            const std::span<const double> s = self.rawState();
+            return std::vector<double>(s.begin(), s.end());
+        }
+    );
+    py_cvode_timestep_context.def("abundance",
+        py::overload_cast<size_t>(&gridfire::solver::PointSolverTimestepContext::abundance, py::const_),
+        py::arg("species_index"));
+    py_cvode_timestep_context.def("abundance",
+        py::overload_cast<const fourdst::atomic::Species&>(&gridfire::solver::PointSolverTimestepContext::abundance, py::const_),
+        py::arg("species"));
+    py_cvode_timestep_context.def_property_readonly("accumulatedSpecificEnergy", &gridfire::solver::PointSolverTimestepContext::accumulatedSpecificEnergy);
 
 
 

@@ -36,28 +36,16 @@ if get_option('build_python')
     ]
 
 
-    if meson.is_cross_build() and host_machine.system() == 'darwin'
-        py_mod = shared_module(
-            '_gridfire',
-            sources: py_sources,
-            dependencies: gridfire_py_deps,
-            name_prefix: '',
-            name_suffix: 'so',
-            install: true,
-            install_rpath: gridfire_ext_rpath,
-            install_dir: py_installation.get_install_dir() + '/gridfire'
-        )
-    else
-        py_mod = py_installation.extension_module(
-            '_gridfire',
-            sources: py_sources,
-            dependencies : gridfire_py_deps,
-            install : true,
-            install_rpath: gridfire_ext_rpath,
-            subdir: 'gridfire',
-        )
-    endif
-
+    py_mod = py_installation.extension_module(
+        '_gridfire',
+        sources: py_sources,
+        dependencies: gridfire_py_deps,
+        install: true,
+        link_args: gridfire_ext_rpath_args,
+        build_rpath: gridfire_ext_rpath,
+        install_rpath: gridfire_ext_rpath,
+        subdir: 'gridfire',
+    )
 
     py_installation.install_sources(
         files(

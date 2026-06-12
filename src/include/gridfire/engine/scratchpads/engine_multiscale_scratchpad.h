@@ -130,7 +130,7 @@ struct MultiscalePartitioningEngineViewScratchPad final : AbstractScratchPad {
      * @brief Check whether the scratchpad has been initialized.
      * @return true if initialized with a valid SUNContext, false otherwise.
      */
-    [[nodiscard]] bool is_initialized() const override { return has_initialized; }
+    [[nodiscard]] bool is_initialized() const override;
 
     /**
      * @brief Initialize the scratchpad by creating a SUNDIALS context.
@@ -150,16 +150,7 @@ struct MultiscalePartitioningEngineViewScratchPad final : AbstractScratchPad {
      * SUNContext ctx = scratch.sun_ctx;
      * @endcode
      */
-    void initialize() {
-        if (has_initialized) return;
-
-        const int flag = SUNContext_Create(SUN_COMM_NULL, &sun_ctx);
-        if (flag != 0) {
-            throw std::runtime_error("Failed to create SUNContext in MultiscalePartitioningEngineViewScratchPad.");
-        }
-
-        has_initialized = true;
-    }
+    void initialize();
 
     /**
      * @brief Destructor that properly releases SUNDIALS resources.
@@ -167,13 +158,7 @@ struct MultiscalePartitioningEngineViewScratchPad final : AbstractScratchPad {
      * Clears all QSE solvers before freeing the SUNContext to ensure
      * proper cleanup order and avoid dangling references.
      */
-    ~MultiscalePartitioningEngineViewScratchPad() override {
-        qse_solvers.clear();
-        if (sun_ctx != nullptr) {
-            SUNContext_Free(&sun_ctx);
-            sun_ctx = nullptr;
-        }
-    }
+    ~MultiscalePartitioningEngineViewScratchPad() override;
 
     /**
      * @brief Create a partial copy of this scratchpad.
@@ -196,20 +181,7 @@ struct MultiscalePartitioningEngineViewScratchPad final : AbstractScratchPad {
      *
      * @endcode
      */
-    [[nodiscard]] std::unique_ptr<AbstractScratchPad> clone() const override {
-        auto clone_pad = std::make_unique<MultiscalePartitioningEngineViewScratchPad>();
-        clone_pad->qse_groups = this->qse_groups;
-        clone_pad->dynamic_species = this->dynamic_species;
-        clone_pad->algebraic_species = this->algebraic_species;
-        clone_pad->composition_cache = this->composition_cache;
-
-        clone_pad->initialize();
-        clone_pad->qse_solvers.reserve(this->qse_solvers.size());
-        for (const auto& solver : qse_solvers) {
-            clone_pad->qse_solvers.push_back(solver->clone(clone_pad->sun_ctx)); // Must rebind context to new SUNContext
-        }
-        return clone_pad;
-    }
+    [[nodiscard]] std::unique_ptr<AbstractScratchPad> clone() const override;
 };
 
 } // namespace gridfire::engine::scratch

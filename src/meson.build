@@ -12,6 +12,7 @@ gridfire_sources = files(
     'lib/engine/procedures/construction.cpp',
     'lib/engine/diagnostics/dynamic_engine_diagnostics.cpp',
     'lib/engine/types/jacobian.cpp',
+    'lib/engine/scratchpads/engine_multiscale_scratchpad.cpp',
     'lib/reaction/reaction.cpp',
     'lib/reaction/reaclib.cpp',
     'lib/reaction/weak/weak.cpp',
@@ -67,39 +68,97 @@ gridfire_link_args = cpp.get_supported_link_arguments(
 )
 
 if get_option('build_python')
-    gridfire_link_whole += [libcomposition, libconst, liblogging]
     if get_option('plugin_support')
-        gridfire_link_whole += [libplugin]
+        error('plugin_support is not available when build_python=true: '
+              + 'the fourdst wheel does not ship libplugin, and bundling it '
+              + 'would break cross-package type compatibility.')
     endif
+
+    # ---- rpaths ---------------------------------------------------------
+    # Wheel layout (both packages share one site-packages):
+    #   <site-packages>/gridfire/_gridfire.<tag>.so
+    #   <site-packages>/gridfire/lib/libgridfire.{so,dylib}
+    #   <site-packages>/fourdst/lib/lib{composition,logging,const}.*
+    #   <site-packages>/fourdst/lib/vendor/libreflect_cpp.*
+    #
+    # libgridfire (in gridfire/lib/) needs:  itself-dir, ../../fourdst/lib{,/vendor}
+    # _gridfire   (in gridfire/)     needs:  ./lib, ../fourdst/lib{,/vendor}
+    #
+    # Platform split:
+    #   * macOS / Mach-O: LC_RPATH cannot hold colon-separated lists,
+    #     meson carries a user-supplied build_rpath as a single string, and
+    #     install_rpath is only applied by `meson install` (which
+    #     meson-python never runs). So on darwin we emit one raw
+    #     `-Wl,-rpath,<path>` link arg per path, and deliberately do NOT
+    #     set build_rpath/install_rpath (a real `meson install` would then
+    #     add install_rpath on top of the link args, producing duplicate
+    #     LC_RPATH entries, which macOS 26+ dyld treats as a hard load
+    #     error).
+    #   * Linux / ELF: colon-joined DT_RUNPATH is the native format, and
+    #     install_rpath is baked into the binary at link time, so the
+    #     kwargs work for both meson-python wheels and `meson install`.
+    #
+    # NOTE: compose paths with '+', never the '/' join operator —
+    # 'x' / '/y' silently discards 'x' in Meson.
+    #
+    # gridfire_ext_rpath_args / gridfire_ext_rpath are consumed later by
+    # build-python/meson.build for the _gridfire extension module (this
+    # subdir is processed before build-python in the root meson.build).
+    if host_machine.system() == 'darwin'
+        gridfire_lib_rpath_args = [
+            '-Wl,-rpath,@loader_path',
+            '-Wl,-rpath,@loader_path/../../fourdst/lib',
+            '-Wl,-rpath,@loader_path/../../fourdst/lib/vendor',
+        ]
+        gridfire_lib_rpath = ''
+
+        gridfire_ext_rpath_args = [
+            '-Wl,-rpath,@loader_path/lib',
+            '-Wl,-rpath,@loader_path/../fourdst/lib',
+            '-Wl,-rpath,@loader_path/../fourdst/lib/vendor',
+        ]
+        gridfire_ext_rpath = ''
+    else
+        gridfire_lib_rpath_args = []
+        gridfire_lib_rpath = '$ORIGIN:' + '$ORIGIN/../../fourdst/lib:' + '$ORIGIN/../../fourdst/lib/vendor'
+
+        gridfire_ext_rpath_args = []
+        gridfire_ext_rpath = '$ORIGIN/lib:' + '$ORIGIN/../fourdst/lib:' + '$ORIGIN/../fourdst/lib/vendor'
+    endif
+
     libgridfire = shared_library('gridfire',
-                                 gridfire_sources,
-                                 include_directories: include_directories('include'),
-                                 dependencies: gridfire_build_dependencies,
-                                 cpp_args: gridfire_args,
-                                 link_whole: gridfire_link_whole,
-                                 link_args: gridfire_link_args,
-                                 install: true,
-                                 install_dir: gridfire_libdir)
+        gridfire_sources,
+        include_directories: include_directories('include'),
+        dependencies: gridfire_build_dependencies,
+        cpp_args: gridfire_args,
+        link_whole: gridfire_link_whole,
+        link_args: gridfire_link_args + gridfire_lib_rpath_args,
+        install: true,
+        install_dir: gridfire_libdir,
+        build_rpath: gridfire_lib_rpath,
+        install_rpath: gridfire_lib_rpath,
+    )
 else
     libgridfire = library('gridfire',
-                          gridfire_sources,
-                          include_directories: include_directories('include'),
-                          dependencies: gridfire_build_dependencies,
-                          link_whole: gridfire_link_whole,
-                          link_args: gridfire_link_args,
-                          cpp_args: gridfire_args,
-                          install : true)
+        gridfire_sources,
+        include_directories: include_directories('include'),
+        dependencies: gridfire_build_dependencies,
+        link_whole: gridfire_link_whole,
+        link_args: gridfire_link_args,
+        cpp_args: gridfire_args,
+        install : true
+    )
 endif
 
 if get_option('build_python')
-    gridfire_iface_deps = []
-    foreach d : gridfire_build_dependencies
-        gridfire_iface_deps += d.partial_dependency(compile_args: true, includes: true)
-    endforeach
+    gridfire_iface_dep = declare_dependency(
+        dependencies: gridfire_build_dependencies,
+    ).partial_dependency(compile_args: true, includes: true)
+
     gridfire_dep = declare_dependency(
         include_directories: include_directories('include'),
         link_with: libgridfire,
-        dependencies: gridfire_iface_deps,
+        dependencies: [gridfire_iface_dep],
         compile_args: gridfire_args,
     )
 else
@@ -114,8 +173,8 @@ endif
 meson.override_dependency('gridfire', gridfire_dep)
 
 install_subdir('include/gridfire',
-               install_dir: gridfire_includedir,
-               exclude_files: ['utils/config.h.in'],
+    install_dir: gridfire_includedir,
+    exclude_files: ['utils/config.h.in'],
 )
 
 
@@ -126,4 +185,3 @@ if get_option('build_c_api')
     message('Configuring C API...')
     subdir('extern')
 endif
-

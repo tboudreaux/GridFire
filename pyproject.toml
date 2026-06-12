@@ -1,14 +1,10 @@
 [build-system]
-requires = [
-    "meson-python>=0.19.0",
-    "meson>=1.9.1",
-    "pybind11>=2.10"
-]
+requires = ["meson-python>=0.19.0", "meson>=1.9.1", "pybind11==3.0.0", "fourdst==0.10.5"]
 build-backend = "mesonpy"
 
 [project]
 name = "gridfire"
-version = "v0.7.6rc4.2"
+dynamic = ["version"]
 description = "Python interface to the GridFire nuclear network code"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
@@ -20,6 +16,8 @@ authors = [
 maintainers = [
     {name = "Emily M. Boudreaux", email = "emily@boudreauxmail.com"}
 ]
+
+dependencies = ["fourdst==0.10.5"]
 
 [tool.meson-python.args]
 setup = [
