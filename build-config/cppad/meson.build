@@ -29,8 +29,14 @@ libcppad_static = static_library(
     install: false
 )
 
+dl_dep = dependency('dl', required: false)
+if not dl_dep.found()
+    dl_dep = cpp.find_library('dl', required: false)
+endif
+
 cppad_dep = declare_dependency(
-    include_directories: cppad_incs
+    include_directories: cppad_incs,
+    dependencies: dl_dep.found() ? [dl_dep] : [],
 )
 
 message('Staging vendored CppAD headers for ' + gridfire_vendor_includedir)
