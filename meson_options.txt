@@ -13,3 +13,4 @@ option('openmp_support', type: 'boolean', value: false, description: 'Enable Ope
 option('use_mimalloc', type: 'boolean', value: true, description: 'Use mimalloc as the memory allocator for GridFire. Generally this is ~10% faster than the system allocator.')
 option('build_benchmarks', type: 'boolean', value: false, description: 'build the benchmark suite')
 option('asan', type: 'boolean', value: false, description: 'Enable AddressSanitizer (ASan) support for detecting memory errors')
+option('libomp_prefix', type: 'string', value: '', description: 'Explicit prefix of an LLVM OpenMP runtime to use instead of auto-detection (macOS wheel builds). Empty = dependency(\'openmp\') auto-detection.')

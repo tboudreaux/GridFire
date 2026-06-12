@@ -57,7 +57,16 @@ if get_option('plugin_support')
 endif
 
 if get_option('openmp_support')
-    openmp_dep = dependency('openmp', required: true)
+    libomp_prefix = get_option('libomp_prefix')
+    if libomp_prefix != ''
+        omp_lib = cpp.find_library('omp', dirs: [libomp_prefix + '/lib'])
+        openmp_dep = declare_dependency(
+            compile_args: ['-Xpreprocessor', '-fopenmp', '-I' + libomp_prefix + '/include'],
+            dependencies: omp_lib,
+        )
+    else
+        openmp_dep = dependency('openmp', required: true)
+    endif
     gridfire_build_dependencies += [openmp_dep]
 endif
 
