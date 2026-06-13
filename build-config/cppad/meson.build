@@ -2,7 +2,7 @@ cppad_cmake_options = cmake.subproject_options()
 
 cppad_cmake_options.add_cmake_defines({
                                           'cppad_static_lib': 'true',
-                                          'cpp_mas_num_threads': '10',
+                                          'cppad_max_num_threads': '512',
                                           'cppad_debug_and_release': 'false',
                                           'include_doc': 'false',
                                           'CMAKE_POSITION_INDEPENDENT_CODE': true

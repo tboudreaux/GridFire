@@ -45,7 +45,7 @@ do
 
         BUILD_WHEEL_DIR="$(mktemp -d)"
         CC=clang CXX=clang++ "$PY" -m pip wheel . \
-          --no-deps --config-settings=setup-args=-Dunity=on \
+          --no-deps  \
           -w "$BUILD_WHEEL_DIR" -vv
 
         CURRENT_WHEEL="$(find "$BUILD_WHEEL_DIR" -name "*.whl" | head -n1)"
