@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -223,10 +223,10 @@ Public Member Functions</h2></td></tr>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">DynamicEngine &amp;<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a> = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.construct();</div>
 <div class="line">solver::CVODESolverStrategy <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>);</div>
 <div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_out.html">NetOut</a> out = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluate(netIn, <span class="keyword">true</span>);</div>
-<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:39</div></div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:25</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:26</div></div>
 <div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:37</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:38</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#a3b600b9f02113d6ae3be22c556872ba9">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a685d2c695279edb3697d3552f9d3ba43">PyNetworkPolicy</a>.</p>
@@ -342,8 +342,8 @@ Public Member Functions</h2></td></tr>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.get_seed_reactions();</div>
 <div class="line"><span class="comment">// inspect reaction IDs or count</span></div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Policy requires &quot;</span> &lt;&lt; reactions.<a class="code hl_function" href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">size</a>() &lt;&lt; <span class="stringliteral">&quot; reactions&quot;</span> &lt;&lt; std::endl;</div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:845</div></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:908</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:846</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:909</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#adcefccb171b339350a9b4a61d89adbbc">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#af0b892e995f58375144bd5559cf2b4c9">PyNetworkPolicy</a>.</p>
@@ -438,8 +438,8 @@ Public Member Functions</h2></td></tr>
 <p>The status reports whether the policy has been initialized and whether the constructed network satisfies the policy's key requirements.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><a class="code hl_enumeration" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">NetworkPolicyStatus</a> s = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.getStatus();</div>
 <div class="line"><span class="keywordflow">if</span> (s != <a class="code hl_enumvalue" href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">NetworkPolicyStatus::INITIALIZED_VERIFIED</a>) { <span class="comment">// handle error }</span></div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">gridfire::policy::NetworkPolicyStatus</a></div><div class="ttdeci">NetworkPolicyStatus</div><div class="ttdoc">Lifecycle/verification status for a NetworkPolicy instance.</div><div class="ttdef"><b>Definition</b> policy_abstract.h:40</div></div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">gridfire::policy::NetworkPolicyStatus::INITIALIZED_VERIFIED</a></div><div class="ttdeci">@ INITIALIZED_VERIFIED</div><div class="ttdef"><b>Definition</b> policy_abstract.h:45</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109">gridfire::policy::NetworkPolicyStatus</a></div><div class="ttdeci">NetworkPolicyStatus</div><div class="ttdoc">Lifecycle/verification status for a NetworkPolicy instance.</div><div class="ttdef"><b>Definition</b> policy_abstract.h:42</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html_a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e"><div class="ttname"><a href="namespacegridfire_1_1policy.html#a0f52cd334fb84998d9c68430a41f6109aff6473ea13033c0680a084b372f5755e">gridfire::policy::NetworkPolicyStatus::INITIALIZED_VERIFIED</a></div><div class="ttdeci">@ INITIALIZED_VERIFIED</div><div class="ttdef"><b>Definition</b> policy_abstract.h:47</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html#a1ecfb6ea2e18e8cf55228f80ee5c50ed">gridfire::policy::MainSequencePolicy</a>, and <a class="el" href="class_py_network_policy.html#a8506a1f9c22d47c266abe1519ffb9bc0">PyNetworkPolicy</a>.</p>

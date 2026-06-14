@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,7 +108,8 @@ $(function(){initNavTree('engine_2scratchpads_2utils_8h.html',''); initResizable
 
 <p>Utility functions for convenient scratchpad retrieval with exception handling.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="blob_8h.html">gridfire/engine/scratchpads/blob.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &lt;expected&gt;</code><br />
+<code>#include &quot;<a class="el" href="blob_8h.html">gridfire/engine/scratchpads/blob.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="error__scratchpad_8h.html">gridfire/exceptions/error_scratchpad.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utils.h:</div>
@@ -184,8 +185,8 @@ Functions</h2></td></tr>
 <div class="ttc" id="aengine_2scratchpads_2utils_8h_html"><div class="ttname"><a href="engine_2scratchpads_2utils_8h.html">utils.h</a></div><div class="ttdoc">Utility functions for convenient scratchpad retrieval with exception handling.</div></div>
 <div class="ttc" id="aengine__graph__scratchpad_8h_html"><div class="ttname"><a href="engine__graph__scratchpad_8h.html">engine_graph_scratchpad.h</a></div><div class="ttdoc">Scratchpad implementation for the GraphEngine using CppAD automatic differentiation.</div></div>
 <div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html">gridfire::engine::scratch</a></div><div class="ttdoc">Scratchpad memory management for computational engines.</div><div class="ttdef"><b>Definition</b> blob.h:69</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_ab8f89f710094bfc93b84e26c818249b9"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#ab8f89f710094bfc93b84e26c818249b9">gridfire::engine::scratch::get_state</a></div><div class="ttdeci">CTX * get_state(StateBlob &amp;ctx)</div><div class="ttdoc">Retrieve a scratchpad from a StateBlob, throwing on error.</div><div class="ttdef"><b>Definition</b> utils.h:84</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:39</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_ab8f89f710094bfc93b84e26c818249b9"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#ab8f89f710094bfc93b84e26c818249b9">gridfire::engine::scratch::get_state</a></div><div class="ttdeci">CTX * get_state(StateBlob &amp;ctx)</div><div class="ttdoc">Retrieve a scratchpad from a StateBlob, throwing on error.</div><div class="ttdef"><b>Definition</b> utils.h:87</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
 <div class="ttc" id="astructgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad_html"><div class="ttname"><a href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html">gridfire::engine::scratch::GraphEngineScratchPad</a></div><div class="ttdoc">Scratchpad for storing CppAD automatic differentiation state for GraphEngine.</div><div class="ttdef"><b>Definition</b> engine_graph_scratchpad.h:83</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Thread Safety</dt><dd>These functions inherit the thread safety characteristics of StateBlob. They are <b>not thread-safe</b> - each thread should operate on its own StateBlob instance.</dd></dl>

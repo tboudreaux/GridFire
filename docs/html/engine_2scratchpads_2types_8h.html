@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -111,10 +111,11 @@ $(function(){initNavTree('engine_2scratchpads_2types_8h.html',''); initResizable
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;string_view&gt;</code><br />
+<code>#include &lt;format&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for types.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="engine_2scratchpads_2types_8h__incl.svg" width="196" height="126"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="engine_2scratchpads_2types_8h__incl.svg" width="266" height="126"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -191,10 +192,10 @@ Functions</h2></td></tr>
 <div class="line">}</div>
 <div class="ttc" id="aengine_2scratchpads_2types_8h_html"><div class="ttname"><a href="engine_2scratchpads_2types_8h.html">types.h</a></div><div class="ttdoc">Type definitions and utilities for the scratchpad system.</div></div>
 <div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html">gridfire::engine::scratch</a></div><div class="ttdoc">Scratchpad memory management for computational engines.</div><div class="ttdef"><b>Definition</b> blob.h:69</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649be"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649be">gridfire::engine::scratch::ScratchPadType</a></div><div class="ttdeci">ScratchPadType</div><div class="ttdoc">Enumeration of all registered scratchpad types.</div><div class="ttdef"><b>Definition</b> types.h:64</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723">gridfire::engine::scratch::ScratchPadType::GRAPH_ENGINE_SCRATCHPAD</a></div><div class="ttdeci">@ GRAPH_ENGINE_SCRATCHPAD</div><div class="ttdoc">GraphEngineScratchPad for CppAD-based engines.</div><div class="ttdef"><b>Definition</b> types.h:65</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a7fa4b4931eb98910018ecb9e6d37a778"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a7fa4b4931eb98910018ecb9e6d37a778">gridfire::engine::scratch::get_max_scratchpad_types</a></div><div class="ttdeci">consteval size_t get_max_scratchpad_types()</div><div class="ttdoc">Get the maximum number of scratchpad types at compile time.</div><div class="ttdef"><b>Definition</b> types.h:93</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_aca27b37993186128808c8fdd96c54849"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#aca27b37993186128808c8fdd96c54849">gridfire::engine::scratch::get_scratchpad_type_name</a></div><div class="ttdeci">constexpr std::string_view get_scratchpad_type_name(const ScratchPadType scratchpad_type)</div><div class="ttdoc">Convert a ScratchPadType to a human-readable name.</div><div class="ttdef"><b>Definition</b> types.h:121</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649be"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649be">gridfire::engine::scratch::ScratchPadType</a></div><div class="ttdeci">ScratchPadType</div><div class="ttdoc">Enumeration of all registered scratchpad types.</div><div class="ttdef"><b>Definition</b> types.h:65</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723">gridfire::engine::scratch::ScratchPadType::GRAPH_ENGINE_SCRATCHPAD</a></div><div class="ttdeci">@ GRAPH_ENGINE_SCRATCHPAD</div><div class="ttdoc">GraphEngineScratchPad for CppAD-based engines.</div><div class="ttdef"><b>Definition</b> types.h:66</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a7fa4b4931eb98910018ecb9e6d37a778"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a7fa4b4931eb98910018ecb9e6d37a778">gridfire::engine::scratch::get_max_scratchpad_types</a></div><div class="ttdeci">consteval size_t get_max_scratchpad_types()</div><div class="ttdoc">Get the maximum number of scratchpad types at compile time.</div><div class="ttdef"><b>Definition</b> types.h:94</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_aca27b37993186128808c8fdd96c54849"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#aca27b37993186128808c8fdd96c54849">gridfire::engine::scratch::get_scratchpad_type_name</a></div><div class="ttdeci">constexpr std::string_view get_scratchpad_type_name(const ScratchPadType scratchpad_type)</div><div class="ttdoc">Convert a ScratchPadType to a human-readable name.</div><div class="ttdef"><b>Definition</b> types.h:122</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd>AbstractScratchPad </dd>
 <dd>

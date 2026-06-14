@@ -1,5 +1,7 @@
 var NAVTREEINDEX10 =
 {
+"functions_func_r.html":[8,3,1,15],
+"functions_func_s.html":[8,3,1,16],
 "functions_func_t.html":[8,3,1,17],
 "functions_func_u.html":[8,3,1,18],
 "functions_func_v.html":[8,3,1,19],
@@ -243,11 +245,9 @@ var NAVTREEINDEX10 =
 "io_2bindings_8h.html":[9,0,1,3,4,2],
 "io_2bindings_8h.html#aba28f9bd688764ab1905af9d40d4b428":[9,0,1,3,4,2,0],
 "io_8h.html":[9,0,1,1,0,4,1],
-"jacobian_8cpp.html":[9,0,1,2,0,2,0],
+"jacobian_8cpp.html":[9,0,1,2,0,3,0],
 "jacobian_8h.html":[9,0,1,1,0,1,3,2],
 "jacobian__format_8h.html":[9,0,1,1,0,12,0,1],
 "logging_8cpp.html":[9,0,1,2,7,0],
-"logging_8h.html":[9,0,1,1,0,12,3],
-"macros_8h.html":[9,0,1,1,0,12,4],
-"macros_8h.html#a7841b2d58d83626b304a6836a7b669fd":[9,0,1,1,0,12,4,2]
+"logging_8h.html":[9,0,1,1,0,12,3]
 };

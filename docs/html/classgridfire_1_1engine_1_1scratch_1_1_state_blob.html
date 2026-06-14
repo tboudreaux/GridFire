@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -384,7 +384,7 @@ Static Private Attributes</h2></td></tr>
 <div class="ttc" id="aclassgridfire_1_1engine_1_1scratch_1_1_state_blob_html_aa45357f0c368d7403306452c5ea56af0"><div class="ttname"><a href="#aa45357f0c368d7403306452c5ea56af0">gridfire::engine::scratch::StateBlob::clone_structure</a></div><div class="ttdeci">std::unique_ptr&lt; StateBlob &gt; clone_structure() const</div><div class="ttdoc">Create a deep copy of this blob with all enrolled scratchpads.</div><div class="ttdef"><b>Definition</b> blob.h:361</div></div>
 <div class="ttc" id="aclassgridfire_1_1engine_1_1scratch_1_1_state_blob_html_acedd28277e5c6805865a9baa3991686a"><div class="ttname"><a href="#acedd28277e5c6805865a9baa3991686a">gridfire::engine::scratch::StateBlob::get</a></div><div class="ttdeci">std::expected&lt; CTX *, Error &gt; get() const</div><div class="ttdoc">Retrieve a scratchpad by type.</div><div class="ttdef"><b>Definition</b> blob.h:230</div></div>
 <div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html">gridfire::engine::scratch</a></div><div class="ttdoc">Scratchpad memory management for computational engines.</div><div class="ttdef"><b>Definition</b> blob.h:69</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:39</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
 <div class="ttc" id="astructgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad_html"><div class="ttname"><a href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html">gridfire::engine::scratch::GraphEngineScratchPad</a></div><div class="ttdoc">Scratchpad for storing CppAD automatic differentiation state for GraphEngine.</div><div class="ttdef"><b>Definition</b> engine_graph_scratchpad.h:83</div></div>
 </div><!-- fragment --> </dd></dl>
 
@@ -613,8 +613,8 @@ template&lt;IsScratchPad CTX, bool MUST_BE_INITIALIZED&gt; </div>
 <div class="line">        <span class="comment">// Use scratch...</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649be"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649be">gridfire::engine::scratch::ScratchPadType</a></div><div class="ttdeci">ScratchPadType</div><div class="ttdoc">Enumeration of all registered scratchpad types.</div><div class="ttdef"><b>Definition</b> types.h:64</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723">gridfire::engine::scratch::ScratchPadType::GRAPH_ENGINE_SCRATCHPAD</a></div><div class="ttdeci">@ GRAPH_ENGINE_SCRATCHPAD</div><div class="ttdoc">GraphEngineScratchPad for CppAD-based engines.</div><div class="ttdef"><b>Definition</b> types.h:65</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649be"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649be">gridfire::engine::scratch::ScratchPadType</a></div><div class="ttdeci">ScratchPadType</div><div class="ttdoc">Enumeration of all registered scratchpad types.</div><div class="ttdef"><b>Definition</b> types.h:65</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html_a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649bea979fbf2c36e2a27005d241a7d27eb723">gridfire::engine::scratch::ScratchPadType::GRAPH_ENGINE_SCRATCHPAD</a></div><div class="ttdeci">@ GRAPH_ENGINE_SCRATCHPAD</div><div class="ttdoc">GraphEngineScratchPad for CppAD-based engines.</div><div class="ttdef"><b>Definition</b> types.h:66</div></div>
 <div class="ttc" id="astructgridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad_html"><div class="ttname"><a href="structgridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad.html">gridfire::engine::scratch::AbstractScratchPad</a></div><div class="ttdoc">Abstract base struct for engine scratchpad memory.</div><div class="ttdef"><b>Definition</b> scratchpad_abstract.h:82</div></div>
 </div><!-- fragment --> </dd></dl>
 

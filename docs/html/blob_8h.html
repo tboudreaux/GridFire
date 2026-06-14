@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -194,7 +194,7 @@ Concepts</h2></td></tr>
 <div class="ttc" id="aclassgridfire_1_1engine_1_1scratch_1_1_state_blob_html_acedd28277e5c6805865a9baa3991686a"><div class="ttname"><a href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html#acedd28277e5c6805865a9baa3991686a">gridfire::engine::scratch::StateBlob::get</a></div><div class="ttdeci">std::expected&lt; CTX *, Error &gt; get() const</div><div class="ttdoc">Retrieve a scratchpad by type.</div><div class="ttdef"><b>Definition</b> blob.h:230</div></div>
 <div class="ttc" id="aengine__graph__scratchpad_8h_html"><div class="ttname"><a href="engine__graph__scratchpad_8h.html">engine_graph_scratchpad.h</a></div><div class="ttdoc">Scratchpad implementation for the GraphEngine using CppAD automatic differentiation.</div></div>
 <div class="ttc" id="anamespacegridfire_1_1engine_1_1scratch_html"><div class="ttname"><a href="namespacegridfire_1_1engine_1_1scratch.html">gridfire::engine::scratch</a></div><div class="ttdoc">Scratchpad memory management for computational engines.</div><div class="ttdef"><b>Definition</b> blob.h:69</div></div>
-<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:39</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
 <div class="ttc" id="astructgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad_html"><div class="ttname"><a href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html">gridfire::engine::scratch::GraphEngineScratchPad</a></div><div class="ttdoc">Scratchpad for storing CppAD automatic differentiation state for GraphEngine.</div><div class="ttdef"><b>Definition</b> engine_graph_scratchpad.h:83</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Thread Safety</dt><dd>The StateBlob class is <b>not thread-safe</b>. Each thread should have its own StateBlob instance. Use clone_structure() to create independent copies for parallel workers. The cloned blob contains deep copies of all enrolled scratchpads.</dd></dl>

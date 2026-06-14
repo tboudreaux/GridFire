@@ -32,7 +32,7 @@ import importlib.metadata
 try:
     _meta = importlib.metadata.metadata('gridfire')
     __version__ = _meta['Version']
-    __author__ = _meta['Author']
+    __author__ = _meta['Authors']
     __license__ = _meta['License']
     __email__ = _meta['Author-email']
     __url__ = _meta['Home-page'] or _meta.get('Project-URL', '').split(',')[0].split(' ')[-1].strip()
@@ -115,7 +115,7 @@ def gf_get_extra_flags() -> List[str]:
 def gf_compiler_flags(just_gridfire=False):
     flags = []
     if not just_gridfire:
-        flags.extend(fourdst_flags = fst.get_compiler_flags())
+        flags.extend(fst.get_compiler_flags())
     flags.extend(gf_get_rpath_flags())
     flags.extend(gf_get_lib_flags())
     flags.extend(gf_get_include_flags())

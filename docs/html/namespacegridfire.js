@@ -21,9 +21,17 @@ var namespacegridfire =
     [ "IsArithmeticOrAD", "conceptgridfire_1_1_is_arithmetic_or_a_d.html", null ],
     [ "gf_author", "namespacegridfire.html#a1de3db5e65a2e834c55f458307cab68e", null ],
     [ "gf_collaboration", "namespacegridfire.html#a454366ce631749963d3c6b387bcbc3e7", null ],
+    [ "gf_compiler_flags", "namespacegridfire.html#ab6c262cb95aefce7b7217be05def6a2c", null ],
     [ "gf_credits", "namespacegridfire.html#a787f9de5930793c2976d22426ae971b5", null ],
     [ "gf_description", "namespacegridfire.html#afa60407432a1e563b9731ce298cf42bc", null ],
     [ "gf_email", "namespacegridfire.html#ae6f8e40e5233e5c98c9c4290f518b72d", null ],
+    [ "gf_get_compiler_flags_formatted", "namespacegridfire.html#a286ece04602867606e20af9f4f4ad4e7", null ],
+    [ "gf_get_extra_flags", "namespacegridfire.html#a6cf0ab33165c3069a2b4c196a04e12a7", null ],
+    [ "gf_get_include_dirs", "namespacegridfire.html#a40cbecad1b1a87c6711ee7e20517f092", null ],
+    [ "gf_get_include_flags", "namespacegridfire.html#a94f04c082dd84602da5431004e1ac96a", null ],
+    [ "gf_get_lib_dirs", "namespacegridfire.html#adf54b5015a40a40f65c1400e9e4355f1", null ],
+    [ "gf_get_lib_flags", "namespacegridfire.html#a9bdc5344d515db787a2bdceaa19dccf0", null ],
+    [ "gf_get_rpath_flags", "namespacegridfire.html#a350115e7c1a0b4d331afb4e6dc5b09df", null ],
     [ "gf_license", "namespacegridfire.html#a081c76fc9fbac9b5b380c8e4fa0e7be0", null ],
     [ "gf_metadata", "namespacegridfire.html#a0ee5ace587287cdba8f9755a0ef0b498", null ],
     [ "gf_url", "namespacegridfire.html#ae5ade7b2d801af88a79382441ec68277", null ],
@@ -35,5 +43,6 @@ var namespacegridfire =
     [ "__license__", "namespacegridfire.html#a23f04b652e06ef7660bed6ce2f36def8", null ],
     [ "__url__", "namespacegridfire.html#a75069cd30950ced7af0da9454e4cc921", null ],
     [ "__version__", "namespacegridfire.html#a14116c4fbbb07c2fa95826dc543771a2", null ],
-    [ "_meta", "namespacegridfire.html#acb6c9c1b2920f0d1744a8e7198d2cf5b", null ]
+    [ "_meta", "namespacegridfire.html#acb6c9c1b2920f0d1744a8e7198d2cf5b", null ],
+    [ "_PACKAGE_DIR", "namespacegridfire.html#af1322f32e7c01a82e55767967a23420d", null ]
 ];

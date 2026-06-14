@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -582,10 +582,10 @@ Callback and Policy Example</h3>
 <div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a> output = solver.evaluate(input);</div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1engine_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:183</div></div>
-<div class="ttc" id="aclassgridfire_1_1policy_1_1_main_sequence_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></div><div class="ttdoc">A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.</div><div class="ttdef"><b>Definition</b> stellar_policy.h:59</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:27</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:37</div></div>
+<div class="ttc" id="aclassgridfire_1_1engine_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:185</div></div>
+<div class="ttc" id="aclassgridfire_1_1policy_1_1_main_sequence_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></div><div class="ttdoc">A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.</div><div class="ttdef"><b>Definition</b> stellar_policy.h:60</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:28</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:38</div></div>
 </div><!-- fragment --><p> &gt;<b>Note:</b> If you want to see exactly why each repartitioning stage was triggered in a human readable manner add the flag True to <code>solver.evaluate</code> (<code>solver.evaluate(input, true)</code>).</p>
 <p>&gt;<b>Note:</b> A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.</p>
 <p>&gt;<b>Note:</b> The order of species in the boost state vector (<code>ctx.state</code>) is <b>not guaranteed</b> to be any particular order run over run. Therefore, in order to reliably extract </p><blockquote class="doxtable">
@@ -711,7 +711,7 @@ Python Example for End Users</h3>
 <div class="line">  parser.add_argument(<span class="stringliteral">&quot;--tMax&quot;</span>, type=float, help=<span class="stringliteral">&quot;Time in s&quot;</span>, default=3.1536 * 1e17)</div>
 <div class="line">  args = parser.parse_args()</div>
 <div class="line">  main(args.temp, args.rho, args.tMax)</div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:25</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:26</div></div>
 <div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
 </div><!-- fragment --></li>
 </ol>

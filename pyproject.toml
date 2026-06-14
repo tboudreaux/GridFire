@@ -1,5 +1,5 @@
 [build-system]
-requires = ["meson-python>=0.19.0", "meson>=1.9.1", "pybind11==3.0.0", "fourdst==0.10.5"]
+requires = ["meson-python>=0.19.0", "meson>=1.9.1", "pybind11==3.0.0", "fourdst==0.10.6"]
 build-backend = "mesonpy"
 
 [project]
@@ -37,3 +37,13 @@ setup = [
     '-Dbuild_python=true'
 ]
 install = ['--skip-subprojects']
+
+[project.scripts]
+gf-compiler-flags = "gridfire:gf_get_compiler_flags_formatted"
+gf-extra-cflags = "gridfire:gf_get_extra_flags"
+gf-get-include-flags = "gridfire:gf_get_include_flags"
+gf-get-lib-flags = "gridfire:gf_get_lib_flags"
+gf-get-rpath-flags = "gridfire:gf_get_rpath_flags"
+gf-version = "gridfire:gf_version"
+gf-get-include-dirs = "gridfire:gf_get_include_dirs"
+gf-get-lib-dirs = "gridfire:gf_get_lib_dirs"

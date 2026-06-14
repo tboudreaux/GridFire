@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v0.7.6rc4.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.0.2</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -150,8 +150,8 @@ Friends</h2></td></tr>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><a class="code hl_class" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">ProtonProtonChainPolicy</a> pp;</div>
 <div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a>&amp; reactions = pp.<a class="code hl_function" href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae689a0dfeb36f85ddc6db5a8dc4f630a">get_reactions</a>();</div>
 <div class="ttc" id="aclassgridfire_1_1policy_1_1_multi_reaction_chain_policy_html_ae689a0dfeb36f85ddc6db5a8dc4f630a"><div class="ttname"><a href="classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html#ae689a0dfeb36f85ddc6db5a8dc4f630a">gridfire::policy::MultiReactionChainPolicy::get_reactions</a></div><div class="ttdeci">const reaction::ReactionSet &amp; get_reactions() const override</div><div class="ttdoc">Returns the combined ReactionSet of all child chain policies.</div><div class="ttdef"><b>Definition</b> policy_logical.cpp:20</div></div>
-<div class="ttc" id="aclassgridfire_1_1policy_1_1_proton_proton_chain_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">gridfire::policy::ProtonProtonChainPolicy</a></div><div class="ttdoc">Proton-Proton Chain Policy.</div><div class="ttdef"><b>Definition</b> chains.h:197</div></div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:845</div></div>
+<div class="ttc" id="aclassgridfire_1_1policy_1_1_proton_proton_chain_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html">gridfire::policy::ProtonProtonChainPolicy</a></div><div class="ttdoc">Proton-Proton Chain Policy.</div><div class="ttdef"><b>Definition</b> chains.h:198</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a></div><div class="ttdef"><b>Definition</b> reaction.h:846</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Concrete implementations may throw exceptions on construction if the underlying reaction database (e.g. REACLIB) does not include requested reactions. See <code><a class="el" href="chains_8h.html" title="Concrete implementations of ReactionChainPolicy for key stellar reaction chains.">chains.h</a></code> for details. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -289,7 +289,7 @@ Friends</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&amp; reference to the chain's reactions.</dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;set = chainPolicy.get_reactions();</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Chain contains &quot;</span> &lt;&lt; set.<a class="code hl_function" href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">size</a>() &lt;&lt; <span class="stringliteral">&quot; reactions\n&quot;</span>;</div>
-<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:908</div></div>
+<div class="ttc" id="aclassgridfire_1_1reaction_1_1_reaction_set_html_af14cf34d7367cb6a6be5191724c2d4cf"><div class="ttname"><a href="classgridfire_1_1reaction_1_1_reaction_set.html#af14cf34d7367cb6a6be5191724c2d4cf">gridfire::reaction::ReactionSet::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Gets the number of reactions in the set.</div><div class="ttdef"><b>Definition</b> reaction.h:909</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">

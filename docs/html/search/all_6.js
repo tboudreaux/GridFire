@@ -9,5 +9,6 @@ var searchData=
   ['_5f_5furl_5f_5f_6',['__url__',['../namespacegridfire.html#a75069cd30950ced7af0da9454e4cc921',1,'gridfire']]],
   ['_5f_5fversion_5f_5f_7',['__version__',['../namespacegridfire.html#a14116c4fbbb07c2fa95826dc543771a2',1,'gridfire']]],
   ['_5fcount_8',['_COUNT',['../namespacegridfire_1_1engine_1_1scratch.html#a61cbbc8ec7103cc74fc8e549fd0649beaf3351ee60ccc810690817d90739bf103',1,'gridfire::engine::scratch']]],
-  ['_5fmeta_9',['_meta',['../namespacegridfire.html#acb6c9c1b2920f0d1744a8e7198d2cf5b',1,'gridfire']]]
+  ['_5fmeta_9',['_meta',['../namespacegridfire.html#acb6c9c1b2920f0d1744a8e7198d2cf5b',1,'gridfire']]],
+  ['_5fpackage_5fdir_10',['_PACKAGE_DIR',['../namespacegridfire.html#af1322f32e7c01a82e55767967a23420d',1,'gridfire']]]
 ];

@@ -1,8 +1,12 @@
 var structgridfire_1_1solver_1_1_point_solver_timestep_context =
 [
     [ "PointSolverTimestepContext", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a0493540df76c61ebb2f58214327d3419", null ],
+    [ "abundance", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a7ba845a3088139ee4787036b4fdfa416", null ],
+    [ "abundance", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#acf697ed8b63b0a73c0b580bb7c8cab65", null ],
+    [ "accumulatedSpecificEnergy", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ad0310ec77e49f7e4f93b6fe115810ab8", null ],
     [ "describe", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a5307efe7f090f77b17d78a6d789d929b", null ],
     [ "getPhysicalComposition", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a5dade04c339a5a5f96cbb144c825b298", null ],
+    [ "rawState", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a8515c5878d2c0046b1c15176032ce9b6", null ],
     [ "current_neutrino_energy_loss_rate", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ab7d9e6258c7b11d04be596a248b8943f", null ],
     [ "current_total_energy", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a3473e38643070becd4650b278c5c42ff", null ],
     [ "currentConvergenceFailures", "structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a463e55bef82693821e0cc52890a8a5fe", null ],
