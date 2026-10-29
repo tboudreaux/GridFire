@@ -683,7 +683,7 @@ The syntax for registration is very similar to C++. There are a few things to no
 from fourdst.composition import Composition
 from gridfire.type import NetIn
 from gridfire.policy import MainSequencePolicy
-from gridfire.solver import CVODESolverStrategy
+from gridfire.solver import PointSolver, PointSolverContext
 from enum import Enum
 from typing import Dict, Union, SupportsFloat
 import json
@@ -721,9 +721,9 @@ class StepLogger:
     self.step_data[self.num_steps][StepData.TIME] = context.t
     self.step_data[self.num_steps][StepData.DT] = context.dt
     comp_data: Dict[str, SupportsFloat] = {}
-    for species in engine.getNetworkSpecies():
-      sid = engine.getSpeciesIndex(species)
-      comp_data[species.name()] = context.state[sid]
+    comp = context.composition
+    for species in engine.getNetworkSpecies(context.state_ctx):
+      comp_data[species.name()] = comp.getMolarAbundance(species)
     self.step_data[self.num_steps][StepData.COMP] = comp_data
     self.num_steps += 1
 
@@ -757,15 +757,18 @@ def main(temp: float, rho: float, time: float):
   netIn = init_netIn(temp, rho, time, comp)
 
   policy = MainSequencePolicy(comp)
-  engine = policy.construct()
+  construct = policy.construct()
 
-  solver = CVODESolverStrategy(engine)
+  engine = construct.engine
+  context = PointSolverContext(construct.scratch_blob)
 
-  step_logger = StepLogger()
-  solver.set_callback(lambda context: step_logger.log_step(context))
+  solver = PointSolver(engine)
 
-  solver.evaluate(netIn, False)
-  step_logger.to_xml("log_data.xml")
+  logger = StepLogger()
+
+  context.callback = lambda ctx: logger.log_step(ctx)
+  solver.evaluate(context, netIn)
+  logger.to_xml("log_data.xml")
 
 if __name__ == "__main__":
   import argparse
@@ -775,7 +778,6 @@ if __name__ == "__main__":
   parser.add_argument("--tMax", type=float, help="Time in s", default=3.1536 * 1e17)
   args = parser.parse_args()
   main(args.temp, args.rho, args.tMax)
-
 ```
 
 
