@@ -267,6 +267,23 @@ namespace gridfire::engine {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
     }
 
+    std::vector<double> DefinedEngineView::calculateEnergyChannels(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        auto *state = scratch::get_state<scratch::DefinedEngineViewScratchPad, true>(ctx);
+        const fourdst::composition::MaskedComposition masked(comp, state->active_species | std::ranges::to<std::vector>());
+        return m_baseEngine.calculateEnergyChannels(ctx, masked, T9, rho, state->active_reactions);
+    }
+
+    const std::vector<std::string>& DefinedEngineView::getEnergyChannelNames(
+        scratch::StateBlob& ctx
+    ) const {
+        return m_baseEngine.getEnergyChannelNames(ctx);
+    }
+
     std::unique_ptr<scratch::StateBlob> DefinedEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
         throw exceptions::ScratchPadError("DefinedEngineView does not support StateBlob construction. This will be implemented in a future version.");
     }

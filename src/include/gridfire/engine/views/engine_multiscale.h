@@ -615,6 +615,17 @@ namespace gridfire::engine {
             scratch::StateBlob &
         ) const override;
 
+        [[nodiscard]] std::vector<double> calculateEnergyChannels(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho
+        ) const override;
+
+        [[nodiscard]] const std::vector<std::string>& getEnergyChannelNames(
+            scratch::StateBlob& ctx
+        ) const override;
+
         [[nodiscard]] std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const override;
     public:
         /**

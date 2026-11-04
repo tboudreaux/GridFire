@@ -482,6 +482,34 @@ namespace gridfire::engine {
             scratch::StateBlob& ctx
         ) const = 0;
 
+        /**
+         * @brief Calculate the nuclear energy generation rate attributed to each energy channel.
+         *
+         * Channels (e.g. H_pp, H_CNO, He, ...) partition the network's reactions, so the returned values sum to the
+         * nuclearEnergyGenerationRate of calculateRHSAndEnergy at the same state. Values are net of reaction neutrino
+         * losses, in erg/g/s, ordered like getEnergyChannelNames().
+         *
+         * @return Energy generation rate per channel, or an empty vector if the engine does not support channels.
+         */
+        [[nodiscard]] virtual std::vector<double> calculateEnergyChannels(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho
+        ) const {
+            return {};
+        }
+
+        /**
+         * @brief Names of the energy channels reported by calculateEnergyChannels().
+         */
+        [[nodiscard]] virtual const std::vector<std::string>& getEnergyChannelNames(
+            scratch::StateBlob& ctx
+        ) const {
+            static const std::vector<std::string> no_channels;
+            return no_channels;
+        }
+
         [[nodiscard]] virtual std::unique_ptr<scratch::StateBlob> constructStateBlob(const scratch::StateBlob *blob) const = 0;
 
     };

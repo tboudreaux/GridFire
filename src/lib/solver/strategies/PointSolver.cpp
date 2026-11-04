@@ -729,6 +729,9 @@ namespace gridfire::solver {
         }
         LOG_TRACE_L2(m_logger, "Found eps: {:0.3E}, dlnEps/dlnT: {:0.3E}, dlnEps/dlnRho: {:0.3E}", netOut.eps_nuc, netOut.dlnEps_dlnT, netOut.dlnEps_dlnRho);
 
+        netOut.energy_channel_names = m_engine.getEnergyChannelNames(*sctx_p->engine_ctx);
+        netOut.eps_by_channel = m_engine.calculateEnergyChannels(*sctx_p->engine_ctx, outputComposition, T9, netIn.density);
+
         netOut.specific_neutrino_energy_loss = accumulated_neutrino_energy_loss;
         netOut.specific_neutrino_flux = accumulated_total_neutrino_flux;
         LOG_TRACE_L2(m_logger, "Output data built!");

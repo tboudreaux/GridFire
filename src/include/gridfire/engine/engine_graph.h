@@ -12,6 +12,7 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
 #include "gridfire/engine/procedures/construction.h"
+#include "gridfire/engine/procedures/energy_channels.h"
 #include "gridfire/config/config.h"
 
 #include "gridfire/engine/scratchpads/blob.h"
@@ -681,6 +682,28 @@ namespace gridfire::engine {
             scratch::StateBlob&
         ) const override;
 
+        [[nodiscard]] std::vector<double> calculateEnergyChannels(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho
+        ) const override;
+
+        /**
+         * @brief Calculate the energy generation rate of each channel using only the given active reactions.
+         */
+        [[nodiscard]] std::vector<double> calculateEnergyChannels(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho,
+            const reaction::ReactionSet& activeReactions
+        ) const;
+
+        [[nodiscard]] const std::vector<std::string>& getEnergyChannelNames(
+            scratch::StateBlob& ctx
+        ) const override;
+
         [[nodiscard]] const CppAD::ADFun<double>& getAuthoritativeADFun() const  { return m_authoritativeADFun; }
 
 
@@ -700,6 +723,10 @@ namespace gridfire::engine {
             std::vector<size_t> unique_product_indices{}; ///< Unique product indices for reverse reactions.
             std::vector<int> product_powers{}; ///< Powers of each unique product in the reverse reaction.
             double reverse_symmetry_factor{}; ///< Symmetry factor for reverse reactions.
+
+            // Energy channel attribution
+            double energy_per_flow{}; ///< Energy released per unit net molar flow, net of neutrino losses [erg][mol^-1]
+            size_t channel_index{}; ///< Index into m_energy_channels.names
         };
 
 
@@ -780,6 +807,8 @@ namespace gridfire::engine {
 
         struct PrecomputationKernelResults {
             std::vector<double> dydt_vector;
+            std::vector<double> molar_flows; ///< Net molar flow of each active reaction, in active reaction order
+            std::vector<size_t> reaction_indices; ///< Index into m_precomputed_reactions of each active reaction
             double total_neutrino_energy_loss_rate{0.0};
             double total_neutrino_flux{0.0};
         };
@@ -811,6 +840,7 @@ namespace gridfire::engine {
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
         std::vector<PrecomputedReaction> m_precomputed_reactions;
+        EnergyChannels m_energy_channels;
         std::unordered_map<uint64_t, size_t> m_precomputed_reaction_index_map;
 
         bool m_useReverseReactions = false; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
@@ -892,6 +922,18 @@ namespace gridfire::engine {
          * @brief Neutrino energy carried away per unit net molar reaction flow [erg][mol^-1] (0 for non-weak reactions).
          */
         [[nodiscard]] double neutrino_energy_loss_per_molar_flow(const reaction::Reaction &reaction) const;
+
+        /**
+         * @brief Evaluate the bare forward and reverse rates of the active reactions, as consumed by the precomputed kernel.
+         */
+        void compute_bare_rates(
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho,
+            const reaction::ReactionSet& activeReactions,
+            std::vector<double>& bare_rates,
+            std::vector<double>& bare_reverse_rates
+        ) const;
 
         PrecomputationKernelResults accumulate_flows_serial(
             scratch::StateBlob& ctx,

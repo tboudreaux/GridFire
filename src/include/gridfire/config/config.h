@@ -2,6 +2,9 @@
 
 #include "fourdst/config/config.h"
 
+#include <string>
+#include <vector>
+
 namespace gridfire::config {
     struct BoundaryFluxConfig {
         double relativeThreshold = 3e-8;
@@ -32,8 +35,14 @@ namespace gridfire::config {
         AdaptiveEngineViewConfig adaptiveEngineView;
     };
 
+    struct EnergyChannelConfig {
+        std::vector<std::string> fuels = {"H-1", "He-4", "C-12", "Ne-20", "O-16", "Si-28"}; ///< Fuels ordered by burning stage
+        bool splitHydrogenPPCNO = true; ///< Report hydrogen burning as separate pp and CNO channels
+    };
+
     struct EngineConfig {
         EngineViewConfig views;
+        EnergyChannelConfig energyChannels;
 
     };
 

@@ -67,6 +67,21 @@ class NetOut:
     def energy(self) -> float:
         ...
     @property
+    def energy_channel_names(self) -> list[str]:
+        """
+        Names of the energy channels (e.g. H_pp, H_CNO, He, ...)
+        """
+    @property
+    def eps_by_channel(self) -> list[float]:
+        """
+        Instantaneous eps_nuc (erg/g/s) attributed to each energy channel; sums to eps_nuc
+        """
+    @property
+    def eps_channels(self) -> dict[str, float]:
+        """
+        Mapping from energy channel name to its instantaneous eps_nuc contribution (erg/g/s)
+        """
+    @property
     def eps_nuc(self) -> float:
         """
         Instantaneous specific nuclear energy generation rate (erg/g/s) at the final state, net of reaction neutrino losses

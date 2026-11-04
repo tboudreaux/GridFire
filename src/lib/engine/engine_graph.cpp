@@ -194,17 +194,7 @@ namespace gridfire::engine {
             LOG_TRACE_L3(m_logger, "Using precomputation for reaction rates in GraphEngine calculateRHSAndEnergy.");
             std::vector<double> bare_rates;
             std::vector<double> bare_reverse_rates;
-            bare_rates.reserve(activeReactions.size());
-            bare_reverse_rates.reserve(activeReactions.size());
-
-
-            for (const auto& reaction: activeReactions) {
-                assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
-                bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
-                if (reaction->type() != reaction::ReactionType::WEAK) {
-                    bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
-                }
-            }
+            compute_bare_rates(comp, T9, rho, activeReactions, bare_rates, bare_reverse_rates);
 
             LOG_TRACE_L3(m_logger, "Precomputed {} forward and {} reverse reaction rates for active reactions.", bare_rates.size(), bare_reverse_rates.size());
 
@@ -235,6 +225,89 @@ namespace gridfire::engine {
             state->most_recent_rhs_calculation = result;
             return result;
         }
+    }
+
+    void GraphEngine::compute_bare_rates(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions,
+        std::vector<double> &bare_rates,
+        std::vector<double> &bare_reverse_rates
+    ) const {
+        const double Ye = comp.getElectronAbundance();
+        const std::vector<double> molarAbundances = comp.getMolarAbundanceVector();
+        bare_rates.clear();
+        bare_reverse_rates.clear();
+        bare_rates.reserve(activeReactions.size());
+        bare_reverse_rates.reserve(activeReactions.size());
+
+        for (const auto& reaction: activeReactions) {
+            assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
+            bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
+            if (reaction->type() != reaction::ReactionType::WEAK) {
+                bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
+            }
+        }
+    }
+
+    std::vector<double> GraphEngine::calculateEnergyChannels(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        return calculateEnergyChannels(ctx, comp, T9, rho, m_reactions);
+    }
+
+    std::vector<double> GraphEngine::calculateEnergyChannels(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const reaction::ReactionSet &activeReactions
+    ) const {
+        // Uses the same rate evaluation and flow kernel as calculateRHSAndEnergy so that the channels sum to eps
+        std::vector<double> bare_rates;
+        std::vector<double> bare_reverse_rates;
+        compute_bare_rates(comp, T9, rho, activeReactions, bare_rates, bare_reverse_rates);
+
+        const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            activeReactions,
+            m_networkSpecies,
+            comp.getMolarAbundanceVector(),
+            T9,
+            rho
+        );
+
+        std::vector<double> local_abundances;
+        local_abundances.reserve(m_networkSpecies.size());
+        for (const auto& species: m_networkSpecies) {
+            local_abundances.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
+        }
+
+        const PrecomputationKernelResults kernel = accumulate_flows_serial(
+            ctx,
+            local_abundances,
+            screeningFactors,
+            bare_rates,
+            bare_reverse_rates,
+            rho,
+            activeReactions
+        );
+
+        std::vector<double> eps_by_channel(m_energy_channels.names.size(), 0.0);
+        for (const auto& [flow, j] : std::views::zip(kernel.molar_flows, kernel.reaction_indices)) {
+            const PrecomputedReaction& precomp = m_precomputed_reactions[j];
+            eps_by_channel[precomp.channel_index] += flow * precomp.energy_per_flow;
+        }
+        return eps_by_channel;
+    }
+
+    const std::vector<std::string>& GraphEngine::getEnergyChannelNames(
+        scratch::StateBlob& ctx
+    ) const {
+        return m_energy_channels.names;
     }
 
     EnergyDerivatives GraphEngine::calculateEpsDerivatives(
@@ -578,6 +651,8 @@ namespace gridfire::engine {
             reactionCounter++;
         }
 
+        results.molar_flows = std::move(molarReactionFlows);
+        results.reaction_indices = std::move(reactionIndices);
         return results;
     }
 
@@ -863,7 +938,7 @@ namespace gridfire::engine {
         StepDerivatives<double> result;
         std::vector<double> dydt_scratch(m_networkSpecies.size(), 0.0);
 
-        const auto [dydt_vector, total_neutrino_energy_loss_rate, total_neutrino_flux] = accumulate_flows_serial(
+        const PrecomputationKernelResults kernel = accumulate_flows_serial(
             ctx,
             state->local_abundance_cache,
             screeningFactors,
@@ -872,9 +947,9 @@ namespace gridfire::engine {
             rho,
             activeReactions
         );
-        dydt_scratch = dydt_vector;
-        result.neutrinoEnergyLossRate = total_neutrino_energy_loss_rate;
-        result.totalNeutrinoFlux = total_neutrino_flux;
+        dydt_scratch = kernel.dydt_vector;
+        result.neutrinoEnergyLossRate = kernel.total_neutrino_energy_loss_rate;
+        result.totalNeutrinoFlux = kernel.total_neutrino_flux;
 
         // load scratch into result.dydt
         for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
@@ -1423,6 +1498,17 @@ namespace gridfire::engine {
             speciesIndexMap[m_networkSpecies[i]] = i;
         }
 
+        // --- Energy channel classification (once per network) ---
+        std::vector<fourdst::atomic::Species> fuels;
+        for (const auto& fuel_name : m_config->engine.energyChannels.fuels) {
+            const auto it = fourdst::atomic::species.find(fuel_name);
+            if (it == fourdst::atomic::species.end()) {
+                throw std::invalid_argument(std::format("Unknown energy channel fuel species '{}'.", fuel_name));
+            }
+            fuels.push_back(it->second);
+        }
+        m_energy_channels = classify_energy_channels(m_reactions, fuels, m_config->engine.energyChannels.splitHydrogenPPCNO);
+
         m_precomputed_reactions.clear();
         m_precomputed_reactions.reserve(m_reactions.size());
         m_precomputed_reaction_index_map.clear();
@@ -1481,10 +1567,17 @@ namespace gridfire::engine {
             precomp.affected_species_indices.reserve(stoichiometryMap.size());
             precomp.stoichiometric_coefficients.reserve(stoichiometryMap.size());
 
+            double massChange = 0.0; // [u]
             for (const auto& [species, coeff] : stoichiometryMap) {
                 precomp.affected_species_indices.push_back(speciesIndexMap.at(species));
                 precomp.stoichiometric_coefficients.push_back(coeff);
+                massChange += static_cast<double>(coeff) * species.mass();
             }
+
+            // --- Precompute energy channel attribution (matches the eps definition in calculateAllDerivativesUsingPrecomputation) ---
+            precomp.energy_per_flow = -massChange * m_constants.u * m_constants.Na * m_constants.c * m_constants.c
+                                      - neutrino_energy_loss_per_molar_flow(reaction);
+            precomp.channel_index = m_energy_channels.reaction_channel[i];
 
             m_precomputed_reactions.push_back(std::move(precomp));
         }

@@ -23,6 +23,8 @@
 #include "fourdst/composition/composition.h"
 #include "cppad/cppad.hpp"
 #include <format>
+#include <string>
+#include <vector>
 
 namespace gridfire {
     struct NetIn {
@@ -49,6 +51,8 @@ namespace gridfire {
         double dlnEps_dlnT = 0.0; ///< Logarithmic derivative (T/eps_nuc) * dEps_dT at fixed rho and composition (0 if eps_nuc == 0)
         double dlnEps_dlnRho = 0.0; ///< Logarithmic derivative (rho/eps_nuc) * dEps_dRho at fixed T and composition (0 if eps_nuc == 0)
         double neutrino_energy_loss_rate = 0.0; ///< Instantaneous reaction neutrino energy loss rate in erg/g/s
+        std::vector<std::string> energy_channel_names; ///< Names of the energy channels (e.g. H_pp, H_CNO, He, ...)
+        std::vector<double> eps_by_channel; ///< Instantaneous eps_nuc attributed to each channel in erg/g/s; sums to eps_nuc
 
         friend std::ostream& operator<<(std::ostream& os, const NetOut& netOut) {
             os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", ε=" << netOut.energy << ", dε/dT=" << netOut.dEps_dT << ", dε/dρ=" << netOut.dEps_dRho << ", ε_nuc=" << netOut.eps_nuc << ")";

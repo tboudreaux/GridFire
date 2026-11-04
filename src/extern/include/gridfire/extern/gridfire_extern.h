@@ -87,34 +87,27 @@ extern "C" {
 
     int gf_construct_solver_from_engine(void* ptr);
 
-    int gf_evolve(
-        enum GF_TYPE type,
-        void* ptr,
-        const void* Y_in,
-        size_t num_species,
-        const void* T,
-        const void* rho,
-        double tMax,
-        double dt0,
-        void* Y_out,
-        void* energy_out,
-        void* dEps_dT,
-        void* dEps_dRho,
-        void* specific_neutrino_energy_loss,
-        void* specific_neutrino_flux,
-        void* mass_lost
-    );
-
     /**
-     * Same as gf_evolve, but additionally returns the instantaneous quantities at the final state. These are evaluated
-     * at the same composition, temperature, and density as dEps_dT and dEps_dRho, so the four are mutually consistent:
-     *   eps_nuc                   - specific nuclear energy generation rate net of reaction neutrino losses [erg/g/s]
-     *   dlnEps_dlnT               - (T / eps_nuc) * dEps_dT   (0 if eps_nuc == 0)
-     *   dlnEps_dlnRho             - (rho / eps_nuc) * dEps_dRho (0 if eps_nuc == 0)
-     *   neutrino_energy_loss_rate - reaction neutrino energy loss rate [erg/g/s]
-     * For MULTI_ZONE each of these is an array with one entry per zone.
+     * Evolve one zone (SINGLE_ZONE) or every zone (MULTI_ZONE) for tMax seconds.
+     *
+     * For MULTI_ZONE, T, rho, and every scalar output are arrays with one entry per zone, and Y_in / Y_out hold
+     * num_species abundances per zone.
+     *
+     * Outputs:
+     *   energy_out                    - specific energy released over tMax [erg/g]
+     *   dEps_dT, dEps_dRho            - partial derivatives of eps_nuc at the final state (fixed composition)
+     *   specific_neutrino_energy_loss - neutrino energy lost over tMax [erg/g]
+     *   specific_neutrino_flux        - neutrinos emitted over tMax [1/g]
+     *   mass_lost                     - mass in species outside the registered species list
+     *   eps_nuc                       - instantaneous energy generation rate at the final state, net of neutrinos [erg/g/s]
+     *   dlnEps_dlnT, dlnEps_dlnRho    - logarithmic derivatives of eps_nuc (0 if eps_nuc == 0)
+     *   neutrino_energy_loss_rate     - instantaneous reaction neutrino loss rate at the final state [erg/g/s]
+     *   eps_by_channel                - eps_nuc split by energy channel, num_channels entries per zone
+     *                                   (see gf_get_num_energy_channels); sums to eps_nuc
+     *
+     * eps_nuc, its derivatives, and eps_by_channel are all evaluated at the same final state.
      */
-    int gf_evolve_ext(
+    int gf_evolve(
         enum GF_TYPE type,
         void* ptr,
         const void* Y_in,
@@ -133,8 +126,19 @@ extern "C" {
         void* eps_nuc,
         void* dlnEps_dlnT,
         void* dlnEps_dlnRho,
-        void* neutrino_energy_loss_rate
+        void* neutrino_energy_loss_rate,
+        void* eps_by_channel
     );
+
+    /**
+     * Number of energy channels reported per zone by gf_evolve (valid once the engine has been constructed).
+     */
+    int gf_get_num_energy_channels(void* ptr, size_t* num_channels);
+
+    /**
+     * Name of energy channel `index` (e.g. "H_pp", "H_CNO", "He"). The string is owned by the context.
+     */
+    int gf_get_energy_channel_name(void* ptr, size_t index, const char** name);
 
 #ifdef __cplusplus
 }

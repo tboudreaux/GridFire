@@ -52,6 +52,9 @@ program main_multi
     real(c_double), dimension(ZONES) :: snu_e_loss
     real(c_double), dimension(ZONES) :: snu_flux
     real(c_double), dimension(ZONES) :: dmass
+    real(c_double), dimension(ZONES) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate
+    real(c_double), allocatable :: eps_by_channel(:, :) ! (num_channels, ZONES)
+    character(len=16), allocatable :: channel_names(:)
 
     ! Time settings
     real(c_double) :: tMax = 3.0e17  ! 10 Gyr total time
@@ -97,9 +100,14 @@ program main_multi
     print *, "Evolving system..."
 
     ! Note: We pass the arrays T_arr and rho_arr.
+    allocate(eps_by_channel(net%gff_get_num_energy_channels(), ZONES))
+    allocate(channel_names(size(eps_by_channel, 1)))
+    call net%gff_get_energy_channel_names(channel_names)
+
     call net%gff_evolve(Y_in, T_arr, rho_arr, tMax, dt0, &
             Y_out, energy_out, dedt, dedrho, &
-            snu_e_loss, snu_flux, dmass, ierr)
+            snu_e_loss, snu_flux, dmass, &
+            eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)
 
     if (ierr /= 0) then
         print *, "Evolution Failed with error code: ", ierr
@@ -117,6 +125,10 @@ program main_multi
         print '(A, ES12.5, A)', " Energy Gen:  ", energy_out(z), " erg/g/s"
         print '(A, ES12.5)',    " Mass Lost:   ", dmass(z)
         print '(A, ES12.5)',    " T:           ", T_arr(z)
+        print '(A, ES12.5)',    " eps_nuc:     ", eps_nuc(z)
+        do i = 1, size(eps_by_channel, 1)
+            print '(A, A16, ES12.5)', "   eps channel ", channel_names(i), eps_by_channel(i, z)
+        end do
 
         print *, " Key Abundances (H-1, He-4, C-12):"
         print '(3(ES12.5, 1X))', Y_out(1, z), Y_out(3, z), Y_out(4, z)

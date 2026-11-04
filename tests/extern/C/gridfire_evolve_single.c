@@ -1,6 +1,7 @@
 #include "gridfire/extern/gridfire_extern.h"
 #include <stdio.h>
 #define NUM_SPECIES 8
+#define MAX_CHANNELS 16
 
 // Define a macro to check return codes
 #define CHECK_RET_CODE(ret, ctx, msg) \
@@ -49,6 +50,20 @@ int main() {
     double specific_neutrino_energy_loss;
     double specific_neutrino_flux;
     double mass_lost;
+    double eps_nuc;
+    double dlnEps_dlnT;
+    double dlnEps_dlnRho;
+    double neutrino_energy_loss_rate;
+    double eps_by_channel[MAX_CHANNELS];
+
+    size_t num_channels;
+    ret = gf_get_num_energy_channels(ctx, &num_channels);
+    CHECK_RET_CODE(ret, ctx, "ENERGY CHANNELS");
+    if (num_channels > MAX_CHANNELS) {
+        printf("Error: %zu energy channels exceeds MAX_CHANNELS\n", num_channels);
+        gf_free(SINGLE_ZONE, ctx);
+        return 1;
+    }
 
     const double T_in = 1e7; // Temperature in K
     const double rho_in = 1.5e2; // Density in g/cm^3
@@ -67,7 +82,13 @@ int main() {
         &dEps_dT,
         &dEps_dRho,
         &specific_neutrino_energy_loss,
-        &specific_neutrino_flux, &mass_lost
+        &specific_neutrino_flux,
+        &mass_lost,
+        &eps_nuc,
+        &dlnEps_dlnT,
+        &dlnEps_dlnRho,
+        &neutrino_energy_loss_rate,
+        eps_by_channel
     );
 
     CHECK_RET_CODE(ret, ctx, "EVOLUTION");
@@ -83,6 +104,13 @@ int main() {
     printf("Specific neutrino energy loss: %e\n", specific_neutrino_energy_loss);
     printf("Specific neutrino flux: %e\n", specific_neutrino_flux);
     printf("Mass lost: %e\n", mass_lost);
+    printf("eps_nuc: %e (dlnEps/dlnT: %f, dlnEps/dlnRho: %f, neutrino loss rate: %e)\n", eps_nuc, dlnEps_dlnT, dlnEps_dlnRho, neutrino_energy_loss_rate);
+    for (size_t i = 0; i < num_channels; i++) {
+        const char* name;
+        ret = gf_get_energy_channel_name(ctx, i, &name);
+        CHECK_RET_CODE(ret, ctx, "ENERGY CHANNEL NAME");
+        printf("  eps[%s]: %e\n", name, eps_by_channel[i]);
+    }
 
     gf_free(SINGLE_ZONE, ctx);
 

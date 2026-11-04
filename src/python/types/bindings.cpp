@@ -41,6 +41,15 @@ void register_type_bindings(const pybind11::module &m) {
         .def_readonly("dlnEps_dlnT", &gridfire::NetOut::dlnEps_dlnT, "Logarithmic derivative dln(eps_nuc)/dln(T) at the final state (0 if eps_nuc == 0)")
         .def_readonly("dlnEps_dlnRho", &gridfire::NetOut::dlnEps_dlnRho, "Logarithmic derivative dln(eps_nuc)/dln(rho) at the final state (0 if eps_nuc == 0)")
         .def_readonly("neutrino_energy_loss_rate", &gridfire::NetOut::neutrino_energy_loss_rate, "Instantaneous reaction neutrino energy loss rate (erg/g/s) at the final state")
+        .def_readonly("energy_channel_names", &gridfire::NetOut::energy_channel_names, "Names of the energy channels (e.g. H_pp, H_CNO, He, ...)")
+        .def_readonly("eps_by_channel", &gridfire::NetOut::eps_by_channel, "Instantaneous eps_nuc (erg/g/s) attributed to each energy channel; sums to eps_nuc")
+        .def_property_readonly("eps_channels", [](const gridfire::NetOut& netOut) {
+            py::dict channels;
+            for (size_t i = 0; i < netOut.energy_channel_names.size() && i < netOut.eps_by_channel.size(); ++i) {
+                channels[py::str(netOut.energy_channel_names[i])] = netOut.eps_by_channel[i];
+            }
+            return channels;
+        }, "Mapping from energy channel name to its instantaneous eps_nuc contribution (erg/g/s)")
         .def("__repr__", [](const gridfire::NetOut &netOut) {
             std::string repr = std::format(
                 "NetOut(<μ> = {} steps = {}, ε = {}, dε/dT = {}, dε/dρ = {}, ε_nuc = {})",

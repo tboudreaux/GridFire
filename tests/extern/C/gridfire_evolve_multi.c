@@ -4,6 +4,7 @@
 #define NUM_SPECIES 8
 #define ZONES 100
 #define ZONE_POLICY MULTI_ZONE
+#define MAX_CHANNELS 16
 
 // Define a macro to check return codes
 #define CHECK_RET_CODE(ret, ctx, msg) \
@@ -83,6 +84,21 @@ int main() {
     double specific_neutrino_energy_loss[ZONES];
     double specific_neutrino_flux[ZONES];
     double mass_lost[ZONES];
+    double eps_nuc[ZONES];
+    double dlnEps_dlnT[ZONES];
+    double dlnEps_dlnRho[ZONES];
+    double neutrino_energy_loss_rate[ZONES];
+    double eps_by_channel[ZONES][MAX_CHANNELS]; // Only the first num_channels entries of each zone row are used
+
+    size_t num_channels;
+    ret = gf_get_num_energy_channels(ctx, &num_channels);
+    CHECK_RET_CODE(ret, ctx, "ENERGY CHANNELS");
+    if (num_channels > MAX_CHANNELS) {
+        printf("Error: %zu energy channels exceeds MAX_CHANNELS\n", num_channels);
+        gf_free(ZONE_POLICY, ctx);
+        return 1;
+    }
+    double* eps_by_channel_flat = &eps_by_channel[0][0]; // gf_evolve writes num_channels contiguous entries per zone
 
     printf(" Evolving...\n");
     ret = gf_evolve(
@@ -99,7 +115,13 @@ int main() {
         dEps_dT,
         dEps_dRho,
         specific_neutrino_energy_loss,
-        specific_neutrino_flux, &mass_lost
+        specific_neutrino_flux,
+        mass_lost,
+        eps_nuc,
+        dlnEps_dlnT,
+        dlnEps_dlnRho,
+        neutrino_energy_loss_rate,
+        eps_by_channel_flat
     );
     CHECK_RET_CODE(ret, ctx, "EVOLUTION");
     printf(" Done.\n");
@@ -117,6 +139,13 @@ int main() {
         printf("  Specific neutrino energy loss: %e\n", specific_neutrino_energy_loss[zone]);
         printf("  Specific neutrino flux: %e\n", specific_neutrino_flux[zone]);
         printf("  Mass lost: %e\n", mass_lost[zone]);
+        printf("  eps_nuc: %e (dlnEps/dlnT: %f, dlnEps/dlnRho: %f)\n", eps_nuc[zone], dlnEps_dlnT[zone], dlnEps_dlnRho[zone]);
+        for (size_t i = 0; i < num_channels; i++) {
+            const char* name;
+            ret = gf_get_energy_channel_name(ctx, i, &name);
+            CHECK_RET_CODE(ret, ctx, "ENERGY CHANNEL NAME");
+            printf("    eps[%s]: %e\n", name, eps_by_channel_flat[zone * num_channels + i]);
+        }
     }
 
     gf_free(ZONE_POLICY, ctx);

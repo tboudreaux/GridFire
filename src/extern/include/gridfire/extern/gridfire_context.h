@@ -8,16 +8,18 @@
 #include <vector>
 
 /**
- * @brief Optional destinations for the instantaneous final-state quantities in NetOut.
+ * @brief Destinations for the instantaneous final-state quantities in NetOut.
  *
- * For a point context each pointer refers to a single double; for a grid context each refers to an array with one
- * entry per zone. A null member (or a null struct) means that quantity is not written.
+ * For a point context each scalar pointer refers to a single double; for a grid context each refers to an array with
+ * one entry per zone. eps_by_channel holds the channel energies of each zone contiguously
+ * (eps_by_channel[zone * num_channels + channel]).
  */
 struct GFInstantaneousOutputs {
     double* eps_nuc = nullptr;
     double* dlnEps_dlnT = nullptr;
     double* dlnEps_dlnRho = nullptr;
     double* neutrino_energy_loss_rate = nullptr;
+    double* eps_by_channel = nullptr;
 
     void write(const gridfire::NetOut& netOut, size_t index) const;
 };
@@ -40,6 +42,7 @@ struct GFContext {
     virtual void init_solver_from_engine() = 0;
 
     fourdst::composition::Composition init_composition_from_abundance_vector(const std::vector<double> &abundances, size_t num_species) const;
+    [[nodiscard]] const std::vector<std::string>& get_energy_channel_names() const;
     std::string last_error;
 };
 
@@ -63,7 +66,7 @@ struct GFPointContext final: GFContext{
         double& specific_neutrino_energy_loss,
         double& specific_neutrino_flux,
         double& mass_lost,
-        const GFInstantaneousOutputs* instantaneous = nullptr
+        const GFInstantaneousOutputs& instantaneous
     ) const;
 
 };
@@ -99,7 +102,7 @@ struct GFGridContext final : GFContext {
         double* specific_neutrino_energy_loss,
         double* specific_neutrino_flux,
         double* mass_lost,
-        const GFInstantaneousOutputs* instantaneous = nullptr
+        const GFInstantaneousOutputs& instantaneous
     ) const;
 
 };

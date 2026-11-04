@@ -1124,6 +1124,23 @@ namespace gridfire::engine {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
     }
 
+    std::vector<double> MultiscalePartitioningEngineView::calculateEnergyChannels(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        // Mirrors calculateRHSAndEnergy
+        const fourdst::composition::Composition qseComposition = getNormalizedEquilibratedComposition(ctx, comp, T9, rho, false);
+        return m_baseEngine.calculateEnergyChannels(ctx, qseComposition, T9, rho);
+    }
+
+    const std::vector<std::string>& MultiscalePartitioningEngineView::getEnergyChannelNames(
+        scratch::StateBlob& ctx
+    ) const {
+        return m_baseEngine.getEnergyChannelNames(ctx);
+    }
+
     std::unique_ptr<scratch::StateBlob> MultiscalePartitioningEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
         std::unique_ptr<scratch::StateBlob> i_blob;
         if (blob) {

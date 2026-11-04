@@ -10,6 +10,7 @@ gridfire_sources = files(
     'lib/engine/views/engine_priming.cpp',
     'lib/engine/procedures/priming.cpp',
     'lib/engine/procedures/construction.cpp',
+    'lib/engine/procedures/energy_channels.cpp',
     'lib/engine/diagnostics/dynamic_engine_diagnostics.cpp',
     'lib/engine/types/jacobian.cpp',
     'lib/engine/scratchpads/engine_multiscale_scratchpad.cpp',

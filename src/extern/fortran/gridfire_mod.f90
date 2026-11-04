@@ -134,7 +134,8 @@ module gridfire_mod
         ! int gf_evolve(...)
         function gf_evolve_c_scalar(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
                 Y_out, energy, dedt, dedrho, &
-                nue_loss, nu_flux, mass_lost) result(ierr) &
+                nue_loss, nu_flux, mass_lost, &
+                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate, eps_by_channel) result(ierr) &
                 bind(C, name="gf_evolve")
             import :: c_ptr, c_int, c_double, c_size_t
             type(c_ptr), value :: ptr
@@ -144,10 +145,12 @@ module gridfire_mod
             ! Arrays
             real(c_double), dimension(*), intent(in) :: Y_in
             real(c_double), dimension(*), intent(out) :: Y_out
+            real(c_double), dimension(*), intent(out) :: eps_by_channel
 
             ! Scalars (Passed by Reference -> matches void*)
             real(c_double), intent(in) :: T, rho
             real(c_double), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
+            real(c_double), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate
 
             ! Scalars (Passed by Value)
             real(c_double), value :: tMax, dt0
@@ -158,7 +161,8 @@ module gridfire_mod
         ! 2. Interface for Multi Zone (Arrays)
         function gf_evolve_c_array(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
                 Y_out, energy, dedt, dedrho, &
-                nue_loss, nu_flux, mass_lost) result(ierr) &
+                nue_loss, nu_flux, mass_lost, &
+                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate, eps_by_channel) result(ierr) &
                 bind(C, name="gf_evolve")
             import :: c_ptr, c_int, c_double, c_size_t
             type(c_ptr), value :: ptr
@@ -171,6 +175,8 @@ module gridfire_mod
 
             real(c_double), dimension(*), intent(out) :: Y_out
             real(c_double), dimension(*), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
+            real(c_double), dimension(*), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate
+            real(c_double), dimension(*), intent(out) :: eps_by_channel
 
             ! Scalars (Passed by Value)
             real(c_double), value :: tMax, dt0
@@ -178,48 +184,20 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
-        ! int gf_evolve_ext(...) -- gf_evolve plus instantaneous final-state quantities
-        function gf_evolve_ext_c_scalar(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
-                Y_out, energy, dedt, dedrho, &
-                nue_loss, nu_flux, mass_lost, &
-                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate) result(ierr) &
-                bind(C, name="gf_evolve_ext")
-            import :: c_ptr, c_int, c_double, c_size_t
+        ! int gf_get_num_energy_channels(void* ptr, size_t* num_channels);
+        function gf_get_num_energy_channels(ptr, num_channels) result(ierr) bind(C, name="gf_get_num_energy_channels")
+            import :: c_ptr, c_int, c_size_t
             type(c_ptr), value :: ptr
-            integer(c_int), value :: ctx_type
-            integer(c_size_t), value :: num_species
-
-            real(c_double), dimension(*), intent(in) :: Y_in
-            real(c_double), dimension(*), intent(out) :: Y_out
-
-            real(c_double), intent(in) :: T, rho
-            real(c_double), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
-            real(c_double), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate
-
-            real(c_double), value :: tMax, dt0
-
+            integer(c_size_t), intent(out) :: num_channels
             integer(c_int) :: ierr
         end function
 
-        function gf_evolve_ext_c_array(ctx_type, ptr, Y_in, num_species, T, rho, tMax, dt0, &
-                Y_out, energy, dedt, dedrho, &
-                nue_loss, nu_flux, mass_lost, &
-                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate) result(ierr) &
-                bind(C, name="gf_evolve_ext")
-            import :: c_ptr, c_int, c_double, c_size_t
+        ! int gf_get_energy_channel_name(void* ptr, size_t index, const char** name);
+        function gf_get_energy_channel_name(ptr, index, name) result(ierr) bind(C, name="gf_get_energy_channel_name")
+            import :: c_ptr, c_int, c_size_t
             type(c_ptr), value :: ptr
-            integer(c_int), value :: ctx_type
-            integer(c_size_t), value :: num_species
-
-            real(c_double), dimension(*), intent(in) :: Y_in
-            real(c_double), dimension(*), intent(in) :: T, rho
-
-            real(c_double), dimension(*), intent(out) :: Y_out
-            real(c_double), dimension(*), intent(out) :: energy, dedt, dedrho, nue_loss, nu_flux, mass_lost
-            real(c_double), dimension(*), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate
-
-            real(c_double), value :: tMax, dt0
-
+            integer(c_size_t), value :: index
+            type(c_ptr), intent(out) :: name
             integer(c_int) :: ierr
         end function
     end interface
@@ -242,10 +220,8 @@ module gridfire_mod
 
         generic :: gff_evolve => gff_evolve_single, gff_evolve_multi
 
-        procedure :: gff_evolve_ext_single
-        procedure :: gff_evolve_ext_multi
-
-        generic :: gff_evolve_ext => gff_evolve_ext_single, gff_evolve_ext_multi
+        procedure :: gff_get_num_energy_channels
+        procedure :: gff_get_energy_channel_names
     end type GridFire
 
     contains
@@ -378,46 +354,8 @@ module gridfire_mod
             end if
         end subroutine gff_setup_solver
 
-        subroutine gff_evolve_single(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
-            class(GridFire), intent(in) :: self
-            real(c_double), dimension(:), intent(in) :: Y_in
-            real(c_double), intent(in) :: T, rho
-            real(c_double), value :: tMax, dt0
-
-            real(c_double), dimension(:), intent(out) :: Y_out
-            real(c_double), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
-            integer, intent(out) :: ierr
-            integer(c_int) :: c_ierr
-
-            c_ierr = gf_evolve_c_scalar(self%ctx_type, self%ctx, &
-                    Y_in, self%num_species, &
-                    T, rho, tMax, dt0, &
-                    Y_out, &
-                    energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost)
-            ierr = int(c_ierr)
-        end subroutine gff_evolve_single
-
-        subroutine gff_evolve_multi(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)
-            class(GridFire), intent(in) :: self
-            real(c_double), dimension(:,:), intent(in) :: Y_in
-            real(c_double), dimension(:), intent(in) :: T, rho
-            real(c_double), value :: tMax, dt0
-
-            real(c_double), dimension(:,:), intent(out) :: Y_out
-            real(c_double), dimension(:), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
-            integer, intent(out) :: ierr
-            integer(c_int) :: c_ierr
-
-            c_ierr = gf_evolve_c_array(self%ctx_type, self%ctx, &
-                    Y_in, self%num_species, &
-                    T, rho, tMax, dt0, &
-                    Y_out, &
-                    energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost)
-            ierr = int(c_ierr)
-        end subroutine gff_evolve_multi
-
-        subroutine gff_evolve_ext_single(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
-                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, ierr)
+        subroutine gff_evolve_single(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
+                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)
             class(GridFire), intent(in) :: self
             real(c_double), dimension(:), intent(in) :: Y_in
             real(c_double), intent(in) :: T, rho
@@ -426,20 +364,21 @@ module gridfire_mod
             real(c_double), dimension(:), intent(out) :: Y_out
             real(c_double), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
             real(c_double), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate
+            real(c_double), dimension(:), intent(out) :: eps_by_channel ! size gff_get_num_energy_channels()
             integer, intent(out) :: ierr
             integer(c_int) :: c_ierr
 
-            c_ierr = gf_evolve_ext_c_scalar(self%ctx_type, self%ctx, &
+            c_ierr = gf_evolve_c_scalar(self%ctx_type, self%ctx, &
                     Y_in, self%num_species, &
                     T, rho, tMax, dt0, &
                     Y_out, &
                     energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
-                    eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate)
+                    eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel)
             ierr = int(c_ierr)
-        end subroutine gff_evolve_ext_single
+        end subroutine gff_evolve_single
 
-        subroutine gff_evolve_ext_multi(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
-                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, ierr)
+        subroutine gff_evolve_multi(self, Y_in, T, rho, tMax, dt0, Y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
+                eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)
             class(GridFire), intent(in) :: self
             real(c_double), dimension(:,:), intent(in) :: Y_in
             real(c_double), dimension(:), intent(in) :: T, rho
@@ -448,16 +387,53 @@ module gridfire_mod
             real(c_double), dimension(:,:), intent(out) :: Y_out
             real(c_double), dimension(:), intent(out) :: energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost
             real(c_double), dimension(:), intent(out) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate
+            real(c_double), dimension(:,:), intent(out) :: eps_by_channel ! (num_channels, num_zones)
             integer, intent(out) :: ierr
             integer(c_int) :: c_ierr
 
-            c_ierr = gf_evolve_ext_c_array(self%ctx_type, self%ctx, &
+            c_ierr = gf_evolve_c_array(self%ctx_type, self%ctx, &
                     Y_in, self%num_species, &
                     T, rho, tMax, dt0, &
                     Y_out, &
                     energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, &
-                    eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate)
+                    eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel)
             ierr = int(c_ierr)
-        end subroutine gff_evolve_ext_multi
+        end subroutine gff_evolve_multi
+
+        function gff_get_num_energy_channels(self) result(num_channels)
+            class(GridFire), intent(in) :: self
+            integer(c_size_t) :: num_channels
+            integer(c_int) :: ierr
+
+            ierr = gf_get_num_energy_channels(self%ctx, num_channels)
+            if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
+                print *, "GridFire Energy Channel Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end function gff_get_num_energy_channels
+
+        subroutine gff_get_energy_channel_names(self, names)
+            class(GridFire), intent(in) :: self
+            character(len=*), dimension(:), intent(out) :: names ! size gff_get_num_energy_channels()
+            type(c_ptr) :: c_name
+            character(kind=c_char), pointer :: char_ptr(:)
+            integer(c_int) :: ierr
+            integer :: i, k
+
+            do i = 1, size(names)
+                ierr = gf_get_energy_channel_name(self%ctx, int(i - 1, c_size_t), c_name)
+                if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
+                    print *, "GridFire Energy Channel Error: ", self%gff_get_last_error()
+                    error stop
+                end if
+
+                call c_f_pointer(c_name, char_ptr, [len(names(i)) + 1])
+                names(i) = ' '
+                do k = 1, len(names(i))
+                    if (char_ptr(k) == c_null_char) exit
+                    names(i)(k:k) = char_ptr(k)
+                end do
+            end do
+        end subroutine gff_get_energy_channel_names
 
 end module gridfire_mod

@@ -37,6 +37,9 @@ program main
     ! Output buffers
     real(c_double), dimension(8) :: Y_out
     real(c_double) :: energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass
+    real(c_double) :: eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate
+    real(c_double), allocatable :: eps_by_channel(:)
+    character(len=16), allocatable :: channel_names(:)
 
     ! Thermodynamic Conditions (Solar Core-ish)
     real(c_double) :: T = 1.5e7      ! 15 Million K
@@ -61,7 +64,12 @@ program main
 
     ! --- 5. Evolve ---
     print *, "Evolving system (t = ", tMax, "s dt =", dt0, "s)..."
-    call net%gff_evolve(Y_in, T, rho, tMax, dt0, Y_out, energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass, ierr)
+    allocate(eps_by_channel(net%gff_get_num_energy_channels()))
+    allocate(channel_names(size(eps_by_channel)))
+    call net%gff_get_energy_channel_names(channel_names)
+
+    call net%gff_evolve(Y_in, T, rho, tMax, dt0, Y_out, energy_out, dedt, dedrho, snu_e_loss, snu_flux, dmass, &
+            eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)
 
     if (ierr /= 0) then
         print *, "Evolution Failed with error code: ", ierr
@@ -78,6 +86,12 @@ program main
     print '(A, ES12.5)',    "dEps/drho:         ", dedrho
     print '(A, ES12.5)',    "Neutrino Energy Loss:      ", snu_e_loss
     print '(A, ES12.5)',    "Neutrino Flux:          ", snu_flux
+    print '(A, ES12.5)',    "eps_nuc:           ", eps_nuc
+    print '(A, F10.5)',     "dlnEps/dlnT:       ", dlneps_dlnt
+    print '(A, F10.5)',     "dlnEps/dlnRho:     ", dlneps_dlnrho
+    do i = 1, size(eps_by_channel)
+        print '(A, A16, ES12.5)', "  eps channel ", channel_names(i), eps_by_channel(i)
+    end do
     print '(A, ES12.5)',    "Mass Change:       ", dmass
 
     print *, ""

@@ -107,7 +107,7 @@ int GFPointContext::evolve(
     double& specific_neutrino_energy_loss,
     double& specific_neutrino_flux,
     double& mass_lost,
-    const GFInstantaneousOutputs* instantaneous
+    const GFInstantaneousOutputs& instantaneous
 ) const {
 
     const std::vector<double> Y_scratch(Y_in, Y_in + num_species);
@@ -127,9 +127,7 @@ int GFPointContext::evolve(
     dEps_dRho = result.dEps_dRho;
     specific_neutrino_energy_loss = result.specific_neutrino_energy_loss;
     specific_neutrino_flux = result.specific_neutrino_flux;
-    if (instantaneous) {
-        instantaneous->write(result, 0);
-    }
+    instantaneous.write(result, 0);
 
     std::set<fourdst::atomic::Species> seen_species;
     for (size_t i = 0; i < num_species; i++) {
@@ -153,6 +151,19 @@ void GFInstantaneousOutputs::write(const gridfire::NetOut& netOut, const size_t 
     if (dlnEps_dlnT) dlnEps_dlnT[index] = netOut.dlnEps_dlnT;
     if (dlnEps_dlnRho) dlnEps_dlnRho[index] = netOut.dlnEps_dlnRho;
     if (neutrino_energy_loss_rate) neutrino_energy_loss_rate[index] = netOut.neutrino_energy_loss_rate;
+    if (eps_by_channel) {
+        const size_t num_channels = netOut.eps_by_channel.size();
+        for (size_t channel = 0; channel < num_channels; ++channel) {
+            eps_by_channel[index * num_channels + channel] = netOut.eps_by_channel[channel];
+        }
+    }
+}
+
+const std::vector<std::string>& GFContext::get_energy_channel_names() const {
+    if (!engine || !engine_ctx) {
+        throw gridfire::exceptions::GridFireError("Energy channels are unavailable until an engine has been constructed (call gf_construct_engine_from_policy first).");
+    }
+    return engine->getEnergyChannelNames(*engine_ctx);
 }
 
 void GFGridContext::init_solver_from_engine() {
@@ -175,7 +186,7 @@ int GFGridContext::evolve(
     double *specific_neutrino_energy_loss,
     double *specific_neutrino_flux,
     double *mass_lost,
-    const GFInstantaneousOutputs* instantaneous
+    const GFInstantaneousOutputs& instantaneous
 ) const {
     if (this->get_zones() == 0) {
         throw gridfire::exceptions::GridFireError("GFGridContext has zero zones configured for evolution.");
@@ -224,9 +235,7 @@ int GFGridContext::evolve(
         dEps_dRho[zone_idx] = netOut.dEps_dRho;
         specific_neutrino_energy_loss[zone_idx] = netOut.specific_neutrino_energy_loss;
         specific_neutrino_flux[zone_idx] = netOut.specific_neutrino_flux;
-        if (instantaneous) {
-            instantaneous->write(netOut, zone_idx);
-        }
+        instantaneous.write(netOut, zone_idx);
 
         std::set<fourdst::atomic::Species> seen_species;
         for (size_t i = 0; i < num_species; ++i) {

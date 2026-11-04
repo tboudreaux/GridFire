@@ -297,6 +297,23 @@ namespace gridfire::engine {
         return m_baseEngine.getMostRecentRHSCalculation(ctx);
     }
 
+    std::vector<double> AdaptiveEngineView::calculateEnergyChannels(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        // Mirrors calculateRHSAndEnergy
+        const fourdst::composition::Composition collectedComp = collectComposition(ctx, comp, T9, rho);
+        return m_baseEngine.calculateEnergyChannels(ctx, collectedComp, T9, rho);
+    }
+
+    const std::vector<std::string>& AdaptiveEngineView::getEnergyChannelNames(
+        scratch::StateBlob& ctx
+    ) const {
+        return m_baseEngine.getEnergyChannelNames(ctx);
+    }
+
     std::unique_ptr<scratch::StateBlob> AdaptiveEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
         std::unique_ptr<scratch::StateBlob> i_blob;
         if (blob) {

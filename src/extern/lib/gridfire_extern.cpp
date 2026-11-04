@@ -204,159 +204,7 @@ extern "C" {
         });
     }
 
-    static int gf_evolve_impl(
-        const enum GF_TYPE type,
-        void* ptr,
-        const void* Y_in,
-        const size_t num_species,
-        const void* T,
-        const void* rho,
-        const double tMax,
-        const double dt0,
-        void* Y_out,
-        void* energy_out,
-        void* dEps_dT,
-        void* dEps_dRho,
-        void* specific_neutrino_energy_loss,
-        void* specific_neutrino_flux,
-        void* mass_lost,
-        const GFInstantaneousOutputs* instantaneous
-    ) {
-
-        printf("In C Starting gf_evolve with type %d\n", type);
-        printf("In C num_species: %zu, tMax: %e, dt0: %e\n", num_species, tMax, dt0);
-        printf("In C Y_in ptr: %p, T ptr: %p, rho ptr: %p\n", Y_in, T, rho);
-        // values
-        printf("In C Y_in first 5 values: ");
-        const auto* Y_in_ptr = static_cast<const double*>(Y_in);
-        for (size_t i = 0; i < std::min(num_species, size_t(5)); ++i) {
-            printf("%e ", Y_in_ptr[i]);
-        }
-        printf("\n");
-        printf("In C T value: %e\n", *(static_cast<const double*>(T)));
-        printf("In C rho value: %e\n", *(static_cast<const double*>(rho)));
-        printf("In C tMax value: %e\n", tMax);
-        printf("In C dt0 value: %e\n", dt0);
-
-        if (!ptr || !Y_in || !T || !rho) {
-            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
-        }
-
-        if (!Y_out || !energy_out || !dEps_dT || !dEps_dRho || !specific_neutrino_energy_loss || !specific_neutrino_flux || !mass_lost) {
-            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
-        }
-
-        if (tMax <= 0 || dt0 <= 0) {
-            return GF_INVALID_TIMESTEPS;
-        }
-
-        if (num_species <= 0) {
-            return GF_INVALID_NUM_SPECIES;
-        }
-
-        switch (type) {
-            case SINGLE_ZONE : {
-                auto* ctx = static_cast<GFPointContext*>(ptr);
-                const auto T_ptr = static_cast<const double*>(T);
-                const auto *rho_ptr = static_cast<const double*>(rho);
-
-                auto* Y_out_local = static_cast<double*>(Y_out);
-                auto* energy_out_local = static_cast<double*>(energy_out);
-                auto* dEps_dT_local = static_cast<double*>(dEps_dT);
-                auto* dEps_dRho_local = static_cast<double*>(dEps_dRho);
-                auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
-                auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
-                auto* mass_lost_local = static_cast<double*>(mass_lost);
-
-                printf("Evolving single zone with T = %e, rho = %e for tMax = %e and dt0 = %e\n", *T_ptr, *rho_ptr, tMax, dt0);
-
-                return execute_guarded(ctx, [&]() {
-                    return ctx->evolve(
-                        static_cast<const double*>(Y_in),
-                        num_species,
-                        *T_ptr,
-                        *rho_ptr,
-                        tMax,
-                        dt0,
-                        Y_out_local,
-                        *energy_out_local,
-                        *dEps_dT_local,
-                        *dEps_dRho_local,
-                        *specific_neutrino_energy_loss_local,
-                        *specific_neutrino_flux_local,
-                        *mass_lost_local,
-                        instantaneous
-                    );
-                });
-            }
-            case MULTI_ZONE : {
-                auto* ctx = static_cast<GFGridContext*>(ptr);
-                const auto *T_ptr = static_cast<const double*>(T);
-                const auto *rho_ptr = static_cast<const double*>(rho);
-
-                auto* Y_out_local = static_cast<double*>(Y_out);
-                auto* energy_out_local = static_cast<double*>(energy_out);
-                auto* dEps_dT_local = static_cast<double*>(dEps_dT);
-                auto* dEps_dRho_local = static_cast<double*>(dEps_dRho);
-                auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
-                auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
-                auto* mass_lost_local = static_cast<double*>(mass_lost);
-
-                printf("Evolving multi zone for tMax = %e and dt0 = %e\n", tMax, dt0);
-
-                return execute_guarded(ctx, [&]() {
-                    return ctx->evolve(
-                        static_cast<const double*>(Y_in),
-                        num_species,
-                        T_ptr, // T pointer
-                        rho_ptr, // rho pointer
-                        tMax,
-                        dt0,
-                        Y_out_local,
-                        energy_out_local,
-                        dEps_dT_local,
-                        dEps_dRho_local,
-                        specific_neutrino_energy_loss_local,
-                        specific_neutrino_flux_local,
-                        mass_lost_local,
-                        instantaneous
-                    );
-                });
-            }
-            default :
-                return GF_UNKNOWN_ERROR;
-        }
-
-
-
-    }
-
     int gf_evolve(
-        const enum GF_TYPE type,
-        void* ptr,
-        const void* Y_in,
-        const size_t num_species,
-        const void* T,
-        const void* rho,
-        const double tMax,
-        const double dt0,
-        void* Y_out,
-        void* energy_out,
-        void* dEps_dT,
-        void* dEps_dRho,
-        void* specific_neutrino_energy_loss,
-        void* specific_neutrino_flux,
-        void* mass_lost
-    ) {
-        return gf_evolve_impl(
-            type, ptr, Y_in, num_species, T, rho, tMax, dt0,
-            Y_out, energy_out, dEps_dT, dEps_dRho,
-            specific_neutrino_energy_loss, specific_neutrino_flux, mass_lost,
-            nullptr
-        );
-    }
-
-    int gf_evolve_ext(
         const enum GF_TYPE type,
         void* ptr,
         const void* Y_in,
@@ -375,25 +223,116 @@ extern "C" {
         void* eps_nuc,
         void* dlnEps_dlnT,
         void* dlnEps_dlnRho,
-        void* neutrino_energy_loss_rate
+        void* neutrino_energy_loss_rate,
+        void* eps_by_channel
     ) {
-        if (!eps_nuc || !dlnEps_dlnT || !dlnEps_dlnRho || !neutrino_energy_loss_rate) {
+        if (!ptr || !Y_in || !T || !rho) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+
+        if (!Y_out || !energy_out || !dEps_dT || !dEps_dRho || !specific_neutrino_energy_loss || !specific_neutrino_flux || !mass_lost ||
+            !eps_nuc || !dlnEps_dlnT || !dlnEps_dlnRho || !neutrino_energy_loss_rate || !eps_by_channel) {
             return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+
+        if (tMax <= 0 || dt0 <= 0) {
+            return GF_INVALID_TIMESTEPS;
+        }
+
+        if (num_species <= 0) {
+            return GF_INVALID_NUM_SPECIES;
         }
 
         const GFInstantaneousOutputs instantaneous{
             .eps_nuc = static_cast<double*>(eps_nuc),
             .dlnEps_dlnT = static_cast<double*>(dlnEps_dlnT),
             .dlnEps_dlnRho = static_cast<double*>(dlnEps_dlnRho),
-            .neutrino_energy_loss_rate = static_cast<double*>(neutrino_energy_loss_rate)
+            .neutrino_energy_loss_rate = static_cast<double*>(neutrino_energy_loss_rate),
+            .eps_by_channel = static_cast<double*>(eps_by_channel)
         };
 
-        return gf_evolve_impl(
-            type, ptr, Y_in, num_species, T, rho, tMax, dt0,
-            Y_out, energy_out, dEps_dT, dEps_dRho,
-            specific_neutrino_energy_loss, specific_neutrino_flux, mass_lost,
-            &instantaneous
-        );
+        auto* Y_out_local = static_cast<double*>(Y_out);
+        auto* energy_out_local = static_cast<double*>(energy_out);
+        auto* dEps_dT_local = static_cast<double*>(dEps_dT);
+        auto* dEps_dRho_local = static_cast<double*>(dEps_dRho);
+        auto* specific_neutrino_energy_loss_local = static_cast<double*>(specific_neutrino_energy_loss);
+        auto* specific_neutrino_flux_local = static_cast<double*>(specific_neutrino_flux);
+        auto* mass_lost_local = static_cast<double*>(mass_lost);
+
+        switch (type) {
+            case SINGLE_ZONE : {
+                auto* ctx = static_cast<GFPointContext*>(ptr);
+                return execute_guarded(ctx, [&]() {
+                    return ctx->evolve(
+                        static_cast<const double*>(Y_in),
+                        num_species,
+                        *static_cast<const double*>(T),
+                        *static_cast<const double*>(rho),
+                        tMax,
+                        dt0,
+                        Y_out_local,
+                        *energy_out_local,
+                        *dEps_dT_local,
+                        *dEps_dRho_local,
+                        *specific_neutrino_energy_loss_local,
+                        *specific_neutrino_flux_local,
+                        *mass_lost_local,
+                        instantaneous
+                    );
+                });
+            }
+            case MULTI_ZONE : {
+                auto* ctx = static_cast<GFGridContext*>(ptr);
+                return execute_guarded(ctx, [&]() {
+                    return ctx->evolve(
+                        static_cast<const double*>(Y_in),
+                        num_species,
+                        static_cast<const double*>(T),
+                        static_cast<const double*>(rho),
+                        tMax,
+                        dt0,
+                        Y_out_local,
+                        energy_out_local,
+                        dEps_dT_local,
+                        dEps_dRho_local,
+                        specific_neutrino_energy_loss_local,
+                        specific_neutrino_flux_local,
+                        mass_lost_local,
+                        instantaneous
+                    );
+                });
+            }
+            default :
+                return GF_UNKNOWN_ERROR;
+        }
+    }
+
+    int gf_get_num_energy_channels(void* ptr, size_t* num_channels) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!num_channels) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            *num_channels = ctx->get_energy_channel_names().size();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_energy_channel_name(void* ptr, const size_t index, const char** name) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!name) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            *name = ctx->get_energy_channel_names().at(index).c_str();
+            return GF_SUCCESS;
+        });
     }
 
     char* gf_get_last_error_message(void* ptr) {
