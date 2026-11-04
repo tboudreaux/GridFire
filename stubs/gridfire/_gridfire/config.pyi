@@ -2,6 +2,7 @@
 GridFire configuration bindings
 """
 from __future__ import annotations
+import gridfire._gridfire.screening
 import typing
 __all__: list[str] = ['AdaptiveEngineViewConfig', 'BoundaryFluxConfig', 'EngineConfig', 'EngineViewConfig', 'GridFireConfig', 'PointSolverConfig', 'SolverConfig', 'TriggerConfig']
 class AdaptiveEngineViewConfig:
@@ -29,6 +30,7 @@ class BoundaryFluxConfig:
     def relativeThreshold(self, arg0: typing.SupportsFloat) -> None:
         ...
 class EngineConfig:
+    screening: gridfire._gridfire.screening.ScreeningType
     views: EngineViewConfig
     def __init__(self) -> None:
         ...

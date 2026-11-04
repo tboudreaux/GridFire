@@ -1,0 +1,36 @@
+360a361,363
+>             ! GridFire comparison (BBQ_DISABLE_EOS): skip the EOS call, as GridFire does not evaluate an EOS
+>             character(len=255) :: env_val
+>             integer :: env_val_status, env_val_length
+430,436c433,451
+<             call eosDT_get( &
+<                eos_handle, species, g% chem_id, g% net_iso, x, &
+<                Rho, lgRho, T, lgT, &
+<                res, d_dlnd, d_dlnT, d_dxa, ierr)
+<             if (ierr /= 0) then
+<                if (report_ierr) write(*,*) 'failed in eosDT_get'
+<                return
+---
+>             ! GridFire comparison: the EOS is only evaluated when BBQ_DISABLE_EOS is exactly "False" (as in the GridFire
+>             ! paper patch). When it is skipped, eta is set to zero (GridFire's mue = 0) rather than left uninitialised.
+>             call get_environment_variable("BBQ_DISABLE_EOS", value=env_val, length=env_val_length, status=env_val_status)
+>             if (trim(env_val) == "False") then
+>                call eosDT_get( &
+>                   eos_handle, species, g% chem_id, g% net_iso, x, &
+>                   Rho, lgRho, T, lgT, &
+>                   res, d_dlnd, d_dlnT, d_dxa, ierr)
+>                if (ierr /= 0) then
+>                   if (report_ierr) write(*,*) 'failed in eosDT_get'
+>                   return
+>                end if
+>                eta = res(i_eta)
+>                d_eta_dlnT = d_dlnT(i_eta)
+>                d_eta_dlnRho = d_dlnd(i_eta)
+>             else
+>                eta = 0d0
+>                d_eta_dlnT = 0d0
+>                d_eta_dlnRho = 0d0
+438,440d452
+<             eta = res(i_eta)
+<             d_eta_dlnT = d_dlnT(i_eta)
+<             d_eta_dlnRho = d_dlnd(i_eta)

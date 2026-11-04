@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fourdst/config/config.h"
+#include "gridfire/screening/screening_types.h"
 
 #include <string>
 #include <vector>
@@ -43,6 +44,7 @@ namespace gridfire::config {
     struct EngineConfig {
         EngineViewConfig views;
         EnergyChannelConfig energyChannels;
+        screening::ScreeningType screening = screening::ScreeningType::WEAK; ///< Electron screening of reaction rates (WEAK: Salpeter 1954; BARE: none)
 
     };
 

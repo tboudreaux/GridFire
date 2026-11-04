@@ -257,10 +257,11 @@ namespace gridfire::engine {
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
-         * @return Molar flow rate for the reaction (e.g., mol/g/s).
+         * @return Forward (one-way) molar flow of the reaction [mol/g/s], including electron screening.
          *
-         * This method computes the net rate at which the given reaction proceeds
-         * under the current state.
+         * This is the forward flow exactly as the RHS uses it (screened, before the reverse flow is subtracted).
+         * It is a one-way flow on purpose: callers use it as a measure of how fast a reaction runs (culling,
+         * QSE timescales), and a net flow would hide fast reactions that are in equilibrium.
          */
         [[nodiscard]] virtual double calculateMolarReactionFlow(
             scratch::StateBlob& ctx,

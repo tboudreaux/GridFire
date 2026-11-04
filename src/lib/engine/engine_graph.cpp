@@ -34,6 +34,7 @@
 #include "cppad/utility/sparse_rcv.hpp"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/reaction/reaclib.h"
+#include "gridfire/reaction/weak/neutrino_energies.h"
 
 
 namespace {
@@ -45,8 +46,13 @@ namespace {
         NONE
     };
 
+    bool is_reaclib_weak(const gridfire::reaction::Reaction& r) {
+        return r.type() == gridfire::reaction::ReactionType::REACLIB_WEAK ||
+               r.type() == gridfire::reaction::ReactionType::LOGICAL_REACLIB_WEAK;
+    }
+
     REACLIB_WEAK_TYPES get_weak_reaclib_reaction_type(const gridfire::reaction::Reaction& r) {
-        if (r.type() != gridfire::reaction::ReactionType::REACLIB_WEAK) {
+        if (!is_reaclib_weak(r)) {
             return REACLIB_WEAK_TYPES::NONE;
         }
 
@@ -129,6 +135,17 @@ namespace gridfire::engine {
     ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
     m_reactions(reactions)
+    {
+        syncInternalMaps();
+    }
+
+    GraphEngine::GraphEngine(
+        const reaction::ReactionSet &reactions,
+        const partition::PartitionFunction &partitionFunction
+    ) :
+    m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
+    m_reactions(reactions),
+    m_partitionFunction(partitionFunction.clone())
     {
         syncInternalMaps();
     }
@@ -245,9 +262,8 @@ namespace gridfire::engine {
         for (const auto& reaction: activeReactions) {
             assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
             bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
-            if (reaction->type() != reaction::ReactionType::WEAK) {
-                bare_reverse_rates.push_back(calculateReverseRate(*reaction, T9, rho, comp));
-            }
+            // Always push so bare_reverse_rates stays index-aligned with activeReactions (the kernel indexes it that way)
+            bare_reverse_rates.push_back(has_reverse_rate(*reaction) ? calculateReverseRate(*reaction, T9, rho, comp) : 0.0);
         }
     }
 
@@ -551,8 +567,13 @@ namespace gridfire::engine {
     double GraphEngine::neutrino_energy_loss_per_molar_flow(
         const reaction::Reaction &reaction
     ) const {
-        if (reaction.type() != reaction::ReactionType::REACLIB_WEAK) {
+        if (!is_reaclib_weak(reaction)) {
             return 0.0;
+        }
+        // Prefer tabulated average neutrino energies (Bahcall 2002 / weaklib, as used by MESA). The fraction-of-Q
+        // heuristic below is only a fallback: it overestimates losses for e.g. p(p,e+)d (0.72 vs 0.267 MeV).
+        if (const auto tabulated = reaction::weak::tabulated_neutrino_energy_MeV(reaction)) {
+            return *tabulated * m_constants.Na * m_constants.MeV_to_erg;
         }
         const double q_abs = std::abs(reaction.qValue());
         const REACLIB_WEAK_TYPES weakType = get_weak_reaclib_reaction_type(reaction);
@@ -578,7 +599,7 @@ namespace gridfire::engine {
         const double netFlow,
         const reaction::Reaction &reaction
     ) const {
-        if (reaction.type() == reaction::ReactionType::REACLIB_WEAK) {
+        if (is_reaclib_weak(reaction)) {
             const double local_neutrino_loss = netFlow * neutrino_energy_loss_per_molar_flow(reaction);
             const double local_neutrino_flux = netFlow * m_constants.Na;
 
@@ -995,7 +1016,7 @@ namespace gridfire::engine {
 
         const double Ye = comp.getElectronAbundance();
 
-        return calculateMolarReactionFlow<double>(
+        const double bareFlow = calculateMolarReactionFlow<double>(
             reaction,
             comp.getMolarAbundanceVector(),
             T9,
@@ -1009,6 +1030,24 @@ namespace gridfire::engine {
                 return std::nullopt; // Species not present
             }
         );
+        if (bareFlow == 0.0 || m_screeningType == screening::ScreeningType::BARE) {
+            return bareFlow;
+        }
+
+        // Apply the same screening factor the RHS uses, so this is the forward flow the network actually integrates.
+        // Callers ask for every reaction at one composition, so the network-ordered abundances are cached per composition.
+        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        const std::size_t compHash = comp.hash();
+        if (state->flow_abundances_hash != compHash || state->flow_abundances.size() != m_networkSpecies.size()) {
+            state->flow_abundances.assign(m_networkSpecies.size(), 0.0);
+            for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+                if (comp.contains(m_networkSpecies[i])) {
+                    state->flow_abundances[i] = comp.getMolarAbundance(m_networkSpecies[i]);
+                }
+            }
+            state->flow_abundances_hash = compHash;
+        }
+        return m_screeningModel->calculateScreeningFactor(reaction, m_networkSpecies, state->flow_abundances, T9, rho) * bareFlow;
     }
 
     NetworkJacobian GraphEngine::generateJacobianMatrix(
@@ -1395,6 +1434,15 @@ namespace gridfire::engine {
         scratch::StateBlob& ctx,
         const NetIn &netIn
     ) const {
+        // A species the network cannot evolve would otherwise be silently dropped from the solver state (and from the
+        // output composition), losing its mass
+        for (const auto& species : netIn.composition.getRegisteredSpecies()) {
+            if (!m_networkSpeciesMap.contains(species.name()) && netIn.composition.getMolarAbundance(species) > 0.0) {
+                throw exceptions::BadCollectionError(std::format(
+                    "Input composition contains {} (molar abundance {:.3e}), which is not in the network. Remove it or "
+                    "build a network that includes it.", species.name(), netIn.composition.getMolarAbundance(species)));
+            }
+        }
         fourdst::composition::Composition baseUpdatedComposition = netIn.composition;
         for (const auto& species : m_networkSpecies) {
             if (!netIn.composition.contains(species)) {
@@ -1481,7 +1529,7 @@ namespace gridfire::engine {
         m_atomicReverseRates.reserve(m_reactions.size());
 
         for (const auto& reaction: m_reactions) {
-            if (reaction->qValue() != 0.0 and m_useReverseReactions) {
+            if (has_reverse_rate(*reaction) and m_useReverseReactions) {
                 m_atomicReverseRates.push_back(std::make_unique<AtomicReverseRate>(*reaction, *this));
             } else {
                 m_atomicReverseRates.push_back(nullptr);
@@ -1543,7 +1591,7 @@ namespace gridfire::engine {
             precomp.symmetry_factor = 1.0/symmetryDenominator;
 
             // --- Precompute reverse reaction information ---
-            if (reaction.qValue() != 0.0 && reaction.type() != reaction::ReactionType::WEAK) {
+            if (has_reverse_rate(reaction)) {
                 std::unordered_map<size_t, int> productCounts;
                 for (const auto& product : reaction.products()) {
                     productCounts[speciesIndexMap.at(product)]++;

@@ -28,4 +28,14 @@ namespace gridfire::screening {
     ) const {
         return calculateFactors_impl<double>(reactions, species, Y, T9, rho);
     }
+
+    double WeakScreeningModel::calculateScreeningFactor(
+        const reaction::Reaction &reaction,
+        const std::vector<fourdst::atomic::Species>& species,
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
+        return factor_impl<double>(reaction, prefactor_impl<double>(species, Y, T9, rho));
+    }
 }

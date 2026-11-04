@@ -77,7 +77,22 @@ namespace gridfire::screening {
             CppAD::AD<double> T9,
             CppAD::AD<double> rho
         ) const override;
+        [[nodiscard]] double calculateScreeningFactor(
+            const reaction::Reaction& reaction,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const override;
     private:
+        /// @brief Salpeter prefactor 0.188 zeta^(1/2) rho^(1/2) T_6^(-3/2), times 0 below the low-temperature cutoff.
+        template <IsArithmeticOrAD T>
+        [[nodiscard]] static T prefactor_impl(const std::vector<fourdst::atomic::Species>& species, const std::vector<T>& Y, T T9, T rho);
+
+        /// @brief exp(H_12) for one reaction given the prefactor (1 for one-body reactions).
+        template <IsArithmeticOrAD T>
+        [[nodiscard]] static T factor_impl(const reaction::Reaction& reaction, T prefactor);
+
         /// @brief Logger instance for recording trace and debug information.
         [[maybe_unused]] quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
 
@@ -139,6 +154,59 @@ namespace gridfire::screening {
      * 6.  **Final Factor**: The screening factor for the reaction is `exp(H_12)`.
      */
     template <IsArithmeticOrAD T>
+    T WeakScreeningModel::prefactor_impl(
+        const std::vector<fourdst::atomic::Species>& species,
+        const std::vector<T>& Y,
+        const T T9,
+        const T rho
+    ) {
+        // --- CppAD safe low temperature check ---
+        const T zero(0.0);
+        const T one(1.0);
+        const T low_temp_threshold(1e-9);
+        const T low_T_flag = CppAD::CondExpLt(T9, low_temp_threshold, zero, one);
+
+        // --- Composition-dependent term ---
+        // zeta = sum_i (Z_i^2 + Z_i) X_i / A_i = sum_i (Z_i^2 + Z_i) Y_i, with Y_i the molar abundance (mol/g)
+        T zeta(0.0);
+        for (size_t i = 0; i < species.size(); ++i) {
+            const T Z = species[i].m_z;
+            zeta += (Z * Z + Z) * Y[i];
+        }
+
+        // Salpeter (1954): H_12 = 0.188 Z_1 Z_2 zeta^(1/2) rho^(1/2) T_6^(-3/2) (Clayton 1968, eq. 4-221). The coefficient
+        // is for T in units of 10^6 K; evaluating it with T_7 overstated H by 10^1.5 (screening factors ~6 instead of
+        // ~1.06 for p + p in the solar core).
+        const T T6 = T9 * static_cast<T>(1000.0);
+        const T T6_safe = CppAD::CondExpLe(T6, low_temp_threshold, low_temp_threshold, T6);
+        return low_T_flag * static_cast<T>(0.188) * CppAD::sqrt(rho / (T6_safe * T6_safe * T6_safe)) * CppAD::sqrt(zeta);
+    }
+
+    template <IsArithmeticOrAD T>
+    T WeakScreeningModel::factor_impl(const reaction::Reaction& reaction, const T prefactor) {
+        T H_12(0.0);
+        const auto& reactants = reaction.reactants();
+        const bool isTripleAlpha = (
+            reactants.size() == 3 &&
+            reactants[0].m_z == 2 &&
+            reactants[1].m_z == 2 &&
+            reactants[2].m_z == 2 &&
+            reactants[0] == reactants[1] &&
+            reactants[1] == reactants[2]
+        );
+        if (reactants.size() == 2) {
+            H_12 = prefactor * static_cast<T>(reactants[0].m_z) * static_cast<T>(reactants[1].m_z);
+        } else if (isTripleAlpha) {
+            // alpha + alpha, then alpha + 8Be: H = H(2,2) + H(2,4) = 3 H(2,2)
+            H_12 = static_cast<T>(3.0) * prefactor * static_cast<T>(4.0);
+        }
+        // One-body reactions keep H_12 = 0 (no screening). Cap H_12 at 2 (factor e^2) to avoid numerical issues outside
+        // the weak regime this model is meant for.
+        H_12 = CppAD::CondExpGe(H_12, static_cast<T>(2.0), static_cast<T>(2.0), H_12);
+        return CppAD::exp(H_12);
+    }
+
+    template <IsArithmeticOrAD T>
     std::vector<T> WeakScreeningModel::calculateFactors_impl(
         const reaction::ReactionSet& reactions,
         const std::vector<fourdst::atomic::Species>& species,
@@ -146,67 +214,12 @@ namespace gridfire::screening {
         const T T9,
         const T rho
     ) const {
-        LOG_TRACE_L3(
-            m_logger,
-            "Calculating weak screening factors for {} reactions...",
-            reactions.size()
-        );
-        // --- CppAD Safe low temp checking ---
-        const T zero(0.0);
-        const T one(1.0);
-        const T low_temp_threshold(1e-9);
-
-        const T low_T_flag = CppAD::CondExpLt(T9, low_temp_threshold, zero, one);
-
-        // --- Calculate composition-dependent terms ---
-        // ζ = ∑(Z_i^2 + Z_i) * X_i / A_i
-        // This simplifies somewhat to ζ = ∑ (Z_i^2 + Z_i) * Y_i
-        // Where Y_i is the molar abundance (mol/g)
-        T zeta(0.0);
-        for (size_t i = 0; i < species.size(); ++i) {
-            const T Z = species[i].m_z;
-            zeta += (Z * Z + Z) * Y[i];
-        }
-
-        // --- Constant prefactors ---
-        const T T7 = T9 * static_cast<T>(100.00);
-        const T T7_safe = CppAD::CondExpLe(T7, low_temp_threshold, low_temp_threshold, T7);
-        const T prefactor = static_cast<T>(0.188) * CppAD::sqrt(rho / (T7_safe * T7_safe * T7_safe)) * CppAD::sqrt(zeta);
-
-        // --- Loop through reactions and calculate screening factors for each ---
+        LOG_TRACE_L3(m_logger, "Calculating weak screening factors for {} reactions...", reactions.size());
+        const T prefactor = prefactor_impl<T>(species, Y, T9, rho);
         std::vector<T> factors;
         factors.reserve(reactions.size());
         for (const auto& reaction : reactions) {
-            T H_12(0.0); // screening abundance term
-            const auto& reactants = reaction->reactants();
-            const bool isTripleAlpha = (
-                reactants.size() == 3 &&
-                reactants[0].m_z == 2 &&
-                reactants[1].m_z == 2 &&
-                reactants[2].m_z == 2 &&
-                reactants[0] == reactants[1] &&
-                reactants[1] == reactants[2]
-                );
-            if (reactants.size() == 2) {
-                LOG_TRACE_L3(m_logger, "Calculating screening factor for reaction: {}", reaction->id());
-                const T Z1 = static_cast<T>(reactants[0].m_z);
-                const T Z2 = static_cast<T>(reactants[1].m_z);
-                H_12 = prefactor * Z1 * Z2;
-            }
-            else if (isTripleAlpha) {
-                LOG_TRACE_L3(m_logger, "Special case for triple alpha process in reaction: {}", reaction->id());
-                // Special case for triple alpha process
-                const T Z_alpha = static_cast<T>(2.0);
-                const T H_alpha_alpha = prefactor * Z_alpha * Z_alpha;
-                H_12 = static_cast<T>(3.0) * H_alpha_alpha; // Triple alpha process
-            }
-            // For 1 body reactions H_12 remains 0 so e^H_12 will be 1.0 (screening does not apply)
-            // Aside from triple alpha, all other astrophysically relevant reactions are 2-body in the weak screening regime
-
-            H_12 *= low_T_flag; // Apply low temperature flag to screening factor
-            H_12 = CppAD::CondExpGe(H_12, static_cast<T>(2.0), static_cast<T>(2.0), H_12); // Caps the screening factor at 10 to avoid numerical issues
-            factors.push_back(CppAD::exp(H_12));
-            // std::cout << "Screening factor: " << reaction.peName() << " : " << factors.back() << "(" << H_12 << ")" << std::endl;
+            factors.push_back(factor_impl<T>(*reaction, prefactor));
         }
         return factors;
     }

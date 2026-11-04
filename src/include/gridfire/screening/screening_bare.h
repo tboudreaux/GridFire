@@ -81,6 +81,14 @@ namespace gridfire::screening {
             ADDouble T9,
             ADDouble rho
         ) const override;
+        /// @brief Always 1 (no screening).
+        [[nodiscard]] double calculateScreeningFactor(
+            const reaction::Reaction&,
+            const std::vector<fourdst::atomic::Species>&,
+            const std::vector<double>&,
+            double,
+            double
+        ) const override { return 1.0; }
     private:
         /**
          * @brief Template implementation for calculating screening factors.

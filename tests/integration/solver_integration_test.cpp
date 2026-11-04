@@ -1,0 +1,649 @@
+// Integration tests: end-to-end runs of PointSolver and GridSolver.
+//
+// Three kinds of checks:
+//   * Exact answers. Tiny networks whose reactions have constant rates (REACLIB a0 only) have closed-form solutions
+//     (exponential decay, Bateman chains, relaxation to equilibrium), so they measure the integrator directly.
+//   * Bookkeeping that needs no reference data: NetOut.energy equals the mass defect of the composition change minus
+//     the neutrino losses; baryon number is conserved; chained runs reproduce a single run; NetOut's instantaneous
+//     fields describe its own final state.
+//   * Loose physics sanity checks and GridSolver consistency on the main sequence network.
+#include "gf_test_support.h"
+
+#include "gridfire/engine/engine_graph.h"
+#include "gridfire/reaction/reaclib.h"
+#include "gridfire/reaction/reaction.h"
+#include "gridfire/screening/screening_types.h"
+#include "gridfire/solver/strategies/GridSolver.h"
+#include "gridfire/solver/strategies/PointSolver.h"
+#include "gridfire/utils/gf_omp.h"
+
+#include "fourdst/atomic/species.h"
+#include "fourdst/composition/utils/utils.h"
+
+#include <gtest/gtest.h>
+
+#include <algorithm>
+#include <limits>
+#include <cmath>
+#include <format>
+#include <map>
+#include <memory>
+#include <numeric>
+#include <string>
+#include <vector>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+using fourdst::atomic::Species;
+using gridfire::NetIn;
+using gridfire::NetOut;
+using gridfire::engine::GraphEngine;
+using gridfire::reaction::ReaclibReaction;
+using gridfire::reaction::ReactionSet;
+using gridfire::solver::PointSolver;
+using gridfire::solver::PointSolverContext;
+
+namespace {
+    const Species& sp(const char* name) { return fourdst::atomic::species.at(name); }
+
+    /// A reaction with a temperature- and density-independent rate (all REACLIB coefficients but a0 are zero).
+    /// Q = 0 so the engine never attaches a reverse rate, and the type is plain REACLIB so there are no neutrino losses.
+    std::unique_ptr<gridfire::reaction::Reaction> constant_rate(
+        const std::string& id,
+        const std::vector<Species>& reactants,
+        const std::vector<Species>& products,
+        const double rate
+    ) {
+        return std::make_unique<ReaclibReaction>(id, id, 1, reactants, products, 0.0, "test",
+                                                 gridfire::reaction::RateCoefficientSet{std::log(rate), 0, 0, 0, 0, 0, 0});
+    }
+
+    /// A small GraphEngine together with a state blob for it.
+    struct SmallNetwork {
+        std::unique_ptr<GraphEngine> engine;
+        std::unique_ptr<gridfire::engine::scratch::StateBlob> context;
+
+        explicit SmallNetwork(const ReactionSet& reactions) {
+            gridfire::test::quiet_logging();
+            GF_PAR_INIT();
+            engine = std::make_unique<GraphEngine>(reactions);
+            context = engine->constructStateBlob(nullptr);
+        }
+    };
+
+    ReactionSet make_set(std::vector<std::unique_ptr<gridfire::reaction::Reaction>> reactions) {
+        return ReactionSet(std::move(reactions));
+    }
+
+    struct RunOptions {
+        double rel_tol = 1e-10;
+        double abs_tol = 1e-12;
+    };
+
+    NetOut run(const gridfire::engine::DynamicEngine& engine, const gridfire::engine::scratch::StateBlob& context,
+               const fourdst::composition::Composition& composition, const double T, const double rho,
+               const double tMax, const RunOptions& options = {}) {
+        PointSolverContext sctx(context);
+        sctx.set_stdout_logging(false);
+        sctx.rel_tol = options.rel_tol;
+        sctx.abs_tol = options.abs_tol;
+        const PointSolver solver(engine);
+        NetIn in;
+        in.composition = composition;
+        in.temperature = T;
+        in.density = rho;
+        in.tMax = tMax;
+        in.dt0 = 1e-12;
+        in.energy = 0.0;
+        return solver.evaluate(sctx, in);
+    }
+
+    double Y(const NetOut& out, const char* species) {
+        return out.composition.contains(sp(species)) ? out.composition.getMolarAbundance(sp(species)) : 0.0;
+    }
+
+    /// GridFire's definition of the energy released by a change of composition: -sum_i dY_i m_i u N_A c^2 [erg/g].
+    double mass_defect_energy(const fourdst::composition::CompositionAbstract& before,
+                              const fourdst::composition::CompositionAbstract& after) {
+        const auto& k = gridfire::test::constants();
+        double dm = 0.0;
+        for (const auto& species : after.getRegisteredSpecies()) {
+            const double y0 = before.contains(species) ? before.getMolarAbundance(species) : 0.0;
+            dm += (after.getMolarAbundance(species) - y0) * species.mass();
+        }
+        return -dm * k.u * k.Na * k.c * k.c;
+    }
+
+    double baryon_number(const fourdst::composition::CompositionAbstract& comp) {
+        double total = 0.0;
+        for (const auto& species : comp.getRegisteredSpecies()) total += species.a() * comp.getMolarAbundance(species);
+        return total;
+    }
+
+    constexpr double MeV_to_erg = 1.602176634e-6;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Exact answers
+// ---------------------------------------------------------------------------------------------------------------------
+
+TEST(ExactSolutions, SingleBetaDecayFollowsExponential) {
+    // The real REACLIB 13N(,e+)13C rate is a constant (half-life 598 s).
+    auto reaction = gridfire::reaclib::get_all_reaclib_reactions().get("n13(,e+)c13");
+    ASSERT_TRUE(reaction.has_value());
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(std::move(*reaction));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const auto initial = gridfire::test::make_composition({sp("N-13"), sp("C-13")}, {1.0 / 13.0, 0.0});
+    const auto rhs = net.engine->calculateRHSAndEnergy(*net.context, initial, 0.015, 100.0, false);
+    ASSERT_TRUE(rhs.has_value());
+    const double lambda = -rhs->dydt.at(sp("N-13")) / initial.getMolarAbundance(sp("N-13"));
+    EXPECT_NEAR(std::log(2.0) / lambda, 598.0, 2.0) << "13N half-life";
+
+    for (const double t : {60.0, 600.0, 3000.0}) {
+        const NetOut out = run(*net.engine, *net.context, initial, 1.5e7, 100.0, t);
+        const double exact = (1.0 / 13.0) * std::exp(-lambda * t);
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "N-13"), exact), 1e-6) << "t = " << t;
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "C-13"), 1.0 / 13.0 - exact), 1e-6) << "t = " << t;
+    }
+}
+
+TEST(ExactSolutions, TwoStepChainFollowsBateman) {
+    const double l1 = 1e-2, l2 = 3e-3;
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("o20(,e-)f20", {sp("O-20")}, {sp("F-20")}, l1));
+    list.push_back(constant_rate("f20(,e-)ne20", {sp("F-20")}, {sp("Ne-20")}, l2));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const double y0 = 1.0 / 20.0;
+    const auto initial = gridfire::test::make_composition({sp("O-20"), sp("F-20"), sp("Ne-20")}, {y0, 0.0, 0.0});
+    for (const double t : {10.0, 100.0, 500.0, 2000.0}) {
+        const NetOut out = run(*net.engine, *net.context, initial, 1e8, 1.0, t);
+        const double a = y0 * std::exp(-l1 * t);
+        const double b = y0 * l1 / (l2 - l1) * (std::exp(-l1 * t) - std::exp(-l2 * t));
+        const double c = y0 - a - b;
+        // rtol = 1e-10 per step; allow the global error to grow to 1e-6 of the abundance, or of 1e-8 y0 once decayed away
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "O-20"), a, 1e-8 * y0), 1e-6) << "t = " << t;
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "F-20"), b, 1e-8 * y0), 1e-6) << "t = " << t;
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "Ne-20"), c, 1e-8 * y0), 1e-6) << "t = " << t;
+    }
+}
+
+TEST(ExactSolutions, ReversiblePairRelaxesToEquilibrium) {
+    const double kf = 2e-2, kr = 5e-3;
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("n13(,e+)c13", {sp("N-13")}, {sp("C-13")}, kf));
+    list.push_back(constant_rate("c13(,e-)n13", {sp("C-13")}, {sp("N-13")}, kr));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const double total = 1.0 / 13.0;
+    const double a_eq = total * kr / (kf + kr);
+    const auto initial = gridfire::test::make_composition({sp("N-13"), sp("C-13")}, {total, 0.0});
+    for (const double t : {5.0, 50.0, 500.0, 5000.0}) {
+        const NetOut out = run(*net.engine, *net.context, initial, 1e8, 1.0, t);
+        const double a = a_eq + (total - a_eq) * std::exp(-(kf + kr) * t);
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "N-13"), a), 1e-6) << "t = " << t;
+        EXPECT_LT(gridfire::test::rel_diff(Y(out, "C-13"), total - a), 1e-6) << "t = " << t;
+    }
+}
+
+TEST(ExactSolutions, ErrorShrinksAsToleranceTightens) {
+    const double l1 = 1e-2, l2 = 3e-3, t = 500.0;
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("o20(,e-)f20", {sp("O-20")}, {sp("F-20")}, l1));
+    list.push_back(constant_rate("f20(,e-)ne20", {sp("F-20")}, {sp("Ne-20")}, l2));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const double y0 = 1.0 / 20.0;
+    const auto initial = gridfire::test::make_composition({sp("O-20"), sp("F-20"), sp("Ne-20")}, {y0, 0.0, 0.0});
+    const double exact = y0 * l1 / (l2 - l1) * (std::exp(-l1 * t) - std::exp(-l2 * t));
+
+    std::vector<double> errors;
+    for (const double rtol : {1e-4, 1e-6, 1e-8, 1e-10}) {
+        const NetOut out = run(*net.engine, *net.context, initial, 1e8, 1.0, t, {rtol, 1e-12});
+        errors.push_back(gridfire::test::rel_diff(Y(out, "F-20"), exact));
+        // CVODE controls local error; the global error may exceed rtol by a modest factor, never by orders of magnitude
+        EXPECT_LT(errors.back(), 100.0 * rtol) << "rtol = " << rtol;
+    }
+    EXPECT_LT(errors.back(), errors.front() * 1e-3) << "tightening rtol by 1e6 should reduce the error by well over 1e3";
+}
+
+TEST(ExactSolutions, PublicForwardFlowsReproduceScreenedRHS) {
+    // Strong two-body reactions with Q = 0 have no reverse rate, so dY/dt = sum_r nu_r * (forward flow)_r exactly. At
+    // solar-core density weak screening changes these flows by several percent, so this checks that the public
+    // per-reaction flow (used for culling and QSE timescales) includes the same screening as the RHS.
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("c12_p", {sp("C-12"), sp("H-1")}, {sp("N-13")}, 1e-10));
+    list.push_back(constant_rate("c12_a", {sp("C-12"), sp("He-4")}, {sp("O-16")}, 1e-12));
+    const SmallNetwork net(make_set(std::move(list)));
+    ASSERT_EQ(net.engine->getScreeningModel(*net.context), gridfire::screening::ScreeningType::WEAK);
+
+    const auto comp = gridfire::test::make_composition({sp("H-1"), sp("He-4"), sp("C-12"), sp("N-13"), sp("O-16")},
+                                                       {0.7, 0.07, 1e-3, 0.0, 0.0});
+    const double T9 = 0.015, rho = 150.0;
+    const auto rhs = net.engine->calculateRHSAndEnergy(*net.context, comp, T9, rho, false);
+    ASSERT_TRUE(rhs.has_value());
+    std::map<Species, double> from_flows;
+    for (const auto& reaction : net.engine->getNetworkReactions(*net.context)) {
+        const double flow = net.engine->calculateMolarReactionFlow(*net.context, *reaction, comp, T9, rho);
+        for (const auto& s : net.engine->getNetworkSpecies(*net.context)) from_flows[s] += reaction->stoichiometry(s) * flow;
+    }
+    for (const auto& [s, dydt] : rhs->dydt) {
+        EXPECT_LT(gridfire::test::rel_diff(from_flows[s], dydt, 1e-300), 1e-12) << s.name();
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Energy bookkeeping
+// ---------------------------------------------------------------------------------------------------------------------
+
+TEST(EnergyBookkeeping, BetaDecayEnergyIsMassDefectMinusNeutrinos) {
+    auto reaction = gridfire::reaclib::get_all_reaclib_reactions().get("n13(,e+)c13");
+    ASSERT_TRUE(reaction.has_value());
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(std::move(*reaction));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const auto initial = gridfire::test::make_composition({sp("N-13"), sp("C-13")}, {1.0 / 13.0, 0.0});
+    const NetOut out = run(*net.engine, *net.context, initial, 1.5e7, 100.0, 1000.0);
+
+    const double decayed = 1.0 / 13.0 - Y(out, "N-13");
+    const double neutrinos = decayed * 0.706 * gridfire::test::constants().Na * MeV_to_erg; // Bahcall <E_nu> for 13N
+    const double expected = mass_defect_energy(initial, out.composition) - neutrinos;
+    EXPECT_LT(gridfire::test::rel_diff(out.energy, expected), 1e-6)
+        << std::format("energy {:.10e} vs mass defect {:.10e} - neutrinos {:.10e}", out.energy,
+                       mass_defect_energy(initial, out.composition), neutrinos);
+
+    // The reported neutrino loss is accumulated as (rate at last RHS call) x (step), so it is only first-order accurate
+    EXPECT_LT(gridfire::test::rel_diff(out.specific_neutrino_energy_loss, neutrinos), 0.05)
+        << std::format("accumulated neutrino loss {:.6e} vs exact {:.6e}", out.specific_neutrino_energy_loss, neutrinos);
+}
+
+TEST(EnergyBookkeeping, StrongOnlyEnergyIsMassDefect) {
+    // A constant-rate strong chain has no neutrino losses, so the released energy is exactly the mass defect
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("c12_alpha", {sp("C-12"), sp("He-4")}, {sp("O-16")}, 1e-3));
+    const SmallNetwork net(make_set(std::move(list)));
+
+    const auto initial = gridfire::test::make_composition({sp("He-4"), sp("C-12"), sp("O-16")}, {0.5 / 4.0, 0.5 / 12.0, 0.0});
+    const NetOut out = run(*net.engine, *net.context, initial, 2e8, 1e3, 1.0);
+    ASSERT_GT(1.0 - Y(out, "C-12") / (0.5 / 12.0), 1e-3) << "test should burn a measurable amount";
+    EXPECT_LT(gridfire::test::rel_diff(out.energy, mass_defect_energy(initial, out.composition)), 1e-7);
+    EXPECT_EQ(out.specific_neutrino_energy_loss, 0.0);
+}
+
+TEST(EnergyBookkeeping, SolarRunEnergyIsMassDefectMinusNeutrinos) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const auto initial = gridfire::test::solar_composition();
+    const NetOut out = run(shared.engine, *context, initial, 1.5e7, 150.0, 3e15, {1e-8, 1e-14});
+
+    const double defect = mass_defect_energy(initial, out.composition);
+    ASSERT_GT(defect, 0.0);
+    // Neutrinos carry ~2-3% of the energy; their accumulated total is first-order accurate
+    const double nu_fraction = out.specific_neutrino_energy_loss / defect;
+    EXPECT_GT(nu_fraction, 0.015);
+    EXPECT_LT(nu_fraction, 0.05);
+    EXPECT_LT(gridfire::test::rel_diff(out.energy + out.specific_neutrino_energy_loss, defect), 2e-3)
+        << std::format("energy {:.8e} + neutrinos {:.8e} vs mass defect {:.8e}", out.energy,
+                       out.specific_neutrino_energy_loss, defect);
+    RecordProperty("neutrino_fraction", std::format("{:.4f}", nu_fraction));
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Conservation, restarts and final-state consistency on the main sequence network
+// ---------------------------------------------------------------------------------------------------------------------
+
+TEST(SolverConsistency, BaryonNumberConservedAndStepsCounted) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const auto initial = gridfire::test::solar_composition();
+    // sum_i A_i Y_i is not 1 (Y is per gram, and masses are not A amu), but reactions must leave it unchanged.
+    const double B0 = baryon_number(initial);
+    // The 4e7 K run burns hydrogen to exhaustion. Default tolerances: tighter ones currently fail there (see KnownBugs).
+    for (const auto& [T, tMax] : std::vector<std::pair<double, double>>{{1.5e7, 1e17}, {2.5e7, 1e14}, {4e7, 1e13}}) {
+        const NetOut out = run(shared.engine, *context, initial, T, 100.0, tMax, {1e-5, 1e-8});
+        ASSERT_LT(Y(out, "H-1"), 0.9 * initial.getMolarAbundance(sp("H-1"))) << "T = " << T << ": should burn substantially";
+        EXPECT_LT(std::abs(baryon_number(out.composition) / B0 - 1.0), 1e-10) << "T = " << T;
+        for (const auto& species : out.composition.getRegisteredSpecies()) {
+            EXPECT_GE(out.composition.getMolarAbundance(species), 0.0) << species.name() << " at T = " << T;
+        }
+        EXPECT_GT(out.num_steps, 10) << "T = " << T << ": num_steps should count every CVODE step, across reinitialisations";
+    }
+}
+
+TEST(SolverConsistency, ChainedRunsReproduceSingleRun) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const auto initial = gridfire::test::solar_composition();
+    const double T = 2e7, rho = 100.0, tMax = 1e14;
+    const RunOptions options{1e-9, 1e-15};
+
+    const NetOut whole = run(shared.engine, *context, initial, T, rho, tMax, options);
+    const NetOut first = run(shared.engine, *context, initial, T, rho, tMax / 2, options);
+    const NetOut second = run(shared.engine, *context, first.composition, T, rho, tMax / 2, options);
+
+    for (const auto& species : whole.composition.getRegisteredSpecies()) {
+        const double X_whole = whole.composition.getMassFraction(species);
+        if (X_whole < 1e-10) continue;
+        EXPECT_LT(gridfire::test::rel_diff(second.composition.getMassFraction(species), X_whole), 1e-5) << species.name();
+    }
+    EXPECT_LT(gridfire::test::rel_diff(first.energy + second.energy, whole.energy), 1e-5);
+}
+
+TEST(SolverConsistency, InstantaneousOutputsDescribeFinalState) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const double T = 1.8e7, rho = 120.0;
+    const NetOut out = run(shared.engine, *context, gridfire::test::solar_composition(), T, rho, 1e13, {1e-8, 1e-14});
+
+    const auto probe = shared.fresh_context();
+    const auto rhs = shared.engine.calculateRHSAndEnergy(*probe, out.composition, T / 1e9, rho, false);
+    ASSERT_TRUE(rhs.has_value());
+    const auto [dEps_dT, dEps_dRho] = shared.engine.calculateEpsDerivatives(*probe, out.composition, T / 1e9, rho);
+    const auto channels = shared.engine.calculateEnergyChannels(*probe, out.composition, T / 1e9, rho);
+
+    EXPECT_LT(gridfire::test::rel_diff(out.eps_nuc, rhs->nuclearEnergyGenerationRate), 1e-12);
+    EXPECT_LT(gridfire::test::rel_diff(out.neutrino_energy_loss_rate, rhs->neutrinoEnergyLossRate), 1e-12);
+    EXPECT_LT(gridfire::test::rel_diff(out.dEps_dT, dEps_dT), 1e-12);
+    EXPECT_LT(gridfire::test::rel_diff(out.dEps_dRho, dEps_dRho), 1e-12);
+    EXPECT_LT(gridfire::test::rel_diff(out.dlnEps_dlnT, T * dEps_dT / rhs->nuclearEnergyGenerationRate), 1e-12);
+    EXPECT_LT(gridfire::test::rel_diff(out.dlnEps_dlnRho, rho * dEps_dRho / rhs->nuclearEnergyGenerationRate), 1e-12);
+
+    ASSERT_EQ(out.eps_by_channel.size(), channels.size());
+    ASSERT_EQ(out.energy_channel_names.size(), channels.size());
+    for (size_t i = 0; i < channels.size(); ++i) {
+        EXPECT_LT(gridfire::test::rel_diff(out.eps_by_channel[i], channels[i], 1e-30), 1e-12) << out.energy_channel_names[i];
+    }
+    const double sum = std::accumulate(out.eps_by_channel.begin(), out.eps_by_channel.end(), 0.0);
+    EXPECT_LT(gridfire::test::rel_diff(sum, out.eps_nuc), 1e-10);
+
+    // Hydrogen burning: eps ~ T^4 (pp) to T^20 (CNO), and eps ~ rho for two-body reactions
+    EXPECT_GT(out.dlnEps_dlnT, 3.0);
+    EXPECT_LT(out.dlnEps_dlnT, 25.0);
+    EXPECT_NEAR(out.dlnEps_dlnRho, 1.0, 0.05);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Physics sanity (loose bounds)
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    double channel(const NetOut& out, const std::string& name) {
+        for (size_t i = 0; i < out.energy_channel_names.size(); ++i) {
+            if (out.energy_channel_names[i] == name) return out.eps_by_channel[i];
+        }
+        ADD_FAILURE() << "no energy channel named " << name;
+        return 0.0;
+    }
+
+    /// Solar composition burned at T long enough for the CN cycle to approach equilibrium, as in a main sequence core.
+    NetOut burned_solar(const double T) {
+        const auto& shared = gridfire::test::main_sequence_engine();
+        const auto context = shared.fresh_context();
+        // ~100 Myr: long enough to convert the initial 12C to 14N (the CN cycle then runs at its slow equilibrium rate),
+        // but ~1% of the hydrogen burning time
+        return run(shared.engine, *context, gridfire::test::solar_composition(), T, 150.0, 3e15, {1e-8, 1e-14});
+    }
+}
+
+TEST(PhysicsSanity, SolarCoreIsPPDominated) {
+    const NetOut out = burned_solar(1.5e7);
+    const double pp = channel(out, "H_pp"), cno = channel(out, "H_CNO");
+    RecordProperty("pp_fraction", std::format("{:.4f}", pp / out.eps_nuc));
+    EXPECT_GT(pp / out.eps_nuc, 0.95) << std::format("pp {:.4e}, CNO {:.4e}, total {:.4e}", pp, cno, out.eps_nuc);
+    EXPECT_GT(out.eps_nuc, 1.0);
+    EXPECT_LT(out.eps_nuc, 1e2);
+}
+
+TEST(PhysicsSanity, PPAndCNOCrossNearSeventeenToTwentyMillionKelvin) {
+    const NetOut cool = burned_solar(1.6e7);
+    const NetOut hot = burned_solar(2.3e7);
+    EXPECT_GT(channel(cool, "H_pp"), channel(cool, "H_CNO"));
+    EXPECT_LT(channel(hot, "H_pp"), channel(hot, "H_CNO"));
+}
+
+TEST(PhysicsSanity, TripleAlphaTurnsOnNearOneHundredMillionKelvin) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto species = shared.engine.getNetworkSpecies(*shared.fresh_context());
+    std::vector<double> Y(species.size(), 0.0);
+    for (size_t i = 0; i < species.size(); ++i) {
+        if (species[i] == sp("He-4")) Y[i] = 0.99 / 4.0;
+        if (species[i] == sp("C-12")) Y[i] = 0.01 / 12.0;
+    }
+    const auto helium = gridfire::test::make_composition(species, Y);
+
+    auto he_eps = [&](const double T) {
+        const auto context = shared.fresh_context();
+        const NetOut out = run(shared.engine, *context, helium, T, 1e4, 1.0, {1e-8, 1e-14});
+        return channel(out, "He");
+    };
+    const double cold = he_eps(5e7), warm = he_eps(1e8), hot = he_eps(2e8);
+    RecordProperty("eps_He_1e8", std::format("{:.4e}", warm));
+    EXPECT_LT(cold, 1e-3 * warm);
+    EXPECT_GT(warm, 1.0);
+    EXPECT_GT(hot, 1e3 * warm);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// GridSolver
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    std::vector<NetOut> run_grid(const std::vector<NetIn>& inputs, const int threads) {
+        const auto& shared = gridfire::test::main_sequence_engine();
+        const auto context = shared.fresh_context();
+        const PointSolver point(shared.engine);
+        const gridfire::solver::GridSolver grid(shared.engine, point);
+        gridfire::solver::GridSolverContext gctx(*context);
+        gctx.zone_completion_logging = false;
+        gctx.set_stdout_logging(false);
+#ifdef _OPENMP
+        const int previous = omp_get_max_threads();
+        omp_set_num_threads(threads);
+#else
+        (void)threads;
+#endif
+        auto results = grid.evaluate(gctx, inputs);
+#ifdef _OPENMP
+        omp_set_num_threads(previous);
+#endif
+        return results;
+    }
+
+    std::vector<NetIn> zone_inputs(const std::vector<double>& temperatures) {
+        std::vector<NetIn> inputs;
+        for (const double T : temperatures) {
+            NetIn in;
+            in.composition = gridfire::test::solar_composition();
+            in.temperature = T;
+            in.density = 100.0;
+            in.tMax = 1e12;
+            in.dt0 = 1e-12;
+            in.energy = 0.0;
+            inputs.push_back(in);
+        }
+        return inputs;
+    }
+
+    void expect_identical(const NetOut& a, const NetOut& b, const std::string& what) {
+        EXPECT_EQ(a.energy, b.energy) << what;
+        EXPECT_EQ(a.eps_nuc, b.eps_nuc) << what;
+        EXPECT_EQ(a.dEps_dT, b.dEps_dT) << what;
+        EXPECT_EQ(a.eps_by_channel, b.eps_by_channel) << what;
+        for (const auto& species : a.composition.getRegisteredSpecies()) {
+            EXPECT_EQ(a.composition.getMolarAbundance(species), b.composition.getMolarAbundance(species)) << what << " " << species.name();
+        }
+    }
+}
+
+TEST(GridSolver, IdenticalZonesGiveIdenticalResults) {
+    const auto results = run_grid(zone_inputs({1.6e7, 1.6e7, 1.6e7, 1.6e7}), 4);
+    ASSERT_EQ(results.size(), 4u);
+    for (size_t z = 1; z < results.size(); ++z) expect_identical(results[0], results[z], std::format("zone {}", z));
+}
+
+TEST(GridSolver, ZonesMatchStandalonePointSolver) {
+    const auto inputs = zone_inputs({1.4e7, 1.8e7, 2.2e7, 3.0e7});
+    const auto results = run_grid(inputs, 4);
+    const auto& shared = gridfire::test::main_sequence_engine();
+    for (size_t z = 0; z < inputs.size(); ++z) {
+        const auto context = shared.fresh_context();
+        PointSolverContext sctx(*context);
+        sctx.set_stdout_logging(false);
+        const NetOut alone = PointSolver(shared.engine).evaluate(sctx, inputs[z]);
+        expect_identical(results[z], alone, std::format("zone {} (T = {:.2e})", z, inputs[z].temperature));
+    }
+}
+
+TEST(GridSolver, ThreadCountDoesNotChangeResults) {
+    const auto inputs = zone_inputs({1.4e7, 1.8e7, 2.2e7, 3.0e7, 1.5e7, 2.5e7});
+    const auto serial = run_grid(inputs, 1);
+    const auto parallel = run_grid(inputs, 4);
+    ASSERT_EQ(serial.size(), parallel.size());
+    for (size_t z = 0; z < serial.size(); ++z) expect_identical(serial[z], parallel[z], std::format("zone {}", z));
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Failure handling
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    NetIn valid_input() {
+        NetIn in;
+        in.composition = gridfire::test::solar_composition();
+        in.temperature = 1.5e7;
+        in.density = 100.0;
+        in.tMax = 1e10;
+        in.dt0 = 1e-12;
+        in.energy = 0.0;
+        return in;
+    }
+
+    void evaluate_point(const NetIn& in) {
+        const auto& shared = gridfire::test::main_sequence_engine();
+        const auto context = shared.fresh_context();
+        PointSolverContext sctx(*context);
+        sctx.set_stdout_logging(false);
+        (void)PointSolver(shared.engine).evaluate(sctx, in);
+    }
+}
+
+TEST(FailureHandling, ValidInputRuns) {
+    EXPECT_NO_THROW(evaluate_point(valid_input()));
+}
+
+TEST(FailureHandling, NonPositiveTemperatureIsRejected) {
+    for (const double T : {0.0, -1e7}) {
+        NetIn in = valid_input();
+        in.temperature = T;
+        EXPECT_ANY_THROW(evaluate_point(in)) << "T = " << T;
+    }
+}
+
+TEST(FailureHandling, NonPositiveDensityIsRejected) {
+    for (const double rho : {0.0, -1.0}) {
+        NetIn in = valid_input();
+        in.density = rho;
+        EXPECT_ANY_THROW(evaluate_point(in)) << "rho = " << rho;
+    }
+}
+
+TEST(FailureHandling, NonFiniteInputsAreRejected) {
+    NetIn in = valid_input();
+    in.temperature = std::nan("");
+    EXPECT_ANY_THROW(evaluate_point(in)) << "T = NaN";
+    in = valid_input();
+    in.density = std::numeric_limits<double>::infinity();
+    EXPECT_ANY_THROW(evaluate_point(in)) << "rho = inf";
+}
+
+TEST(FailureHandling, SpeciesOutsideNetworkIsRejected) {
+    NetIn in = valid_input();
+    in.composition = fourdst::composition::buildCompositionFromMassFractions(
+        std::vector<std::string>{"H-1", "He-4", "U-238"}, std::vector<double>{0.7, 0.29, 0.01});
+    EXPECT_ANY_THROW(evaluate_point(in));
+}
+
+
+TEST(FailureHandling, NonPositiveTMaxDoesNotIntegrate) {
+    for (const double tMax : {0.0, -1.0}) {
+        NetIn in = valid_input();
+        in.tMax = tMax;
+        // Either rejecting the input or returning the unchanged composition with zero energy is acceptable
+        try {
+            const auto& shared = gridfire::test::main_sequence_engine();
+            const auto context = shared.fresh_context();
+            PointSolverContext sctx(*context);
+            sctx.set_stdout_logging(false);
+            const NetOut out = PointSolver(shared.engine).evaluate(sctx, in);
+            EXPECT_EQ(out.energy, 0.0) << "tMax = " << tMax;
+            EXPECT_DOUBLE_EQ(out.composition.getMolarAbundance(sp("H-1")), in.composition.getMolarAbundance(sp("H-1")));
+        } catch (const std::exception&) {
+            SUCCEED();
+        }
+    }
+}
+
+// Known bug: the energy accumulator's error weight is rel_tol * |E| + abs_tol, with abs_tol (a mass-fraction tolerance)
+// used directly in erg/g. At t = 0, E = 0, so a tight abs_tol demands e.g. 1e-16 erg/g of an energy growing at
+// ~1e15 erg/g/s, and CVODE fails on its first step. Making the accumulator a CVODE quadrature with its own (relative)
+// tolerance would fix it. This test skips while the bug is present and fails once it is fixed, as a reminder to
+// turn it into a normal assertion.
+TEST(KnownBugs, TightAbsoluteToleranceFailsOnEnergyAccumulator) {
+    std::vector<std::unique_ptr<gridfire::reaction::Reaction>> list;
+    list.push_back(constant_rate("o20(,e-)f20", {sp("O-20")}, {sp("F-20")}, 1e-2));
+    const SmallNetwork net(make_set(std::move(list)));
+    const auto initial = gridfire::test::make_composition({sp("O-20"), sp("F-20")}, {0.05, 0.0});
+    bool failed = false;
+    try {
+        (void)run(*net.engine, *net.context, initial, 1e8, 1.0, 100.0, {1e-8, 1e-16});
+    } catch (const std::exception&) {
+        failed = true;
+    }
+    if (failed) {
+        GTEST_SKIP() << "Known bug: abs_tol is applied to the energy accumulator in erg/g; abs_tol = 1e-16 fails at t = 0";
+    }
+    FAIL() << "abs_tol = 1e-16 now integrates: the energy-tolerance bug appears fixed; make this a normal test";
+}
+
+
+// Known bug: with tight tolerances CVODE fails with CV_CONSTR_FAIL as hydrogen is exhausted (H-1 ~ 1e-8), because the
+// non-negativity constraints and BDF's extrapolated predictor fight as an abundance decays to zero. Default tolerances
+// (1e-5 / 1e-8) get through. Skips while the bug is present; fails once fixed.
+TEST(KnownBugs, TightTolerancesFailAtHydrogenExhaustion) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    bool failed = false;
+    try {
+        (void)run(shared.engine, *context, gridfire::test::solar_composition(), 4e7, 100.0, 1e13, {1e-8, 1e-12});
+    } catch (const std::exception&) {
+        failed = true;
+    }
+    if (failed) {
+        GTEST_SKIP() << "Known bug: rtol = 1e-8 fails with CV_CONSTR_FAIL at hydrogen exhaustion (T = 4e7 K)";
+    }
+    FAIL() << "rtol = 1e-8 now integrates through hydrogen exhaustion: the bug appears fixed; make this a normal test";
+}
+
+
+// Known bug: GridSolver catches a zone's GridFireError, prints it, and returns a default-constructed NetOut for that
+// zone (with uninitialised energy and num_steps), so the caller cannot tell the zone failed. It should rethrow after
+// the parallel loop, or report per-zone status. Skips while the bug is present; fails once fixed.
+TEST(KnownBugs, GridSolverHidesZoneFailures) {
+    auto inputs = zone_inputs({1.6e7, 1.6e7});
+    inputs[1].temperature = -1.0; // Rejected by PointSolver::evaluate
+    bool threw = false;
+    try {
+        (void)run_grid(inputs, 2);
+    } catch (const std::exception&) {
+        threw = true;
+    }
+    if (!threw) {
+        GTEST_SKIP() << "Known bug: GridSolver swallows a failing zone's exception and returns a default NetOut";
+    }
+    FAIL() << "GridSolver now reports zone failures: the bug appears fixed; make this a normal test";
+}

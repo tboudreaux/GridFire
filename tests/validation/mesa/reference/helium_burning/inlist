@@ -1,0 +1,34 @@
+&bbq
+    net_name = 'network.net'
+    max_steps = 1000000
+    eps = 1d-8
+    odescal = 1d-10
+    stptry = 0
+    use_hydrostatic = .true.
+    write_iso_list = .true.
+    iso_list_filename = 'iso.list'
+/
+
+&sampling
+/
+
+&profile
+/
+
+&hydrostatic
+    min_time = -8
+    max_time = 15
+    log_time = .true.
+    num_times = 120
+    logT = 8.1
+    logRho = 4.0
+    input_composition_filename = 'comp.txt'
+    output_filename = 'bbq_output.txt'
+/
+
+&eos
+/
+
+&nuclear
+    screening_mode = 'salpeter'
+/

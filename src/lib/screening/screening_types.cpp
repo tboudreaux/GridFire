@@ -4,6 +4,7 @@
 #include "gridfire/screening/screening_bare.h"
 
 #include <memory>
+#include <stdexcept>
 
 namespace gridfire::screening {
     std::unique_ptr<ScreeningModel> selectScreeningModel(const ScreeningType type) {

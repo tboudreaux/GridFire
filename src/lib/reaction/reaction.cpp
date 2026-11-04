@@ -45,6 +45,11 @@ namespace gridfire::reaction {
     m_sourceLabel(label),
     m_rateCoefficients(sets),
     m_reverse(reverse) {
+        // The projectile field of a REACLIB id, e.g. "e-" in be7(e-,)li7 or "e-p" in p(e-p,)d
+        const auto open = id.find('(');
+        const auto comma = id.find(',', open);
+        m_electronCapture = open != std::string_view::npos && comma != std::string_view::npos &&
+                            id.substr(open + 1, comma - open - 1).find("e-") != std::string_view::npos;
         for (const auto& reactant : reactants) {
             m_reactants[reactant]++;
         }
@@ -61,7 +66,7 @@ namespace gridfire::reaction {
         const std::vector<double> &Y,
         const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
-        return calculate_rate<double>(T9);
+        return calculate_rate<double>(T9) * electron_density_factor(rho, Ye);
     }
 
     CppAD::AD<double> ReaclibReaction::calculate_rate(
@@ -72,7 +77,7 @@ namespace gridfire::reaction {
         const std::vector<CppAD::AD<double>>& Y,
         const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
-        return calculate_rate<CppAD::AD<double>>(T9);
+        return calculate_rate<CppAD::AD<double>>(T9) * electron_density_factor(rho, Ye);
     }
 
     double ReaclibReaction::calculate_log_rate_partial_deriv_wrt_T9(
@@ -285,7 +290,7 @@ namespace gridfire::reaction {
         // if (m_cached_rates.contains(T9)) {
         //     return m_cached_rates.at(T9);
         // }
-        const double rate = calculate_rate<double>(T9);
+        const double rate = calculate_rate<double>(T9) * electron_density_factor(rho, Ye);
         // m_cached_rates[T9] = rate;
         return rate;
     }
@@ -356,7 +361,7 @@ namespace gridfire::reaction {
         CppAD::AD<double> Ye,
         CppAD::AD<double> mue, const std::vector<CppAD::AD<double>>& Y, const std::unordered_map<size_t, Species>& index_to_species_map
     ) const {
-        return calculate_rate<CppAD::AD<double>>(T9);
+        return calculate_rate<CppAD::AD<double>>(T9) * electron_density_factor(rho, Ye);
     }
 
     std::optional<std::vector<RateCoefficientSet>> LogicalReaclibReaction::getRateCoefficients() const {
@@ -637,22 +642,13 @@ namespace gridfire::reaction {
     }
 
     bool reaction_is_weak(const reaction::Reaction& reaction) {
-        const std::vector<fourdst::atomic::Species>& reactants = reaction.reactants();
-        const std::vector<fourdst::atomic::Species>& products = reaction.products();
-
-        if (reactants.size() != products.size()) {
-            return false;
-        }
-
-        if (reactants.size() != 1 || products.size() != 1) {
-            return false;
-        }
-
-        if (std::floor(reactants[0].a()) != std::floor(products[0].a())) {
-            return false;
-        }
-
-        return true;
+        // A reaction is weak exactly when it changes the total nuclear charge (the difference is carried by leptons).
+        // This covers decays and captures as well as two-body weak reactions (p(p,e+)d, he3(p,e+)he4) and
+        // beta-delayed particle emission (b8(,e+ a)he4), which a one-reactant/one-product test misses.
+        int dZ = 0;
+        for (const auto& reactant : reaction.reactants()) dZ -= reactant.z();
+        for (const auto& product : reaction.products()) dZ += product.z();
+        return dZ != 0;
     }
 
 

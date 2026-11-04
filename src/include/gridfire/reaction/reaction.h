@@ -366,6 +366,9 @@ namespace gridfire::reaction {
         - There is only one reactant and one product
         - The mass number (A) of the reactant is equal to the mass number (A) of the product
     */
+    /**
+     * @brief True if the reaction changes the total nuclear charge, i.e. it is mediated by the weak interaction.
+     */
     bool reaction_is_weak(const Reaction& reaction);
 
     class ReaclibReaction : public Reaction {
@@ -583,6 +586,9 @@ namespace gridfire::reaction {
          */
         [[nodiscard]] bool is_reverse() const override { return m_reverse; }
 
+        /// @brief True if the reaction captures an electron, whose REACLIB rate must be scaled by rho * Ye.
+        [[nodiscard]] bool is_electron_capture() const { return m_electronCapture; }
+
         /**
          * @brief Calculates the excess energy from the mass difference of reactants and products.
          * @return The excess energy in MeV.
@@ -643,6 +649,18 @@ namespace gridfire::reaction {
         std::string m_sourceLabel; ///< Source label for the rate data (e.g., "wc12w", "st08").
         RateCoefficientSet m_rateCoefficients; ///< The seven rate coefficients.
         bool m_reverse = false; ///< Flag indicating if this is a reverse reaction rate.
+        bool m_electronCapture = false; ///< Captures an electron (e.g. be7(e-,)li7): REACLIB tabulates these per unit electron density
+
+        /**
+         * @brief Factor converting the REACLIB fit to the physical rate: rho * Ye for electron captures, 1 otherwise.
+         *
+         * REACLIB electron-capture rates are given per unit electron density (as MESA's reaction_ye_rho_exponents and
+         * pynucastro also assume), so the rate in 1/s is the fit times rho * Ye.
+         */
+        template <typename T>
+        [[nodiscard]] T electron_density_factor(const T rho, const T Ye) const {
+            return m_electronCapture ? rho * Ye : static_cast<T>(1.0);
+        }
     private:
         /**
          * @brief Template implementation for calculating the reaction rate.

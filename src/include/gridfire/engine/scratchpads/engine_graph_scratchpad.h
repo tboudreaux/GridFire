@@ -112,6 +112,14 @@ struct GraphEngineScratchPad final : AbstractScratchPad {
     /// @brief The most recent RHS calculation result for warm-starting.
     std::optional<StepDerivatives<double>> most_recent_rhs_calculation;
 
+    /// @brief Network-ordered abundances of the composition last passed to calculateMolarReactionFlow.
+    /// @details Callers evaluate that method for every reaction at one composition, so the abundances (needed for the
+    ///          screening factor) are built once per composition. Not copied by clone(): it is only a cache.
+    std::vector<double> flow_abundances;
+
+    /// @brief Hash of the composition flow_abundances was built from.
+    std::optional<std::size_t> flow_abundances_hash;
+
     /// @brief Flag indicating whether the scratchpad has been initialized.
     bool has_initialized = false;
 

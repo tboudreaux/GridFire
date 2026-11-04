@@ -104,5 +104,23 @@ namespace gridfire::screening {
             ADDouble T9,
             ADDouble rho
         ) const = 0;
+
+        /**
+         * @brief Screening factor of a single reaction (same value calculateScreeningFactors gives it).
+         *
+         * Used where one reaction's screened flow is needed on its own (e.g. culling and QSE timescales). The default
+         * builds a one-reaction set; models override it to avoid that allocation.
+         */
+        [[nodiscard]] virtual double calculateScreeningFactor(
+            const reaction::Reaction& reaction,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            const double T9,
+            const double rho
+        ) const {
+            reaction::ReactionSet single;
+            single.add_reaction(reaction);
+            return calculateScreeningFactors(single, species, Y, T9, rho).at(0);
+        }
     };
 }

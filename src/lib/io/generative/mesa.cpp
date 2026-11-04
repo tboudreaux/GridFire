@@ -47,12 +47,17 @@ namespace gridfire::io::generative {
         sort_species(react_sorted);
         sort_species(prod_sorted);
 
-        if (react_sorted.size() == 1 && prod_sorted.size() == 1) {
-            if (reaction.type() == reaction::ReactionType::WEAK ||
-                reaction.type() == reaction::ReactionType::REACLIB_WEAK ||
-                reaction.type() == reaction::ReactionType::LOGICAL_REACLIB_WEAK) {
-                return "r_" + get_mesa_iso_name(react_sorted[0]) + "_wk_" + get_mesa_iso_name(prod_sorted[0]);
-            }
+        // Weak reactions follow MESA's reaclib convention r_<reactants>_wk_<products> for any number of participants
+        // (e.g. r_n13_wk_c13, r_h1_h1_wk_h2, r_h1_he3_wk_he4, r_b8_wk_he4_he4). They must be handled before the
+        // strong (x,g)/(g,x) patterns below, which would otherwise misname p(p,e+)d as r_h1_pg_h2.
+        if (reaction.type() == reaction::ReactionType::WEAK ||
+            reaction.type() == reaction::ReactionType::REACLIB_WEAK ||
+            reaction.type() == reaction::ReactionType::LOGICAL_REACLIB_WEAK) {
+            std::string name = "r";
+            for (const auto& s : react_sorted) name += "_" + get_mesa_iso_name(s);
+            name += "_wk";
+            for (const auto& s : prod_sorted) name += "_" + get_mesa_iso_name(s);
+            return name;
         }
 
         if (react_sorted.size() == 2 && prod_sorted.size() == 1) {

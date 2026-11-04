@@ -18,6 +18,7 @@ gridfire_sources = files(
     'lib/reaction/reaclib.cpp',
     'lib/reaction/weak/weak.cpp',
     'lib/reaction/weak/weak_interpolator.cpp',
+    'lib/reaction/weak/neutrino_energies.cpp',
     'lib/io/network_file.cpp',
     'lib/io/generative/python.cpp',
     'lib/io/generative/mesa.cpp',

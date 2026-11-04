@@ -138,6 +138,14 @@ namespace gridfire::engine {
          */
         explicit GraphEngine(const reaction::ReactionSet &reactions);
 
+        /**
+         * @brief Construct a GraphEngine from an explicit set of reactions with the given partition function.
+         *
+         * Unlike GraphEngine(const reaction::ReactionSet&), this sets the partition function used by reverse rates, so
+         * a reaction set taken from (or edited from) another engine reproduces that engine's physics.
+         */
+        GraphEngine(const reaction::ReactionSet &reactions, const partition::PartitionFunction &partitionFunction);
+
         void addReaction(
             const reaction::Reaction& reaction
         );
@@ -316,10 +324,11 @@ namespace gridfire::engine {
          * @param comp Composition object containing current abundances.
          * @param T9 Temperature in units of 10^9 K.
          * @param rho Density in g/cm^3.
-         * @return Molar flow rate for the reaction (e.g., mol/g/s).
+         * @return Forward (one-way) molar flow of the reaction [mol/g/s], including electron screening.
          *
-         * This method computes the net rate at which the given reaction proceeds
-         * under the current state.
+         * This is the forward flow exactly as the RHS uses it (screened, before the reverse flow is subtracted).
+         * It is a one-way flow on purpose: callers use it as a measure of how fast a reaction runs (culling,
+         * QSE timescales), and a net flow would hide fast reactions that are in equilibrium.
          *
          */
         [[nodiscard]] double calculateMolarReactionFlow(
@@ -835,7 +844,7 @@ namespace gridfire::engine {
 
         std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
-        screening::ScreeningType m_screeningType = screening::ScreeningType::BARE; ///< Screening type for the reaction network. Default to no screening.
+        screening::ScreeningType m_screeningType = m_config->engine.screening; ///< Screening model, from engine.screening in the configuration (default WEAK). m_config is declared above, so it is initialised first.
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
@@ -917,6 +926,17 @@ namespace gridfire::engine {
             scratch::StateBlob& ctx,
             double netFlow,
             const reaction::Reaction &reaction) const;
+
+        /**
+         * @brief Whether a reaction carries a detailed-balance reverse rate (strong REACLIB reactions with Q != 0).
+         *
+         * Weak reactions never do. Every code path (AD tape, precomputed kernel, atomic reverse rates) uses this so they
+         * cannot disagree; whether reverse rates are enabled at all (m_useReverseReactions) is checked separately.
+         */
+        [[nodiscard]] static bool has_reverse_rate(const reaction::Reaction &reaction) {
+            return reaction.qValue() != 0.0 &&
+                   (reaction.type() == reaction::ReactionType::REACLIB || reaction.type() == reaction::ReactionType::LOGICAL_REACLIB);
+        }
 
         /**
          * @brief Neutrino energy carried away per unit net molar reaction flow [erg][mol^-1] (0 for non-weak reactions).
@@ -1121,7 +1141,7 @@ namespace gridfire::engine {
         // --- Setup output derivatives structure ---
         // We use a vector internally since indexed lookups are much cheeper, O(1)
         std::vector<T> dydt_vec;
-        dydt_vec.resize(m_reactions.size(), static_cast<T>(0.0));
+        dydt_vec.resize(m_networkSpecies.size(), static_cast<T>(0.0)); // One entry per species (was sized by reaction count)
 
         // --- AD Pre-setup (flags to control conditionals in an AD safe / branch aware manner) ---
         // ----- Constants for AD safe calculations ---
@@ -1145,6 +1165,13 @@ namespace gridfire::engine {
             // The issue is that this would introduce a branch which would require the auto diff tape to be re-recorded
             // each timestep, which is very inefficient.
             Y[i] = CppAD::CondExpLt(Y[i], zero, zero, Y[i]); // Ensure no negative abundances
+        }
+
+        // Electron abundance from the abundances themselves, so electron-capture rates (which scale with rho * Ye) are
+        // exact and differentiable on the AD tape too; the tape is recorded with only a placeholder for the Ye argument.
+        T Ye_network = zero;
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            Ye_network += static_cast<T>(m_networkSpecies[i].z()) * Y[i];
         }
 
         const T u = static_cast<T>(m_constants.u); // Atomic mass unit in grams
@@ -1178,7 +1205,7 @@ namespace gridfire::engine {
                     Y,
                     T9,
                     rho,
-                    Ye,
+                    Ye_network,
                     mue,
                     speciesLookup
                 );
@@ -1186,7 +1213,7 @@ namespace gridfire::engine {
             // 2. Calculate reverse reaction rate
             T reverseMolarFlow = static_cast<T>(0.0);
             // Do not calculate reverse flow for weak reactions since photodisintegration does not apply
-            if ((reaction.type() == reaction::ReactionType::LOGICAL_REACLIB || reaction.type() == reaction::ReactionType::REACLIB) && m_useReverseReactions) {
+            if (has_reverse_rate(reaction) && m_useReverseReactions) {
                 reverseMolarFlow = calculateReverseMolarReactionFlow<T>(
                     T9,
                     rho,
@@ -1269,7 +1296,11 @@ namespace gridfire::engine {
             const T Yi = Y[species_index.value()];
 
             // --- If count is > 1 , we need to raise the molar concentration to the power of count since there are really count bodies in that reaction ---
-            molar_concentration_product *= CppAD::pow(Yi, static_cast<T>(count)); // ni^count
+            // ni^count as repeated multiplication: CppAD::pow(Y, n) is taped as exp(n log Y), whose derivative CppAD
+            // defines as 0 at Y = 0, which would drop Jacobian columns of species that are currently absent
+            for (size_t k = 0; k < count; ++k) {
+                molar_concentration_product *= Yi;
+            }
 
             // --- Apply factorial correction for identical reactions ---
             if (count > 1) {

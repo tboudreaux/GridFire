@@ -1,4 +1,5 @@
 #include "gridfire/solver/strategies/PointSolver.h"
+#include "fourdst/constants/const.h"
 
 #include "gridfire/types/types.h"
 #include "gridfire/utils/table_format.h"
@@ -229,6 +230,17 @@ namespace gridfire::solver {
         if (sctx_p == nullptr) {
             throw exceptions::SolverError("Provided solver context is not of type PointSolverContext");
         }
+        // Reject unphysical inputs up front: they otherwise produce nonsense rates (e.g. rho^(n-1) < 0) that CVODE can
+        // spend unbounded time on instead of failing.
+        if (!std::isfinite(netIn.temperature) || netIn.temperature <= 0.0) {
+            throw exceptions::SolverError(std::format("PointSolver::evaluate: temperature must be finite and positive (got {} K)", netIn.temperature));
+        }
+        if (!std::isfinite(netIn.density) || netIn.density <= 0.0) {
+            throw exceptions::SolverError(std::format("PointSolver::evaluate: density must be finite and positive (got {} g/cm^3)", netIn.density));
+        }
+        if (!std::isfinite(netIn.tMax)) {
+            throw exceptions::SolverError(std::format("PointSolver::evaluate: tMax must be finite (got {} s)", netIn.tMax));
+        }
 
         LOG_TRACE_L1(m_logger, "Starting solver evaluation with T9: {} and rho: {}", netIn.temperature/1e9, netIn.density);
         LOG_TRACE_L1(m_logger, "Building engine update trigger....");
@@ -346,6 +358,10 @@ namespace gridfire::solver {
             user_data.captured_exception.reset();
 
             utils::check_cvode_flag(CVodeSetUserData(sctx_p->cvode_mem, &user_data), "CVodeSetUserData");
+            // Never step past tMax: in CV_ONE_STEP mode CVODE otherwise returns its internal state at the end of the
+            // last step, which can lie up to a full (late-time, large) step beyond tMax. Set every iteration because
+            // CVODE disables the stop time once reached and the resources may have been reinitialised.
+            utils::check_cvode_flag(CVodeSetStopTime(sctx_p->cvode_mem, netIn.tMax), "CVodeSetStopTime");
 
             LOG_TRACE_L2(m_logger, "Taking one CVODE step...");
             int flag = CVode(sctx_p->cvode_mem, netIn.tMax, sctx_p->Y, &current_time, CV_ONE_STEP);
@@ -698,7 +714,11 @@ namespace gridfire::solver {
         NetOut netOut;
         netOut.composition = outputComposition;
         netOut.energy = accumulated_energy;
-        utils::check_cvode_flag(CVodeGetNumSteps(sctx_p->cvode_mem, reinterpret_cast<long int *>(&netOut.num_steps)), "CVodeGetNumSteps");
+        // Steps since the last CVODE (re)initialisation, plus those taken before any trigger-driven reinitialisations.
+        // (Read into a long: writing CVODE's long through an int* was undefined behaviour.)
+        long int steps_since_reinit = 0;
+        utils::check_cvode_flag(CVodeGetNumSteps(sctx_p->cvode_mem, &steps_since_reinit), "CVodeGetNumSteps");
+        netOut.num_steps = static_cast<int>(total_steps + static_cast<size_t>(steps_since_reinit));
 
         LOG_TRACE_L2(m_logger, "generating final nuclear energy generation rate derivatives...");
         auto [dEps_dT, dEps_dRho] = m_engine.calculateEpsDerivatives(
@@ -957,12 +977,31 @@ namespace gridfire::solver {
         }
         LOG_TRACE_L2(solver_instance->m_logger, "Done transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
 
-        // For now assume that the energy derivatives wrt. abundances are zero
-        // TODO: Need a better way to build this part of the output jacobian so it properly pushes the solver
-        //       in the right direction. Currently we effectively are doing a fixed point iteration in energy space.
-        for (long int i = 1; i < N; ++i) {
-            J_data[(N - 1) * N + i] = 0.0; // df(energy_dot)/df(y_i)
-            J_data[i * N + (N - 1)] = 0.0; // df(f_i)/df(energy_dot)
+        // Energy accumulator row: eps = -sum_i (dY_i/dt) m_i u N_A c^2 - eps_nu, so d(eps)/dY_j = -sum_i J_ij m_i u N_A c^2
+        // up to the neutrino term. Mass excesses (m_i - A_i) are used instead of masses: sum_i A_i J_ij = 0 by baryon
+        // conservation, so this is the same quantity without cancelling terms of order A_i. Without this row Newton
+        // treats the accumulator as a fixed-point iteration, which stalls whenever its tolerance is tight. The
+        // neutrino part (a few percent of eps) is omitted; it only makes that component converge slightly slower.
+        // Nothing depends on the accumulator, so its column stays zero.
+        static const double erg_per_amu_per_mol = [] {
+            const auto& k = fourdst::constant::Constants::getInstance();
+            const double c = k.get("c").value;
+            return k.get("u").value * k.get("N_a").value * c * c;
+        }();
+        const auto& species_list = engine->getNetworkSpecies(data->ctx);
+        std::vector<double> mass_excess(numSpecies);
+        for (size_t i = 0; i < numSpecies; ++i) {
+            mass_excess[i] = species_list[i].mass() - static_cast<double>(species_list[i].a());
+        }
+        for (size_t j = 0; j < numSpecies; ++j) {
+            double dEps_dYj = 0.0;
+            for (size_t i = 0; i < numSpecies; ++i) {
+                dEps_dYj -= J_data[j * N + i] * mass_excess[i];
+            }
+            J_data[j * N + (N - 1)] = dEps_dYj * erg_per_amu_per_mol; // row: energy, column: Y_j
+        }
+        for (long int i = 0; i < N; ++i) {
+            J_data[(N - 1) * N + i] = 0.0; // column: energy (nothing depends on the accumulator)
         }
 
         return 0;
@@ -1091,6 +1130,8 @@ namespace gridfire::solver {
             throw std::runtime_error("Failed to create constraints vector for CVODE");
         }
         N_VConst(1.0, sctx_p->constraints); // Set all constraints to >= 0 (note this is where the flag values are set)
+        // The trailing energy accumulator is unconstrained: net-endothermic burning legitimately drives it negative
+        N_VGetArrayPointer(sctx_p->constraints)[N - 1] = 0.0;
 
         utils::check_cvode_flag(CVodeSetConstraints(sctx_p->cvode_mem, sctx_p->constraints), "CVodeSetConstraints");
 

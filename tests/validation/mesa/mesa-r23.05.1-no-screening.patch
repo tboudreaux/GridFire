@@ -1,0 +1,25 @@
+diff --git a/rates/private/screen.f90 b/rates/private/screen.f90
+index c9c48fd..ab823b2 100644
+--- a/rates/private/screen.f90
++++ b/rates/private/screen.f90
+@@ -58,8 +58,9 @@
+       
+          include 'formats'
+ 
+-         if (screening_mode == no_screening .or. zbar == 0d0) return
+-
++         ! GridFire validation patch: set the state before the early return. screen_pair compares sc% logT with its
++         ! low-temperature limit before checking the screening mode, so with no_screening an unset logT gave a
++         ! screening factor of 0 (every screened rate zero) instead of 1.
+          sc% temp  = temp
+          sc% den   = den
+          sc% logT  = logT
+@@ -68,6 +69,8 @@
+          sc% abar  = abar
+          sc% z2bar = z2bar
+ 
++         if (screening_mode == no_screening .or. zbar == 0d0) return
++
+          ! get the info that depends only on temp, den, and overall composition         
+ 
+          sc% ytot     = 1.0d0/abar
