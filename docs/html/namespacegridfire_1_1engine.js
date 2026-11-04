@@ -10,6 +10,7 @@ var namespacegridfire_1_1engine =
     [ "AdaptiveEngineView", "classgridfire_1_1engine_1_1_adaptive_engine_view.html", "classgridfire_1_1engine_1_1_adaptive_engine_view" ],
     [ "DefinedEngineView", "classgridfire_1_1engine_1_1_defined_engine_view.html", "classgridfire_1_1engine_1_1_defined_engine_view" ],
     [ "DynamicEngine", "classgridfire_1_1engine_1_1_dynamic_engine.html", "classgridfire_1_1engine_1_1_dynamic_engine" ],
+    [ "EnergyChannels", "structgridfire_1_1engine_1_1_energy_channels.html", "structgridfire_1_1engine_1_1_energy_channels" ],
     [ "EnergyDerivatives", "structgridfire_1_1engine_1_1_energy_derivatives.html", "structgridfire_1_1engine_1_1_energy_derivatives" ],
     [ "Engine", "classgridfire_1_1engine_1_1_engine.html", "classgridfire_1_1engine_1_1_engine" ],
     [ "EngineView", "classgridfire_1_1engine_1_1_engine_view.html", "classgridfire_1_1engine_1_1_engine_view" ],
@@ -73,6 +74,7 @@ var namespacegridfire_1_1engine =
       [ "NOT_PRESENT", "namespacegridfire_1_1engine.html#a83c9d755597668bba3cf00cd0ea10ee3a4b8e04af593e6ce16901570c52fe5607", null ]
     ] ],
     [ "build_nuclear_network", "namespacegridfire_1_1engine.html#a7b64607db49cfc042cbee63be5351549", null ],
+    [ "classify_energy_channels", "namespacegridfire_1_1engine.html#a4ccd7d931681c09abe22f2b8c5b722fb", null ],
     [ "engine_type_to_string", "namespacegridfire_1_1engine.html#a589015f6509c051c16b3e4ebc7550dd2", null ],
     [ "EngineStatus_to_string", "namespacegridfire_1_1engine.html#a006018e8e5f80ddb857009dbad962753", null ],
     [ "has_flag", "namespacegridfire_1_1engine.html#a7377e1152d165cfb9eadc16c5dc2f492", null ],

@@ -54,9 +54,10 @@ var searchData=
   ['fourthorder_51',['FourthOrder',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a100e3bf0197221c19b222badf42aa964',1,'gridfire::engine']]],
   ['from_20source_52',['1.2 Development from Source',['../md_docs_2static_2usage.html#autotoc_md66',1,'']]],
   ['front_53',['FRONT',['../classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html#a7002ebbef966f89b2426f5ea0df33329aa692ae3131928d57ddcd2408d6b44d71',1,'gridfire::partition::RauscherThielemannPartitionFunction']]],
-  ['full_54',['Full',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75',1,'gridfire::engine']]],
-  ['func_5fcode_55',['func_code',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a7f54bd3e068a61b4e90de8d8f4d7207a',1,'gridfire::io::gen::PyFunctionDef']]],
-  ['func_5fname_56',['func_name',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a795d0022f7c645fc443781dc6bf35121',1,'gridfire::io::gen::PyFunctionDef']]],
-  ['functions_57',['Available Partition Functions',['../index.html#autotoc_md34',1,'']]],
-  ['funding_58',['Funding',['../index.html#autotoc_md4',1,'']]]
+  ['fuels_54',['fuels',['../structgridfire_1_1config_1_1_energy_channel_config.html#a9fac899668c36196a6ab85a68786f208',1,'gridfire::config::EnergyChannelConfig']]],
+  ['full_55',['Full',['../namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75',1,'gridfire::engine']]],
+  ['func_5fcode_56',['func_code',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a7f54bd3e068a61b4e90de8d8f4d7207a',1,'gridfire::io::gen::PyFunctionDef']]],
+  ['func_5fname_57',['func_name',['../structgridfire_1_1io_1_1gen_1_1_py_function_def.html#a795d0022f7c645fc443781dc6bf35121',1,'gridfire::io::gen::PyFunctionDef']]],
+  ['functions_58',['Available Partition Functions',['../index.html#autotoc_md34',1,'']]],
+  ['funding_59',['Funding',['../index.html#autotoc_md4',1,'']]]
 ];

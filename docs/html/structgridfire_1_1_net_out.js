@@ -7,6 +7,8 @@ var structgridfire_1_1_net_out =
     [ "dlnEps_dlnRho", "structgridfire_1_1_net_out.html#a977c172d34d57b905a908347fee141e9", null ],
     [ "dlnEps_dlnT", "structgridfire_1_1_net_out.html#a231ebb3c4731182b951e20afd500b41f", null ],
     [ "energy", "structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6", null ],
+    [ "energy_channel_names", "structgridfire_1_1_net_out.html#adb4f841eec300e6fac8083a92fff801f", null ],
+    [ "eps_by_channel", "structgridfire_1_1_net_out.html#a8d01d595e14c41055b17fe37b522a668", null ],
     [ "eps_nuc", "structgridfire_1_1_net_out.html#a45642cab003f11cc0936e2f4a91a4ca4", null ],
     [ "neutrino_energy_loss_rate", "structgridfire_1_1_net_out.html#a3ee94fec54cebb6e2fba3e43cbafd8f3", null ],
     [ "num_steps", "structgridfire_1_1_net_out.html#a51c16703132cf739ec2fd89eae7badd6", null ],

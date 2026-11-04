@@ -1,5 +1,6 @@
 var classgridfire_1_1engine_1_1_dynamic_engine =
 [
+    [ "calculateEnergyChannels", "classgridfire_1_1engine_1_1_dynamic_engine.html#ac7786da06b52ba15298df3db015e4496", null ],
     [ "calculateEpsDerivatives", "classgridfire_1_1engine_1_1_dynamic_engine.html#a3fd5d4f3c58d1790b7a517b5ef888eaf", null ],
     [ "calculateMolarReactionFlow", "classgridfire_1_1engine_1_1_dynamic_engine.html#abf0f13b9eae66da6119e6fca826379e8", null ],
     [ "collectComposition", "classgridfire_1_1engine_1_1_dynamic_engine.html#a078a16d21f2d7de9636c5bc6a05ddfec", null ],
@@ -7,6 +8,7 @@ var classgridfire_1_1engine_1_1_dynamic_engine =
     [ "generateJacobianMatrix", "classgridfire_1_1engine_1_1_dynamic_engine.html#ab6d95491f017feb4c43d9fa05739fcd0", null ],
     [ "generateJacobianMatrix", "classgridfire_1_1engine_1_1_dynamic_engine.html#a78f7b315bfa0a1f34d8fd5ab652b6934", null ],
     [ "generateJacobianMatrix", "classgridfire_1_1engine_1_1_dynamic_engine.html#a983551b5fef4610799c062cb5be2b1c7", null ],
+    [ "getEnergyChannelNames", "classgridfire_1_1engine_1_1_dynamic_engine.html#abca0a8fa907bd1192a7e35770da583b8", null ],
     [ "getInactiveNetworkReactions", "classgridfire_1_1engine_1_1_dynamic_engine.html#ac87099ff654ca30a8d8224f4779e1a15", null ],
     [ "getInactiveReactionMolarReactionFlow", "classgridfire_1_1engine_1_1_dynamic_engine.html#adc0a33fa6e9d8de3b433fef55f3a6972", null ],
     [ "getMostRecentRHSCalculation", "classgridfire_1_1engine_1_1_dynamic_engine.html#a30cc7809d53540bd3407d971de8eec48", null ],

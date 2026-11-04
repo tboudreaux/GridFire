@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -134,12 +134,12 @@ Functions</h2></td></tr>
 <tr class="separator:aba493cbe050ed688d5850914998d145e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed17ad088b2c25c0c2bf5549527e53fd" id="r_aed17ad088b2c25c0c2bf5549527e53fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a> (void *ptr)</td></tr>
 <tr class="separator:aed17ad088b2c25c0c2bf5549527e53fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac78ce940de632943d30dd7b2e5d1d2fb" id="r_ac78ce940de632943d30dd7b2e5d1d2fb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac78ce940de632943d30dd7b2e5d1d2fb">gf_evolve_impl</a> (const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a> type, void *ptr, const void *Y_in, const size_t num_species, const void *T, const void *rho, const double tMax, const double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, const <a class="el" href="struct_g_f_instantaneous_outputs.html">GFInstantaneousOutputs</a> *instantaneous)</td></tr>
-<tr class="separator:ac78ce940de632943d30dd7b2e5d1d2fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b8f950c57fe06a352002f1b52b0f59f" id="r_a9b8f950c57fe06a352002f1b52b0f59f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b8f950c57fe06a352002f1b52b0f59f">gf_evolve</a> (const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a> type, void *ptr, const void *Y_in, const size_t num_species, const void *T, const void *rho, const double tMax, const double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost)</td></tr>
-<tr class="separator:a9b8f950c57fe06a352002f1b52b0f59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae35433ed47ccd35b4bd342695bea1be9" id="r_ae35433ed47ccd35b4bd342695bea1be9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae35433ed47ccd35b4bd342695bea1be9">gf_evolve_ext</a> (const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a> type, void *ptr, const void *Y_in, const size_t num_species, const void *T, const void *rho, const double tMax, const double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, void *eps_nuc, void *dlnEps_dlnT, void *dlnEps_dlnRho, void *neutrino_energy_loss_rate)</td></tr>
-<tr class="separator:ae35433ed47ccd35b4bd342695bea1be9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae76734eeac2d77c0b0c74648f4ad5292" id="r_ae76734eeac2d77c0b0c74648f4ad5292"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae76734eeac2d77c0b0c74648f4ad5292">gf_evolve</a> (const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a> type, void *ptr, const void *Y_in, const size_t num_species, const void *T, const void *rho, const double tMax, const double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, void *eps_nuc, void *dlnEps_dlnT, void *dlnEps_dlnRho, void *neutrino_energy_loss_rate, void *eps_by_channel)</td></tr>
+<tr class="separator:ae76734eeac2d77c0b0c74648f4ad5292"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35461bcef871f0358a24e4c8e82ba12e" id="r_a35461bcef871f0358a24e4c8e82ba12e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35461bcef871f0358a24e4c8e82ba12e">gf_get_num_energy_channels</a> (void *ptr, size_t *num_channels)</td></tr>
+<tr class="separator:a35461bcef871f0358a24e4c8e82ba12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc3aeada4ae7b8587ea976617706b528" id="r_acc3aeada4ae7b8587ea976617706b528"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc3aeada4ae7b8587ea976617706b528">gf_get_energy_channel_name</a> (void *ptr, const size_t index, const char **name)</td></tr>
+<tr class="separator:acc3aeada4ae7b8587ea976617706b528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a851d8c23bdc73852988b870c5f409639" id="r_a851d8c23bdc73852988b870c5f409639"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a851d8c23bdc73852988b870c5f409639">gf_get_last_error_message</a> (void *ptr)</td></tr>
 <tr class="separator:a851d8c23bdc73852988b870c5f409639"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45e1894a8f62c10d8b239613705a420a" id="r_a45e1894a8f62c10d8b239613705a420a"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45e1894a8f62c10d8b239613705a420a">gf_error_code_to_string</a> (const int error_code)</td></tr>
@@ -211,100 +211,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9b8f950c57fe06a352002f1b52b0f59f" name="a9b8f950c57fe06a352002f1b52b0f59f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b8f950c57fe06a352002f1b52b0f59f">&#9670;&#160;</a></span>gf_evolve()</h2>
+<a id="ae76734eeac2d77c0b0c74648f4ad5292" name="ae76734eeac2d77c0b0c74648f4ad5292"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae76734eeac2d77c0b0c74648f4ad5292">&#9670;&#160;</a></span>gf_evolve()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int gf_evolve </td>
-          <td>(</td>
-          <td class="paramtype">const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>Y_in</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>tMax</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>dt0</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>Y_out</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>energy_out</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>dEps_dT</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>dEps_dRho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>specific_neutrino_energy_loss</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>specific_neutrino_flux</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae35433ed47ccd35b4bd342695bea1be9" name="ae35433ed47ccd35b4bd342695bea1be9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae35433ed47ccd35b4bd342695bea1be9">&#9670;&#160;</a></span>gf_evolve_ext()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int gf_evolve_ext </td>
           <td>(</td>
           <td class="paramtype">enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>, </td>
         </tr>
@@ -396,110 +310,19 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>neutrino_energy_loss_rate</em></span>&#160;)</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>neutrino_energy_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>eps_by_channel</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Same as gf_evolve, but additionally returns the instantaneous quantities at the final state. These are evaluated at the same composition, temperature, and density as dEps_dT and dEps_dRho, so the four are mutually consistent: eps_nuc - specific nuclear energy generation rate net of reaction neutrino losses [erg/g/s] dlnEps_dlnT - (T / eps_nuc) * dEps_dT (0 if eps_nuc == 0) dlnEps_dlnRho - (rho / eps_nuc) * dEps_dRho (0 if eps_nuc == 0) neutrino_energy_loss_rate - reaction neutrino energy loss rate [erg/g/s] For MULTI_ZONE each of these is an array with one entry per zone. </p>
-
-</div>
-</div>
-<a id="ac78ce940de632943d30dd7b2e5d1d2fb" name="ac78ce940de632943d30dd7b2e5d1d2fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac78ce940de632943d30dd7b2e5d1d2fb">&#9670;&#160;</a></span>gf_evolve_impl()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int gf_evolve_impl </td>
-          <td>(</td>
-          <td class="paramtype">const enum <a class="el" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d">GF_TYPE</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>Y_in</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>tMax</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>dt0</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>Y_out</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>energy_out</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>dEps_dT</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>dEps_dRho</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>specific_neutrino_energy_loss</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>specific_neutrino_flux</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="struct_g_f_instantaneous_outputs.html">GFInstantaneousOutputs</a> *</td>          <td class="paramname"><span class="paramname"><em>instantaneous</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Evolve one zone (SINGLE_ZONE) or every zone (MULTI_ZONE) for tMax seconds.</p>
+<p>For MULTI_ZONE, T, rho, and every scalar output are arrays with one entry per zone, and Y_in / Y_out hold num_species abundances per zone.</p>
+<p>Outputs: energy_out - specific energy released over tMax [erg/g] dEps_dT, dEps_dRho - partial derivatives of eps_nuc at the final state (fixed composition) specific_neutrino_energy_loss - neutrino energy lost over tMax [erg/g] specific_neutrino_flux - neutrinos emitted over tMax [1/g] mass_lost - mass in species outside the registered species list eps_nuc - instantaneous energy generation rate at the final state, net of neutrinos [erg/g/s] dlnEps_dlnT, dlnEps_dlnRho - logarithmic derivatives of eps_nuc (0 if eps_nuc == 0) neutrino_energy_loss_rate - instantaneous reaction neutrino loss rate at the final state [erg/g/s] eps_by_channel - eps_nuc split by energy channel, num_channels entries per zone (see gf_get_num_energy_channels); sums to eps_nuc</p>
+<p>eps_nuc, its derivatives, and eps_by_channel are all evaluated at the same final state. </p>
 
 </div>
 </div>
@@ -524,6 +347,33 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="acc3aeada4ae7b8587ea976617706b528" name="acc3aeada4ae7b8587ea976617706b528"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc3aeada4ae7b8587ea976617706b528">&#9670;&#160;</a></span>gf_get_energy_channel_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int gf_get_energy_channel_name </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char **</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Name of energy channel <code>index</code> (e.g. "H_pp", "H_CNO", "He"). The string is owned by the context. </p>
+
+</div>
+</div>
 <a id="a851d8c23bdc73852988b870c5f409639" name="a851d8c23bdc73852988b870c5f409639"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a851d8c23bdc73852988b870c5f409639">&#9670;&#160;</a></span>gf_get_last_error_message()</h2>
 
@@ -538,6 +388,28 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a35461bcef871f0358a24e4c8e82ba12e" name="a35461bcef871f0358a24e4c8e82ba12e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35461bcef871f0358a24e4c8e82ba12e">&#9670;&#160;</a></span>gf_get_num_energy_channels()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int gf_get_num_energy_channels </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *</td>          <td class="paramname"><span class="paramname"><em>num_channels</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of energy channels reported per zone by gf_evolve (valid once the engine has been constructed). </p>
 
 </div>
 </div>

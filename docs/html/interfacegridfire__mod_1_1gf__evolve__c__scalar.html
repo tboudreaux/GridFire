@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,12 +108,12 @@ $(function(){initNavTree('interfacegridfire__mod_1_1gf__evolve__c__scalar.html',
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a83fb2200772097ff0e653afc6701f0df" id="r_a83fb2200772097ff0e653afc6701f0df"><td class="memItemLeft" align="right" valign="top">integer(c_int) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83fb2200772097ff0e653afc6701f0df">gf_evolve_c_scalar</a> (ctx_type, ptr, y_in, num_species, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nue_loss, nu_flux, mass_lost)</td></tr>
-<tr class="separator:a83fb2200772097ff0e653afc6701f0df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a221c62e63c09ff569276e64d2eeab975" id="r_a221c62e63c09ff569276e64d2eeab975"><td class="memItemLeft" align="right" valign="top">integer(c_int) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a221c62e63c09ff569276e64d2eeab975">gf_evolve_c_scalar</a> (ctx_type, ptr, y_in, num_species, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nue_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate, eps_by_channel)</td></tr>
+<tr class="separator:a221c62e63c09ff569276e64d2eeab975"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a83fb2200772097ff0e653afc6701f0df" name="a83fb2200772097ff0e653afc6701f0df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83fb2200772097ff0e653afc6701f0df">&#9670;&#160;</a></span>gf_evolve_c_scalar()</h2>
+<a id="a221c62e63c09ff569276e64d2eeab975" name="a221c62e63c09ff569276e64d2eeab975"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a221c62e63c09ff569276e64d2eeab975">&#9670;&#160;</a></span>gf_evolve_c_scalar()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +191,32 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>&#160;)</td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_nuc</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dlneps_dlnt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dlneps_dlnrho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>nue_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_by_channel</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

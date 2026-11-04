@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -128,6 +128,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract class for engines supporting Jacobian and stoichiometry operations.  <a href="classgridfire_1_1engine_1_1_dynamic_engine.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_energy_channels.html">EnergyChannels</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition of a reaction network into named energy generation channels.  <a href="structgridfire_1_1engine_1_1_energy_channels.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure holding derivatives of energy generation rate with respect to T and rho.  <a href="structgridfire_1_1engine_1_1_energy_derivatives.html#details">More...</a><br /></td></tr>
@@ -272,6 +275,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a7b64607db49cfc042cbee63be5351549" id="r_a7b64607db49cfc042cbee63be5351549"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b64607db49cfc042cbee63be5351549">build_nuclear_network</a> (const fourdst::composition::CompositionAbstract &amp;composition, const <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html">rates::weak::WeakRateInterpolator</a> &amp;weakInterpolator, <a class="el" href="#a55cd7c313bbfafd5b6a1bcd6329ed99b">BuildDepthType</a> maxLayers=<a class="el" href="#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75">NetworkBuildDepth::Full</a>, <a class="el" href="#a775506bb881280f73264db27cb8388f9">NetworkConstructionFlags</a> ReactionTypes=<a class="el" href="#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee">NetworkConstructionFlags::DEFAULT</a>)</td></tr>
 <tr class="memdesc:a7b64607db49cfc042cbee63be5351549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a nuclear reaction network from the Reaclib library based on an initial composition.  <br /></td></tr>
 <tr class="separator:a7b64607db49cfc042cbee63be5351549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ccd7d931681c09abe22f2b8c5b722fb" id="r_a4ccd7d931681c09abe22f2b8c5b722fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1engine_1_1_energy_channels.html">EnergyChannels</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ccd7d931681c09abe22f2b8c5b722fb">classify_energy_channels</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;fuels, bool splitHydrogenPPCNO)</td></tr>
+<tr class="memdesc:a4ccd7d931681c09abe22f2b8c5b722fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classify reactions into energy channels from an ordered list of fuels.  <br /></td></tr>
+<tr class="separator:a4ccd7d931681c09abe22f2b8c5b722fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59778f067222e7c5e8932a7101b25807" id="r_a59778f067222e7c5e8932a7101b25807"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1engine_1_1_priming_report.html">PrimingReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59778f067222e7c5e8932a7101b25807">primeNetwork</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, const <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html">GraphEngine</a> &amp;engine, const std::optional&lt; std::vector&lt; <a class="el" href="namespacegridfire_1_1reaction.html#a026997f11e811fa7754ac9121c4ba74e">reaction::ReactionType</a> &gt; &gt; &amp;ignoredReactionTypes)</td></tr>
 <tr class="memdesc:a59778f067222e7c5e8932a7101b25807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primes absent species in the network to their equilibrium abundances.  <br /></td></tr>
 <tr class="separator:a59778f067222e7c5e8932a7101b25807"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -648,6 +654,50 @@ Resolved integer depth from maxLayers must not be zero. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::logic_error</td><td>If the resolved network depth is zero (no reactions can be collected). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4ccd7d931681c09abe22f2b8c5b722fb" name="a4ccd7d931681c09abe22f2b8c5b722fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ccd7d931681c09abe22f2b8c5b722fb">&#9670;&#160;</a></span>classify_energy_channels()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1engine_1_1_energy_channels.html">EnergyChannels</a> gridfire::engine::classify_energy_channels </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>fuels</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>splitHydrogenPPCNO</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Classify reactions into energy channels from an ordered list of fuels. </p>
+<p>The user supplies fuels (e.g. H-1, He-4, C-12, Ne-20, O-16, Si-28), ordered by burning stage; no reactions are listed by hand. The classification is purely topological and runs once per network:</p>
+<ol type="1">
+<li>Each fuel is labelled with its own stage. Every other species inherits the lowest stage of the reactions that produce it (a fixed point over the reaction graph), so intermediates such as He-3, Be-7, or N-13 are labelled as hydrogen burning products.</li>
+<li>Each reaction takes the label of its lightest reactant (the "projectile"). This places He-3 + He-4 in the pp chain while placing N-14 + He-4 in helium burning.</li>
+<li>Optionally, hydrogen burning is split into pp and CNO: a hydrogen-stage reaction involving any nucleus with Z &gt;= 6 is CNO (this also captures the NeNa and MgAl cycles).</li>
+</ol>
+<p>Reactions whose lightest reactant has no label (no fuel lineage) are placed in "other".</p>
+<dl class="section note"><dt>Note</dt><dd>During advanced burning, alpha captures are labelled as helium burning even when the alphas come from photodisintegration (e.g. Ne-20(a,g)Mg-24 during neon burning).</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reactions</td><td>Reactions to classify. </td></tr>
+    <tr><td class="paramname">fuels</td><td>Fuel species ordered by burning stage. </td></tr>
+    <tr><td class="paramname">splitHydrogenPPCNO</td><td>Split the H-1 stage into "H_pp" and "H_CNO". </td></tr>
   </table>
   </dd>
 </dl>

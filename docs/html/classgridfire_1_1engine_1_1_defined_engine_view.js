@@ -1,6 +1,7 @@
 var classgridfire_1_1engine_1_1_defined_engine_view =
 [
     [ "DefinedEngineView", "classgridfire_1_1engine_1_1_defined_engine_view.html#ada2f326789dc8ae8305617c8d700ae05", null ],
+    [ "calculateEnergyChannels", "classgridfire_1_1engine_1_1_defined_engine_view.html#ac6b98597523a1917f627cb88b6d07b2a", null ],
     [ "calculateEpsDerivatives", "classgridfire_1_1engine_1_1_defined_engine_view.html#ab6e0458acf7855ff6472b96801048479", null ],
     [ "calculateMolarReactionFlow", "classgridfire_1_1engine_1_1_defined_engine_view.html#afb78ba1245f5b61a29d6163c4548f6b6", null ],
     [ "calculateRHSAndEnergy", "classgridfire_1_1engine_1_1_defined_engine_view.html#a297412202e82ab25b6fc0a8a27a433e7", null ],
@@ -13,6 +14,7 @@ var classgridfire_1_1engine_1_1_defined_engine_view =
     [ "generateJacobianMatrix", "classgridfire_1_1engine_1_1_defined_engine_view.html#a37ba76a5a0d0cb46d93df1982f196f11", null ],
     [ "generateJacobianMatrix", "classgridfire_1_1engine_1_1_defined_engine_view.html#a1457e3aa9caae5d2fba17adc62f47c79", null ],
     [ "getBaseEngine", "classgridfire_1_1engine_1_1_defined_engine_view.html#ab6f82ef31b99bfe8a6c4e475bcdb96f8", null ],
+    [ "getEnergyChannelNames", "classgridfire_1_1engine_1_1_defined_engine_view.html#a9166e88d90d4edb1f340f8a56c87097b", null ],
     [ "getMostRecentRHSCalculation", "classgridfire_1_1engine_1_1_defined_engine_view.html#a8d2685b85a46c3979ca23db7eaa618b5", null ],
     [ "getNetworkReactions", "classgridfire_1_1engine_1_1_defined_engine_view.html#acec78c23ab9a29c6fe930cb54388e6eb", null ],
     [ "getNetworkSpecies", "classgridfire_1_1engine_1_1_defined_engine_view.html#a8dfbe8792e112e33623cf5bf44696376", null ],

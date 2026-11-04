@@ -1,89 +1,94 @@
 <map id="gridfire::engine::GraphEngine" name="gridfire::engine::GraphEngine">
-<area shape="rect" id="Node000001" title="A reaction network engine that uses a graph&#45;based representation." alt="" coords="1747,537,1937,562"/>
-<area shape="rect" id="Node000033" href="$classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html" title=" " alt="" coords="2045,605,2234,646"/>
-<area shape="poly" id="edge39_Node000033_Node000001" title=" " alt="" coords="1903,565,1961,581,2049,605,2044,605,1960,586,1903,570"/>
-<area shape="rect" id="Node000002" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="1360,81,1526,122"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1541,88,1588,89,1637,96,1684,112,1725,138,1748,169,1769,215,1788,272,1804,334,1828,455,1841,538,1836,535,1823,456,1799,335,1783,273,1764,217,1744,172,1722,142,1681,117,1636,101,1588,94,1543,93"/>
-<area shape="rect" id="Node000003" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="968,89,1122,114"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1137,99,1362,101,1357,103,1139,104"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="1164,208,1320,264"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1319,268,1345,277,1402,292,1453,299,1542,304,1585,308,1628,317,1674,336,1725,366,1748,385,1768,407,1801,455,1824,501,1838,537,1834,535,1820,503,1796,457,1764,410,1744,389,1722,370,1672,340,1627,322,1584,313,1542,309,1453,305,1401,297,1343,282,1319,273"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="628,342,708,368"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="712,333,819,292,884,272,950,255,1061,239,1166,236,1161,238,1062,245,951,260,885,277,821,297,715,338"/>
-<area shape="rect" id="Node000014" href="$classgridfire_1_1reaction_1_1_reaction_set.html" title=" " alt="" coords="1386,340,1500,381"/>
-<area shape="poly" id="edge17_Node000014_Node000005" title=" " alt="" coords="723,364,828,384,951,399,1045,404,1139,399,1272,385,1388,369,1383,371,1273,390,1140,405,1045,409,950,405,828,389,724,369"/>
-<area shape="rect" id="Node000018" title=" " alt="" coords="972,335,1118,375"/>
-<area shape="poly" id="edge19_Node000018_Node000005" title=" " alt="" coords="723,352,974,354,969,356,724,358"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="298,335,423,375"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="438,352,630,353,626,357,440,357"/>
-<area shape="rect" id="Node000007" href="$structgridfire_1_1engine_1_1_graph_engine_1_1constants.html" title=" " alt="" coords="1348,212,1538,253"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1553,222,1597,225,1642,233,1686,248,1725,272,1756,301,1781,336,1800,374,1816,413,1834,486,1842,538,1837,535,1829,487,1810,415,1795,376,1776,339,1752,305,1722,276,1683,253,1641,238,1596,230,1554,227"/>
-<area shape="rect" id="Node000008" href="$classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html" title="3D table interpolator for tabulated weak reaction data by isotope." alt="" coords="1366,147,1521,187"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1536,154,1584,155,1633,162,1682,177,1725,204,1761,241,1789,286,1810,335,1825,384,1840,475,1843,538,1838,535,1835,476,1819,385,1805,336,1784,289,1757,245,1722,208,1680,182,1632,167,1583,160,1537,159"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="953,139,1137,195"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1152,164,1367,166,1363,168,1154,170"/>
-<area shape="rect" id="Node000010" href="$structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html" title="Regular 2D grid and payloads for a single isotope (A,Z)." alt="" coords="600,147,736,187"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="751,164,955,166,950,168,753,169"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="288,129,433,154"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="448,146,602,160,597,163,450,151"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="248,179,473,219"/>
-<area shape="poly" id="edge11_Node000010_Node000012" title=" " alt="" coords="487,184,565,175,602,173,597,176,565,181,490,188"/>
-<area shape="rect" id="Node000013" href="$structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html" title="Interpolated weak&#45;rate payload at a single state." alt="" coords="5,179,143,219"/>
-<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="157,197,249,197,245,201,160,201"/>
-<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="1515,372,1617,401,1672,422,1725,447,1757,468,1786,492,1831,537,1826,536,1783,496,1754,473,1722,452,1670,427,1615,406,1515,377"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="965,463,1125,519"/>
-<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="1139,496,1185,493,1232,485,1278,470,1318,447,1328,434,1330,421,1332,406,1342,390,1362,376,1388,369,1383,371,1365,381,1346,394,1337,407,1335,422,1332,436,1322,451,1280,475,1233,491,1186,498,1141,501"/>
-<area shape="rect" id="Node000016" title=" " alt="" coords="589,476,747,517"/>
-<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="762,492,967,491,962,493,764,498"/>
-<area shape="rect" id="Node000017" href="$classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source." alt="" coords="303,536,418,577"/>
-<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="431,540,591,510,586,513,434,545"/>
-<area shape="rect" id="Node000020" title=" " alt="" coords="1375,405,1511,476"/>
-<area shape="poly" id="edge24_Node000020_Node000017" title=" " alt="" coords="432,554,740,551,939,543,1139,528,1231,522,1270,515,1319,501,1343,486,1372,473,1377,471,1345,491,1321,505,1272,521,1232,527,1140,534,939,548,741,556,434,559"/>
-<area shape="poly" id="edge38_Node000033_Node000017" title=" " alt="" coords="366,589,387,720,408,802,436,886,475,964,499,999,526,1029,556,1054,589,1073,626,1085,667,1090,1843,1090,1881,1086,1916,1074,1947,1057,1976,1033,2001,1005,2024,974,2062,902,2091,826,2112,753,2133,648,2137,644,2117,755,2096,828,2067,904,2029,976,2005,1009,1979,1037,1950,1061,1918,1079,1882,1091,1843,1095,667,1095,625,1091,587,1078,553,1059,522,1033,495,1002,471,967,431,888,402,803,382,721,364,594"/>
-<area shape="poly" id="edge18_Node000014_Node000018" title=" " alt="" coords="1133,354,1388,359,1383,360,1134,359"/>
-<area shape="rect" id="Node000019" title=" " alt="" coords="980,269,1110,310"/>
-<area shape="poly" id="edge20_Node000014_Node000019" title=" " alt="" coords="1125,300,1320,334,1388,348,1383,349,1320,339,1125,305"/>
-<area shape="poly" id="edge21_Node000001_Node000020" title=" " alt="" coords="1527,456,1724,507,1807,536,1801,536,1723,512,1527,461"/>
-<area shape="rect" id="Node000021" title=" " alt="" coords="988,613,1102,638"/>
-<area shape="poly" id="edge22_Node000020_Node000021" title=" " alt="" coords="1117,618,1241,605,1292,597,1318,588,1327,577,1332,566,1331,541,1330,515,1334,501,1342,487,1356,472,1372,465,1377,462,1360,477,1346,490,1339,503,1336,515,1337,541,1337,567,1332,579,1322,592,1293,602,1242,611,1118,623"/>
-<area shape="rect" id="Node000024" title=" " alt="" coords="1354,564,1533,620"/>
-<area shape="poly" id="edge27_Node000024_Node000021" title=" " alt="" coords="1116,633,1214,640,1267,639,1320,633,1377,620,1372,621,1320,638,1267,644,1214,645,1117,639"/>
-<area shape="rect" id="Node000022" title=" " alt="" coords="592,605,744,646"/>
-<area shape="poly" id="edge23_Node000021_Node000022" title=" " alt="" coords="759,623,990,625,985,627,760,628"/>
-<area shape="rect" id="Node000023" title=" " alt="" coords="1376,500,1511,541"/>
-<area shape="poly" id="edge25_Node000001_Node000023" title=" " alt="" coords="1526,524,1750,542,1744,543,1526,529"/>
-<area shape="poly" id="edge26_Node000001_Node000024" title=" " alt="" coords="1548,578,1749,559,1744,560,1549,584"/>
-<area shape="rect" id="Node000025" title=" " alt="" coords="1354,644,1533,700"/>
-<area shape="poly" id="edge28_Node000001_Node000025" title=" " alt="" coords="1547,646,1633,624,1722,597,1810,564,1815,562,1724,602,1635,629,1549,652"/>
-<area shape="rect" id="Node000026" title=" " alt="" coords="1362,724,1525,780"/>
-<area shape="poly" id="edge29_Node000001_Node000026" title=" " alt="" coords="1539,741,1586,731,1635,715,1681,692,1721,661,1731,646,1733,630,1735,613,1745,595,1769,575,1795,564,1800,562,1772,579,1749,598,1740,614,1739,631,1736,648,1725,665,1684,697,1637,720,1588,736,1541,746"/>
-<area shape="rect" id="Node000027" title=" " alt="" coords="1346,804,1540,845"/>
-<area shape="poly" id="edge30_Node000001_Node000027" title=" " alt="" coords="1555,823,1600,817,1644,805,1686,785,1721,756,1734,737,1739,718,1735,679,1730,639,1734,617,1745,595,1767,574,1791,564,1796,562,1770,579,1749,598,1739,619,1735,639,1740,679,1744,719,1739,739,1725,760,1689,789,1646,810,1601,822,1556,829"/>
-<area shape="rect" id="Node000028" href="$classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions." alt="" coords="981,804,1109,845"/>
-<area shape="poly" id="edge31_Node000027_Node000028" title=" " alt="" coords="1124,822,1349,824,1343,825,1124,827"/>
-<area shape="rect" id="Node000029" title=" " alt="" coords="1376,869,1511,910"/>
-<area shape="poly" id="edge32_Node000001_Node000029" title=" " alt="" coords="1526,898,1577,898,1629,891,1680,874,1702,860,1721,843,1731,823,1736,795,1735,722,1733,649,1736,618,1745,595,1766,574,1790,564,1795,562,1769,579,1750,598,1741,619,1738,649,1740,722,1741,795,1736,825,1725,846,1705,864,1682,878,1631,896,1577,903,1527,903"/>
-<area shape="rect" id="Node000030" title=" " alt="" coords="985,869,1105,910"/>
-<area shape="poly" id="edge33_Node000029_Node000030" title=" " alt="" coords="1120,887,1378,889,1372,890,1120,892"/>
-<area shape="rect" id="Node000031" title=" " alt="" coords="2690,554,2945,609"/>
-<area shape="poly" id="edge34_Node000001_Node000031" title=" " alt="" coords="2672,578,1937,555,1937,550,2678,576"/>
-<area shape="rect" id="Node000032" title=" " alt="" coords="2427,588,2585,644"/>
-<area shape="poly" id="edge35_Node000031_Node000032" title=" " alt="" coords="2601,603,2693,595,2687,596,2601,608"/>
-<area shape="poly" id="edge36_Node000032_Node000033" title=" " alt="" coords="2249,620,2429,618,2424,619,2250,625"/>
-<area shape="rect" id="Node000034" title=" " alt="" coords="1769,608,1915,649"/>
-<area shape="poly" id="edge37_Node000033_Node000034" title=" " alt="" coords="1930,625,2047,626,2041,627,1931,630"/>
-<area shape="rect" id="Node000035" title=" " alt="" coords="1344,935,1542,975"/>
-<area shape="poly" id="edge40_Node000001_Node000035" title=" " alt="" coords="1558,970,1602,969,1646,962,1687,946,1721,920,1735,895,1740,857,1736,762,1731,665,1734,625,1745,595,1765,574,1789,564,1794,562,1769,579,1750,598,1739,626,1736,665,1742,762,1745,858,1740,896,1725,924,1689,951,1647,967,1602,974,1558,975"/>
-<area shape="rect" id="Node000036" href="$classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models." alt="" coords="983,935,1107,975"/>
-<area shape="poly" id="edge41_Node000035_Node000036" title=" " alt="" coords="1123,952,1346,955,1341,955,1123,958"/>
-<area shape="rect" id="Node000037" title=" " alt="" coords="1358,999,1528,1055"/>
-<area shape="poly" id="edge42_Node000001_Node000037" title=" " alt="" coords="1544,1041,1591,1041,1639,1035,1684,1019,1704,1006,1721,991,1731,977,1737,960,1743,914,1742,859,1737,798,1729,680,1732,631,1737,611,1745,595,1765,574,1789,564,1794,562,1769,579,1750,598,1742,613,1737,632,1734,680,1742,798,1747,858,1748,914,1742,961,1735,980,1725,994,1707,1011,1686,1024,1640,1040,1592,1047,1544,1046"/>
-<area shape="rect" id="Node000038" href="$structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html" title=" " alt="" coords="950,1007,1140,1047"/>
-<area shape="poly" id="edge43_Node000037_Node000038" title=" " alt="" coords="1155,1024,1360,1027,1355,1027,1155,1030"/>
-<area shape="rect" id="Node000039" title=" " alt="" coords="597,946,739,972"/>
-<area shape="poly" id="edge44_Node000038_Node000039" title=" " alt="" coords="755,962,839,971,927,986,991,1006,986,1006,926,991,838,976,755,967"/>
-<area shape="rect" id="Node000040" title=" " alt="" coords="608,1022,729,1048"/>
-<area shape="poly" id="edge45_Node000038_Node000040" title=" " alt="" coords="744,1033,926,1031,953,1032,948,1033,926,1036,745,1038"/>
-<area shape="rect" id="Node000041" title=" " alt="" coords="1375,16,1511,57"/>
-<area shape="poly" id="edge46_Node000001_Node000041" title=" " alt="" coords="1526,30,1577,33,1630,44,1681,63,1704,77,1725,94,1749,130,1771,182,1790,245,1806,314,1830,448,1841,538,1837,535,1824,448,1801,315,1785,246,1766,183,1745,132,1721,98,1701,81,1678,68,1628,49,1576,39,1527,35"/>
+<area shape="rect" id="Node000001" title="A reaction network engine that uses a graph&#45;based representation." alt="" coords="1754,579,1944,604"/>
+<area shape="rect" id="Node000033" href="$classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html" title=" " alt="" coords="2052,647,2241,688"/>
+<area shape="poly" id="edge39_Node000033_Node000001" title=" " alt="" coords="1910,606,1968,622,2056,646,2051,646,1967,628,1910,612"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="1367,80,1533,121"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1548,87,1596,89,1644,97,1691,113,1732,140,1757,174,1779,226,1797,288,1813,357,1837,490,1848,579,1844,577,1832,490,1808,358,1792,290,1774,227,1752,177,1728,144,1689,118,1643,102,1595,94,1549,93"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="975,45,1129,71"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1144,59,1234,64,1327,74,1369,82,1364,84,1327,79,1233,70,1146,64"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="1171,82,1327,138"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1334,140,1352,145,1410,155,1462,157,1554,148,1597,147,1641,153,1685,171,1732,204,1771,247,1801,298,1822,353,1836,409,1845,463,1850,511,1850,580,1846,577,1844,511,1840,463,1831,410,1817,355,1796,300,1767,250,1729,208,1683,176,1639,158,1597,152,1554,154,1462,162,1409,161,1350,150,1335,146"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="632,148,711,174"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="725,148,778,139,991,120,1172,112,1168,114,991,125,779,145,728,152"/>
+<area shape="rect" id="Node000014" href="$classgridfire_1_1reaction_1_1_reaction_set.html" title=" " alt="" coords="1393,274,1507,314"/>
+<area shape="poly" id="edge17_Node000014_Node000005" title=" " alt="" coords="726,158,865,161,1041,170,1130,179,1211,191,1279,207,1328,228,1337,236,1342,243,1353,259,1395,281,1390,281,1349,263,1337,246,1333,239,1326,232,1277,212,1210,196,1129,184,1041,175,865,166,728,163"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="979,208,1125,249"/>
+<area shape="poly" id="edge19_Node000018_Node000005" title=" " alt="" coords="723,176,779,192,883,210,981,222,976,224,882,215,778,197,724,181"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="298,140,423,181"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="437,158,634,159,630,162,440,163"/>
+<area shape="rect" id="Node000007" href="$structgridfire_1_1engine_1_1_graph_engine_1_1constants.html" title=" " alt="" coords="1356,208,1545,249"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1560,223,1605,228,1650,238,1693,255,1732,280,1765,314,1791,354,1811,397,1826,441,1844,522,1849,579,1845,577,1838,523,1821,443,1806,399,1786,357,1761,317,1729,284,1691,259,1648,243,1604,233,1561,228"/>
+<area shape="rect" id="Node000008" href="$classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html" title="3D table interpolator for tabulated weak reaction data by isotope." alt="" coords="1372,339,1528,380"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1543,372,1638,400,1687,420,1732,446,1769,478,1801,515,1843,579,1838,577,1797,518,1766,482,1729,451,1684,425,1636,405,1543,378"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="960,338,1144,394"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1159,362,1375,360,1370,362,1161,367"/>
+<area shape="rect" id="Node000010" href="$structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html" title="Regular 2D grid and payloads for a single isotope (A,Z)." alt="" coords="604,346,740,386"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="755,363,962,365,957,367,756,369"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="288,376,433,402"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="447,389,565,384,605,380,601,382,565,389,450,394"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="248,307,473,348"/>
+<area shape="poly" id="edge11_Node000010_Node000012" title=" " alt="" coords="488,341,606,356,601,359,489,346"/>
+<area shape="rect" id="Node000013" href="$structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html" title="Interpolated weak&#45;rate payload at a single state." alt="" coords="5,307,143,348"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="157,325,249,326,245,329,160,330"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="1523,293,1573,299,1628,311,1683,331,1732,361,1758,386,1780,414,1814,477,1836,535,1847,579,1843,577,1831,537,1809,479,1776,417,1754,389,1729,365,1680,336,1627,316,1572,304,1523,298"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="972,418,1132,474"/>
+<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="1146,443,1192,437,1239,426,1285,408,1325,382,1334,369,1337,355,1339,341,1349,325,1369,311,1395,303,1390,306,1372,316,1353,329,1344,342,1342,356,1339,371,1329,386,1287,413,1241,431,1193,442,1148,448"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="592,431,751,472"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="766,447,974,446,969,448,767,453"/>
+<area shape="rect" id="Node000017" href="$classgridfire_1_1reaction_1_1_reaction.html" title="Represents a single nuclear reaction from a specific data source." alt="" coords="303,491,418,532"/>
+<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="432,495,594,465,590,468,434,500"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="1382,404,1518,475"/>
+<area shape="poly" id="edge24_Node000020_Node000017" title=" " alt="" coords="432,509,743,506,944,498,1146,483,1272,468,1384,451,1379,453,1272,473,1147,489,944,503,744,511,434,514"/>
+<area shape="poly" id="edge38_Node000033_Node000017" title=" " alt="" coords="363,545,368,612,376,699,392,799,418,901,436,951,457,997,481,1040,510,1078,543,1109,580,1132,623,1147,670,1153,1850,1153,1889,1149,1925,1137,1957,1118,1986,1094,2012,1064,2035,1031,2073,956,2101,876,2121,800,2141,690,2145,686,2126,801,2106,878,2078,958,2040,1034,2016,1067,1990,1097,1960,1122,1927,1142,1891,1154,1850,1158,670,1158,621,1153,578,1137,540,1113,506,1081,477,1043,452,1000,431,953,413,903,387,800,371,700,363,612,361,550"/>
+<area shape="poly" id="edge18_Node000014_Node000018" title=" " alt="" coords="1140,240,1395,284,1390,286,1141,246"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="987,274,1117,314"/>
+<area shape="poly" id="edge20_Node000014_Node000019" title=" " alt="" coords="1132,291,1395,293,1390,295,1133,297"/>
+<area shape="poly" id="edge21_Node000001_Node000020" title=" " alt="" coords="1533,455,1630,482,1731,520,1786,548,1831,578,1826,578,1783,553,1729,524,1628,487,1533,461"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="995,568,1109,594"/>
+<area shape="poly" id="edge22_Node000020_Node000021" title=" " alt="" coords="1123,573,1247,560,1299,551,1325,543,1335,531,1338,517,1340,502,1349,486,1380,465,1384,463,1353,489,1345,503,1343,518,1340,533,1329,547,1300,557,1248,565,1124,578"/>
+<area shape="rect" id="Node000024" title=" " alt="" coords="1360,564,1540,619"/>
+<area shape="poly" id="edge27_Node000024_Node000021" title=" " alt="" coords="1123,585,1171,588,1362,592,1357,593,1171,593,1124,590"/>
+<area shape="rect" id="Node000022" title=" " alt="" coords="596,560,747,601"/>
+<area shape="poly" id="edge23_Node000021_Node000022" title=" " alt="" coords="762,578,998,580,993,582,763,583"/>
+<area shape="rect" id="Node000023" title=" " alt="" coords="1382,499,1518,540"/>
+<area shape="poly" id="edge25_Node000001_Node000023" title=" " alt="" coords="1533,532,1776,577,1771,578,1533,537"/>
+<area shape="poly" id="edge26_Node000001_Node000024" title=" " alt="" coords="1555,589,1756,591,1751,592,1556,594"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="1360,644,1540,699"/>
+<area shape="poly" id="edge28_Node000001_Node000025" title=" " alt="" coords="1555,648,1784,604,1779,605,1556,653"/>
+<area shape="rect" id="Node000026" title=" " alt="" coords="1368,724,1532,779"/>
+<area shape="poly" id="edge29_Node000001_Node000026" title=" " alt="" coords="1547,734,1639,708,1685,688,1729,664,1741,651,1753,636,1782,617,1810,606,1815,604,1785,621,1756,640,1745,654,1732,668,1688,693,1640,713,1548,739"/>
+<area shape="rect" id="Node000027" title=" " alt="" coords="1354,803,1547,844"/>
+<area shape="poly" id="edge30_Node000001_Node000027" title=" " alt="" coords="1562,818,1606,810,1651,796,1693,776,1728,747,1738,734,1742,721,1741,695,1740,667,1743,652,1752,636,1774,616,1799,606,1804,604,1778,621,1756,640,1748,654,1745,667,1746,695,1747,722,1742,737,1732,751,1695,780,1653,801,1608,815,1563,823"/>
+<area shape="rect" id="Node000028" href="$classgridfire_1_1partition_1_1_partition_function.html" title="Abstract interface for evaluating nuclear partition functions." alt="" coords="988,803,1116,844"/>
+<area shape="poly" id="edge31_Node000027_Node000028" title=" " alt="" coords="1131,821,1356,823,1350,824,1131,826"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="1382,868,1518,909"/>
+<area shape="poly" id="edge32_Node000001_Node000029" title=" " alt="" coords="1533,895,1583,894,1636,886,1686,868,1709,854,1728,837,1744,813,1750,790,1749,766,1743,742,1738,717,1735,691,1738,664,1752,636,1773,616,1798,606,1802,604,1776,620,1756,640,1744,666,1740,691,1743,716,1749,741,1754,765,1755,790,1749,815,1732,840,1712,858,1689,872,1638,891,1584,899,1534,900"/>
+<area shape="rect" id="Node000030" title=" " alt="" coords="992,868,1112,909"/>
+<area shape="poly" id="edge33_Node000029_Node000030" title=" " alt="" coords="1127,886,1385,888,1379,889,1127,891"/>
+<area shape="rect" id="Node000031" title=" " alt="" coords="2697,596,2952,651"/>
+<area shape="poly" id="edge34_Node000001_Node000031" title=" " alt="" coords="2679,619,1944,597,1944,592,2685,618"/>
+<area shape="rect" id="Node000032" title=" " alt="" coords="2434,630,2592,686"/>
+<area shape="poly" id="edge35_Node000031_Node000032" title=" " alt="" coords="2608,645,2700,637,2694,638,2608,650"/>
+<area shape="poly" id="edge36_Node000032_Node000033" title=" " alt="" coords="2256,662,2436,660,2431,660,2257,667"/>
+<area shape="rect" id="Node000034" title=" " alt="" coords="1776,650,1922,690"/>
+<area shape="poly" id="edge37_Node000033_Node000034" title=" " alt="" coords="1937,667,2054,668,2048,669,1938,672"/>
+<area shape="rect" id="Node000035" title=" " alt="" coords="1351,934,1549,974"/>
+<area shape="poly" id="edge40_Node000001_Node000035" title=" " alt="" coords="1565,967,1609,965,1653,957,1694,941,1728,915,1740,893,1745,861,1743,780,1739,697,1742,662,1752,637,1773,616,1797,606,1802,604,1776,620,1757,639,1748,664,1745,697,1748,780,1750,862,1745,895,1732,919,1696,946,1654,963,1610,971,1565,972"/>
+<area shape="rect" id="Node000036" href="$classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models." alt="" coords="990,934,1114,974"/>
+<area shape="poly" id="edge41_Node000035_Node000036" title=" " alt="" coords="1130,951,1353,954,1348,954,1130,957"/>
+<area shape="rect" id="Node000037" title=" " alt="" coords="1365,998,1535,1054"/>
+<area shape="poly" id="edge42_Node000001_Node000037" title=" " alt="" coords="1551,1039,1598,1039,1646,1033,1691,1017,1711,1004,1728,989,1737,976,1742,961,1748,920,1747,871,1744,817,1737,713,1740,669,1752,637,1772,616,1796,606,1801,604,1776,620,1757,639,1746,670,1742,713,1749,817,1753,871,1753,921,1748,962,1741,979,1732,992,1714,1008,1693,1021,1647,1038,1598,1045,1551,1045"/>
+<area shape="rect" id="Node000038" href="$structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html" title=" " alt="" coords="957,999,1147,1040"/>
+<area shape="poly" id="edge43_Node000037_Node000038" title=" " alt="" coords="1162,1019,1367,1024,1362,1025,1162,1024"/>
+<area shape="rect" id="Node000039" title=" " alt="" coords="600,1021,743,1047"/>
+<area shape="poly" id="edge44_Node000038_Node000039" title=" " alt="" coords="758,1028,959,1023,954,1023,759,1033"/>
+<area shape="rect" id="Node000041" href="$structgridfire_1_1engine_1_1_energy_channels.html" title="Partition of a reaction network into named energy generation channels." alt="" coords="974,1072,1130,1113"/>
+<area shape="poly" id="edge48_Node000041_Node000039" title=" " alt="" coords="758,1045,976,1081,971,1081,758,1050"/>
+<area shape="rect" id="Node000040" title=" " alt="" coords="611,928,732,954"/>
+<area shape="poly" id="edge45_Node000038_Node000040" title=" " alt="" coords="748,941,838,951,934,971,958,984,992,999,986,998,956,988,932,977,837,956,748,946"/>
+<area shape="poly" id="edge46_Node000001_Node000041" title=" " alt="" coords="1145,1099,1297,1108,1472,1109,1556,1103,1630,1091,1690,1072,1712,1060,1728,1046,1738,1031,1744,1013,1750,965,1749,908,1743,846,1735,724,1739,674,1744,653,1752,636,1772,616,1796,606,1801,604,1776,620,1757,640,1749,655,1744,675,1741,724,1749,845,1754,908,1755,965,1749,1014,1742,1033,1732,1049,1715,1064,1692,1077,1631,1096,1557,1108,1472,1114,1296,1113,1145,1104"/>
+<area shape="rect" id="Node000042" title=" " alt="" coords="589,1092,754,1118"/>
+<area shape="poly" id="edge47_Node000041_Node000042" title=" " alt="" coords="770,1104,778,1104,856,1105,933,1104,971,1103,976,1103,933,1109,856,1111,778,1109,770,1109"/>
+<area shape="rect" id="Node000043" title=" " alt="" coords="1382,15,1518,56"/>
+<area shape="poly" id="edge49_Node000001_Node000043" title=" " alt="" coords="1534,29,1584,33,1637,44,1688,64,1711,79,1732,96,1758,135,1780,192,1799,261,1815,337,1838,482,1849,579,1844,577,1833,483,1810,338,1794,263,1775,194,1753,137,1728,100,1708,83,1686,69,1636,49,1583,39,1535,35"/>
 </map>

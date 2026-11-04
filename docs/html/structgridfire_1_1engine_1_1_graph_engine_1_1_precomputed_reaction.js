@@ -1,6 +1,8 @@
 var structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction =
 [
     [ "affected_species_indices", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a8be44cfc0731bb53861e1772027b36a4", null ],
+    [ "channel_index", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a8fe365872231c6e36a7655cd68a23a7a", null ],
+    [ "energy_per_flow", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#abf3cae9950c125671ebd306b22390d0b", null ],
     [ "product_powers", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae0dce375a45959da6c75fec3ede46fea", null ],
     [ "reactant_powers", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a4360de7e2c518db798d97dac87bea252", null ],
     [ "reaction_hash", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a2a63022b616788e377c804fcf1ccf847", null ],

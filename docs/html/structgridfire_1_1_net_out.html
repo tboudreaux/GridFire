@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,6 +108,11 @@ $(function(){initNavTree('structgridfire_1_1_net_out.html',''); initResizable(tr
 <div class="contents">
 
 <p><code>#include &lt;types.h&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for gridfire::NetOut:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1_net_out__coll__graph.svg" width="354" height="126"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -144,6 +149,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a3ee94fec54cebb6e2fba3e43cbafd8f3" id="r_a3ee94fec54cebb6e2fba3e43cbafd8f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ee94fec54cebb6e2fba3e43cbafd8f3">neutrino_energy_loss_rate</a> = 0.0</td></tr>
 <tr class="memdesc:a3ee94fec54cebb6e2fba3e43cbafd8f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous reaction neutrino energy loss rate in erg/g/s.  <br /></td></tr>
 <tr class="separator:a3ee94fec54cebb6e2fba3e43cbafd8f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb4f841eec300e6fac8083a92fff801f" id="r_adb4f841eec300e6fac8083a92fff801f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb4f841eec300e6fac8083a92fff801f">energy_channel_names</a></td></tr>
+<tr class="memdesc:adb4f841eec300e6fac8083a92fff801f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of the energy channels (e.g. H_pp, H_CNO, He, ...)  <br /></td></tr>
+<tr class="separator:adb4f841eec300e6fac8083a92fff801f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d01d595e14c41055b17fe37b522a668" id="r_a8d01d595e14c41055b17fe37b522a668"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d01d595e14c41055b17fe37b522a668">eps_by_channel</a></td></tr>
+<tr class="memdesc:a8d01d595e14c41055b17fe37b522a668"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous eps_nuc attributed to each channel in erg/g/s; sums to eps_nuc.  <br /></td></tr>
+<tr class="separator:a8d01d595e14c41055b17fe37b522a668"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -274,6 +285,38 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Energy in ergs after evaluation. </p>
+
+</div>
+</div>
+<a id="adb4f841eec300e6fac8083a92fff801f" name="adb4f841eec300e6fac8083a92fff801f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb4f841eec300e6fac8083a92fff801f">&#9670;&#160;</a></span>energy_channel_names</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; gridfire::NetOut::energy_channel_names</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Names of the energy channels (e.g. H_pp, H_CNO, He, ...) </p>
+
+</div>
+</div>
+<a id="a8d01d595e14c41055b17fe37b522a668" name="a8d01d595e14c41055b17fe37b522a668"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d01d595e14c41055b17fe37b522a668">&#9670;&#160;</a></span>eps_by_channel</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; gridfire::NetOut::eps_by_channel</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Instantaneous eps_nuc attributed to each channel in erg/g/s; sums to eps_nuc. </p>
 
 </div>
 </div>

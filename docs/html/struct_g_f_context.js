@@ -1,6 +1,7 @@
 var struct_g_f_context =
 [
     [ "~GFContext", "struct_g_f_context.html#a4da09184145ea3bddef5dee206dea458", null ],
+    [ "get_energy_channel_names", "struct_g_f_context.html#a7abb052098804c7f2fd7d25098b83ed6", null ],
     [ "init_composition_from_abundance_vector", "struct_g_f_context.html#a4aa31d479303659b475558ef2df30cbe", null ],
     [ "init_engine_from_policy", "struct_g_f_context.html#a18aab1769f5e3071d768753141f15c6c", null ],
     [ "init_solver_from_engine", "struct_g_f_context.html#ae1d09e19a43ddca42a1c3d360daf548e", null ],

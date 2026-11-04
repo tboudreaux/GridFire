@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,12 +108,12 @@ $(function(){initNavTree('interfacegridfire__mod_1_1gf__evolve__c__array.html','
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3685f82bf2007c73cead610d502c077e" id="r_a3685f82bf2007c73cead610d502c077e"><td class="memItemLeft" align="right" valign="top">integer(c_int) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3685f82bf2007c73cead610d502c077e">gf_evolve_c_array</a> (ctx_type, ptr, y_in, num_species, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nue_loss, nu_flux, mass_lost)</td></tr>
-<tr class="separator:a3685f82bf2007c73cead610d502c077e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac91c160070a89305861d8c4ecba2df63" id="r_ac91c160070a89305861d8c4ecba2df63"><td class="memItemLeft" align="right" valign="top">integer(c_int) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac91c160070a89305861d8c4ecba2df63">gf_evolve_c_array</a> (ctx_type, ptr, y_in, num_species, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nue_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nue_loss_rate, eps_by_channel)</td></tr>
+<tr class="separator:ac91c160070a89305861d8c4ecba2df63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3685f82bf2007c73cead610d502c077e" name="a3685f82bf2007c73cead610d502c077e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3685f82bf2007c73cead610d502c077e">&#9670;&#160;</a></span>gf_evolve_c_array()</h2>
+<a id="ac91c160070a89305861d8c4ecba2df63" name="ac91c160070a89305861d8c4ecba2df63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac91c160070a89305861d8c4ecba2df63">&#9670;&#160;</a></span>gf_evolve_c_array()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +191,32 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>&#160;)</td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>mass_lost</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_nuc</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dlneps_dlnt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dlneps_dlnrho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>nue_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_by_channel</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

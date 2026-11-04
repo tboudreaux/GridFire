@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -207,6 +207,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a51abea9730a700dcffecdde9adbc0456"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9eeedbcf35b6cb0341a51ba1dddc97fe" id="r_a9eeedbcf35b6cb0341a51ba1dddc97fe"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9eeedbcf35b6cb0341a51ba1dddc97fe">getMostRecentRHSCalculation</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;) const override</td></tr>
 <tr class="separator:a9eeedbcf35b6cb0341a51ba1dddc97fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24f058cff90dc1318d6950e803ab63af" id="r_a24f058cff90dc1318d6950e803ab63af"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24f058cff90dc1318d6950e803ab63af">calculateEnergyChannels</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const override</td></tr>
+<tr class="memdesc:a24f058cff90dc1318d6950e803ab63af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the nuclear energy generation rate attributed to each energy channel.  <br /></td></tr>
+<tr class="separator:a24f058cff90dc1318d6950e803ab63af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa1f9b59de7fd240b86d51e87581d39b" id="r_afa1f9b59de7fd240b86d51e87581d39b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa1f9b59de7fd240b86d51e87581d39b">getEnergyChannelNames</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const override</td></tr>
+<tr class="memdesc:afa1f9b59de7fd240b86d51e87581d39b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of the energy channels reported by <a class="el" href="#a24f058cff90dc1318d6950e803ab63af" title="Calculate the nuclear energy generation rate attributed to each energy channel.">calculateEnergyChannels()</a>.  <br /></td></tr>
+<tr class="separator:afa1f9b59de7fd240b86d51e87581d39b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80dc129ae2fc3dd2f1d82e123e7cda3f" id="r_a80dc129ae2fc3dd2f1d82e123e7cda3f"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80dc129ae2fc3dd2f1d82e123e7cda3f">constructStateBlob</a> (const <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> *blob) const override</td></tr>
 <tr class="separator:a80dc129ae2fc3dd2f1d82e123e7cda3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1engine_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></td></tr>
@@ -316,7 +322,7 @@ Private Attributes</h2></td></tr>
 <div class="line"><span class="comment">//    The integrator will call calculateRHSAndEnergy, etc. on the multiscaleEngine.</span></div>
 <div class="line"><span class="keyword">auto</span> Y_initial = multiscaleEngine.mapNetInToMolarAbundanceVector({equilibratedComp, ...});</div>
 <div class="line"><span class="keyword">auto</span> derivatives = multiscaleEngine.calculateRHSAndEnergy(Y_initial, T9, rho);</div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:28</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:30</div></div>
 </div><!-- fragment --></dd></dl>
 <p>&lt;DynamicEngine&gt; </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
@@ -495,6 +501,51 @@ Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>An unordered map representing the adjacency list of the connectivity graph.</dd></dl>
 <dl class="section user"><dt>Purpose</dt><dd>To find reaction connections within a specific group of species.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It iterates through all reactions in the base engine. If a reaction involves at least two distinct species from the input <code>species_pool</code> (one as a reactant and one as a product), it adds edges between all reactants and products from that reaction that are also in the pool. </dd></dl>
+
+</div>
+</div>
+<a id="a24f058cff90dc1318d6950e803ab63af" name="a24f058cff90dc1318d6950e803ab63af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24f058cff90dc1318d6950e803ab63af">&#9670;&#160;</a></span>calculateEnergyChannels()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; double &gt; gridfire::engine::MultiscalePartitioningEngineView::calculateEnergyChannels </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the nuclear energy generation rate attributed to each energy channel. </p>
+<p>Channels (e.g. H_pp, H_CNO, He, ...) partition the network's reactions, so the returned values sum to the nuclearEnergyGenerationRate of calculateRHSAndEnergy at the same state. Values are net of reaction neutrino losses, in erg/g/s, ordered like <a class="el" href="#afa1f9b59de7fd240b86d51e87581d39b" title="Names of the energy channels reported by calculateEnergyChannels().">getEnergyChannelNames()</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>Energy generation rate per channel, or an empty vector if the engine does not support channels. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html#ac7786da06b52ba15298df3db015e4496">gridfire::engine::DynamicEngine</a>.</p>
 
 </div>
 </div>
@@ -1140,6 +1191,35 @@ Private Attributes</h2></td></tr>
 <dl class="section user"><dt>Purpose</dt><dd>To allow external queries of the partitioning results.</dd></dl>
 <dl class="section user"><dt>How</dt><dd>It returns a const reference to the <code>m_dynamic_species</code> member vector.</dd></dl>
 <dl class="section pre"><dt>Precondition</dt><dd><code><a class="el" href="#af4798d726d6e9d554ec741220e31c681" title="Partitions the network based on timescales from a NetIn struct.">partitionNetwork()</a></code> must have been called. </dd></dl>
+
+</div>
+</div>
+<a id="afa1f9b59de7fd240b86d51e87581d39b" name="afa1f9b59de7fd240b86d51e87581d39b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa1f9b59de7fd240b86d51e87581d39b">&#9670;&#160;</a></span>getEnergyChannelNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt; std::string &gt; &amp; gridfire::engine::MultiscalePartitioningEngineView::getEnergyChannelNames </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Names of the energy channels reported by <a class="el" href="#a24f058cff90dc1318d6950e803ab63af" title="Calculate the nuclear energy generation rate attributed to each energy channel.">calculateEnergyChannels()</a>. </p>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html#abca0a8fa907bd1192a7e35770da583b8">gridfire::engine::DynamicEngine</a>.</p>
 
 </div>
 </div>

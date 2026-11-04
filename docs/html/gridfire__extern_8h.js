@@ -54,10 +54,11 @@ var gridfire__extern_8h =
     [ "gf_construct_engine_from_policy", "gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6", null ],
     [ "gf_construct_solver_from_engine", "gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd", null ],
     [ "gf_error_code_to_string", "gridfire__extern_8h.html#ac7089c7bad97d0ffe7c9445dcd0258f2", null ],
-    [ "gf_evolve", "gridfire__extern_8h.html#a807dc807fea7c92f328849aea7572af4", null ],
-    [ "gf_evolve_ext", "gridfire__extern_8h.html#a56e684c5802a49b71951a810837c3e8a", null ],
+    [ "gf_evolve", "gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652", null ],
     [ "gf_free", "gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5", null ],
+    [ "gf_get_energy_channel_name", "gridfire__extern_8h.html#acc53a08c0da3e7c3ec9f041d2e443752", null ],
     [ "gf_get_last_error_message", "gridfire__extern_8h.html#a851d8c23bdc73852988b870c5f409639", null ],
+    [ "gf_get_num_energy_channels", "gridfire__extern_8h.html#a35461bcef871f0358a24e4c8e82ba12e", null ],
     [ "gf_init", "gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034", null ],
     [ "gf_register_species", "gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680", null ],
     [ "gf_set_num_zones", "gridfire__extern_8h.html#a541a743ca349b42f627a357dff5a7d18", null ]

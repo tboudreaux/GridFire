@@ -6,6 +6,7 @@ var config_8h =
     [ "gridfire::config::SolverConfig", "structgridfire_1_1config_1_1_solver_config.html", "structgridfire_1_1config_1_1_solver_config" ],
     [ "gridfire::config::AdaptiveEngineViewConfig", "structgridfire_1_1config_1_1_adaptive_engine_view_config.html", "structgridfire_1_1config_1_1_adaptive_engine_view_config" ],
     [ "gridfire::config::EngineViewConfig", "structgridfire_1_1config_1_1_engine_view_config.html", "structgridfire_1_1config_1_1_engine_view_config" ],
+    [ "gridfire::config::EnergyChannelConfig", "structgridfire_1_1config_1_1_energy_channel_config.html", "structgridfire_1_1config_1_1_energy_channel_config" ],
     [ "gridfire::config::EngineConfig", "structgridfire_1_1config_1_1_engine_config.html", "structgridfire_1_1config_1_1_engine_config" ],
     [ "gridfire::config::GridFireConfig", "structgridfire_1_1config_1_1_grid_fire_config.html", "structgridfire_1_1config_1_1_grid_fire_config" ]
 ];

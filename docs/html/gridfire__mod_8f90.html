@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -131,9 +131,9 @@ Data Types</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evolve__c__array.html">gridfire_mod::gf_evolve_c_array</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evolve__ext__c__scalar.html">gridfire_mod::gf_evolve_ext_c_scalar</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__num__energy__channels.html">gridfire_mod::gf_get_num_energy_channels</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evolve__ext__c__array.html">gridfire_mod::gf_evolve_ext_c_array</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__energy__channel__name.html">gridfire_mod::gf_get_energy_channel_name</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire_mod::gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -220,14 +220,14 @@ Functions/Subroutines</h2></td></tr>
 <tr class="separator:ab41de5ffc335f2dc31de185ca8c9f183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb95b0aa3e2446b2ea94c7f0e67887a3" id="r_abb95b0aa3e2446b2ea94c7f0e67887a3"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#abb95b0aa3e2446b2ea94c7f0e67887a3">gridfire_mod::gff_setup_solver</a> (self, solver_name)</td></tr>
 <tr class="separator:abb95b0aa3e2446b2ea94c7f0e67887a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0efe918be492a18d8ed355bd5dc5d8de" id="r_a0efe918be492a18d8ed355bd5dc5d8de"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a0efe918be492a18d8ed355bd5dc5d8de">gridfire_mod::gff_evolve_single</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)</td></tr>
-<tr class="separator:a0efe918be492a18d8ed355bd5dc5d8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9e4ae78a806c6e9d83c7c52bcd36de8" id="r_ae9e4ae78a806c6e9d83c7c52bcd36de8"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#ae9e4ae78a806c6e9d83c7c52bcd36de8">gridfire_mod::gff_evolve_multi</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, ierr)</td></tr>
-<tr class="separator:ae9e4ae78a806c6e9d83c7c52bcd36de8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23c8031eb6f23abeab6b2bfccbf9539f" id="r_a23c8031eb6f23abeab6b2bfccbf9539f"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a23c8031eb6f23abeab6b2bfccbf9539f">gridfire_mod::gff_evolve_ext_single</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, ierr)</td></tr>
-<tr class="separator:a23c8031eb6f23abeab6b2bfccbf9539f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a136ca4fd21dadae0f456183d67ccee26" id="r_a136ca4fd21dadae0f456183d67ccee26"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a136ca4fd21dadae0f456183d67ccee26">gridfire_mod::gff_evolve_ext_multi</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, ierr)</td></tr>
-<tr class="separator:a136ca4fd21dadae0f456183d67ccee26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85853a2314cc0e020d3a04b8fde0a141" id="r_a85853a2314cc0e020d3a04b8fde0a141"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a85853a2314cc0e020d3a04b8fde0a141">gridfire_mod::gff_evolve_single</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)</td></tr>
+<tr class="separator:a85853a2314cc0e020d3a04b8fde0a141"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7849171498b7e8bcebbdec1c9de81a41" id="r_a7849171498b7e8bcebbdec1c9de81a41"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a7849171498b7e8bcebbdec1c9de81a41">gridfire_mod::gff_evolve_multi</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)</td></tr>
+<tr class="separator:a7849171498b7e8bcebbdec1c9de81a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb4a579b468ac4e50436c71eef2cd786" id="r_afb4a579b468ac4e50436c71eef2cd786"><td class="memItemLeft" align="right" valign="top">integer(c_size_t) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#afb4a579b468ac4e50436c71eef2cd786">gridfire_mod::gff_get_num_energy_channels</a> (self)</td></tr>
+<tr class="separator:afb4a579b468ac4e50436c71eef2cd786"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9103feba62a80f9680f6e8eefa6efd19" id="r_a9103feba62a80f9680f6e8eefa6efd19"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire__mod.html#a9103feba62a80f9680f6e8eefa6efd19">gridfire_mod::gff_get_energy_channel_names</a> (self, names)</td></tr>
+<tr class="separator:a9103feba62a80f9680f6e8eefa6efd19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

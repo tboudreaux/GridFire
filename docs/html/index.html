@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.1.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -584,8 +584,8 @@ Callback and Policy Example</h3>
 <div class="line">}</div>
 <div class="ttc" id="aclassgridfire_1_1engine_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:185</div></div>
 <div class="ttc" id="aclassgridfire_1_1policy_1_1_main_sequence_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></div><div class="ttdoc">A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.</div><div class="ttdef"><b>Definition</b> stellar_policy.h:60</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:28</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:38</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:30</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:40</div></div>
 </div><!-- fragment --><p> &gt;<b>Note:</b> If you want to see exactly why each repartitioning stage was triggered in a human readable manner add the flag True to <code>solver.evaluate</code> (<code>solver.evaluate(input, true)</code>).</p>
 <p>&gt;<b>Note:</b> A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.</p>
 <p>&gt;<b>Note:</b> The order of species in the boost state vector (<code>ctx.state</code>) is <b>not guaranteed</b> to be any particular order run over run. Therefore, in order to reliably extract </p><blockquote class="doxtable">
@@ -784,7 +784,7 @@ C Example</h3>
 <div class="line">    <span class="keywordtype">double</span> neutrino_flux;</div>
 <div class="line">    <span class="keywordtype">double</span> mass_lost;</div>
 <div class="line"> </div>
-<div class="line">    ret = <a class="code hl_function" href="gridfire__extern_8h.html#a807dc807fea7c92f328849aea7572af4">gf_evolve</a>(</div>
+<div class="line">    ret = <a class="code hl_function" href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a>(</div>
 <div class="line">        gf_context,</div>
 <div class="line">        abundances,</div>
 <div class="line">        NUM_SPECIES,</div>
@@ -820,7 +820,7 @@ C Example</h3>
 <div class="ttc" id="agridfire__extern_8h_html"><div class="ttname"><a href="gridfire__extern_8h.html">gridfire_extern.h</a></div></div>
 <div class="ttc" id="agridfire__extern_8h_html_a0d42f6060caa8e73b2ef36f591a12034"><div class="ttname"><a href="gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034">gf_init</a></div><div class="ttdeci">void * gf_init(const enum GF_TYPE type)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:117</div></div>
 <div class="ttc" id="agridfire__extern_8h_html_a1a963d1279164f2a870be4e9e1dba1d5"><div class="ttname"><a href="gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5">gf_free</a></div><div class="ttdeci">int gf_free(const enum GF_TYPE type, void *ctx)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:127</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_a807dc807fea7c92f328849aea7572af4"><div class="ttname"><a href="gridfire__extern_8h.html#a807dc807fea7c92f328849aea7572af4">gf_evolve</a></div><div class="ttdeci">int gf_evolve(enum GF_TYPE type, void *ptr, const void *Y_in, size_t num_species, const void *T, const void *rho, double tMax, double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:334</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a60e36bee7b809c1358ea1a8cbdb3f652"><div class="ttname"><a href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a></div><div class="ttdeci">int gf_evolve(enum GF_TYPE type, void *ptr, const void *Y_in, size_t num_species, const void *T, const void *rho, double tMax, double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, void *eps_nuc, void *dlnEps_dlnT, void *dlnEps_dlnRho, void *neutrino_energy_loss_rate, void *eps_by_channel)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:207</div></div>
 <div class="ttc" id="agridfire__extern_8h_html_ae70b23310adcce0925900ca00a18a4a6"><div class="ttname"><a href="gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6">gf_construct_engine_from_policy</a></div><div class="ttdeci">int gf_construct_engine_from_policy(void *ptr, const char *policy_name, const double *abundances, size_t num_species)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:184</div></div>
 <div class="ttc" id="agridfire__extern_8h_html_aed17ad088b2c25c0c2bf5549527e53fd"><div class="ttname"><a href="gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a></div><div class="ttdeci">int gf_construct_solver_from_engine(void *ptr)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:197</div></div>
 <div class="ttc" id="agridfire__extern_8h_html_af7e09bf5cf979211260e715faaa3a680"><div class="ttname"><a href="gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680">gf_register_species</a></div><div class="ttdeci">int gf_register_species(void *ptr, const int num_species, const char **species_names)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:158</div></div>
