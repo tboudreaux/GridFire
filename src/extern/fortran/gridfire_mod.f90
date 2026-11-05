@@ -68,6 +68,7 @@ module gridfire_mod
         enumerator :: GF_INVALID_TYPE = 37
 
         enumerator :: GF_CONFIG_ERROR = 38
+        enumerator :: GF_INVALID_STATE = 39
 
         enumerator :: GF_SINGLE_ZONE = 1001
         enumerator :: GF_MULTI_ZONE = 1002
@@ -260,6 +261,64 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_evaluate(...): T and rho are scalars for SINGLE_ZONE and arrays for MULTI_ZONE; both are passed by
+        ! reference, so one interface serves both. Optional outputs are passed as C pointers (c_null_ptr to skip).
+        function gf_evaluate_c(ctx_type, ptr, Y, num_species, T, rho, eps_nuc, dedt, dedrho, &
+                nue_loss_rate, eps_by_channel, dydt) result(ierr) bind(C, name="gf_evaluate")
+            import :: c_ptr, c_int, c_double, c_size_t
+            integer(c_int), value :: ctx_type
+            type(c_ptr), value :: ptr
+            real(c_double), dimension(*), intent(in) :: Y
+            integer(c_size_t), value :: num_species
+            real(c_double), dimension(*), intent(in) :: T, rho
+            real(c_double), dimension(*), intent(out) :: eps_nuc, dedt, dedrho
+            type(c_ptr), value :: nue_loss_rate, eps_by_channel, dydt
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_num_network_species(void* ptr, size_t* num_species);
+        function gf_get_num_network_species(ptr, num_species) result(ierr) bind(C, name="gf_get_num_network_species")
+            import :: c_ptr, c_int, c_size_t
+            type(c_ptr), value :: ptr
+            integer(c_size_t), intent(out) :: num_species
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_network_species(void* ptr, size_t index, const char** name, int* A, int* Z, double* mass);
+        function gf_get_network_species(ptr, index, name, A, Z, mass) result(ierr) bind(C, name="gf_get_network_species")
+            import :: c_ptr, c_int, c_size_t, c_double
+            type(c_ptr), value :: ptr
+            integer(c_size_t), value :: index
+            type(c_ptr), intent(out) :: name
+            integer(c_int), intent(out) :: A, Z
+            real(c_double), intent(out) :: mass
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_register_network_species(void* ptr);
+        function gf_register_network_species(ptr) result(ierr) bind(C, name="gf_register_network_species")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_num_reactions(void* ptr, size_t* num_reactions);
+        function gf_get_num_reactions(ptr, num_reactions) result(ierr) bind(C, name="gf_get_num_reactions")
+            import :: c_ptr, c_int, c_size_t
+            type(c_ptr), value :: ptr
+            integer(c_size_t), intent(out) :: num_reactions
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_reaction_id(void* ptr, size_t index, const char** id);
+        function gf_get_reaction_id(ptr, index, id) result(ierr) bind(C, name="gf_get_reaction_id")
+            import :: c_ptr, c_int, c_size_t
+            type(c_ptr), value :: ptr
+            integer(c_size_t), value :: index
+            type(c_ptr), intent(out) :: id
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_get_num_energy_channels(void* ptr, size_t* num_channels);
         function gf_get_num_energy_channels(ptr, num_channels) result(ierr) bind(C, name="gf_get_num_energy_channels")
             import :: c_ptr, c_int, c_size_t
@@ -299,6 +358,16 @@ module gridfire_mod
         procedure :: gff_evolve_multi
 
         generic :: gff_evolve => gff_evolve_single, gff_evolve_multi
+
+        procedure :: gff_evaluate_single
+        procedure :: gff_evaluate_multi
+        generic :: gff_evaluate => gff_evaluate_single, gff_evaluate_multi
+
+        procedure :: gff_get_num_network_species
+        procedure :: gff_get_network_species
+        procedure :: gff_register_network_species
+        procedure :: gff_get_num_reactions
+        procedure :: gff_get_reaction_ids
 
         procedure :: gff_get_num_energy_channels
         procedure :: gff_get_energy_channel_names
@@ -541,6 +610,153 @@ module gridfire_mod
                     eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel)
             ierr = int(c_ierr)
         end subroutine gff_evolve_multi
+
+        ! Copy a C string owned by the context into a blank-padded Fortran string.
+        subroutine copy_c_string(c_str, f_str)
+            type(c_ptr), intent(in) :: c_str
+            character(len=*), intent(out) :: f_str
+            character(kind=c_char), pointer :: chars(:)
+            integer :: k
+
+            f_str = ' '
+            call c_f_pointer(c_str, chars, [len(f_str) + 1])
+            do k = 1, len(f_str)
+                if (chars(k) == c_null_char) exit
+                f_str(k:k) = chars(k)
+            end do
+        end subroutine copy_c_string
+
+        ! Instantaneous eps_nuc and its derivatives at fixed composition (no integration). Y in registered species order.
+        subroutine gff_evaluate_single(self, Y, T, rho, eps_nuc, dedt, dedrho, ierr, nu_e_loss_rate, eps_by_channel, dydt)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:), intent(in) :: Y
+            real(c_double), intent(in) :: T, rho
+            real(c_double), intent(out) :: eps_nuc, dedt, dedrho
+            integer, intent(out) :: ierr
+            real(c_double), intent(out), optional, target :: nu_e_loss_rate
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: eps_by_channel ! num_channels
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: dydt ! num_species
+            real(c_double) :: T_a(1), rho_a(1), eps_a(1), dedt_a(1), dedrho_a(1)
+            type(c_ptr) :: p_nu, p_channels, p_dydt
+
+            p_nu = c_null_ptr
+            p_channels = c_null_ptr
+            p_dydt = c_null_ptr
+            if (present(nu_e_loss_rate)) p_nu = c_loc(nu_e_loss_rate)
+            if (present(eps_by_channel)) p_channels = c_loc(eps_by_channel)
+            if (present(dydt)) p_dydt = c_loc(dydt)
+
+            T_a(1) = T
+            rho_a(1) = rho
+            ierr = int(gf_evaluate_c(self%ctx_type, self%ctx, Y, self%num_species, T_a, rho_a, &
+                    eps_a, dedt_a, dedrho_a, p_nu, p_channels, p_dydt))
+            eps_nuc = eps_a(1)
+            dedt = dedt_a(1)
+            dedrho = dedrho_a(1)
+        end subroutine gff_evaluate_single
+
+        ! As gff_evaluate_single for every zone: Y(num_species, num_zones), T(num_zones), ...
+        subroutine gff_evaluate_multi(self, Y, T, rho, eps_nuc, dedt, dedrho, ierr, nu_e_loss_rate, eps_by_channel, dydt)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:,:), intent(in) :: Y
+            real(c_double), dimension(:), intent(in) :: T, rho
+            real(c_double), dimension(:), intent(out) :: eps_nuc, dedt, dedrho
+            integer, intent(out) :: ierr
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: nu_e_loss_rate
+            real(c_double), dimension(:,:), intent(out), optional, target, contiguous :: eps_by_channel ! (num_channels, num_zones)
+            real(c_double), dimension(:,:), intent(out), optional, target, contiguous :: dydt ! (num_species, num_zones)
+            type(c_ptr) :: p_nu, p_channels, p_dydt
+
+            p_nu = c_null_ptr
+            p_channels = c_null_ptr
+            p_dydt = c_null_ptr
+            if (present(nu_e_loss_rate)) p_nu = c_loc(nu_e_loss_rate)
+            if (present(eps_by_channel)) p_channels = c_loc(eps_by_channel)
+            if (present(dydt)) p_dydt = c_loc(dydt)
+
+            ierr = int(gf_evaluate_c(self%ctx_type, self%ctx, Y, self%num_species, T, rho, &
+                    eps_nuc, dedt, dedrho, p_nu, p_channels, p_dydt))
+        end subroutine gff_evaluate_multi
+
+        function gff_get_num_network_species(self) result(num_species)
+            class(GridFire), intent(in) :: self
+            integer(c_size_t) :: num_species
+            integer(c_int) :: ierr
+
+            ierr = gf_get_num_network_species(self%ctx, num_species)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Network Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end function gff_get_num_network_species
+
+        ! Names, A, Z and atomic masses [u] of the network species, in network order. Each array has
+        ! gff_get_num_network_species() entries; A, Z and mass are optional.
+        subroutine gff_get_network_species(self, names, A, Z, mass)
+            class(GridFire), intent(in) :: self
+            character(len=*), dimension(:), intent(out) :: names
+            integer(c_int), dimension(:), intent(out), optional :: A, Z
+            real(c_double), dimension(:), intent(out), optional :: mass
+            type(c_ptr) :: c_name
+            integer(c_int) :: ierr, A_i, Z_i
+            real(c_double) :: mass_i
+            integer :: i
+
+            do i = 1, size(names)
+                ierr = gf_get_network_species(self%ctx, int(i - 1, c_size_t), c_name, A_i, Z_i, mass_i)
+                if (ierr /= GF_SUCCESS) then
+                    print *, "GridFire Network Error: ", self%gff_get_last_error()
+                    error stop
+                end if
+                call copy_c_string(c_name, names(i))
+                if (present(A)) A(i) = A_i
+                if (present(Z)) Z(i) = Z_i
+                if (present(mass)) mass(i) = mass_i
+            end do
+        end subroutine gff_get_network_species
+
+        ! Register the network's species (network order) so gff_evolve / gff_evaluate carry the full network.
+        subroutine gff_register_network_species(self)
+            class(GridFire), intent(inout) :: self
+            integer(c_int) :: ierr
+
+            ierr = gf_register_network_species(self%ctx)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Network Error: ", self%gff_get_last_error()
+                error stop
+            end if
+            self%num_species = self%gff_get_num_network_species()
+        end subroutine gff_register_network_species
+
+        function gff_get_num_reactions(self) result(num_reactions)
+            class(GridFire), intent(in) :: self
+            integer(c_size_t) :: num_reactions
+            integer(c_int) :: ierr
+
+            ierr = gf_get_num_reactions(self%ctx, num_reactions)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Network Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end function gff_get_num_reactions
+
+        ! Reaction identifiers (e.g. "p(p,e+)d"); ids has gff_get_num_reactions() entries.
+        subroutine gff_get_reaction_ids(self, ids)
+            class(GridFire), intent(in) :: self
+            character(len=*), dimension(:), intent(out) :: ids
+            type(c_ptr) :: c_id
+            integer(c_int) :: ierr
+            integer :: i
+
+            do i = 1, size(ids)
+                ierr = gf_get_reaction_id(self%ctx, int(i - 1, c_size_t), c_id)
+                if (ierr /= GF_SUCCESS) then
+                    print *, "GridFire Network Error: ", self%gff_get_last_error()
+                    error stop
+                end if
+                call copy_c_string(c_id, ids(i))
+            end do
+        end subroutine gff_get_reaction_ids
 
         function gff_get_num_energy_channels(self) result(num_channels)
             class(GridFire), intent(in) :: self

@@ -16,3 +16,10 @@ gf_fortran_config_test = executable('gf_fortran_config_test', 'gridfire_config.f
            dependencies: [gridfire_fortran_dep]
 )
 test('extern_fortran_config', gf_fortran_config_test, args: [meson.current_build_dir()], suite: 'extern', timeout: 600)
+
+gf_fortran_evaluate_test = executable('gf_fortran_evaluate_test', 'gridfire_evaluate.f90',
+           install: false,
+           fortran_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_fortran_dep]
+)
+test('extern_fortran_evaluate', gf_fortran_evaluate_test, suite: 'extern', timeout: 600)

@@ -101,6 +101,9 @@ namespace {
         } catch (const gridfire::exceptions::GridFireError& e) {
             ctx->last_error = e.what();
             return GF_GRIDFIRE_ERROR;
+        } catch (const GFInvalidStateError& e) {
+            ctx->last_error = e.what();
+            return GF_INVALID_STATE;
         } catch (const GFConfigError& e) {
             ctx->last_error = e.what();
             return GF_CONFIG_ERROR;
@@ -429,6 +432,119 @@ extern "C" {
         }
     }
 
+    int gf_evaluate(
+        const enum GF_TYPE type,
+        void* ptr,
+        const double* Y,
+        const size_t num_species,
+        const double* T,
+        const double* rho,
+        double* eps_nuc,
+        double* dEps_dT,
+        double* dEps_dRho,
+        double* neutrino_energy_loss_rate,
+        double* eps_by_channel,
+        double* dYdt
+    ) {
+        if (!ptr || !Y || !T || !rho) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!eps_nuc || !dEps_dT || !dEps_dRho) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        if (num_species == 0) {
+            return GF_INVALID_NUM_SPECIES;
+        }
+        size_t num_zones = 0;
+        switch (type) {
+            case SINGLE_ZONE: num_zones = 1; break;
+            case MULTI_ZONE: num_zones = static_cast<GFGridContext*>(ptr)->get_zones(); break;
+            default: return GF_INVALID_TYPE;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        const GFEvaluationOutputs out{
+            .eps_nuc = eps_nuc,
+            .dEps_dT = dEps_dT,
+            .dEps_dRho = dEps_dRho,
+            .neutrino_energy_loss_rate = neutrino_energy_loss_rate,
+            .eps_by_channel = eps_by_channel,
+            .dYdt = dYdt
+        };
+        return execute_guarded(ctx, [&]() {
+            ctx->evaluate(Y, num_species, T, rho, num_zones, out);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_num_network_species(void* ptr, size_t* num_species) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!num_species) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            *num_species = ctx->network_species().size();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_network_species(void* ptr, const size_t index, const char** name, int* A, int* Z, double* mass) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            const auto& species = ctx->network_species().at(index);
+            if (name) *name = ctx->network_species_names.at(index).c_str();
+            if (A) *A = species.a();
+            if (Z) *Z = species.z();
+            if (mass) *mass = species.mass();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_register_network_species(void* ptr) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->register_network_species();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_num_reactions(void* ptr, size_t* num_reactions) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!num_reactions) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            *num_reactions = ctx->network_reactions().size();
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_reaction_id(void* ptr, const size_t index, const char** id) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!id) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            (void)ctx->network_reactions(); // throws if no engine yet
+            *id = ctx->reaction_ids.at(index).c_str();
+            return GF_SUCCESS;
+        });
+    }
+
     int gf_get_num_energy_channels(void* ptr, size_t* num_channels) {
         if (!ptr) {
             return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
@@ -541,6 +657,8 @@ extern "C" {
                 return const_cast<char*>("GF_INVALID_TYPE");
             case GF_CONFIG_ERROR:
                 return const_cast<char*>("GF_CONFIG_ERROR");
+            case GF_INVALID_STATE:
+                return const_cast<char*>("GF_INVALID_STATE");
             case FDSSE_NON_4DSTAR_ERROR:
                 return const_cast<char*>("FDSSE_NON_4DSTAR_ERROR");
             case FDSSE_UNKNOWN_ERROR:

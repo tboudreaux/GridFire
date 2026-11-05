@@ -71,6 +71,7 @@ extern "C" {
         GF_INVALID_TYPE = 37,
 
         GF_CONFIG_ERROR = 38,
+        GF_INVALID_STATE = 39, /**< Caller error: non-physical T, rho or abundances, or a species outside the network */
     };
 
     /** Electron screening model (GridFireConfig::engine.screening). */
@@ -195,6 +196,70 @@ extern "C" {
         void* neutrino_energy_loss_rate,
         void* eps_by_channel
     );
+
+    /**
+     * Instantaneous nuclear energy generation at fixed composition, for every zone, without integrating.
+     *
+     * No solver is set up or touched, so this needs only gf_construct_engine_from_policy and can be called any number
+     * of times between (or instead of) gf_evolve calls. For MULTI_ZONE every argument is an array with one entry per
+     * zone, Y holds num_species abundances per zone, and dYdt likewise.
+     *
+     * Inputs:
+     *   Y                         - molar abundances in registered species order (gf_register_species, or
+     *                               gf_register_network_species); network species not registered are taken as absent
+     *   T, rho                    - temperature [K] and density [g/cm^3]
+     * Outputs (eps_nuc, dEps_dT, dEps_dRho required; the rest may be NULL):
+     *   eps_nuc                   - energy generation rate, net of reaction neutrino losses [erg/g/s]
+     *   dEps_dT, dEps_dRho        - partial derivatives of eps_nuc at fixed composition [erg/g/s/K], [erg/g/s / (g/cm^3)],
+     *                               always returned as absolute derivatives (also when eps_nuc = 0)
+     *   neutrino_energy_loss_rate - reaction neutrino energy loss rate [erg/g/s]
+     *   eps_by_channel            - eps_nuc by energy channel, gf_get_num_energy_channels entries per zone
+     *   dYdt                      - dY/dt for each registered species [mol/g/s]
+     *
+     * Returns GF_INVALID_STATE (a caller error) for a non-positive or non-finite T or rho, a negative or non-finite
+     * abundance, or a positive abundance of a registered species that is not in the network.
+     */
+    int gf_evaluate(
+        enum GF_TYPE type,
+        void* ptr,
+        const double* Y,
+        size_t num_species,
+        const double* T,
+        const double* rho,
+        double* eps_nuc,
+        double* dEps_dT,
+        double* dEps_dRho,
+        double* neutrino_energy_loss_rate,
+        double* eps_by_channel,
+        double* dYdt
+    );
+
+    /**
+     * The network built by gf_construct_engine_from_policy is fixed for the life of the context: its species, their
+     * order and its reactions never change, so the indices below stay valid. Network species not registered with
+     * gf_register_species are dropped (reported as mass_lost) by gf_evolve; gf_register_network_species avoids that.
+     */
+
+    /** Number of species in the network. */
+    int gf_get_num_network_species(void* ptr, size_t* num_species);
+
+    /**
+     * Network species `index` (0-based, network order): name (e.g. "N-15", owned by the context), mass number A,
+     * charge Z and atomic mass [u], the masses GridFire uses. Any output pointer may be NULL.
+     */
+    int gf_get_network_species(void* ptr, size_t index, const char** name, int* A, int* Z, double* mass);
+
+    /**
+     * Register the network's own species, in network order (replacing gf_register_species), so gf_evolve and
+     * gf_evaluate take and return the full network composition and no species is dropped between calls.
+     */
+    int gf_register_network_species(void* ptr);
+
+    /** Number of reactions in the network. */
+    int gf_get_num_reactions(void* ptr, size_t* num_reactions);
+
+    /** Identifier of reaction `index` (0-based), e.g. "p(p,e+)d" or "he4(2a,)c12". The string is owned by the context. */
+    int gf_get_reaction_id(void* ptr, size_t index, const char** id);
 
     /**
      * Number of energy channels reported per zone by gf_evolve (valid once the engine has been constructed).

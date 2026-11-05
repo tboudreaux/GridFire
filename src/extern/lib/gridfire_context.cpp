@@ -6,6 +6,9 @@
 #include "gridfire/exceptions/error_policy.h"
 #include "gridfire/utils/logging.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "fourdst/config/config.h"
 
 void GFContext::init_species_map(const std::vector<std::string> &species_names) {
@@ -75,6 +78,15 @@ void GFContext::init_engine_from_policy(const std::string &policy_name, const do
             this->engine = &e;
             this->engine_ctx = ctx->clone_structure();
 
+            this->network_species_names.clear();
+            for (const auto& species : e.getNetworkSpecies(*this->engine_ctx)) {
+                this->network_species_names.emplace_back(species.name());
+            }
+            this->reaction_ids.clear();
+            for (const auto& reaction : e.getNetworkReactions(*this->engine_ctx)) {
+                this->reaction_ids.emplace_back(reaction->id());
+            }
+
             break;
         }
         default:
@@ -109,6 +121,101 @@ fourdst::composition::Composition GFContext::init_composition_from_abundance_vec
     return comp;
 }
 
+
+const std::vector<fourdst::atomic::Species>& GFContext::network_species() const {
+    if (!engine || !engine_ctx) {
+        throw gridfire::exceptions::GridFireError("The network is unavailable until an engine has been constructed (call gf_construct_engine_from_policy first).");
+    }
+    return engine->getNetworkSpecies(*engine_ctx);
+}
+
+const gridfire::reaction::ReactionSet& GFContext::network_reactions() const {
+    if (!engine || !engine_ctx) {
+        throw gridfire::exceptions::GridFireError("The network is unavailable until an engine has been constructed (call gf_construct_engine_from_policy first).");
+    }
+    return engine->getNetworkReactions(*engine_ctx);
+}
+
+void GFContext::register_network_species() {
+    speciesList = network_species();
+}
+
+void GFContext::evaluate(
+    const double* Y,
+    const size_t num_species,
+    const double* T,
+    const double* rho,
+    const size_t num_zones,
+    const GFEvaluationOutputs& out
+) const {
+    const auto& network = network_species();
+    if (num_species != speciesList.size()) {
+        throw GFInvalidStateError(std::format(
+            "Number of species provided ({}) does not match the registered species count ({}).", num_species, speciesList.size()));
+    }
+
+    // Where each registered species sits in the network (npos: not in the network)
+    constexpr size_t npos = static_cast<size_t>(-1);
+    std::vector<size_t> network_index(num_species, npos);
+    for (size_t i = 0; i < num_species; ++i) {
+        if (const auto it = std::ranges::find(network, speciesList[i]); it != network.end()) {
+            network_index[i] = static_cast<size_t>(it - network.begin());
+        }
+    }
+
+    const size_t num_channels = engine->getEnergyChannelNames(*engine_ctx).size();
+    std::vector<double> Y_network(network.size());
+    for (size_t zone = 0; zone < num_zones; ++zone) {
+        const double* Y_zone = Y + zone * num_species;
+        if (!std::isfinite(T[zone]) || T[zone] <= 0.0 || !std::isfinite(rho[zone]) || rho[zone] <= 0.0) {
+            throw GFInvalidStateError(std::format(
+                "Zone {}: temperature ({}) and density ({}) must be positive and finite.", zone, T[zone], rho[zone]));
+        }
+
+        // The engine needs every network species; those not registered are absent
+        std::ranges::fill(Y_network, 0.0);
+        for (size_t i = 0; i < num_species; ++i) {
+            if (!std::isfinite(Y_zone[i]) || Y_zone[i] < 0.0) {
+                throw GFInvalidStateError(std::format(
+                    "Zone {}: molar abundance of {} ({}) must be finite and non-negative.", zone, speciesList[i].name(), Y_zone[i]));
+            }
+            if (network_index[i] == npos) {
+                if (Y_zone[i] > 0.0) {
+                    throw GFInvalidStateError(std::format(
+                        "Zone {}: {} (molar abundance {:.3e}) is not in the network.", zone, speciesList[i].name(), Y_zone[i]));
+                }
+                continue;
+            }
+            Y_network[network_index[i]] = Y_zone[i];
+        }
+        const fourdst::composition::Composition comp(network, Y_network);
+
+        const double T9 = T[zone] / 1e9;
+        const auto rhs = engine->calculateRHSAndEnergy(*engine_ctx, comp, T9, rho[zone], false);
+        if (!rhs) {
+            throw gridfire::exceptions::BadRHSEngineError(std::format(
+                "Zone {}: the engine could not evaluate the RHS ({}).", zone, gridfire::engine::EngineStatus_to_string(rhs.error())));
+        }
+        const auto [dEps_dT, dEps_dRho] = engine->calculateEpsDerivatives(*engine_ctx, comp, T9, rho[zone]);
+
+        out.eps_nuc[zone] = rhs->nuclearEnergyGenerationRate;
+        out.dEps_dT[zone] = dEps_dT;
+        out.dEps_dRho[zone] = dEps_dRho;
+        if (out.neutrino_energy_loss_rate) {
+            out.neutrino_energy_loss_rate[zone] = rhs->neutrinoEnergyLossRate;
+        }
+        if (out.eps_by_channel) {
+            const std::vector<double> channels = engine->calculateEnergyChannels(*engine_ctx, comp, T9, rho[zone]);
+            std::ranges::copy(channels, out.eps_by_channel + zone * num_channels);
+        }
+        if (out.dYdt) {
+            for (size_t i = 0; i < num_species; ++i) {
+                const auto it = rhs->dydt.find(speciesList[i]);
+                out.dYdt[zone * num_species + i] = it == rhs->dydt.end() ? 0.0 : it->second;
+            }
+        }
+    }
+}
 
 void GFPointContext::init_solver_from_engine() {
     this->solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine, config);

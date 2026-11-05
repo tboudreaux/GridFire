@@ -18,6 +18,24 @@ struct GFConfigError final : std::runtime_error {
 };
 
 /**
+ * @brief Raised by the C API for an invalid thermodynamic state or composition passed in by the caller (as opposed to a
+ * solver failure). gf_* functions report it as GF_INVALID_STATE.
+ */
+struct GFInvalidStateError final : std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
+
+/// Destinations for gf_evaluate. Each points to num_zones entries (eps_by_channel and dYdt: per zone, contiguous).
+struct GFEvaluationOutputs {
+    double* eps_nuc = nullptr;
+    double* dEps_dT = nullptr;
+    double* dEps_dRho = nullptr;
+    double* neutrino_energy_loss_rate = nullptr; ///< May be null
+    double* eps_by_channel = nullptr; ///< May be null; num_channels per zone
+    double* dYdt = nullptr; ///< May be null; num_species per zone, in registered species order
+};
+
+/**
  * @brief Destinations for the instantaneous final-state quantities in NetOut.
  *
  * For a point context each scalar pointer refers to a single double; for a grid context each refers to an array with
@@ -54,12 +72,27 @@ struct GFContext {
     void save_config(const std::string& path) const;
     std::unique_ptr<gridfire::engine::scratch::StateBlob> engine_ctx;
     std::vector<fourdst::atomic::Species> speciesList;
+    std::vector<std::string> network_species_names; ///< Null-terminated names handed out by gf_get_network_species
+    std::vector<std::string> reaction_ids; ///< Null-terminated ids handed out by gf_get_reaction_id
 
     virtual void init_species_map(const std::vector<std::string>& species_names);
     virtual void init_engine_from_policy(const std::string& policy_name, const double *abundances, size_t num_species);
     virtual void init_solver_from_engine() = 0;
 
     fourdst::composition::Composition init_composition_from_abundance_vector(const std::vector<double> &abundances, size_t num_species) const;
+    /// The engine's network species, in network order. Throws if no engine has been built yet.
+    [[nodiscard]] const std::vector<fourdst::atomic::Species>& network_species() const;
+    /// Reactions in the engine's network. Throws if no engine has been built yet.
+    [[nodiscard]] const gridfire::reaction::ReactionSet& network_reactions() const;
+    /// Register the network's own species, in network order, as the species of every later call.
+    void register_network_species();
+
+    /**
+     * Instantaneous eps_nuc, its derivatives, neutrino losses, channel energies and dY/dt for num_zones states
+     * (Y holds num_species abundances per zone, in registered species order). No solver is involved.
+     */
+    void evaluate(const double* Y, size_t num_species, const double* T, const double* rho, size_t num_zones,
+                  const GFEvaluationOutputs& out) const;
     [[nodiscard]] const std::vector<std::string>& get_energy_channel_names() const;
     std::string last_error;
 };

@@ -16,3 +16,10 @@ gf_extern_c_config = executable('gf_extern_c_config', 'gridfire_config.c',
            dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
 )
 test('extern_c_config', gf_extern_c_config, args: [meson.current_build_dir()], suite: 'extern', timeout: 600)
+
+gf_extern_c_evaluate = executable('gf_extern_c_evaluate', 'gridfire_evaluate.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
+)
+test('extern_c_evaluate', gf_extern_c_evaluate, suite: 'extern', timeout: 600)
