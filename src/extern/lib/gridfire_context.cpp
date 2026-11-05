@@ -164,7 +164,6 @@ void GFContext::evaluate(
     }
 
     const size_t num_channels = engine->getEnergyChannelNames(*engine_ctx).size();
-    std::vector<double> Y_network(network.size());
     for (size_t zone = 0; zone < num_zones; ++zone) {
         const double* Y_zone = Y + zone * num_species;
         if (!std::isfinite(T[zone]) || T[zone] <= 0.0 || !std::isfinite(rho[zone]) || rho[zone] <= 0.0) {
@@ -172,46 +171,39 @@ void GFContext::evaluate(
                 "Zone {}: temperature ({}) and density ({}) must be positive and finite.", zone, T[zone], rho[zone]));
         }
 
-        // The engine needs every network species; those not registered are absent
-        std::ranges::fill(Y_network, 0.0);
+        // Caller errors are reported as GF_INVALID_STATE before anything reaches the engine
         for (size_t i = 0; i < num_species; ++i) {
             if (!std::isfinite(Y_zone[i]) || Y_zone[i] < 0.0) {
                 throw GFInvalidStateError(std::format(
                     "Zone {}: molar abundance of {} ({}) must be finite and non-negative.", zone, speciesList[i].name(), Y_zone[i]));
             }
-            if (network_index[i] == npos) {
-                if (Y_zone[i] > 0.0) {
-                    throw GFInvalidStateError(std::format(
-                        "Zone {}: {} (molar abundance {:.3e}) is not in the network.", zone, speciesList[i].name(), Y_zone[i]));
-                }
-                continue;
+            if (network_index[i] == npos && Y_zone[i] > 0.0) {
+                throw GFInvalidStateError(std::format(
+                    "Zone {}: {} (molar abundance {:.3e}) is not in the network.", zone, speciesList[i].name(), Y_zone[i]));
             }
-            Y_network[network_index[i]] = Y_zone[i];
         }
-        const fourdst::composition::Composition comp(network, Y_network);
 
-        const double T9 = T[zone] / 1e9;
-        const auto rhs = engine->calculateRHSAndEnergy(*engine_ctx, comp, T9, rho[zone], false);
-        if (!rhs) {
-            throw gridfire::exceptions::BadRHSEngineError(std::format(
-                "Zone {}: the engine could not evaluate the RHS ({}).", zone, gridfire::engine::EngineStatus_to_string(rhs.error())));
-        }
-        const auto [dEps_dT, dEps_dRho] = engine->calculateEpsDerivatives(*engine_ctx, comp, T9, rho[zone]);
+        // The same pass-through to the engine that the C++ solvers' evaluateRates uses
+        gridfire::NetIn netIn;
+        netIn.composition = fourdst::composition::Composition(speciesList, std::vector<double>(Y_zone, Y_zone + num_species));
+        netIn.temperature = T[zone];
+        netIn.density = rho[zone];
+        const gridfire::InstantaneousRates rates = gridfire::solver::evaluate_instantaneous_rates(
+            *engine, *engine_ctx, netIn, out.eps_by_channel != nullptr);
 
-        out.eps_nuc[zone] = rhs->nuclearEnergyGenerationRate;
-        out.dEps_dT[zone] = dEps_dT;
-        out.dEps_dRho[zone] = dEps_dRho;
+        out.eps_nuc[zone] = rates.eps_nuc;
+        out.dEps_dT[zone] = rates.dEps_dT;
+        out.dEps_dRho[zone] = rates.dEps_dRho;
         if (out.neutrino_energy_loss_rate) {
-            out.neutrino_energy_loss_rate[zone] = rhs->neutrinoEnergyLossRate;
+            out.neutrino_energy_loss_rate[zone] = rates.neutrino_energy_loss_rate;
         }
         if (out.eps_by_channel) {
-            const std::vector<double> channels = engine->calculateEnergyChannels(*engine_ctx, comp, T9, rho[zone]);
-            std::ranges::copy(channels, out.eps_by_channel + zone * num_channels);
+            std::ranges::copy(rates.eps_by_channel, out.eps_by_channel + zone * num_channels);
         }
         if (out.dYdt) {
             for (size_t i = 0; i < num_species; ++i) {
-                const auto it = rhs->dydt.find(speciesList[i]);
-                out.dYdt[zone * num_species + i] = it == rhs->dydt.end() ? 0.0 : it->second;
+                const auto it = rates.dydt.find(speciesList[i]);
+                out.dYdt[zone * num_species + i] = it == rates.dydt.end() ? 0.0 : it->second;
             }
         }
     }

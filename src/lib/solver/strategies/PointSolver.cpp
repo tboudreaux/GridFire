@@ -243,6 +243,17 @@ namespace gridfire::solver {
         return evaluate(solver_ctx, netIn, false);
     }
 
+    InstantaneousRates PointSolver::evaluateRates(
+        SolverContextBase& solver_ctx,
+        const NetIn& netIn
+    ) const {
+        auto* sctx_p = dynamic_cast<PointSolverContext*>(&solver_ctx);
+        if (!sctx_p) {
+            throw exceptions::SolverError("PointSolver::evaluateRates: provided solver context is not of type PointSolverContext");
+        }
+        return evaluate_instantaneous_rates(m_engine, *sctx_p->engine_ctx, netIn);
+    }
+
     NetOut PointSolver::evaluate(
         SolverContextBase& solver_ctx,
         const NetIn &netIn,

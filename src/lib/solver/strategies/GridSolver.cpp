@@ -5,6 +5,9 @@
 #include "gridfire/utils/macros.h"
 #include "gridfire/utils/gf_omp.h"
 
+#include <algorithm>
+#include <exception>
+
 #include <cstdio>
 #include <print>
 
@@ -103,5 +106,55 @@ namespace gridfire::solver {
             }
         }
         return results;
+    }
+
+    std::vector<InstantaneousRates> GridSolver::evaluateRates(
+        SolverContextBase& ctx,
+        const std::vector<NetIn>& netIns
+    ) const {
+        auto* sctx_p = dynamic_cast<GridSolverContext*>(&ctx);
+        if (!sctx_p) {
+            throw exceptions::SolverError("GridSolver::evaluateRates: SolverContextBase is not of type GridSolverContext.");
+        }
+        const size_t n_zones = netIns.size();
+        std::vector<InstantaneousRates> results(n_zones);
+        if (n_zones == 0) { return results; }
+        prepare_workspaces(*sctx_p, n_zones);
+
+        // Exceptions cannot leave an OpenMP region, so the first one is kept and rethrown afterwards
+        std::exception_ptr failure = nullptr;
+        GF_OMP(
+            parallel for default(none) shared(results, sctx_p, netIns, n_zones, failure),
+        for (size_t zone_idx = 0; zone_idx < n_zones; ++zone_idx)) {
+            try {
+                results[zone_idx] = m_solver.evaluateRates(*sctx_p->solver_workspaces[zone_idx], netIns[zone_idx]);
+            } catch (...) {
+#if defined(GF_USE_OPENMP)
+#pragma omp critical(gf_grid_evaluate_rates_failure)
+#endif
+                {
+                    if (!failure) { failure = std::current_exception(); }
+                }
+            }
+        }
+        if (failure) {
+            std::rethrow_exception(failure);
+        }
+        return results;
+    }
+
+    void GridSolver::prepare_workspaces(GridSolverContext& ctx, const size_t n_zones) {
+        if (ctx.solver_workspaces.size() == n_zones &&
+            std::ranges::all_of(ctx.solver_workspaces, [](const auto& w) { return w != nullptr; })) {
+            return;
+        }
+        ctx.solver_workspaces.resize(n_zones);
+        for (auto& workspace : ctx.solver_workspaces) {
+            if (!workspace) {
+                workspace = std::make_unique<PointSolverContext>(ctx.ctx_template);
+                workspace->set_stdout_logging(ctx.zone_stdout_logging);
+                workspace->set_detailed_logging(ctx.zone_detailed_logging);
+            }
+        }
     }
 }

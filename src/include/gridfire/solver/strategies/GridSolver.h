@@ -42,5 +42,16 @@ namespace gridfire::solver {
             SolverContextBase& ctx,
             const std::vector<NetIn>& netIns
         ) const override;
+
+        /**
+         * @brief The single-zone solver's evaluateRates for every zone (in parallel with OpenMP), without integrating.
+         */
+        [[nodiscard]] std::vector<InstantaneousRates> evaluateRates(
+            SolverContextBase& ctx,
+            const std::vector<NetIn>& netIns
+        ) const override;
+    private:
+        /// One single-zone context per zone, made from ctx_template (reused when the zone count is unchanged).
+        static void prepare_workspaces(GridSolverContext& ctx, size_t n_zones);
     };
 }

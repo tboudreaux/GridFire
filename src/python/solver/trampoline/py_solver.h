@@ -15,6 +15,11 @@ public:
         gridfire::solver::SolverContextBase &solver_ctx,
         const gridfire::NetIn &netIn
     ) const override;
+
+    gridfire::InstantaneousRates evaluateRates(
+        gridfire::solver::SolverContextBase &solver_ctx,
+        const gridfire::NetIn &netIn
+    ) const override;
 };
 
 class PyMultiZoneDynamicNetworkSolver final : public gridfire::solver::MultiZoneDynamicNetworkSolver {
@@ -25,6 +30,11 @@ public:
     ) : gridfire::solver::MultiZoneDynamicNetworkSolver(engine, local_solver) {}
 
     std::vector<gridfire::NetOut> evaluate(
+        gridfire::solver::SolverContextBase &solver_ctx,
+        const std::vector<gridfire::NetIn> &netIns
+    ) const override;
+
+    std::vector<gridfire::InstantaneousRates> evaluateRates(
         gridfire::solver::SolverContextBase &solver_ctx,
         const std::vector<gridfire::NetIn> &netIns
     ) const override;

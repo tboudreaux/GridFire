@@ -48,6 +48,10 @@ class MultiZoneDynamicNetworkSolver:
         """
         evaluate the dynamic engine using the dynamic engine class for multiple zones (using openmp if available)
         """
+    def evaluateRates(self, solver_ctx: SolverContextBase, netIns: collections.abc.Sequence[gridfire._gridfire.type.NetIn]) -> list[gridfire._gridfire.type.InstantaneousRates]:
+        """
+        evaluateRates for every zone, without integrating (using openmp if available)
+        """
 class PointSolver(SingleZoneDynamicNetworkSolver):
     @typing.overload
     def __init__(self, engine: gridfire._gridfire.engine.DynamicEngine) -> None:
@@ -167,6 +171,10 @@ class SingleZoneDynamicNetworkSolver:
     def evaluate(self, solver_ctx: SolverContextBase, netIn: gridfire._gridfire.type.NetIn) -> gridfire._gridfire.type.NetOut:
         """
         evaluate the dynamic engine using the dynamic engine class for a single zone
+        """
+    def evaluateRates(self, solver_ctx: SolverContextBase, netIn: gridfire._gridfire.type.NetIn) -> gridfire._gridfire.type.InstantaneousRates:
+        """
+        Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's state, without integrating
         """
 class SolverContextBase:
     pass

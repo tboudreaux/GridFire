@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/exceptions/error_solver.h"
 #include "gridfire/types/types.h"
 
 #include <functional>
@@ -44,6 +45,25 @@ namespace gridfire::solver {
         [[nodiscard]] virtual std::vector<std::tuple<std::string, std::string>> describe() const = 0;
     };
     /**
+     * @brief Instantaneous rates at netIn's state straight from the engine, with no integration.
+     *
+     * One calculateRHSAndEnergy call (eps, neutrino losses, dY/dt) and one calculateEpsDerivatives call, plus
+     * calculateEnergyChannels when include_channels is set. netIn.tMax, dt0 and energy are ignored. Network species
+     * missing from netIn.composition are taken as absent.
+     *
+     * @param engine_ctx Scratch state of engine (its own, or one cloned from it); only engine scratch is touched.
+     * @throws exceptions::SolverError for a non-positive or non-finite temperature or density, a negative or
+     *         non-finite abundance, or a positive abundance of a species that is not in the network.
+     * @throws exceptions::BadRHSEngineError if the engine cannot evaluate the RHS.
+     */
+    [[nodiscard]] InstantaneousRates evaluate_instantaneous_rates(
+        const engine::DynamicEngine& engine,
+        engine::scratch::StateBlob& engine_ctx,
+        const NetIn& netIn,
+        bool include_channels = true
+    );
+
+    /**
      * @class SingleZoneNetworkSolver
      * @brief Abstract base class for network solver strategies.
      *
@@ -82,6 +102,22 @@ namespace gridfire::solver {
             const NetIn& netIn
         ) const = 0;
 
+        /**
+         * @brief Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's
+         *        state, without integrating (netIn.tMax and dt0 are ignored).
+         *
+         * A pass-through to the engine (see evaluate_instantaneous_rates) using this solver's context, so a consumer
+         * holding a solver stack can get the rates that evaluate() would report at the end of a step, at any state.
+         * The integrator state in solver_ctx is not touched. Solvers that support it override this; the default
+         * throws exceptions::SolverError.
+         */
+        [[nodiscard]] virtual InstantaneousRates evaluateRates(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn
+        ) const {
+            throw exceptions::SolverError("This solver does not support evaluateRates.");
+        }
+
     protected:
         const EngineT& m_engine; ///< The engine used by this solver strategy.
     };
@@ -102,6 +138,17 @@ namespace gridfire::solver {
             SolverContextBase& solver_ctx,
             const std::vector<NetIn>& netIns
         ) const = 0;
+
+        /**
+         * @brief SingleZoneNetworkSolver::evaluateRates for every zone, without integrating. The default throws
+         *        exceptions::SolverError.
+         */
+        [[nodiscard]] virtual std::vector<InstantaneousRates> evaluateRates(
+            SolverContextBase& solver_ctx,
+            const std::vector<NetIn>& netIns
+        ) const {
+            throw exceptions::SolverError("This solver does not support evaluateRates.");
+        }
     protected:
         const EngineT& m_engine; ///< The engine used by this solver strategy.
         const SingleZoneNetworkSolver<EngineT>& m_solver;

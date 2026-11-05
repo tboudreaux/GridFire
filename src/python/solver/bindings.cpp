@@ -162,6 +162,13 @@ void register_solver_bindings(const py::module &m) {
         py::arg("netIn"),
         "evaluate the dynamic engine using the dynamic engine class for a single zone"
     );
+    py_single_zone_dynamic_network_solver.def(
+        "evaluateRates",
+        &gridfire::solver::SingleZoneDynamicNetworkSolver::evaluateRates,
+        py::arg("solver_ctx"),
+        py::arg("netIn"),
+        "Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's state, without integrating"
+    );
     auto py_multi_zone_dynamic_network_solver = py::class_<gridfire::solver::MultiZoneDynamicNetworkSolver, PyMultiZoneDynamicNetworkSolver>(m, "MultiZoneDynamicNetworkSolver");
     py_multi_zone_dynamic_network_solver.def(
         "evaluate",
@@ -169,6 +176,13 @@ void register_solver_bindings(const py::module &m) {
         py::arg("solver_ctx"),
         py::arg("netIns"),
         "evaluate the dynamic engine using the dynamic engine class for multiple zones (using openmp if available)"
+    );
+    py_multi_zone_dynamic_network_solver.def(
+        "evaluateRates",
+        &gridfire::solver::MultiZoneDynamicNetworkSolver::evaluateRates,
+        py::arg("solver_ctx"),
+        py::arg("netIns"),
+        "evaluateRates for every zone, without integrating (using openmp if available)"
     );
 
     auto py_point_solver = py::class_<gridfire::solver::PointSolver, gridfire::solver::SingleZoneDynamicNetworkSolver>(m, "PointSolver");

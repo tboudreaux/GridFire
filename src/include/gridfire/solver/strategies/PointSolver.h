@@ -229,6 +229,16 @@ namespace gridfire::solver {
         ) const override;
 
         /**
+         * @brief Instantaneous rates at netIn's state, without integrating (see
+         *        SingleZoneNetworkSolver::evaluateRates). Uses the engine scratch in solver_ctx (a PointSolverContext);
+         *        CVODE state is not touched, so this may be called between evaluate() calls.
+         */
+        [[nodiscard]] InstantaneousRates evaluateRates(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn
+        ) const override;
+
+        /**
          * @brief Call to evaluate which will let the user control if the trigger reasoning is displayed
          * @param solver_ctx
          * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.

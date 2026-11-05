@@ -2,9 +2,58 @@
 GridFire type bindings
 """
 from __future__ import annotations
+import fourdst._phys.atomic
 import fourdst._phys.composition
 import typing
-__all__: list[str] = ['NetIn', 'NetOut']
+__all__: list[str] = ['InstantaneousRates', 'NetIn', 'NetOut']
+class InstantaneousRates:
+    """
+    Instantaneous rates at one state, with nothing integrated (see evaluateRates)
+    """
+    def __init__(self) -> None:
+        ...
+    def __repr__(self) -> str:
+        ...
+    @property
+    def dEps_dRho(self) -> float:
+        """
+        d(eps_nuc)/d(rho) at fixed T and composition (erg/g/s per g/cm^3)
+        """
+    @property
+    def dEps_dT(self) -> float:
+        """
+        d(eps_nuc)/dT at fixed rho and composition (erg/g/s/K)
+        """
+    @property
+    def dydt(self) -> dict[fourdst._phys.atomic.Species, float]:
+        """
+        dY/dt of every network species (mol/g/s)
+        """
+    @property
+    def energy_channel_names(self) -> list[str]:
+        """
+        Names of the energy channels
+        """
+    @property
+    def eps_by_channel(self) -> list[float]:
+        """
+        eps_nuc by energy channel (erg/g/s); sums to eps_nuc
+        """
+    @property
+    def eps_nuc(self) -> float:
+        """
+        Specific nuclear energy generation rate (erg/g/s), net of reaction neutrino losses
+        """
+    @property
+    def neutrino_energy_loss_rate(self) -> float:
+        """
+        Reaction neutrino energy loss rate (erg/g/s)
+        """
+    @property
+    def neutrino_flux(self) -> float:
+        """
+        Reaction neutrino emission rate (neutrinos/g/s)
+        """
 class NetIn:
     composition: fourdst._phys.composition.Composition
     def __init__(self) -> None:

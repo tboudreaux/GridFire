@@ -29,6 +29,20 @@ void register_type_bindings(const pybind11::module &m) {
         return ss.str();
     });
 
+    py::class_<gridfire::InstantaneousRates>(m, "InstantaneousRates", "Instantaneous rates at one state, with nothing integrated (see evaluateRates)")
+        .def(py::init<>())
+        .def_readonly("eps_nuc", &gridfire::InstantaneousRates::eps_nuc, "Specific nuclear energy generation rate (erg/g/s), net of reaction neutrino losses")
+        .def_readonly("dEps_dT", &gridfire::InstantaneousRates::dEps_dT, "d(eps_nuc)/dT at fixed rho and composition (erg/g/s/K)")
+        .def_readonly("dEps_dRho", &gridfire::InstantaneousRates::dEps_dRho, "d(eps_nuc)/d(rho) at fixed T and composition (erg/g/s per g/cm^3)")
+        .def_readonly("neutrino_energy_loss_rate", &gridfire::InstantaneousRates::neutrino_energy_loss_rate, "Reaction neutrino energy loss rate (erg/g/s)")
+        .def_readonly("neutrino_flux", &gridfire::InstantaneousRates::neutrino_flux, "Reaction neutrino emission rate (neutrinos/g/s)")
+        .def_readonly("dydt", &gridfire::InstantaneousRates::dydt, "dY/dt of every network species (mol/g/s)")
+        .def_readonly("energy_channel_names", &gridfire::InstantaneousRates::energy_channel_names, "Names of the energy channels")
+        .def_readonly("eps_by_channel", &gridfire::InstantaneousRates::eps_by_channel, "eps_nuc by energy channel (erg/g/s); sums to eps_nuc")
+        .def("__repr__", [](const gridfire::InstantaneousRates& rates) {
+            return std::format("InstantaneousRates(ε_nuc = {}, dε/dT = {}, dε/dρ = {})", rates.eps_nuc, rates.dEps_dT, rates.dEps_dRho);
+        });
+
     py::class_<gridfire::NetOut>(m, "NetOut")
         .def_readonly("composition", &gridfire::NetOut::composition)
         .def_readonly("num_steps", &gridfire::NetOut::num_steps)

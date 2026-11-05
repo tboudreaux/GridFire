@@ -39,6 +39,32 @@ std::vector<gridfire::NetOut> PyMultiZoneDynamicNetworkSolver::evaluate(
     );
 }
 
+gridfire::InstantaneousRates PySingleZoneDynamicNetworkSolver::evaluateRates(
+    gridfire::solver::SolverContextBase &solver_ctx,
+    const gridfire::NetIn &netIn
+) const {
+    PYBIND11_OVERRIDE(
+        gridfire::InstantaneousRates,
+        gridfire::solver::SingleZoneDynamicNetworkSolver,
+        evaluateRates,
+        solver_ctx,
+        netIn
+    );
+}
+
+std::vector<gridfire::InstantaneousRates> PyMultiZoneDynamicNetworkSolver::evaluateRates(
+    gridfire::solver::SolverContextBase &solver_ctx,
+    const std::vector<gridfire::NetIn> &netIns
+) const {
+    PYBIND11_OVERRIDE(
+        std::vector<gridfire::InstantaneousRates>,
+        gridfire::solver::MultiZoneDynamicNetworkSolver,
+        evaluateRates,
+        solver_ctx,
+        netIns
+    );
+}
+
 std::vector<std::tuple<std::string, std::string>> PyTimestepContextBase::describe() const {
     using ReturnType = std::vector<std::tuple<std::string, std::string>>;
     PYBIND11_OVERRIDE_PURE(

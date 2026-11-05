@@ -24,6 +24,7 @@
 #include "cppad/cppad.hpp"
 #include <format>
 #include <string>
+#include <map>
 #include <vector>
 
 namespace gridfire {
@@ -58,6 +59,24 @@ namespace gridfire {
             os << "NetOut(composition=" << netOut.composition << ", num_steps=" << netOut.num_steps << ", ε=" << netOut.energy << ", dε/dT=" << netOut.dEps_dT << ", dε/dρ=" << netOut.dEps_dRho << ", ε_nuc=" << netOut.eps_nuc << ")";
             return os;
         }
+    };
+
+    /**
+     * @brief Instantaneous rates at one state (composition, T, rho), with nothing integrated.
+     *
+     * Returned by SingleZoneNetworkSolver::evaluateRates and MultiZoneNetworkSolver::evaluateRates, and what the C
+     * API's gf_evaluate reports. eps_nuc, dEps_dT and dEps_dRho match the final-state values evolve() reports for the
+     * same state.
+     */
+    struct InstantaneousRates {
+        double eps_nuc = 0.0; ///< Specific nuclear energy generation rate, net of reaction neutrino losses, in erg/g/s
+        double dEps_dT = 0.0; ///< d(eps_nuc)/dT at fixed rho and composition, in erg/g/s/K
+        double dEps_dRho = 0.0; ///< d(eps_nuc)/d(rho) at fixed T and composition, in erg/g/s/(g/cm^3)
+        double neutrino_energy_loss_rate = 0.0; ///< Reaction neutrino energy loss rate in erg/g/s
+        double neutrino_flux = 0.0; ///< Reaction neutrino emission rate in neutrinos/g/s
+        std::map<fourdst::atomic::Species, double> dydt; ///< dY/dt of every network species, in mol/g/s
+        std::vector<std::string> energy_channel_names; ///< Names of the energy channels (empty if not requested)
+        std::vector<double> eps_by_channel; ///< eps_nuc by energy channel, in erg/g/s; sums to eps_nuc (empty if not requested)
     };
 
     /**

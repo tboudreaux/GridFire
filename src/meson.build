@@ -24,6 +24,7 @@ gridfire_sources = files(
     'lib/io/generative/mesa.cpp',
     'lib/solver/strategies/PointSolver.cpp',
     'lib/solver/strategies/GridSolver.cpp',
+    'lib/solver/strategies/rates.cpp',
     'lib/solver/strategies/triggers/engine_partitioning_trigger.cpp',
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',

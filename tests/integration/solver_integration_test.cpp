@@ -714,3 +714,121 @@ TEST(KnownBugs, GridSolverHidesZoneFailures) {
     }
     FAIL() << "GridSolver now reports zone failures: the bug appears fixed; make this a normal test";
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// evaluateRates: instantaneous rates through the solver stack, without integrating
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    NetIn state(const fourdst::composition::Composition& composition, const double T, const double rho) {
+        NetIn in;
+        in.composition = composition;
+        in.temperature = T;
+        in.density = rho;
+        in.tMax = 0.0; // ignored by evaluateRates
+        in.dt0 = 0.0;
+        in.energy = 0.0;
+        return in;
+    }
+}
+
+// evaluateRates at evolve()'s final state reproduces the final-state values evolve() reports
+TEST(SolverEvaluateRates, PointSolverMatchesEvolveFinalState) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    PointSolverContext sctx(*context);
+    sctx.set_stdout_logging(false);
+    const PointSolver solver(shared.engine);
+
+    NetIn in = state(gridfire::test::solar_composition(), 1.5e7, 150.0);
+    in.tMax = 3e15;
+    in.dt0 = 1e-12;
+    const NetOut out = solver.evaluate(sctx, in);
+
+    const gridfire::InstantaneousRates rates = solver.evaluateRates(sctx, state(out.composition, 1.5e7, 150.0));
+    EXPECT_NEAR(rates.eps_nuc, out.eps_nuc, 1e-12 * std::abs(out.eps_nuc));
+    EXPECT_NEAR(rates.dEps_dT, out.dEps_dT, 1e-12 * std::abs(out.dEps_dT));
+    EXPECT_NEAR(rates.dEps_dRho, out.dEps_dRho, 1e-12 * std::abs(out.dEps_dRho));
+    EXPECT_NEAR(rates.neutrino_energy_loss_rate, out.neutrino_energy_loss_rate, 1e-12 * out.neutrino_energy_loss_rate);
+    EXPECT_EQ(rates.energy_channel_names, out.energy_channel_names);
+    ASSERT_EQ(rates.eps_by_channel.size(), out.eps_by_channel.size());
+    for (size_t c = 0; c < rates.eps_by_channel.size(); ++c) {
+        EXPECT_NEAR(rates.eps_by_channel[c], out.eps_by_channel[c], 1e-12 * std::abs(out.eps_nuc)) << out.energy_channel_names[c];
+    }
+    EXPECT_EQ(rates.dydt.size(), shared.engine.getNetworkSpecies(*context).size()) << "dY/dt covers every network species";
+    EXPECT_LT(rates.dydt.at(sp("H-1")), 0.0);
+    EXPECT_GT(rates.neutrino_flux, 0.0);
+}
+
+// The result is the engine's own RHS and derivatives at that state, and calling it leaves integration unaffected
+TEST(SolverEvaluateRates, IsAPassThroughThatLeavesIntegrationUnchanged) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const PointSolver solver(shared.engine);
+    const auto comp = gridfire::test::solar_composition();
+
+    PointSolverContext sctx(*context);
+    sctx.set_stdout_logging(false);
+    const auto rates = solver.evaluateRates(sctx, state(comp, 2e7, 80.0));
+    const auto& network = shared.engine.getNetworkSpecies(*context);
+    const auto engine_comp = gridfire::test::make_composition(network, gridfire::test::abundances_in_order(comp, network));
+    const auto rhs = shared.engine.calculateRHSAndEnergy(*context, engine_comp, 0.02, 80.0, false);
+    ASSERT_TRUE(rhs.has_value());
+    EXPECT_EQ(rates.eps_nuc, rhs->nuclearEnergyGenerationRate);
+    EXPECT_EQ(rates.dydt, rhs->dydt);
+
+    NetIn in = state(comp, 1.5e7, 150.0);
+    in.tMax = 1e14;
+    in.dt0 = 1e-12;
+    PointSolverContext plain(*shared.fresh_context());
+    plain.set_stdout_logging(false);
+    const NetOut reference = solver.evaluate(plain, in);
+    (void)solver.evaluateRates(sctx, state(comp, 3e7, 10.0));
+    const NetOut after_rates = solver.evaluate(sctx, in);
+    EXPECT_EQ(after_rates.energy, reference.energy);
+    EXPECT_EQ(after_rates.eps_nuc, reference.eps_nuc);
+    EXPECT_EQ(after_rates.num_steps, reference.num_steps);
+}
+
+TEST(SolverEvaluateRates, GridSolverMatchesPointSolverPerZone) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const PointSolver point(shared.engine);
+    const gridfire::solver::GridSolver grid(shared.engine, point);
+    gridfire::solver::GridSolverContext gctx(*context);
+    gctx.zone_completion_logging = false;
+
+    std::vector<NetIn> inputs;
+    for (const double T : {1.0e7, 1.5e7, 2.5e7, 4e7}) {
+        inputs.push_back(state(gridfire::test::solar_composition(), T, 100.0));
+    }
+    const auto grid_rates = grid.evaluateRates(gctx, inputs);
+    ASSERT_EQ(grid_rates.size(), inputs.size());
+    PointSolverContext sctx(*context);
+    for (size_t z = 0; z < inputs.size(); ++z) {
+        const auto single = point.evaluateRates(sctx, inputs[z]);
+        EXPECT_EQ(grid_rates[z].eps_nuc, single.eps_nuc) << "zone " << z;
+        EXPECT_EQ(grid_rates[z].dEps_dT, single.dEps_dT) << "zone " << z;
+        EXPECT_EQ(grid_rates[z].dEps_dRho, single.dEps_dRho) << "zone " << z;
+    }
+}
+
+TEST(SolverEvaluateRates, RejectsInvalidStates) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const PointSolver solver(shared.engine);
+    PointSolverContext sctx(*context);
+    const auto comp = gridfire::test::solar_composition();
+    EXPECT_THROW((void)solver.evaluateRates(sctx, state(comp, -1.0, 100.0)), gridfire::exceptions::SolverError);
+    EXPECT_THROW((void)solver.evaluateRates(sctx, state(comp, 1.5e7, std::nan(""))), gridfire::exceptions::SolverError);
+
+    // A species outside the network
+    auto outside = comp;
+    outside.registerSpecies(sp("U-238"));
+    outside.setMolarAbundance(sp("U-238"), 1e-8);
+    EXPECT_THROW((void)solver.evaluateRates(sctx, state(outside, 1.5e7, 100.0)), gridfire::exceptions::SolverError);
+
+    // The wrong context type
+    gridfire::solver::GridSolverContext wrong(*context);
+    EXPECT_THROW((void)solver.evaluateRates(wrong, state(comp, 1.5e7, 100.0)), gridfire::exceptions::SolverError);
+}
