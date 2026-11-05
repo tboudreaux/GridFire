@@ -380,6 +380,76 @@ namespace gridfire::engine {
         const double rho,
         const reaction::ReactionSet &activeReactions
     ) const {
+        if (m_jacobianMethod == JacobianMethod::ANALYTIC) {
+            if (const auto analytic = calculateAnalyticEpsDerivatives(comp, T9, rho)) {
+                return *analytic;
+            }
+        }
+        return calculateAutoDiffEpsDerivatives(ctx, comp, T9, rho);
+    }
+
+    std::optional<EnergyDerivatives> GraphEngine::calculateAnalyticEpsDerivatives(
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        for (const auto& precomp : m_precomputed_reactions) {
+            if (!precomp.analytic_rate_derivative || (m_useReverseReactions && precomp.reverse_symmetry_factor != 0.0)) {
+                return std::nullopt;
+            }
+        }
+        const std::vector<double> Y = networkAbundances(comp);
+        const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            m_reactions, m_networkSpecies, Y, T9, rho
+        );
+        const auto dlnf = m_screeningModel->calculateScreeningStateLogDerivatives(
+            m_reactions, m_networkSpecies, Y, T9, rho
+        );
+        if (!dlnf) {
+            return std::nullopt;
+        }
+        std::vector<double> bare_rates;
+        std::vector<double> bare_reverse_rates;
+        compute_bare_rates(comp, T9, rho, m_reactions, bare_rates, bare_reverse_rates);
+
+        // Unused by REACLIB rates, but the interface takes one
+        static const fourdst::composition::Composition no_composition;
+
+        // eps = sum_r F_r E_r at fixed composition, so d eps / d ln x = sum_r F_r E_r d ln F_r / d ln x
+        double dEps_dlnT = 0.0;
+        double dEps_dlnRho = 0.0;
+        for (size_t r = 0; r < m_reactions.size(); ++r) {
+            const reaction::Reaction& reaction = m_reactions[r];
+            const PrecomputedReaction& precomp = m_precomputed_reactions[r];
+
+            // F = f k sym rho^(n-1) prod_u Y_u^p_u, exactly as the RHS forms it
+            const size_t numReactants = reaction.reactants().size();
+            const double rhoPower = numReactants > 1 ? static_cast<double>(numReactants) - 1.0 : 0.0;
+            double flow = screeningFactors[r] * bare_rates[r] * precomp.symmetry_factor * std::pow(rho, rhoPower);
+            for (size_t u = 0; u < precomp.unique_reactant_indices.size(); ++u) {
+                for (int p = 0; p < precomp.reactant_powers[u]; ++p) {
+                    flow *= Y[precomp.unique_reactant_indices[u]];
+                }
+            }
+            const double weight = flow * precomp.energy_per_flow;
+            if (weight == 0.0) {
+                continue;
+            }
+
+            const double dlnk_dlnT = T9 * reaction.calculate_log_rate_partial_deriv_wrt_T9(T9, rho, 0.0, 0.0, no_composition);
+            const double dlnk_dlnRho = precomp.electron_capture ? 1.0 : 0.0; // rate proportional to rho * Ye
+            dEps_dlnT += weight * (dlnk_dlnT + (*dlnf)[r].dlnT);
+            dEps_dlnRho += weight * (rhoPower + dlnk_dlnRho + (*dlnf)[r].dlnRho);
+        }
+        return EnergyDerivatives{dEps_dlnT / (T9 * 1e9), dEps_dlnRho / rho};
+    }
+
+    EnergyDerivatives GraphEngine::calculateAutoDiffEpsDerivatives(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
         auto* state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         const size_t numSpecies = m_networkSpecies.size();
         const size_t numADInputs = numSpecies + 2; // +2 for T9 and rho
@@ -1876,6 +1946,7 @@ namespace gridfire::engine {
             // --- Composition dependence of the rate itself (used by the analytic Jacobian) ---
             const auto* reaclib = dynamic_cast<const reaction::ReaclibReaction*>(&reaction);
             precomp.electron_capture = reaclib != nullptr && reaclib->is_electron_capture();
+            precomp.analytic_rate_derivative = reaclib != nullptr;
 
             m_precomputed_reactions.push_back(std::move(precomp));
         }

@@ -100,6 +100,16 @@ namespace gridfire::screening {
         ) const override {
             return std::vector<double>(reactions.size() * species.size(), 0.0);
         }
+
+        [[nodiscard]] std::optional<std::vector<StateLogDerivatives>> calculateScreeningStateLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>&,
+            const std::vector<double>&,
+            double,
+            double
+        ) const override {
+            return std::vector<StateLogDerivatives>(reactions.size());
+        }
     private:
         /**
          * @brief Template implementation for calculating screening factors.

@@ -99,6 +99,16 @@ namespace gridfire::screening {
             double T9,
             double rho
         ) const override;
+
+        /// ln f = H_12 with H_12 proportional to rho^(1/2) T^(-3/2), so d ln f/d ln T = -3/2 H and d ln f/d ln rho = H/2
+        /// (zero where the factor is capped or the reaction is unscreened).
+        [[nodiscard]] std::optional<std::vector<StateLogDerivatives>> calculateScreeningStateLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const override;
     private:
         /// @brief Salpeter prefactor 0.188 zeta^(1/2) rho^(1/2) T_6^(-3/2), times 0 below the low-temperature cutoff.
         template <IsArithmeticOrAD T>

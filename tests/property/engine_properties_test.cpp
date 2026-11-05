@@ -257,6 +257,27 @@ TEST_F(EngineProperties, AnalyticJacobianMatchesAutoDiff) {
     }
 }
 
+// d(eps)/dT and d(eps)/d(rho) at fixed composition, from the REACLIB fits and the screening model, against the CppAD
+// tape over random states spanning hydrogen and helium burning. Both describe the same eps, so they agree to round-off.
+TEST_F(EngineProperties, AnalyticEpsDerivativesMatchAutoDiff) {
+    auto draw = sampler(11);
+    for (int k = 0; k < 20; ++k) {
+        const EngineState s = draw.next();
+        SCOPED_TRACE(trace(s));
+        const auto analytic = graph().calculateAnalyticEpsDerivatives(s.composition, s.T9, s.rho);
+        ASSERT_TRUE(analytic.has_value()) << "REACLIB rates with weak screening have analytic derivatives";
+        const auto autodiff = graph().calculateAutoDiffEpsDerivatives(*m_ctx, s.composition, s.T9, s.rho);
+        EXPECT_LE(std::abs(analytic->dEps_dT - autodiff.dEps_dT), 1e-9 * std::abs(autodiff.dEps_dT))
+            << "dEps/dT analytic " << analytic->dEps_dT << " CppAD " << autodiff.dEps_dT;
+        EXPECT_LE(std::abs(analytic->dEps_dRho - autodiff.dEps_dRho), 1e-9 * std::abs(autodiff.dEps_dRho))
+            << "dEps/drho analytic " << analytic->dEps_dRho << " CppAD " << autodiff.dEps_dRho;
+        // The default (engine.jacobian = ANALYTIC) path returns the analytic values
+        const auto selected = graph().calculateEpsDerivatives(*m_ctx, s.composition, s.T9, s.rho);
+        EXPECT_EQ(selected.dEps_dT, analytic->dEps_dT);
+        EXPECT_EQ(selected.dEps_dRho, analytic->dEps_dRho);
+    }
+}
+
 // On an integrator iterate with slightly negative abundances, the solver evaluates the RHS on the raw values (so a
 // destroyed species keeps its restoring term) and needs the Jacobian of exactly that function. Check both Jacobian
 // methods against finite differences of calculateRHSAndEnergyFromRawAbundances, including the negative columns.

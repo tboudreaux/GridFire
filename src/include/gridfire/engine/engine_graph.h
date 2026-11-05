@@ -393,6 +393,29 @@ namespace gridfire::engine {
         ) const;
 
         /**
+         * @brief Analytic d(eps)/dT and d(eps)/d(rho) at fixed composition: eps = sum_r F_r E_r over the forward flows
+         *        F_r and energies per flow E_r, so each derivative is sum_r F_r E_r d(ln F_r), with d ln F_r from the
+         *        REACLIB fit, the rho^(n-1) and rho*Ye factors, and the screening model. This is what
+         *        calculateEpsDerivatives returns when engine.jacobian is JacobianMethod::ANALYTIC.
+         * @return std::nullopt when it does not apply, so callers fall back to CppAD: reverse reactions enabled, a
+         *         reaction without an analytic rate derivative (tabulated weak rates), or a screening model without
+         *         analytic temperature and density derivatives.
+         */
+        [[nodiscard]] std::optional<EnergyDerivatives> calculateAnalyticEpsDerivatives(
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const;
+
+        /// @brief d(eps)/dT and d(eps)/d(rho) from the CppAD tape, whatever engine.jacobian says.
+        [[nodiscard]] EnergyDerivatives calculateAutoDiffEpsDerivatives(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho
+        ) const;
+
+        /**
          * @brief RHS on an integrator iterate, with mass-action products taken from the raw (possibly negative)
          *        abundances. Not cached, since comp alone does not identify the iterate.
          * @see DynamicEngine::calculateRHSAndEnergyFromRawAbundances
@@ -839,7 +862,8 @@ namespace gridfire::engine {
             bool emits_neutrino{}; ///< Weak reaction: each unit of net flow emits one neutrino per nucleus
             size_t channel_index{}; ///< Index into m_energy_channels.names
 
-            // Rate dependence on composition
+            // Rate dependence on composition and state
+            bool analytic_rate_derivative{}; ///< The rate has an analytic d ln k / dT9 (REACLIB fits; not tabulated weak rates)
             bool electron_capture{}; ///< Rate scales with rho * Ye (a REACLIB electron capture), so it depends on every Y_k through Ye
         };
 

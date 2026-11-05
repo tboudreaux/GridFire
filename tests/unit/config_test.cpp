@@ -73,7 +73,7 @@ TEST(RuntimeConfig, PolicyPassesConfigToEngine) {
     EXPECT_NE(std::ranges::find(channels, "H"), channels.end());
 }
 
-TEST(RuntimeConfig, JacobianMethodSelectsTheJacobian) {
+TEST(RuntimeConfig, JacobianMethodSelectsJacobianAndEpsDerivatives) {
     for (const JacobianMethod method : {JacobianMethod::ANALYTIC, JacobianMethod::AUTOMATIC_DIFFERENTIATION}) {
         GridFireConfig config;
         config.engine.jacobian = method;
@@ -90,6 +90,14 @@ TEST(RuntimeConfig, JacobianMethodSelectsTheJacobian) {
                 ASSERT_EQ(selected(row, col), expected(row, col)) << "J(" << row.name() << ", " << col.name() << ")";
             }
         }
+
+        // The same setting selects how d(eps)/dT and d(eps)/d(rho) are computed
+        const auto eps_selected = e.graph().calculateEpsDerivatives(e.ctx(), comp, T9, RHO);
+        const auto eps_expected = method == JacobianMethod::ANALYTIC
+            ? *e.graph().calculateAnalyticEpsDerivatives(comp, T9, RHO)
+            : e.graph().calculateAutoDiffEpsDerivatives(e.ctx(), comp, T9, RHO);
+        EXPECT_EQ(eps_selected.dEps_dT, eps_expected.dEps_dT);
+        EXPECT_EQ(eps_selected.dEps_dRho, eps_expected.dEps_dRho);
     }
 }
 

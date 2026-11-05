@@ -71,4 +71,23 @@ namespace gridfire::screening {
         }
         return dlnf_dY;
     }
+
+    std::optional<std::vector<ScreeningModel::StateLogDerivatives>> WeakScreeningModel::calculateScreeningStateLogDerivatives(
+        const reaction::ReactionSet &reactions,
+        const std::vector<fourdst::atomic::Species>& species,
+        const std::vector<double> &Y,
+        const double T9,
+        const double rho
+    ) const {
+        std::vector<StateLogDerivatives> derivatives(reactions.size());
+        const double prefactor = prefactor_impl<double>(species, Y, T9, rho); // 0 below the low-temperature cutoff
+        size_t r = 0;
+        for (const auto& reaction : reactions) {
+            if (const double H_12 = H_impl<double>(*reaction, prefactor); H_12 > 0.0 && H_12 < H_CAP) {
+                derivatives[r] = {.dlnT = -1.5 * H_12, .dlnRho = 0.5 * H_12};
+            }
+            ++r;
+        }
+        return derivatives;
+    }
 }

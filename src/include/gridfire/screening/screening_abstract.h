@@ -141,5 +141,29 @@ namespace gridfire::screening {
         ) const {
             return std::nullopt;
         }
+
+        /// d(ln f)/d(ln T) and d(ln f)/d(ln rho) of one reaction's screening factor at fixed composition.
+        struct StateLogDerivatives {
+            double dlnT = 0.0;
+            double dlnRho = 0.0;
+        };
+
+        /**
+         * @brief Temperature and density derivatives of the screening factors, for the analytic d(eps)/dT and
+         * d(eps)/d(rho).
+         *
+         * @return One entry per reaction, consistent with the double-precision calculateScreeningFactors at the same
+         *         state, or std::nullopt when the model has no analytic derivatives. The default returns std::nullopt,
+         *         so the engine falls back to CppAD and a model without this method stays correct.
+         */
+        [[nodiscard]] virtual std::optional<std::vector<StateLogDerivatives>> calculateScreeningStateLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const {
+            return std::nullopt;
+        }
     };
 }
