@@ -48,7 +48,8 @@ namespace gridfire::solver {
      * @brief Instantaneous rates at netIn's state straight from the engine, with no integration.
      *
      * One calculateRHSAndEnergy call (eps, neutrino losses, dY/dt) and one calculateEpsDerivatives call, plus
-     * calculateEnergyChannels when include_channels is set. netIn.tMax, dt0 and energy are ignored. Network species
+     * calculateEnergyChannels when include_channels is set and calculateReactionContributions (each reaction's
+     * energy, neutrino loss and neutrino emission rates) when include_reactions is set. netIn.tMax, dt0 and energy are ignored. Network species
      * missing from netIn.composition are taken as absent.
      *
      * @param engine_ctx Scratch state of engine (its own, or one cloned from it); only engine scratch is touched.
@@ -60,7 +61,8 @@ namespace gridfire::solver {
         const engine::DynamicEngine& engine,
         engine::scratch::StateBlob& engine_ctx,
         const NetIn& netIn,
-        bool include_channels = true
+        bool include_channels = true,
+        bool include_reactions = true
     );
 
     /**

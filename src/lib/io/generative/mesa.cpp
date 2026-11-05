@@ -53,9 +53,13 @@ namespace gridfire::io::generative {
         if (reaction.type() == reaction::ReactionType::WEAK ||
             reaction.type() == reaction::ReactionType::REACLIB_WEAK ||
             reaction.type() == reaction::ReactionType::LOGICAL_REACLIB_WEAK) {
+            // ...except electron captures with more than one nuclear reactant, which MESA names _ec_ (pep is
+            // r_h1_h1_ec_h2, distinct from pp's r_h1_h1_wk_h2); single-nucleus captures stay _wk_ (r_be7_wk_li7)
+            const auto* reaclib = dynamic_cast<const reaction::ReaclibReaction*>(&reaction);
+            const bool multiBodyCapture = reaclib != nullptr && reaclib->is_electron_capture() && react_sorted.size() > 1;
             std::string name = "r";
             for (const auto& s : react_sorted) name += "_" + get_mesa_iso_name(s);
-            name += "_wk";
+            name += multiBodyCapture ? "_ec" : "_wk";
             for (const auto& s : prod_sorted) name += "_" + get_mesa_iso_name(s);
             return name;
         }

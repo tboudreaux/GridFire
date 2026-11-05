@@ -75,6 +75,20 @@ namespace gridfire::engine {
      * This struct encapsulates the partial derivatives of the specific nuclear energy
      * generation rate with respect to temperature and density.
      */
+    /**
+     * @brief What each reaction contributes at one state, in getNetworkReactions() order.
+     *
+     * The contributions sum to the totals of calculateRHSAndEnergy at the same state: energy_rate to
+     * nuclearEnergyGenerationRate, neutrino_energy_loss_rate to neutrinoEnergyLossRate and neutrino_rate to
+     * totalNeutrinoFlux. Solar neutrino sources (pp, pep, hep, Be-7, B-8, N-13, O-15, F-17) are individual entries.
+     */
+    struct ReactionContributions {
+        std::vector<double> molar_flow;                ///< Net molar flow of each reaction [mol/g/s]
+        std::vector<double> energy_rate;               ///< Energy released, net of neutrinos [erg/g/s]
+        std::vector<double> neutrino_energy_loss_rate; ///< Energy carried off by reaction neutrinos [erg/g/s]
+        std::vector<double> neutrino_rate;             ///< Reaction neutrinos emitted [1/g/s]
+    };
+
     struct EnergyDerivatives {
         double dEps_dT = 0.0;  ///< Partial derivative of energy generation rate with respect to temperature.
         double dEps_dRho = 0.0;///< Partial derivative of energy generation rate with respect to density.
@@ -545,6 +559,21 @@ namespace gridfire::engine {
             double rho
         ) const {
             return {};
+        }
+
+        /**
+         * @brief Each reaction's flow, energy release, neutrino energy loss and neutrino emission rate at one state.
+         *
+         * @return Per-reaction contributions in getNetworkReactions() order (see ReactionContributions), or
+         *         std::nullopt if the engine does not support them.
+         */
+        [[nodiscard]] virtual std::optional<ReactionContributions> calculateReactionContributions(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho
+        ) const {
+            return std::nullopt;
         }
 
         /**

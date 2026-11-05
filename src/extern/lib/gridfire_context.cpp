@@ -4,6 +4,7 @@
 #include "fourdst/atomic/species.h"
 
 #include "fourdst/composition/exceptions/exceptions_composition.h"
+#include "fourdst/composition/utils/utils.h"
 #include "gridfire/exceptions/error_policy.h"
 #include "gridfire/utils/logging.h"
 
@@ -34,6 +35,53 @@ void GFContext::set_config(const gridfire::config::GridFireConfig &new_config) {
         throw GFConfigError("The configuration must be set before the engine is constructed (gf_construct_engine_from_policy); the engine already built would not use it.");
     }
     config = new_config;
+}
+
+void GFContext::set_passive_species(const std::vector<std::string> &names) {
+    if (engine != nullptr) {
+        throw GFConfigError("Passive species must be set before the engine is constructed (gf_construct_engine_from_policy).");
+    }
+    for (const auto& name : names) {
+        if (!fourdst::atomic::species.contains(name)) {
+            throw GFConfigError(std::format("Passive species {} is not recognized in the atomic species database.", name));
+        }
+    }
+    config.engine.passiveSpecies = names;
+}
+
+void GFContext::mass_fractions_to_molar(const double *X, const size_t num_species, const size_t num_zones, double *Y) const {
+    if (num_species != speciesList.size()) {
+        throw fourdst::composition::exceptions::InvalidCompositionError(std::format(
+            "Number of species provided ({}) does not match the registered species count ({}).", num_species, speciesList.size()));
+    }
+    for (size_t zone = 0; zone < num_zones; ++zone) {
+        const double* X_zone = X + zone * num_species;
+        fourdst::composition::Composition comp;
+        try {
+            comp = fourdst::composition::buildCompositionFromMassFractions(
+                speciesList, std::vector<double>(X_zone, X_zone + num_species));
+        } catch (const fourdst::composition::exceptions::InvalidCompositionError& e) {
+            throw GFInvalidStateError(std::format("Zone {}: {}", zone, e.what()));
+        }
+        for (size_t i = 0; i < num_species; ++i) {
+            Y[zone * num_species + i] = comp.getMolarAbundance(speciesList[i]);
+        }
+    }
+}
+
+void GFContext::molar_to_mass_fractions(const double *Y, const size_t num_species, const size_t num_zones, double *X) const {
+    if (num_species != speciesList.size()) {
+        throw fourdst::composition::exceptions::InvalidCompositionError(std::format(
+            "Number of species provided ({}) does not match the registered species count ({}).", num_species, speciesList.size()));
+    }
+    for (size_t zone = 0; zone < num_zones; ++zone) {
+        const double* Y_zone = Y + zone * num_species;
+        const fourdst::composition::Composition comp(speciesList, std::vector<double>(Y_zone, Y_zone + num_species));
+        const auto fractions = comp.getMassFraction();
+        for (size_t i = 0; i < num_species; ++i) {
+            X[zone * num_species + i] = fractions.at(speciesList[i]);
+        }
+    }
 }
 
 void GFContext::load_config(const std::string &path) {
@@ -185,7 +233,7 @@ void GFContext::evaluate(
         netIn.temperature = T[zone];
         netIn.density = rho[zone];
         const gridfire::InstantaneousRates rates = gridfire::solver::evaluate_instantaneous_rates(
-            *engine, *engine_ctx, netIn, out.eps_by_channel != nullptr);
+            *engine, *engine_ctx, netIn, out.eps_by_channel != nullptr, false);
 
         out.eps_nuc[zone] = rates.eps_nuc;
         out.dEps_dT[zone] = rates.dEps_dT;
@@ -202,6 +250,36 @@ void GFContext::evaluate(
                 out.dYdt[zone * num_species + i] = it == rates.dydt.end() ? 0.0 : it->second;
             }
         }
+    }
+}
+
+void GFContext::evaluate_reactions(
+    const double* Y,
+    const size_t num_species,
+    const double* T,
+    const double* rho,
+    const size_t num_zones,
+    const GFReactionOutputs& out
+) const {
+    const size_t num_reactions = network_reactions().size();
+    for (size_t zone = 0; zone < num_zones; ++zone) {
+        const double* Y_zone = Y + zone * num_species;
+        validate_zone(Y_zone, num_species, T[zone], rho[zone], zone);
+
+        gridfire::NetIn netIn;
+        netIn.composition = fourdst::composition::Composition(speciesList, std::vector<double>(Y_zone, Y_zone + num_species));
+        netIn.temperature = T[zone];
+        netIn.density = rho[zone];
+        const gridfire::InstantaneousRates rates = gridfire::solver::evaluate_instantaneous_rates(
+            *engine, *engine_ctx, netIn, false, true);
+        if (rates.reaction_energy_rate.size() != num_reactions) {
+            throw gridfire::exceptions::GridFireError("This engine does not report per-reaction contributions.");
+        }
+        const size_t offset = zone * num_reactions;
+        if (out.molar_flow) std::ranges::copy(rates.reaction_molar_flow, out.molar_flow + offset);
+        if (out.energy_rate) std::ranges::copy(rates.reaction_energy_rate, out.energy_rate + offset);
+        if (out.neutrino_energy_loss_rate) std::ranges::copy(rates.reaction_neutrino_energy_loss_rate, out.neutrino_energy_loss_rate + offset);
+        if (out.neutrino_rate) std::ranges::copy(rates.reaction_neutrino_rate, out.neutrino_rate + offset);
     }
 }
 

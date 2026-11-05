@@ -821,6 +821,14 @@ namespace gridfire::engine {
             double rho
         ) const override;
 
+        /// @copydoc DynamicEngine::calculateReactionContributions
+        [[nodiscard]] std::optional<ReactionContributions> calculateReactionContributions(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract& comp,
+            double T9,
+            double rho
+        ) const override;
+
         /**
          * @brief Calculate the energy generation rate of each channel using only the given active reactions.
          */

@@ -54,6 +54,31 @@ class InstantaneousRates:
         """
         Reaction neutrino emission rate (neutrinos/g/s)
         """
+    @property
+    def reaction_energy_rate(self) -> list[float]:
+        """
+        Energy released per reaction, net of neutrinos (erg/g/s); sums to eps_nuc
+        """
+    @property
+    def reaction_ids(self) -> list[str]:
+        """
+        Reaction identifiers, e.g. 'p(p,e+)d'
+        """
+    @property
+    def reaction_molar_flow(self) -> list[float]:
+        """
+        Net molar flow of each reaction (mol/g/s)
+        """
+    @property
+    def reaction_neutrino_energy_loss_rate(self) -> list[float]:
+        """
+        Neutrino energy loss per reaction (erg/g/s)
+        """
+    @property
+    def reaction_neutrino_rate(self) -> list[float]:
+        """
+        Neutrinos emitted per reaction (1/g/s)
+        """
 class NetIn:
     composition: fourdst._phys.composition.Composition
     def __init__(self) -> None:

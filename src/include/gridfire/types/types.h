@@ -104,6 +104,13 @@ namespace gridfire {
         std::map<fourdst::atomic::Species, double> dydt; ///< dY/dt of every network species, in mol/g/s
         std::vector<std::string> energy_channel_names; ///< Names of the energy channels (empty if not requested)
         std::vector<double> eps_by_channel; ///< eps_nuc by energy channel, in erg/g/s; sums to eps_nuc (empty if not requested)
+
+        // --- Per reaction, in reaction_ids order (empty if not requested or not supported by the engine) ---
+        std::vector<std::string> reaction_ids;              ///< Reaction identifiers, e.g. "p(p,e+)d"
+        std::vector<double> reaction_molar_flow;            ///< Net molar flow of each reaction [mol/g/s]
+        std::vector<double> reaction_energy_rate;           ///< Energy released, net of neutrinos [erg/g/s]; sums to eps_nuc
+        std::vector<double> reaction_neutrino_energy_loss_rate; ///< Reaction neutrino energy loss [erg/g/s]; sums to neutrino_energy_loss_rate
+        std::vector<double> reaction_neutrino_rate;         ///< Reaction neutrinos emitted [1/g/s]; sums to neutrino_flux
     };
 
     /**

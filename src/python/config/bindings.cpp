@@ -44,6 +44,8 @@ void register_config_bindings(pybind11::module &m) {
         .def_readwrite("views", &gridfire::config::EngineConfig::views)
         .def_readwrite("screening", &gridfire::config::EngineConfig::screening)
         .def_readwrite("screeningBlend", &gridfire::config::EngineConfig::screeningBlend)
+        .def_readwrite("passiveSpecies", &gridfire::config::EngineConfig::passiveSpecies,
+            "Species carried in the composition without reactions (count towards Y_e and screening, never change)")
         .def_readwrite("jacobian", &gridfire::config::EngineConfig::jacobian);
 
     py::class_<gridfire::config::GridFireConfig>(m, "GridFireConfig")

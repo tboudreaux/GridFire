@@ -186,6 +186,37 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_set_passive_species(void* ptr, size_t num_species, const char** species_names);
+        function gf_set_passive_species(ptr, num_species, species_names) result(ierr) bind(C, name="gf_set_passive_species")
+            import
+            type(c_ptr), value :: ptr
+            integer(c_size_t), value :: num_species
+            type(c_ptr), dimension(*), intent(in) :: species_names
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_mass_fractions_to_molar(void* ptr, const double* X, size_t num_species, size_t num_zones, double* Y);
+        function gf_mass_fractions_to_molar(ptr, X, num_species, num_zones, Y) result(ierr) &
+                bind(C, name="gf_mass_fractions_to_molar")
+            import
+            type(c_ptr), value :: ptr
+            real(c_double), dimension(*), intent(in) :: X
+            integer(c_size_t), value :: num_species, num_zones
+            real(c_double), dimension(*), intent(out) :: Y
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_molar_to_mass_fractions(void* ptr, const double* Y, size_t num_species, size_t num_zones, double* X);
+        function gf_molar_to_mass_fractions(ptr, Y, num_species, num_zones, X) result(ierr) &
+                bind(C, name="gf_molar_to_mass_fractions")
+            import
+            type(c_ptr), value :: ptr
+            real(c_double), dimension(*), intent(in) :: Y
+            integer(c_size_t), value :: num_species, num_zones
+            real(c_double), dimension(*), intent(out) :: X
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_register_species(void* ptr, const int num_species, const char** species_names);
         function gf_register_species(ptr, num_species, species_names) result(ierr) bind(C, name="gf_register_species")
             import
@@ -309,6 +340,19 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_evaluate_reactions(...): T and rho by reference (scalar or array); outputs as C pointers (c_null_ptr to skip)
+        function gf_evaluate_reactions_c(ctx_type, ptr, Y, num_species, T, rho, molar_flow, energy_rate, &
+                nue_loss_rate, nu_rate) result(ierr) bind(C, name="gf_evaluate_reactions")
+            import :: c_ptr, c_int, c_double, c_size_t
+            integer(c_int), value :: ctx_type
+            type(c_ptr), value :: ptr
+            real(c_double), dimension(*), intent(in) :: Y
+            integer(c_size_t), value :: num_species
+            real(c_double), dimension(*), intent(in) :: T, rho
+            type(c_ptr), value :: molar_flow, energy_rate, nue_loss_rate, nu_rate
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_get_num_network_species(void* ptr, size_t* num_species);
         function gf_get_num_network_species(ptr, num_species) result(ierr) bind(C, name="gf_get_num_network_species")
             import :: c_ptr, c_int, c_size_t
@@ -383,6 +427,13 @@ module gridfire_mod
         procedure :: gff_get_config
         procedure :: gff_load_config
         procedure :: gff_save_config
+        procedure :: gff_set_passive_species
+        procedure :: gff_mass_fractions_to_molar_single
+        procedure :: gff_mass_fractions_to_molar_multi
+        generic :: gff_mass_fractions_to_molar => gff_mass_fractions_to_molar_single, gff_mass_fractions_to_molar_multi
+        procedure :: gff_molar_to_mass_fractions_single
+        procedure :: gff_molar_to_mass_fractions_multi
+        generic :: gff_molar_to_mass_fractions => gff_molar_to_mass_fractions_single, gff_molar_to_mass_fractions_multi
         procedure :: gff_setup_policy
         procedure :: gff_setup_solver
         procedure :: gff_get_last_error
@@ -395,6 +446,10 @@ module gridfire_mod
         procedure :: gff_evaluate_single
         procedure :: gff_evaluate_multi
         generic :: gff_evaluate => gff_evaluate_single, gff_evaluate_multi
+
+        procedure :: gff_evaluate_reactions_single
+        procedure :: gff_evaluate_reactions_multi
+        generic :: gff_evaluate_reactions => gff_evaluate_reactions_single, gff_evaluate_reactions_multi
 
         procedure :: gff_get_zone_status
         procedure :: gff_set_shared_composition_groups
@@ -540,6 +595,68 @@ module gridfire_mod
                 error stop
             end if
         end subroutine gff_save_config
+
+        ! Species carried without reactions (count towards Y_e and screening, never change). They must also be passed
+        ! to gff_register_species, and none may take part in a reaction. Call before gff_setup_policy.
+        subroutine gff_set_passive_species(self, species_list)
+            class(GridFire), intent(in) :: self
+            character(len=*), dimension(:), intent(in) :: species_list
+
+            type(c_ptr), allocatable, dimension(:) :: c_ptrs
+            character(kind=c_char, len=:), allocatable, target :: temp_strs(:)
+            integer :: i, n
+            integer(c_int) :: ierr
+
+            n = size(species_list)
+            allocate(c_ptrs(max(n, 1)))
+            allocate(character(len=len(species_list)+1) :: temp_strs(max(n, 1)))
+            do i = 1, n
+                temp_strs(i) = trim(species_list(i)) // c_null_char
+                c_ptrs(i) = c_loc(temp_strs(i))
+            end do
+
+            ierr = gf_set_passive_species(self%ctx, int(n, c_size_t), c_ptrs)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_set_passive_species
+
+        ! Mass fractions to molar abundances (registered species order), Y_i = X_i / m_i; X must sum to one to 1e-10.
+        ! GridFire itself takes molar abundances only; ierr is GF_INVALID_STATE for a bad X.
+        subroutine gff_mass_fractions_to_molar_single(self, X, Y, ierr)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:), intent(in) :: X
+            real(c_double), dimension(:), intent(out) :: Y
+            integer, intent(out) :: ierr
+            ierr = int(gf_mass_fractions_to_molar(self%ctx, X, int(size(X), c_size_t), 1_c_size_t, Y))
+        end subroutine gff_mass_fractions_to_molar_single
+
+        ! As above for X(num_species, num_zones)
+        subroutine gff_mass_fractions_to_molar_multi(self, X, Y, ierr)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:,:), intent(in) :: X
+            real(c_double), dimension(:,:), intent(out) :: Y
+            integer, intent(out) :: ierr
+            ierr = int(gf_mass_fractions_to_molar(self%ctx, X, int(size(X, 1), c_size_t), int(size(X, 2), c_size_t), Y))
+        end subroutine gff_mass_fractions_to_molar_multi
+
+        ! Molar abundances to mass fractions, X_i = Y_i m_i / sum_j Y_j m_j (each zone sums to one; see gridfire_extern.h)
+        subroutine gff_molar_to_mass_fractions_single(self, Y, X, ierr)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:), intent(in) :: Y
+            real(c_double), dimension(:), intent(out) :: X
+            integer, intent(out) :: ierr
+            ierr = int(gf_molar_to_mass_fractions(self%ctx, Y, int(size(Y), c_size_t), 1_c_size_t, X))
+        end subroutine gff_molar_to_mass_fractions_single
+
+        subroutine gff_molar_to_mass_fractions_multi(self, Y, X, ierr)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:,:), intent(in) :: Y
+            real(c_double), dimension(:,:), intent(out) :: X
+            integer, intent(out) :: ierr
+            ierr = int(gf_molar_to_mass_fractions(self%ctx, Y, int(size(Y, 1), c_size_t), int(size(Y, 2), c_size_t), X))
+        end subroutine gff_molar_to_mass_fractions_multi
 
         subroutine gff_register_species(self, species_list)
             class(GridFire), intent(inout) :: self
@@ -781,6 +898,55 @@ module gridfire_mod
                 error stop
             end if
         end subroutine gff_get_zone_status
+
+        ! Each reaction's molar flow [mol/g/s], energy rate net of neutrinos [erg/g/s], neutrino energy loss rate
+        ! [erg/g/s] and neutrino emission rate [1/g/s] at fixed composition (no integration). Arrays have
+        ! gff_get_num_reactions() entries, in gff_get_reaction_ids order; all four are optional.
+        subroutine gff_evaluate_reactions_single(self, Y, T, rho, ierr, molar_flow, energy_rate, nu_e_loss_rate, nu_rate)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:), intent(in) :: Y
+            real(c_double), intent(in) :: T, rho
+            integer, intent(out) :: ierr
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: molar_flow, energy_rate
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: nu_e_loss_rate, nu_rate
+            real(c_double) :: T_a(1), rho_a(1)
+            type(c_ptr) :: p_flow, p_energy, p_loss, p_rate
+
+            p_flow = c_null_ptr
+            p_energy = c_null_ptr
+            p_loss = c_null_ptr
+            p_rate = c_null_ptr
+            if (present(molar_flow)) p_flow = c_loc(molar_flow)
+            if (present(energy_rate)) p_energy = c_loc(energy_rate)
+            if (present(nu_e_loss_rate)) p_loss = c_loc(nu_e_loss_rate)
+            if (present(nu_rate)) p_rate = c_loc(nu_rate)
+            T_a(1) = T
+            rho_a(1) = rho
+            ierr = int(gf_evaluate_reactions_c(self%ctx_type, self%ctx, Y, self%num_species, T_a, rho_a, &
+                    p_flow, p_energy, p_loss, p_rate))
+        end subroutine gff_evaluate_reactions_single
+
+        ! As gff_evaluate_reactions_single for every zone: Y(num_species, num_zones), outputs (num_reactions, num_zones)
+        subroutine gff_evaluate_reactions_multi(self, Y, T, rho, ierr, molar_flow, energy_rate, nu_e_loss_rate, nu_rate)
+            class(GridFire), intent(in) :: self
+            real(c_double), dimension(:,:), intent(in) :: Y
+            real(c_double), dimension(:), intent(in) :: T, rho
+            integer, intent(out) :: ierr
+            real(c_double), dimension(:,:), intent(out), optional, target, contiguous :: molar_flow, energy_rate
+            real(c_double), dimension(:,:), intent(out), optional, target, contiguous :: nu_e_loss_rate, nu_rate
+            type(c_ptr) :: p_flow, p_energy, p_loss, p_rate
+
+            p_flow = c_null_ptr
+            p_energy = c_null_ptr
+            p_loss = c_null_ptr
+            p_rate = c_null_ptr
+            if (present(molar_flow)) p_flow = c_loc(molar_flow)
+            if (present(energy_rate)) p_energy = c_loc(energy_rate)
+            if (present(nu_e_loss_rate)) p_loss = c_loc(nu_e_loss_rate)
+            if (present(nu_rate)) p_rate = c_loc(nu_rate)
+            ierr = int(gf_evaluate_reactions_c(self%ctx_type, self%ctx, Y, self%num_species, T, rho, &
+                    p_flow, p_energy, p_loss, p_rate))
+        end subroutine gff_evaluate_reactions_multi
 
         function gff_get_num_network_species(self) result(num_species)
             class(GridFire), intent(in) :: self

@@ -289,7 +289,8 @@ def translate_names_to_species(names: List[str]) -> List[Species]:
 def determine_reaction_type(reactants: List[str],
                             products: List[str],
                             qValue: float,
-                            chapter: int
+                            chapter: int,
+                            label: str = ""
                             ) -> Tuple[str, List[str], List[str], str, str, str]:
     """
     Analyze a reaction for quantum number conservation and classify projectiles/ejectiles.
@@ -375,7 +376,9 @@ def determine_reaction_type(reactants: List[str],
         ejectiles.append("e+") # β+ Decay
     if dZ == 1 and chapter == 1 and qValue < BETA_PLUS_THRESHOLD_ENERGY:
         projectiles.append("e-") # electron capture
-    if dZ == 1 and chapter != 1:
+    if dZ == 1 and chapter != 1 and label.lower().startswith("ec"):
+        projectiles.append("e-") # Electron capture in a multi-body reaction, e.g. pep: p(e-p,)d
+    elif dZ == 1 and chapter != 1:
         ejectiles.append("e+") # Positron as byproduct of two body reaction
 
 
@@ -455,7 +458,7 @@ def extract_groups(match: re.Match, reverse: bool) -> Reaction:
     if reverse:
         rList, pList = pList, rList
     qValue = float(groups[3].strip())
-    target, proj, ejec, residual, key, rType = determine_reaction_type(rList, pList, qValue, chapter)
+    target, proj, ejec, residual, key, rType = determine_reaction_type(rList, pList, qValue, chapter, groups[2].strip())
     reaction = Reaction(
         reactants=rList,
         products=pList,

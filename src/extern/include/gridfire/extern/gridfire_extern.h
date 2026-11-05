@@ -158,6 +158,35 @@ extern "C" {
     int gf_save_config(void* ptr, const char* path);
 
     /**
+     * Species carried in the composition without any reactions, e.g. the metals a stellar code lumps together and
+     * represents by one isotope. They count towards Y_e and screening but never change, and the network is not grown
+     * from them. They must also be registered (gf_register_species) and none may take part in a reaction of the
+     * network (gf_construct_engine_from_policy fails with GF_BAD_COLLECTION_ERROR otherwise). Must be called before
+     * gf_construct_engine_from_policy (GF_CONFIG_ERROR otherwise); num_species = 0 clears the list.
+     */
+    int gf_set_passive_species(void* ptr, size_t num_species, const char** species_names);
+
+    /**
+     * Convert mass fractions to the molar abundances every other call takes. GridFire works in molar abundances only;
+     * these helpers are for callers that keep mass fractions, and change nothing in the context.
+     *
+     * X and Y hold num_species values per zone (registered species order, zone-major), for num_zones zones. Each zone
+     * goes through the same conversion as the C++ library (fourdst::composition::buildCompositionFromMassFractions):
+     * Y_i = X_i / m_i, with m_i the atomic mass [u] reported by gf_get_network_species. Each zone's mass fractions must
+     * sum to one to within 1e-10 (GF_INVALID_STATE otherwise, naming the zone). Needs gf_register_species first.
+     */
+    int gf_mass_fractions_to_molar(void* ptr, const double* X, size_t num_species, size_t num_zones, double* Y);
+
+    /**
+     * Convert molar abundances to mass fractions, X_i = Y_i m_i / sum_j Y_j m_j for each zone (the C++ library's
+     * Composition::getMassFraction), so each zone's X sums to one. Burning lowers sum_j Y_j m_j (the binding energy
+     * released, about 0.7% of the rest mass for complete hydrogen burning); the normalisation absorbs it, so mass
+     * fractions taken after gf_evolve are the true fractions of the material's current rest mass. Register the whole
+     * network (gf_register_network_species) so that no burnt mass sits in a species the caller does not track.
+     */
+    int gf_molar_to_mass_fractions(void* ptr, const double* Y, size_t num_species, size_t num_zones, double* X);
+
+    /**
      * Build the engine from a named policy and the starting abundances (registered species order).
      *
      *   "MAIN_SEQUENCE_POLICY" - pp chains and CNO cycle, a network grown from the starting composition; requires
@@ -290,6 +319,34 @@ extern "C" {
         double* neutrino_energy_loss_rate,
         double* eps_by_channel,
         double* dYdt
+    );
+
+    /**
+     * What each reaction contributes at fixed composition, for every zone, without integrating (like gf_evaluate).
+     *
+     * Each output holds gf_get_num_reactions entries per zone, in gf_get_reaction_id order (zone-major for MULTI_ZONE);
+     * any may be NULL. Over the reactions they sum to gf_evaluate's totals at the same state:
+     *   molar_flow                - net molar flow of each reaction [mol/g/s]
+     *   energy_rate               - energy released, net of neutrinos [erg/g/s]; sums to eps_nuc
+     *   neutrino_energy_loss_rate - energy carried off by reaction neutrinos [erg/g/s]; sums to the neutrino loss rate
+     *   neutrino_rate             - reaction neutrinos emitted [1/g/s]; the solar sources are the entries for
+     *                               p(p,e+)d (pp), p(e-p,)d (pep), he3(p,e+)he4 (hep), be7(e-,)li7, b8(,e+ a)he4 (B-8),
+     *                               n13(,e+)c13, o15(,e+)n15 and f17(,e+)o17
+     *
+     * Called with gf_evolve's Y_out, T and rho, it gives the per-reaction values at the end of that step (gf_evaluate
+     * reproduces gf_evolve's final-state eps exactly). Inputs and errors are as for gf_evaluate.
+     */
+    int gf_evaluate_reactions(
+        enum GF_TYPE type,
+        void* ptr,
+        const double* Y,
+        size_t num_species,
+        const double* T,
+        const double* rho,
+        double* molar_flow,
+        double* energy_rate,
+        double* neutrino_energy_loss_rate,
+        double* neutrino_rate
     );
 
     /**

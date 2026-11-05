@@ -15,7 +15,8 @@ namespace gridfire::solver {
         const engine::DynamicEngine& engine,
         engine::scratch::StateBlob& engine_ctx,
         const NetIn& netIn,
-        const bool include_channels
+        const bool include_channels,
+        const bool include_reactions
     ) {
         if (!std::isfinite(netIn.temperature) || netIn.temperature <= 0.0) {
             throw exceptions::SolverError(std::format("evaluateRates: temperature must be finite and positive (got {} K)", netIn.temperature));
@@ -67,6 +68,17 @@ namespace gridfire::solver {
         if (include_channels) {
             rates.energy_channel_names = engine.getEnergyChannelNames(engine_ctx);
             rates.eps_by_channel = engine.calculateEnergyChannels(engine_ctx, comp, T9, netIn.density);
+        }
+        if (include_reactions) {
+            if (auto contributions = engine.calculateReactionContributions(engine_ctx, comp, T9, netIn.density)) {
+                for (const auto& reaction : engine.getNetworkReactions(engine_ctx)) {
+                    rates.reaction_ids.emplace_back(reaction->id());
+                }
+                rates.reaction_molar_flow = std::move(contributions->molar_flow);
+                rates.reaction_energy_rate = std::move(contributions->energy_rate);
+                rates.reaction_neutrino_energy_loss_rate = std::move(contributions->neutrino_energy_loss_rate);
+                rates.reaction_neutrino_rate = std::move(contributions->neutrino_rate);
+            }
         }
         return rates;
     }

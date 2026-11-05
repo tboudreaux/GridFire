@@ -24,6 +24,7 @@ if get_option('build_tests')
         ['unit/screening_cd09_test.cpp', 'unit', 300],
         ['unit/config_test.cpp', 'unit', 300],
         ['unit/policy_test.cpp', 'unit', 300],
+        ['unit/dsep_composition_test.cpp', 'unit', 300],
         ['property/engine_properties_test.cpp', 'property', 900],
         ['integration/solver_integration_test.cpp', 'integration', 1800],
     ]

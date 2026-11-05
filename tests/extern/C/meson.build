@@ -44,3 +44,10 @@ gf_extern_c_shared_composition = executable('gf_extern_c_shared_composition', 'g
            dependencies: [gridfire_extern_dep]
 )
 test('extern_c_shared_composition', gf_extern_c_shared_composition, suite: 'extern', timeout: 600)
+
+gf_extern_c_dsep_composition = executable('gf_extern_c_dsep_composition', 'gridfire_dsep_composition.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
+)
+test('extern_c_dsep_composition', gf_extern_c_dsep_composition, suite: 'extern', timeout: 600)

@@ -147,6 +147,38 @@ namespace gridfire::reaclib {
         return result;
     }
 
+    /**
+     * REACLIB marks electron captures by their label ("ec..."), but the name generator (utils/reaclib/format.py, before
+     * it was fixed) wrote every charge-raising two-body reaction as emitting a positron. That gave pep (p + e- + p ->
+     * d, label "ecw") the pp name p(p,e+)d, so it was merged into pp: its rate lost the rho*Y_e factor REACLIB
+     * electron-capture rates need, and its neutrinos were given the pp energy. An electron-capture-labelled entry named
+     * with an emitted positron is renamed with the electron as a projectile, e.g. p(p,e+)d -> p(e-p,)d.
+     */
+    static std::string electron_capture_name(const std::string& rpName, const std::string_view label) {
+        if (!label.starts_with("ec")) {
+            return rpName;
+        }
+        const auto open = rpName.find('(');
+        const auto comma = rpName.find(',', open);
+        const auto close = rpName.find(')', comma);
+        if (open == std::string::npos || comma == std::string::npos || close == std::string::npos) {
+            return rpName;
+        }
+        std::string projectiles = rpName.substr(open + 1, comma - open - 1);
+        std::string ejectiles = rpName.substr(comma + 1, close - comma - 1);
+        if (projectiles.find("e-") != std::string::npos) {
+            return rpName; // already an electron capture
+        }
+        const auto positron = ejectiles.find("e+");
+        if (positron == std::string::npos) {
+            return rpName;
+        }
+        ejectiles.erase(positron, 2);
+        while (!ejectiles.empty() && ejectiles.front() == ' ') ejectiles.erase(ejectiles.begin());
+        while (!ejectiles.empty() && ejectiles.back() == ' ') ejectiles.pop_back();
+        return rpName.substr(0, open + 1) + "e-" + projectiles + "," + ejectiles + rpName.substr(close);
+    }
+
     static void initializeAllReaclibReactions() {
         if (s_initialized) {
             return;
@@ -177,7 +209,7 @@ namespace gridfire::reaclib {
                 coeffs[6]
             };
 
-            auto rpName_revNormalized = std::string(rpName_sv);
+            auto rpName_revNormalized = electron_capture_name(std::string(rpName_sv), label_sv);
             if (reverse) {
                 auto result = reverse_pe_name(std::string(rpName_sv));
                 if (!result) {

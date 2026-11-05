@@ -29,6 +29,14 @@ struct GFInvalidStateError final : std::runtime_error {
 /// The GF_* / FDSSE_* code for an exception (as every gf_* function reports it), with its message.
 int gf_error_code(const std::exception_ptr& error, std::string& message);
 
+/// Destinations for gf_evaluate_reactions; each holds num_reactions entries per zone (zone-major). Any may be null.
+struct GFReactionOutputs {
+    double* molar_flow = nullptr;
+    double* energy_rate = nullptr;
+    double* neutrino_energy_loss_rate = nullptr;
+    double* neutrino_rate = nullptr;
+};
+
 /// Destinations for gf_evaluate. Each points to num_zones entries (eps_by_channel and dYdt: per zone, contiguous).
 struct GFEvaluationOutputs {
     double* eps_nuc = nullptr;
@@ -81,6 +89,13 @@ struct GFContext {
     std::vector<std::string> network_species_names; ///< Null-terminated names handed out by gf_get_network_species
     std::vector<std::string> reaction_ids; ///< Null-terminated ids handed out by gf_get_reaction_id
 
+    /// Set the species carried without reactions (config engine.passiveSpecies). Throws once the engine exists.
+    void set_passive_species(const std::vector<std::string>& names);
+    /// Y for num_zones zones of mass fractions X (registered species order), via buildCompositionFromMassFractions.
+    void mass_fractions_to_molar(const double* X, size_t num_species, size_t num_zones, double* Y) const;
+    /// Normalised mass fractions X for num_zones zones of molar abundances Y, via Composition::getMassFraction.
+    void molar_to_mass_fractions(const double* Y, size_t num_species, size_t num_zones, double* X) const;
+
     virtual void init_species_map(const std::vector<std::string>& species_names);
     virtual void init_engine_from_policy(const std::string& policy_name, const double *abundances, size_t num_species);
     virtual void init_solver_from_engine() = 0;
@@ -99,6 +114,10 @@ struct GFContext {
      */
     void evaluate(const double* Y, size_t num_species, const double* T, const double* rho, size_t num_zones,
                   const GFEvaluationOutputs& out) const;
+
+    /// Each reaction's flow, energy, neutrino loss and neutrino emission rate for num_zones states (no solver).
+    void evaluate_reactions(const double* Y, size_t num_species, const double* T, const double* rho, size_t num_zones,
+                            const GFReactionOutputs& out) const;
     [[nodiscard]] const std::vector<std::string>& get_energy_channel_names() const;
     mutable std::string last_error;
 

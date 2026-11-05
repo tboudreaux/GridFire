@@ -260,6 +260,52 @@ extern "C" {
     }
 
 
+    int gf_set_passive_species(void* ptr, const size_t num_species, const char** species_names) {
+        if (!ptr || (num_species > 0 && !species_names)) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            std::vector<std::string> names;
+            for (size_t i = 0; i < num_species; ++i) {
+                if (!species_names[i]) {
+                    throw GFConfigError(std::format("Passive species name {} is NULL.", i));
+                }
+                names.emplace_back(species_names[i]);
+            }
+            ctx->set_passive_species(names);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_mass_fractions_to_molar(void* ptr, const double* X, const size_t num_species, const size_t num_zones, double* Y) {
+        if (!ptr || !X) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!Y) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->mass_fractions_to_molar(X, num_species, num_zones, Y);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_molar_to_mass_fractions(void* ptr, const double* Y, const size_t num_species, const size_t num_zones, double* X) {
+        if (!ptr || !Y) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!X) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->molar_to_mass_fractions(Y, num_species, num_zones, X);
+            return GF_SUCCESS;
+        });
+    }
+
     void* gf_init(const enum GF_TYPE type) {
         if (type == MULTI_ZONE) {
             return new GFGridContext();
@@ -524,6 +570,43 @@ extern "C" {
         const std::vector<int> groups = gridfire::solver::shared_composition_groups_from_mask(mask);
         std::ranges::copy(groups, group);
         return GF_SUCCESS;
+    }
+
+    int gf_evaluate_reactions(
+        const enum GF_TYPE type,
+        void* ptr,
+        const double* Y,
+        const size_t num_species,
+        const double* T,
+        const double* rho,
+        double* molar_flow,
+        double* energy_rate,
+        double* neutrino_energy_loss_rate,
+        double* neutrino_rate
+    ) {
+        if (!ptr || !Y || !T || !rho) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (num_species == 0) {
+            return GF_INVALID_NUM_SPECIES;
+        }
+        size_t num_zones = 0;
+        switch (type) {
+            case SINGLE_ZONE: num_zones = 1; break;
+            case MULTI_ZONE: num_zones = static_cast<GFGridContext*>(ptr)->get_zones(); break;
+            default: return GF_INVALID_TYPE;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        const GFReactionOutputs out{
+            .molar_flow = molar_flow,
+            .energy_rate = energy_rate,
+            .neutrino_energy_loss_rate = neutrino_energy_loss_rate,
+            .neutrino_rate = neutrino_rate
+        };
+        return execute_guarded(ctx, [&]() {
+            ctx->evaluate_reactions(Y, num_species, T, rho, num_zones, out);
+            return GF_SUCCESS;
+        });
     }
 
     int gf_get_zone_status(void* ptr, int* status, double* time_reached) {

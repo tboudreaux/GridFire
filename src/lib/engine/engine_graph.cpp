@@ -107,6 +107,26 @@ namespace {
 }
 
 namespace gridfire::engine {
+    namespace {
+        /// The composition a network is built from, without the passive species (which must not seed reactions)
+        fourdst::composition::Composition without_passive_species(
+            const fourdst::composition::Composition& composition,
+            const config::GridFireConfig& config
+        ) {
+            if (config.engine.passiveSpecies.empty()) {
+                return composition;
+            }
+            fourdst::composition::Composition seeds;
+            for (const auto& species : composition.getRegisteredSpecies()) {
+                if (std::ranges::find(config.engine.passiveSpecies, std::string(species.name())) == config.engine.passiveSpecies.end()) {
+                    seeds.registerSpecies(species);
+                    seeds.setMolarAbundance(species, composition.getMolarAbundance(species));
+                }
+            }
+            return seeds;
+        }
+    }
+
     GraphEngine::GraphEngine(
         const fourdst::composition::Composition &composition,
         const BuildDepthType buildDepth
@@ -147,7 +167,7 @@ namespace gridfire::engine {
         const config::GridFireConfig &config
     ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
-    m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
+    m_reactions(build_nuclear_network(without_passive_species(composition, config), m_weakRateInterpolator, buildDepth, reactionTypes)),
     m_partitionFunction(partitionFunction.clone()),
     m_depth(buildDepth)
     {
@@ -326,19 +346,15 @@ namespace gridfire::engine {
         std::vector<double> bare_reverse_rates;
         compute_bare_rates(comp, T9, rho, activeReactions, bare_rates, bare_reverse_rates);
 
+        // Network-ordered abundances for screening as well as the flows (comp may hold a subset, in its own order)
+        const std::vector<double> local_abundances = networkAbundances(comp);
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
             activeReactions,
             m_networkSpecies,
-            comp.getMolarAbundanceVector(),
+            local_abundances,
             T9,
             rho
         );
-
-        std::vector<double> local_abundances;
-        local_abundances.reserve(m_networkSpecies.size());
-        for (const auto& species: m_networkSpecies) {
-            local_abundances.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
-        }
 
         const PrecomputationKernelResults kernel = accumulate_flows_serial(
             ctx,
@@ -356,6 +372,44 @@ namespace gridfire::engine {
             eps_by_channel[precomp.channel_index] += flow * precomp.energy_per_flow;
         }
         return eps_by_channel;
+    }
+
+    std::optional<ReactionContributions> GraphEngine::calculateReactionContributions(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho
+    ) const {
+        // The same rate evaluation and flow kernel as calculateRHSAndEnergy, so the contributions sum to its totals
+        std::vector<double> bare_rates;
+        std::vector<double> bare_reverse_rates;
+        compute_bare_rates(comp, T9, rho, m_reactions, bare_rates, bare_reverse_rates);
+        // Network-ordered abundances for screening as well as the flows (comp may hold a subset, in its own order)
+        const std::vector<double> local_abundances = networkAbundances(comp);
+        const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            m_reactions, m_networkSpecies, local_abundances, T9, rho
+        );
+        const PrecomputationKernelResults kernel = accumulate_flows_serial(
+            ctx, local_abundances, screeningFactors, bare_rates, bare_reverse_rates, rho, m_reactions
+        );
+
+        const size_t n = m_reactions.size();
+        ReactionContributions contributions{
+            .molar_flow = std::vector<double>(n, 0.0),
+            .energy_rate = std::vector<double>(n, 0.0),
+            .neutrino_energy_loss_rate = std::vector<double>(n, 0.0),
+            .neutrino_rate = std::vector<double>(n, 0.0),
+        };
+        for (const auto& [flow, j] : std::views::zip(kernel.molar_flows, kernel.reaction_indices)) {
+            const PrecomputedReaction& precomp = m_precomputed_reactions[j];
+            contributions.molar_flow[j] = flow;
+            contributions.energy_rate[j] = flow * precomp.energy_per_flow;
+            if (precomp.emits_neutrino) {
+                contributions.neutrino_energy_loss_rate[j] = flow * precomp.neutrino_energy_per_flow;
+                contributions.neutrino_rate[j] = flow * m_constants.Na;
+            }
+        }
+        return contributions;
     }
 
     const std::vector<std::string>& GraphEngine::getEnergyChannelNames(
@@ -543,6 +597,18 @@ namespace gridfire::engine {
             for (const auto& product: reaction->products()) {
                 uniqueSpeciesNames.insert(product.name());
             }
+        }
+
+        // Passive species: in the composition (Y_e, screening) but in no reaction, so their abundances never change
+        for (const auto& name : m_config->engine.passiveSpecies) {
+            if (!fourdst::atomic::species.contains(name)) {
+                throw exceptions::BadCollectionError(std::format("Passive species {} is not a known species.", name));
+            }
+            if (uniqueSpeciesNames.contains(fourdst::atomic::species.at(name).name())) {
+                throw exceptions::BadCollectionError(std::format(
+                    "Passive species {} takes part in reactions of the network; only species outside it can be passive.", name));
+            }
+            uniqueSpeciesNames.insert(fourdst::atomic::species.at(name).name());
         }
 
         for (const auto& name: uniqueSpeciesNames) {

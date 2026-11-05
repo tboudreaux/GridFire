@@ -37,3 +37,10 @@ gf_fortran_shared_composition_test = executable('gf_fortran_shared_composition_t
            dependencies: [gridfire_fortran_dep]
 )
 test('extern_fortran_shared_composition', gf_fortran_shared_composition_test, suite: 'extern', timeout: 600)
+
+gf_fortran_dsep_composition_test = executable('gf_fortran_dsep_composition_test', 'gridfire_dsep_composition.f90',
+           install: false,
+           fortran_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_fortran_dep]
+)
+test('extern_fortran_dsep_composition', gf_fortran_dsep_composition_test, suite: 'extern', timeout: 600)

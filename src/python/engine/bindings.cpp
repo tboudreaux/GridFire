@@ -51,6 +51,14 @@ namespace {
             py::arg("rho"),
             "Calculate deps/dT and deps/drho"
         )
+        .def("calculateReactionContributions",
+            &gridfire::engine::DynamicEngine::calculateReactionContributions,
+            py::arg("ctx"),
+            py::arg("comp"),
+            py::arg("T9"),
+            py::arg("rho"),
+            "Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)"
+        )
         .def("generateJacobianMatrix",
             [](const gridfire::engine::DynamicEngine& self,
                sp::StateBlob& ctx,
@@ -233,6 +241,13 @@ void register_base_engine_bindings(const pybind11::module &m) {
     py::class_<gridfire::engine::StepDerivatives<double>>(m, "StepDerivatives")
         .def_readonly("dYdt", &gridfire::engine::StepDerivatives<double>::dydt, "The right-hand side (dY/dt) of the ODE system.")
         .def_readonly("energy", &gridfire::engine::StepDerivatives<double>::nuclearEnergyGenerationRate, "The energy generation rate.");
+
+    py::class_<gridfire::engine::ReactionContributions>(m, "ReactionContributions",
+        "What each reaction contributes at one state, in getNetworkReactions() order; the entries sum to the RHS totals")
+        .def_readonly("molar_flow", &gridfire::engine::ReactionContributions::molar_flow, "Net molar flow of each reaction (mol/g/s)")
+        .def_readonly("energy_rate", &gridfire::engine::ReactionContributions::energy_rate, "Energy released, net of neutrinos (erg/g/s)")
+        .def_readonly("neutrino_energy_loss_rate", &gridfire::engine::ReactionContributions::neutrino_energy_loss_rate, "Energy carried off by reaction neutrinos (erg/g/s)")
+        .def_readonly("neutrino_rate", &gridfire::engine::ReactionContributions::neutrino_rate, "Reaction neutrinos emitted (1/g/s)");
 
     py::class_<gridfire::engine::SparsityPattern> py_sparsity_pattern(m, "SparsityPattern");
 

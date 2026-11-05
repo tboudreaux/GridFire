@@ -56,6 +56,10 @@ namespace gridfire::config {
         EnergyChannelConfig energyChannels;
         screening::ScreeningType screening = screening::ScreeningType::BLENDED; ///< Electron screening of reaction rates (default BLENDED) (WEAK: Salpeter 1954; CD09: Chugunov & DeWitt 2009, weak to strong coupling; BLENDED: Salpeter handing over to CD09 as coupling grows; BARE: none)
         screening::ScreeningBlendWindow screeningBlend; ///< Where BLENDED screening hands over from Salpeter to CD09 (weak-screening exponent H)
+        /// Species carried in the composition without any reactions (e.g. the metals a stellar code lumps into Z,
+        /// represented by one isotope): they count towards Y_e and screening, and their abundances never change.
+        /// A passive species may not take part in any reaction of the network.
+        std::vector<std::string> passiveSpecies;
         engine::JacobianMethod jacobian = engine::JacobianMethod::ANALYTIC; ///< How GraphEngine computes the species Jacobian
 
     };
