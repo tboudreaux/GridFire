@@ -39,13 +39,18 @@ namespace gridfire {
     };
 
     struct NetOut {
-        fourdst::composition::Composition composition; ///< Composition of the network after evaluation
-        int num_steps; ///< Number of steps taken in the evaluation
-        double energy; ///< Energy in ergs after evaluation
-        double dEps_dT; ///< Partial derivative of energy generation rate with respect to temperature
-        double dEps_dRho; ///< Partial derivative of energy generation rate with respect to density
-        double specific_neutrino_energy_loss; ///< Neutrino energy loss rate in ergs/g/s
-        double specific_neutrino_flux; ///< Total neutrino flux in neutrinos/g/s
+        fourdst::composition::Composition composition; ///< Composition of the network after evaluation (the input composition for a zone that failed)
+        int num_steps = 0; ///< Number of steps taken in the evaluation
+        double energy = 0.0; ///< Energy in ergs after evaluation
+        double dEps_dT = 0.0; ///< Partial derivative of energy generation rate with respect to temperature
+        double dEps_dRho = 0.0; ///< Partial derivative of energy generation rate with respect to density
+        double specific_neutrino_energy_loss = 0.0; ///< Neutrino energy loss rate in ergs/g/s
+        double specific_neutrino_flux = 0.0; ///< Total neutrino flux in neutrinos/g/s
+
+        // --- Outcome (multi-zone solvers report a failed zone here; single-zone solvers throw instead) ---
+        bool converged = true; ///< false if this zone could not be integrated to tMax; its other values are then zero
+        double time_reached = 0.0; ///< Time integrated to [s]: tMax on success, the last accepted step on failure
+        std::string failure_message; ///< Why the zone failed (empty if converged)
 
         // --- Instantaneous quantities at the final state (same composition, T, and rho as dEps_dT and dEps_dRho) ---
         double eps_nuc = 0.0; ///< Instantaneous specific nuclear energy generation rate, net of reaction neutrino losses, in erg/g/s

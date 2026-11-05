@@ -2,11 +2,14 @@
 
 #include "gridfire/solver/strategies/strategy_abstract.h"
 
+#include <exception>
 #include <functional>
 
 namespace gridfire::solver {
     struct GridSolverContext final : SolverContextBase {
         std::vector<std::unique_ptr<SolverContextBase>> solver_workspaces;
+        /// Exception of each zone of the latest evaluate() call (null for zones that converged)
+        std::vector<std::exception_ptr> zone_failures;
         std::vector<std::function<void(const TimestepContextBase&)>> timestep_callbacks;
         const engine::scratch::StateBlob& ctx_template;
 

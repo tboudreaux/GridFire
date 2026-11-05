@@ -333,4 +333,39 @@ namespace gridfire::policy {
     std::string MainSequenceReactionChainPolicy::name() const {
         return "MainSequenceReactionChainPolicy";
     }
+
+    HeliumBurningChainPolicy::HeliumBurningChainPolicy()
+    : TemperatureDependentChainPolicy({
+        "he4(2a,)c12",
+        "c12(a,g)o16",
+        "o16(a,g)ne20",
+        "ne20(a,g)mg24",
+        "n14(a,g)f18",
+        "f18(,e+)o18",
+        "o18(a,g)ne22",
+        "c13(a,n)o16"
+        }) {}
+
+    std::unique_ptr<ReactionChainPolicy> HeliumBurningChainPolicy::clone() const {
+        return std::make_unique<HeliumBurningChainPolicy>(*this);
+    }
+
+    std::string HeliumBurningChainPolicy::name() const {
+        return "HeliumBurningChainPolicy";
+    }
+
+    HydrogenHeliumReactionChainPolicy::HydrogenHeliumReactionChainPolicy()
+    : MultiReactionChainPolicy(
+        []() {
+            std::vector<std::unique_ptr<ReactionChainPolicy>> chain_policies;
+            chain_policies.push_back(std::make_unique<ProtonProtonChainPolicy>());
+            chain_policies.push_back(std::make_unique<CNOChainPolicy>());
+            chain_policies.push_back(std::make_unique<HeliumBurningChainPolicy>());
+            return chain_policies;
+        }()
+    ){}
+
+    std::string HydrogenHeliumReactionChainPolicy::name() const {
+        return "HydrogenHeliumReactionChainPolicy";
+    }
 }

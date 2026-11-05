@@ -225,6 +225,18 @@ void register_reaction_chain_policy_bindings(pybind11::module &m) {
 
     registerReactionChainPolicyDefs(py_mainSeq);
 
+    py::class_<gridfire::policy::HeliumBurningChainPolicy, TemperatureDependentChainPolicy> py_heBurning(m, "HeliumBurningChainPolicy");
+    py_heBurning.def(py::init<>());
+    py_heBurning.def("name", &gridfire::policy::HeliumBurningChainPolicy::name, "Get the name of the reaction chain policy.");
+
+    registerReactionChainPolicyDefs(py_heBurning);
+
+    py::class_<gridfire::policy::HydrogenHeliumReactionChainPolicy, MultiReactionChainPolicy> py_hHe(m, "HydrogenHeliumReactionChainPolicy");
+    py_hHe.def(py::init<>());
+    py_hHe.def("name", &gridfire::policy::HydrogenHeliumReactionChainPolicy::name, "Get the name of the reaction chain policy.");
+
+    registerReactionChainPolicyDefs(py_hHe);
+
 }
 
 void register_network_policy_bindings(pybind11::module &m) {
@@ -289,4 +301,24 @@ void register_network_policy_bindings(pybind11::module &m) {
     );
 
     registerNetworkPolicyDefs(py_mainSeqPolicy);
+
+    py::class_<gridfire::policy::HydrogenHeliumBurningPolicy, gridfire::policy::NetworkPolicy> py_hHePolicy(m, "HydrogenHeliumBurningPolicy");
+    py_hHePolicy.def(
+        py::init<const fourdst::composition::Composition&>(),
+        py::arg("composition"),
+        "Fixed hydrogen and helium burning network (independent of the starting composition, which only has to lie within it)."
+    );
+    py_hHePolicy.def(
+        py::init<const fourdst::composition::Composition&, const gridfire::config::GridFireConfig&>(),
+        py::arg("composition"),
+        py::arg("config"),
+        "As above; construct() builds the engine with this configuration."
+    );
+    py_hHePolicy.def(
+        "getConfig",
+        &gridfire::policy::HydrogenHeliumBurningPolicy::getConfig,
+        "Get a copy of the configuration construct() builds the engine with."
+    );
+
+    registerNetworkPolicyDefs(py_hHePolicy);
 }

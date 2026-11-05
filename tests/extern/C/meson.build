@@ -23,3 +23,17 @@ gf_extern_c_evaluate = executable('gf_extern_c_evaluate', 'gridfire_evaluate.c',
            dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
 )
 test('extern_c_evaluate', gf_extern_c_evaluate, suite: 'extern', timeout: 600)
+
+gf_extern_c_zone_status = executable('gf_extern_c_zone_status', 'gridfire_zone_status.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep]
+)
+test('extern_c_zone_status', gf_extern_c_zone_status, args: [meson.current_build_dir()], suite: 'extern', timeout: 600)
+
+gf_extern_c_he_policy = executable('gf_extern_c_he_policy', 'gridfire_he_policy.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep]
+)
+test('extern_c_he_policy', gf_extern_c_he_policy, suite: 'extern', timeout: 600)

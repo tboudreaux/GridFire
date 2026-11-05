@@ -94,6 +94,21 @@ class NetOut:
     def __repr__(self) -> str:
         ...
     @property
+    def converged(self) -> bool:
+        """
+        False if this zone could not be integrated to tMax (multi-zone solvers); its other values are then zero
+        """
+    @property
+    def failure_message(self) -> str:
+        """
+        Why the zone failed (empty if converged)
+        """
+    @property
+    def time_reached(self) -> float:
+        """
+        Time integrated to (s): tMax on success, the last accepted step on failure
+        """
+    @property
     def composition(self) -> fourdst._phys.composition.Composition:
         ...
     @property

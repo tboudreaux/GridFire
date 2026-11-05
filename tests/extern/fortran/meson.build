@@ -23,3 +23,10 @@ gf_fortran_evaluate_test = executable('gf_fortran_evaluate_test', 'gridfire_eval
            dependencies: [gridfire_fortran_dep]
 )
 test('extern_fortran_evaluate', gf_fortran_evaluate_test, suite: 'extern', timeout: 600)
+
+gf_fortran_zone_status_test = executable('gf_fortran_zone_status_test', 'gridfire_zone_status.f90',
+           install: false,
+           fortran_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_fortran_dep]
+)
+test('extern_fortran_zone_status', gf_fortran_zone_status_test, suite: 'extern', timeout: 600)

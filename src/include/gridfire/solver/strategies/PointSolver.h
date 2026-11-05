@@ -130,6 +130,7 @@ namespace gridfire::solver {
         size_t last_size = 0;
         size_t last_composition_hash = 0ULL;
         sunrealtype last_good_time_step = 0ULL;
+        double last_accepted_time = 0.0; ///< Time [s] of the last accepted step of the latest evaluate() call (also after a failure)
 
         void init() override;
         void set_stdout_logging(bool enable) override;

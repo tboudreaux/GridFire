@@ -4,6 +4,108 @@
 #include "gridfire/extern/gridfire_extern.h"
 #include "fourdst/config/exceptions/exceptions.h"
 
+int gf_error_code(const std::exception_ptr& error, std::string& message) {
+    try {
+        std::rethrow_exception(error);
+    } catch (fourdst::composition::exceptions::UnknownSymbolError& e) {
+        message = e.what();
+        return FDSSE_UNKNOWN_SYMBOL_ERROR;
+    } catch (const fourdst::composition::exceptions::SpeciesError& e) {
+        message = e.what();
+        return FDSSE_SPECIES_ERROR;
+    } catch (const fourdst::composition::exceptions::InvalidCompositionError& e) {
+        message = e.what();
+        return FDSSE_INVALID_COMPOSITION_ERROR;
+    } catch (const fourdst::composition::exceptions::CompositionError& e) {
+        message = e.what();
+        return FDSSE_COMPOSITION_ERROR;
+    } catch (const gridfire::exceptions::InvalidQSESolutionError& e) {
+        message = e.what();
+        return GF_INVALID_QSE_SOLUTION_ERROR;
+    } catch (const gridfire::exceptions::FailedToPartitionEngineError& e) {
+        message = e.what();
+        return GF_FAILED_TO_PARTITION_ENGINE_ERROR;
+    } catch (const gridfire::exceptions::NetworkResizedError& e) {
+        message = e.what();
+        return GF_NETWORK_RESIZED_ERROR;
+    } catch (const gridfire::exceptions::UnableToSetNetworkReactionsError& e) {
+        message = e.what();
+        return GF_UNABLE_TO_SET_NETWORK_REACTIONS_ERROR;
+    } catch (const gridfire::exceptions::BadCollectionError& e) {
+        message = e.what();
+        return GF_BAD_COLLECTION_ERROR;
+    } catch (const gridfire::exceptions::BadRHSEngineError& e) {
+        message = e.what();
+        return GF_BAD_RHS_ENGINE_ERROR;
+    } catch (const gridfire::exceptions::StaleJacobianError& e) {
+        message = e.what();
+        return GF_STALE_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::UninitializedJacobianError& e) {
+        message = e.what();
+        return GF_UNINITIALIZED_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::UnknownJacobianError& e) {
+        message = e.what();
+        return GF_UNKNOWN_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::JacobianError& e) {
+        message = e.what();
+        return GF_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::EngineError& e) {
+        message = e.what();
+        return GF_ENGINE_ERROR;
+    } catch (const gridfire::exceptions::ReactionParsingError& e) {
+        message = e.what();
+        return GF_REACTION_PARSING_ERROR;
+    } catch (const gridfire::exceptions::ReactionError& e) {
+        message = e.what();
+        return GF_REACTION_ERROR;
+    } catch (const gridfire::exceptions::SingularJacobianError& e) {
+        message = e.what();
+        return GF_SINGULAR_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::IllConditionedJacobianError& e) {
+        message = e.what();
+        return GF_ILL_CONDITIONED_JACOBIAN_ERROR;
+    } catch (const gridfire::exceptions::CVODESolverFailureError& e) {
+        message = e.what();
+        return GF_CVODE_SOLVER_FAILURE_ERROR;
+    } catch (const gridfire::exceptions::KINSolSolverFailureError& e) {
+        message = e.what();
+        return GF_KINSOL_SOLVER_FAILURE_ERROR;
+    } catch (const gridfire::exceptions::SUNDIALSError& e) {
+        message = e.what();
+        return GF_SUNDIALS_ERROR;
+    } catch (const gridfire::exceptions::SolverError& e) {
+        message = e.what();
+        return GF_SOLVER_ERROR;
+    } catch (const gridfire::exceptions::HashingError& e) {
+        message = e.what();
+        return GF_HASHING_ERROR;
+    } catch (const gridfire::exceptions::UtilityError& e) {
+        message = e.what();
+        return GF_UTILITY_ERROR;
+    } catch (const gridfire::exceptions::DebugException& e) {
+        message = e.what();
+        return GF_DEBUG_ERROR;
+    } catch (const gridfire::exceptions::GridFireError& e) {
+        message = e.what();
+        return GF_GRIDFIRE_ERROR;
+    } catch (const GFInvalidStateError& e) {
+        message = e.what();
+        return GF_INVALID_STATE;
+    } catch (const GFConfigError& e) {
+        message = e.what();
+        return GF_CONFIG_ERROR;
+    } catch (const fourdst::config::exceptions::ConfigError& e) {
+        message = e.what();
+        return GF_CONFIG_ERROR;
+    } catch (std::exception& e) {
+        message = e.what();
+        return GF_NON_GRIDFIRE_ERROR;
+    } catch (...) {
+        message = "Unknown error occurred during evolution.";
+        return GF_UNKNOWN_ERROR;
+    }
+}
+
 namespace {
 
     template<typename T>
@@ -20,102 +122,8 @@ namespace {
                 return result;
             }
             return GF_SUCCESS;
-        } catch (fourdst::composition::exceptions::UnknownSymbolError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_UNKNOWN_SYMBOL_ERROR;
-        } catch (const fourdst::composition::exceptions::SpeciesError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_SPECIES_ERROR;
-        } catch (const fourdst::composition::exceptions::InvalidCompositionError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_INVALID_COMPOSITION_ERROR;
-        } catch (const fourdst::composition::exceptions::CompositionError& e) {
-            ctx->last_error = e.what();
-            return FDSSE_COMPOSITION_ERROR;
-        } catch (const gridfire::exceptions::InvalidQSESolutionError& e) {
-            ctx->last_error = e.what();
-            return GF_INVALID_QSE_SOLUTION_ERROR;
-        } catch (const gridfire::exceptions::FailedToPartitionEngineError& e) {
-            ctx->last_error = e.what();
-            return GF_FAILED_TO_PARTITION_ENGINE_ERROR;
-        } catch (const gridfire::exceptions::NetworkResizedError& e) {
-            ctx->last_error = e.what();
-            return GF_NETWORK_RESIZED_ERROR;
-        } catch (const gridfire::exceptions::UnableToSetNetworkReactionsError& e) {
-            ctx->last_error = e.what();
-            return GF_UNABLE_TO_SET_NETWORK_REACTIONS_ERROR;
-        } catch (const gridfire::exceptions::BadCollectionError& e) {
-            ctx->last_error = e.what();
-            return GF_BAD_COLLECTION_ERROR;
-        } catch (const gridfire::exceptions::BadRHSEngineError& e) {
-            ctx->last_error = e.what();
-            return GF_BAD_RHS_ENGINE_ERROR;
-        } catch (const gridfire::exceptions::StaleJacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_STALE_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::UninitializedJacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_UNINITIALIZED_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::UnknownJacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_UNKNOWN_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::JacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::EngineError& e) {
-            ctx->last_error = e.what();
-            return GF_ENGINE_ERROR;
-        } catch (const gridfire::exceptions::ReactionParsingError& e) {
-            ctx->last_error = e.what();
-            return GF_REACTION_PARSING_ERROR;
-        } catch (const gridfire::exceptions::ReactionError& e) {
-            ctx->last_error = e.what();
-            return GF_REACTION_ERROR;
-        } catch (const gridfire::exceptions::SingularJacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_SINGULAR_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::IllConditionedJacobianError& e) {
-            ctx->last_error = e.what();
-            return GF_ILL_CONDITIONED_JACOBIAN_ERROR;
-        } catch (const gridfire::exceptions::CVODESolverFailureError& e) {
-            ctx->last_error = e.what();
-            return GF_CVODE_SOLVER_FAILURE_ERROR;
-        } catch (const gridfire::exceptions::KINSolSolverFailureError& e) {
-            ctx->last_error = e.what();
-            return GF_KINSOL_SOLVER_FAILURE_ERROR;
-        } catch (const gridfire::exceptions::SUNDIALSError& e) {
-            ctx->last_error = e.what();
-            return GF_SUNDIALS_ERROR;
-        } catch (const gridfire::exceptions::SolverError& e) {
-            ctx->last_error = e.what();
-            return GF_SOLVER_ERROR;
-        } catch (const gridfire::exceptions::HashingError& e) {
-            ctx->last_error = e.what();
-            return GF_HASHING_ERROR;
-        } catch (const gridfire::exceptions::UtilityError& e) {
-            ctx->last_error = e.what();
-            return GF_UTILITY_ERROR;
-        } catch (const gridfire::exceptions::DebugException& e) {
-            ctx->last_error = e.what();
-            return GF_DEBUG_ERROR;
-        } catch (const gridfire::exceptions::GridFireError& e) {
-            ctx->last_error = e.what();
-            return GF_GRIDFIRE_ERROR;
-        } catch (const GFInvalidStateError& e) {
-            ctx->last_error = e.what();
-            return GF_INVALID_STATE;
-        } catch (const GFConfigError& e) {
-            ctx->last_error = e.what();
-            return GF_CONFIG_ERROR;
-        } catch (const fourdst::config::exceptions::ConfigError& e) {
-            ctx->last_error = e.what();
-            return GF_CONFIG_ERROR;
-        } catch (std::exception& e) {
-            ctx->last_error = e.what();
-            return GF_NON_GRIDFIRE_ERROR;
         } catch (...) {
-            ctx->last_error = "Unknown error occurred during evolution.";
-            return GF_UNKNOWN_ERROR;
+            return gf_error_code(std::current_exception(), ctx->last_error);
         }
     }
 
@@ -476,6 +484,18 @@ extern "C" {
         });
     }
 
+    int gf_get_zone_status(void* ptr, int* status, double* time_reached) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        const auto* ctx = static_cast<GFContext*>(ptr);
+        for (size_t zone = 0; zone < ctx->zone_status.size(); ++zone) {
+            if (status) status[zone] = ctx->zone_status[zone];
+            if (time_reached) time_reached[zone] = ctx->zone_time_reached[zone];
+        }
+        return GF_SUCCESS;
+    }
+
     int gf_get_num_network_species(void* ptr, size_t* num_species) {
         if (!ptr) {
             return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
@@ -659,6 +679,8 @@ extern "C" {
                 return const_cast<char*>("GF_CONFIG_ERROR");
             case GF_INVALID_STATE:
                 return const_cast<char*>("GF_INVALID_STATE");
+            case GF_ZONE_FAILURE:
+                return const_cast<char*>("GF_ZONE_FAILURE");
             case FDSSE_NON_4DSTAR_ERROR:
                 return const_cast<char*>("FDSSE_NON_4DSTAR_ERROR");
             case FDSSE_UNKNOWN_ERROR:

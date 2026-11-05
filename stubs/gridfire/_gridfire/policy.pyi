@@ -11,7 +11,7 @@ import gridfire._gridfire.engine.scratchpads
 import gridfire._gridfire.partition
 import gridfire._gridfire.reaction
 import typing
-__all__: list[str] = ['CNOChainPolicy', 'CNOIChainPolicy', 'CNOIIChainPolicy', 'CNOIIIChainPolicy', 'CNOIVChainPolicy', 'ConstructionResults', 'HotCNOChainPolicy', 'HotCNOIChainPolicy', 'HotCNOIIChainPolicy', 'HotCNOIIIChainPolicy', 'INITIALIZED_UNVERIFIED', 'INITIALIZED_VERIFIED', 'MISSING_KEY_REACTION', 'MISSING_KEY_SPECIES', 'MainSequencePolicy', 'MainSequenceReactionChainPolicy', 'MultiReactionChainPolicy', 'NetworkPolicy', 'NetworkPolicyStatus', 'ProtonProtonChainPolicy', 'ProtonProtonIChainPolicy', 'ProtonProtonIIChainPolicy', 'ProtonProtonIIIChainPolicy', 'ReactionChainPolicy', 'TemperatureDependentChainPolicy', 'TripleAlphaChainPolicy', 'UNINITIALIZED', 'network_policy_status_to_string']
+__all__: list[str] = ['CNOChainPolicy', 'HeliumBurningChainPolicy', 'HydrogenHeliumBurningPolicy', 'HydrogenHeliumReactionChainPolicy', 'CNOIChainPolicy', 'CNOIIChainPolicy', 'CNOIIIChainPolicy', 'CNOIVChainPolicy', 'ConstructionResults', 'HotCNOChainPolicy', 'HotCNOIChainPolicy', 'HotCNOIIChainPolicy', 'HotCNOIIIChainPolicy', 'INITIALIZED_UNVERIFIED', 'INITIALIZED_VERIFIED', 'MISSING_KEY_REACTION', 'MISSING_KEY_SPECIES', 'MainSequencePolicy', 'MainSequenceReactionChainPolicy', 'MultiReactionChainPolicy', 'NetworkPolicy', 'NetworkPolicyStatus', 'ProtonProtonChainPolicy', 'ProtonProtonIChainPolicy', 'ProtonProtonIIChainPolicy', 'ProtonProtonIIIChainPolicy', 'ReactionChainPolicy', 'TemperatureDependentChainPolicy', 'TripleAlphaChainPolicy', 'UNINITIALIZED', 'network_policy_status_to_string']
 class CNOChainPolicy(MultiReactionChainPolicy):
     def __eq__(self, other: ReactionChainPolicy) -> bool:
         """
@@ -234,6 +234,146 @@ class ConstructionResults:
     @property
     def scratch_blob(self) -> gridfire._gridfire.engine.scratchpads.StateBlob:
         ...
+class HeliumBurningChainPolicy(TemperatureDependentChainPolicy):
+    def __eq__(self, other: ReactionChainPolicy) -> bool:
+        """
+        Check equality with another ReactionChainPolicy.
+        """
+    def __hash__(self) -> int:
+        ...
+    def __init__(self) -> None:
+        ...
+    def __ne__(self, other: ReactionChainPolicy) -> bool:
+        """
+        Check inequality with another ReactionChainPolicy.
+        """
+    def __repr__(self) -> str:
+        ...
+    @typing.overload
+    def contains(self, id: str) -> bool:
+        """
+        Check if the reaction chain contains a reaction with the given ID.
+        """
+    @typing.overload
+    def contains(self, reaction: ...) -> bool:
+        """
+        Check if the reaction chain contains the given reaction.
+        """
+    def get_reactions(self) -> gridfire._gridfire.reaction.ReactionSet:
+        """
+        Get the ReactionSet representing this reaction chain.
+        """
+    def hash(self, seed: typing.SupportsInt) -> int:
+        """
+        Compute a hash value for the reaction chain policy.
+        """
+    @typing.overload
+    def name(self) -> str:
+        """
+        Get the name of the reaction chain policy.
+        """
+    @typing.overload
+    def name(self) -> str:
+        """
+        Get the name of the reaction chain policy.
+        """
+def network_policy_status_to_string(status: NetworkPolicyStatus) -> str:
+    """
+    Convert a NetworkPolicyStatus enum value to its string representation.
+    """
+INITIALIZED_UNVERIFIED: NetworkPolicyStatus  # value = <NetworkPolicyStatus.INITIALIZED_UNVERIFIED: 1>
+INITIALIZED_VERIFIED: NetworkPolicyStatus  # value = <NetworkPolicyStatus.INITIALIZED_VERIFIED: 4>
+MISSING_KEY_REACTION: NetworkPolicyStatus  # value = <NetworkPolicyStatus.MISSING_KEY_REACTION: 2>
+MISSING_KEY_SPECIES: NetworkPolicyStatus  # value = <NetworkPolicyStatus.MISSING_KEY_SPECIES: 3>
+UNINITIALIZED: NetworkPolicyStatus  # value = <NetworkPolicyStatus.UNINITIALIZED: 0>
+class HydrogenHeliumBurningPolicy(NetworkPolicy):
+    @typing.overload
+    def __init__(self, composition: fourdst._phys.composition.Composition) -> None:
+        """
+        Fixed hydrogen and helium burning network (independent of the starting composition, which only has to lie within it).
+        """
+    @typing.overload
+    def __init__(self, composition: fourdst._phys.composition.Composition, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        As above; construct() builds the engine with this configuration.
+        """
+    def getConfig(self) -> gridfire._gridfire.config.GridFireConfig:
+        """
+        Get a copy of the configuration construct() builds the engine with.
+        """
+    def construct(self) -> ConstructionResults:
+        """
+        Construct the network according to the policy.
+        """
+    def get_engine_stack(self) -> list[gridfire._gridfire.engine.DynamicEngine]:
+        ...
+    def get_engine_types_stack(self) -> list[gridfire._gridfire.engine.EngineTypes]:
+        """
+        Get the types of engines in the stack constructed by the network policy.
+        """
+    def get_partition_function(self) -> gridfire._gridfire.partition.PartitionFunction:
+        ...
+    def get_seed_reactions(self) -> gridfire._gridfire.reaction.ReactionSet:
+        """
+        Get the set of seed reactions required by the network policy.
+        """
+    def get_seed_species(self) -> set[fourdst._phys.atomic.Species]:
+        """
+        Get the set of seed species required by the network policy.
+        """
+    def get_stack_scratch_blob(self) -> gridfire._gridfire.engine.scratchpads.StateBlob:
+        ...
+    def get_status(self) -> NetworkPolicyStatus:
+        """
+        Get the current status of the network policy.
+        """
+    def name(self) -> str:
+        """
+        Get the name of the network policy.
+        """
+class HydrogenHeliumReactionChainPolicy(MultiReactionChainPolicy):
+    def __eq__(self, other: ReactionChainPolicy) -> bool:
+        """
+        Check equality with another ReactionChainPolicy.
+        """
+    def __hash__(self) -> int:
+        ...
+    def __init__(self) -> None:
+        ...
+    def __ne__(self, other: ReactionChainPolicy) -> bool:
+        """
+        Check inequality with another ReactionChainPolicy.
+        """
+    def __repr__(self) -> str:
+        ...
+    @typing.overload
+    def contains(self, id: str) -> bool:
+        """
+        Check if the reaction chain contains a reaction with the given ID.
+        """
+    @typing.overload
+    def contains(self, reaction: ...) -> bool:
+        """
+        Check if the reaction chain contains the given reaction.
+        """
+    def get_reactions(self) -> gridfire._gridfire.reaction.ReactionSet:
+        """
+        Get the ReactionSet representing this reaction chain.
+        """
+    def hash(self, seed: typing.SupportsInt) -> int:
+        """
+        Compute a hash value for the reaction chain policy.
+        """
+    @typing.overload
+    def name(self) -> str:
+        """
+        Get the name of the reaction chain policy.
+        """
+    @typing.overload
+    def name(self) -> str:
+        """
+        Get the name of the reaction chain policy.
+        """
 class HotCNOChainPolicy(MultiReactionChainPolicy):
     def __eq__(self, other: ReactionChainPolicy) -> bool:
         """

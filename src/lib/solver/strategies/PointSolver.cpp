@@ -369,6 +369,7 @@ namespace gridfire::solver {
         // ReSharper disable once CppTooWideScope
         [[maybe_unused]] double last_callback_time = 0;
         sctx_p->num_steps = 0;
+        sctx_p->last_accepted_time = 0.0;
         double accumulated_energy = 0.0;
 
         double accumulated_neutrino_energy_loss = 0.0;
@@ -400,6 +401,7 @@ namespace gridfire::solver {
 
             LOG_TRACE_L2(m_logger, "Taking one CVODE step...");
             int flag = CVode(sctx_p->cvode_mem, netIn.tMax, sctx_p->Y, &current_time, CV_ONE_STEP);
+            sctx_p->last_accepted_time = current_time; // on failure CVODE returns the time of the last accepted step
             LOG_TRACE_L2(m_logger, "CVODE step complete. Current time: {}, step status: {}", current_time, utils::cvode_ret_code_map.at(flag));
 
             if (user_data.captured_exception){
@@ -776,6 +778,7 @@ namespace gridfire::solver {
         NetOut netOut;
         netOut.composition = outputComposition;
         netOut.energy = accumulated_energy;
+        netOut.time_reached = current_time;
         // Steps since the last CVODE (re)initialisation, plus those taken before any trigger-driven reinitialisations.
         // (Read into a long: writing CVODE's long through an int* was undefined behaviour.)
         long int steps_since_reinit = 0;
@@ -1201,6 +1204,9 @@ namespace gridfire::solver {
         sctx_p->Y = utils::init_sun_vector(N, sctx_p->sun_ctx);
         sctx_p->YErr = N_VClone(sctx_p->Y);
 
+        // SUNDIALS calls every handler on its stack, and the default one prints to stderr; replace the stack so errors
+        // go only to GridFire's log (and the handler is not pushed again on every reinitialisation)
+        SUNContext_ClearErrHandlers(sctx_p->sun_ctx);
         SUNContext_PushErrHandler(sctx_p->sun_ctx, cvode_error_handler, m_logger);
 
         sunrealtype *y_data = N_VGetArrayPointer(sctx_p->Y);

@@ -72,6 +72,7 @@ extern "C" {
 
         GF_CONFIG_ERROR = 38,
         GF_INVALID_STATE = 39, /**< Caller error: non-physical T, rho or abundances, or a species outside the network */
+        GF_ZONE_FAILURE = 40, /**< MULTI_ZONE gf_evolve: one or more zones failed, the rest are valid (gf_get_zone_status) */
     };
 
     /** Electron screening model (GridFireConfig::engine.screening). */
@@ -150,6 +151,15 @@ extern "C" {
     /** Write this context's configuration as TOML (the format gf_load_config reads). */
     int gf_save_config(void* ptr, const char* path);
 
+    /**
+     * Build the engine from a named policy and the starting abundances (registered species order).
+     *
+     *   "MAIN_SEQUENCE_POLICY" - pp chains and CNO cycle, a network grown from the starting composition; requires
+     *                            H-1, He-3, He-4, C-12, N-14, O-16, Ne-20 and Mg-24.
+     *   "H_HE_BURNING_POLICY"  - pp chains, CNO cycle and helium burning (triple-alpha, alpha captures to Mg-24,
+     *                            N-14 -> Ne-22). The network is the same whatever the starting composition, and no
+     *                            species is required; the composition only has to lie within the network.
+     */
     int gf_construct_engine_from_policy(void* ptr, const char* policy_name, const double *abundances, size_t num_species);
 
     int gf_construct_solver_from_engine(void* ptr);
@@ -196,6 +206,23 @@ extern "C" {
         void* neutrino_energy_loss_rate,
         void* eps_by_channel
     );
+
+    /**
+     * Outcome of each zone in the latest gf_evolve call (1 entry for SINGLE_ZONE, gf_set_num_zones entries for
+     * MULTI_ZONE). Either array may be NULL.
+     *
+     *   status       - GF_SUCCESS, or the zone's own error code. GF_INVALID_STATE (a non-physical input) is a caller
+     *                  error; solver failures such as GF_CVODE_SOLVER_FAILURE_ERROR are worth retrying with a shorter
+     *                  step.
+     *   time_reached - how far the zone was integrated [s]: tMax on success, the last accepted step on failure.
+     *
+     * Failure semantics of gf_evolve: a failed zone's Y_out holds its input abundances and its other outputs are 0;
+     * every other zone's outputs are complete. A SINGLE_ZONE call returns the zone's error code; a MULTI_ZONE call
+     * returns GF_ZONE_FAILURE if any zone failed (gf_get_last_error_message names the first few). Input errors found
+     * before integrating (GF_INVALID_STATE, a wrong species count) fail the whole call and write nothing. Nothing is
+     * printed to stdout.
+     */
+    int gf_get_zone_status(void* ptr, int* status, double* time_reached);
 
     /**
      * Instantaneous nuclear energy generation at fixed composition, for every zone, without integrating.

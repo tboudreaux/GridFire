@@ -1,4 +1,5 @@
 #include "gridfire/extern/gridfire_context.h"
+#include "gridfire/extern/gridfire_extern.h"
 
 #include "fourdst/atomic/species.h"
 
@@ -54,11 +55,13 @@ void GFContext::init_engine_from_policy(const std::string &policy_name, const do
     fourdst::composition::Composition comp = init_composition_from_abundance_vector(Y_scratch, num_species);
 
     enum class EnginePolicy {
-        MAIN_SEQUENCE_POLICY
+        MAIN_SEQUENCE_POLICY,
+        H_HE_BURNING_POLICY
     };
 
     static const std::unordered_map<std::string, EnginePolicy> engine_map = {
-        {"MAIN_SEQUENCE_POLICY", EnginePolicy::MAIN_SEQUENCE_POLICY}
+        {"MAIN_SEQUENCE_POLICY", EnginePolicy::MAIN_SEQUENCE_POLICY},
+        {"H_HE_BURNING_POLICY", EnginePolicy::H_HE_BURNING_POLICY}
     };
 
     if (!engine_map.contains(policy_name)) {
@@ -72,30 +75,30 @@ void GFContext::init_engine_from_policy(const std::string &policy_name, const do
     }
 
     switch (engine_map.at(policy_name)) {
-        case EnginePolicy::MAIN_SEQUENCE_POLICY: {
+        case EnginePolicy::MAIN_SEQUENCE_POLICY:
             this->policy = std::make_unique<gridfire::policy::MainSequencePolicy>(comp, config);
-            const auto& [e, ctx] = policy->construct();
-            this->engine = &e;
-            this->engine_ctx = ctx->clone_structure();
-
-            this->network_species_names.clear();
-            for (const auto& species : e.getNetworkSpecies(*this->engine_ctx)) {
-                this->network_species_names.emplace_back(species.name());
-            }
-            this->reaction_ids.clear();
-            for (const auto& reaction : e.getNetworkReactions(*this->engine_ctx)) {
-                this->reaction_ids.emplace_back(reaction->id());
-            }
-
             break;
-        }
+        case EnginePolicy::H_HE_BURNING_POLICY:
+            this->policy = std::make_unique<gridfire::policy::HydrogenHeliumBurningPolicy>(comp, config);
+            break;
         default:
             throw gridfire::exceptions::PolicyError(
-                "Unhandled engine policy in GFPointContext::init_engine_from_policy"
+                "Unhandled engine policy in GFContext::init_engine_from_policy"
             );
     }
 
+    const auto& [e, ctx] = policy->construct();
+    this->engine = &e;
+    this->engine_ctx = ctx->clone_structure();
 
+    this->network_species_names.clear();
+    for (const auto& species : e.getNetworkSpecies(*this->engine_ctx)) {
+        this->network_species_names.emplace_back(species.name());
+    }
+    this->reaction_ids.clear();
+    for (const auto& reaction : e.getNetworkReactions(*this->engine_ctx)) {
+        this->reaction_ids.emplace_back(reaction->id());
+    }
 }
 
 fourdst::composition::Composition GFContext::init_composition_from_abundance_vector(const std::vector<double> &abundances, size_t num_species) const {
@@ -140,6 +143,28 @@ void GFContext::register_network_species() {
     speciesList = network_species();
 }
 
+void GFContext::validate_zone(const double* Y, const size_t num_species, const double T, const double rho, const size_t zone) const {
+    if (num_species != speciesList.size()) {
+        throw GFInvalidStateError(std::format(
+            "Number of species provided ({}) does not match the registered species count ({}).", num_species, speciesList.size()));
+    }
+    if (!std::isfinite(T) || T <= 0.0 || !std::isfinite(rho) || rho <= 0.0) {
+        throw GFInvalidStateError(std::format(
+            "Zone {}: temperature ({}) and density ({}) must be positive and finite.", zone, T, rho));
+    }
+    const auto& network = network_species();
+    for (size_t i = 0; i < num_species; ++i) {
+        if (!std::isfinite(Y[i]) || Y[i] < 0.0) {
+            throw GFInvalidStateError(std::format(
+                "Zone {}: molar abundance of {} ({}) must be finite and non-negative.", zone, speciesList[i].name(), Y[i]));
+        }
+        if (Y[i] > 0.0 && std::ranges::find(network, speciesList[i]) == network.end()) {
+            throw GFInvalidStateError(std::format(
+                "Zone {}: {} (molar abundance {:.3e}) is not in the network.", zone, speciesList[i].name(), Y[i]));
+        }
+    }
+}
+
 void GFContext::evaluate(
     const double* Y,
     const size_t num_species,
@@ -148,40 +173,11 @@ void GFContext::evaluate(
     const size_t num_zones,
     const GFEvaluationOutputs& out
 ) const {
-    const auto& network = network_species();
-    if (num_species != speciesList.size()) {
-        throw GFInvalidStateError(std::format(
-            "Number of species provided ({}) does not match the registered species count ({}).", num_species, speciesList.size()));
-    }
-
-    // Where each registered species sits in the network (npos: not in the network)
-    constexpr size_t npos = static_cast<size_t>(-1);
-    std::vector<size_t> network_index(num_species, npos);
-    for (size_t i = 0; i < num_species; ++i) {
-        if (const auto it = std::ranges::find(network, speciesList[i]); it != network.end()) {
-            network_index[i] = static_cast<size_t>(it - network.begin());
-        }
-    }
-
     const size_t num_channels = engine->getEnergyChannelNames(*engine_ctx).size();
     for (size_t zone = 0; zone < num_zones; ++zone) {
         const double* Y_zone = Y + zone * num_species;
-        if (!std::isfinite(T[zone]) || T[zone] <= 0.0 || !std::isfinite(rho[zone]) || rho[zone] <= 0.0) {
-            throw GFInvalidStateError(std::format(
-                "Zone {}: temperature ({}) and density ({}) must be positive and finite.", zone, T[zone], rho[zone]));
-        }
-
         // Caller errors are reported as GF_INVALID_STATE before anything reaches the engine
-        for (size_t i = 0; i < num_species; ++i) {
-            if (!std::isfinite(Y_zone[i]) || Y_zone[i] < 0.0) {
-                throw GFInvalidStateError(std::format(
-                    "Zone {}: molar abundance of {} ({}) must be finite and non-negative.", zone, speciesList[i].name(), Y_zone[i]));
-            }
-            if (network_index[i] == npos && Y_zone[i] > 0.0) {
-                throw GFInvalidStateError(std::format(
-                    "Zone {}: {} (molar abundance {:.3e}) is not in the network.", zone, speciesList[i].name(), Y_zone[i]));
-            }
-        }
+        validate_zone(Y_zone, num_species, T[zone], rho[zone], zone);
 
         // The same pass-through to the engine that the C++ solvers' evaluateRates uses
         gridfire::NetIn netIn;
@@ -212,6 +208,7 @@ void GFContext::evaluate(
 void GFPointContext::init_solver_from_engine() {
     this->solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine, config);
     this->solver_ctx = std::make_unique<gridfire::solver::PointSolverContext>(*engine_ctx);
+    this->solver_ctx->set_stdout_logging(false); // the per-step table would go to the host code's stdout
 }
 
 
@@ -231,6 +228,10 @@ int GFPointContext::evolve(
     double& mass_lost,
     const GFInstantaneousOutputs& instantaneous
 ) const {
+    zone_status.assign(1, GF_INVALID_STATE); // until the input has been validated
+    zone_time_reached.assign(1, 0.0);
+    validate_zone(Y_in, num_species, T, rho, 0);
+    zone_status[0] = GF_SUCCESS;
 
     const std::vector<double> Y_scratch(Y_in, Y_in + num_species);
     const fourdst::composition::Composition comp = init_composition_from_abundance_vector(Y_scratch, num_species);
@@ -242,7 +243,22 @@ int GFPointContext::evolve(
     netIn.tMax = tMax;
     netIn.composition = comp;
 
-    const gridfire::NetOut result = this->solver->evaluate(*solver_ctx, netIn);
+    gridfire::NetOut result;
+    try {
+        result = this->solver->evaluate(*solver_ctx, netIn);
+    } catch (...) {
+        // A failed zone hands back its input abundances and zero rates, and records how far it got
+        std::string message;
+        zone_status[0] = gf_error_code(std::current_exception(), message);
+        if (const auto* point_ctx = dynamic_cast<const gridfire::solver::PointSolverContext*>(solver_ctx.get())) {
+            zone_time_reached[0] = point_ctx->last_accepted_time;
+        }
+        std::copy_n(Y_in, num_species, Y_out);
+        energy_out = dEps_dT = dEps_dRho = specific_neutrino_energy_loss = specific_neutrino_flux = mass_lost = 0.0;
+        instantaneous.write_zero(0, engine->getEnergyChannelNames(*engine_ctx).size());
+        throw;
+    }
+    zone_time_reached[0] = result.time_reached;
 
     energy_out = result.energy;
     dEps_dT  = result.dEps_dT;
@@ -268,6 +284,16 @@ int GFPointContext::evolve(
     return 0;
 }
 
+void GFInstantaneousOutputs::write_zero(const size_t index, const size_t num_channels) const {
+    if (eps_nuc) eps_nuc[index] = 0.0;
+    if (dlnEps_dlnT) dlnEps_dlnT[index] = 0.0;
+    if (dlnEps_dlnRho) dlnEps_dlnRho[index] = 0.0;
+    if (neutrino_energy_loss_rate) neutrino_energy_loss_rate[index] = 0.0;
+    if (eps_by_channel) {
+        std::fill_n(eps_by_channel + index * num_channels, num_channels, 0.0);
+    }
+}
+
 void GFInstantaneousOutputs::write(const gridfire::NetOut& netOut, const size_t index) const {
     if (eps_nuc) eps_nuc[index] = netOut.eps_nuc;
     if (dlnEps_dlnT) dlnEps_dlnT[index] = netOut.dlnEps_dlnT;
@@ -291,7 +317,10 @@ const std::vector<std::string>& GFContext::get_energy_channel_names() const {
 void GFGridContext::init_solver_from_engine() {
     this->local_solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine, config);
     this->solver = std::make_unique<gridfire::solver::GridSolver>(*this->engine, *this->local_solver);
-    this->solver_ctx = std::make_unique<gridfire::solver::GridSolverContext>(*engine_ctx);
+    auto grid_ctx = std::make_unique<gridfire::solver::GridSolverContext>(*engine_ctx);
+    grid_ctx->zone_completion_logging = false; // nothing on the host code's stdout
+    grid_ctx->set_stdout_logging(false);
+    this->solver_ctx = std::move(grid_ctx);
 }
 
 int GFGridContext::evolve(
@@ -322,6 +351,12 @@ int GFGridContext::evolve(
         throw gridfire::exceptions::GridFireError("Output abundance pointer is null.");
     }
 
+    zone_status.assign(this->get_zones(), GF_INVALID_STATE); // until the input has been validated
+    zone_time_reached.assign(this->get_zones(), 0.0);
+    for (size_t i = 0; i < this->get_zones(); ++i) {
+        validate_zone(Y_in + i * num_species, num_species, T[i], rho[i], i);
+    }
+
     std::vector<fourdst::composition::Composition> zone_compositions;
 
     zone_compositions.reserve(this->get_zones());
@@ -349,9 +384,34 @@ int GFGridContext::evolve(
     }
 
     std::vector<gridfire::NetOut> results = this->solver->evaluate(*this->solver_ctx, netIns);
+    const auto& failures = dynamic_cast<const gridfire::solver::GridSolverContext&>(*this->solver_ctx).zone_failures;
+    const size_t num_channels = engine->getEnergyChannelNames(*engine_ctx).size();
+
+    zone_status.assign(this->get_zones(), GF_SUCCESS);
+    zone_time_reached.assign(this->get_zones(), 0.0);
+    size_t num_failed = 0;
+    std::string failure_summary;
 
     for (size_t zone_idx = 0; zone_idx < this->get_zones(); ++zone_idx) {
         const gridfire::NetOut& netOut = results[zone_idx];
+        zone_time_reached[zone_idx] = netOut.time_reached;
+        if (!netOut.converged) {
+            // A failed zone hands back its input abundances and zero rates; the other zones are unaffected
+            std::string message;
+            zone_status[zone_idx] = zone_idx < failures.size() && failures[zone_idx]
+                ? gf_error_code(failures[zone_idx], message)
+                : GF_SOLVER_ERROR;
+            if (num_failed < 3) {
+                failure_summary += std::format("{}zone {}: {}", num_failed ? "; " : "", zone_idx,
+                                               message.empty() ? netOut.failure_message : message);
+            }
+            ++num_failed;
+            std::copy_n(Y_in + zone_idx * num_species, num_species, Y_out + zone_idx * num_species);
+            energy_out[zone_idx] = dEps_dT[zone_idx] = dEps_dRho[zone_idx] = 0.0;
+            specific_neutrino_energy_loss[zone_idx] = specific_neutrino_flux[zone_idx] = mass_lost[zone_idx] = 0.0;
+            instantaneous.write_zero(zone_idx, num_channels);
+            continue;
+        }
         energy_out[zone_idx] = netOut.energy;
         dEps_dT[zone_idx] = netOut.dEps_dT;;
         dEps_dRho[zone_idx] = netOut.dEps_dRho;
@@ -371,6 +431,11 @@ int GFGridContext::evolve(
                 mass_lost[zone_idx] += species.mass() * netOut.composition.getMolarAbundance(species);
             }
         }
+    }
+    if (num_failed > 0) {
+        last_error = std::format("{} of {} zones failed ({}{}). See gf_get_zone_status.", num_failed, this->get_zones(),
+                                 failure_summary, num_failed > 3 ? "; ..." : "");
+        return GF_ZONE_FAILURE;
     }
     return 0;
 }

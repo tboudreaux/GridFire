@@ -402,6 +402,33 @@ namespace gridfire::policy {
      * @see ProtonProtonChainPolicy
      * @see CNOChainPolicy
      */
+    /**
+     * @class HeliumBurningChainPolicy
+     * @brief Core and shell helium burning: triple-alpha, the alpha captures that follow it up to Mg-24, the
+     *        N-14(a,g)F-18(e+)O-18(a,g)Ne-22 chain that converts CNO material, and the C-13(a,n) neutron source.
+     *
+     * Reactions are named as the REACLIB network builds them (triple-alpha is the single he4(2a,)c12 rate).
+     */
+    class HeliumBurningChainPolicy final : public TemperatureDependentChainPolicy {
+    public:
+        HeliumBurningChainPolicy();
+
+        [[nodiscard]] std::unique_ptr<ReactionChainPolicy> clone() const override;
+
+        [[nodiscard]] std::string name() const override;
+    };
+
+    /**
+     * @class HydrogenHeliumReactionChainPolicy
+     * @brief The pp chains, the CNO cycle and helium burning (HeliumBurningChainPolicy).
+     */
+    class HydrogenHeliumReactionChainPolicy final : public MultiReactionChainPolicy {
+    public:
+        HydrogenHeliumReactionChainPolicy();
+
+        [[nodiscard]] std::string name() const override;
+    };
+
     class MainSequenceReactionChainPolicy final : public MultiReactionChainPolicy {
     public:
         MainSequenceReactionChainPolicy();

@@ -183,7 +183,66 @@ namespace gridfire::policy {
     public:
 
     };
+
+    /**
+     * @class HydrogenHeliumBurningPolicy
+     * @brief A fixed network for hydrogen and helium burning, from the main sequence through core and shell helium
+     *        burning (HydrogenHeliumReactionChainPolicy: pp chains, CNO cycle, triple-alpha and the alpha captures).
+     *
+     * Unlike MainSequencePolicy, the network does not depend on the starting composition: it is always built
+     * (to third order) from the same seed species (H-1, He-3, He-4, C-12, N-14, O-16, Ne-20, Mg-24), so a run started
+     * from a pristine composition already contains every helium-burning species and reaction it will need, and two
+     * runs with different compositions have the same species in the same order. The composition passed in only has to
+     * lie within that network; no species is required, so callers that do not track Ne-20 or Mg-24 can leave them out.
+     *
+     * construct() verifies the network contains every reaction of HydrogenHeliumReactionChainPolicy.
+     */
+    class HydrogenHeliumBurningPolicy final : public NetworkPolicy {
+    public:
+        /**
+         * @param composition Starting composition; every species with a positive abundance must be in the network
+         *        (checked by construct()).
+         */
+        explicit HydrogenHeliumBurningPolicy(const fourdst::composition::Composition& composition);
+
+        /// As HydrogenHeliumBurningPolicy(const Composition&), building the engine with the given configuration.
+        HydrogenHeliumBurningPolicy(const fourdst::composition::Composition& composition, const config::GridFireConfig& config);
+
+        /// The configuration construct() builds the engine with.
+        [[nodiscard]] const config::GridFireConfig& getConfig() const { return m_config; }
+
+        [[nodiscard]] std::string name() const override { return "HydrogenHeliumBurningPolicy"; }
+
+        /// The species the network is built from (none of them is required in the starting composition).
+        [[nodiscard]] const std::set<fourdst::atomic::Species>& get_seed_species() const override { return m_seed_species; }
+        [[nodiscard]] const reaction::ReactionSet& get_seed_reactions() const override { return m_reaction_policy->get_reactions(); }
+
+        /**
+         * @brief Build the network and verify it.
+         * @throws exceptions::MissingKeyReactionError if a required reaction is missing from the network.
+         * @throws exceptions::PolicyError if the starting composition has a positive abundance of a species outside it.
+         */
+        ConstructionResults construct() override;
+
+        [[nodiscard]] NetworkPolicyStatus get_status() const override { return m_status; }
+        [[nodiscard]] const std::vector<std::unique_ptr<engine::DynamicEngine>> &get_engine_stack() const override;
+        [[nodiscard]] std::vector<engine::EngineTypes> get_engine_types_stack() const override;
+        [[nodiscard]] const std::unique_ptr<partition::PartitionFunction>& get_partition_function() const override { return m_partition_function; }
+        [[nodiscard]] std::unique_ptr<engine::scratch::StateBlob> get_stack_scratch_blob() const override;
+
+    private:
+        std::set<fourdst::atomic::Species> m_seed_species;
+        std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<HydrogenHeliumReactionChainPolicy>();
+        fourdst::composition::Composition m_composition; ///< The starting composition (checked against the network)
+        config::GridFireConfig m_config;
+        std::unique_ptr<partition::PartitionFunction> m_partition_function;
+        std::vector<std::unique_ptr<engine::DynamicEngine>> m_network_stack;
+        NetworkPolicyStatus m_status = NetworkPolicyStatus::UNINITIALIZED;
+    };
 }
 
 template<>
 struct std::formatter<gridfire::policy::MainSequencePolicy> : std::formatter<gridfire::policy::NetworkPolicy> {};
+
+template<>
+struct std::formatter<gridfire::policy::HydrogenHeliumBurningPolicy> : std::formatter<gridfire::policy::NetworkPolicy> {};

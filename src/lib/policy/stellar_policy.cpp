@@ -17,6 +17,14 @@
 #include "fourdst/composition/utils/utils.h"
 
 namespace {
+    std::unique_ptr<gridfire::partition::PartitionFunction> make_partition_function() {
+        using gridfire::partition::BasePartitionType;
+        return std::make_unique<gridfire::partition::CompositePartitionFunction>(gridfire::partition::CompositePartitionFunction({
+            BasePartitionType::RauscherThielemann,
+            BasePartitionType::GroundState
+        }));
+    }
+
     std::set<fourdst::atomic::Species> initialize_seed_species() {
         return {
             fourdst::atomic::H_1,
@@ -157,5 +165,70 @@ namespace gridfire::policy {
             }
         }
         return NetworkPolicyStatus::INITIALIZED_VERIFIED;
+    }
+
+    HydrogenHeliumBurningPolicy::HydrogenHeliumBurningPolicy(const fourdst::composition::Composition& composition)
+    : HydrogenHeliumBurningPolicy(composition, config::GridFireConfig{}) {}
+
+    HydrogenHeliumBurningPolicy::HydrogenHeliumBurningPolicy(
+        const fourdst::composition::Composition& composition,
+        const config::GridFireConfig& config
+    ) :
+    m_seed_species(initialize_seed_species()),
+    m_composition(composition),
+    m_config(config),
+    m_partition_function(make_partition_function()) {}
+
+    ConstructionResults HydrogenHeliumBurningPolicy::construct() {
+        m_network_stack.clear();
+        m_status = NetworkPolicyStatus::UNINITIALIZED;
+
+        // Build from every seed species regardless of the starting composition (the builder follows species with a
+        // positive abundance; the values themselves do not matter), so the network is the same for every run
+        fourdst::composition::Composition seeds;
+        for (const auto& species : m_seed_species) {
+            seeds.registerSpecies(species);
+            seeds.setMolarAbundance(species, 1.0);
+        }
+        m_network_stack.emplace_back(std::make_unique<engine::GraphEngine>(
+            seeds, *m_partition_function, engine::NetworkBuildDepth::ThirdOrder, engine::NetworkConstructionFlags::DEFAULT, m_config
+        ));
+        std::unique_ptr<engine::scratch::StateBlob> scratch_blob = m_network_stack.back()->constructStateBlob(nullptr);
+
+        const reaction::ReactionSet& network = m_network_stack.front()->getNetworkReactions(*scratch_blob);
+        for (const auto& reaction : m_reaction_policy->get_reactions()) {
+            if (!network.contains(*reaction)) {
+                m_status = NetworkPolicyStatus::MISSING_KEY_REACTION;
+                throw exceptions::MissingKeyReactionError(std::format(
+                    "HydrogenHeliumBurningPolicy construction failed: the network is missing {}.", reaction->id()));
+            }
+        }
+        const auto& networkSpecies = m_network_stack.front()->getNetworkSpecies(*scratch_blob);
+        for (const auto& species : m_composition.getRegisteredSpecies()) {
+            if (m_composition.getMolarAbundance(species) > 0.0 && std::ranges::find(networkSpecies, species) == networkSpecies.end()) {
+                throw exceptions::PolicyError(std::format(
+                    "HydrogenHeliumBurningPolicy: the starting composition contains {}, which is not in the network.", species.name()));
+            }
+        }
+        m_status = NetworkPolicyStatus::INITIALIZED_VERIFIED;
+        return {.engine = *m_network_stack.back(), .scratch_blob = std::move(scratch_blob)};
+    }
+
+    const std::vector<std::unique_ptr<engine::DynamicEngine>>& HydrogenHeliumBurningPolicy::get_engine_stack() const {
+        if (m_status != NetworkPolicyStatus::INITIALIZED_VERIFIED) {
+            throw exceptions::PolicyError("Cannot get engine stack from HydrogenHeliumBurningPolicy: call construct() first.");
+        }
+        return m_network_stack;
+    }
+
+    std::vector<engine::EngineTypes> HydrogenHeliumBurningPolicy::get_engine_types_stack() const {
+        return {engine::EngineTypes::GRAPH_ENGINE};
+    }
+
+    std::unique_ptr<engine::scratch::StateBlob> HydrogenHeliumBurningPolicy::get_stack_scratch_blob() const {
+        if (m_network_stack.empty()) {
+            throw exceptions::PolicyError("Cannot get stack scratch blob from HydrogenHeliumBurningPolicy: call construct() first.");
+        }
+        return m_network_stack.front()->constructStateBlob(nullptr);
     }
 }

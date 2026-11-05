@@ -90,6 +90,10 @@ namespace gridfire::solver {
             sctx_p->solver_workspaces[zone_idx]->set_detailed_logging(sctx_p->zone_detailed_logging);
         }
 
+        sctx_p->zone_failures.assign(n_zones, nullptr);
+
+        // A zone that fails is reported in its NetOut (converged = false, the input composition, the time reached) and
+        // in zone_failures, so one bad zone neither stops the others nor needs an exception to leave the parallel region
         GF_OMP(
             parallel for default(none) shared(results, sctx_p, netIns, n_zones),
         for (size_t zone_idx = 0; zone_idx < n_zones; ++zone_idx)) {
@@ -98,8 +102,22 @@ namespace gridfire::solver {
                     *sctx_p->solver_workspaces[zone_idx],
                     netIns[zone_idx]
                 );
-            } catch (exceptions::GridFireError& e) {
-                std::println("CVODE Solver Failure in zone {}: {}", zone_idx, e.what());
+            } catch (...) {
+                sctx_p->zone_failures[zone_idx] = std::current_exception();
+                NetOut failed{};
+                failed.composition = netIns[zone_idx].composition;
+                failed.converged = false;
+                if (const auto* point = dynamic_cast<const PointSolverContext*>(sctx_p->solver_workspaces[zone_idx].get())) {
+                    failed.time_reached = point->last_accepted_time;
+                }
+                try {
+                    std::rethrow_exception(sctx_p->zone_failures[zone_idx]);
+                } catch (const std::exception& e) {
+                    failed.failure_message = e.what();
+                } catch (...) {
+                    failed.failure_message = "unknown error";
+                }
+                results[zone_idx] = std::move(failed);
             }
             if (sctx_p->zone_completion_logging) {
                 std::println("Thread {} completed zone {}", GF_OMP_THREAD_NUM, zone_idx);

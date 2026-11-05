@@ -4,6 +4,7 @@
 #include "gridfire/gridfire.h"
 #include "fourdst/atomic/atomicSpecies.h"
 
+#include <exception>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -24,6 +25,9 @@ struct GFConfigError final : std::runtime_error {
 struct GFInvalidStateError final : std::runtime_error {
     using std::runtime_error::runtime_error;
 };
+
+/// The GF_* / FDSSE_* code for an exception (as every gf_* function reports it), with its message.
+int gf_error_code(const std::exception_ptr& error, std::string& message);
 
 /// Destinations for gf_evaluate. Each points to num_zones entries (eps_by_channel and dYdt: per zone, contiguous).
 struct GFEvaluationOutputs {
@@ -50,6 +54,8 @@ struct GFInstantaneousOutputs {
     double* eps_by_channel = nullptr;
 
     void write(const gridfire::NetOut& netOut, size_t index) const;
+    /// Zero the outputs of zone `index` (for a zone that failed)
+    void write_zero(size_t index, size_t num_channels) const;
 };
 
 enum class GFContextType {
@@ -94,7 +100,15 @@ struct GFContext {
     void evaluate(const double* Y, size_t num_species, const double* T, const double* rho, size_t num_zones,
                   const GFEvaluationOutputs& out) const;
     [[nodiscard]] const std::vector<std::string>& get_energy_channel_names() const;
-    std::string last_error;
+    mutable std::string last_error;
+
+    /// Outcome of each zone of the latest gf_evolve call (GF_SUCCESS or the zone's error code), and the time it reached
+    mutable std::vector<int> zone_status;
+    mutable std::vector<double> zone_time_reached;
+
+    /// Throws GFInvalidStateError unless T, rho and the abundances of one zone are physical and Y has no positive
+    /// abundance outside the network (which the integrator would have to drop).
+    void validate_zone(const double* Y, size_t num_species, double T, double rho, size_t zone) const;
 };
 
 struct GFPointContext final: GFContext{

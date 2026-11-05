@@ -69,6 +69,7 @@ module gridfire_mod
 
         enumerator :: GF_CONFIG_ERROR = 38
         enumerator :: GF_INVALID_STATE = 39
+        enumerator :: GF_ZONE_FAILURE = 40
 
         enumerator :: GF_SINGLE_ZONE = 1001
         enumerator :: GF_MULTI_ZONE = 1002
@@ -276,6 +277,14 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_get_zone_status(void* ptr, int* status, double* time_reached);
+        function gf_get_zone_status(ptr, status, time_reached) result(ierr) bind(C, name="gf_get_zone_status")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            type(c_ptr), value :: status, time_reached
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_get_num_network_species(void* ptr, size_t* num_species);
         function gf_get_num_network_species(ptr, num_species) result(ierr) bind(C, name="gf_get_num_network_species")
             import :: c_ptr, c_int, c_size_t
@@ -363,6 +372,7 @@ module gridfire_mod
         procedure :: gff_evaluate_multi
         generic :: gff_evaluate => gff_evaluate_single, gff_evaluate_multi
 
+        procedure :: gff_get_zone_status
         procedure :: gff_get_num_network_species
         procedure :: gff_get_network_species
         procedure :: gff_register_network_species
@@ -677,6 +687,28 @@ module gridfire_mod
             ierr = int(gf_evaluate_c(self%ctx_type, self%ctx, Y, self%num_species, T, rho, &
                     eps_nuc, dedt, dedrho, p_nu, p_channels, p_dydt))
         end subroutine gff_evaluate_multi
+
+        ! Outcome of each zone in the latest gff_evolve call: status(i) is GF_SUCCESS or the zone's error code and
+        ! time_reached(i) how far it was integrated [s]. Arrays have num_zones entries (1 for SINGLE_ZONE); both optional.
+        ! A failed zone's Y_out holds its input abundances and its other outputs are 0. A MULTI_ZONE gff_evolve returns
+        ! GF_ZONE_FAILURE in ierr if any zone failed.
+        subroutine gff_get_zone_status(self, status, time_reached)
+            class(GridFire), intent(in) :: self
+            integer(c_int), dimension(:), intent(out), optional, target, contiguous :: status
+            real(c_double), dimension(:), intent(out), optional, target, contiguous :: time_reached
+            type(c_ptr) :: p_status, p_time
+            integer(c_int) :: ierr
+
+            p_status = c_null_ptr
+            p_time = c_null_ptr
+            if (present(status)) p_status = c_loc(status)
+            if (present(time_reached)) p_time = c_loc(time_reached)
+            ierr = gf_get_zone_status(self%ctx, p_status, p_time)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Zone Status Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_get_zone_status
 
         function gff_get_num_network_species(self) result(num_species)
             class(GridFire), intent(in) :: self

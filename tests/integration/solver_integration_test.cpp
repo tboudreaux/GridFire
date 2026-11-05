@@ -832,3 +832,53 @@ TEST(SolverEvaluateRates, RejectsInvalidStates) {
     gridfire::solver::GridSolverContext wrong(*context);
     EXPECT_THROW((void)solver.evaluateRates(wrong, state(comp, 1.5e7, 100.0)), gridfire::exceptions::SolverError);
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Per-zone failure reporting
+// ---------------------------------------------------------------------------------------------------------------------
+
+// A zone that cannot be integrated (T = 1e10 K with no step-failure restarts) is reported in its NetOut and in
+// zone_failures; the other zones complete as if it were not there
+TEST(GridSolverFailures, FailedZoneIsReportedAndOthersComplete) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    gridfire::config::GridFireConfig config;
+    config.solver.pointSolver.maxStepFailureRestarts = 0;
+    const PointSolver point(shared.engine, config);
+    const gridfire::solver::GridSolver grid(shared.engine, point);
+    gridfire::solver::GridSolverContext gctx(*context);
+    gctx.zone_completion_logging = false;
+
+    std::vector<NetIn> inputs = zone_inputs({1.5e7, 1e10, 2e7});
+    inputs[1].density = 1e4;
+    const auto results = grid.evaluate(gctx, inputs);
+    ASSERT_EQ(results.size(), 3u);
+    ASSERT_EQ(gctx.zone_failures.size(), 3u);
+
+    EXPECT_FALSE(results[1].converged);
+    EXPECT_NE(gctx.zone_failures[1], nullptr);
+    EXPECT_FALSE(results[1].failure_message.empty());
+    EXPECT_LT(results[1].time_reached, inputs[1].tMax);
+    EXPECT_EQ(results[1].energy, 0.0);
+    EXPECT_EQ(results[1].composition.getMolarAbundance(sp("H-1")), inputs[1].composition.getMolarAbundance(sp("H-1")))
+        << "a failed zone carries its input composition";
+    EXPECT_THROW(std::rethrow_exception(gctx.zone_failures[1]), gridfire::exceptions::CVODESolverFailureError);
+
+    for (const size_t z : {0u, 2u}) {
+        EXPECT_TRUE(results[z].converged) << "zone " << z;
+        EXPECT_EQ(gctx.zone_failures[z], nullptr) << "zone " << z;
+        EXPECT_EQ(results[z].time_reached, inputs[z].tMax) << "zone " << z;
+        const NetOut alone = run(shared.engine, *context, inputs[z].composition, inputs[z].temperature,
+                                 inputs[z].density, inputs[z].tMax, {.rel_tol = 1e-5, .abs_tol = 1e-8});
+        EXPECT_EQ(results[z].energy, alone.energy) << "zone " << z << " is affected by the failed zone";
+    }
+}
+
+TEST(GridSolverFailures, PointSolverReportsTimeReached) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const NetOut out = run(shared.engine, *context, gridfire::test::solar_composition(), 1.5e7, 150.0, 1e13);
+    EXPECT_TRUE(out.converged);
+    EXPECT_EQ(out.time_reached, 1e13);
+    EXPECT_TRUE(out.failure_message.empty());
+}
