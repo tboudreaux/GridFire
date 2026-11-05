@@ -43,6 +43,7 @@ void register_config_bindings(pybind11::module &m) {
         .def(py::init<>())
         .def_readwrite("views", &gridfire::config::EngineConfig::views)
         .def_readwrite("screening", &gridfire::config::EngineConfig::screening)
+        .def_readwrite("screeningBlend", &gridfire::config::EngineConfig::screeningBlend)
         .def_readwrite("jacobian", &gridfire::config::EngineConfig::jacobian);
 
     py::class_<gridfire::config::GridFireConfig>(m, "GridFireConfig")

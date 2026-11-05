@@ -29,6 +29,7 @@ gridfire_sources = files(
     'lib/screening/screening_types.cpp',
     'lib/screening/screening_weak.cpp',
     'lib/screening/screening_bare.cpp',
+    'lib/screening/screening_blended.cpp',
     'lib/partition/partition_rauscher_thielemann.cpp',
     'lib/partition/partition_ground.cpp',
     'lib/partition/composite/partition_composite.cpp',

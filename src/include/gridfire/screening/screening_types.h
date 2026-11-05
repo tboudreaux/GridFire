@@ -32,7 +32,38 @@ namespace gridfire::screening {
          * 4. The final screening factor is `exp(H_12)`.
          * A special calculation is performed for the triple-alpha reaction.
          */
-        WEAK,   
+        WEAK,
+        /**
+         * @brief Chugunov & DeWitt (2009) screening, valid from weak through strong coupling (CD09ScreeningModel).
+         *
+         * Their eq. (A4) interpolation between the Salpeter weak limit (with the electrons' contribution weighted by
+         * their degeneracy) and the strong-coupling fit, eqs. (23)-(25). Suited to dense or degenerate plasmas (low-mass
+         * stars, red-giant and white-dwarf cores) where weak screening is not valid.
+         */
+        CD09,
+        /**
+         * @brief Salpeter weak screening blended into Chugunov & DeWitt (2009) as coupling grows
+         *        (BlendedScreeningModel of WeakScreeningModel and CD09ScreeningModel).
+         *
+         * Pure Salpeter while its exponent \f$H\f$ is below ScreeningBlendWindow::weakExponent, where weak screening
+         * is accurate (e.g. every pp-chain and CNO reaction in the Sun), pure CD09 above
+         * ScreeningBlendWindow::strongExponent, and a smooth blend between.
+         */
+        BLENDED,
+    };
+
+    /**
+     * @brief Where BlendedScreeningModel hands over from its weak to its strong prescription.
+     *
+     * The handover is measured by the weak prescription's own exponent \f$H = \ln f_{\rm weak}\f$ (for Salpeter,
+     * \f$H = Z_1 Z_2 e^2 / \lambda_D k_B T\f$, the small parameter of the weak-screening expansion): the weak result
+     * is used for \f$H \le\f$ weakExponent, the strong one for \f$H \ge\f$ strongExponent, and their exponents are
+     * blended smoothly in \f$\ln H\f$ between. strongExponent must not exceed 2, where WeakScreeningModel caps
+     * \f$H\f$, so the cap never enters the blend.
+     */
+    struct ScreeningBlendWindow {
+        double weakExponent = 0.5;   ///< Below this weak-screening exponent the weak prescription is used alone
+        double strongExponent = 1.5; ///< Above this weak-screening exponent the strong prescription is used alone
     };
 
     /**
@@ -66,5 +97,5 @@ namespace gridfire::screening {
      * );
      * @endcode
      */
-    std::unique_ptr<ScreeningModel> selectScreeningModel(ScreeningType type);
+    std::unique_ptr<ScreeningModel> selectScreeningModel(ScreeningType type, const ScreeningBlendWindow& window = {});
 }

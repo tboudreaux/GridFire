@@ -25,7 +25,8 @@ through **the same history**, and the results are compared step by step.
   rates). Cases without reference data are skipped.
 * The test writes `mesa_comparison_<case>.csv` in its working directory; `plot_comparison.py` turns those into figures.
 
-Both codes use weak (Salpeter 1954) screening: GridFire's default `engine.screening = "weak"` and MESA's
+Both codes use weak (Salpeter 1954) screening: GridFire's `engine.screening = WEAK` (the comparison sets it explicitly;
+GridFire's default, BLENDED, is identical to it wherever weak screening holds) and MESA's
 `screening_mode = 'salpeter'`, set in bbq's `&nuclear` group. bbq reads `screening_mode` only from `&nuclear`; anywhere
 else it is silently ignored and bbq uses its default, Chugunov screening (this affected the GridFire paper's inlists,
 which set it in a `&controls` group). The comparison test fails if `provenance.json` records a different screening from

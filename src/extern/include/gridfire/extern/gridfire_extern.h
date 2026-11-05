@@ -78,7 +78,9 @@ extern "C" {
     /** Electron screening model (GridFireConfig::engine.screening). */
     enum GF_SCREENING_TYPE {
         GF_SCREENING_BARE = 0, /**< No screening */
-        GF_SCREENING_WEAK = 1  /**< Salpeter (1954) weak screening, the default */
+        GF_SCREENING_WEAK = 1, /**< Salpeter (1954) weak screening */
+        GF_SCREENING_CD09 = 2, /**< Chugunov & DeWitt (2009), weak through strong coupling */
+        GF_SCREENING_BLENDED = 3 /**< Salpeter handing over to CD09 as coupling grows (see engine_screening_blend_*); the default */
     };
 
     /** How the engine computes the species Jacobian (GridFireConfig::engine.jacobian). */
@@ -108,6 +110,10 @@ extern "C" {
         double trigger_boundary_flux_absolute_threshold;
         /* engine.views.adaptiveEngineView */
         double engine_adaptive_relative_culling_threshold;
+        /* engine.screeningBlend: BLENDED screening uses Salpeter below this weak-screening exponent H ... */
+        double engine_screening_blend_weak;
+        /* ... and CD09 above this one (0 < weak < strong <= 2) */
+        double engine_screening_blend_strong;
         /* solver.pointSolver */
         int solver_clamp_negative_iterates;
         int solver_max_step_failure_restarts;

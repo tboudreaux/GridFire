@@ -184,7 +184,7 @@ namespace gridfire::engine {
             cfg = config;
         });
         m_screeningType = m_config->engine.screening;
-        m_screeningModel = screening::selectScreeningModel(m_screeningType);
+        m_screeningModel = screening::selectScreeningModel(m_screeningType, m_config->engine.screeningBlend);
         m_jacobianMethod = m_config->engine.jacobian;
     }
 

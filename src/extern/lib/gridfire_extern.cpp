@@ -142,11 +142,15 @@ namespace {
         c.trigger_boundary_flux_relative_threshold = trigger.boundaryFlux.relativeThreshold;
         c.trigger_boundary_flux_absolute_threshold = trigger.boundaryFlux.absoluteThreshold;
         c.engine_adaptive_relative_culling_threshold = config.engine.views.adaptiveEngineView.relativeCullingThreshold;
+        c.engine_screening_blend_weak = config.engine.screeningBlend.weakExponent;
+        c.engine_screening_blend_strong = config.engine.screeningBlend.strongExponent;
         c.solver_clamp_negative_iterates = point.clampNegativeIterates ? 1 : 0;
         c.solver_max_step_failure_restarts = point.maxStepFailureRestarts;
         switch (config.engine.screening) {
             case gridfire::screening::ScreeningType::BARE: c.engine_screening = GF_SCREENING_BARE; break;
             case gridfire::screening::ScreeningType::WEAK: c.engine_screening = GF_SCREENING_WEAK; break;
+            case gridfire::screening::ScreeningType::CD09: c.engine_screening = GF_SCREENING_CD09; break;
+            case gridfire::screening::ScreeningType::BLENDED: c.engine_screening = GF_SCREENING_BLENDED; break;
         }
         switch (config.engine.jacobian) {
             case gridfire::engine::JacobianMethod::ANALYTIC: c.engine_jacobian = GF_JACOBIAN_ANALYTIC; break;
@@ -174,11 +178,20 @@ namespace {
         trigger.boundaryFlux.relativeThreshold = c.trigger_boundary_flux_relative_threshold;
         trigger.boundaryFlux.absoluteThreshold = c.trigger_boundary_flux_absolute_threshold;
         base.engine.views.adaptiveEngineView.relativeCullingThreshold = c.engine_adaptive_relative_culling_threshold;
+        if (!(c.engine_screening_blend_weak > 0.0) || !(c.engine_screening_blend_strong > c.engine_screening_blend_weak) ||
+            !(c.engine_screening_blend_strong <= 2.0)) {
+            throw GFConfigError(std::format("engine_screening_blend_weak ({}) and engine_screening_blend_strong ({}) must satisfy "
+                "0 < weak < strong <= 2.", c.engine_screening_blend_weak, c.engine_screening_blend_strong));
+        }
+        base.engine.screeningBlend.weakExponent = c.engine_screening_blend_weak;
+        base.engine.screeningBlend.strongExponent = c.engine_screening_blend_strong;
         point.clampNegativeIterates = c.solver_clamp_negative_iterates != 0;
         point.maxStepFailureRestarts = c.solver_max_step_failure_restarts;
         switch (c.engine_screening) {
             case GF_SCREENING_BARE: base.engine.screening = gridfire::screening::ScreeningType::BARE; break;
             case GF_SCREENING_WEAK: base.engine.screening = gridfire::screening::ScreeningType::WEAK; break;
+            case GF_SCREENING_CD09: base.engine.screening = gridfire::screening::ScreeningType::CD09; break;
+            case GF_SCREENING_BLENDED: base.engine.screening = gridfire::screening::ScreeningType::BLENDED; break;
             default: throw GFConfigError(std::format("engine_screening ({}) is not a GF_SCREENING_TYPE.", c.engine_screening));
         }
         switch (c.engine_jacobian) {

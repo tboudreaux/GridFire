@@ -223,7 +223,7 @@ TEST(ExactSolutions, PublicForwardFlowsReproduceScreenedRHS) {
     list.push_back(constant_rate("c12_p", {sp("C-12"), sp("H-1")}, {sp("N-13")}, 1e-10));
     list.push_back(constant_rate("c12_a", {sp("C-12"), sp("He-4")}, {sp("O-16")}, 1e-12));
     const SmallNetwork net(make_set(std::move(list)));
-    ASSERT_EQ(net.engine->getScreeningModel(*net.context), gridfire::screening::ScreeningType::WEAK);
+    ASSERT_EQ(net.engine->getScreeningModel(*net.context), gridfire::screening::ScreeningType::BLENDED);
 
     const auto comp = gridfire::test::make_composition({sp("H-1"), sp("He-4"), sp("C-12"), sp("N-13"), sp("O-16")},
                                                        {0.7, 0.07, 1e-3, 0.0, 0.0});
@@ -697,22 +697,24 @@ TEST(SolverRobustness, TightTolerancesIntegrateThroughHydrogenExhaustion) {
 }
 
 
-// Known bug: GridSolver catches a zone's GridFireError, prints it, and returns a default-constructed NetOut for that
-// zone (with uninitialised energy and num_steps), so the caller cannot tell the zone failed. It should rethrow after
-// the parallel loop, or report per-zone status. Skips while the bug is present; fails once fixed.
-TEST(KnownBugs, GridSolverHidesZoneFailures) {
+// GridSolver used to catch a zone's error, print it, and return a default NetOut, so the caller could not tell the zone
+// failed. It now marks the zone as not converged, keeps its input composition and records the error; other zones are
+// unaffected.
+TEST(GridSolverFailures, InvalidZoneIsReportedNotHidden) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const PointSolver point(shared.engine);
+    const gridfire::solver::GridSolver grid(shared.engine, point);
+    gridfire::solver::GridSolverContext gctx(*context);
+    gctx.zone_completion_logging = false;
     auto inputs = zone_inputs({1.6e7, 1.6e7});
-    inputs[1].temperature = -1.0; // Rejected by PointSolver::evaluate
-    bool threw = false;
-    try {
-        (void)run_grid(inputs, 2);
-    } catch (const std::exception&) {
-        threw = true;
-    }
-    if (!threw) {
-        GTEST_SKIP() << "Known bug: GridSolver swallows a failing zone's exception and returns a default NetOut";
-    }
-    FAIL() << "GridSolver now reports zone failures: the bug appears fixed; make this a normal test";
+    inputs[1].temperature = -1.0; // rejected by PointSolver::evaluate
+    const auto results = grid.evaluate(gctx, inputs);
+    ASSERT_EQ(results.size(), 2u);
+    EXPECT_TRUE(results[0].converged);
+    EXPECT_FALSE(results[1].converged);
+    EXPECT_EQ(results[1].energy, 0.0);
+    EXPECT_THROW(std::rethrow_exception(gctx.zone_failures[1]), gridfire::exceptions::SolverError);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -939,7 +941,8 @@ TEST(SharedCompositionGroups, ShellsShareCompositionButNotEnergy) {
     ASSERT_EQ(burnt.shell_energy.size(), 2u);
     EXPECT_GT(burnt.shell_energy[0], 10.0 * burnt.shell_energy[1]) << "the hot shell releases far more energy";
     const double weighted = 0.25 * burnt.shell_energy[0] + 0.75 * burnt.shell_energy[1];
-    EXPECT_NEAR(weighted, burnt.group.energy, 1e-5 * burnt.group.energy)
+    // Both are integrated on steps chosen to rel_tol = 1e-5, so they agree to a few times that
+    EXPECT_NEAR(weighted, burnt.group.energy, 1e-4 * burnt.group.energy)
         << "per-shell energies are inconsistent with the integrated composition change";
     EXPECT_NEAR(baryon_number(burnt.group.composition), baryon_number(in.composition), 1e-10) << "baryon number is conserved";
     EXPECT_GT(burnt.shell_neutrino_energy_loss[0], burnt.shell_neutrino_energy_loss[1]);

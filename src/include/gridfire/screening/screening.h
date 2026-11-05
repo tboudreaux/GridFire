@@ -4,3 +4,5 @@
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_bare.h"
 #include "gridfire/screening/screening_weak.h"
+#include "gridfire/screening/screening_CD09.h"
+#include "gridfire/screening/screening_blended.h"

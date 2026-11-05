@@ -20,7 +20,7 @@ program gridfire_config_test
 
     ! --- Defaults ---
     defaults = gff_default_config()
-    call check(defaults%engine_screening == GF_SCREENING_WEAK, "default screening is weak")
+    call check(defaults%engine_screening == GF_SCREENING_BLENDED, "default screening is blended")
     call check(defaults%engine_jacobian == GF_JACOBIAN_ANALYTIC, "default Jacobian is analytic")
 
     ! --- A configuration built in Fortran round-trips through the context and through TOML ---
@@ -79,6 +79,8 @@ contains
                 a%trigger_boundary_flux_relative_threshold == b%trigger_boundary_flux_relative_threshold .and. &
                 a%trigger_boundary_flux_absolute_threshold == b%trigger_boundary_flux_absolute_threshold .and. &
                 a%engine_adaptive_relative_culling_threshold == b%engine_adaptive_relative_culling_threshold .and. &
+                a%engine_screening_blend_weak == b%engine_screening_blend_weak .and. &
+                a%engine_screening_blend_strong == b%engine_screening_blend_strong .and. &
                 a%solver_clamp_negative_iterates == b%solver_clamp_negative_iterates .and. &
                 a%solver_max_step_failure_restarts == b%solver_max_step_failure_restarts .and. &
                 a%engine_screening == b%engine_screening .and. a%engine_jacobian == b%engine_jacobian .and. &

@@ -21,6 +21,7 @@ if get_option('build_tests')
         ['unit/energy_channels_test.cpp', 'unit', 120],
         ['unit/network_data_test.cpp', 'unit', 120],
         ['unit/screening_test.cpp', 'unit', 120],
+        ['unit/screening_cd09_test.cpp', 'unit', 300],
         ['unit/config_test.cpp', 'unit', 300],
         ['unit/policy_test.cpp', 'unit', 300],
         ['property/engine_properties_test.cpp', 'property', 900],

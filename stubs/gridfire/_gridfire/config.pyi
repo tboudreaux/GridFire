@@ -33,6 +33,7 @@ class BoundaryFluxConfig:
 class EngineConfig:
     jacobian: gridfire._gridfire.engine.JacobianMethod
     screening: gridfire._gridfire.screening.ScreeningType
+    screeningBlend: gridfire._gridfire.screening.ScreeningBlendWindow
     views: EngineViewConfig
     def __init__(self) -> None:
         ...

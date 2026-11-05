@@ -79,6 +79,8 @@ module gridfire_mod
     enum, bind(C)
         enumerator :: GF_SCREENING_BARE = 0
         enumerator :: GF_SCREENING_WEAK = 1
+        enumerator :: GF_SCREENING_CD09 = 2
+        enumerator :: GF_SCREENING_BLENDED = 3
     end enum
 
     ! Values for GFConfig%engine_jacobian (enum GF_JACOBIAN_METHOD)
@@ -101,11 +103,15 @@ module gridfire_mod
         real(c_double) :: trigger_boundary_flux_absolute_threshold
         ! engine.views.adaptiveEngineView
         real(c_double) :: engine_adaptive_relative_culling_threshold
+        ! engine.screeningBlend: BLENDED screening uses Salpeter below engine_screening_blend_weak (weak-screening
+        ! exponent H) and CD09 above engine_screening_blend_strong (0 < weak < strong <= 2)
+        real(c_double) :: engine_screening_blend_weak
+        real(c_double) :: engine_screening_blend_strong
         ! solver.pointSolver
         integer(c_int) :: solver_clamp_negative_iterates
         integer(c_int) :: solver_max_step_failure_restarts
         ! engine
-        integer(c_int) :: engine_screening        ! GF_SCREENING_BARE or GF_SCREENING_WEAK
+        integer(c_int) :: engine_screening        ! GF_SCREENING_BARE, _WEAK, _CD09 or _BLENDED
         integer(c_int) :: engine_jacobian         ! GF_JACOBIAN_ANALYTIC or GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION
         integer(c_int) :: engine_split_hydrogen_pp_cno
     end type GFConfig

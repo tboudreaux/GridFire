@@ -1,5 +1,6 @@
 #include "mesa_case.h"
 
+#include "gridfire/config/config.h"
 #include "gridfire/partition/composite/partition_composite.h"
 
 #include "fourdst/composition/utils/utils.h"
@@ -68,11 +69,16 @@ namespace gridfire::test::mesa {
         network.partition_function = std::make_unique<partition::CompositePartitionFunction>(
             std::vector{partition::BasePartitionType::RauscherThielemann, partition::BasePartitionType::GroundState}
         );
+        // The references were made with MESA's 'salpeter' screening, so GridFire uses its Salpeter (WEAK) model here
+        // whatever the default is
+        config::GridFireConfig config;
+        config.engine.screening = screening::ScreeningType::WEAK;
         network.engine = std::make_unique<engine::GraphEngine>(
             network.initial_composition,
             *network.partition_function,
             engine::NetworkBuildDepth::ThirdOrder,
-            engine::NetworkConstructionFlags::DEFAULT
+            engine::NetworkConstructionFlags::DEFAULT,
+            config
         );
         if (!excluded.empty()) {
             auto full_context = network.engine->constructStateBlob(nullptr);
@@ -89,7 +95,7 @@ namespace gridfire::test::mesa {
                 throw std::runtime_error(std::format("{}: {} excluded reactions listed but only {} are in the network",
                                                      burn_case.name, excluded.size(), removed));
             }
-            network.engine = std::make_unique<engine::GraphEngine>(kept, *network.partition_function);
+            network.engine = std::make_unique<engine::GraphEngine>(kept, *network.partition_function, config);
         }
 
         network.context = network.engine->constructStateBlob(nullptr);

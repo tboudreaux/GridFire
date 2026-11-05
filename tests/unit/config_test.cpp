@@ -53,7 +53,7 @@ TEST(RuntimeConfig, ConstructorsWithoutConfigUseDefaults) {
     const GridFireConfig defaults{};
     EXPECT_EQ(e.graph().getConfig().engine.screening, defaults.engine.screening);
     EXPECT_EQ(e.graph().getConfig().engine.jacobian, defaults.engine.jacobian);
-    EXPECT_EQ(e.graph().getScreeningModel(e.ctx()), ScreeningType::WEAK);
+    EXPECT_EQ(e.graph().getScreeningModel(e.ctx()), ScreeningType::BLENDED);
     EXPECT_EQ(e.policy->getConfig().engine.jacobian, JacobianMethod::ANALYTIC);
 }
 
@@ -117,7 +117,9 @@ TEST(RuntimeConfig, ScreeningSelectsTheRates) {
     };
     // Weak screening raises the solar-core pp rate by a few percent
     EXPECT_GT(eps(screened) / eps(unscreened), 1.02);
-    EXPECT_EQ(eps(screened), eps(by_default));
+    // The default (BLENDED) is Salpeter wherever weak screening holds; in the solar core only a few heavy-ion
+    // reactions reach the blend window, and they barely contribute to eps
+    EXPECT_NEAR(eps(by_default), eps(screened), 1e-9 * eps(screened));
 }
 
 TEST(RuntimeConfig, GraphEngineFromReactionsTakesConfig) {
@@ -127,7 +129,7 @@ TEST(RuntimeConfig, GraphEngineFromReactionsTakesConfig) {
     const GraphEngine engine(source.graph().getNetworkReactions(source.ctx()), config);
     const auto ctx = engine.constructStateBlob(nullptr);
     EXPECT_EQ(engine.getScreeningModel(*ctx), ScreeningType::BARE);
-    EXPECT_EQ(GraphEngine(source.graph().getNetworkReactions(source.ctx())).getConfig().engine.screening, ScreeningType::WEAK);
+    EXPECT_EQ(GraphEngine(source.graph().getNetworkReactions(source.ctx())).getConfig().engine.screening, ScreeningType::BLENDED);
 }
 
 TEST(RuntimeConfig, AdaptiveViewTakesConfig) {

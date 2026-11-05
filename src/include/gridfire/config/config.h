@@ -54,7 +54,8 @@ namespace gridfire::config {
     struct EngineConfig {
         EngineViewConfig views;
         EnergyChannelConfig energyChannels;
-        screening::ScreeningType screening = screening::ScreeningType::WEAK; ///< Electron screening of reaction rates (WEAK: Salpeter 1954; BARE: none)
+        screening::ScreeningType screening = screening::ScreeningType::BLENDED; ///< Electron screening of reaction rates (default BLENDED) (WEAK: Salpeter 1954; CD09: Chugunov & DeWitt 2009, weak to strong coupling; BLENDED: Salpeter handing over to CD09 as coupling grows; BARE: none)
+        screening::ScreeningBlendWindow screeningBlend; ///< Where BLENDED screening hands over from Salpeter to CD09 (weak-screening exponent H)
         engine::JacobianMethod jacobian = engine::JacobianMethod::ANALYTIC; ///< How GraphEngine computes the species Jacobian
 
     };

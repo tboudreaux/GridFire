@@ -165,5 +165,48 @@ namespace gridfire::screening {
         ) const {
             return std::nullopt;
         }
+
+        /**
+         * @name Subsets of reactions
+         * As calculateScreeningFactors, calculateScreeningLogDerivatives and calculateScreeningStateLogDerivatives, but
+         * only the reactions with a non-zero entry in @p needed have to be correct; the others may hold anything (a
+         * model that can skip them, such as CD09ScreeningModel, returns factor 1 and zero derivatives). Used by
+         * BlendedScreeningModel, which needs its strong prescription only where the blend gives it weight. The defaults
+         * evaluate every reaction.
+         * @{
+         */
+        [[nodiscard]] virtual std::vector<double> calculateScreeningFactors(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho,
+            const std::vector<char>& needed
+        ) const {
+            return calculateScreeningFactors(reactions, species, Y, T9, rho);
+        }
+
+        [[nodiscard]] virtual std::optional<std::vector<double>> calculateScreeningLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho,
+            const std::vector<char>& needed
+        ) const {
+            return calculateScreeningLogDerivatives(reactions, species, Y, T9, rho);
+        }
+
+        [[nodiscard]] virtual std::optional<std::vector<StateLogDerivatives>> calculateScreeningStateLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho,
+            const std::vector<char>& needed
+        ) const {
+            return calculateScreeningStateLogDerivatives(reactions, species, Y, T9, rho);
+        }
+        /** @} */
     };
 }

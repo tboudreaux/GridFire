@@ -78,13 +78,13 @@ TEST(Screening, BareFactorsAreOne) {
     for (const double f : factors) EXPECT_EQ(f, 1.0);
 }
 
-TEST(Screening, ConfigDefaultsToWeak) {
-    EXPECT_EQ(gridfire::config::GridFireConfig{}.engine.screening, gridfire::screening::ScreeningType::WEAK);
+TEST(Screening, ConfigDefaultsToBlended) {
+    EXPECT_EQ(gridfire::config::GridFireConfig{}.engine.screening, gridfire::screening::ScreeningType::BLENDED);
 }
 
-TEST(Screening, GraphEngineDefaultsToWeak) {
+TEST(Screening, GraphEngineDefaultsToBlended) {
     const auto& shared = gridfire::test::main_sequence_engine();
-    EXPECT_EQ(shared.graph.getScreeningModel(*shared.fresh_context()), gridfire::screening::ScreeningType::WEAK);
+    EXPECT_EQ(shared.graph.getScreeningModel(*shared.fresh_context()), gridfire::screening::ScreeningType::BLENDED);
 }
 
 TEST(WeakScreening, LogDerivativesMatchFiniteDifferences) {

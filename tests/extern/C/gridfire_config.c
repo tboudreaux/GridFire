@@ -41,6 +41,8 @@ static int configs_equal(const struct GFConfig* a, const struct GFConfig* b) {
            a->trigger_boundary_flux_relative_threshold == b->trigger_boundary_flux_relative_threshold &&
            a->trigger_boundary_flux_absolute_threshold == b->trigger_boundary_flux_absolute_threshold &&
            a->engine_adaptive_relative_culling_threshold == b->engine_adaptive_relative_culling_threshold &&
+           a->engine_screening_blend_weak == b->engine_screening_blend_weak &&
+           a->engine_screening_blend_strong == b->engine_screening_blend_strong &&
            a->solver_clamp_negative_iterates == b->solver_clamp_negative_iterates &&
            a->solver_max_step_failure_restarts == b->solver_max_step_failure_restarts &&
            a->engine_screening == b->engine_screening && a->engine_jacobian == b->engine_jacobian &&
@@ -82,7 +84,7 @@ int main(int argc, char** argv) {
     /* --- Defaults --- */
     struct GFConfig defaults;
     CHECK(gf_config_defaults(&defaults) == GF_SUCCESS, "gf_config_defaults");
-    CHECK(defaults.engine_screening == GF_SCREENING_WEAK, "default screening is %d", defaults.engine_screening);
+    CHECK(defaults.engine_screening == GF_SCREENING_BLENDED, "default screening is %d", defaults.engine_screening);
     CHECK(defaults.engine_jacobian == GF_JACOBIAN_ANALYTIC, "default Jacobian is %d", defaults.engine_jacobian);
     CHECK(defaults.solver_abs_tol > 0.0 && defaults.solver_rel_tol > 0.0, "default tolerances");
 
@@ -96,6 +98,8 @@ int main(int argc, char** argv) {
     custom.engine_screening = GF_SCREENING_BARE;
     custom.engine_jacobian = GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION;
     custom.solver_rel_tol = 1e-7;
+    custom.engine_screening_blend_weak = 0.4;
+    custom.engine_screening_blend_strong = 1.2;
     custom.solver_max_step_failure_restarts = 5;
     custom.engine_split_hydrogen_pp_cno = 0;
     CHECK_OK(gf_set_config(ctx, &custom), ctx, "gf_set_config");
@@ -106,6 +110,9 @@ int main(int argc, char** argv) {
     struct GFConfig invalid = custom;
     invalid.engine_jacobian = 7;
     CHECK(gf_set_config(ctx, &invalid) == GF_CONFIG_ERROR, "an invalid Jacobian method was accepted");
+    invalid = custom;
+    invalid.engine_screening_blend_strong = 2.5; /* above the weak-screening cap */
+    CHECK(gf_set_config(ctx, &invalid) == GF_CONFIG_ERROR, "a blend window above H = 2 was accepted");
     invalid = custom;
     invalid.solver_abs_tol = -1.0;
     CHECK(gf_set_config(ctx, &invalid) == GF_CONFIG_ERROR, "a negative tolerance was accepted");
