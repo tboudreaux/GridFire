@@ -208,6 +208,31 @@ extern "C" {
     );
 
     /**
+     * MULTI_ZONE only: burn groups of zones as one shared composition in every later gf_evolve call (a convective zone
+     * under instantaneous mixing).
+     *
+     *   group - one entry per zone: -1 to burn the zone on its own, or a group id >= 0; zones with the same id share
+     *           one composition (the mass-weighted average of their inputs), which burns at the mass-weighted mean of
+     *           their rates. NULL clears the groups (every zone on its own, the default).
+     *   mass  - one entry per zone: its mass (any units, only ratios within a group matter); must be positive for every
+     *           grouped zone. May be NULL only when no zone is grouped.
+     *
+     * Every member of a group gets the group's Y_out, but its own energy, neutrino losses, eps_nuc, derivatives and
+     * channel energies, evaluated at its own T and rho. Members use the zone's tMax and dt0 (one per call anyway).
+     * A group that fails fails as a unit: every member gets the group's status (gf_get_zone_status). Groups stay set
+     * until changed or cleared; the zone count must not change while they are set.
+     *
+     * Returns GF_INVALID_STATE for an id below -1 or a grouped zone without a positive mass.
+     */
+    int gf_set_shared_composition_groups(void* ptr, const int* group, const double* mass);
+
+    /**
+     * Group ids for gf_set_shared_composition_groups from a per-zone flag (e.g. 1 = convective), for zones ordered in
+     * space: each contiguous run of non-zero flags is one group (ids 0, 1, ...), every other zone gets -1.
+     */
+    int gf_shared_composition_groups_from_mask(const int* flagged, size_t num_zones, int* group);
+
+    /**
      * Outcome of each zone in the latest gf_evolve call (1 entry for SINGLE_ZONE, gf_set_num_zones entries for
      * MULTI_ZONE). Either array may be NULL.
      *

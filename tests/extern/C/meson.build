@@ -37,3 +37,10 @@ gf_extern_c_he_policy = executable('gf_extern_c_he_policy', 'gridfire_he_policy.
            dependencies: [gridfire_extern_dep]
 )
 test('extern_c_he_policy', gf_extern_c_he_policy, suite: 'extern', timeout: 600)
+
+gf_extern_c_shared_composition = executable('gf_extern_c_shared_composition', 'gridfire_shared_composition.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep]
+)
+test('extern_c_shared_composition', gf_extern_c_shared_composition, suite: 'extern', timeout: 600)

@@ -153,6 +153,14 @@ struct GFGridContext final : GFContext {
         return zones;
     }
 
+    /// Shared-composition group of each zone (-1: on its own) and zone masses; empty: no groups
+    std::vector<int> shared_composition_groups;
+    std::vector<double> zone_masses;
+
+    /// Set (or, with group == nullptr, clear) the shared-composition groups applied to every later evolve().
+    /// Throws GFInvalidStateError for an id below -1 or a grouped zone without a positive, finite mass.
+    void set_shared_composition_groups(const int* group, const double* mass);
+
     int evolve(
         const double* Y_in,
         size_t num_species,

@@ -11,7 +11,7 @@ import gridfire._gridfire.engine.scratchpads
 import gridfire._gridfire.type
 import types
 import typing
-__all__: list[str] = ['GridSolver', 'GridSolverContext', 'MultiZoneDynamicNetworkSolver', 'PointSolver', 'PointSolverContext', 'PointSolverTimestepContext', 'SingleZoneDynamicNetworkSolver', 'SolverContextBase']
+__all__: list[str, 'shared_composition_groups_from_mask'] = ['GridSolver', 'GridSolverContext', 'MultiZoneDynamicNetworkSolver', 'PointSolver', 'PointSolverContext', 'PointSolverTimestepContext', 'SingleZoneDynamicNetworkSolver', 'SolverContextBase']
 class GridSolver(MultiZoneDynamicNetworkSolver):
     def __init__(self, engine: gridfire._gridfire.engine.DynamicEngine, solver: SingleZoneDynamicNetworkSolver) -> None:
         """
@@ -25,6 +25,20 @@ class GridSolverContext(SolverContextBase):
     detailed_logging: bool
     stdout_logging: bool
     zone_completion_logging: bool
+    @property
+    def shared_composition_groups(self) -> list[int]:
+        ...
+    @property
+    def zone_masses(self) -> list[float]:
+        ...
+    def set_shared_composition_groups(self, group_of_zone: collections.abc.Sequence[typing.SupportsInt], zone_mass: collections.abc.Sequence[typing.SupportsFloat]) -> None:
+        """
+        Burn zones with the same group id (>= 0) as one shared composition from the next evaluate(); -1 burns a zone on its own
+        """
+    def clear_shared_composition_groups(self) -> None:
+        """
+        Burn every zone on its own again
+        """
     def __init__(self, ctx_template: gridfire._gridfire.engine.scratchpads.StateBlob) -> None:
         ...
     @typing.overload
@@ -172,9 +186,17 @@ class SingleZoneDynamicNetworkSolver:
         """
         evaluate the dynamic engine using the dynamic engine class for a single zone
         """
+    def evaluateSharedComposition(self, solver_ctx: SolverContextBase, netIn: gridfire._gridfire.type.NetIn, shells: collections.abc.Sequence[gridfire._gridfire.type.ShellState]) -> gridfire._gridfire.type.SharedCompositionResult:
+        """
+        Burn one composition shared by several shells (each at its own T and rho, weighted by mass) for netIn.tMax
+        """
     def evaluateRates(self, solver_ctx: SolverContextBase, netIn: gridfire._gridfire.type.NetIn) -> gridfire._gridfire.type.InstantaneousRates:
         """
         Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's state, without integrating
         """
 class SolverContextBase:
     pass
+def shared_composition_groups_from_mask(flagged: collections.abc.Sequence[bool]) -> list[int]:
+    """
+    Group ids from a per-zone flag for zones ordered in space: each contiguous run of flagged zones is one group, the rest -1
+    """

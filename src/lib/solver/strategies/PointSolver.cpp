@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <algorithm>
+#include <array>
 
 #include "fourdst/atomic/species.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
@@ -257,8 +258,62 @@ namespace gridfire::solver {
     NetOut PointSolver::evaluate(
         SolverContextBase& solver_ctx,
         const NetIn &netIn,
+        const bool displayTrigger,
+        const bool forceReinitialize
+    ) const {
+        return evaluate_impl(solver_ctx, netIn, displayTrigger, forceReinitialize, {}, nullptr);
+    }
+
+    SharedCompositionResult PointSolver::evaluateSharedComposition(
+        SolverContextBase& solver_ctx,
+        const NetIn& netIn,
+        const std::vector<ShellState>& shells
+    ) const {
+        if (shells.empty()) {
+            throw exceptions::SolverError("PointSolver::evaluateSharedComposition: no shells given.");
+        }
+        double total_weight = 0.0;
+        for (const auto& shell : shells) {
+            if (!std::isfinite(shell.temperature) || shell.temperature <= 0.0 || !std::isfinite(shell.density) ||
+                shell.density <= 0.0 || !std::isfinite(shell.weight) || shell.weight <= 0.0) {
+                throw exceptions::SolverError(std::format(
+                    "PointSolver::evaluateSharedComposition: every shell needs a positive, finite temperature, density and "
+                    "weight (got T = {} K, rho = {} g/cm^3, weight = {})", shell.temperature, shell.density, shell.weight));
+            }
+            total_weight += shell.weight;
+        }
+        // Normalise the weights, and take the mass-weighted mean state for the group-level decisions (triggers, project)
+        std::vector<ShellState> normalised = shells;
+        NetIn mean = netIn;
+        mean.temperature = 0.0;
+        mean.density = 0.0;
+        for (auto& shell : normalised) {
+            shell.weight /= total_weight;
+            mean.temperature += shell.weight * shell.temperature;
+            mean.density += shell.weight * shell.density;
+        }
+
+        std::vector<double> quadrature;
+        SharedCompositionResult result;
+        result.group = evaluate_impl(solver_ctx, mean, false, false, normalised, &quadrature);
+        result.shell_energy.resize(shells.size());
+        result.shell_neutrino_energy_loss.resize(shells.size());
+        result.shell_neutrino_flux.resize(shells.size());
+        for (size_t i = 0; i < shells.size(); ++i) {
+            result.shell_energy[i] = quadrature.at(3 * i);
+            result.shell_neutrino_energy_loss[i] = quadrature.at(3 * i + 1);
+            result.shell_neutrino_flux[i] = quadrature.at(3 * i + 2);
+        }
+        return result;
+    }
+
+    NetOut PointSolver::evaluate_impl(
+        SolverContextBase& solver_ctx,
+        const NetIn &netIn,
         bool displayTrigger,
-        bool forceReinitialize
+        bool forceReinitialize,
+        const std::vector<ShellState>& shells,
+        std::vector<double>* quadrature_out
     ) const {
         auto* sctx_p = dynamic_cast<PointSolverContext*>(&solver_ctx);
         if (sctx_p == nullptr) {
@@ -344,6 +399,9 @@ namespace gridfire::solver {
             equilibratedComposition = netIn.composition; // Use the provided composition as-is if we already have validated CVODE resources and that the composition is consistent with the previous state
         }
 
+        // Shared-composition groups integrate each shell's energy, neutrino loss and neutrino flux along the steps
+        std::vector<double> quad_values(3 * shells.size(), 0.0);
+
         size_t numSpecies = m_engine.getNetworkSpecies(*sctx_p->engine_ctx).size();
         CVODEUserData user_data {
             .solver_instance = this,
@@ -353,6 +411,7 @@ namespace gridfire::solver {
             .abs_tol = sctx_p->abs_tol.value(),
             .rel_tol = sctx_p->rel_tol.value(),
         };
+        user_data.shells = shells;
         auto reset_error_weight_history = [&]() {
             const auto* y_data = N_VGetArrayPointer(sctx_p->Y);
             user_data.previous_accepted_abundances.assign(y_data, y_data + numSpecies);
@@ -400,6 +459,7 @@ namespace gridfire::solver {
             utils::check_cvode_flag(CVodeSetStopTime(sctx_p->cvode_mem, netIn.tMax), "CVodeSetStopTime");
 
             LOG_TRACE_L2(m_logger, "Taking one CVODE step...");
+            const double step_start_time = current_time;
             int flag = CVode(sctx_p->cvode_mem, netIn.tMax, sctx_p->Y, &current_time, CV_ONE_STEP);
             sctx_p->last_accepted_time = current_time; // on failure CVODE returns the time of the last accepted step
             LOG_TRACE_L2(m_logger, "CVODE step complete. Current time: {}, step status: {}", current_time, utils::cvode_ret_code_map.at(flag));
@@ -452,6 +512,9 @@ namespace gridfire::solver {
 
             sunrealtype* y_data = N_VGetArrayPointer(sctx_p->Y);
             const double current_energy = y_data[numSpecies]; // Specific energy rate
+            if (!shells.empty() && current_time > step_start_time) {
+                integrate_shells_over_step(sctx_p, user_data, step_start_time, current_time, quad_values);
+            }
 
             if (user_data.previous_accepted_abundances.size() == numSpecies) {
                 for (size_t i = 0; i < numSpecies; ++i) {
@@ -822,6 +885,9 @@ namespace gridfire::solver {
         LOG_TRACE_L2(m_logger, "Output data built!");
         LOG_TRACE_L2(m_logger, "Solver evaluation complete!.");
 
+        if (quadrature_out) {
+            *quadrature_out = quad_values;
+        }
         sctx_p->last_composition_hash = netOut.composition.hash();
         sctx_p->last_size = netOut.composition.size() + 1;
         CVodeGetLastStep(sctx_p->cvode_mem, &sctx_p->last_good_time_step);
@@ -1002,89 +1068,103 @@ namespace gridfire::solver {
             return ss.str();
         }());
 
-        LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {}", t);
-        NetworkJacobian jac = clampIterates
-            ? engine->generateJacobianMatrix(data->ctx, composition, data->T9, data->rho)
-            : engine->generateJacobianMatrixFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), data->T9, data->rho);
-        LOG_TRACE_L2(solver_instance->m_logger, "Regularizing Jacobian matrix at time {}", t);
-        jac = regularize_jacobian(jac, composition, solver_instance->m_logger);
-        LOG_TRACE_L2(solver_instance->m_logger, "Done regularizing Jacobian matrix at time {}", t);
-        if (!jac.infs().empty() || !jac.nans().empty()) {
-            auto infString = [&jac]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                std::vector<JacobianEntry> entries = jac.infs();
-                for (const auto &[fst, snd]: entries | std::views::keys) {
-                    ss << "J(" << fst.name() << ", " << snd.name() << ")";
-                    if (i < entries.size() - 1) {
-                        ss << ", ";
+        // The Jacobian at one state, regularised and checked for non-finite entries
+        const auto checked_jacobian = [&](const double T9_s, const double rho_s) {
+            LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {}", t);
+            NetworkJacobian jac = clampIterates
+                ? engine->generateJacobianMatrix(data->ctx, composition, T9_s, rho_s)
+                : engine->generateJacobianMatrixFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), T9_s, rho_s);
+            LOG_TRACE_L2(solver_instance->m_logger, "Regularizing Jacobian matrix at time {}", t);
+            jac = regularize_jacobian(jac, composition, solver_instance->m_logger);
+            LOG_TRACE_L2(solver_instance->m_logger, "Done regularizing Jacobian matrix at time {}", t);
+            if (!jac.infs().empty() || !jac.nans().empty()) {
+                auto infString = [&jac]() -> std::string {
+                    std::stringstream ss;
+                    size_t i = 0;
+                    std::vector<JacobianEntry> entries = jac.infs();
+                    for (const auto &[fst, snd]: entries | std::views::keys) {
+                        ss << "J(" << fst.name() << ", " << snd.name() << ")";
+                        if (i < entries.size() - 1) {
+                            ss << ", ";
+                        }
+                        i++;
                     }
-                    i++;
-                }
-                if (entries.empty()) {
-                    ss << "None";
-                }
-                return ss.str();
-            };
-            auto nanString = [&jac]() -> std::string {
-                std::stringstream ss;
-                size_t i = 0;
-                std::vector<JacobianEntry> entries = jac.nans();
-                for (const auto &[fst, snd]: entries | std::views::keys) {
-                    ss << "J(" << fst.name() << ", " << snd.name() << ")";
-                    if (i < entries.size() - 1) {
-                        ss << ", ";
+                    if (entries.empty()) {
+                        ss << "None";
                     }
-                    i++;
-                }
-                if (entries.empty()) {
-                    ss << "None";
-                }
-                return ss.str();
-            };
-            LOG_ERROR(
-                solver_instance->m_logger,
-                "Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. GridFire will now halt.",
-                t,
-                jac.infs().size(),
-                infString(),
-                jac.nans().size(),
-                nanString()
-            );
-            throw exceptions::IllConditionedJacobianError(std::format("Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers.", t, jac.infs().size(), infString(), jac.nans().size(), nanString()));
-        }
-        LOG_TRACE_L2(solver_instance->m_logger, "Jacobian matrix created at time {} of shape ({} x {})", t, std::get<0>(jac.shape()), std::get<1>(jac.shape()));
+                    return ss.str();
+                };
+                auto nanString = [&jac]() -> std::string {
+                    std::stringstream ss;
+                    size_t i = 0;
+                    std::vector<JacobianEntry> entries = jac.nans();
+                    for (const auto &[fst, snd]: entries | std::views::keys) {
+                        ss << "J(" << fst.name() << ", " << snd.name() << ")";
+                        if (i < entries.size() - 1) {
+                            ss << ", ";
+                        }
+                        i++;
+                    }
+                    if (entries.empty()) {
+                        ss << "None";
+                    }
+                    return ss.str();
+                };
+                LOG_ERROR(
+                    solver_instance->m_logger,
+                    "Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. GridFire will now halt.",
+                    t,
+                    jac.infs().size(),
+                    infString(),
+                    jac.nans().size(),
+                    nanString()
+                );
+                throw exceptions::IllConditionedJacobianError(std::format("Jacobian matrix generated at time {} contains {} infinite entries ({}) and {} NaN entries ({}). This will lead to a solver failure. In order to ensure tractability GridFire will not proceed. Focus on improving conditioning of the Jacobian matrix. If you believe this is an error please contact the GridFire developers.", t, jac.infs().size(), infString(), jac.nans().size(), nanString()));
+            }
+            LOG_TRACE_L2(solver_instance->m_logger, "Jacobian matrix created at time {} of shape ({} x {})", t, std::get<0>(jac.shape()), std::get<1>(jac.shape()));
+            return jac;
+        };
 
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const long int N = SUNDenseMatrix_Columns(J);
         const auto& species_list = engine->getNetworkSpecies(data->ctx);
-
-        // The Jacobian's own index order need not match the solver's, so map it once per call (N lookups) and then
-        // walk only the stored entries, rather than looking up every (species, species) pair (N^2 lookups).
-        LOG_TRACE_L2(solver_instance->m_logger, "Transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
-        const auto& jac_index_of = jac.mapping();
-        if (jac.shape() != std::tuple<size_t, size_t>{numSpecies, numSpecies}) {
-            throw exceptions::IllConditionedJacobianError(std::format(
-                "Jacobian generated at time {} has shape ({} x {}) but the network has {} species.",
-                t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), numSpecies));
-        }
-        std::vector<long int> solver_index(numSpecies, -1);
-        for (size_t k = 0; k < numSpecies; ++k) {
-            const auto it = jac_index_of.find(species_list[k]);
-            if (it == jac_index_of.end() || it->second >= numSpecies) {
-                throw exceptions::IllConditionedJacobianError(std::format(
-                    "Jacobian generated at time {} has no entry for network species {}.", t, species_list[k].name()));
-            }
-            solver_index[it->second] = static_cast<long int>(k);
-        }
         SUNMatZero(J);
-        const Eigen::SparseMatrix<double>& jac_matrix = jac.data();
-        for (int outer = 0; outer < jac_matrix.outerSize(); ++outer) {
-            for (Eigen::SparseMatrix<double>::InnerIterator it(jac_matrix, outer); it; ++it) {
-                // J(i,j) = d(f_i)/d(y_j), column-major: J_data[j*N + i]
-                const long int i = solver_index[it.row()];
-                const long int j = solver_index[it.col()];
-                J_data[j * N + i] = it.value();
+
+        // Add weight * J_state into the dense matrix. The Jacobian's own index order need not match the solver's, so
+        // map it once (N lookups) and walk only the stored entries, rather than looking up every (species, species)
+        // pair (N^2 lookups).
+        std::vector<long int> solver_index(numSpecies, -1);
+        const auto add_jacobian = [&](const NetworkJacobian& jac, const double weight) {
+            const auto& jac_index_of = jac.mapping();
+            if (jac.shape() != std::tuple<size_t, size_t>{numSpecies, numSpecies}) {
+                throw exceptions::IllConditionedJacobianError(std::format(
+                    "Jacobian generated at time {} has shape ({} x {}) but the network has {} species.",
+                    t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), numSpecies));
+            }
+            for (size_t k = 0; k < numSpecies; ++k) {
+                const auto it = jac_index_of.find(species_list[k]);
+                if (it == jac_index_of.end() || it->second >= numSpecies) {
+                    throw exceptions::IllConditionedJacobianError(std::format(
+                        "Jacobian generated at time {} has no entry for network species {}.", t, species_list[k].name()));
+                }
+                solver_index[it->second] = static_cast<long int>(k);
+            }
+            const Eigen::SparseMatrix<double>& jac_matrix = jac.data();
+            for (int outer = 0; outer < jac_matrix.outerSize(); ++outer) {
+                for (Eigen::SparseMatrix<double>::InnerIterator it(jac_matrix, outer); it; ++it) {
+                    // J(i,j) = d(f_i)/d(y_j), column-major: J_data[j*N + i]
+                    J_data[solver_index[it.col()] * N + solver_index[it.row()]] += weight * it.value();
+                }
+            }
+        };
+
+        // A single state, or a shared-composition group: J = sum_i w_i J(Y, T_i, rho_i)
+        LOG_TRACE_L2(solver_instance->m_logger, "Transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
+        if (data->shells.empty()) {
+            add_jacobian(checked_jacobian(data->T9, data->rho), 1.0);
+        } else {
+            for (const ShellState& shell : data->shells) {
+                add_jacobian(checked_jacobian(shell.temperature / 1e9, shell.density), shell.weight);
             }
         }
         LOG_TRACE_L2(solver_instance->m_logger, "Done transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
@@ -1128,12 +1208,8 @@ namespace gridfire::solver {
             LOG_WARNING(logger, "[SUNDIALS WARNING] {} at {}:{}: {}", func, file, line, msg);
         }
     }
-    PointSolver::CVODERHSOutputData PointSolver::calculate_rhs(
-        const sunrealtype t,
-        N_Vector y,
-        N_Vector ydot,
-        const CVODEUserData *data
-    ) const {
+    template <typename PerState>
+    void PointSolver::for_each_state(N_Vector y, const CVODEUserData* data, PerState&& per_state) const {
         const size_t numSpecies = m_engine.getNetworkSpecies(data->ctx).size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
@@ -1142,47 +1218,85 @@ namespace gridfire::solver {
         // Composition gets them clamped.
         const bool clampIterates = m_config->solver.pointSolver.clampNegativeIterates;
         const std::vector<double> y_vec = clamped_iterate(y_data, numSpecies, clampIterates);
-        fourdst::composition::Composition composition(m_engine.getNetworkSpecies(data->ctx), y_vec);
+        const fourdst::composition::Composition composition(m_engine.getNetworkSpecies(data->ctx), y_vec);
 
-        LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition", t, composition.size());
-        const auto result = clampIterates
-            ? m_engine.calculateRHSAndEnergy(data->ctx, composition, data->T9, data->rho, false)
-            : m_engine.calculateRHSAndEnergyFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), data->T9, data->rho);
-        if (!result) {
-            LOG_CRITICAL(m_logger, "Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error()));
-            throw exceptions::BadRHSEngineError(std::format("Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error())));
-        }
-
-        sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
-        const auto& [
-            dydt,
-            nuclearEnergyGenerationRate,
-            reactionContributions,
-            neutrinoEnergyLossRate,
-            totalNeutrinoFlux
-        ] = result.value();
-
-        LOG_TRACE_L2(m_logger, "Done calculating RHS at time {}, specific nuclear energy generation rate: {}", t, nuclearEnergyGenerationRate);
-        LOG_TRACE_L2(m_logger, "RHS at time {} is {}", t, [&dydt]() -> std::string {
-            std::stringstream ss;
-            size_t i = 0;
-            for (const auto& [species, rate] : dydt) {
-                ss << "dY(" << species.name() << ")/dt" << ": " << rate;
-                if (i < dydt.size() - 1) {
-                    ss << ", ";
-                }
-                i++;
+        const auto evaluate_at = [&](const double T9, const double rho) {
+            auto result = clampIterates
+                ? m_engine.calculateRHSAndEnergy(data->ctx, composition, T9, rho, false)
+                : m_engine.calculateRHSAndEnergyFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), T9, rho);
+            if (!result) {
+                throw exceptions::BadRHSEngineError(std::format(
+                    "Failed to calculate RHS at T9 = {}, rho = {}: {}", T9, rho, EngineStatus_to_string(result.error())));
             }
-            return ss.str();
-        }());
+            return std::move(*result);
+        };
 
-        for (size_t i = 0; i < numSpecies; ++i) {
-            fourdst::atomic::Species species = m_engine.getNetworkSpecies(data->ctx)[i];
-            ydot_data[i] = dydt.at(species);
+        if (data->shells.empty()) {
+            per_state(size_t{0}, 1.0, evaluate_at(data->T9, data->rho));
+            return;
         }
-        ydot_data[numSpecies] = nuclearEnergyGenerationRate; // Set the last element to the specific energy rate
+        for (size_t i = 0; i < data->shells.size(); ++i) {
+            const ShellState& shell = data->shells[i];
+            per_state(i, shell.weight, evaluate_at(shell.temperature / 1e9, shell.density));
+        }
+    }
 
-        return {reactionContributions, result.value().neutrinoEnergyLossRate, result.value().totalNeutrinoFlux};
+    PointSolver::CVODERHSOutputData PointSolver::calculate_rhs(
+        const sunrealtype t,
+        N_Vector y,
+        N_Vector ydot,
+        const CVODEUserData *data
+    ) const {
+        const auto& species = m_engine.getNetworkSpecies(data->ctx);
+        const size_t numSpecies = species.size();
+        sunrealtype* ydot_data = N_VGetArrayPointer(ydot);
+        std::fill_n(ydot_data, numSpecies + 1, 0.0);
+
+        // A single state, or a shared-composition group: dY/dt = sum_i w_i f(Y, T_i, rho_i) (weights sum to 1)
+        CVODERHSOutputData output{std::nullopt, 0.0, 0.0};
+        for_each_state(y, data, [&](size_t, const double weight, StepDerivatives<double>&& rhs) {
+            for (size_t i = 0; i < numSpecies; ++i) {
+                ydot_data[i] += weight * rhs.dydt.at(species[i]);
+            }
+            ydot_data[numSpecies] += weight * rhs.nuclearEnergyGenerationRate; // the specific energy accumulator
+            output.neutrino_energy_loss_rate += weight * rhs.neutrinoEnergyLossRate;
+            output.total_neutrino_flux += weight * rhs.totalNeutrinoFlux;
+            if (data->shells.empty()) {
+                output.reaction_contribution_map = std::move(rhs.reactionContributions);
+            }
+        });
+        LOG_TRACE_L2(m_logger, "Done calculating RHS at time {}, specific nuclear energy generation rate: {}", t, ydot_data[numSpecies]);
+        return output;
+    }
+
+    void PointSolver::integrate_shells_over_step(
+        PointSolverContext* sctx_p,
+        const CVODEUserData& data,
+        const double t0,
+        const double t1,
+        std::vector<double>& totals
+    ) const {
+        // 3-point Gauss-Legendre on CVODE's interpolating polynomial for the step just taken (CVodeGetDky), which is as
+        // accurate as the step itself; exact for polynomials up to degree 5 in t
+        constexpr std::array<double, 3> nodes = {-0.7745966692414834, 0.0, 0.7745966692414834};
+        constexpr std::array<double, 3> weights = {5.0 / 9.0, 8.0 / 9.0, 5.0 / 9.0};
+        const double half = 0.5 * (t1 - t0);
+        const double mid = 0.5 * (t1 + t0);
+        N_Vector y_at = N_VClone(sctx_p->Y);
+        try {
+            for (size_t g = 0; g < nodes.size(); ++g) {
+                utils::check_cvode_flag(CVodeGetDky(sctx_p->cvode_mem, mid + half * nodes[g], 0, y_at), "CVodeGetDky");
+                for_each_state(y_at, &data, [&](const size_t i, double, const StepDerivatives<double>& rhs) {
+                    totals[3 * i] += weights[g] * half * rhs.nuclearEnergyGenerationRate;
+                    totals[3 * i + 1] += weights[g] * half * rhs.neutrinoEnergyLossRate;
+                    totals[3 * i + 2] += weights[g] * half * rhs.totalNeutrinoFlux;
+                });
+            }
+        } catch (...) {
+            N_VDestroy(y_at);
+            throw;
+        }
+        N_VDestroy(y_at);
     }
 
     void PointSolver::initialize_cvode_integration_resources(

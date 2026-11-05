@@ -118,6 +118,25 @@ namespace gridfire::solver {
             throw exceptions::SolverError("This solver does not support evaluateRates.");
         }
 
+        /**
+         * @brief Burn one composition shared by several shells, each at its own temperature and density, for
+         *        netIn.tMax: dY/dt = sum_i w_i f(Y, T_i, rho_i). netIn supplies the composition, tMax and dt0; its
+         *        temperature and density are ignored.
+         *
+         * This is a convective zone under instantaneous mixing: the shells exchange material much faster than they
+         * burn, so they hold one composition and the zone burns at the mass-weighted mean of its shells' rates. Each
+         * shell's energy and neutrino losses are integrated separately. The default throws exceptions::SolverError.
+         *
+         * @param shells The shells' states and mass weights (weights summing to 1).
+         */
+        [[nodiscard]] virtual SharedCompositionResult evaluateSharedComposition(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn,
+            const std::vector<ShellState>& shells
+        ) const {
+            throw exceptions::SolverError("This solver does not support evaluateSharedComposition.");
+        }
+
     protected:
         const EngineT& m_engine; ///< The engine used by this solver strategy.
     };

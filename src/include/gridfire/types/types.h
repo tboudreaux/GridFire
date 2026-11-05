@@ -67,6 +67,28 @@ namespace gridfire {
     };
 
     /**
+     * @brief One shell of a shared-composition group: its thermodynamic state and its share of the group's mass.
+     */
+    struct ShellState {
+        double temperature = 0.0; ///< Temperature in K
+        double density = 0.0; ///< Density in g/cm^3
+        double weight = 0.0; ///< Mass fraction of the group in this shell (the weights of a group sum to 1)
+    };
+
+    /**
+     * @brief Result of burning one composition shared by several shells (SingleZoneNetworkSolver::evaluateSharedComposition).
+     *
+     * The composition evolves as dY/dt = sum_i w_i f(Y, T_i, rho_i); the energy and neutrino losses of each shell are
+     * integrated alongside at that shell's own T and rho.
+     */
+    struct SharedCompositionResult {
+        NetOut group; ///< The shared composition, step count and time reached; energy is the mass-weighted mean
+        std::vector<double> shell_energy; ///< Specific energy released in each shell over the step [erg/g], net of neutrinos
+        std::vector<double> shell_neutrino_energy_loss; ///< Reaction neutrino energy lost from each shell [erg/g]
+        std::vector<double> shell_neutrino_flux; ///< Reaction neutrinos emitted per gram of each shell [1/g]
+    };
+
+    /**
      * @brief Instantaneous rates at one state (composition, T, rho), with nothing integrated.
      *
      * Returned by SingleZoneNetworkSolver::evaluateRates and MultiZoneNetworkSolver::evaluateRates, and what the C

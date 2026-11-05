@@ -277,6 +277,24 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_set_shared_composition_groups(void* ptr, const int* group, const double* mass);
+        function gf_set_shared_composition_groups(ptr, group, mass) result(ierr) bind(C, name="gf_set_shared_composition_groups")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            type(c_ptr), value :: group, mass
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_shared_composition_groups_from_mask(const int* flagged, size_t num_zones, int* group);
+        function gf_shared_composition_groups_from_mask(flagged, num_zones, group) result(ierr) &
+                bind(C, name="gf_shared_composition_groups_from_mask")
+            import :: c_int, c_size_t
+            integer(c_int), dimension(*), intent(in) :: flagged
+            integer(c_size_t), value :: num_zones
+            integer(c_int), dimension(*), intent(out) :: group
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_get_zone_status(void* ptr, int* status, double* time_reached);
         function gf_get_zone_status(ptr, status, time_reached) result(ierr) bind(C, name="gf_get_zone_status")
             import :: c_ptr, c_int
@@ -373,6 +391,8 @@ module gridfire_mod
         generic :: gff_evaluate => gff_evaluate_single, gff_evaluate_multi
 
         procedure :: gff_get_zone_status
+        procedure :: gff_set_shared_composition_groups
+        procedure :: gff_clear_shared_composition_groups
         procedure :: gff_get_num_network_species
         procedure :: gff_get_network_species
         procedure :: gff_register_network_species
@@ -687,6 +707,52 @@ module gridfire_mod
             ierr = int(gf_evaluate_c(self%ctx_type, self%ctx, Y, self%num_species, T, rho, &
                     eps_nuc, dedt, dedrho, p_nu, p_channels, p_dydt))
         end subroutine gff_evaluate_multi
+
+        ! MULTI_ZONE: burn zones with the same group id (>= 0) as one shared composition in every later gff_evolve
+        ! (a convective zone under instantaneous mixing); -1 burns a zone on its own. mass(i) is zone i's mass (any
+        ! units), required for grouped zones. Every member gets the group's Y_out but its own energy and rates.
+        subroutine gff_set_shared_composition_groups(self, group, mass)
+            class(GridFire), intent(in) :: self
+            integer(c_int), dimension(:), intent(in), target, contiguous :: group
+            real(c_double), dimension(:), intent(in), target, contiguous :: mass
+            integer(c_int) :: ierr
+
+            if (size(group) /= self%num_zones .or. size(mass) /= self%num_zones) then
+                print *, "GridFire Error: shared-composition group and mass arrays need one entry per zone."
+                error stop
+            end if
+            ierr = gf_set_shared_composition_groups(self%ctx, c_loc(group), c_loc(mass))
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Shared Composition Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_set_shared_composition_groups
+
+        ! Burn every zone on its own again.
+        subroutine gff_clear_shared_composition_groups(self)
+            class(GridFire), intent(in) :: self
+            integer(c_int) :: ierr
+
+            ierr = gf_set_shared_composition_groups(self%ctx, c_null_ptr, c_null_ptr)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Shared Composition Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_clear_shared_composition_groups
+
+        ! Group ids from a per-zone flag (e.g. 1 = convective) for zones ordered in space: each contiguous run of
+        ! non-zero flags is one group, every other zone -1.
+        function gff_shared_composition_groups_from_mask(flagged) result(group)
+            integer(c_int), dimension(:), intent(in) :: flagged
+            integer(c_int), dimension(size(flagged)) :: group
+            integer(c_int) :: ierr
+
+            ierr = gf_shared_composition_groups_from_mask(flagged, int(size(flagged), c_size_t), group)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Shared Composition Error: could not build groups from the mask."
+                error stop
+            end if
+        end function gff_shared_composition_groups_from_mask
 
         ! Outcome of each zone in the latest gff_evolve call: status(i) is GF_SUCCESS or the zone's error code and
         ! time_reached(i) how far it was integrated [s]. Arrays have num_zones entries (1 for SINGLE_ZONE); both optional.

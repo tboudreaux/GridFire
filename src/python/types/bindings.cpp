@@ -29,6 +29,21 @@ void register_type_bindings(const pybind11::module &m) {
         return ss.str();
     });
 
+    py::class_<gridfire::ShellState>(m, "ShellState", "One shell of a shared-composition group: its state and its share of the group's mass")
+        .def(py::init<>())
+        .def(py::init([](const double temperature, const double density, const double weight) {
+            return gridfire::ShellState{temperature, density, weight};
+        }), py::arg("temperature"), py::arg("density"), py::arg("weight"))
+        .def_readwrite("temperature", &gridfire::ShellState::temperature, "Temperature (K)")
+        .def_readwrite("density", &gridfire::ShellState::density, "Density (g/cm^3)")
+        .def_readwrite("weight", &gridfire::ShellState::weight, "Mass fraction of the group in this shell");
+
+    py::class_<gridfire::SharedCompositionResult>(m, "SharedCompositionResult", "Result of burning one composition shared by several shells")
+        .def_readonly("group", &gridfire::SharedCompositionResult::group, "The shared composition, step count and time reached; energy is the mass-weighted mean")
+        .def_readonly("shell_energy", &gridfire::SharedCompositionResult::shell_energy, "Specific energy released in each shell (erg/g), net of neutrinos")
+        .def_readonly("shell_neutrino_energy_loss", &gridfire::SharedCompositionResult::shell_neutrino_energy_loss, "Reaction neutrino energy lost from each shell (erg/g)")
+        .def_readonly("shell_neutrino_flux", &gridfire::SharedCompositionResult::shell_neutrino_flux, "Reaction neutrinos emitted per gram of each shell");
+
     py::class_<gridfire::InstantaneousRates>(m, "InstantaneousRates", "Instantaneous rates at one state, with nothing integrated (see evaluateRates)")
         .def(py::init<>())
         .def_readonly("eps_nuc", &gridfire::InstantaneousRates::eps_nuc, "Specific nuclear energy generation rate (erg/g/s), net of reaction neutrino losses")

@@ -323,6 +323,34 @@ void GFGridContext::init_solver_from_engine() {
     this->solver_ctx = std::move(grid_ctx);
 }
 
+void GFGridContext::set_shared_composition_groups(const int* group, const double* mass) {
+    if (group == nullptr) {
+        shared_composition_groups.clear();
+        zone_masses.clear();
+        return;
+    }
+    if (zones == 0) {
+        throw GFInvalidStateError("Set the number of zones (gf_set_num_zones) before the shared-composition groups.");
+    }
+    std::vector<int> groups(group, group + zones);
+    std::vector<double> masses(zones, 0.0);
+    for (size_t z = 0; z < zones; ++z) {
+        if (groups[z] < -1) {
+            throw GFInvalidStateError(std::format("Zone {} has group id {}; use -1 for a zone burnt on its own.", z, groups[z]));
+        }
+        if (groups[z] >= 0) {
+            if (mass == nullptr || !std::isfinite(mass[z]) || mass[z] <= 0.0) {
+                throw GFInvalidStateError(std::format("Zone {} is in group {} but has no positive, finite mass.", z, groups[z]));
+            }
+        }
+        if (mass != nullptr) {
+            masses[z] = mass[z];
+        }
+    }
+    shared_composition_groups = std::move(groups);
+    zone_masses = std::move(masses);
+}
+
 int GFGridContext::evolve(
     const double* Y_in,
     size_t num_species,
@@ -383,6 +411,12 @@ int GFGridContext::evolve(
         netIns.push_back(netIn);
     }
 
+    auto& grid_ctx = dynamic_cast<gridfire::solver::GridSolverContext&>(*this->solver_ctx);
+    if (shared_composition_groups.empty()) {
+        grid_ctx.clear_shared_composition_groups();
+    } else {
+        grid_ctx.set_shared_composition_groups(shared_composition_groups, zone_masses);
+    }
     std::vector<gridfire::NetOut> results = this->solver->evaluate(*this->solver_ctx, netIns);
     const auto& failures = dynamic_cast<const gridfire::solver::GridSolverContext&>(*this->solver_ctx).zone_failures;
     const size_t num_channels = engine->getEnergyChannelNames(*engine_ctx).size();

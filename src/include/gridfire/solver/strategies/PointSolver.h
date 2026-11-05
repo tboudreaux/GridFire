@@ -240,6 +240,19 @@ namespace gridfire::solver {
         ) const override;
 
         /**
+         * @brief Burn a composition shared by several shells (see SingleZoneNetworkSolver::evaluateSharedComposition).
+         *
+         * The RHS and Jacobian are the mass-weighted sums of the engine's at each shell's state. Each shell's energy and
+         * neutrino losses are integrated over every accepted step by Gauss-Legendre quadrature on CVODE's interpolant. The group's step-acceptance logic (triggers,
+         * restarts) uses the mass-weighted mean temperature and density.
+         */
+        [[nodiscard]] SharedCompositionResult evaluateSharedComposition(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn,
+            const std::vector<ShellState>& shells
+        ) const override;
+
+        /**
          * @brief Call to evaluate which will let the user control if the trigger reasoning is displayed
          * @param solver_ctx
          * @param netIn Inputs: temperature [K], density [g cm^-3], tMax [s], composition.
@@ -289,6 +302,8 @@ namespace gridfire::solver {
             std::optional<std::map<fourdst::atomic::Species, std::unordered_map<std::string, double>>> reaction_contribution_map;
             double neutrino_energy_loss_rate = 0.0;
             double total_neutrino_flux = 0.0;
+            /// Shells sharing this composition (empty: the single state T9, rho). Weights sum to 1.
+            std::vector<ShellState> shells;
         };
 
         struct CVODERHSOutputData {
@@ -305,6 +320,29 @@ namespace gridfire::solver {
          * @return 0 on success; 1 on recoverable StaleEngineTrigger; -1 on other failures.
          */
         static int cvode_rhs_wrapper(sunrealtype t, N_Vector y, N_Vector ydot, void *user_data);
+
+        /// Run the engine at every state of data (its shells, or T9/rho), with y as calculate_rhs passes it.
+        template <typename PerState>
+        void for_each_state(N_Vector y, const CVODEUserData* data, PerState&& per_state) const;
+
+        /// Add each shell's energy, neutrino loss and neutrino flux over the accepted step [t0, t1] to totals (3 per shell)
+        void integrate_shells_over_step(
+            PointSolverContext* sctx_p,
+            const CVODEUserData& data,
+            double t0,
+            double t1,
+            std::vector<double>& totals
+        ) const;
+
+        /// The implementation behind evaluate() and evaluateSharedComposition(); shells empty for a single state.
+        NetOut evaluate_impl(
+            SolverContextBase& solver_ctx,
+            const NetIn& netIn,
+            bool displayTrigger,
+            bool forceReinitialize,
+            const std::vector<ShellState>& shells,
+            std::vector<double>* quadrature_out
+        ) const;
 
         /**
          * @brief Builds CVODE error weights from runtime species and energy scales.

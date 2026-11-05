@@ -30,3 +30,10 @@ gf_fortran_zone_status_test = executable('gf_fortran_zone_status_test', 'gridfir
            dependencies: [gridfire_fortran_dep]
 )
 test('extern_fortran_zone_status', gf_fortran_zone_status_test, suite: 'extern', timeout: 600)
+
+gf_fortran_shared_composition_test = executable('gf_fortran_shared_composition_test', 'gridfire_shared_composition.f90',
+           install: false,
+           fortran_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_fortran_dep]
+)
+test('extern_fortran_shared_composition', gf_fortran_shared_composition_test, suite: 'extern', timeout: 600)

@@ -882,3 +882,114 @@ TEST(GridSolverFailures, PointSolverReportsTimeReached) {
     EXPECT_EQ(out.time_reached, 1e13);
     EXPECT_TRUE(out.failure_message.empty());
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Shared-composition groups (convective zones under instantaneous mixing)
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    struct GridHarness {
+        const gridfire::test::SharedEngine& shared = gridfire::test::main_sequence_engine();
+        std::unique_ptr<gridfire::engine::scratch::StateBlob> context = shared.fresh_context();
+        PointSolver point;
+        gridfire::solver::GridSolver grid;
+        gridfire::solver::GridSolverContext gctx;
+
+        explicit GridHarness(const gridfire::config::GridFireConfig& config = {})
+            : point(shared.engine, config), grid(shared.engine, point), gctx(*context) {
+            gctx.zone_completion_logging = false;
+        }
+    };
+}
+
+// Identical shells in a group burn exactly like one of them alone, and each gets that zone's energy
+TEST(SharedCompositionGroups, IdenticalShellsMatchASingleZone) {
+    GridHarness h;
+    const std::vector<NetIn> inputs = zone_inputs({1.5e7, 1.5e7, 1.5e7});
+    const auto alone = run_grid({inputs[0]}, 1).front();
+    h.gctx.set_shared_composition_groups({0, 0, 0}, {1.0, 2.0, 3.0});
+    const auto grouped = h.grid.evaluate(h.gctx, inputs);
+    for (size_t z = 0; z < 3; ++z) {
+        ASSERT_TRUE(grouped[z].converged) << grouped[z].failure_message;
+        EXPECT_NEAR(grouped[z].energy, alone.energy, 1e-6 * alone.energy) << "zone " << z;
+        EXPECT_NEAR(Y(grouped[z], "H-1"), Y(alone, "H-1"), 1e-8 * Y(alone, "H-1")) << "zone " << z;
+        EXPECT_NEAR(grouped[z].eps_nuc, alone.eps_nuc, 1e-6 * alone.eps_nuc) << "zone " << z;
+    }
+}
+
+// A hot and a cool shell share one composition; each shell's energy is its own, and the mass-weighted energy equals the
+// energy released by the shared composition change (the solver's energy accumulator)
+TEST(SharedCompositionGroups, ShellsShareCompositionButNotEnergy) {
+    const auto& shared = gridfire::test::main_sequence_engine();
+    const auto context = shared.fresh_context();
+    const PointSolver solver(shared.engine);
+    PointSolverContext sctx(*context);
+    sctx.set_stdout_logging(false);
+
+    NetIn in;
+    in.composition = gridfire::test::solar_composition();
+    in.tMax = 1e15;
+    in.dt0 = 1e-12;
+    in.energy = 0.0;
+    const std::vector<gridfire::ShellState> shells = {
+        {.temperature = 2.5e7, .density = 120.0, .weight = 0.25},
+        {.temperature = 1.2e7, .density = 60.0, .weight = 0.75},
+    };
+    const auto burnt = solver.evaluateSharedComposition(sctx, in, shells);
+    ASSERT_EQ(burnt.shell_energy.size(), 2u);
+    EXPECT_GT(burnt.shell_energy[0], 10.0 * burnt.shell_energy[1]) << "the hot shell releases far more energy";
+    const double weighted = 0.25 * burnt.shell_energy[0] + 0.75 * burnt.shell_energy[1];
+    EXPECT_NEAR(weighted, burnt.group.energy, 1e-5 * burnt.group.energy)
+        << "per-shell energies are inconsistent with the integrated composition change";
+    EXPECT_NEAR(baryon_number(burnt.group.composition), baryon_number(in.composition), 1e-10) << "baryon number is conserved";
+    EXPECT_GT(burnt.shell_neutrino_energy_loss[0], burnt.shell_neutrino_energy_loss[1]);
+}
+
+// Burning a zone mixed differs from burning its shells separately and averaging: here the hot shell's CNO equilibrium
+// is fed by the whole zone's carbon
+TEST(SharedCompositionGroups, MixedBurnDiffersFromShellByShell) {
+    GridHarness h;
+    std::vector<NetIn> inputs = zone_inputs({3e7, 1.5e7});
+    for (auto& in : inputs) { in.tMax = 3e13; }
+    const auto separate = run_grid(inputs, 1);
+    h.gctx.set_shared_composition_groups({0, 0}, {1.0, 1.0});
+    const auto mixed = h.grid.evaluate(h.gctx, inputs);
+    ASSERT_TRUE(mixed[0].converged && mixed[1].converged);
+    EXPECT_EQ(Y(mixed[0], "C-12"), Y(mixed[1], "C-12")) << "members share one composition";
+    const double averaged_C12 = 0.5 * (Y(separate[0], "C-12") + Y(separate[1], "C-12"));
+    EXPECT_GT(std::abs(Y(mixed[0], "C-12") - averaged_C12), 1e-3 * averaged_C12);
+}
+
+// Zones outside a group are unaffected by it, and a group that fails fails as a unit
+TEST(SharedCompositionGroups, UngroupedZonesUnaffectedAndGroupsFailTogether) {
+    gridfire::config::GridFireConfig config;
+    config.solver.pointSolver.maxStepFailureRestarts = 0;
+    GridHarness h(config);
+    std::vector<NetIn> inputs = zone_inputs({1.5e7, 1e10, 2e7, 1.8e7});
+    inputs[1].density = 1e4;
+    h.gctx.set_shared_composition_groups({0, 0, -1, -1}, {1.0, 1.0, 1.0, 1.0});
+    const auto results = h.grid.evaluate(h.gctx, inputs);
+    EXPECT_FALSE(results[0].converged);
+    EXPECT_FALSE(results[1].converged);
+    EXPECT_NE(h.gctx.zone_failures[0], nullptr);
+    EXPECT_EQ(h.gctx.zone_failures[0], h.gctx.zone_failures[1]);
+    for (const size_t z : {2u, 3u}) {
+        ASSERT_TRUE(results[z].converged);
+        const auto alone = run_grid({inputs[z]}, 1).front();
+        EXPECT_EQ(results[z].energy, alone.energy) << "zone " << z;
+    }
+}
+
+TEST(SharedCompositionGroups, GroupsFromMaskAndValidation) {
+    EXPECT_EQ(gridfire::solver::shared_composition_groups_from_mask({true, true, false, true, false, false, true, true}),
+              (std::vector<int>{0, 0, -1, 1, -1, -1, 2, 2}));
+    GridHarness h;
+    EXPECT_THROW(h.gctx.set_shared_composition_groups({0, 0}, {1.0}), gridfire::exceptions::SolverError);
+    EXPECT_THROW(h.gctx.set_shared_composition_groups({0, -2}, {1.0, 1.0}), gridfire::exceptions::SolverError);
+    EXPECT_THROW(h.gctx.set_shared_composition_groups({0, 0}, {1.0, 0.0}), gridfire::exceptions::SolverError);
+    EXPECT_NO_THROW(h.gctx.set_shared_composition_groups({-1, 0}, {0.0, 1.0}));
+    EXPECT_THROW((void)h.grid.evaluate(h.gctx, zone_inputs({1.5e7, 1.5e7, 1.5e7})), gridfire::exceptions::SolverError)
+        << "groups set for 2 zones, 3 given";
+    h.gctx.clear_shared_composition_groups();
+    EXPECT_NO_THROW((void)h.grid.evaluate(h.gctx, zone_inputs({1.5e7})));
+}

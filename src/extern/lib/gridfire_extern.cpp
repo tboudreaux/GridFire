@@ -484,6 +484,35 @@ extern "C" {
         });
     }
 
+    int gf_set_shared_composition_groups(void* ptr, const int* group, const double* mass) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* base = static_cast<GFContext*>(ptr);
+        auto* grid = dynamic_cast<GFGridContext*>(base);
+        if (!grid) {
+            base->last_error = "Shared-composition groups need a MULTI_ZONE context.";
+            return GF_INVALID_TYPE;
+        }
+        return execute_guarded(grid, [&]() {
+            grid->set_shared_composition_groups(group, mass);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_shared_composition_groups_from_mask(const int* flagged, const size_t num_zones, int* group) {
+        if (!flagged) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!group) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        const std::vector<bool> mask(flagged, flagged + num_zones);
+        const std::vector<int> groups = gridfire::solver::shared_composition_groups_from_mask(mask);
+        std::ranges::copy(groups, group);
+        return GF_SUCCESS;
+    }
+
     int gf_get_zone_status(void* ptr, int* status, double* time_reached) {
         if (!ptr) {
             return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;

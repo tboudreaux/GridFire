@@ -5,7 +5,7 @@ from __future__ import annotations
 import fourdst._phys.atomic
 import fourdst._phys.composition
 import typing
-__all__: list[str] = ['InstantaneousRates', 'NetIn', 'NetOut']
+__all__: list[str] = ['InstantaneousRates', 'NetIn', 'NetOut', 'SharedCompositionResult', 'ShellState']
 class InstantaneousRates:
     """
     Instantaneous rates at one state, with nothing integrated (see evaluateRates)
@@ -163,4 +163,41 @@ class NetOut:
         ...
     @property
     def specific_neutrino_flux(self) -> float:
+        ...
+class SharedCompositionResult:
+    """
+    Result of burning one composition shared by several shells
+    """
+    @property
+    def group(self) -> NetOut:
+        """
+        The shared composition, step count and time reached; energy is the mass-weighted mean
+        """
+    @property
+    def shell_energy(self) -> list[float]:
+        """
+        Specific energy released in each shell (erg/g), net of neutrinos
+        """
+    @property
+    def shell_neutrino_energy_loss(self) -> list[float]:
+        """
+        Reaction neutrino energy lost from each shell (erg/g)
+        """
+    @property
+    def shell_neutrino_flux(self) -> list[float]:
+        """
+        Reaction neutrinos emitted per gram of each shell
+        """
+class ShellState:
+    """
+    One shell of a shared-composition group: its state and its share of the group's mass
+    """
+    density: float
+    temperature: float
+    weight: float
+    @typing.overload
+    def __init__(self) -> None:
+        ...
+    @typing.overload
+    def __init__(self, temperature: typing.SupportsFloat, density: typing.SupportsFloat, weight: typing.SupportsFloat) -> None:
         ...

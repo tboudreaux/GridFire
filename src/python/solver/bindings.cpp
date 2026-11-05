@@ -163,6 +163,14 @@ void register_solver_bindings(const py::module &m) {
         "evaluate the dynamic engine using the dynamic engine class for a single zone"
     );
     py_single_zone_dynamic_network_solver.def(
+        "evaluateSharedComposition",
+        &gridfire::solver::SingleZoneDynamicNetworkSolver::evaluateSharedComposition,
+        py::arg("solver_ctx"),
+        py::arg("netIn"),
+        py::arg("shells"),
+        "Burn one composition shared by several shells (each at its own T and rho, weighted by mass) for netIn.tMax"
+    );
+    py_single_zone_dynamic_network_solver.def(
         "evaluateRates",
         &gridfire::solver::SingleZoneDynamicNetworkSolver::evaluateRates,
         py::arg("solver_ctx"),
@@ -225,6 +233,16 @@ void register_solver_bindings(const py::module &m) {
     py_grid_solver_context.def("set_callback", py::overload_cast<const std::function<void(const gridfire::solver::TimestepContextBase&)>&, size_t>(&gridfire::solver::GridSolverContext::set_callback) , py::arg("callback"), py::arg("zone_idx"));
     py_grid_solver_context.def("clear_callback", py::overload_cast<>(&gridfire::solver::GridSolverContext::clear_callback));
     py_grid_solver_context.def("clear_callback", py::overload_cast<size_t>(&gridfire::solver::GridSolverContext::clear_callback), py::arg("zone_idx"));
+    py_grid_solver_context.def("set_shared_composition_groups", &gridfire::solver::GridSolverContext::set_shared_composition_groups,
+        py::arg("group_of_zone"), py::arg("zone_mass"),
+        "Burn zones with the same group id (>= 0) as one shared composition from the next evaluate(); -1 burns a zone on its own");
+    py_grid_solver_context.def("clear_shared_composition_groups", &gridfire::solver::GridSolverContext::clear_shared_composition_groups,
+        "Burn every zone on its own again");
+    py_grid_solver_context.def_readonly("shared_composition_groups", &gridfire::solver::GridSolverContext::shared_composition_groups);
+    py_grid_solver_context.def_readonly("zone_masses", &gridfire::solver::GridSolverContext::zone_masses);
+    // register_solver_bindings receives the module as const; def() needs a mutable handle to the same module object
+    py::reinterpret_borrow<py::module_>(m).def("shared_composition_groups_from_mask", &gridfire::solver::shared_composition_groups_from_mask, py::arg("flagged"),
+        "Group ids from a per-zone flag for zones ordered in space: each contiguous run of flagged zones is one group, the rest -1");
     py_grid_solver_context.def_property(
         "stdout_logging",
         [](const gridfire::solver::GridSolverContext& self) -> bool {

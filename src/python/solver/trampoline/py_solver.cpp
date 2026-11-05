@@ -52,6 +52,21 @@ gridfire::InstantaneousRates PySingleZoneDynamicNetworkSolver::evaluateRates(
     );
 }
 
+gridfire::SharedCompositionResult PySingleZoneDynamicNetworkSolver::evaluateSharedComposition(
+    gridfire::solver::SolverContextBase &solver_ctx,
+    const gridfire::NetIn &netIn,
+    const std::vector<gridfire::ShellState> &shells
+) const {
+    PYBIND11_OVERRIDE(
+        gridfire::SharedCompositionResult,
+        gridfire::solver::SingleZoneDynamicNetworkSolver,
+        evaluateSharedComposition,
+        solver_ctx,
+        netIn,
+        shells
+    );
+}
+
 std::vector<gridfire::InstantaneousRates> PyMultiZoneDynamicNetworkSolver::evaluateRates(
     gridfire::solver::SolverContextBase &solver_ctx,
     const std::vector<gridfire::NetIn> &netIns

@@ -20,6 +20,12 @@ public:
         gridfire::solver::SolverContextBase &solver_ctx,
         const gridfire::NetIn &netIn
     ) const override;
+
+    gridfire::SharedCompositionResult evaluateSharedComposition(
+        gridfire::solver::SolverContextBase &solver_ctx,
+        const gridfire::NetIn &netIn,
+        const std::vector<gridfire::ShellState> &shells
+    ) const override;
 };
 
 class PyMultiZoneDynamicNetworkSolver final : public gridfire::solver::MultiZoneDynamicNetworkSolver {
