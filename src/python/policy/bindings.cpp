@@ -7,6 +7,7 @@
 #include "trampoline/py_policy.h"
 
 #include "gridfire/policy/policy.h"
+#include "gridfire/config/config.h"
 
 
 namespace py = pybind11;
@@ -267,6 +268,24 @@ void register_network_policy_bindings(pybind11::module &m) {
         py::arg("seed_species"),
         py::arg("mass_fractions"),
         "Construct MainSequencePolicy from seed species and mass fractions."
+    );
+    py_mainSeqPolicy.def(
+        py::init<const fourdst::composition::Composition&, const gridfire::config::GridFireConfig&>(),
+        py::arg("composition"),
+        py::arg("config"),
+        "Construct MainSequencePolicy from an existing composition; construct() builds the engine with this configuration."
+    );
+    py_mainSeqPolicy.def(
+        py::init<std::vector<fourdst::atomic::Species>, const std::vector<double>&, const gridfire::config::GridFireConfig&>(),
+        py::arg("seed_species"),
+        py::arg("mass_fractions"),
+        py::arg("config"),
+        "Construct MainSequencePolicy from seed species and mass fractions; construct() builds the engine with this configuration."
+    );
+    py_mainSeqPolicy.def(
+        "getConfig",
+        &gridfire::policy::MainSequencePolicy::getConfig,
+        "Get a copy of the configuration construct() builds the engine with."
     );
 
     registerNetworkPolicyDefs(py_mainSeqPolicy);

@@ -8,6 +8,7 @@
 #include "gridfire/types/types.h"
 #include "gridfire/reaction/reaction.h"
 #include "gridfire/engine/engine_abstract.h"
+#include "gridfire/engine/types/jacobian_method.h"
 #include "gridfire/screening/screening_abstract.h"
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/partition/partition_abstract.h"
@@ -19,6 +20,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <span>
 #include <vector>
 #include <memory>
 #include <ranges>
@@ -145,6 +147,42 @@ namespace gridfire::engine {
          * a reaction set taken from (or edited from) another engine reproduces that engine's physics.
          */
         GraphEngine(const reaction::ReactionSet &reactions, const partition::PartitionFunction &partitionFunction);
+
+        /**
+         * @name Constructors taking a configuration
+         *
+         * Each matches a constructor above but takes the GridFireConfig to use (screening model, Jacobian method,
+         * energy channels) instead of the defaults. The constructors above are equivalent to passing
+         * config::GridFireConfig{}.
+         * @{
+         */
+        GraphEngine(
+            const fourdst::composition::Composition &composition,
+            const config::GridFireConfig &config
+        );
+
+        GraphEngine(
+            const fourdst::composition::Composition &composition,
+            const partition::PartitionFunction& partitionFunction,
+            BuildDepthType buildDepth,
+            NetworkConstructionFlags reactionTypes,
+            const config::GridFireConfig &config
+        );
+
+        GraphEngine(
+            const reaction::ReactionSet &reactions,
+            const config::GridFireConfig &config
+        );
+
+        GraphEngine(
+            const reaction::ReactionSet &reactions,
+            const partition::PartitionFunction &partitionFunction,
+            const config::GridFireConfig &config
+        );
+        /** @} */
+
+        /// The configuration this engine was built with.
+        [[nodiscard]] config::GridFireConfig getConfig() const { return *m_config; }
 
         void addReaction(
             const reaction::Reaction& reaction
@@ -315,6 +353,68 @@ namespace gridfire::engine {
             double T9,
             double rho,
             const SparsityPattern &sparsityPattern
+        ) const override;
+
+        /**
+         * @brief Analytic species Jacobian, assembled from the precomputed reaction topology.
+         *
+         * Differentiates the RHS that calculateRHSAndEnergy computes: mass-action forward flows, reverse flows when
+         * enabled, screening (through ScreeningModel::calculateScreeningLogDerivatives) and the electron-density
+         * dependence of electron-capture rates. It follows whatever network the engine holds, with no per-network
+         * code, and is what generateJacobianMatrix returns when engine.jacobian is JacobianMethod::ANALYTIC.
+         *
+         * @param abundances Molar abundances in getNetworkSpecies() order to differentiate at, e.g. a raw integrator
+         *        iterate; when empty they are taken from comp. Rates and Ye always come from comp.
+         * @return std::nullopt if the screening model provides no analytic derivatives.
+         */
+        [[nodiscard]] std::optional<NetworkJacobian> generateAnalyticJacobianMatrix(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            std::span<const double> abundances = {}
+        ) const;
+
+        /**
+         * @brief Species Jacobian from dense reverse-mode sweeps over the CppAD tape.
+         *
+         * The reference implementation, and what generateJacobianMatrix returns when engine.jacobian is
+         * JacobianMethod::AUTOMATIC_DIFFERENTIATION (or the screening model has no analytic derivatives).
+         *
+         * @param abundances Molar abundances in getNetworkSpecies() order to differentiate at, e.g. a raw integrator
+         *        iterate; when empty they are taken from comp.
+         */
+        [[nodiscard]] NetworkJacobian generateAutoDiffJacobianMatrix(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            double T9,
+            double rho,
+            std::span<const double> abundances = {}
+        ) const;
+
+        /**
+         * @brief RHS on an integrator iterate, with mass-action products taken from the raw (possibly negative)
+         *        abundances. Not cached, since comp alone does not identify the iterate.
+         * @see DynamicEngine::calculateRHSAndEnergyFromRawAbundances
+         */
+        [[nodiscard]] std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergyFromRawAbundances(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            std::span<const double> rawAbundances,
+            double T9,
+            double rho
+        ) const override;
+
+        /**
+         * @brief Jacobian of calculateRHSAndEnergyFromRawAbundances, by the configured JacobianMethod.
+         * @see DynamicEngine::generateJacobianMatrixFromRawAbundances
+         */
+        [[nodiscard]] NetworkJacobian generateJacobianMatrixFromRawAbundances(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            std::span<const double> rawAbundances,
+            double T9,
+            double rho
         ) const override;
 
         /**
@@ -735,7 +835,12 @@ namespace gridfire::engine {
 
             // Energy channel attribution
             double energy_per_flow{}; ///< Energy released per unit net molar flow, net of neutrino losses [erg][mol^-1]
+            double neutrino_energy_per_flow{}; ///< Energy carried off by neutrinos per unit net molar flow [erg][mol^-1]
+            bool emits_neutrino{}; ///< Weak reaction: each unit of net flow emits one neutrino per nucleus
             size_t channel_index{}; ///< Index into m_energy_channels.names
+
+            // Rate dependence on composition
+            bool electron_capture{}; ///< Rate scales with rho * Ye (a REACLIB electron capture), so it depends on every Y_k through Ye
         };
 
 
@@ -822,6 +927,9 @@ namespace gridfire::engine {
             double total_neutrino_flux{0.0};
         };
     private:
+        /// Adopt a configuration and the settings derived from it. Constructors call this before syncInternalMaps().
+        void configure(const config::GridFireConfig &config);
+
         Config<config::GridFireConfig> m_config;
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log");
 
@@ -844,8 +952,9 @@ namespace gridfire::engine {
 
         std::vector<std::unique_ptr<AtomicReverseRate>> m_atomicReverseRates;
 
-        screening::ScreeningType m_screeningType = m_config->engine.screening; ///< Screening model, from engine.screening in the configuration (default WEAK). m_config is declared above, so it is initialised first.
+        screening::ScreeningType m_screeningType = m_config->engine.screening; ///< Screening model, from engine.screening in the configuration (default WEAK); set by configure().
         std::unique_ptr<screening::ScreeningModel> m_screeningModel = screening::selectScreeningModel(m_screeningType);
+        JacobianMethod m_jacobianMethod = m_config->engine.jacobian; ///< How generateJacobianMatrix computes the Jacobian, from engine.jacobian in the configuration (default ANALYTIC); set by configure().
 
         bool m_usePrecomputation = true; ///< Flag to enable or disable using precomputed reactions for efficiency. Mathematically, this should not change the results. Generally end users should not need to change this.
         std::vector<PrecomputedReaction> m_precomputed_reactions;
@@ -922,10 +1031,9 @@ namespace gridfire::engine {
             const PrecomputedReaction &precomputedReaction
         ) const;
 
-        std::pair<double, double> compute_neutrino_fluxes(
-            scratch::StateBlob& ctx,
+        [[nodiscard]] std::pair<double, double> compute_neutrino_fluxes(
             double netFlow,
-            const reaction::Reaction &reaction) const;
+            const PrecomputedReaction &precomputedReaction) const;
 
         /**
          * @brief Whether a reaction carries a detailed-balance reverse rate (strong REACLIB reactions with Q != 0).
@@ -966,14 +1074,44 @@ namespace gridfire::engine {
         ) const;
 
 
+        /**
+         * @param abundances Molar abundances in m_networkSpecies order for the mass-action products and screening;
+         *        when empty they are taken from comp. Integrator iterates pass their raw (possibly negative) values.
+         */
         [[nodiscard]] StepDerivatives<double> calculateAllDerivativesUsingPrecomputation(
             scratch::StateBlob& ctx,
             const fourdst::composition::CompositionAbstract &comp,
             const std::vector<double> &bare_rates,
             const std::vector<double> &bare_reverse_rates,
             double T9,
-            double rho, const reaction::ReactionSet &activeReactions
+            double rho, const reaction::ReactionSet &activeReactions,
+            std::span<const double> abundances = {}
         ) const;
+
+        /// @brief Molar abundances of comp in m_networkSpecies order (0 for species comp does not hold).
+        [[nodiscard]] std::vector<double> networkAbundances(const fourdst::composition::CompositionAbstract &comp) const;
+
+        /**
+         * @brief Analytic Jacobian at the abundances Y (m_networkSpecies order), with rates and Ye from comp.
+         * @return std::nullopt if the screening model provides no analytic derivatives.
+         */
+        [[nodiscard]] std::optional<NetworkJacobian> analyticJacobian(
+            const fourdst::composition::CompositionAbstract &comp,
+            std::span<const double> Y,
+            double T9,
+            double rho
+        ) const;
+
+        /// @brief CppAD Jacobian at the abundances Y (m_networkSpecies order).
+        [[nodiscard]] NetworkJacobian autoDiffJacobian(
+            scratch::StateBlob& ctx,
+            std::span<const double> Y,
+            double T9,
+            double rho
+        ) const;
+
+        /// @brief Pack a dense row-major species Jacobian, dropping off-diagonal entries below MIN_JACOBIAN_THRESHOLD.
+        [[nodiscard]] NetworkJacobian packJacobian(std::span<const double> dense) const;
 
         /**
          * @brief Calculates the molar reaction flow for a given reaction.
@@ -1157,21 +1295,18 @@ namespace gridfire::engine {
         // --- Check if the density is below the threshold where we ignore reactions ---
         T threshold_flag = CppAD::CondExpLt(rho, rho_threshold, zero, one); // If rho < threshold, set flag to 0
 
-        std::vector<T> Y = Y_in;
-        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
-            // We use CppAD::CondExpLt to handle AD taping and prevent branching
-            // Note that while this is syntactically more complex this is equivalent to
-            // if (Y[i] < 0) {Y[i] = 0;}
-            // The issue is that this would introduce a branch which would require the auto diff tape to be re-recorded
-            // each timestep, which is very inefficient.
-            Y[i] = CppAD::CondExpLt(Y[i], zero, zero, Y[i]); // Ensure no negative abundances
-        }
+        // Abundances are used as given, without clamping negatives to zero: everything built from a Composition is
+        // non-negative already, and integrator iterates are deliberately evaluated raw (see
+        // DynamicEngine::calculateRHSAndEnergyFromRawAbundances), so the tape must differentiate the same unclamped
+        // mass-action products as the precomputed RHS.
+        const std::vector<T>& Y = Y_in;
 
         // Electron abundance from the abundances themselves, so electron-capture rates (which scale with rho * Ye) are
         // exact and differentiable on the AD tape too; the tape is recorded with only a placeholder for the Ye argument.
+        // Ye is that of the clamped iterate, as in the precomputed RHS (whose rates come from a Composition)
         T Ye_network = zero;
         for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
-            Ye_network += static_cast<T>(m_networkSpecies[i].z()) * Y[i];
+            Ye_network += static_cast<T>(m_networkSpecies[i].z()) * CppAD::CondExpLt(Y[i], zero, zero, Y[i]);
         }
 
         const T u = static_cast<T>(m_constants.u); // Atomic mass unit in grams

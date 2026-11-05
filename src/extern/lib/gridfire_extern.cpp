@@ -2,6 +2,7 @@
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/extern/gridfire_context.h"
 #include "gridfire/extern/gridfire_extern.h"
+#include "fourdst/config/exceptions/exceptions.h"
 
 namespace {
 
@@ -100,6 +101,12 @@ namespace {
         } catch (const gridfire::exceptions::GridFireError& e) {
             ctx->last_error = e.what();
             return GF_GRIDFIRE_ERROR;
+        } catch (const GFConfigError& e) {
+            ctx->last_error = e.what();
+            return GF_CONFIG_ERROR;
+        } catch (const fourdst::config::exceptions::ConfigError& e) {
+            ctx->last_error = e.what();
+            return GF_CONFIG_ERROR;
         } catch (std::exception& e) {
             ctx->last_error = e.what();
             return GF_NON_GRIDFIRE_ERROR;
@@ -111,7 +118,122 @@ namespace {
 
 }
 
+namespace {
+    GFConfig to_c_config(const gridfire::config::GridFireConfig& config) {
+        const auto& point = config.solver.pointSolver;
+        const auto& trigger = point.trigger;
+        GFConfig c{};
+        c.solver_abs_tol = point.absTol;
+        c.solver_rel_tol = point.relTol;
+        c.trigger_off_diagonal_threshold = trigger.offDiagonalThreshold;
+        c.trigger_timestep_collapse_ratio = trigger.timestepCollapseRatio;
+        c.trigger_max_convergence_failures = trigger.maxConvergenceFailures;
+        c.trigger_boundary_flux_relative_threshold = trigger.boundaryFlux.relativeThreshold;
+        c.trigger_boundary_flux_absolute_threshold = trigger.boundaryFlux.absoluteThreshold;
+        c.engine_adaptive_relative_culling_threshold = config.engine.views.adaptiveEngineView.relativeCullingThreshold;
+        c.solver_clamp_negative_iterates = point.clampNegativeIterates ? 1 : 0;
+        c.solver_max_step_failure_restarts = point.maxStepFailureRestarts;
+        switch (config.engine.screening) {
+            case gridfire::screening::ScreeningType::BARE: c.engine_screening = GF_SCREENING_BARE; break;
+            case gridfire::screening::ScreeningType::WEAK: c.engine_screening = GF_SCREENING_WEAK; break;
+        }
+        switch (config.engine.jacobian) {
+            case gridfire::engine::JacobianMethod::ANALYTIC: c.engine_jacobian = GF_JACOBIAN_ANALYTIC; break;
+            case gridfire::engine::JacobianMethod::AUTOMATIC_DIFFERENTIATION: c.engine_jacobian = GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION; break;
+        }
+        c.engine_split_hydrogen_pp_cno = config.engine.energyChannels.splitHydrogenPPCNO ? 1 : 0;
+        return c;
+    }
+
+    /// Apply a C configuration on top of base (which supplies the fields GFConfig does not carry, e.g. the fuel list).
+    gridfire::config::GridFireConfig from_c_config(const GFConfig& c, gridfire::config::GridFireConfig base) {
+        if (!(c.solver_abs_tol > 0.0) || !(c.solver_rel_tol > 0.0)) {
+            throw GFConfigError(std::format("solver_abs_tol ({}) and solver_rel_tol ({}) must be positive.", c.solver_abs_tol, c.solver_rel_tol));
+        }
+        if (c.solver_max_step_failure_restarts < 0) {
+            throw GFConfigError(std::format("solver_max_step_failure_restarts ({}) must not be negative.", c.solver_max_step_failure_restarts));
+        }
+        auto& point = base.solver.pointSolver;
+        auto& trigger = point.trigger;
+        point.absTol = c.solver_abs_tol;
+        point.relTol = c.solver_rel_tol;
+        trigger.offDiagonalThreshold = c.trigger_off_diagonal_threshold;
+        trigger.timestepCollapseRatio = c.trigger_timestep_collapse_ratio;
+        trigger.maxConvergenceFailures = c.trigger_max_convergence_failures;
+        trigger.boundaryFlux.relativeThreshold = c.trigger_boundary_flux_relative_threshold;
+        trigger.boundaryFlux.absoluteThreshold = c.trigger_boundary_flux_absolute_threshold;
+        base.engine.views.adaptiveEngineView.relativeCullingThreshold = c.engine_adaptive_relative_culling_threshold;
+        point.clampNegativeIterates = c.solver_clamp_negative_iterates != 0;
+        point.maxStepFailureRestarts = c.solver_max_step_failure_restarts;
+        switch (c.engine_screening) {
+            case GF_SCREENING_BARE: base.engine.screening = gridfire::screening::ScreeningType::BARE; break;
+            case GF_SCREENING_WEAK: base.engine.screening = gridfire::screening::ScreeningType::WEAK; break;
+            default: throw GFConfigError(std::format("engine_screening ({}) is not a GF_SCREENING_TYPE.", c.engine_screening));
+        }
+        switch (c.engine_jacobian) {
+            case GF_JACOBIAN_ANALYTIC: base.engine.jacobian = gridfire::engine::JacobianMethod::ANALYTIC; break;
+            case GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION: base.engine.jacobian = gridfire::engine::JacobianMethod::AUTOMATIC_DIFFERENTIATION; break;
+            default: throw GFConfigError(std::format("engine_jacobian ({}) is not a GF_JACOBIAN_METHOD.", c.engine_jacobian));
+        }
+        base.engine.energyChannels.splitHydrogenPPCNO = c.engine_split_hydrogen_pp_cno != 0;
+        return base;
+    }
+}
+
 extern "C" {
+
+    int gf_config_defaults(GFConfig* config) {
+        if (!config) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        *config = to_c_config(gridfire::config::GridFireConfig{});
+        return GF_SUCCESS;
+    }
+
+    int gf_set_config(void* ptr, const GFConfig* config) {
+        if (!ptr || !config) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->set_config(from_c_config(*config, ctx->config));
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_config(void* ptr, GFConfig* config) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!config) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        const auto* ctx = static_cast<GFContext*>(ptr);
+        *config = to_c_config(ctx->config);
+        return GF_SUCCESS;
+    }
+
+    int gf_load_config(void* ptr, const char* path) {
+        if (!ptr || !path) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->load_config(path);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_save_config(void* ptr, const char* path) {
+        if (!ptr || !path) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->save_config(path);
+            return GF_SUCCESS;
+        });
+    }
 
 
     void* gf_init(const enum GF_TYPE type) {
@@ -417,6 +539,8 @@ extern "C" {
                 return const_cast<char*>("GF_UNKNOWN_FREE_TYPE");
             case GF_INVALID_TYPE:
                 return const_cast<char*>("GF_INVALID_TYPE");
+            case GF_CONFIG_ERROR:
+                return const_cast<char*>("GF_CONFIG_ERROR");
             case FDSSE_NON_4DSTAR_ERROR:
                 return const_cast<char*>("FDSSE_NON_4DSTAR_ERROR");
             case FDSSE_UNKNOWN_ERROR:

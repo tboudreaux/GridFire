@@ -86,3 +86,34 @@ TEST(Screening, GraphEngineDefaultsToWeak) {
     const auto& shared = gridfire::test::main_sequence_engine();
     EXPECT_EQ(shared.graph.getScreeningModel(*shared.fresh_context()), gridfire::screening::ScreeningType::WEAK);
 }
+
+TEST(WeakScreening, LogDerivativesMatchFiniteDifferences) {
+    const std::vector<Species> species = {sp("H-1"), sp("He-4"), sp("C-12"), sp("N-14")};
+    const std::vector<double> Y = {0.70 / 1.007825, 0.28 / 4.002603, 0.012 / 12.0, 0.008 / 14.003074};
+    const auto reactions = two_body_set({{sp("H-1"), sp("H-1")}, {sp("C-12"), sp("H-1")}, {sp("N-14"), sp("H-1")}});
+    const gridfire::screening::WeakScreeningModel model;
+    const double T9 = 0.015, rho = 150.0;
+    const auto dlnf = model.calculateScreeningLogDerivatives(reactions, species, Y, T9, rho);
+    ASSERT_TRUE(dlnf.has_value());
+    for (size_t k = 0; k < species.size(); ++k) {
+        const double h = 1e-4 * Y[k];
+        std::vector<double> up = Y, down = Y;
+        up[k] += h;
+        down[k] -= h;
+        const auto f_up = model.calculateScreeningFactors(reactions, species, up, T9, rho);
+        const auto f_down = model.calculateScreeningFactors(reactions, species, down, T9, rho);
+        for (size_t r = 0; r < reactions.size(); ++r) {
+            const double fd = (std::log(f_up[r]) - std::log(f_down[r])) / (2.0 * h);
+            const double analytic = (*dlnf)[r * species.size() + k];
+            EXPECT_NEAR(analytic, fd, 1e-6 * std::abs(fd)) << "reaction " << r << ", species " << species[k].name();
+        }
+    }
+}
+
+TEST(Screening, BareLogDerivativesAreZero) {
+    const std::vector<Species> species = {sp("H-1"), sp("He-4")};
+    const auto dlnf = gridfire::screening::BareScreeningModel().calculateScreeningLogDerivatives(
+        two_body_set({{sp("H-1"), sp("H-1")}}), species, {0.7, 0.07}, 0.015, 150.0);
+    ASSERT_TRUE(dlnf.has_value());
+    for (const double d : *dlnf) EXPECT_EQ(d, 0.0);
+}

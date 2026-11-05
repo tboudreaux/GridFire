@@ -1,3 +1,5 @@
+#include "gridfire/engine/types/jacobian_method.h"
+#include "gridfire/config/config.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // Needed for vectors, maps, sets, strings
 #include <pybind11/stl_bind.h> // Needed for binding std::vector, std::map etc. if needed directly
@@ -344,6 +346,11 @@ void register_engine_building_type_bindings(const pybind11::module &m) {
         .export_values();
 
     py::class_<gridfire::engine::BuildDepthType> py_build_depth_type(m, "BuildDepthType");
+
+    py::enum_<gridfire::engine::JacobianMethod>(m, "JacobianMethod")
+        .value("ANALYTIC", gridfire::engine::JacobianMethod::ANALYTIC, "Jacobian assembled from the reaction topology (default)")
+        .value("AUTOMATIC_DIFFERENTIATION", gridfire::engine::JacobianMethod::AUTOMATIC_DIFFERENTIATION, "Jacobian from the CppAD tape")
+        .export_values();
 }
 
 void register_engine_reporting_type_bindings(const pybind11::module &m) {
@@ -462,6 +469,28 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
     py_graph_engine_bindings.def(py::init<const gridfire::reaction::ReactionSet &>(),
         py::arg("reactions"),
         "Initialize GraphEngine with a set of reactions."
+    );
+    py_graph_engine_bindings.def(py::init<const fourdst::composition::Composition &, const gridfire::config::GridFireConfig &>(),
+        py::arg("composition"),
+        py::arg("config"),
+        "Initialize GraphEngine with a composition (full build depth) and a configuration."
+    );
+    py_graph_engine_bindings.def(py::init<const fourdst::composition::Composition &, const gridfire::partition::PartitionFunction &, const gridfire::engine::BuildDepthType, const gridfire::engine::NetworkConstructionFlags, const gridfire::config::GridFireConfig &>(),
+        py::arg("composition"),
+        py::arg("partitionFunction"),
+        py::arg("depth"),
+        py::arg("reactionTypes"),
+        py::arg("config"),
+        "Initialize GraphEngine with a composition, partition function, build depth, reaction types and configuration."
+    );
+    py_graph_engine_bindings.def(py::init<const gridfire::reaction::ReactionSet &, const gridfire::config::GridFireConfig &>(),
+        py::arg("reactions"),
+        py::arg("config"),
+        "Initialize GraphEngine with a set of reactions and a configuration."
+    );
+    py_graph_engine_bindings.def("getConfig",
+        &gridfire::engine::GraphEngine::getConfig,
+        "Get a copy of the configuration this engine was built with."
     );
     py_graph_engine_bindings.def("getSpeciesTimescales",
         [](const gridfire::engine::GraphEngine& self,
@@ -616,6 +645,14 @@ void register_engine_view_bindings(const pybind11::module &m) {
     py_adaptive_engine_view_bindings.def(py::init<gridfire::engine::DynamicEngine&>(),
         py::arg("baseEngine"),
         "Construct an adaptive engine view with a base engine.");
+    py_adaptive_engine_view_bindings.def(py::init<gridfire::engine::DynamicEngine&, const gridfire::config::GridFireConfig&>(),
+        py::arg("baseEngine"),
+        py::arg("config"),
+        "Construct an adaptive engine view with a base engine and a configuration.");
+    py_adaptive_engine_view_bindings.def("getConfig",
+        &gridfire::engine::AdaptiveEngineView::getConfig,
+        "Get a copy of the configuration this view was built with."
+    );
     py_adaptive_engine_view_bindings.def("getBaseEngine",
         &gridfire::engine::AdaptiveEngineView::getBaseEngine,
         "Get the base engine associated with this adaptive engine view."

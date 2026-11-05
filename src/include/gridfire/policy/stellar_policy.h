@@ -20,6 +20,7 @@
 #include <set>
 
 #include "gridfire/policy/policy_abstract.h"
+#include "gridfire/config/config.h"
 #include "gridfire/engine/engine_abstract.h"
 #include "gridfire/reaction/reaction.h"
 
@@ -94,6 +95,21 @@ namespace gridfire::policy {
         explicit MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, const std::vector<double> &mass_fractions);
 
         /**
+         * @brief As MainSequencePolicy(const Composition&), building the engine with the given configuration.
+         *
+         * The constructors without a configuration use config::GridFireConfig{}.
+         */
+        MainSequencePolicy(const fourdst::composition::Composition& composition, const config::GridFireConfig& config);
+
+        /**
+         * @brief As MainSequencePolicy(seed_species, mass_fractions), building the engine with the given configuration.
+         */
+        MainSequencePolicy(std::vector<fourdst::atomic::Species> seed_species, const std::vector<double> &mass_fractions, const config::GridFireConfig& config);
+
+        /// The configuration construct() builds the engine with.
+        [[nodiscard]] const config::GridFireConfig& getConfig() const { return m_config; }
+
+        /**
          * @brief Returns the name of the policy.
          * @return "MainSequencePolicy"
          */
@@ -155,6 +171,7 @@ namespace gridfire::policy {
 
         std::unique_ptr<ReactionChainPolicy> m_reaction_policy = std::make_unique<MainSequenceReactionChainPolicy>(); ///< The composed reaction chain policy (PP-chain + CNO-cycle).
         fourdst::composition::Composition m_initializing_composition; ///< The initial composition used to build the network.
+        config::GridFireConfig m_config; ///< Configuration passed to the engine built by construct().
         std::unique_ptr<partition::PartitionFunction> m_partition_function; ///< The partition function used in network construction.
         std::vector<std::unique_ptr<engine::DynamicEngine>> m_network_stack; ///< The stack of dynamic engines constructed by the policy.
 

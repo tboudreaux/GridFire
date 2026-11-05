@@ -354,6 +354,12 @@ namespace gridfire::solver {
          * sorted table of species with the highest error ratios; then invokes diagnostic routines to
          * inspect Jacobian stiffness and species balance.
          */
+        /**
+         * @brief Describe a failed CVODE step: time, step size, and the components that dominate CVODE's weighted
+         *        local error estimate (the quantity whose norm decides whether a step is accepted).
+         */
+        [[nodiscard]] std::string describe_cvode_failure(PointSolverContext* sctx_p, double t) const;
+
         void log_step_diagnostics(
             PointSolverContext* sctx_p,
             engine::scratch::StateBlob &ctx,

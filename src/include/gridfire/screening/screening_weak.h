@@ -84,14 +84,36 @@ namespace gridfire::screening {
             double T9,
             double rho
         ) const override;
+
+        /**
+         * @brief Analytic d(ln f_r)/dY_k for the weak screening factors.
+         *
+         * ln f_r = H_r, with H_r proportional to sqrt(zeta) and zeta = sum_k (Z_k^2 + Z_k) Y_k, so
+         * d(ln f_r)/dY_k = H_r (Z_k^2 + Z_k) / (2 zeta). It is zero where H_r is capped, below the low-temperature
+         * cutoff, and when zeta <= 0 (the factor is then pinned at 1).
+         */
+        [[nodiscard]] std::optional<std::vector<double>> calculateScreeningLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const override;
     private:
         /// @brief Salpeter prefactor 0.188 zeta^(1/2) rho^(1/2) T_6^(-3/2), times 0 below the low-temperature cutoff.
         template <IsArithmeticOrAD T>
         [[nodiscard]] static T prefactor_impl(const std::vector<fourdst::atomic::Species>& species, const std::vector<T>& Y, T T9, T rho);
 
-        /// @brief exp(H_12) for one reaction given the prefactor (1 for one-body reactions).
+        /// @brief Uncapped H_12 for one reaction given the prefactor (0 for one-body reactions).
+        template <IsArithmeticOrAD T>
+        [[nodiscard]] static T H_impl(const reaction::Reaction& reaction, T prefactor);
+
+        /// @brief exp(min(H_12, H_cap)) for one reaction given the prefactor.
         template <IsArithmeticOrAD T>
         [[nodiscard]] static T factor_impl(const reaction::Reaction& reaction, T prefactor);
+
+        /// @brief Largest H_12 applied (factor e^2), to avoid numerical issues outside the weak regime.
+        static constexpr double H_CAP = 2.0;
 
         /// @brief Logger instance for recording trace and debug information.
         [[maybe_unused]] quill::Logger* m_logger = fourdst::logging::LogManager::getInstance().getLogger("log");
@@ -183,8 +205,7 @@ namespace gridfire::screening {
     }
 
     template <IsArithmeticOrAD T>
-    T WeakScreeningModel::factor_impl(const reaction::Reaction& reaction, const T prefactor) {
-        T H_12(0.0);
+    T WeakScreeningModel::H_impl(const reaction::Reaction& reaction, const T prefactor) {
         const auto& reactants = reaction.reactants();
         const bool isTripleAlpha = (
             reactants.size() == 3 &&
@@ -195,15 +216,21 @@ namespace gridfire::screening {
             reactants[1] == reactants[2]
         );
         if (reactants.size() == 2) {
-            H_12 = prefactor * static_cast<T>(reactants[0].m_z) * static_cast<T>(reactants[1].m_z);
-        } else if (isTripleAlpha) {
-            // alpha + alpha, then alpha + 8Be: H = H(2,2) + H(2,4) = 3 H(2,2)
-            H_12 = static_cast<T>(3.0) * prefactor * static_cast<T>(4.0);
+            return prefactor * static_cast<T>(reactants[0].m_z) * static_cast<T>(reactants[1].m_z);
         }
-        // One-body reactions keep H_12 = 0 (no screening). Cap H_12 at 2 (factor e^2) to avoid numerical issues outside
-        // the weak regime this model is meant for.
-        H_12 = CppAD::CondExpGe(H_12, static_cast<T>(2.0), static_cast<T>(2.0), H_12);
-        return CppAD::exp(H_12);
+        if (isTripleAlpha) {
+            // alpha + alpha, then alpha + 8Be: H = H(2,2) + H(2,4) = 3 H(2,2)
+            return static_cast<T>(3.0) * prefactor * static_cast<T>(4.0);
+        }
+        // One-body reactions are not screened
+        return static_cast<T>(0.0);
+    }
+
+    template <IsArithmeticOrAD T>
+    T WeakScreeningModel::factor_impl(const reaction::Reaction& reaction, const T prefactor) {
+        const T H_12 = H_impl<T>(reaction, prefactor);
+        const T cap = static_cast<T>(H_CAP);
+        return CppAD::exp(CppAD::CondExpGe(H_12, cap, cap, H_12));
     }
 
     template <IsArithmeticOrAD T>

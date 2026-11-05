@@ -23,6 +23,16 @@ namespace gridfire::engine {
     ) :
     m_baseEngine(baseEngine) {}
 
+    AdaptiveEngineView::AdaptiveEngineView(
+        DynamicEngine &baseEngine,
+        const config::GridFireConfig &config
+    ) :
+    m_baseEngine(baseEngine) {
+        m_config.mutate([&config](auto& cfg) {
+            cfg = config;
+        });
+    }
+
     fourdst::composition::Composition AdaptiveEngineView::project(
         scratch::StateBlob& ctx,
         const NetIn &netIn

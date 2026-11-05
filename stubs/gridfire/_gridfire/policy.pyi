@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections.abc
 import fourdst._phys.atomic
 import fourdst._phys.composition
+import gridfire._gridfire.config
 import gridfire._gridfire.engine
 import gridfire._gridfire.engine.scratchpads
 import gridfire._gridfire.partition
@@ -415,6 +416,20 @@ class MainSequencePolicy(NetworkPolicy):
     def __init__(self, seed_species: collections.abc.Sequence[fourdst._phys.atomic.Species], mass_fractions: collections.abc.Sequence[typing.SupportsFloat]) -> None:
         """
         Construct MainSequencePolicy from seed species and mass fractions.
+        """
+    @typing.overload
+    def __init__(self, composition: fourdst._phys.composition.Composition, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Construct MainSequencePolicy from an existing composition; construct() builds the engine with this configuration.
+        """
+    @typing.overload
+    def __init__(self, seed_species: collections.abc.Sequence[fourdst._phys.atomic.Species], mass_fractions: collections.abc.Sequence[typing.SupportsFloat], config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Construct MainSequencePolicy from seed species and mass fractions; construct() builds the engine with this configuration.
+        """
+    def getConfig(self) -> gridfire._gridfire.config.GridFireConfig:
+        """
+        Get a copy of the configuration construct() builds the engine with.
         """
     def construct(self) -> ConstructionResults:
         """

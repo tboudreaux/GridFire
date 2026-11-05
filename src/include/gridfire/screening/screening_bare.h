@@ -89,6 +89,17 @@ namespace gridfire::screening {
             double,
             double
         ) const override { return 1.0; }
+
+        /// @brief Always zero: bare screening factors do not depend on composition.
+        [[nodiscard]] std::optional<std::vector<double>> calculateScreeningLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double>&,
+            double,
+            double
+        ) const override {
+            return std::vector<double>(reactions.size() * species.size(), 0.0);
+        }
     private:
         /**
          * @brief Template implementation for calculating screening factors.

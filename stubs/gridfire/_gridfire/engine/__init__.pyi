@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections.abc
 import fourdst._phys.atomic
 import fourdst._phys.composition
+import gridfire._gridfire.config
 import gridfire._gridfire.io
 import gridfire._gridfire.partition
 import gridfire._gridfire.reaction
@@ -15,11 +16,21 @@ import numpy.typing
 import typing
 from . import diagnostics
 from . import scratchpads
-__all__: list[str] = ['ACTIVE', 'ADAPTIVE_ENGINE_VIEW', 'AdaptiveEngineView', 'BuildDepthType', 'DEFAULT', 'DEFINED_ENGINE_VIEW', 'DefinedEngineView', 'DynamicEngine', 'EQUILIBRIUM', 'Engine', 'EngineTypes', 'FILE_DEFINED_ENGINE_VIEW', 'FULL_SUCCESS', 'FifthOrder', 'FileDefinedEngineView', 'FourthOrder', 'Full', 'GRAPH_ENGINE', 'GraphEngine', 'INACTIVE_FLOW', 'MAX_ITERATIONS_REACHED', 'MULTISCALE_PARTITIONING_ENGINE_VIEW', 'MultiscalePartitioningEngineView', 'NONE', 'NOT_PRESENT', 'NO_SPECIES_TO_PRIME', 'NetworkBuildDepth', 'NetworkConstructionFlags', 'NetworkJacobian', 'NetworkPrimingEngineView', 'PRIMING_ENGINE_VIEW', 'PrimingReport', 'PrimingReportStatus', 'REACLIB', 'REACLIB_STRONG', 'REACLIB_WEAK', 'SecondOrder', 'Shallow', 'SparsityPattern', 'SpeciesStatus', 'StepDerivatives', 'ThirdOrder', 'WRL_BETA_MINUS', 'WRL_BETA_PLUS', 'WRL_ELECTRON_CAPTURE', 'WRL_POSITRON_CAPTURE', 'WRL_WEAK', 'build_nuclear_network', 'diagnostics', 'primeNetwork', 'regularize_jacobian', 'scratchpads']
+__all__: list[str] = ['ACTIVE', 'ADAPTIVE_ENGINE_VIEW', 'ANALYTIC', 'AUTOMATIC_DIFFERENTIATION', 'AdaptiveEngineView', 'BuildDepthType', 'DEFAULT', 'DEFINED_ENGINE_VIEW', 'DefinedEngineView', 'DynamicEngine', 'EQUILIBRIUM', 'Engine', 'EngineTypes', 'FILE_DEFINED_ENGINE_VIEW', 'FULL_SUCCESS', 'FifthOrder', 'FileDefinedEngineView', 'FourthOrder', 'Full', 'GRAPH_ENGINE', 'GraphEngine', 'INACTIVE_FLOW', 'JacobianMethod', 'MAX_ITERATIONS_REACHED', 'MULTISCALE_PARTITIONING_ENGINE_VIEW', 'MultiscalePartitioningEngineView', 'NONE', 'NOT_PRESENT', 'NO_SPECIES_TO_PRIME', 'NetworkBuildDepth', 'NetworkConstructionFlags', 'NetworkJacobian', 'NetworkPrimingEngineView', 'PRIMING_ENGINE_VIEW', 'PrimingReport', 'PrimingReportStatus', 'REACLIB', 'REACLIB_STRONG', 'REACLIB_WEAK', 'SecondOrder', 'Shallow', 'SparsityPattern', 'SpeciesStatus', 'StepDerivatives', 'ThirdOrder', 'WRL_BETA_MINUS', 'WRL_BETA_PLUS', 'WRL_ELECTRON_CAPTURE', 'WRL_POSITRON_CAPTURE', 'WRL_WEAK', 'build_nuclear_network', 'diagnostics', 'primeNetwork', 'regularize_jacobian', 'scratchpads']
 class AdaptiveEngineView(DynamicEngine):
+    @typing.overload
     def __init__(self, baseEngine: DynamicEngine) -> None:
         """
         Construct an adaptive engine view with a base engine.
+        """
+    @typing.overload
+    def __init__(self, baseEngine: DynamicEngine, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Construct an adaptive engine view with a base engine and a configuration.
+        """
+    def getConfig(self) -> gridfire._gridfire.config.GridFireConfig:
+        """
+        Get a copy of the configuration this view was built with.
         """
     def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
         """
@@ -354,6 +365,25 @@ class GraphEngine(DynamicEngine):
         Initialize GraphEngine with a set of reactions.
         """
     @typing.overload
+    def __init__(self, composition: fourdst._phys.composition.Composition, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Initialize GraphEngine with a composition (full build depth) and a configuration.
+        """
+    @typing.overload
+    def __init__(self, composition: fourdst._phys.composition.Composition, partitionFunction: gridfire._gridfire.partition.PartitionFunction, depth: gridfire._gridfire.engine.NetworkBuildDepth | typing.SupportsInt, reactionTypes: NetworkConstructionFlags, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Initialize GraphEngine with a composition, partition function, build depth, reaction types and configuration.
+        """
+    @typing.overload
+    def __init__(self, reactions: gridfire._gridfire.reaction.ReactionSet, config: gridfire._gridfire.config.GridFireConfig) -> None:
+        """
+        Initialize GraphEngine with a set of reactions and a configuration.
+        """
+    def getConfig(self) -> gridfire._gridfire.config.GridFireConfig:
+        """
+        Get a copy of the configuration this engine was built with.
+        """
+    @typing.overload
     def addReaction(self, reaction: ...) -> None:
         """
         Add a reaction to the engine's network manually.
@@ -598,6 +628,43 @@ class MultiscalePartitioningEngineView(DynamicEngine):
         """
         Update the engine state based on the provided NetIn object.
         """
+class JacobianMethod:
+    """
+    Members:
+    
+      ANALYTIC : Jacobian assembled from the reaction topology (default)
+    
+      AUTOMATIC_DIFFERENTIATION : Jacobian from the CppAD tape
+    """
+    ANALYTIC: typing.ClassVar[JacobianMethod]  # value = <JacobianMethod.ANALYTIC: 0>
+    AUTOMATIC_DIFFERENTIATION: typing.ClassVar[JacobianMethod]  # value = <JacobianMethod.AUTOMATIC_DIFFERENTIATION: 1>
+    __members__: typing.ClassVar[dict[str, JacobianMethod]]  # value = {'ANALYTIC': <JacobianMethod.ANALYTIC: 0>, 'AUTOMATIC_DIFFERENTIATION': <JacobianMethod.AUTOMATIC_DIFFERENTIATION: 1>}
+    def __eq__(self, other: typing.Any) -> bool:
+        ...
+    def __getstate__(self) -> int:
+        ...
+    def __hash__(self) -> int:
+        ...
+    def __index__(self) -> int:
+        ...
+    def __init__(self, value: typing.SupportsInt) -> None:
+        ...
+    def __int__(self) -> int:
+        ...
+    def __ne__(self, other: typing.Any) -> bool:
+        ...
+    def __repr__(self) -> str:
+        ...
+    def __setstate__(self, state: typing.SupportsInt) -> None:
+        ...
+    def __str__(self) -> str:
+        ...
+    @property
+    def name(self) -> str:
+        ...
+    @property
+    def value(self) -> int:
+        ...
 class NetworkBuildDepth:
     """
     Members:
@@ -1028,3 +1095,5 @@ WRL_BETA_PLUS: NetworkConstructionFlags  # value = <NetworkConstructionFlags.WRL
 WRL_ELECTRON_CAPTURE: NetworkConstructionFlags  # value = <NetworkConstructionFlags.WRL_ELECTRON_CAPTURE: 8>
 WRL_POSITRON_CAPTURE: NetworkConstructionFlags  # value = <NetworkConstructionFlags.WRL_POSITRON_CAPTURE: 16>
 WRL_WEAK: NetworkConstructionFlags  # value = <NetworkConstructionFlags.WRL_WEAK: 30>
+ANALYTIC: JacobianMethod  # value = <JacobianMethod.ANALYTIC: 0>
+AUTOMATIC_DIFFERENTIATION: JacobianMethod  # value = <JacobianMethod.AUTOMATIC_DIFFERENTIATION: 1>

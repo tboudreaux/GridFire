@@ -158,7 +158,7 @@ namespace gridfire::engine {
          * @brief Provides access to the underlying sparse matrix data.
          * @return The Eigen::SparseMatrix representing the Jacobian.
          */
-        [[nodiscard]] Eigen::SparseMatrix<double> data() const;
+        [[nodiscard]] const Eigen::SparseMatrix<double>& data() const;
 
         /**
          * @brief Provides access to the species-to-index mapping.

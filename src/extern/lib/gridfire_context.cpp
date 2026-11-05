@@ -6,6 +6,8 @@
 #include "gridfire/exceptions/error_policy.h"
 #include "gridfire/utils/logging.h"
 
+#include "fourdst/config/config.h"
+
 void GFContext::init_species_map(const std::vector<std::string> &species_names) {
     this->speciesList.clear();
     this->speciesList.reserve(species_names.size());
@@ -21,6 +23,27 @@ void GFContext::init_species_map(const std::vector<std::string> &species_names) 
         this->speciesList.push_back(resolve_species_name(name));
     }
 
+}
+
+void GFContext::set_config(const gridfire::config::GridFireConfig &new_config) {
+    if (engine != nullptr) {
+        throw GFConfigError("The configuration must be set before the engine is constructed (gf_construct_engine_from_policy); the engine already built would not use it.");
+    }
+    config = new_config;
+}
+
+void GFContext::load_config(const std::string &path) {
+    fourdst::config::Config<gridfire::config::GridFireConfig> loaded;
+    loaded.load(path);
+    set_config(*loaded);
+}
+
+void GFContext::save_config(const std::string &path) const {
+    fourdst::config::Config<gridfire::config::GridFireConfig> current;
+    current.mutate([this](auto& cfg) {
+        cfg = config;
+    });
+    current.save(path);
 }
 
 void GFContext::init_engine_from_policy(const std::string &policy_name, const double *abundances, const size_t num_species) {
@@ -47,7 +70,7 @@ void GFContext::init_engine_from_policy(const std::string &policy_name, const do
 
     switch (engine_map.at(policy_name)) {
         case EnginePolicy::MAIN_SEQUENCE_POLICY: {
-            this->policy = std::make_unique<gridfire::policy::MainSequencePolicy>(comp);
+            this->policy = std::make_unique<gridfire::policy::MainSequencePolicy>(comp, config);
             const auto& [e, ctx] = policy->construct();
             this->engine = &e;
             this->engine_ctx = ctx->clone_structure();
@@ -88,7 +111,7 @@ fourdst::composition::Composition GFContext::init_composition_from_abundance_vec
 
 
 void GFPointContext::init_solver_from_engine() {
-    this->solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine);
+    this->solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine, config);
     this->solver_ctx = std::make_unique<gridfire::solver::PointSolverContext>(*engine_ctx);
 }
 
@@ -167,7 +190,7 @@ const std::vector<std::string>& GFContext::get_energy_channel_names() const {
 }
 
 void GFGridContext::init_solver_from_engine() {
-    this->local_solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine);
+    this->local_solver = std::make_unique<gridfire::solver::PointSolver>(*this->engine, config);
     this->solver = std::make_unique<gridfire::solver::GridSolver>(*this->engine, *this->local_solver);
     this->solver_ctx = std::make_unique<gridfire::solver::GridSolverContext>(*engine_ctx);
 }

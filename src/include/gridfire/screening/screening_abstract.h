@@ -6,6 +6,7 @@
 
 #include "cppad/cppad.hpp"
 
+#include <optional>
 #include <vector>
 
 namespace gridfire::screening {
@@ -121,6 +122,24 @@ namespace gridfire::screening {
             reaction::ReactionSet single;
             single.add_reaction(reaction);
             return calculateScreeningFactors(single, species, Y, T9, rho).at(0);
+        }
+
+        /**
+         * @brief Composition derivatives of the screening factors, for the analytic network Jacobian.
+         *
+         * @return d(ln f_r)/dY_k row-major (reactions.size() x species.size()), consistent with the double-precision
+         *         calculateScreeningFactors at the same state, or std::nullopt when the model has no analytic
+         *         derivatives. The default returns std::nullopt, so the engine falls back to the CppAD Jacobian and a
+         *         model without this method stays correct.
+         */
+        [[nodiscard]] virtual std::optional<std::vector<double>> calculateScreeningLogDerivatives(
+            const reaction::ReactionSet& reactions,
+            const std::vector<fourdst::atomic::Species>& species,
+            const std::vector<double> &Y,
+            double T9,
+            double rho
+        ) const {
+            return std::nullopt;
         }
     };
 }

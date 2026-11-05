@@ -69,6 +69,50 @@ extern "C" {
         GF_UNKNOWN_FREE_TYPE = 36,
 
         GF_INVALID_TYPE = 37,
+
+        GF_CONFIG_ERROR = 38,
+    };
+
+    /** Electron screening model (GridFireConfig::engine.screening). */
+    enum GF_SCREENING_TYPE {
+        GF_SCREENING_BARE = 0, /**< No screening */
+        GF_SCREENING_WEAK = 1  /**< Salpeter (1954) weak screening, the default */
+    };
+
+    /** How the engine computes the species Jacobian (GridFireConfig::engine.jacobian). */
+    enum GF_JACOBIAN_METHOD {
+        GF_JACOBIAN_ANALYTIC = 0,                 /**< Analytic, from the precomputed reactions; the default */
+        GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION = 1 /**< CppAD automatic differentiation */
+    };
+
+    /**
+     * Run-time configuration, the C mirror of gridfire::config::GridFireConfig (field names follow its nesting).
+     *
+     * Start from gf_config_defaults, change what you need, and pass it to gf_set_config before
+     * gf_construct_engine_from_policy. Booleans are ints (0 = false). The energy channel fuel list has no field here;
+     * it keeps its current value (the default, or what gf_load_config read).
+     *
+     * Fortran: type(GFConfig) in gridfire_mod has the same layout.
+     */
+    struct GFConfig {
+        /* solver.pointSolver */
+        double solver_abs_tol;
+        double solver_rel_tol;
+        /* solver.pointSolver.trigger */
+        double trigger_off_diagonal_threshold;
+        double trigger_timestep_collapse_ratio;
+        double trigger_max_convergence_failures;
+        double trigger_boundary_flux_relative_threshold;
+        double trigger_boundary_flux_absolute_threshold;
+        /* engine.views.adaptiveEngineView */
+        double engine_adaptive_relative_culling_threshold;
+        /* solver.pointSolver */
+        int solver_clamp_negative_iterates;
+        int solver_max_step_failure_restarts;
+        /* engine */
+        int engine_screening;              /**< enum GF_SCREENING_TYPE */
+        int engine_jacobian;               /**< enum GF_JACOBIAN_METHOD */
+        int engine_split_hydrogen_pp_cno;  /**< engine.energyChannels.splitHydrogenPPCNO */
     };
 
     char* gf_get_last_error_message(void* ptr);
@@ -82,6 +126,28 @@ extern "C" {
     int gf_set_num_zones(const enum GF_TYPE type, void* ptr, const size_t num_zones);
 
     int gf_register_species(void* ptr, const int num_species, const char** species_names);
+
+    /** Fill config with GridFire's defaults (the same values a C++ GridFireConfig{} has). */
+    int gf_config_defaults(struct GFConfig* config);
+
+    /**
+     * Use config for the engine and solver this context builds. Must be called before
+     * gf_construct_engine_from_policy (GF_CONFIG_ERROR otherwise, or for out-of-range values).
+     */
+    int gf_set_config(void* ptr, const struct GFConfig* config);
+
+    /** The configuration this context uses (defaults, or whatever gf_set_config / gf_load_config set). */
+    int gf_get_config(void* ptr, struct GFConfig* config);
+
+    /**
+     * Read the configuration from a TOML file, with the same rules as gf_set_config. The file must be complete, in
+     * the format gf_save_config writes, so the easiest way to make one is to save the defaults (gf_save_config, or
+     * the gf_generate_config_file tool) and edit them.
+     */
+    int gf_load_config(void* ptr, const char* path);
+
+    /** Write this context's configuration as TOML (the format gf_load_config reads). */
+    int gf_save_config(void* ptr, const char* path);
 
     int gf_construct_engine_from_policy(void* ptr, const char* policy_name, const double *abundances, size_t num_species);
 

@@ -54,11 +54,26 @@ namespace gridfire::policy {
         m_partition_function = build_partition_function();
     }
 
+    MainSequencePolicy::MainSequencePolicy(
+        const fourdst::composition::Composition& composition,
+        const config::GridFireConfig& config
+    ) : MainSequencePolicy(composition) {
+        m_config = config;
+    }
+
+    MainSequencePolicy::MainSequencePolicy(
+        std::vector<fourdst::atomic::Species> seed_species,
+        const std::vector<double> &mass_fractions,
+        const config::GridFireConfig& config
+    ) : MainSequencePolicy(std::move(seed_species), mass_fractions) {
+        m_config = config;
+    }
+
      ConstructionResults MainSequencePolicy::construct() {
         m_network_stack.clear();
 
         m_network_stack.emplace_back(
-            std::make_unique<engine::GraphEngine>(m_initializing_composition, *m_partition_function, engine::NetworkBuildDepth::ThirdOrder, engine::NetworkConstructionFlags::DEFAULT)
+            std::make_unique<engine::GraphEngine>(m_initializing_composition, *m_partition_function, engine::NetworkBuildDepth::ThirdOrder, engine::NetworkConstructionFlags::DEFAULT, m_config)
         );
 
         std::unique_ptr<engine::scratch::StateBlob> scratch_blob = m_network_stack.back()->constructStateBlob(nullptr);

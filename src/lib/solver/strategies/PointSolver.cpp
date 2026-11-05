@@ -1,6 +1,9 @@
 #include "gridfire/solver/strategies/PointSolver.h"
 #include "fourdst/constants/const.h"
 
+#include <numeric>
+#include <span>
+
 #include "gridfire/types/types.h"
 #include "gridfire/utils/table_format.h"
 #include "gridfire/engine/diagnostics/dynamic_engine_diagnostics.h"
@@ -28,6 +31,26 @@
 #include "gridfire/utils/sundials.h"
 #include "gridfire/config/config.h"
 
+
+namespace {
+    /**
+     * @brief A CVODE iterate's abundances with negative values set to zero, for building a Composition (which cannot
+     *        hold negative abundances).
+     *
+     * With clampInPlace (solver.pointSolver.clampNegativeIterates) the iterate itself is clamped too, as in v1.2.0.
+     * Otherwise CVODE's vector is left untouched and the engine evaluates the raw iterate.
+     */
+    std::vector<double> clamped_iterate(sunrealtype* y_data, const size_t numSpecies, const bool clampInPlace) {
+        std::vector<double> clamped(y_data, y_data + numSpecies);
+        for (size_t i = 0; i < numSpecies; ++i) {
+            if (clamped[i] < 0.0) {
+                clamped[i] = 0.0;
+                if (clampInPlace) { y_data[i] = 0.0; }
+            }
+        }
+        return clamped;
+    }
+}
 
 namespace gridfire::solver {
      using namespace gridfire::engine;
@@ -348,6 +371,7 @@ namespace gridfire::solver {
         size_t prev_convergence_failures = 0;
 
         size_t total_steps = 0;
+        int step_failure_restarts = 0;
 
         LOG_TRACE_L1(m_logger, "Starting CVODE iteration...");
         fourdst::composition::Composition postStep = equilibratedComposition;
@@ -372,7 +396,34 @@ namespace gridfire::solver {
                 std::rethrow_exception(std::make_exception_ptr(*user_data.captured_exception));
             }
 
-            utils::check_cvode_flag(flag, "CVode");
+            if ((flag == CV_ERR_FAILURE || flag == CV_CONV_FAILURE || flag == CV_CONSTR_FAIL) &&
+                step_failure_restarts < m_config->solver.pointSolver.maxStepFailureRestarts) {
+                // On these failures CVODE leaves the last accepted state in Y at current_time. Restarting there resets
+                // BDF to order 1 with a fresh history, which often gets past a step the old history could not take.
+                ++step_failure_restarts;
+                LOG_WARNING(m_logger, "CVODE step failed ({}) {}; restarting from the last accepted state ({} of {}).",
+                    utils::cvode_ret_code_map.at(flag), describe_cvode_failure(sctx_p, current_time),
+                    step_failure_restarts, m_config->solver.pointSolver.maxStepFailureRestarts);
+                long int steps_before_restart = 0;
+                CVodeGetNumSteps(sctx_p->cvode_mem, &steps_before_restart);
+                total_steps += static_cast<size_t>(steps_before_restart); // CVodeReInit resets CVODE's step counter
+                // The returned state can hold tiny negative abundances, which a new initial state may not (positivity
+                // constraints); the energy accumulator is unconstrained and kept as is
+                sunrealtype* restart_state = N_VGetArrayPointer(sctx_p->Y);
+                for (size_t i = 0; i < numSpecies; ++i) {
+                    restart_state[i] = std::max(restart_state[i], 0.0);
+                }
+                utils::check_cvode_flag(CVodeReInit(sctx_p->cvode_mem, current_time, sctx_p->Y), "CVodeReInit");
+                reset_error_weight_history();
+                continue;
+            }
+            if (flag < 0) {
+                const auto code = utils::cvode_ret_code_map.find(flag);
+                throw exceptions::CVODESolverFailureError(std::format(
+                    "CVODE error in CVode: {} ({})",
+                    code != utils::cvode_ret_code_map.end() ? code->second : std::format("unknown error code {}", flag),
+                    describe_cvode_failure(sctx_p, current_time)));
+            }
 
             if (auto graph_state = sctx_p->engine_ctx->get<scratch::GraphEngineScratchPad>(); graph_state) {
                 graph_state.value()->stepDerivativesCache.clear();
@@ -763,6 +814,38 @@ namespace gridfire::solver {
         return netOut;
     }
 
+    std::string PointSolver::describe_cvode_failure(PointSolverContext* sctx_p, const double t) const {
+        const auto& species = m_engine.getNetworkSpecies(*sctx_p->engine_ctx);
+        const size_t numSpecies = species.size();
+
+        double h = 0.0;
+        CVodeGetCurrentStep(sctx_p->cvode_mem, &h);
+        N_Vector weights = N_VClone(sctx_p->Y);
+        if (weights == nullptr ||
+            CVodeGetErrWeights(sctx_p->cvode_mem, weights) != CV_SUCCESS ||
+            CVodeGetEstLocalErrors(sctx_p->cvode_mem, sctx_p->YErr) != CV_SUCCESS) {
+            if (weights != nullptr) { N_VDestroy(weights); }
+            return std::format("at t = {:.6e} s, h = {:.3e} s", t, h);
+        }
+        const sunrealtype* y = N_VGetArrayPointer(sctx_p->Y);
+        const sunrealtype* err = N_VGetArrayPointer(sctx_p->YErr);
+        const sunrealtype* w = N_VGetArrayPointer(weights);
+
+        // Rank components (species, then the energy accumulator) by |local error x weight|
+        std::vector<size_t> order(numSpecies + 1);
+        std::iota(order.begin(), order.end(), 0);
+        std::ranges::sort(order, [&](const size_t a, const size_t b) { return std::abs(err[a] * w[a]) > std::abs(err[b] * w[b]); });
+
+        std::string worst;
+        for (size_t k = 0; k < std::min<size_t>(4, order.size()); ++k) {
+            const size_t i = order[k];
+            const std::string name = i < numSpecies ? std::string(species[i].name()) : "energy";
+            worst += std::format("{}{} (Y = {:.3e}, err*w = {:.3e})", k == 0 ? "" : ", ", name, y[i], err[i] * w[i]);
+        }
+        N_VDestroy(weights);
+        return std::format("at t = {:.6e} s, h = {:.3e} s; largest weighted local errors: {}", t, h, worst);
+    }
+
     int PointSolver::cvode_rhs_wrapper(
         const sunrealtype t,
         const N_Vector y,
@@ -886,15 +969,10 @@ namespace gridfire::solver {
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
 
-        // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
-        // small negative numbers which can result in NaN's and more immediate crashes in the composition
-        // finalization stage
-        for (size_t i = 0; i < numSpecies; ++i) {
-            if (y_data[i] < 0.0) {
-                y_data[i] = 0.0;
-            }
-        }
-        std::vector<double> y_vec(y_data, y_data + numSpecies);
+        // Newton iterates can dip slightly below zero. They are evaluated as they are (see
+        // DynamicEngine::generateJacobianMatrixFromRawAbundances); only the Composition gets them clamped.
+        const bool clampIterates = solver_instance->m_config->solver.pointSolver.clampNegativeIterates;
+        const std::vector<double> y_vec = clamped_iterate(y_data, numSpecies, clampIterates);
         fourdst::composition::Composition composition(engine->getNetworkSpecies(data->ctx), y_vec);
         LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {} with {} species in composition (mean molecular mass: {})", t, composition.size(), composition.getMeanParticleMass());
         LOG_TRACE_L2(solver_instance->m_logger, "Composition is {}", [&composition]() -> std::string {
@@ -911,7 +989,9 @@ namespace gridfire::solver {
         }());
 
         LOG_TRACE_L2(solver_instance->m_logger, "Generating Jacobian matrix at time {}", t);
-        NetworkJacobian jac = engine->generateJacobianMatrix(data->ctx, composition, data->T9, data->rho);
+        NetworkJacobian jac = clampIterates
+            ? engine->generateJacobianMatrix(data->ctx, composition, data->T9, data->rho)
+            : engine->generateJacobianMatrixFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), data->T9, data->rho);
         LOG_TRACE_L2(solver_instance->m_logger, "Regularizing Jacobian matrix at time {}", t);
         jac = regularize_jacobian(jac, composition, solver_instance->m_logger);
         LOG_TRACE_L2(solver_instance->m_logger, "Done regularizing Jacobian matrix at time {}", t);
@@ -963,16 +1043,34 @@ namespace gridfire::solver {
 
         sunrealtype* J_data = SUNDenseMatrix_Data(J);
         const long int N = SUNDenseMatrix_Columns(J);
+        const auto& species_list = engine->getNetworkSpecies(data->ctx);
 
+        // The Jacobian's own index order need not match the solver's, so map it once per call (N lookups) and then
+        // walk only the stored entries, rather than looking up every (species, species) pair (N^2 lookups).
         LOG_TRACE_L2(solver_instance->m_logger, "Transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
-        for (size_t j = 0; j < numSpecies; ++j) {
-            const fourdst::atomic::Species& species_j = engine->getNetworkSpecies(data->ctx)[j];
-            for (size_t i = 0; i < numSpecies; ++i) {
-                const fourdst::atomic::Species& species_i = engine->getNetworkSpecies(data->ctx)[i];
-                // J(i,j) = d(f_i)/d(y_j)
-                // Column-major order format for SUNDenseMatrix: J_data[j*N + i] indexes J(i,j)
-                const double dYi_dt = jac(species_i, species_j);
-                J_data[j * N + i] = dYi_dt;
+        const auto& jac_index_of = jac.mapping();
+        if (jac.shape() != std::tuple<size_t, size_t>{numSpecies, numSpecies}) {
+            throw exceptions::IllConditionedJacobianError(std::format(
+                "Jacobian generated at time {} has shape ({} x {}) but the network has {} species.",
+                t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), numSpecies));
+        }
+        std::vector<long int> solver_index(numSpecies, -1);
+        for (size_t k = 0; k < numSpecies; ++k) {
+            const auto it = jac_index_of.find(species_list[k]);
+            if (it == jac_index_of.end() || it->second >= numSpecies) {
+                throw exceptions::IllConditionedJacobianError(std::format(
+                    "Jacobian generated at time {} has no entry for network species {}.", t, species_list[k].name()));
+            }
+            solver_index[it->second] = static_cast<long int>(k);
+        }
+        SUNMatZero(J);
+        const Eigen::SparseMatrix<double>& jac_matrix = jac.data();
+        for (int outer = 0; outer < jac_matrix.outerSize(); ++outer) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(jac_matrix, outer); it; ++it) {
+                // J(i,j) = d(f_i)/d(y_j), column-major: J_data[j*N + i]
+                const long int i = solver_index[it.row()];
+                const long int j = solver_index[it.col()];
+                J_data[j * N + i] = it.value();
             }
         }
         LOG_TRACE_L2(solver_instance->m_logger, "Done transferring Jacobian matrix data to SUNDenseMatrix format at time {}", t);
@@ -988,7 +1086,6 @@ namespace gridfire::solver {
             const double c = k.get("c").value;
             return k.get("u").value * k.get("N_a").value * c * c;
         }();
-        const auto& species_list = engine->getNetworkSpecies(data->ctx);
         std::vector<double> mass_excess(numSpecies);
         for (size_t i = 0; i < numSpecies; ++i) {
             mass_excess[i] = species_list[i].mass() - static_cast<double>(species_list[i].a());
@@ -1026,19 +1123,17 @@ namespace gridfire::solver {
         const size_t numSpecies = m_engine.getNetworkSpecies(data->ctx).size();
         sunrealtype* y_data = N_VGetArrayPointer(y);
 
-        // Solver constraints should keep these values very close to 0 but floating point noise can still result in very
-        // small negative numbers which can result in NaN's and more immediate crashes in the composition
-        // finalization stage
-        for (size_t i = 0; i < numSpecies; ++i) {
-            if (y_data[i] < 0.0) {
-                y_data[i] = 0.0;
-            }
-        }
-        std::vector<double> y_vec(y_data, y_data + numSpecies);
+        // Newton iterates can dip slightly below zero. They are evaluated as they are, which keeps the restoring term
+        // of a species' destruction reactions (see DynamicEngine::calculateRHSAndEnergyFromRawAbundances); only the
+        // Composition gets them clamped.
+        const bool clampIterates = m_config->solver.pointSolver.clampNegativeIterates;
+        const std::vector<double> y_vec = clamped_iterate(y_data, numSpecies, clampIterates);
         fourdst::composition::Composition composition(m_engine.getNetworkSpecies(data->ctx), y_vec);
 
         LOG_TRACE_L2(m_logger, "Calculating RHS at time {} with {} species in composition", t, composition.size());
-        const auto result = m_engine.calculateRHSAndEnergy(data->ctx, composition, data->T9, data->rho, false);
+        const auto result = clampIterates
+            ? m_engine.calculateRHSAndEnergy(data->ctx, composition, data->T9, data->rho, false)
+            : m_engine.calculateRHSAndEnergyFromRawAbundances(data->ctx, composition, std::span<const double>(y_data, numSpecies), data->T9, data->rho);
         if (!result) {
             LOG_CRITICAL(m_logger, "Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error()));
             throw exceptions::BadRHSEngineError(std::format("Failed to calculate RHS at time {}: {}", t, EngineStatus_to_string(result.error())));

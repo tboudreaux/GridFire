@@ -161,7 +161,7 @@ namespace gridfire::engine {
 
     }
 
-    Eigen::SparseMatrix<double> NetworkJacobian::data() const {
+    const Eigen::SparseMatrix<double>& NetworkJacobian::data() const {
         return m_jacobianMatrix;
     }
 

@@ -63,6 +63,15 @@ namespace gridfire::engine {
         explicit AdaptiveEngineView(DynamicEngine& baseEngine);
 
         /**
+         * @brief As AdaptiveEngineView(DynamicEngine&), with the given configuration (engine.views.adaptiveEngineView)
+         * instead of config::GridFireConfig{}.
+         */
+        AdaptiveEngineView(DynamicEngine& baseEngine, const config::GridFireConfig& config);
+
+        /// The configuration this view was built with.
+        [[nodiscard]] config::GridFireConfig getConfig() const { return *m_config; }
+
+        /**
          * @brief Updates the active species and reactions based on the current conditions.
          *
          * @param ctx The scratchpad context for storing thread-local data.

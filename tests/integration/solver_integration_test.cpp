@@ -15,6 +15,7 @@
 #include "gridfire/screening/screening_types.h"
 #include "gridfire/solver/strategies/GridSolver.h"
 #include "gridfire/solver/strategies/PointSolver.h"
+#include "gridfire/config/config.h"
 #include "gridfire/utils/gf_omp.h"
 
 #include "fourdst/atomic/species.h"
@@ -47,6 +48,9 @@ using gridfire::solver::PointSolverContext;
 
 namespace {
     const Species& sp(const char* name) { return fourdst::atomic::species.at(name); }
+
+    /// Most failures SolverRobustness.StressGridFailureBudget accepts (measured; lower it as robustness improves)
+    constexpr size_t STRESS_FAILURE_BUDGET = 0;
 
     /// A reaction with a temperature- and density-independent rate (all REACLIB coefficients but a0 are zero).
     /// Q = 0 so the engine never attaches a reverse rate, and the type is plain REACLIB so there are no neutrino losses.
@@ -508,6 +512,72 @@ TEST(GridSolver, ThreadCountDoesNotChangeResults) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Robustness
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace {
+    struct StressOutcome {
+        int runs = 0;
+        std::vector<std::string> failures;
+    };
+
+    /// Default-tolerance burns over a grid of hydrogen-burning conditions, like those a stellar evolution code asks
+    /// for: T = 1e7-5e7 K, rho = 1-1e4 g/cm^3, solar H or 97% of it moved to He-4, and burns to tMax = 1e12-1e17 s
+    /// (the longer ones exhaust hydrogen). Modelled on the stress grid in SOLVER_FINDINGS_v1.2.0.
+    StressOutcome run_stress_grid(const gridfire::config::GridFireConfig& config) {
+        const auto& shared = gridfire::test::main_sequence_engine();
+        const auto solar = gridfire::test::solar_composition();
+        StressOutcome outcome;
+        for (const double T : {1e7, 1.5e7, 3e7, 5e7}) {
+            for (const double rho : {1.0, 150.0, 1e4}) {
+                for (const double hydrogenScale : {1.0, 0.03}) {
+                    std::vector<std::string> symbols;
+                    std::vector<double> X;
+                    for (const auto& s : solar.getRegisteredSpecies()) {
+                        symbols.emplace_back(s.name());
+                        X.push_back(solar.getMassFraction(s));
+                    }
+                    const auto h = std::ranges::find(symbols, "H-1") - symbols.begin();
+                    const auto he = std::ranges::find(symbols, "He-4") - symbols.begin();
+                    X[he] += X[h] * (1.0 - hydrogenScale);
+                    X[h] *= hydrogenScale;
+                    const auto composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);
+
+                    for (const double tMax : {1e12, 1.6e15, 1e17}) {
+                        ++outcome.runs;
+                        const auto context = shared.fresh_context();
+                        PointSolverContext sctx(*context);
+                        sctx.set_stdout_logging(false);
+                        NetIn in;
+                        in.composition = composition;
+                        in.temperature = T;
+                        in.density = rho;
+                        in.tMax = tMax;
+                        in.dt0 = 1e-12;
+                        in.energy = 0.0;
+                        try {
+                            (void)PointSolver(shared.engine, config).evaluate(sctx, in);
+                        } catch (const std::exception& e) {
+                            outcome.failures.push_back(std::format("T={:.1e} rho={:.0e} X_H x{} tMax={:.1e}: {}", T, rho, hydrogenScale, tMax, e.what()));
+                        }
+                    }
+                }
+            }
+        }
+        return outcome;
+    }
+}
+
+TEST(SolverRobustness, StressGridFailureBudget) {
+    const StressOutcome outcome = run_stress_grid(gridfire::config::GridFireConfig{});
+    std::string list;
+    for (const auto& failure : outcome.failures) list += "\n  " + failure;
+    RecordProperty("failures", static_cast<int>(outcome.failures.size()));
+    std::cout << std::format("stress grid: {} of {} runs failed{}\n", outcome.failures.size(), outcome.runs, list);
+    EXPECT_LE(outcome.failures.size(), STRESS_FAILURE_BUDGET) << "failures:" << list;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Failure handling
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -611,22 +681,19 @@ TEST(KnownBugs, TightAbsoluteToleranceFailsOnEnergyAccumulator) {
 }
 
 
-// Known bug: with tight tolerances CVODE fails with CV_CONSTR_FAIL as hydrogen is exhausted (H-1 ~ 1e-8), because the
-// non-negativity constraints and BDF's extrapolated predictor fight as an abundance decays to zero. Default tolerances
-// (1e-5 / 1e-8) get through. Skips while the bug is present; fails once fixed.
-TEST(KnownBugs, TightTolerancesFailAtHydrogenExhaustion) {
+// Tight tolerances used to fail with CV_CONSTR_FAIL as hydrogen ran out (H-1 ~ 1e-8): clamping negative iterates
+// flattened the RHS of destroyed species while the exact Jacobian still reported their slope. Evaluating raw iterates,
+// plus restarts after a failed step, fixed it; the result must also agree with the default-tolerance run.
+TEST(SolverRobustness, TightTolerancesIntegrateThroughHydrogenExhaustion) {
     const auto& shared = gridfire::test::main_sequence_engine();
     const auto context = shared.fresh_context();
-    bool failed = false;
-    try {
-        (void)run(shared.engine, *context, gridfire::test::solar_composition(), 4e7, 100.0, 1e13, {1e-8, 1e-12});
-    } catch (const std::exception&) {
-        failed = true;
-    }
-    if (failed) {
-        GTEST_SKIP() << "Known bug: rtol = 1e-8 fails with CV_CONSTR_FAIL at hydrogen exhaustion (T = 4e7 K)";
-    }
-    FAIL() << "rtol = 1e-8 now integrates through hydrogen exhaustion: the bug appears fixed; make this a normal test";
+    const auto initial = gridfire::test::solar_composition();
+    const NetOut tight = run(shared.engine, *context, initial, 4e7, 100.0, 1e13, {1e-8, 1e-12});
+    const NetOut loose = run(shared.engine, *context, initial, 4e7, 100.0, 1e13, {1e-5, 1e-8});
+    EXPECT_LT(tight.composition.getMassFraction(sp("H-1")), 1e-6) << "the burn should exhaust hydrogen";
+    EXPECT_LT(std::abs(baryon_number(tight.composition) / baryon_number(initial) - 1.0), 1e-10);
+    EXPECT_LT(gridfire::test::rel_diff(tight.energy, loose.energy), 1e-4);
+    EXPECT_LT(gridfire::test::rel_diff(tight.composition.getMassFraction(sp("He-4")), loose.composition.getMassFraction(sp("He-4"))), 1e-5);
 }
 
 

@@ -23,6 +23,8 @@ void register_config_bindings(pybind11::module &m) {
         .def(py::init<>())
         .def_readwrite("absTol", &gridfire::config::PointSolverConfig::absTol)
         .def_readwrite("relTol", &gridfire::config::PointSolverConfig::relTol)
+        .def_readwrite("clampNegativeIterates", &gridfire::config::PointSolverConfig::clampNegativeIterates)
+        .def_readwrite("maxStepFailureRestarts", &gridfire::config::PointSolverConfig::maxStepFailureRestarts)
         .def_readwrite("trigger", &gridfire::config::PointSolverConfig::trigger);
 
     py::class_<gridfire::config::SolverConfig>(m, "SolverConfig")
@@ -40,7 +42,8 @@ void register_config_bindings(pybind11::module &m) {
     py::class_<gridfire::config::EngineConfig>(m, "EngineConfig")
         .def(py::init<>())
         .def_readwrite("views", &gridfire::config::EngineConfig::views)
-        .def_readwrite("screening", &gridfire::config::EngineConfig::screening);
+        .def_readwrite("screening", &gridfire::config::EngineConfig::screening)
+        .def_readwrite("jacobian", &gridfire::config::EngineConfig::jacobian);
 
     py::class_<gridfire::config::GridFireConfig>(m, "GridFireConfig")
         .def(py::init<>())

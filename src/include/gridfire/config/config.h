@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fourdst/config/config.h"
+#include "gridfire/engine/types/jacobian_method.h"
 #include "gridfire/screening/screening_types.h"
 
 #include <string>
@@ -21,6 +22,15 @@ namespace gridfire::config {
     struct PointSolverConfig {
         double absTol = 1.0e-8;
         double relTol = 1.0e-5;
+        /// Clamp negative CVODE iterates to zero before evaluating the RHS and Jacobian (the v1.2.0 behaviour).
+        /// Off by default: clamping flattens the RHS of a species below zero, removing the restoring term of its
+        /// destruction reactions while the (exact) Jacobian still reports it, so Newton converges to negative
+        /// abundances and steps fail the positivity constraint.
+        bool clampNegativeIterates = false;
+        /// When CVODE gives up on a step (repeated error-test, convergence or positivity-constraint failures), restart
+        /// BDF from the last accepted state (order 1, fresh history) up to this many times per evaluate call before
+        /// failing. The integration interval and tolerances are unchanged.
+        int maxStepFailureRestarts = 3;
         TriggerConfig trigger;
     };
 
@@ -45,6 +55,7 @@ namespace gridfire::config {
         EngineViewConfig views;
         EnergyChannelConfig energyChannels;
         screening::ScreeningType screening = screening::ScreeningType::WEAK; ///< Electron screening of reaction rates (WEAK: Salpeter 1954; BARE: none)
+        engine::JacobianMethod jacobian = engine::JacobianMethod::ANALYTIC; ///< How GraphEngine computes the species Jacobian
 
     };
 

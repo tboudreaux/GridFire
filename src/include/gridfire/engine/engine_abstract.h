@@ -19,6 +19,7 @@
 #include <utility>
 #include <expected>
 #include <optional>
+#include <span>
 #include <format>
 
 /**
@@ -247,6 +248,51 @@ namespace gridfire::engine {
             double rho,
             const SparsityPattern& sparsityPattern
         ) const = 0;
+
+        /**
+         * @brief Calculate the RHS on an integrator iterate that may hold small negative abundances.
+         *
+         * Implicit integrators evaluate the RHS at Newton iterates, which can dip slightly below zero for a species
+         * being destroyed. Evaluating the mass-action products on those raw values keeps the destruction term's
+         * restoring force (-lambda Y pushes a negative Y back up); clamping them to zero would flatten the RHS there
+         * while the Jacobian still reports the slope, and Newton then converges to negative abundances.
+         *
+         * @param ctx The scratchpad context for the current state.
+         * @param comp The iterate with negative abundances set to zero (a Composition cannot hold negative values);
+         *             supplies everything that is not a mass-action product, e.g. rates and Ye.
+         * @param rawAbundances The iterate's molar abundances in getNetworkSpecies() order, possibly negative.
+         * @param T9 Temperature in units of 10^9 K.
+         * @param rho Density in g/cm^3.
+         *
+         * The default ignores rawAbundances and evaluates calculateRHSAndEnergy on comp (the clamped iterate), which
+         * is correct for any engine; engines that can evaluate on raw iterates override it. When no abundance is
+         * negative the result must equal calculateRHSAndEnergy on comp.
+         */
+        [[nodiscard]] virtual std::expected<StepDerivatives<double>, EngineStatus> calculateRHSAndEnergyFromRawAbundances(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            std::span<const double> rawAbundances,
+            const double T9,
+            const double rho
+        ) const {
+            return calculateRHSAndEnergy(ctx, comp, T9, rho, false);
+        }
+
+        /**
+         * @brief Generate the Jacobian of calculateRHSAndEnergyFromRawAbundances at the same iterate.
+         *
+         * Parameters as for calculateRHSAndEnergyFromRawAbundances. The default ignores rawAbundances and returns
+         * generateJacobianMatrix on comp.
+         */
+        [[nodiscard]] virtual NetworkJacobian generateJacobianMatrixFromRawAbundances(
+            scratch::StateBlob& ctx,
+            const fourdst::composition::CompositionAbstract &comp,
+            std::span<const double> rawAbundances,
+            const double T9,
+            const double rho
+        ) const {
+            return generateJacobianMatrix(ctx, comp, T9, rho);
+        }
 
 
         /**

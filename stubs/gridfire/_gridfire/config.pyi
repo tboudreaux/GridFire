@@ -2,6 +2,7 @@
 GridFire configuration bindings
 """
 from __future__ import annotations
+import gridfire._gridfire.engine
 import gridfire._gridfire.screening
 import typing
 __all__: list[str] = ['AdaptiveEngineViewConfig', 'BoundaryFluxConfig', 'EngineConfig', 'EngineViewConfig', 'GridFireConfig', 'PointSolverConfig', 'SolverConfig', 'TriggerConfig']
@@ -30,6 +31,7 @@ class BoundaryFluxConfig:
     def relativeThreshold(self, arg0: typing.SupportsFloat) -> None:
         ...
 class EngineConfig:
+    jacobian: gridfire._gridfire.engine.JacobianMethod
     screening: gridfire._gridfire.screening.ScreeningType
     views: EngineViewConfig
     def __init__(self) -> None:
@@ -44,6 +46,7 @@ class GridFireConfig:
     def __init__(self) -> None:
         ...
 class PointSolverConfig:
+    clampNegativeIterates: bool
     trigger: TriggerConfig
     def __init__(self) -> None:
         ...
@@ -52,6 +55,12 @@ class PointSolverConfig:
         ...
     @absTol.setter
     def absTol(self, arg0: typing.SupportsFloat) -> None:
+        ...
+    @property
+    def maxStepFailureRestarts(self) -> int:
+        ...
+    @maxStepFailureRestarts.setter
+    def maxStepFailureRestarts(self, arg0: typing.SupportsInt) -> None:
         ...
     @property
     def relTol(self) -> float:

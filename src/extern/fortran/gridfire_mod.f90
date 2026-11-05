@@ -67,9 +67,46 @@ module gridfire_mod
 
         enumerator :: GF_INVALID_TYPE = 37
 
+        enumerator :: GF_CONFIG_ERROR = 38
+
         enumerator :: GF_SINGLE_ZONE = 1001
         enumerator :: GF_MULTI_ZONE = 1002
     end enum
+
+    ! Values for GFConfig%engine_screening (enum GF_SCREENING_TYPE)
+    enum, bind(C)
+        enumerator :: GF_SCREENING_BARE = 0
+        enumerator :: GF_SCREENING_WEAK = 1
+    end enum
+
+    ! Values for GFConfig%engine_jacobian (enum GF_JACOBIAN_METHOD)
+    enum, bind(C)
+        enumerator :: GF_JACOBIAN_ANALYTIC = 0
+        enumerator :: GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION = 1
+    end enum
+
+    ! Run-time configuration; same layout as struct GFConfig in gridfire_extern.h. Start from gff_default_config(),
+    ! change fields, and pass it to gff_set_config before gff_setup_policy. Logical options are integers (0 = false).
+    type, bind(C), public :: GFConfig
+        ! solver.pointSolver
+        real(c_double) :: solver_abs_tol
+        real(c_double) :: solver_rel_tol
+        ! solver.pointSolver.trigger
+        real(c_double) :: trigger_off_diagonal_threshold
+        real(c_double) :: trigger_timestep_collapse_ratio
+        real(c_double) :: trigger_max_convergence_failures
+        real(c_double) :: trigger_boundary_flux_relative_threshold
+        real(c_double) :: trigger_boundary_flux_absolute_threshold
+        ! engine.views.adaptiveEngineView
+        real(c_double) :: engine_adaptive_relative_culling_threshold
+        ! solver.pointSolver
+        integer(c_int) :: solver_clamp_negative_iterates
+        integer(c_int) :: solver_max_step_failure_restarts
+        ! engine
+        integer(c_int) :: engine_screening        ! GF_SCREENING_BARE or GF_SCREENING_WEAK
+        integer(c_int) :: engine_jacobian         ! GF_JACOBIAN_ANALYTIC or GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION
+        integer(c_int) :: engine_split_hydrogen_pp_cno
+    end type GFConfig
 
     interface
         ! void* gf_init()
@@ -100,6 +137,45 @@ module gridfire_mod
             import :: c_ptr, c_int
             type(c_ptr), value :: ptr
             type(c_ptr) :: c_msg
+        end function
+
+        ! int gf_config_defaults(struct GFConfig* config);
+        function gf_config_defaults(config) result(ierr) bind(C, name="gf_config_defaults")
+            import :: c_int, GFConfig
+            type(GFConfig), intent(out) :: config
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_set_config(void* ptr, const struct GFConfig* config);
+        function gf_set_config(ptr, config) result(ierr) bind(C, name="gf_set_config")
+            import :: c_ptr, c_int, GFConfig
+            type(c_ptr), value :: ptr
+            type(GFConfig), intent(in) :: config
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_config(void* ptr, struct GFConfig* config);
+        function gf_get_config(ptr, config) result(ierr) bind(C, name="gf_get_config")
+            import :: c_ptr, c_int, GFConfig
+            type(c_ptr), value :: ptr
+            type(GFConfig), intent(out) :: config
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_load_config(void* ptr, const char* path);
+        function gf_load_config(ptr, path) result(ierr) bind(C, name="gf_load_config")
+            import :: c_ptr, c_int, c_char
+            type(c_ptr), value :: ptr
+            character(kind=c_char), dimension(*), intent(in) :: path
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_save_config(void* ptr, const char* path);
+        function gf_save_config(ptr, path) result(ierr) bind(C, name="gf_save_config")
+            import :: c_ptr, c_int, c_char
+            type(c_ptr), value :: ptr
+            character(kind=c_char), dimension(*), intent(in) :: path
+            integer(c_int) :: ierr
         end function
 
         ! int gf_register_species(void* ptr, const int num_species, const char** species_names);
@@ -211,6 +287,10 @@ module gridfire_mod
         procedure :: gff_init
         procedure :: gff_free
         procedure :: gff_register_species
+        procedure :: gff_set_config
+        procedure :: gff_get_config
+        procedure :: gff_load_config
+        procedure :: gff_save_config
         procedure :: gff_setup_policy
         procedure :: gff_setup_solver
         procedure :: gff_get_last_error
@@ -293,6 +373,68 @@ module gridfire_mod
                 msg(i+10:i+10) = char_ptr(i)
             end do
         end function gff_get_last_error
+
+        ! GridFire's default configuration, to modify and pass to gff_set_config.
+        function gff_default_config() result(config)
+            type(GFConfig) :: config
+            integer(c_int) :: ierr
+
+            ierr = gf_config_defaults(config)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: could not read the default configuration."
+                error stop
+            end if
+        end function gff_default_config
+
+        ! Use config for the engine and solver; call before gff_setup_policy.
+        subroutine gff_set_config(self, config)
+            class(GridFire), intent(in) :: self
+            type(GFConfig), intent(in) :: config
+            integer(c_int) :: ierr
+
+            ierr = gf_set_config(self%ctx, config)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_set_config
+
+        function gff_get_config(self) result(config)
+            class(GridFire), intent(in) :: self
+            type(GFConfig) :: config
+            integer(c_int) :: ierr
+
+            ierr = gf_get_config(self%ctx, config)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end function gff_get_config
+
+        ! Read the configuration from a TOML file (as written by gff_save_config); call before gff_setup_policy.
+        subroutine gff_load_config(self, path)
+            class(GridFire), intent(in) :: self
+            character(len=*), intent(in) :: path
+            integer(c_int) :: ierr
+
+            ierr = gf_load_config(self%ctx, trim(path) // c_null_char)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_load_config
+
+        subroutine gff_save_config(self, path)
+            class(GridFire), intent(in) :: self
+            character(len=*), intent(in) :: path
+            integer(c_int) :: ierr
+
+            ierr = gf_save_config(self%ctx, trim(path) // c_null_char)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Config Error: ", self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_save_config
 
         subroutine gff_register_species(self, species_list)
             class(GridFire), intent(inout) :: self

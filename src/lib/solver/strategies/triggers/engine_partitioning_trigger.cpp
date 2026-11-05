@@ -406,6 +406,12 @@ namespace gridfire::trigger::solver::CVODE {
         );
         const fourdst::composition::Composition comp(ctx.networkSpecies, Y);
 
+        const reaction::ReactionSet inactiveReactions = ctx.engine.getInactiveNetworkReactions(ctx.state_ctx);
+        if (inactiveReactions.empty()) {
+            m_misses++;
+            return false; // No inactive reactions to consider
+        }
+
         const double net_active_flow = get_reaction_set_flow(
             ctx.engine.getNetworkReactions(ctx.state_ctx),
             ctx,
@@ -414,12 +420,6 @@ namespace gridfire::trigger::solver::CVODE {
             ctx.rho,
             ReactionSetType::ACTIVE
         );
-
-        const reaction::ReactionSet inactiveReactions = ctx.engine.getInactiveNetworkReactions(ctx.state_ctx);
-        if (inactiveReactions.empty()) {
-            m_misses++;
-            return false; // No inactive reactions to consider
-        }
 
         const double net_boundary_flow = get_reaction_set_flow(
             inactiveReactions,

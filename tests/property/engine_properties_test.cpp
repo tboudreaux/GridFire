@@ -210,6 +210,149 @@ TEST_F(EngineProperties, JacobianMatchesFiniteDifferences) {
     }
 }
 
+namespace {
+    /// Largest |J_ij| over a row: the scale against which round-off in that row is judged.
+    std::vector<double> row_scale(const gridfire::engine::NetworkJacobian& jac, const std::vector<fourdst::atomic::Species>& sps) {
+        std::vector<double> scale(sps.size(), 0.0);
+        for (size_t i = 0; i < sps.size(); ++i) {
+            for (size_t j = 0; j < sps.size(); ++j) scale[i] = std::max(scale[i], std::abs(jac(sps[i], sps[j])));
+        }
+        return scale;
+    }
+
+    std::vector<double> clamped(std::vector<double> Y) {
+        for (double& y : Y) y = std::max(y, 0.0);
+        return Y;
+    }
+}
+
+// The analytic Jacobian and the CppAD tape differentiate the same RHS, so they must agree to round-off, including the
+// columns of species that are absent (Y = 0), whose derivatives are real couplings (e.g. production of a new species).
+TEST_F(EngineProperties, AnalyticJacobianMatchesAutoDiff) {
+    auto draw = sampler(9);
+    const auto& sps = species();
+    for (int k = 0; k < 10; ++k) {
+        const EngineState drawn = draw.next();
+        // Make every third trace species absent
+        std::vector<double> Y = gridfire::test::abundances_in_order(drawn.composition, sps);
+        for (size_t j = 0; j < Y.size(); j += 3) {
+            if (Y[j] < 1e-6) Y[j] = 0.0;
+        }
+        const EngineState s{drawn.T9, drawn.rho, gridfire::test::make_composition(sps, Y)};
+        SCOPED_TRACE(trace(s));
+
+        const auto analytic = graph().generateAnalyticJacobianMatrix(*m_ctx, s.composition, s.T9, s.rho);
+        ASSERT_TRUE(analytic.has_value()) << "the default screening model provides analytic derivatives";
+        const auto autodiff = graph().generateAutoDiffJacobianMatrix(*m_ctx, s.composition, s.T9, s.rho);
+        const auto scale = row_scale(autodiff, sps);
+        for (size_t i = 0; i < sps.size(); ++i) {
+            for (size_t j = 0; j < sps.size(); ++j) {
+                const double a = (*analytic)(sps[i], sps[j]), b = autodiff(sps[i], sps[j]);
+                // Entries below MIN_JACOBIAN_THRESHOLD may be dropped by one method and not the other
+                EXPECT_LE(std::abs(a - b), 1e-10 * std::max(std::abs(a), std::abs(b)) + 1e-13 * scale[i] + gridfire::engine::MIN_JACOBIAN_THRESHOLD)
+                    << "J(" << sps[i].name() << ", " << sps[j].name() << "): analytic " << a << " CppAD " << b
+                    << (Y[j] == 0.0 ? " (absent species)" : "");
+            }
+        }
+    }
+}
+
+// On an integrator iterate with slightly negative abundances, the solver evaluates the RHS on the raw values (so a
+// destroyed species keeps its restoring term) and needs the Jacobian of exactly that function. Check both Jacobian
+// methods against finite differences of calculateRHSAndEnergyFromRawAbundances, including the negative columns.
+TEST_F(EngineProperties, RawIterateJacobianMatchesFiniteDifferences) {
+    auto draw = sampler(10);
+    const auto& sps = species();
+    for (int k = 0; k < 3; ++k) {
+        const EngineState drawn = draw.next();
+        std::vector<double> Y = gridfire::test::abundances_in_order(drawn.composition, sps);
+        std::vector<size_t> negative;
+        for (size_t j = 1; j < Y.size(); j += 5) {
+            if (Y[j] < 1e-6) { Y[j] = -0.5 * Y[j]; negative.push_back(j); }
+        }
+        ASSERT_FALSE(negative.empty());
+        SCOPED_TRACE(std::format("T9={:.4e}, rho={:.4e}, {} negative abundances, seed {}", drawn.T9, drawn.rho, negative.size(), gridfire::test::test_seed()));
+
+        const auto raw_rhs = [&](const std::vector<double>& Yr) {
+            const auto comp = gridfire::test::make_composition(sps, clamped(Yr));
+            return graph().calculateRHSAndEnergyFromRawAbundances(*m_ctx, comp, Yr, drawn.T9, drawn.rho).value();
+        };
+        const auto comp = gridfire::test::make_composition(sps, clamped(Y));
+        const auto analytic = graph().generateJacobianMatrixFromRawAbundances(*m_ctx, comp, Y, drawn.T9, drawn.rho);
+
+        std::vector<double> gross(sps.size(), 0.0);
+        for (size_t i = 0; i < sps.size(); ++i) {
+            for (size_t j = 0; j < sps.size(); ++j) gross[i] += std::abs(analytic(sps[i], sps[j])) * std::abs(Y[j]);
+        }
+        // Every negative column, and a sample of the others
+        std::vector<size_t> columns = negative;
+        for (size_t j = 0; j < Y.size(); j += 7) columns.push_back(j);
+        for (const size_t j : columns) {
+            if (Y[j] == 0.0) continue;
+            const double h = 1e-3 * std::abs(Y[j]); // stays on the same side of zero
+            std::map<double, StepDerivatives<double>> column;
+            const auto rhs_at = [&](const double yj) -> const StepDerivatives<double>& {
+                auto it = column.find(yj);
+                if (it == column.end()) {
+                    std::vector<double> Yp = Y;
+                    Yp[j] = yj;
+                    it = column.emplace(yj, raw_rhs(Yp)).first;
+                }
+                return it->second;
+            };
+            for (size_t i = 0; i < sps.size(); ++i) {
+                const auto fd = gridfire::test::richardson_derivative([&](const double yj) { return rhs_at(yj).dydt.at(sps[i]); }, Y[j], h);
+                const double noise = std::max(fd.noise, 64 * std::numeric_limits<double>::epsilon() * gross[i] / h);
+                const double J = analytic(sps[i], sps[j]);
+                const double dropped = (J == 0.0 && i != j) ? gridfire::engine::MIN_JACOBIAN_THRESHOLD : 0.0;
+                EXPECT_LE(std::abs(J - fd.value), 1e-5 * std::abs(fd.value) + noise + dropped)
+                    << "J(" << sps[i].name() << ", " << sps[j].name() << ") at Y_j = " << Y[j] << ": analytic " << J << " FD " << fd.value;
+            }
+        }
+    }
+}
+
+// The CppAD tape, evaluated on a raw iterate, must agree with the analytic Jacobian there too (both differentiate the
+// unclamped mass-action products).
+TEST_F(EngineProperties, RawIterateJacobianMethodsAgree) {
+    auto draw = sampler(11);
+    const auto& sps = species();
+    for (int k = 0; k < 5; ++k) {
+        const EngineState drawn = draw.next();
+        std::vector<double> Y = gridfire::test::abundances_in_order(drawn.composition, sps);
+        for (size_t j = 2; j < Y.size(); j += 4) {
+            if (Y[j] < 1e-6) Y[j] = -Y[j];
+        }
+        SCOPED_TRACE(trace(drawn));
+        const auto comp = gridfire::test::make_composition(sps, clamped(Y));
+        const auto analytic = graph().generateJacobianMatrixFromRawAbundances(*m_ctx, comp, Y, drawn.T9, drawn.rho);
+        const auto tape = graph().generateAutoDiffJacobianMatrix(*m_ctx, comp, drawn.T9, drawn.rho, Y);
+        const auto scale = row_scale(tape, sps);
+        for (size_t i = 0; i < sps.size(); ++i) {
+            for (size_t j = 0; j < sps.size(); ++j) {
+                const double a = analytic(sps[i], sps[j]), b = tape(sps[i], sps[j]);
+                EXPECT_LE(std::abs(a - b), 1e-10 * std::max(std::abs(a), std::abs(b)) + 1e-13 * scale[i] + gridfire::engine::MIN_JACOBIAN_THRESHOLD)
+                    << "J(" << sps[i].name() << ", " << sps[j].name() << ") at Y_j = " << Y[j] << ": analytic " << a << " CppAD " << b;
+            }
+        }
+    }
+}
+
+// With no negative abundance the raw-iterate entry points are exactly the ordinary ones.
+TEST_F(EngineProperties, RawIterateEvaluationEqualsOrdinaryWhenNonNegative) {
+    auto draw = sampler(12);
+    const auto& sps = species();
+    for (int k = 0; k < 10; ++k) {
+        const EngineState s = draw.next();
+        SCOPED_TRACE(trace(s));
+        const std::vector<double> Y = gridfire::test::abundances_in_order(s.composition, sps);
+        const auto raw = graph().calculateRHSAndEnergyFromRawAbundances(*m_ctx, s.composition, Y, s.T9, s.rho).value();
+        const StepDerivatives<double> ordinary = rhs(s);
+        EXPECT_EQ(raw.nuclearEnergyGenerationRate, ordinary.nuclearEnergyGenerationRate);
+        for (const auto& sp : sps) EXPECT_EQ(raw.dydt.at(sp), ordinary.dydt.at(sp)) << sp.name();
+    }
+}
+
 // A cache hit must be indistinguishable from a fresh evaluation, including its side effect on the most recent RHS.
 TEST_F(EngineProperties, RHSCacheIsTransparent) {
     auto draw = sampler(7);

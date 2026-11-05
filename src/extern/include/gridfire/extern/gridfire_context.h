@@ -5,7 +5,17 @@
 #include "fourdst/atomic/atomicSpecies.h"
 
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <vector>
+
+/**
+ * @brief Raised by the C API for an invalid configuration, or a configuration change after the engine was built.
+ * gf_* functions report it as GF_CONFIG_ERROR.
+ */
+struct GFConfigError final : std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
 
 /**
  * @brief Destinations for the instantaneous final-state quantities in NetOut.
@@ -33,7 +43,15 @@ struct GFContext {
     virtual ~GFContext() = default;
 
     std::unique_ptr<gridfire::policy::NetworkPolicy> policy;
-    const gridfire::engine::DynamicEngine* engine;
+    const gridfire::engine::DynamicEngine* engine = nullptr;
+    gridfire::config::GridFireConfig config; ///< Used for the engine and solver; set before init_engine_from_policy
+
+    /// Replace the configuration. Throws GFConfigError once the engine has been built, since it would not apply.
+    void set_config(const gridfire::config::GridFireConfig& new_config);
+    /// Replace the configuration with one read from a TOML file (the format written by save_config).
+    void load_config(const std::string& path);
+    /// Write the current configuration as TOML, a complete file to edit and pass to load_config.
+    void save_config(const std::string& path) const;
     std::unique_ptr<gridfire::engine::scratch::StateBlob> engine_ctx;
     std::vector<fourdst::atomic::Species> speciesList;
 

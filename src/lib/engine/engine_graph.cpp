@@ -18,6 +18,7 @@
 #include "quill/LogMacros.h"
 
 // ReSharper disable once CppUnusedIncludeDirective
+#include <algorithm>
 #include <cstdint>
 #include <set>
 #include <stdexcept>
@@ -121,33 +122,70 @@ namespace gridfire::engine {
         const fourdst::composition::Composition &composition,
         const partition::PartitionFunction &partitionFunction,
         const BuildDepthType buildDepth,
-        const NetworkConstructionFlags reactionTypes ) :
+        const NetworkConstructionFlags reactionTypes
+    ) : GraphEngine(composition, partitionFunction, buildDepth, reactionTypes, config::GridFireConfig{}) {}
+
+    GraphEngine::GraphEngine(
+        const reaction::ReactionSet &reactions
+    ) : GraphEngine(reactions, config::GridFireConfig{}) {}
+
+    GraphEngine::GraphEngine(
+        const reaction::ReactionSet &reactions,
+        const partition::PartitionFunction &partitionFunction
+    ) : GraphEngine(reactions, partitionFunction, config::GridFireConfig{}) {}
+
+    GraphEngine::GraphEngine(
+        const fourdst::composition::Composition &composition,
+        const config::GridFireConfig &config
+    ) : GraphEngine(composition, partition::GroundStatePartitionFunction(), NetworkBuildDepth::Full, NetworkConstructionFlags::DEFAULT, config) {}
+
+    GraphEngine::GraphEngine(
+        const fourdst::composition::Composition &composition,
+        const partition::PartitionFunction &partitionFunction,
+        const BuildDepthType buildDepth,
+        const NetworkConstructionFlags reactionTypes,
+        const config::GridFireConfig &config
+    ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
     m_reactions(build_nuclear_network(composition, m_weakRateInterpolator, buildDepth, reactionTypes)),
     m_partitionFunction(partitionFunction.clone()),
     m_depth(buildDepth)
     {
-        syncInternalMaps();
-    }
-
-    GraphEngine::GraphEngine(
-        const reaction::ReactionSet &reactions
-    ) :
-    m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
-    m_reactions(reactions)
-    {
+        configure(config);
         syncInternalMaps();
     }
 
     GraphEngine::GraphEngine(
         const reaction::ReactionSet &reactions,
-        const partition::PartitionFunction &partitionFunction
+        const config::GridFireConfig &config
+    ) :
+    m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
+    m_reactions(reactions)
+    {
+        configure(config);
+        syncInternalMaps();
+    }
+
+    GraphEngine::GraphEngine(
+        const reaction::ReactionSet &reactions,
+        const partition::PartitionFunction &partitionFunction,
+        const config::GridFireConfig &config
     ) :
     m_weakRateInterpolator(rates::weak::UNIFIED_WEAK_DATA),
     m_reactions(reactions),
     m_partitionFunction(partitionFunction.clone())
     {
+        configure(config);
         syncInternalMaps();
+    }
+
+    void GraphEngine::configure(const config::GridFireConfig &config) {
+        m_config.mutate([&config](auto& cfg) {
+            cfg = config;
+        });
+        m_screeningType = m_config->engine.screening;
+        m_screeningModel = screening::selectScreeningModel(m_screeningType);
+        m_jacobianMethod = m_config->engine.jacobian;
     }
 
     void GraphEngine::addReaction(
@@ -595,17 +633,13 @@ namespace gridfire::engine {
     }
 
     std::pair<double, double> GraphEngine::compute_neutrino_fluxes(
-        scratch::StateBlob& ctx,
         const double netFlow,
-        const reaction::Reaction &reaction
+        const PrecomputedReaction &precomputedReaction
     ) const {
-        if (is_reaclib_weak(reaction)) {
-            const double local_neutrino_loss = netFlow * neutrino_energy_loss_per_molar_flow(reaction);
-            const double local_neutrino_flux = netFlow * m_constants.Na;
-
-            return {local_neutrino_loss, local_neutrino_flux};
+        if (!precomputedReaction.emits_neutrino) {
+            return {0.0, 0.0};
         }
-        return {0.0, 0.0};
+        return {netFlow * precomputedReaction.neutrino_energy_per_flow, netFlow * m_constants.Na};
     }
 
     GraphEngine::PrecomputationKernelResults GraphEngine::accumulate_flows_serial(
@@ -647,7 +681,7 @@ namespace gridfire::engine {
 
             molarReactionFlows.push_back(netFlow);
 
-            auto [local_neutrino_loss, local_neutrino_flux] = compute_neutrino_fluxes(ctx, netFlow, *reaction);
+            auto [local_neutrino_loss, local_neutrino_flux] = compute_neutrino_fluxes(netFlow, precomputedReaction);
             results.total_neutrino_energy_loss_rate += local_neutrino_loss;
             results.total_neutrino_flux += local_neutrino_flux;
 
@@ -939,22 +973,26 @@ namespace gridfire::engine {
         const std::vector<double> &bare_reverse_rates,
         const double T9,
         const double rho,
-        const reaction::ReactionSet &activeReactions
+        const reaction::ReactionSet &activeReactions,
+        const std::span<const double> abundances
     ) const {
         auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        // --- Abundances for the mass-action products and screening (raw integrator iterates when given) ---
+        if (abundances.empty()) {
+            state->local_abundance_cache = networkAbundances(comp);
+        } else {
+            state->local_abundance_cache.assign(abundances.begin(), abundances.end());
+        }
+
         LOG_TRACE_L3(m_logger, "Computing screening factors for {} active reactions.", activeReactions.size());
         // --- Calculate screening factors ---
         const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
             activeReactions,
             m_networkSpecies,
-            comp.getMolarAbundanceVector(),
+            state->local_abundance_cache,
             T9,
             rho
         );
-        state->local_abundance_cache.clear();
-        for (const auto& species: m_networkSpecies) {
-            state->local_abundance_cache.push_back(comp.contains(species) ? comp.getMolarAbundance(species) : 0.0);
-        }
 
         StepDerivatives<double> result;
         std::vector<double> dydt_scratch(m_networkSpecies.size(), 0.0);
@@ -1056,41 +1094,248 @@ namespace gridfire::engine {
         const double T9,
         const double rho
     ) const {
-        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
-        fourdst::composition::Composition mutableComp;
-        for (const auto& species : m_networkSpecies) {
-            mutableComp.registerSpecies(species);
-            if (comp.contains(species)) {
-                mutableComp.setMolarAbundance(species, comp.getMolarAbundance(species));
+        const std::vector<double> Y = networkAbundances(comp);
+        if (m_jacobianMethod == JacobianMethod::ANALYTIC) {
+            if (std::optional<NetworkJacobian> jac = analyticJacobian(comp, Y, T9, rho)) {
+                return std::move(*jac);
+            }
+            LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Screening model has no analytic derivatives; using the CppAD Jacobian.");
+        }
+        return autoDiffJacobian(ctx, Y, T9, rho);
+    }
+
+    std::optional<NetworkJacobian> GraphEngine::generateAnalyticJacobianMatrix(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const std::span<const double> abundances
+    ) const {
+        if (abundances.empty()) {
+            return analyticJacobian(comp, networkAbundances(comp), T9, rho);
+        }
+        return analyticJacobian(comp, abundances, T9, rho);
+    }
+
+    NetworkJacobian GraphEngine::generateAutoDiffJacobianMatrix(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const double T9,
+        const double rho,
+        const std::span<const double> abundances
+    ) const {
+        if (abundances.empty()) {
+            return autoDiffJacobian(ctx, networkAbundances(comp), T9, rho);
+        }
+        return autoDiffJacobian(ctx, abundances, T9, rho);
+    }
+
+    std::expected<StepDerivatives<double>, EngineStatus> GraphEngine::calculateRHSAndEnergyFromRawAbundances(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const std::span<const double> rawAbundances,
+        const double T9,
+        const double rho
+    ) const {
+        if (rawAbundances.size() != m_networkSpecies.size()) {
+            throw exceptions::BadRHSEngineError(std::format(
+                "calculateRHSAndEnergyFromRawAbundances: expected {} abundances (one per network species), got {}.",
+                m_networkSpecies.size(), rawAbundances.size()));
+        }
+        // With no negative abundance the iterate is exactly comp, so use the ordinary (cached) evaluation
+        if (std::ranges::none_of(rawAbundances, [](const double y) { return y < 0.0; }) || !m_usePrecomputation) {
+            return calculateRHSAndEnergy(ctx, comp, T9, rho, false);
+        }
+        auto* state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        std::vector<double> bare_rates;
+        std::vector<double> bare_reverse_rates;
+        compute_bare_rates(comp, T9, rho, m_reactions, bare_rates, bare_reverse_rates);
+        StepDerivatives<double> result = calculateAllDerivativesUsingPrecomputation(
+            ctx, comp, bare_rates, bare_reverse_rates, T9, rho, m_reactions, rawAbundances
+        );
+        state->most_recent_rhs_calculation = result;
+        return result;
+    }
+
+    NetworkJacobian GraphEngine::generateJacobianMatrixFromRawAbundances(
+        scratch::StateBlob& ctx,
+        const fourdst::composition::CompositionAbstract &comp,
+        const std::span<const double> rawAbundances,
+        const double T9,
+        const double rho
+    ) const {
+        if (rawAbundances.size() != m_networkSpecies.size()) {
+            throw std::invalid_argument(std::format(
+                "generateJacobianMatrixFromRawAbundances: expected {} abundances (one per network species), got {}.",
+                m_networkSpecies.size(), rawAbundances.size()));
+        }
+        if (m_jacobianMethod == JacobianMethod::ANALYTIC) {
+            if (std::optional<NetworkJacobian> jac = analyticJacobian(comp, rawAbundances, T9, rho)) {
+                return std::move(*jac);
             }
         }
+        return autoDiffJacobian(ctx, rawAbundances, T9, rho);
+    }
+
+    std::vector<double> GraphEngine::networkAbundances(const fourdst::composition::CompositionAbstract &comp) const {
+        std::vector<double> Y(m_networkSpecies.size(), 0.0);
+        for (size_t i = 0; i < m_networkSpecies.size(); ++i) {
+            if (comp.contains(m_networkSpecies[i])) {
+                Y[i] = comp.getMolarAbundance(m_networkSpecies[i]);
+            }
+        }
+        return Y;
+    }
+
+    std::optional<NetworkJacobian> GraphEngine::analyticJacobian(
+        const fourdst::composition::CompositionAbstract &comp,
+        const std::span<const double> Y,
+        const double T9,
+        const double rho
+    ) const {
+        const size_t numSpecies = m_networkSpecies.size();
+        const std::vector<double> abundances(Y.begin(), Y.end());
+
+        // --- Screening factors and their composition derivatives, from the same abundances as the RHS ---
+        const std::vector<double> screeningFactors = m_screeningModel->calculateScreeningFactors(
+            m_reactions, m_networkSpecies, abundances, T9, rho
+        );
+        const std::optional<std::vector<double>> dlnf_dY = m_screeningModel->calculateScreeningLogDerivatives(
+            m_reactions, m_networkSpecies, abundances, T9, rho
+        );
+        if (!dlnf_dY) {
+            return std::nullopt;
+        }
+
+        // --- Rates exactly as the RHS evaluates them (from comp: T9, rho and Ye) ---
+        std::vector<double> bare_rates;
+        std::vector<double> bare_reverse_rates;
+        compute_bare_rates(comp, T9, rho, m_reactions, bare_rates, bare_reverse_rates);
+        // Electron-capture rates scale with rho * Ye, and Ye = sum_k Z_k Y_k, so d ln k / dY_k = Z_k / Ye
+        const double Ye = comp.getElectronAbundance();
+
+        std::vector<double> J(numSpecies * numSpecies, 0.0); // row-major: J[i * numSpecies + j] = dYdot_i / dY_j
+        std::vector<double> partials;
+        std::vector<std::pair<size_t, double>> flowDerivative; // (column, dR/dY_column) from the mass-action products
+
+        // y^n and n y^(n-1) as the precomputed RHS forms them (powers are small integers)
+        const auto integer_power = [](const double y, const int n) {
+            double result = 1.0;
+            for (int k = 0; k < n; ++k) { result *= y; }
+            return result;
+        };
+        // prod_u Y[idx_u]^p_u and its partial with respect to each factor, built as a product over the other factors
+        // so that it stays exact when an abundance is zero
+        const auto product_and_partials = [&](const std::vector<size_t>& indices, const std::vector<int>& powers) {
+            partials.assign(indices.size(), 0.0);
+            double product = 1.0;
+            for (size_t u = 0; u < indices.size(); ++u) {
+                product *= integer_power(Y[indices[u]], powers[u]);
+            }
+            for (size_t m = 0; m < indices.size(); ++m) {
+                double partial = powers[m] * integer_power(Y[indices[m]], powers[m] - 1);
+                for (size_t u = 0; u < indices.size(); ++u) {
+                    if (u != m) { partial *= integer_power(Y[indices[u]], powers[u]); }
+                }
+                partials[m] = partial;
+            }
+            return product;
+        };
+
+        for (size_t r = 0; r < m_reactions.size(); ++r) {
+            const reaction::Reaction& reaction = m_reactions[r];
+            const PrecomputedReaction& precomp = m_precomputed_reactions[r];
+            const double screening = screeningFactors[r];
+
+            // forward flow F = f k sym rho^(n-1) prod_u Y_u^p_u
+            const size_t numReactants = reaction.reactants().size();
+            const double forwardScale = screening * bare_rates[r] * precomp.symmetry_factor *
+                std::pow(rho, numReactants > 1 ? static_cast<double>(numReactants) - 1 : 0.0);
+            const double forwardFlow = forwardScale * product_and_partials(precomp.unique_reactant_indices, precomp.reactant_powers);
+            flowDerivative.clear();
+            for (size_t m = 0; m < precomp.unique_reactant_indices.size(); ++m) {
+                flowDerivative.emplace_back(precomp.unique_reactant_indices[m], forwardScale * partials[m]);
+            }
+
+            // reverse flow B = f k_rev sym_rev rho^(m-1) prod_u Y_u^q_u, when the RHS includes it
+            double reverseFlow = 0.0;
+            if (precomp.reverse_symmetry_factor != 0.0 && m_useReverseReactions) {
+                const size_t numProducts = reaction.products().size();
+                const double reverseScale = screening * bare_reverse_rates[r] * precomp.reverse_symmetry_factor *
+                    std::pow(rho, numProducts > 1 ? static_cast<double>(numProducts) - 1 : 0.0);
+                reverseFlow = reverseScale * product_and_partials(precomp.unique_product_indices, precomp.product_powers);
+                for (size_t m = 0; m < precomp.unique_product_indices.size(); ++m) {
+                    flowDerivative.emplace_back(precomp.unique_product_indices[m], -reverseScale * partials[m]);
+                }
+            }
+
+            // Terms that touch every column: screening, dR/dY_k += (F - B) dln f/dY_k, and for electron captures
+            // dF/dY_k += F Z_k / Ye (Ye is that of the clamped iterate, so only non-negative Y_k contribute)
+            const double* dlnf_row = dlnf_dY->data() + r * numSpecies;
+            const bool electronCapture = precomp.electron_capture && Ye > 0.0;
+            const double netFlow = forwardFlow - reverseFlow;
+
+            for (size_t a = 0; a < precomp.affected_species_indices.size(); ++a) {
+                const double nu = precomp.stoichiometric_coefficients[a];
+                double* J_row = J.data() + precomp.affected_species_indices[a] * numSpecies;
+                for (const auto& [col, dR] : flowDerivative) {
+                    J_row[col] += nu * dR;
+                }
+                if (netFlow != 0.0) {
+                    for (size_t col = 0; col < numSpecies; ++col) {
+                        double dR = netFlow * dlnf_row[col];
+                        if (electronCapture && Y[col] >= 0.0) { dR += forwardFlow * m_networkSpecies[col].z() / Ye; }
+                        J_row[col] += nu * dR;
+                    }
+                }
+            }
+        }
+        return packJacobian(J);
+    }
+
+    NetworkJacobian GraphEngine::autoDiffJacobian(
+        scratch::StateBlob& ctx,
+        const std::span<const double> Y,
+        const double T9,
+        const double rho
+    ) const {
+        auto *state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Generating jacobian matrix for T9={}, rho={}..", T9, rho);
         const size_t numSpecies = m_networkSpecies.size();
 
         // 1. Pack the input variables into a vector for CppAD
         std::vector<double> adInput(numSpecies + 2, 0.0); // +2 for T9 and rho
-        const std::vector<double>& Y_dynamic = mutableComp.getMolarAbundanceVector();
-        for (size_t i = 0; i < numSpecies; ++i) {
-            adInput[i] = Y_dynamic[i];
-        }
+        std::ranges::copy(Y, adInput.begin());
         adInput[numSpecies]     = T9;  // T9
         adInput[numSpecies + 1] = rho; // rho
 
-        // 2. Calculate the full jacobian
+        // 2. Calculate the full jacobian (the tape's outputs are dY/dt for every species, then eps)
         assert(state->rhsADFun.has_value() && "RHS ADFun not recorded before Jacobian generation.");
         const std::vector<double> dotY = state->rhsADFun.value().Jacobian(adInput);
 
-        // 3. Pack jacobian vector into sparse matrix
-        Eigen::SparseMatrix<double> jacobianMatrix(static_cast<long>(numSpecies), static_cast<long>(numSpecies));
-        std::vector<Eigen::Triplet<double> > triplets;
+        // 3. Keep the species block
+        std::vector<double> J(numSpecies * numSpecies);
         for (size_t i = 0; i < numSpecies; ++i) {
             for (size_t j = 0; j < numSpecies; ++j) {
-                double value = dotY[i * (numSpecies + 2) + j];
+                J[i * numSpecies + j] = dotY[i * (numSpecies + 2) + j];
+            }
+        }
+        return packJacobian(J);
+    }
+
+    NetworkJacobian GraphEngine::packJacobian(const std::span<const double> dense) const {
+        const size_t numSpecies = m_networkSpecies.size();
+        Eigen::SparseMatrix<double> jacobianMatrix(static_cast<long>(numSpecies), static_cast<long>(numSpecies));
+        std::vector<Eigen::Triplet<double>> triplets;
+        for (size_t i = 0; i < numSpecies; ++i) {
+            for (size_t j = 0; j < numSpecies; ++j) {
+                const double value = dense[i * numSpecies + j];
                 if (std::abs(value) > MIN_JACOBIAN_THRESHOLD || i == j) { // Always keep diagonal elements to avoid pathological stiffness
                     triplets.emplace_back(i, j, value);
                 }
             }
         }
+        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
         LOG_TRACE_L1_LIMIT_EVERY_N(1000, m_logger, "Jacobian matrix generated with dimensions: {} rows x {} columns.", jacobianMatrix.rows(), jacobianMatrix.cols());
 
         auto index_to_species = [this](const size_t index) -> fourdst::atomic::Species {
@@ -1099,9 +1344,7 @@ namespace gridfire::engine {
             }
             throw std::out_of_range("Index out of range in index_to_species mapping.");
         };
-        jacobianMatrix.setFromTriplets(triplets.begin(), triplets.end());
-        NetworkJacobian jac(jacobianMatrix, index_to_species);
-        return jac;
+        return NetworkJacobian(jacobianMatrix, index_to_species);
     }
 
     NetworkJacobian GraphEngine::generateJacobianMatrix(
@@ -1623,9 +1866,16 @@ namespace gridfire::engine {
             }
 
             // --- Precompute energy channel attribution (matches the eps definition in calculateAllDerivativesUsingPrecomputation) ---
+            // The neutrino energy lookup matches species names against a table, so it is done once here, not per RHS call
+            precomp.emits_neutrino = is_reaclib_weak(reaction);
+            precomp.neutrino_energy_per_flow = neutrino_energy_loss_per_molar_flow(reaction);
             precomp.energy_per_flow = -massChange * m_constants.u * m_constants.Na * m_constants.c * m_constants.c
-                                      - neutrino_energy_loss_per_molar_flow(reaction);
+                                      - precomp.neutrino_energy_per_flow;
             precomp.channel_index = m_energy_channels.reaction_channel[i];
+
+            // --- Composition dependence of the rate itself (used by the analytic Jacobian) ---
+            const auto* reaclib = dynamic_cast<const reaction::ReaclibReaction*>(&reaction);
+            precomp.electron_capture = reaclib != nullptr && reaclib->is_electron_capture();
 
             m_precomputed_reactions.push_back(std::move(precomp));
         }
