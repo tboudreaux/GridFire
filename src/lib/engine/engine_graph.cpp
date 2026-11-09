@@ -7,6 +7,7 @@
 #include "gridfire/engine/procedures/construction.h"
 #include "gridfire/utils/hashing.h"
 #include "gridfire/utils/table_format.h"
+#include "gridfire/exceptions/error_reaction.h"
 
 #include "gridfire/engine/scratchpads/engine_graph_scratchpad.h"
 #include "gridfire/engine/scratchpads/blob.h"
@@ -22,6 +23,8 @@
 #include <cstdint>
 #include <set>
 #include <stdexcept>
+#include <cmath>
+#include <format>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -206,6 +209,7 @@ namespace gridfire::engine {
         m_screeningType = m_config->engine.screening;
         m_screeningModel = screening::selectScreeningModel(m_screeningType, m_config->engine.screeningBlend);
         m_jacobianMethod = m_config->engine.jacobian;
+        m_useReverseReactions = m_config->engine.useReverseReactions;
     }
 
     void GraphEngine::addReaction(
@@ -260,7 +264,11 @@ namespace gridfire::engine {
         const double Ye = comp.getElectronAbundance();
         const std::vector<double> molarAbundances = comp.getMolarAbundanceVector();
         if (m_usePrecomputation) {
-            const std::size_t state_hash = utils::hash_state(comp, T9, rho, activeReactions);
+            std::size_t state_hash = utils::hash_state(comp, T9, rho, activeReactions);
+            if (m_rate_multiplier_generation != 0) {
+                // Results computed under earlier multipliers must not be reused
+                state_hash ^= m_rate_multiplier_generation * 0x9E3779B97F4A7C15ULL + (state_hash << 6) + (state_hash >> 2);
+            }
             if (state->stepDerivativesCache.contains(state_hash)) {
                 const StepDerivatives<double>& cached = state->stepDerivativesCache.at(state_hash);
                 state->most_recent_rhs_calculation = cached;
@@ -317,9 +325,18 @@ namespace gridfire::engine {
         bare_rates.reserve(activeReactions.size());
         bare_reverse_rates.reserve(activeReactions.size());
 
+        // Rate multipliers: by position when the active set is the whole network (the usual case), else by lookup
+        const bool scaled = !m_rate_multipliers.empty();
+        const bool wholeNetwork = &activeReactions == &m_reactions;
+        size_t position = 0;
         for (const auto& reaction: activeReactions) {
             assert(m_reactions.contains(*reaction)); // A bug which results in this failing indicates a serious internal inconsistency and should only be present during development.
-            bare_rates.push_back(reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap));
+            double rate = reaction->calculate_rate(T9, rho, Ye, 0.0, molarAbundances, m_indexToSpeciesMap);
+            if (scaled) {
+                rate *= wholeNetwork ? m_rate_multipliers[position] : rateMultiplier(*reaction);
+            }
+            ++position;
+            bare_rates.push_back(rate);
             // Always push so bare_reverse_rates stays index-aligned with activeReactions (the kernel indexes it that way)
             bare_reverse_rates.push_back(has_reverse_rate(*reaction) ? calculateReverseRate(*reaction, T9, rho, comp) : 0.0);
         }
@@ -529,6 +546,7 @@ namespace gridfire::engine {
 
         // Sweep the tape forward to record the function value at x
         assert(state->rhsADFun.has_value() && "AD tape for energy derivatives has not been recorded.");
+        syncTapeRateMultipliers(ctx);
         state->rhsADFun.value().Forward(0, x);
 
         // Extract the gradient at the previously evaluated point x using reverse mode
@@ -579,8 +597,96 @@ namespace gridfire::engine {
         generate_jacobian_sparsity_pattern();
 
         precomputeNetwork();
+        rebuildRateMultipliers();
         LOG_INFO(m_logger, "Internal maps synchronized. Network contains {} species and {} reactions.",
                  m_networkSpecies.size(), m_reactions.size());
+    }
+
+    // --- Rate multipliers ---
+    void GraphEngine::setRateMultiplier(const std::string_view reaction_id, const double factor) {
+        if (!std::isfinite(factor) || factor < 0.0) {
+            throw std::invalid_argument(std::format(
+                "Rate multiplier for {} must be finite and >= 0 (got {}).", reaction_id, factor));
+        }
+        if (!m_reactions.contains(reaction_id)) {
+            throw exceptions::ReactionError("cannot set a rate multiplier: the reaction is not in the network",
+                                            std::string(reaction_id));
+        }
+        if (factor == 1.0) {
+            if (const auto it = m_rate_multiplier_by_id.find(reaction_id); it != m_rate_multiplier_by_id.end()) {
+                m_rate_multiplier_by_id.erase(it);
+            }
+        } else {
+            m_rate_multiplier_by_id.insert_or_assign(std::string(reaction_id), factor);
+        }
+        rebuildRateMultipliers();
+    }
+
+    double GraphEngine::getRateMultiplier(const std::string_view reaction_id) const {
+        if (!m_reactions.contains(reaction_id)) {
+            throw exceptions::ReactionError("no rate multiplier: the reaction is not in the network",
+                                            std::string(reaction_id));
+        }
+        const auto it = m_rate_multiplier_by_id.find(reaction_id);
+        return it == m_rate_multiplier_by_id.end() ? 1.0 : it->second;
+    }
+
+    void GraphEngine::clearRateMultipliers() {
+        m_rate_multiplier_by_id.clear();
+        rebuildRateMultipliers();
+    }
+
+    std::vector<std::pair<std::string, double>> GraphEngine::getRateMultipliers() const {
+        std::vector<std::pair<std::string, double>> result;
+        for (const auto& reaction : m_reactions) {
+            if (const auto it = m_rate_multiplier_by_id.find(reaction->id()); it != m_rate_multiplier_by_id.end()) {
+                result.emplace_back(it->first, it->second);
+            }
+        }
+        return result;
+    }
+
+    void GraphEngine::rebuildRateMultipliers() {
+        const bool was_scaled = !m_rate_multipliers.empty();
+        m_rate_multipliers.clear();
+        bool any = false;
+        if (!m_rate_multiplier_by_id.empty()) {
+            m_rate_multipliers.assign(m_reactions.size(), 1.0);
+            for (size_t i = 0; i < m_reactions.size(); ++i) {
+                if (const auto it = m_rate_multiplier_by_id.find(m_reactions[i].id()); it != m_rate_multiplier_by_id.end()) {
+                    m_rate_multipliers[i] = it->second;
+                    any = true;
+                }
+            }
+            if (!any) {
+                m_rate_multipliers.clear(); // none of the factors names a reaction still in the network
+            }
+        }
+        // Only a change bumps the generation, so an engine that never uses multipliers keeps generation 0
+        if (was_scaled || !m_rate_multipliers.empty()) {
+            ++m_rate_multiplier_generation;
+        }
+    }
+
+    double GraphEngine::rateMultiplier(const reaction::Reaction& reaction) const {
+        if (m_rate_multipliers.empty()) {
+            return 1.0;
+        }
+        const auto it = m_precomputed_reaction_index_map.find(reaction.hash(0));
+        return it == m_precomputed_reaction_index_map.end() ? 1.0 : m_rate_multipliers[it->second];
+    }
+
+    void GraphEngine::syncTapeRateMultipliers(scratch::StateBlob& ctx) const {
+        auto* state = scratch::get_state<scratch::GraphEngineScratchPad, true>(ctx);
+        if (!state->rhsADFun.has_value() || state->rate_multiplier_generation == m_rate_multiplier_generation) {
+            return;
+        }
+        if (m_rate_multipliers.empty()) {
+            state->rhsADFun->new_dynamic(std::vector<double>(m_reactions.size(), 1.0));
+        } else {
+            state->rhsADFun->new_dynamic(m_rate_multipliers);
+        }
+        state->rate_multiplier_generation = m_rate_multiplier_generation;
     }
 
     // --- Network Graph Construction Methods ---
@@ -878,7 +984,8 @@ namespace gridfire::engine {
         const double expFactor = std::exp(-reaction.qValue() / (kBMeV * temp));
         double reverseRate = 0.0;
         // We also let Y be an empy vector since the strong reaction rate is independent of Y
-        const double forwardRate = reaction.calculate_rate(T9, rho, Ye, mue, {}, m_indexToSpeciesMap);
+        // Scaled like the forward rate, so a rate multiplier keeps detailed balance
+        const double forwardRate = rateMultiplier(reaction) * reaction.calculate_rate(T9, rho, Ye, mue, {}, m_indexToSpeciesMap);
 
         if (reaction.reactants().size() == 2 && reaction.products().size() == 2) {
             reverseRate = calculateReverseRateTwoBody(reaction, T9, forwardRate, expFactor);
@@ -1190,7 +1297,7 @@ namespace gridfire::engine {
 
         const double Ye = comp.getElectronAbundance();
 
-        const double bareFlow = calculateMolarReactionFlow<double>(
+        const double bareFlow = rateMultiplier(reaction) * calculateMolarReactionFlow<double>(
             reaction,
             comp.getMolarAbundanceVector(),
             T9,
@@ -1447,6 +1554,7 @@ namespace gridfire::engine {
 
         // 2. Calculate the full jacobian (the tape's outputs are dY/dt for every species, then eps)
         assert(state->rhsADFun.has_value() && "RHS ADFun not recorded before Jacobian generation.");
+        syncTapeRateMultipliers(ctx);
         const std::vector<double> dotY = state->rhsADFun.value().Jacobian(adInput);
 
         // 3. Keep the species block
@@ -1582,6 +1690,7 @@ namespace gridfire::engine {
         auto& jac_subset = state->jacobianSubsetCache.at(sparsity_hash);
 
         assert(state->rhsADFun.has_value() && "RHS ADFun not recorded before Jacobian generation.");
+        syncTapeRateMultipliers(ctx);
         state->rhsADFun.value().sparse_jac_rev(
             x,
             jac_subset, // Sparse Jacobian output
@@ -1857,7 +1966,11 @@ namespace gridfire::engine {
 
         // 3. Declare independent variables (what CppAD will differentiate wrt.)
         //    This also beings the tape recording process.
-        CppAD::Independent(adInput);
+        //    One dynamic parameter per reaction, its rate multiplier: recorded at 1 (generation 0 of the scratchpads'
+        //    copies), and changed with new_dynamic without re-recording (syncTapeRateMultipliers).
+        std::vector<CppAD::AD<double>> adRateMultipliers(m_reactions.size(), CppAD::AD<double>(1.0));
+        CppAD::Independent(adInput, adRateMultipliers);
+        m_tape_rate_multipliers = &adRateMultipliers;
 
         const std::vector<CppAD::AD<double>> adY(adInput.begin(), adInput.begin() + static_cast<long>(numSpecies));
         const CppAD::AD<double> adT9  = adInput[numSpecies];
@@ -1896,6 +2009,7 @@ namespace gridfire::engine {
         );
         dependentVector.push_back(result.nuclearEnergyGenerationRate);
 
+        m_tape_rate_multipliers = nullptr;
         m_authoritativeADFun.Dependent(adInput, dependentVector);
         m_authoritativeADFun.optimize();
 

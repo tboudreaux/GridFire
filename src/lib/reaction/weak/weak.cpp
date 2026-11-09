@@ -95,6 +95,22 @@ namespace {
 }
 
 namespace gridfire::rates::weak {
+    uint64_t data_hash() {
+        static const uint64_t hash = [] {
+            XXHash64 hasher(0);
+            for (const auto& row : UNIFIED_WEAK_DATA) {
+                const float values[] = {row.t9, row.log_rhoye, row.mu_e, row.log_beta_plus, row.log_electron_capture,
+                                        row.log_neutrino_loss_ec, row.log_beta_minus, row.log_positron_capture,
+                                        row.log_antineutrino_loss_bd};
+                hasher.add(&row.A, sizeof row.A);
+                hasher.add(&row.Z, sizeof row.Z);
+                hasher.add(values, sizeof values);
+            }
+            return hasher.hash();
+        }();
+        return hash;
+    }
+
     WeakReactionMap::WeakReactionMap() {
         using namespace fourdst::atomic;
 

@@ -32,6 +32,7 @@ class BoundaryFluxConfig:
         ...
 class EngineConfig:
     jacobian: gridfire._gridfire.engine.JacobianMethod
+    useReverseReactions: bool
     screening: gridfire._gridfire.screening.ScreeningType
     screeningBlend: gridfire._gridfire.screening.ScreeningBlendWindow
     passiveSpecies: list[str]

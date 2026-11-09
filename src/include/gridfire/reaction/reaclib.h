@@ -15,4 +15,10 @@ namespace gridfire::reaclib {
      * @return A constant reference to the application-wide reaction set.
      */
     const reaction::ReactionSet &get_all_reaclib_reactions();
+
+    /// Name of the REACLIB snapshot compiled into this build (the file utils/reaclib/format.py converted).
+    inline constexpr const char* DATA_SOURCE = "REACLIB (pynucastro snapshot reaclib_pynucastro_latest_Z26)";
+
+    /// XXH64 of the REACLIB data compiled into this build: identifies the rate coefficients exactly.
+    uint64_t data_hash();
 } // namespace gridfire::reaclib

@@ -88,6 +88,16 @@ struct GFContext {
     std::vector<fourdst::atomic::Species> speciesList;
     std::vector<std::string> network_species_names; ///< Null-terminated names handed out by gf_get_network_species
     std::vector<std::string> reaction_ids; ///< Null-terminated ids handed out by gf_get_reaction_id
+    std::string policy_name; ///< Policy the engine was built from (empty before gf_construct_engine_from_policy)
+    std::string provenance; ///< Text handed out by gf_get_provenance
+
+    /// Scale one reaction's rate (GraphEngine::setRateMultiplier). Needs the engine; throws GFConfigError before it
+    /// exists or for a factor that is negative or not finite, and gridfire::exceptions::ReactionError for an unknown id.
+    void set_rate_multiplier(const std::string& reaction_id, double factor);
+    /// The factor set for a reaction (1 if none); same errors as set_rate_multiplier.
+    [[nodiscard]] double get_rate_multiplier(const std::string& reaction_id) const;
+    /// Remove every rate multiplier (needs the engine).
+    void clear_rate_multipliers();
 
     /// Set the species carried without reactions (config engine.passiveSpecies). Throws once the engine exists.
     void set_passive_species(const std::vector<std::string>& names);

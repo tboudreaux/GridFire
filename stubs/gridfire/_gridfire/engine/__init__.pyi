@@ -520,6 +520,22 @@ class GraphEngine(DynamicEngine):
         """
         Check if the engine is using reverse reactions.
         """
+    def setRateMultiplier(self, reaction_id: str, factor: typing.SupportsFloat) -> None:
+        """
+        Scale a reaction's rate (and its reverse rate) by factor >= 0 in every later evaluation; 1 removes it, 0 switches the reaction off.
+        """
+    def getRateMultiplier(self, reaction_id: str) -> float:
+        """
+        The factor set for a reaction (1.0 if none).
+        """
+    def clearRateMultipliers(self) -> None:
+        """
+        Remove every rate multiplier.
+        """
+    def getRateMultipliers(self) -> list[tuple[str, float]]:
+        """
+        Every (reaction id, factor) with a factor other than 1, in network order.
+        """
     def primeEngine(self, ctx: scratchpads.StateBlob, netIn: gridfire._gridfire.type.NetIn) -> PrimingReport:
         """
         Prime the engine with a NetIn object to prepare for calculations.

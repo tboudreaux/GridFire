@@ -3,6 +3,7 @@
 
 #include "gridfire/reaction/reaclib.h"
 #include "gridfire/reaction/reactions_data.h"
+#include "xxhash64.h"
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_reaction.h"
 
@@ -254,6 +255,11 @@ namespace gridfire::reaclib {
             throw std::runtime_error("Reaclib reactions have not been initialized.");
         }
         return *s_all_reaclib_reactions_ptr;
+    }
+
+    uint64_t data_hash() {
+        static const uint64_t hash = XXHash64::hash(raw_reactions_data, raw_reactions_data_len, 0);
+        return hash;
     }
 
 } // namespace gridfire::reaclib

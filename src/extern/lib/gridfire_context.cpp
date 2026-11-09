@@ -37,6 +37,35 @@ void GFContext::set_config(const gridfire::config::GridFireConfig &new_config) {
     config = new_config;
 }
 
+namespace {
+    /// The context's GraphEngine (the bottom of the policy's engine stack), whose rates the multipliers scale
+    gridfire::engine::GraphEngine& graph_engine_of(const GFContext& context) {
+        if (context.engine == nullptr || context.policy == nullptr) {
+            throw GFConfigError("Rate multipliers need the engine: call gf_construct_engine_from_policy first.");
+        }
+        auto* graph = dynamic_cast<gridfire::engine::GraphEngine*>(context.policy->get_engine_stack().front().get());
+        if (graph == nullptr) {
+            throw GFConfigError("Rate multipliers are not supported by this policy's engine.");
+        }
+        return *graph;
+    }
+}
+
+void GFContext::set_rate_multiplier(const std::string& reaction_id, const double factor) {
+    if (!std::isfinite(factor) || factor < 0.0) {
+        throw GFConfigError(std::format("Rate multiplier for {} must be finite and >= 0 (got {}).", reaction_id, factor));
+    }
+    graph_engine_of(*this).setRateMultiplier(reaction_id, factor);
+}
+
+double GFContext::get_rate_multiplier(const std::string& reaction_id) const {
+    return graph_engine_of(*this).getRateMultiplier(reaction_id);
+}
+
+void GFContext::clear_rate_multipliers() {
+    graph_engine_of(*this).clearRateMultipliers();
+}
+
 void GFContext::set_passive_species(const std::vector<std::string> &names) {
     if (engine != nullptr) {
         throw GFConfigError("Passive species must be set before the engine is constructed (gf_construct_engine_from_policy).");
@@ -137,6 +166,7 @@ void GFContext::init_engine_from_policy(const std::string &policy_name, const do
 
     const auto& [e, ctx] = policy->construct();
     this->engine = &e;
+    this->policy_name = policy_name;
     this->engine_ctx = ctx->clone_structure();
 
     this->network_species_names.clear();

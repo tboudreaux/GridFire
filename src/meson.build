@@ -37,6 +37,7 @@ gridfire_sources = files(
     'lib/policy/policy_logical.cpp',
     'lib/policy/stellar_policy.cpp',
     'lib/utils/logging.cpp',
+    'lib/utils/provenance.cpp',
 )
 
 

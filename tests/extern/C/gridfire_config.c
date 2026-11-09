@@ -46,7 +46,8 @@ static int configs_equal(const struct GFConfig* a, const struct GFConfig* b) {
            a->solver_clamp_negative_iterates == b->solver_clamp_negative_iterates &&
            a->solver_max_step_failure_restarts == b->solver_max_step_failure_restarts &&
            a->engine_screening == b->engine_screening && a->engine_jacobian == b->engine_jacobian &&
-           a->engine_split_hydrogen_pp_cno == b->engine_split_hydrogen_pp_cno;
+           a->engine_split_hydrogen_pp_cno == b->engine_split_hydrogen_pp_cno &&
+           a->engine_use_reverse_reactions == b->engine_use_reverse_reactions;
 }
 
 /* Build a single-zone context with config (NULL: defaults), evolve 1e10 s at solar-core conditions, return eps_nuc. */
@@ -73,6 +74,57 @@ static double evolved_eps_nuc(const struct GFConfig* config) {
     CHECK_OK(ret, ctx, "gf_evolve");
     gf_free(SINGLE_ZONE, ctx);
     return eps_nuc;
+}
+
+/* Provenance text of a context, copied (the context owns the original) */
+static void provenance_of(void* ctx, char* out, size_t size) {
+    const char* text = NULL;
+    CHECK_OK(gf_get_provenance(ctx, &text), ctx, "gf_get_provenance");
+    snprintf(out, size, "%s", text ? text : "");
+}
+
+static void check_version_and_provenance(void) {
+    const char* version = gf_get_version();
+    int major = -1, minor = -1, patch = -1;
+    CHECK(version && sscanf(version, "%d.%d.%d", &major, &minor, &patch) == 3, "gf_get_version gave '%s'", version);
+
+    static char before[4096], after[4096], other[4096], bare[4096];
+    void* ctx = gf_init(SINGLE_ZONE);
+    provenance_of(ctx, before, sizeof before);
+    const char* keys[] = {"gridfire_version: ", "strong_rates: ", "weak_rates: ", "rate_multipliers: ", "screening: BLENDED",
+                          "jacobian: ANALYTIC", "passive_species: none", "energy_channels: ", "solver: CVODE"};
+    for (size_t i = 0; i < sizeof keys / sizeof keys[0]; ++i) {
+        CHECK(strstr(before, keys[i]) != NULL, "provenance lacks '%s':\n%s", keys[i], before);
+    }
+    CHECK(strstr(before, version) != NULL, "provenance does not give the version");
+    CHECK(strstr(before, "network: ") == NULL, "network listed before the engine exists");
+
+    CHECK_OK(gf_register_species(ctx, NUM_SPECIES, species_names), ctx, "gf_register_species");
+    CHECK_OK(gf_construct_engine_from_policy(ctx, "MAIN_SEQUENCE_POLICY", abundances, NUM_SPECIES), ctx, "construct");
+    provenance_of(ctx, after, sizeof after);
+    CHECK(strstr(after, "policy: MAIN_SEQUENCE_POLICY") && strstr(after, "network: ") && strstr(after, "reactions, hash "),
+          "provenance lacks the policy or network once built:\n%s", after);
+    printf("provenance:\n%s", after);
+
+    /* The same configuration and network give the same text; a different screening model changes it */
+    void* twin = gf_init(SINGLE_ZONE);
+    CHECK_OK(gf_register_species(twin, NUM_SPECIES, species_names), twin, "gf_register_species");
+    CHECK_OK(gf_construct_engine_from_policy(twin, "MAIN_SEQUENCE_POLICY", abundances, NUM_SPECIES), twin, "construct");
+    provenance_of(twin, other, sizeof other);
+    CHECK(strcmp(after, other) == 0, "identical contexts give different provenance");
+
+    void* changed = gf_init(SINGLE_ZONE);
+    struct GFConfig config;
+    gf_config_defaults(&config);
+    config.engine_screening = GF_SCREENING_BARE;
+    CHECK_OK(gf_set_config(changed, &config), changed, "gf_set_config");
+    provenance_of(changed, bare, sizeof bare);
+    CHECK(strstr(bare, "screening: BARE") != NULL, "provenance does not follow the configured screening");
+
+    CHECK(gf_get_provenance(ctx, NULL) == GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR, "NULL output accepted");
+    gf_free(SINGLE_ZONE, ctx);
+    gf_free(SINGLE_ZONE, twin);
+    gf_free(SINGLE_ZONE, changed);
 }
 
 int main(int argc, char** argv) {
@@ -102,6 +154,7 @@ int main(int argc, char** argv) {
     custom.engine_screening_blend_strong = 1.2;
     custom.solver_max_step_failure_restarts = 5;
     custom.engine_split_hydrogen_pp_cno = 0;
+    custom.engine_use_reverse_reactions = 1;
     CHECK_OK(gf_set_config(ctx, &custom), ctx, "gf_set_config");
     CHECK_OK(gf_get_config(ctx, &current), ctx, "gf_get_config");
     CHECK(configs_equal(&current, &custom), "gf_get_config does not return what gf_set_config set");
@@ -158,6 +211,8 @@ int main(int argc, char** argv) {
     CHECK(eps_default / eps_bare > 1.02, "screening did not change eps_nuc (ratio %.6f)", eps_default / eps_bare);
     /* The Jacobian only steers Newton, so both methods reach the same solution to within the tolerances */
     CHECK(fabs(eps_autodiff / eps_default - 1.0) < 1e-3, "Jacobian methods disagree (ratio %.8f)", eps_autodiff / eps_default);
+
+    check_version_and_provenance();
 
     if (failures) {
         printf("%d check(s) failed\n", failures);

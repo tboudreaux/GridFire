@@ -61,6 +61,9 @@ namespace gridfire::config {
         /// A passive species may not take part in any reaction of the network.
         std::vector<std::string> passiveSpecies;
         engine::JacobianMethod jacobian = engine::JacobianMethod::ANALYTIC; ///< How GraphEngine computes the species Jacobian
+        /// Include reverse (photodisintegration) rates, from detailed balance, for strong reactions with two reactants
+        /// and two products. Negligible for hydrogen and helium burning, so off by default.
+        bool useReverseReactions = false;
 
     };
 

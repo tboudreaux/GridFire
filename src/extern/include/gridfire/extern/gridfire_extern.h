@@ -121,6 +121,7 @@ extern "C" {
         int engine_screening;              /**< enum GF_SCREENING_TYPE */
         int engine_jacobian;               /**< enum GF_JACOBIAN_METHOD */
         int engine_split_hydrogen_pp_cno;  /**< engine.energyChannels.splitHydrogenPPCNO */
+        int engine_use_reverse_reactions;  /**< engine.useReverseReactions: reverse rates by detailed balance (default 0) */
     };
 
     char* gf_get_last_error_message(void* ptr);
@@ -156,6 +157,19 @@ extern "C" {
 
     /** Write this context's configuration as TOML (the format gf_load_config reads). */
     int gf_save_config(void* ptr, const char* path);
+
+    /** GridFire's version, e.g. "1.2.0". The string is static. */
+    const char* gf_get_version(void);
+
+    /**
+     * What this context will compute with, for a host code to record next to its results (e.g. in output headers):
+     * one "key: value" line each for the GridFire version, the policy and network (size and a hash of its reactions,
+     * once the engine exists), the strong and weak rate libraries with hashes of their compiled data, rate
+     * multipliers, screening, Jacobian method, passive species, energy channels and solver tolerances. Two runs with
+     * the same description used the same code version, rates, network and physics options. The string is owned by
+     * the context and stays valid until the next gf_get_provenance call or gf_free.
+     */
+    int gf_get_provenance(void* ptr, const char** description);
 
     /**
      * Species carried in the composition without any reactions, e.g. the metals a stellar code lumps together and
@@ -375,6 +389,27 @@ extern "C" {
 
     /** Identifier of reaction `index` (0-based), e.g. "p(p,e+)d" or "he4(2a,)c12". The string is owned by the context. */
     int gf_get_reaction_id(void* ptr, size_t index, const char** id);
+
+    /**
+     * Scale one reaction's rate by a constant factor, e.g. to sample rate uncertainties in Monte Carlo runs.
+     *
+     * reaction_id is an identifier from gf_get_reaction_id. The factor multiplies that reaction's rate in everything
+     * the context computes afterwards (gf_evolve, gf_evaluate, gf_evaluate_reactions, for every zone): energy
+     * generation, abundances, neutrino losses, derivatives and both Jacobian methods. A reverse rate is scaled with
+     * its forward rate, so detailed balance holds. The network is not rebuilt, so changing factors between runs is
+     * cheap. Factors stay until changed; 1 removes one, 0 switches the reaction off. gf_get_provenance lists them.
+     *
+     * Needs gf_construct_engine_from_policy first (GF_CONFIG_ERROR otherwise). Returns GF_CONFIG_ERROR for a negative
+     * or non-finite factor and GF_REACTION_ERROR for a reaction not in the network. Do not call while another thread
+     * is evolving or evaluating with the same context.
+     */
+    int gf_set_rate_multiplier(void* ptr, const char* reaction_id, double factor);
+
+    /** The factor set for a reaction (1 if none). Errors as for gf_set_rate_multiplier. */
+    int gf_get_rate_multiplier(void* ptr, const char* reaction_id, double* factor);
+
+    /** Remove every rate multiplier (all rates back to their library values). Needs the engine. */
+    int gf_clear_rate_multipliers(void* ptr);
 
     /**
      * Number of energy channels reported per zone by gf_evolve (valid once the engine has been constructed).

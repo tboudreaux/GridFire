@@ -120,6 +120,10 @@ struct GraphEngineScratchPad final : AbstractScratchPad {
     /// @brief Hash of the composition flow_abundances was built from.
     std::optional<std::size_t> flow_abundances_hash;
 
+    /// @brief The engine's rate-multiplier generation that rhsADFun's dynamic parameters hold. The engine's tape is
+    ///        recorded with every multiplier at 1, which is generation 0 (GraphEngine::syncTapeRateMultipliers).
+    std::uint64_t rate_multiplier_generation = 0;
+
     /// @brief Flag indicating whether the scratchpad has been initialized.
     bool has_initialized = false;
 
@@ -163,6 +167,7 @@ struct GraphEngineScratchPad final : AbstractScratchPad {
         jacobianSubsetCache.clear();
         jacWorkCache.clear();
         most_recent_rhs_calculation = std::nullopt;
+        rate_multiplier_generation = 0;
         has_initialized = true;
     }
 
@@ -206,6 +211,7 @@ struct GraphEngineScratchPad final : AbstractScratchPad {
         ptr->jacobianSubsetCache = jacobianSubsetCache;
         ptr->jacWorkCache = jacWorkCache;
         ptr->most_recent_rhs_calculation = most_recent_rhs_calculation;
+        ptr->rate_multiplier_generation = rate_multiplier_generation;
         return ptr;
     }
 };

@@ -507,6 +507,28 @@ void con_stype_register_graph_engine_bindings(const pybind11::module &m) {
         &gridfire::engine::GraphEngine::getConfig,
         "Get a copy of the configuration this engine was built with."
     );
+    py_graph_engine_bindings.def("setRateMultiplier",
+        [](gridfire::engine::GraphEngine& self, const std::string& reaction_id, const double factor) {
+            self.setRateMultiplier(reaction_id, factor);
+        },
+        py::arg("reaction_id"), py::arg("factor"),
+        "Scale a reaction's rate (and its reverse rate) by factor >= 0 in every later evaluation; 1 removes it, 0 switches the reaction off."
+    );
+    py_graph_engine_bindings.def("getRateMultiplier",
+        [](const gridfire::engine::GraphEngine& self, const std::string& reaction_id) {
+            return self.getRateMultiplier(reaction_id);
+        },
+        py::arg("reaction_id"),
+        "The factor set for a reaction (1.0 if none)."
+    );
+    py_graph_engine_bindings.def("clearRateMultipliers",
+        &gridfire::engine::GraphEngine::clearRateMultipliers,
+        "Remove every rate multiplier."
+    );
+    py_graph_engine_bindings.def("getRateMultipliers",
+        &gridfire::engine::GraphEngine::getRateMultipliers,
+        "Every (reaction id, factor) with a factor other than 1, in network order."
+    );
     py_graph_engine_bindings.def("getSpeciesTimescales",
         [](const gridfire::engine::GraphEngine& self,
            sp::StateBlob& ctx,

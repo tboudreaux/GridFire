@@ -57,6 +57,21 @@ program gridfire_config_test
     call check(eps_default / eps_bare > 1.02d0, "weak screening raises eps_nuc")
     call check(abs(eps_autodiff / eps_default - 1.0d0) < 1.0d-3, "both Jacobian methods reach the same solution")
 
+    ! --- Version and provenance (the latter a multi-line string, longer than any fixed buffer) ---
+    block
+        character(len=:), allocatable :: version, provenance
+        version = gff_get_version()
+        call check(len(version) >= 5 .and. scan(version, ".") > 0, "gff_get_version gives a version")
+        call net%gff_init(SINGLE_ZONE)
+        call net%gff_set_config(custom)
+        provenance = net%gff_get_provenance()
+        call check(index(provenance, "gridfire_version: " // version) > 0, "provenance gives the version")
+        call check(index(provenance, "jacobian: AUTOMATIC_DIFFERENTIATION") > 0, "provenance follows the configuration")
+        call check(index(provenance, "weak_rates: ") > 0 .and. index(provenance, new_line("a")) > 0, &
+                "provenance has every line")
+        call net%gff_free()
+    end block
+
     print *, "All Fortran configuration checks passed"
 
 contains
@@ -84,7 +99,8 @@ contains
                 a%solver_clamp_negative_iterates == b%solver_clamp_negative_iterates .and. &
                 a%solver_max_step_failure_restarts == b%solver_max_step_failure_restarts .and. &
                 a%engine_screening == b%engine_screening .and. a%engine_jacobian == b%engine_jacobian .and. &
-                a%engine_split_hydrogen_pp_cno == b%engine_split_hydrogen_pp_cno
+                a%engine_split_hydrogen_pp_cno == b%engine_split_hydrogen_pp_cno .and. &
+                a%engine_use_reverse_reactions == b%engine_use_reverse_reactions
     end function same_config
 
     ! Evolve 1e10 s at solar-core conditions with the given configuration and return eps_nuc at the end.

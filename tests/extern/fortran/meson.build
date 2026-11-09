@@ -44,3 +44,10 @@ gf_fortran_dsep_composition_test = executable('gf_fortran_dsep_composition_test'
            dependencies: [gridfire_fortran_dep]
 )
 test('extern_fortran_dsep_composition', gf_fortran_dsep_composition_test, suite: 'extern', timeout: 600)
+
+gf_fortran_rate_multipliers_test = executable('gf_fortran_rate_multipliers_test', 'gridfire_rate_multipliers.f90',
+           install: false,
+           fortran_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_fortran_dep]
+)
+test('extern_fortran_rate_multipliers', gf_fortran_rate_multipliers_test, suite: 'extern', timeout: 600)

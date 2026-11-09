@@ -26,6 +26,12 @@
 
 
 namespace gridfire::rates::weak {
+    /// Source of the weak-rate table compiled into this build.
+    inline constexpr const char* DATA_SOURCE = "Ravlic, Giraud, Paar & Zegers (2024), arXiv:2412.00650";
+
+    /// XXH64 of the weak-rate table compiled into this build (row by row, so struct padding never enters it).
+    uint64_t data_hash();
+
     /**
      * @class WeakReactionMap
      * @brief Index of available weak reactions keyed by species.

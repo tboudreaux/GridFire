@@ -73,6 +73,14 @@ module gridfire_mod
 
         enumerator :: GF_SINGLE_ZONE = 1001
         enumerator :: GF_MULTI_ZONE = 1002
+        ! Correctly spelled names for codes whose original names above are misspelled (both are kept, same values)
+        enumerator :: GF_FAILED_TO_PARTITION_ENGINE_ERROR = 6
+        enumerator :: GF_BAD_RHS_ENGINE_ERROR = 10
+        enumerator :: GF_UNKNOWN_JACOBIAN_ERROR = 13
+        enumerator :: GF_REACTION_ERROR = 21
+        enumerator :: GF_DEBUG_ERROR = 30
+        enumerator :: GF_INVALID_NUM_SPECIES = 34
+        enumerator :: GF_UNKNOWN_FREE_TYPE = 36
     end enum
 
     ! Values for GFConfig%engine_screening (enum GF_SCREENING_TYPE)
@@ -114,6 +122,7 @@ module gridfire_mod
         integer(c_int) :: engine_screening        ! GF_SCREENING_BARE, _WEAK, _CD09 or _BLENDED
         integer(c_int) :: engine_jacobian         ! GF_JACOBIAN_ANALYTIC or GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION
         integer(c_int) :: engine_split_hydrogen_pp_cno
+        integer(c_int) :: engine_use_reverse_reactions  ! reverse rates by detailed balance (default 0)
     end type GFConfig
 
     interface
@@ -145,6 +154,27 @@ module gridfire_mod
             import :: c_ptr, c_int
             type(c_ptr), value :: ptr
             type(c_ptr) :: c_msg
+        end function
+
+        ! const char* gf_get_version(void);
+        function gf_get_version() result(c_str) bind(C, name="gf_get_version")
+            import :: c_ptr
+            type(c_ptr) :: c_str
+        end function
+
+        ! int gf_get_provenance(void* ptr, const char** description);
+        function gf_get_provenance(ptr, description) result(ierr) bind(C, name="gf_get_provenance")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            type(c_ptr), intent(out) :: description
+            integer(c_int) :: ierr
+        end function
+
+        ! size_t strlen(const char*), to copy C strings of any length
+        function c_strlen(str) result(n) bind(C, name="strlen")
+            import :: c_ptr, c_size_t
+            type(c_ptr), value :: str
+            integer(c_size_t) :: n
         end function
 
         ! int gf_config_defaults(struct GFConfig* config);
@@ -237,12 +267,11 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
-        ! int gf_construct_solver_from_engine(void* ptr, const char* solver_name);
-        function gf_construct_solver_from_engine(ptr, solver_name) result(ierr) &
+        ! int gf_construct_solver_from_engine(void* ptr);
+        function gf_construct_solver_from_engine(ptr) result(ierr) &
                 bind(C, name="gf_construct_solver_from_engine")
             import
             type(c_ptr), value :: ptr
-            character(kind=c_char), dimension(*), intent(in) :: solver_name
             integer(c_int) :: ierr
         end function
 
@@ -396,6 +425,31 @@ module gridfire_mod
             integer(c_int) :: ierr
         end function
 
+        ! int gf_set_rate_multiplier(void* ptr, const char* reaction_id, double factor);
+        function gf_set_rate_multiplier(ptr, reaction_id, factor) result(ierr) bind(C, name="gf_set_rate_multiplier")
+            import :: c_ptr, c_int, c_char, c_double
+            type(c_ptr), value :: ptr
+            character(kind=c_char), dimension(*), intent(in) :: reaction_id
+            real(c_double), value :: factor
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_get_rate_multiplier(void* ptr, const char* reaction_id, double* factor);
+        function gf_get_rate_multiplier(ptr, reaction_id, factor) result(ierr) bind(C, name="gf_get_rate_multiplier")
+            import :: c_ptr, c_int, c_char, c_double
+            type(c_ptr), value :: ptr
+            character(kind=c_char), dimension(*), intent(in) :: reaction_id
+            real(c_double), intent(out) :: factor
+            integer(c_int) :: ierr
+        end function
+
+        ! int gf_clear_rate_multipliers(void* ptr);
+        function gf_clear_rate_multipliers(ptr) result(ierr) bind(C, name="gf_clear_rate_multipliers")
+            import :: c_ptr, c_int
+            type(c_ptr), value :: ptr
+            integer(c_int) :: ierr
+        end function
+
         ! int gf_get_num_energy_channels(void* ptr, size_t* num_channels);
         function gf_get_num_energy_channels(ptr, num_channels) result(ierr) bind(C, name="gf_get_num_energy_channels")
             import :: c_ptr, c_int, c_size_t
@@ -437,6 +491,7 @@ module gridfire_mod
         procedure :: gff_setup_policy
         procedure :: gff_setup_solver
         procedure :: gff_get_last_error
+        procedure :: gff_get_provenance
 
         procedure :: gff_evolve_single
         procedure :: gff_evolve_multi
@@ -459,6 +514,9 @@ module gridfire_mod
         procedure :: gff_register_network_species
         procedure :: gff_get_num_reactions
         procedure :: gff_get_reaction_ids
+        procedure :: gff_set_rate_multiplier
+        procedure :: gff_get_rate_multiplier
+        procedure :: gff_clear_rate_multipliers
 
         procedure :: gff_get_num_energy_channels
         procedure :: gff_get_energy_channel_names
@@ -533,6 +591,47 @@ module gridfire_mod
                 msg(i+10:i+10) = char_ptr(i)
             end do
         end function gff_get_last_error
+
+        ! A C string as a Fortran string ("" for a null pointer)
+        function c_to_fortran_string(c_str) result(str)
+            type(c_ptr), intent(in) :: c_str
+            character(len=:), allocatable :: str
+            character(kind=c_char), pointer :: chars(:)
+            integer :: i, n
+
+            if (.not. c_associated(c_str)) then
+                str = ""
+                return
+            end if
+            n = int(c_strlen(c_str))
+            call c_f_pointer(c_str, chars, [max(n, 1)])
+            allocate(character(len=n) :: str)
+            do i = 1, n
+                str(i:i) = chars(i)
+            end do
+        end function c_to_fortran_string
+
+        ! GridFire's version, e.g. "1.2.0"
+        function gff_get_version() result(version)
+            character(len=:), allocatable :: version
+            version = c_to_fortran_string(gf_get_version())
+        end function gff_get_version
+
+        ! What this context computes with, one "key: value" line each (see gf_get_provenance in gridfire_extern.h);
+        ! lines are separated by new_line('a'), ready to write into an output header.
+        function gff_get_provenance(self) result(description)
+            class(GridFire), intent(in) :: self
+            character(len=:), allocatable :: description
+            type(c_ptr) :: c_str
+            integer(c_int) :: ierr
+
+            ierr = gf_get_provenance(self%ctx, c_str)
+            if (ierr /= GF_SUCCESS) then
+                print *, "GridFire Error: ", self%gff_get_last_error()
+                error stop
+            end if
+            description = c_to_fortran_string(c_str)
+        end function gff_get_provenance
 
         ! GridFire's default configuration, to modify and pass to gff_set_config.
         function gff_default_config() result(config)
@@ -622,6 +721,57 @@ module gridfire_mod
             end if
         end subroutine gff_set_passive_species
 
+        ! Scale one reaction's rate (an id from gff_get_reaction_ids) by factor >= 0 in everything computed afterwards;
+        ! 1 removes it, 0 switches the reaction off. Call after gff_setup_policy. With ierr present, failures (e.g.
+        ! GF_REACTION_ERROR for a reaction not in the network) are returned; without it they stop the program.
+        subroutine gff_set_rate_multiplier(self, reaction_id, factor, ierr)
+            class(GridFire), intent(in) :: self
+            character(len=*), intent(in) :: reaction_id
+            real(c_double), intent(in) :: factor
+            integer, intent(out), optional :: ierr
+            integer(c_int) :: c_ierr
+
+            c_ierr = gf_set_rate_multiplier(self%ctx, trim(reaction_id) // c_null_char, factor)
+            call gff_report_or_stop(self, c_ierr, "GridFire Rate Multiplier Error: ", ierr)
+        end subroutine gff_set_rate_multiplier
+
+        ! The factor set for a reaction (1 if none); errors as for gff_set_rate_multiplier.
+        subroutine gff_get_rate_multiplier(self, reaction_id, factor, ierr)
+            class(GridFire), intent(in) :: self
+            character(len=*), intent(in) :: reaction_id
+            real(c_double), intent(out) :: factor
+            integer, intent(out), optional :: ierr
+            integer(c_int) :: c_ierr
+
+            c_ierr = gf_get_rate_multiplier(self%ctx, trim(reaction_id) // c_null_char, factor)
+            call gff_report_or_stop(self, c_ierr, "GridFire Rate Multiplier Error: ", ierr)
+        end subroutine gff_get_rate_multiplier
+
+        ! Remove every rate multiplier.
+        subroutine gff_clear_rate_multipliers(self, ierr)
+            class(GridFire), intent(in) :: self
+            integer, intent(out), optional :: ierr
+            integer(c_int) :: c_ierr
+
+            c_ierr = gf_clear_rate_multipliers(self%ctx)
+            call gff_report_or_stop(self, c_ierr, "GridFire Rate Multiplier Error: ", ierr)
+        end subroutine gff_clear_rate_multipliers
+
+        ! Hand an error code back through ierr when the caller passed one; otherwise stop on failure with the message
+        subroutine gff_report_or_stop(self, c_ierr, prefix, ierr)
+            class(GridFire), intent(in) :: self
+            integer(c_int), intent(in) :: c_ierr
+            character(len=*), intent(in) :: prefix
+            integer, intent(out), optional :: ierr
+
+            if (present(ierr)) then
+                ierr = int(c_ierr)
+            else if (c_ierr /= GF_SUCCESS) then
+                print *, prefix, self%gff_get_last_error()
+                error stop
+            end if
+        end subroutine gff_report_or_stop
+
         ! Mass fractions to molar abundances (registered species order), Y_i = X_i / m_i; X must sum to one to 1e-10.
         ! GridFire itself takes molar abundances only; ierr is GF_INVALID_STATE for a bad X.
         subroutine gff_mass_fractions_to_molar_single(self, X, Y, ierr)
@@ -706,12 +856,27 @@ module gridfire_mod
             end if
         end subroutine gff_setup_policy
 
+        ! Build the solver (CVODE; for MULTI_ZONE a grid of CVODE solvers). solver_name is optional and kept for
+        ! existing callers: GridFire has one solver, so only "CVODE" (any case) is accepted.
         subroutine gff_setup_solver(self, solver_name)
             class(GridFire), intent(in) :: self
-            character(len=*), intent(in) :: solver_name
+            character(len=*), intent(in), optional :: solver_name
             integer(c_int) :: ierr
+            character(len=:), allocatable :: name
+            integer :: i
 
-            ierr = gf_construct_solver_from_engine(self%ctx, trim(solver_name) // c_null_char)
+            if (present(solver_name)) then
+                name = trim(adjustl(solver_name))
+                do i = 1, len(name)
+                    if (name(i:i) >= "a" .and. name(i:i) <= "z") name(i:i) = achar(iachar(name(i:i)) - 32)
+                end do
+                if (name /= "CVODE") then
+                    print *, "GridFire Solver Error: unknown solver '", trim(solver_name), "' (the only solver is CVODE)"
+                    error stop
+                end if
+            end if
+
+            ierr = gf_construct_solver_from_engine(self%ctx)
             if (ierr /= GF_SUCCESS .AND. ierr /= FDSSE_SUCCESS) then
                 print *, "GridFire Solver Error: ", self%gff_get_last_error()
                 error stop

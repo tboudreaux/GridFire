@@ -51,3 +51,10 @@ gf_extern_c_dsep_composition = executable('gf_extern_c_dsep_composition', 'gridf
            dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
 )
 test('extern_c_dsep_composition', gf_extern_c_dsep_composition, suite: 'extern', timeout: 600)
+
+gf_extern_c_rate_multipliers = executable('gf_extern_c_rate_multipliers', 'gridfire_rate_multipliers.c',
+           install: false,
+           c_args: ['-Wall', '-Wextra'],
+           dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
+)
+test('extern_c_rate_multipliers', gf_extern_c_rate_multipliers, suite: 'extern', timeout: 600)

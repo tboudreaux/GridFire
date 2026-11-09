@@ -1,3 +1,4 @@
+#include "gridfire/utils/provenance.h"
 #include "gridfire/gridfire.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/extern/gridfire_context.h"
@@ -157,6 +158,7 @@ namespace {
             case gridfire::engine::JacobianMethod::AUTOMATIC_DIFFERENTIATION: c.engine_jacobian = GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION; break;
         }
         c.engine_split_hydrogen_pp_cno = config.engine.energyChannels.splitHydrogenPPCNO ? 1 : 0;
+        c.engine_use_reverse_reactions = config.engine.useReverseReactions ? 1 : 0;
         return c;
     }
 
@@ -200,6 +202,7 @@ namespace {
             default: throw GFConfigError(std::format("engine_jacobian ({}) is not a GF_JACOBIAN_METHOD.", c.engine_jacobian));
         }
         base.engine.energyChannels.splitHydrogenPPCNO = c.engine_split_hydrogen_pp_cno != 0;
+        base.engine.useReverseReactions = c.engine_use_reverse_reactions != 0;
         return base;
     }
 }
@@ -260,6 +263,27 @@ extern "C" {
     }
 
 
+    const char* gf_get_version(void) {
+        static const std::string version = gridfire::version_string();
+        return version.c_str();
+    }
+
+    int gf_get_provenance(void* ptr, const char** description) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!description) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->provenance = gridfire::describe_provenance(
+                ctx->config, ctx->engine, ctx->engine_ctx.get(), ctx->policy_name);
+            *description = ctx->provenance.c_str();
+            return GF_SUCCESS;
+        });
+    }
+
     int gf_set_passive_species(void* ptr, const size_t num_species, const char** species_names) {
         if (!ptr || (num_species > 0 && !species_names)) {
             return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
@@ -274,6 +298,42 @@ extern "C" {
                 names.emplace_back(species_names[i]);
             }
             ctx->set_passive_species(names);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_set_rate_multiplier(void* ptr, const char* reaction_id, const double factor) {
+        if (!ptr || !reaction_id) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->set_rate_multiplier(reaction_id, factor);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_get_rate_multiplier(void* ptr, const char* reaction_id, double* factor) {
+        if (!ptr || !reaction_id) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        if (!factor) {
+            return GF_UNINITIALIZED_OUTPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            *factor = ctx->get_rate_multiplier(reaction_id);
+            return GF_SUCCESS;
+        });
+    }
+
+    int gf_clear_rate_multipliers(void* ptr) {
+        if (!ptr) {
+            return GF_UNINITIALIZED_INPUT_MEMORY_ERROR;
+        }
+        auto* ctx = static_cast<GFContext*>(ptr);
+        return execute_guarded(ctx, [&]() {
+            ctx->clear_rate_multipliers();
             return GF_SUCCESS;
         });
     }

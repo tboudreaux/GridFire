@@ -18,6 +18,8 @@
 
 #include "gridfire/engine/scratchpads/blob.h"
 
+#include <cstdint>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <span>
@@ -735,6 +737,38 @@ namespace gridfire::engine {
             scratch::StateBlob& ctx
         ) const;
 
+        /**
+         * @brief Scale one reaction's rate by a constant factor (e.g. for Monte Carlo rate-uncertainty runs).
+         *
+         * The factor multiplies the reaction's rate everywhere the engine uses it: the RHS, energy generation, both
+         * Jacobian methods, the eps derivatives and per-reaction contributions. A reverse rate, which follows from the
+         * forward rate by detailed balance, is scaled by the same factor. It takes effect on the next evaluation; the
+         * network is not rebuilt. Factors are kept by reaction id, so they survive a network rebuild for reactions
+         * still in the network.
+         *
+         * Not thread-safe: do not call while any evaluation on this engine (in any state blob) is in progress.
+         *
+         * @param reaction_id Reaction identifier as reported by getNetworkReactions (e.g. "p(p,e+)d").
+         * @param factor Finite and >= 0 (0 switches the reaction off; 1 removes the multiplier).
+         * @throws exceptions::ReactionError if the reaction is not in the network.
+         * @throws std::invalid_argument if factor is negative or not finite.
+         */
+        void setRateMultiplier(std::string_view reaction_id, double factor);
+
+        /// @brief The factor set for a reaction (1 if none). @throws exceptions::ReactionError if not in the network.
+        [[nodiscard]] double getRateMultiplier(std::string_view reaction_id) const;
+
+        /// @brief Remove every rate multiplier.
+        void clearRateMultipliers();
+
+        /// @brief Every reaction with a factor other than 1, in network order, as (reaction id, factor).
+        [[nodiscard]] std::vector<std::pair<std::string, double>> getRateMultipliers() const;
+
+        /**
+         * @brief Changes each time the multipliers change; state blobs use it to refresh what depends on them.
+         */
+        [[nodiscard]] std::uint64_t getRateMultiplierGeneration() const { return m_rate_multiplier_generation; }
+
 
         /**
          * @brief Gets the index of a species in the network.
@@ -993,14 +1027,46 @@ namespace gridfire::engine {
         EnergyChannels m_energy_channels;
         std::unordered_map<uint64_t, size_t> m_precomputed_reaction_index_map;
 
-        bool m_useReverseReactions = false; ///< Flag to enable or disable reverse reactions. If false, only forward reactions are considered.
+        bool m_useReverseReactions = m_config->engine.useReverseReactions; ///< Include reverse rates (engine.useReverseReactions in the configuration; default off); set by configure().
         bool m_store_intermediate_reaction_contributions = false; ///< Flag to enable or disable storing intermediate reaction contributions for debugging.
 
         BuildDepthType m_depth;
 
         CppAD::ADFun<double> m_authoritativeADFun;
 
+        // --- Rate multipliers (setRateMultiplier) ---
+        std::map<std::string, double, std::less<>> m_rate_multiplier_by_id; ///< The factors set, by reaction id (the source of truth; never holds 1)
+        std::vector<double> m_rate_multipliers; ///< Factor per reaction in m_reactions order; empty when no factor is set (the fast path)
+        std::uint64_t m_rate_multiplier_generation = 0; ///< Bumped on every change, so state blobs know to refresh
+        /// The tape's dynamic parameters (one per reaction) while recordADTape runs; otherwise null
+        const std::vector<CppAD::AD<double>>* m_tape_rate_multipliers = nullptr;
+
     private:
+        /// @brief Rebuild m_rate_multipliers from m_rate_multiplier_by_id for the current m_reactions.
+        void rebuildRateMultipliers();
+
+        /// @brief The factor of reaction m_reactions[index] (1 when none is set).
+        [[nodiscard]] double rateMultiplier(const size_t index) const {
+            return m_rate_multipliers.empty() ? 1.0 : m_rate_multipliers[index];
+        }
+
+        /// @brief The factor of a reaction of the network, found by its hash (1 when none is set).
+        [[nodiscard]] double rateMultiplier(const reaction::Reaction& reaction) const;
+
+        /// @brief The factor as T: on the AD tape a dynamic parameter, so it can change without re-recording.
+        template <IsArithmeticOrAD T>
+        [[nodiscard]] T rateMultiplierAs(const size_t index) const {
+            if constexpr (std::is_same_v<T, CppAD::AD<double>>) {
+                if (m_tape_rate_multipliers != nullptr) {
+                    return (*m_tape_rate_multipliers)[index];
+                }
+            }
+            return static_cast<T>(rateMultiplier(index));
+        }
+
+        /// @brief Bring a state blob's copy of the AD tape up to date with the current multipliers.
+        void syncTapeRateMultipliers(scratch::StateBlob& ctx) const;
+
         /**
          * @brief Synchronizes the internal maps.
          *
@@ -1365,8 +1431,8 @@ namespace gridfire::engine {
                 continue; // Skip this reaction if any reactant is not present
             }
 
-            // 1. Calculate forward reaction rate
-            const T forwardMolarReactionFlow = screeningFactors[reactionIndex] *
+            // 1. Calculate forward reaction rate (times the reaction's rate multiplier, a tape parameter under AD)
+            const T forwardMolarReactionFlow = screeningFactors[reactionIndex] * rateMultiplierAs<T>(reactionIndex) *
                 calculateMolarReactionFlow<T>(
                     reaction,
                     Y,
