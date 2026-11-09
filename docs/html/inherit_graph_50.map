@@ -1,3 +1,43 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structgridfire_1_1rates_1_1weak_1_1_rate_data_row.html" title="One row of the unified weak&#45;rate data table for a specific isotope and state." alt="" coords="5,5,142,46"/>
+<area shape="rect" id="Node000000" href="$classgridfire_1_1policy_1_1_reaction_chain_policy.html" title="Abstract interface encapsulating a set of reactions representing a single chain or pathway." alt="" coords="5,169,168,210"/>
+<area shape="rect" id="Node000001" href="$class_py_reaction_chain_policy.html" title=" " alt="" coords="231,120,390,145"/>
+<area shape="poly" id="edge40_Node000000_Node000001" title=" " alt="" coords="181,163,260,144,256,148,184,167"/>
+<area shape="rect" id="Node000002" href="$classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html" title="A ReactionChainPolicy composed of multiple child ReactionChainPolicy instances." alt="" coords="216,169,406,210"/>
+<area shape="poly" id="edge41_Node000000_Node000002" title=" " alt="" coords="181,188,217,188,213,191,184,192"/>
+<area shape="rect" id="Node000008" href="$classgridfire_1_1policy_1_1_temperature_dependent_chain_policy.html" title="Base class for reaction chain policies that are active only within specific temperature ranges." alt="" coords="220,659,402,699"/>
+<area shape="poly" id="edge47_Node000000_Node000008" title=" " alt="" coords="105,222,303,658,298,659,102,226"/>
+<area shape="rect" id="Node000003" href="$classgridfire_1_1policy_1_1_c_n_o_chain_policy.html" title="CNO Chain Policy." alt="" coords="470,5,645,46"/>
+<area shape="poly" id="edge42_Node000002_Node000003" title=" " alt="" coords="401,159,404,156,415,144,421,132,427,108,434,82,441,70,452,57,474,45,471,49,456,61,445,73,439,84,433,109,426,134,419,147,408,160,405,162"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html" title="Hot CNO Chain Policy." alt="" coords="460,71,655,111"/>
+<area shape="poly" id="edge43_Node000002_Node000004" title=" " alt="" coords="393,161,405,155,428,139,453,122,485,110,481,114,455,127,431,143,407,160,397,165"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1policy_1_1_hydrogen_helium_reaction_chain_policy.html" title="The pp chains, the CNO cycle and helium burning (HeliumBurningChainPolicy)." alt="" coords="466,136,650,177"/>
+<area shape="poly" id="edge44_Node000002_Node000005" title=" " alt="" coords="420,173,467,167,463,170,423,177"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html" title=" " alt="" coords="460,201,656,242"/>
+<area shape="poly" id="edge45_Node000002_Node000006" title=" " alt="" coords="420,202,461,208,457,210,423,206"/>
+<area shape="rect" id="Node000007" href="$classgridfire_1_1policy_1_1_proton_proton_chain_policy.html" title="Proton&#45;Proton Chain Policy." alt="" coords="484,267,632,307"/>
+<area shape="poly" id="edge46_Node000002_Node000007" title=" " alt="" coords="368,214,455,251,491,265,486,267,453,256,370,219"/>
+<area shape="rect" id="Node000009" href="$classgridfire_1_1policy_1_1_c_n_o_i_chain_policy.html" title="CNO I Chain Policy." alt="" coords="468,332,647,373"/>
+<area shape="poly" id="edge48_Node000008_Node000009" title=" " alt="" coords="317,642,333,586,360,517,399,445,424,413,452,384,474,371,470,375,456,388,428,416,403,448,365,519,338,588,322,644"/>
+<area shape="rect" id="Node000010" href="$classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html" title="CNO II Chain Policy." alt="" coords="466,397,649,438"/>
+<area shape="poly" id="edge49_Node000008_Node000010" title=" " alt="" coords="322,643,342,599,370,547,407,494,452,449,476,437,472,440,456,453,411,498,374,550,347,601,327,646"/>
+<area shape="rect" id="Node000011" href="$classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html" title="CNO III Chain Policy." alt="" coords="464,463,651,503"/>
+<area shape="poly" id="edge50_Node000008_Node000011" title=" " alt="" coords="331,644,381,579,415,544,453,514,479,502,475,506,455,519,418,548,385,582,335,648"/>
+<area shape="rect" id="Node000012" href="$classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html" title="CNO IV Chain Policy." alt="" coords="464,528,651,569"/>
+<area shape="poly" id="edge51_Node000008_Node000012" title=" " alt="" coords="347,647,396,612,453,579,485,568,481,571,455,584,399,617,351,651"/>
+<area shape="rect" id="Node000013" href="$classgridfire_1_1policy_1_1_helium_burning_chain_policy.html" title="Main Sequence Reaction Chain Policy." alt="" coords="482,593,633,634"/>
+<area shape="poly" id="edge52_Node000008_Node000013" title=" " alt="" coords="404,652,484,632,479,635,406,657"/>
+<area shape="rect" id="Node000014" href="$classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html" title="Hot CNO I Chain Policy." alt="" coords="458,659,657,699"/>
+<area shape="poly" id="edge53_Node000008_Node000014" title=" " alt="" coords="417,676,460,678,455,680,419,682"/>
+<area shape="rect" id="Node000015" href="$classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html" title="Hot CNO II Chain Policy." alt="" coords="456,724,659,765"/>
+<area shape="poly" id="edge54_Node000008_Node000015" title=" " alt="" coords="405,701,481,723,476,724,406,707"/>
+<area shape="rect" id="Node000016" href="$classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html" title="Hot CNO III Chain Policy." alt="" coords="454,789,661,830"/>
+<area shape="poly" id="edge55_Node000008_Node000016" title=" " alt="" coords="349,706,399,741,455,774,486,788,481,789,453,779,396,746,349,712"/>
+<area shape="rect" id="Node000017" href="$classgridfire_1_1policy_1_1_proton_proton_i_chain_policy.html" title="Proton&#45;Proton I Chain Policy." alt="" coords="484,855,632,895"/>
+<area shape="poly" id="edge56_Node000008_Node000017" title=" " alt="" coords="333,709,385,776,418,810,455,839,486,856,480,857,453,844,415,814,381,779,332,715"/>
+<area shape="rect" id="Node000018" href="$classgridfire_1_1policy_1_1_proton_proton_i_i_chain_policy.html" title="Proton&#45;Proton II Chain Policy." alt="" coords="484,920,632,961"/>
+<area shape="poly" id="edge57_Node000008_Node000018" title=" " alt="" coords="325,711,347,757,374,808,411,860,456,905,486,924,481,923,452,909,407,864,370,811,342,759,324,716"/>
+<area shape="rect" id="Node000019" href="$classgridfire_1_1policy_1_1_proton_proton_i_i_i_chain_policy.html" title="Proton&#45;Proton III Chain Policy." alt="" coords="484,985,632,1026"/>
+<area shape="poly" id="edge58_Node000008_Node000019" title=" " alt="" coords="321,712,338,770,365,839,403,910,428,942,456,970,486,990,480,990,452,974,424,945,399,913,360,841,333,772,319,717"/>
+<area shape="rect" id="Node000020" href="$classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html" title="Triple&#45;Alpha Chain Policy." alt="" coords="486,1051,629,1091"/>
+<area shape="poly" id="edge59_Node000008_Node000020" title=" " alt="" coords="317,712,331,782,356,869,374,914,396,958,423,999,456,1036,489,1058,484,1057,452,1040,419,1003,391,961,369,916,351,870,326,784,315,717"/>
 </map>

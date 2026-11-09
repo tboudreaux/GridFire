@@ -1,6 +1,7 @@
 var engine__abstract_8h =
 [
     [ "gridfire::engine::StepDerivatives< T >", "structgridfire_1_1engine_1_1_step_derivatives.html", "structgridfire_1_1engine_1_1_step_derivatives" ],
+    [ "gridfire::engine::ReactionContributions", "structgridfire_1_1engine_1_1_reaction_contributions.html", "structgridfire_1_1engine_1_1_reaction_contributions" ],
     [ "gridfire::engine::EnergyDerivatives", "structgridfire_1_1engine_1_1_energy_derivatives.html", "structgridfire_1_1engine_1_1_energy_derivatives" ],
     [ "gridfire::engine::Engine", "classgridfire_1_1engine_1_1_engine.html", "classgridfire_1_1engine_1_1_engine" ],
     [ "gridfire::engine::DynamicEngine", "classgridfire_1_1engine_1_1_dynamic_engine.html", "classgridfire_1_1engine_1_1_dynamic_engine" ],

@@ -1,39 +1,67 @@
 <map id="GFPointContext" name="GFPointContext">
-<area shape="rect" id="Node000001" title=" " alt="" coords="1830,332,1946,357"/>
-<area shape="rect" id="Node000002" href="$struct_g_f_context.html" title=" " alt="" coords="1564,186,1649,212"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1648,217,1864,331,1858,331,1646,222"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="1195,5,1364,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1360,49,1378,57,1441,88,1501,124,1590,186,1585,185,1498,128,1439,93,1376,61,1359,54"/>
-<area shape="rect" id="Node000004" href="$classgridfire_1_1policy_1_1_network_policy.html" title="Abstract interface for policies that construct DynamicEngine networks from a seed composition." alt="" coords="955,5,1115,46"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1130,23,1197,25,1192,26,1131,28"/>
-<area shape="rect" id="Node000005" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="1196,71,1362,111"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="1361,114,1472,150,1570,186,1565,186,1470,155,1361,119"/>
-<area shape="rect" id="Node000006" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="958,78,1112,104"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1128,88,1198,91,1193,91,1128,94"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="1182,136,1377,177"/>
-<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="1393,168,1566,193,1561,194,1393,174"/>
-<area shape="rect" id="Node000008" href="$classgridfire_1_1engine_1_1scratch_1_1_state_blob.html" title="Container for managing a collection of typed scratchpad instances." alt="" coords="956,136,1114,177"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1129,154,1184,156,1179,157,1130,159"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="590,77,787,148"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="802,124,959,146,953,147,802,129"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="230,92,485,133"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="500,110,592,111,587,113,501,115"/>
-<area shape="rect" id="Node000011" href="$structgridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad.html" title="Abstract base struct for engine scratchpad memory." alt="" coords="5,92,163,133"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="177,110,231,111,227,114,180,115"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="614,172,763,213"/>
-<area shape="poly" id="edge11_Node000008_Node000012" title=" " alt="" coords="778,190,853,186,931,178,958,176,953,177,932,184,854,192,779,195"/>
-<area shape="rect" id="Node000013" title=" " alt="" coords="1212,201,1347,242"/>
-<area shape="poly" id="edge12_Node000002_Node000013" title=" " alt="" coords="1362,215,1471,209,1566,203,1561,204,1471,214,1363,221"/>
-<area shape="rect" id="Node000014" title=" " alt="" coords="1240,266,1319,292"/>
-<area shape="poly" id="edge13_Node000002_Node000014" title=" " alt="" coords="1334,265,1470,234,1561,212,1566,211,1472,239,1335,270"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="972,259,1098,299"/>
-<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="1113,276,1242,279,1237,279,1113,282"/>
-<area shape="rect" id="Node000016" title=" " alt="" coords="1495,316,1718,372"/>
-<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="1734,342,1833,344,1827,344,1734,347"/>
-<area shape="rect" id="Node000017" href="$classgridfire_1_1solver_1_1_single_zone_network_solver.html" title=" " alt="" coords="1186,316,1372,372"/>
-<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="1388,342,1497,344,1492,344,1388,347"/>
-<area shape="rect" id="Node000018" title=" " alt="" coords="1508,396,1705,437"/>
-<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="1703,389,1832,358,1837,357,1704,394"/>
-<area shape="rect" id="Node000019" href="$structgridfire_1_1solver_1_1_solver_context_base.html" title=" " alt="" coords="1205,396,1354,437"/>
-<area shape="poly" id="edge18_Node000018_Node000019" title=" " alt="" coords="1369,414,1510,416,1505,416,1369,419"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="2037,673,2153,698"/>
+<area shape="rect" id="Node000002" href="$struct_g_f_context.html" title=" " alt="" coords="1771,410,1856,436"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1841,444,2082,673,2077,672,1839,449"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="1355,55,1524,95"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1538,95,1612,124,1648,144,1680,169,1708,198,1732,231,1771,301,1797,364,1811,411,1807,409,1792,366,1766,303,1728,234,1704,202,1676,173,1645,149,1609,129,1538,100"/>
+<area shape="rect" id="Node000004" href="$classgridfire_1_1policy_1_1_network_policy.html" title="Abstract interface for policies that construct DynamicEngine networks from a seed composition." alt="" coords="1092,41,1252,82"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1267,64,1357,70,1352,71,1268,69"/>
+<area shape="rect" id="Node000005" href="$classgridfire_1_1engine_1_1_dynamic_engine.html" title="Abstract class for engines supporting Jacobian and stoichiometry operations." alt="" coords="1356,132,1522,173"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="1527,176,1605,208,1644,229,1680,253,1723,292,1759,336,1807,411,1802,409,1755,340,1719,296,1676,257,1641,233,1603,213,1527,181"/>
+<area shape="rect" id="Node000006" href="$classgridfire_1_1engine_1_1_engine.html" title="Abstract base class for a reaction network engine." alt="" coords="1095,106,1249,132"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1264,128,1358,141,1353,143,1265,133"/>
+<area shape="rect" id="Node000007" href="$structgridfire_1_1config_1_1_grid_fire_config.html" title=" " alt="" coords="1361,221,1518,262"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="1533,263,1606,288,1679,321,1748,366,1800,410,1795,409,1745,370,1677,325,1604,293,1533,269"/>
+<area shape="rect" id="Node000008" href="$structgridfire_1_1config_1_1_solver_config.html" title=" " alt="" coords="1098,156,1246,197"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1261,195,1363,222,1358,223,1262,201"/>
+<area shape="rect" id="Node000009" href="$structgridfire_1_1config_1_1_point_solver_config.html" title=" " alt="" coords="736,5,915,46"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="930,28,967,35,1003,46,1039,62,1070,84,1081,99,1083,114,1086,128,1094,143,1109,156,1104,155,1090,146,1081,130,1078,115,1076,101,1066,88,1036,66,1002,51,966,40,931,33"/>
+<area shape="rect" id="Node000010" href="$structgridfire_1_1config_1_1_trigger_config.html" title=" " alt="" coords="354,5,505,46"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="520,23,738,24,734,27,522,28"/>
+<area shape="rect" id="Node000011" href="$structgridfire_1_1config_1_1_boundary_flux_config.html" title=" " alt="" coords="5,5,172,46"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="186,23,355,24,352,28,189,28"/>
+<area shape="rect" id="Node000012" href="$structgridfire_1_1config_1_1_engine_config.html" title=" " alt="" coords="1096,221,1248,262"/>
+<area shape="poly" id="edge11_Node000007_Node000012" title=" " alt="" coords="1263,239,1363,241,1358,242,1264,244"/>
+<area shape="rect" id="Node000013" href="$structgridfire_1_1config_1_1_engine_view_config.html" title=" " alt="" coords="750,71,901,111"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="916,102,1007,122,1044,135,1070,149,1081,164,1084,179,1086,193,1094,207,1111,221,1106,220,1090,210,1081,195,1078,180,1076,166,1067,153,1042,139,1005,127,917,107"/>
+<area shape="rect" id="Node000014" href="$structgridfire_1_1config_1_1_adaptive_engine_view_config.html" title=" " alt="" coords="348,71,510,111"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="525,88,752,90,747,92,527,94"/>
+<area shape="rect" id="Node000015" href="$structgridfire_1_1config_1_1_energy_channel_config.html" title=" " alt="" coords="750,136,902,177"/>
+<area shape="poly" id="edge14_Node000012_Node000015" title=" " alt="" coords="917,164,992,176,1069,195,1093,206,1124,221,1119,221,1091,211,1067,200,991,181,918,169"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="347,204,512,229"/>
+<area shape="poly" id="edge25_Node000002_Node000016" title=" " alt="" coords="468,234,534,266,621,300,721,328,773,336,824,339,1441,339,1537,346,1631,364,1714,387,1779,410,1773,409,1713,392,1630,370,1536,352,1441,344,824,344,772,341,720,333,620,305,532,271,468,239"/>
+<area shape="poly" id="edge17_Node000012_Node000016" title=" " alt="" coords="527,215,773,221,1068,232,1098,236,1093,237,1068,238,773,227,528,221"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="526,199,751,166,747,169,528,204"/>
+<area shape="rect" id="Node000017" href="$structgridfire_1_1screening_1_1_screening_blend_window.html" title="Where BlendedScreeningModel hands over from its weak to its strong prescription." alt="" coords="742,264,909,305"/>
+<area shape="poly" id="edge16_Node000012_Node000017" title=" " alt="" coords="924,270,1099,250,1094,252,925,275"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="1342,379,1537,419"/>
+<area shape="poly" id="edge18_Node000002_Node000018" title=" " alt="" coords="1552,404,1773,420,1768,421,1552,409"/>
+<area shape="rect" id="Node000019" href="$classgridfire_1_1engine_1_1scratch_1_1_state_blob.html" title="Container for managing a collection of typed scratchpad instances." alt="" coords="1093,395,1251,435"/>
+<area shape="poly" id="edge19_Node000018_Node000019" title=" " alt="" coords="1266,407,1344,404,1339,405,1267,412"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="727,380,924,450"/>
+<area shape="poly" id="edge20_Node000019_Node000020" title=" " alt="" coords="939,412,1096,414,1090,416,940,418"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="302,395,557,435"/>
+<area shape="poly" id="edge21_Node000020_Node000021" title=" " alt="" coords="572,412,729,414,724,416,573,418"/>
+<area shape="rect" id="Node000022" href="$structgridfire_1_1engine_1_1scratch_1_1_abstract_scratch_pad.html" title="Abstract base struct for engine scratchpad memory." alt="" coords="10,395,167,435"/>
+<area shape="poly" id="edge22_Node000021_Node000022" title=" " alt="" coords="182,413,303,413,299,417,184,417"/>
+<area shape="rect" id="Node000023" title=" " alt="" coords="751,475,900,515"/>
+<area shape="poly" id="edge23_Node000019_Node000023" title=" " alt="" coords="915,479,990,466,1068,448,1112,437,1117,435,1069,453,991,471,916,484"/>
+<area shape="rect" id="Node000024" title=" " alt="" coords="1372,444,1507,485"/>
+<area shape="poly" id="edge24_Node000002_Node000024" title=" " alt="" coords="1522,453,1773,427,1768,428,1523,458"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="1400,509,1479,534"/>
+<area shape="poly" id="edge26_Node000002_Node000025" title=" " alt="" coords="1494,521,1581,516,1630,509,1677,497,1711,484,1743,467,1792,437,1797,435,1746,472,1713,489,1679,503,1631,514,1582,521,1495,526"/>
+<area shape="rect" id="Node000026" title=" " alt="" coords="1109,501,1235,542"/>
+<area shape="poly" id="edge27_Node000025_Node000026" title=" " alt="" coords="1250,519,1402,521,1397,522,1250,524"/>
+<area shape="rect" id="Node000027" title=" " alt="" coords="1379,558,1500,584"/>
+<area shape="poly" id="edge28_Node000002_Node000027" title=" " alt="" coords="1515,570,1595,562,1637,553,1677,538,1716,515,1751,487,1799,438,1804,435,1754,491,1719,520,1679,543,1639,558,1596,567,1516,575"/>
+<area shape="rect" id="Node000028" title=" " alt="" coords="1367,608,1512,633"/>
+<area shape="poly" id="edge29_Node000002_Node000028" title=" " alt="" coords="1527,621,1603,613,1641,602,1677,586,1700,571,1722,552,1759,509,1786,467,1804,438,1808,435,1791,470,1763,512,1725,556,1703,575,1679,591,1643,607,1604,618,1528,627"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="1702,658,1925,714"/>
+<area shape="poly" id="edge30_Node000001_Node000029" title=" " alt="" coords="1941,683,2040,686,2034,686,1941,688"/>
+<area shape="rect" id="Node000030" href="$classgridfire_1_1solver_1_1_single_zone_network_solver.html" title=" " alt="" coords="1346,658,1532,714"/>
+<area shape="poly" id="edge31_Node000029_Node000030" title=" " alt="" coords="1548,683,1704,686,1699,686,1548,688"/>
+<area shape="rect" id="Node000031" title=" " alt="" coords="1715,737,1912,778"/>
+<area shape="poly" id="edge32_Node000001_Node000031" title=" " alt="" coords="1910,730,2039,699,2044,699,1911,736"/>
+<area shape="rect" id="Node000032" href="$structgridfire_1_1solver_1_1_solver_context_base.html" title=" " alt="" coords="1365,737,1514,778"/>
+<area shape="poly" id="edge33_Node000031_Node000032" title=" " alt="" coords="1529,755,1717,758,1712,758,1529,760"/>
 </map>

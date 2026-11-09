@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,7 +108,10 @@ $(function(){initNavTree('gridfire__context_8h.html',''); initResizable(true); }
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/atomic/atomicSpecies.h&quot;</code><br />
+<code>#include &lt;exception&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for gridfire_context.h:</div>
@@ -123,6 +126,18 @@ This graph shows which files directly or indirectly include this file:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_config_error.html">GFConfigError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raised by the C API for an invalid configuration, or a configuration change after the engine was built. gf_* functions report it as GF_CONFIG_ERROR.  <a href="struct_g_f_config_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_invalid_state_error.html">GFInvalidStateError</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raised by the C API for an invalid thermodynamic state or composition passed in by the caller (as opposed to a solver failure). gf_* functions report it as GF_INVALID_STATE.  <a href="struct_g_f_invalid_state_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_reaction_outputs.html">GFReactionOutputs</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destinations for gf_evaluate_reactions; each holds num_reactions entries per zone (zone-major). Any may be null.  <a href="struct_g_f_reaction_outputs.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_evaluation_outputs.html">GFEvaluationOutputs</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destinations for gf_evaluate. Each points to num_zones entries (eps_by_channel and dYdt: per zone, contiguous).  <a href="struct_g_f_evaluation_outputs.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_instantaneous_outputs.html">GFInstantaneousOutputs</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destinations for the instantaneous final-state quantities in NetOut.  <a href="struct_g_f_instantaneous_outputs.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,6 +157,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2b3a4aaade9a2c842a05e5310b959630" id="r_a2b3a4aaade9a2c842a05e5310b959630"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b3a4aaade9a2c842a05e5310b959630">gf_error_code</a> (const std::exception_ptr &amp;error, std::string &amp;message)</td></tr>
+<tr class="memdesc:a2b3a4aaade9a2c842a05e5310b959630"><td class="mdescLeft">&#160;</td><td class="mdescRight">The GF_* / FDSSE_* code for an exception (as every gf_* function reports it), with its message.  <br /></td></tr>
+<tr class="separator:a2b3a4aaade9a2c842a05e5310b959630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9005fd331665d1e61003e3bcfcc5a9c8" id="r_a9005fd331665d1e61003e3bcfcc5a9c8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="struct_g_f_context.html">GFContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9005fd331665d1e61003e3bcfcc5a9c8">make_gf_context</a> (const <a class="el" href="#a6ea78d58fa871fd32d9a111e8ea81feb">GFContextType</a> &amp;type)</td></tr>
 <tr class="separator:a9005fd331665d1e61003e3bcfcc5a9c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -173,6 +191,29 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a2b3a4aaade9a2c842a05e5310b959630" name="a2b3a4aaade9a2c842a05e5310b959630"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b3a4aaade9a2c842a05e5310b959630">&#9670;&#160;</a></span>gf_error_code()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int gf_error_code </td>
+          <td>(</td>
+          <td class="paramtype">const std::exception_ptr &amp;</td>          <td class="paramname"><span class="paramname"><em>error</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>message</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The GF_* / FDSSE_* code for an exception (as every gf_* function reports it), with its message. </p>
+
+</div>
+</div>
 <a id="a9005fd331665d1e61003e3bcfcc5a9c8" name="a9005fd331665d1e61003e3bcfcc5a9c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9005fd331665d1e61003e3bcfcc5a9c8">&#9670;&#160;</a></span>make_gf_context()</h2>
 

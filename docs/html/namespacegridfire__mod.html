@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -110,9 +110,19 @@ $(function(){initNavTree('namespacegridfire__mod.html',''); initResizable(true);
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Types</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1c__strlen.html">c_strlen</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__clear__rate__multipliers.html">gf_clear_rate_multipliers</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__config__defaults.html">gf_config_defaults</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__construct__engine__from__policy.html">gf_construct_engine_from_policy</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__construct__solver__from__engine.html">gf_construct_solver_from_engine</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evaluate__c.html">gf_evaluate_c</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evaluate__reactions__c.html">gf_evaluate_reactions_c</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__evolve__c__array.html">gf_evolve_c_array</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,19 +130,59 @@ Data Types</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__free.html">gf_free</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__config.html">gf_get_config</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__energy__channel__name.html">gf_get_energy_channel_name</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__last__error__message.html">gf_get_last_error_message</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__network__species.html">gf_get_network_species</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__num__energy__channels.html">gf_get_num_energy_channels</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__num__network__species.html">gf_get_num_network_species</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__num__reactions.html">gf_get_num_reactions</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__provenance.html">gf_get_provenance</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__rate__multiplier.html">gf_get_rate_multiplier</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__reaction__id.html">gf_get_reaction_id</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__version.html">gf_get_version</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__get__zone__status.html">gf_get_zone_status</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__init.html">gf_init</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__load__config.html">gf_load_config</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__mass__fractions__to__molar.html">gf_mass_fractions_to_molar</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__molar__to__mass__fractions.html">gf_molar_to_mass_fractions</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__register__network__species.html">gf_register_network_species</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__register__species.html">gf_register_species</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__save__config.html">gf_save_config</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__set__config.html">gf_set_config</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__set__num__zones.html">gf_set_num_zones</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__set__passive__species.html">gf_set_passive_species</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__set__rate__multiplier.html">gf_set_rate_multiplier</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__set__shared__composition__groups.html">gf_set_shared_composition_groups</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegridfire__mod_1_1gf__shared__composition__groups__from__mask.html">gf_shared_composition_groups_from_mask</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire__mod_1_1gf__type.html">gf_type</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,12 +243,34 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="#a244769a94919381fd624416c41519147aa15140bb392838790a9de6f3ffd0de79">gf_invalid_timesteps</a> = 35
 , <a class="el" href="#a244769a94919381fd624416c41519147a33cceb543129fe9b37ddd809147a7163">gf_unknonwn_free_type</a> = 36
 , <a class="el" href="#a244769a94919381fd624416c41519147a8cd904db660f5f0b5772ba6642e9d509">gf_invalid_type</a> = 37
-, <a class="el" href="#a244769a94919381fd624416c41519147a7404c48f0eb555ce6f07190b9d3e104a">gf_single_zone</a> = 1001
+, <a class="el" href="#a244769a94919381fd624416c41519147a7acd580dc124a683002b519b904b3328">gf_config_error</a> = 38
 , <br />
-&#160;&#160;<a class="el" href="#a244769a94919381fd624416c41519147aea92a4518d63ce2b52e0a4ab413c1843">gf_multi_zone</a> = 1002
+&#160;&#160;<a class="el" href="#a244769a94919381fd624416c41519147aaa181f4d173a0622faaea861dc3e3fbf">gf_invalid_state</a> = 39
+, <a class="el" href="#a244769a94919381fd624416c41519147afd2f45233df6cc2aecab6854f73c37e1">gf_zone_failure</a> = 40
+, <a class="el" href="#a244769a94919381fd624416c41519147a7404c48f0eb555ce6f07190b9d3e104a">gf_single_zone</a> = 1001
+, <a class="el" href="#a244769a94919381fd624416c41519147aea92a4518d63ce2b52e0a4ab413c1843">gf_multi_zone</a> = 1002
+, <br />
+&#160;&#160;<a class="el" href="#a244769a94919381fd624416c41519147a4f6a1ff4d912966361b5b33100223a2d">gf_failed_to_partition_engine_error</a> = 6
+, <a class="el" href="#a244769a94919381fd624416c41519147a0a533a4973051534d57305dcf1f84cfd">gf_bad_rhs_engine_error</a> = 10
+, <a class="el" href="#a244769a94919381fd624416c41519147af629b435abfde46f208462a58572ca09">gf_unknown_jacobian_error</a> = 13
+, <a class="el" href="#a244769a94919381fd624416c41519147a128146cf44f7a610b0087eed4188d5dd">gf_reaction_error</a> = 21
+, <br />
+&#160;&#160;<a class="el" href="#a244769a94919381fd624416c41519147a6491aab4b3f189791a8beeabb6cb98b5">gf_debug_error</a> = 30
+, <a class="el" href="#a244769a94919381fd624416c41519147af01c597bd7c5542f513a72ee09c6e5dc">gf_invalid_num_species</a> = 34
+, <a class="el" href="#a244769a94919381fd624416c41519147ae2d437b21b1fbb2054eb4ebf4fdfedd4">gf_unknown_free_type</a> = 36
 <br />
  }</td></tr>
 <tr class="separator:a244769a94919381fd624416c41519147"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab996e171dfffbb0aee5f1cdd06bc7093" id="r_ab996e171dfffbb0aee5f1cdd06bc7093"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="#ab996e171dfffbb0aee5f1cdd06bc7093a89ca3ec7ae8ce365a57e6d8bf3d4205d">gf_screening_bare</a> = 0
+, <a class="el" href="#ab996e171dfffbb0aee5f1cdd06bc7093ab6558f2b8e92d6c2499293f991c6da5e">gf_screening_weak</a> = 1
+, <a class="el" href="#ab996e171dfffbb0aee5f1cdd06bc7093a722eef92e133a9547844b70b66d65466">gf_screening_cd09</a> = 2
+, <a class="el" href="#ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1">gf_screening_blended</a> = 3
+ }</td></tr>
+<tr class="separator:ab996e171dfffbb0aee5f1cdd06bc7093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb6f25b441e77d573042aae7d358b066" id="r_adb6f25b441e77d573042aae7d358b066"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="#adb6f25b441e77d573042aae7d358b066adf0c689845e3ce71dff89a13bfd2cbdc">gf_jacobian_analytic</a> = 0
+, <a class="el" href="#adb6f25b441e77d573042aae7d358b066a4bdd7aa9b3508eda0e9e1435702480a2">gf_jacobian_automatic_differentiation</a> = 1
+ }</td></tr>
+<tr class="separator:adb6f25b441e77d573042aae7d358b066"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
@@ -208,6 +280,40 @@ Functions/Subroutines</h2></td></tr>
 <tr class="separator:a64b4012b59c5ddf025073c6a8bf467c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ec54357173537549bbd7fb77fdc6dcf" id="r_a6ec54357173537549bbd7fb77fdc6dcf"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ec54357173537549bbd7fb77fdc6dcf">gff_get_last_error</a> (self)</td></tr>
 <tr class="separator:a6ec54357173537549bbd7fb77fdc6dcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38b98f28ffb2c78127208e69d48d5353" id="r_a38b98f28ffb2c78127208e69d48d5353"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38b98f28ffb2c78127208e69d48d5353">c_to_fortran_string</a> (c_str)</td></tr>
+<tr class="separator:a38b98f28ffb2c78127208e69d48d5353"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad80f50f6ad3cd2eddddab625b0a64e21" id="r_ad80f50f6ad3cd2eddddab625b0a64e21"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad80f50f6ad3cd2eddddab625b0a64e21">gff_get_version</a> ()</td></tr>
+<tr class="separator:ad80f50f6ad3cd2eddddab625b0a64e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d3287cf4d1acd7a64e3a97a9a376b17" id="r_a2d3287cf4d1acd7a64e3a97a9a376b17"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d3287cf4d1acd7a64e3a97a9a376b17">gff_get_provenance</a> (self)</td></tr>
+<tr class="separator:a2d3287cf4d1acd7a64e3a97a9a376b17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca2fb3620bcd80a84608aaebc5d14d46" id="r_aca2fb3620bcd80a84608aaebc5d14d46"><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a>) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca2fb3620bcd80a84608aaebc5d14d46">gff_default_config</a> ()</td></tr>
+<tr class="separator:aca2fb3620bcd80a84608aaebc5d14d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afaeb3e886795c50fe000a2f263f46a33" id="r_afaeb3e886795c50fe000a2f263f46a33"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afaeb3e886795c50fe000a2f263f46a33">gff_set_config</a> (self, config)</td></tr>
+<tr class="separator:afaeb3e886795c50fe000a2f263f46a33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa922b4dc2be9f29bc7949786ba370a90" id="r_aa922b4dc2be9f29bc7949786ba370a90"><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a>) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa922b4dc2be9f29bc7949786ba370a90">gff_get_config</a> (self)</td></tr>
+<tr class="separator:aa922b4dc2be9f29bc7949786ba370a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b1d8fdf5cfd6c53da18cea731fa050f" id="r_a6b1d8fdf5cfd6c53da18cea731fa050f"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b1d8fdf5cfd6c53da18cea731fa050f">gff_load_config</a> (self, path)</td></tr>
+<tr class="separator:a6b1d8fdf5cfd6c53da18cea731fa050f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30f17a87742006a98fe4b7fd489e9ff3" id="r_a30f17a87742006a98fe4b7fd489e9ff3"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30f17a87742006a98fe4b7fd489e9ff3">gff_save_config</a> (self, path)</td></tr>
+<tr class="separator:a30f17a87742006a98fe4b7fd489e9ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e70229e4b1256318fb9538f715deb23" id="r_a6e70229e4b1256318fb9538f715deb23"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e70229e4b1256318fb9538f715deb23">gff_set_passive_species</a> (self, species_list)</td></tr>
+<tr class="separator:a6e70229e4b1256318fb9538f715deb23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7edd1428f16d110fae84072f4afd15ab" id="r_a7edd1428f16d110fae84072f4afd15ab"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7edd1428f16d110fae84072f4afd15ab">gff_set_rate_multiplier</a> (self, reaction_id, factor, ierr)</td></tr>
+<tr class="separator:a7edd1428f16d110fae84072f4afd15ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92506234cce78894e6a852d5a336240f" id="r_a92506234cce78894e6a852d5a336240f"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92506234cce78894e6a852d5a336240f">gff_get_rate_multiplier</a> (self, reaction_id, factor, ierr)</td></tr>
+<tr class="separator:a92506234cce78894e6a852d5a336240f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0850e494c8cddf49a0a95362c5f5e785" id="r_a0850e494c8cddf49a0a95362c5f5e785"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0850e494c8cddf49a0a95362c5f5e785">gff_clear_rate_multipliers</a> (self, ierr)</td></tr>
+<tr class="separator:a0850e494c8cddf49a0a95362c5f5e785"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa022aeb7ae2117c0c54257c4f43b3808" id="r_aa022aeb7ae2117c0c54257c4f43b3808"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa022aeb7ae2117c0c54257c4f43b3808">gff_report_or_stop</a> (self, c_ierr, prefix, ierr)</td></tr>
+<tr class="separator:aa022aeb7ae2117c0c54257c4f43b3808"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04ecbb998be45cdd37ff8439dc34dd6f" id="r_a04ecbb998be45cdd37ff8439dc34dd6f"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04ecbb998be45cdd37ff8439dc34dd6f">gff_mass_fractions_to_molar_single</a> (self, x, y, ierr)</td></tr>
+<tr class="separator:a04ecbb998be45cdd37ff8439dc34dd6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f78e3fa65bd8a2a847f2f60b1805c11" id="r_a9f78e3fa65bd8a2a847f2f60b1805c11"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f78e3fa65bd8a2a847f2f60b1805c11">gff_mass_fractions_to_molar_multi</a> (self, x, y, ierr)</td></tr>
+<tr class="separator:a9f78e3fa65bd8a2a847f2f60b1805c11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefcac50ae2eb6f8f414f9b1032018dd4" id="r_aefcac50ae2eb6f8f414f9b1032018dd4"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefcac50ae2eb6f8f414f9b1032018dd4">gff_molar_to_mass_fractions_single</a> (self, y, x, ierr)</td></tr>
+<tr class="separator:aefcac50ae2eb6f8f414f9b1032018dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dce20d34590674d99a6e7124039c9c3" id="r_a6dce20d34590674d99a6e7124039c9c3"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6dce20d34590674d99a6e7124039c9c3">gff_molar_to_mass_fractions_multi</a> (self, y, x, ierr)</td></tr>
+<tr class="separator:a6dce20d34590674d99a6e7124039c9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6789b386afad10758a817d943be754e0" id="r_a6789b386afad10758a817d943be754e0"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6789b386afad10758a817d943be754e0">gff_register_species</a> (self, species_list)</td></tr>
 <tr class="separator:a6789b386afad10758a817d943be754e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab41de5ffc335f2dc31de185ca8c9f183" id="r_ab41de5ffc335f2dc31de185ca8c9f183"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab41de5ffc335f2dc31de185ca8c9f183">gff_setup_policy</a> (self, policy_name, abundances)</td></tr>
@@ -218,6 +324,34 @@ Functions/Subroutines</h2></td></tr>
 <tr class="separator:a85853a2314cc0e020d3a04b8fde0a141"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7849171498b7e8bcebbdec1c9de81a41" id="r_a7849171498b7e8bcebbdec1c9de81a41"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7849171498b7e8bcebbdec1c9de81a41">gff_evolve_multi</a> (self, y_in, t, rho, tmax, dt0, y_out, energy, dedt, dedrho, nu_e_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_e_loss_rate, eps_by_channel, ierr)</td></tr>
 <tr class="separator:a7849171498b7e8bcebbdec1c9de81a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8a482157320b7f1d724410ac2f52b5b" id="r_ad8a482157320b7f1d724410ac2f52b5b"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8a482157320b7f1d724410ac2f52b5b">copy_c_string</a> (c_str, f_str)</td></tr>
+<tr class="separator:ad8a482157320b7f1d724410ac2f52b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9de20ec0a9017beb668e4c8cb8b3504" id="r_ae9de20ec0a9017beb668e4c8cb8b3504"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9de20ec0a9017beb668e4c8cb8b3504">gff_evaluate_single</a> (self, y, t, rho, eps_nuc, dedt, dedrho, ierr, nu_e_loss_rate, eps_by_channel, dydt)</td></tr>
+<tr class="separator:ae9de20ec0a9017beb668e4c8cb8b3504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a40748161780fcff9688b8f28b82192" id="r_a2a40748161780fcff9688b8f28b82192"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a40748161780fcff9688b8f28b82192">gff_evaluate_multi</a> (self, y, t, rho, eps_nuc, dedt, dedrho, ierr, nu_e_loss_rate, eps_by_channel, dydt)</td></tr>
+<tr class="separator:a2a40748161780fcff9688b8f28b82192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7103cbf52bb44c98db49842ec2018502" id="r_a7103cbf52bb44c98db49842ec2018502"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7103cbf52bb44c98db49842ec2018502">gff_set_shared_composition_groups</a> (self, group, mass)</td></tr>
+<tr class="separator:a7103cbf52bb44c98db49842ec2018502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af56b7dbe69cb9d3d1f7b13fe8aaf92e1" id="r_af56b7dbe69cb9d3d1f7b13fe8aaf92e1"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af56b7dbe69cb9d3d1f7b13fe8aaf92e1">gff_clear_shared_composition_groups</a> (self)</td></tr>
+<tr class="separator:af56b7dbe69cb9d3d1f7b13fe8aaf92e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a598d4cb70bd67d3cdfc443ca255c3009" id="r_a598d4cb70bd67d3cdfc443ca255c3009"><td class="memItemLeft" align="right" valign="top">integer(c_int) function, dimension(size(flagged))&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a598d4cb70bd67d3cdfc443ca255c3009">gff_shared_composition_groups_from_mask</a> (flagged)</td></tr>
+<tr class="separator:a598d4cb70bd67d3cdfc443ca255c3009"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90d7d67e58b964b72fe2b5de055d71c9" id="r_a90d7d67e58b964b72fe2b5de055d71c9"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90d7d67e58b964b72fe2b5de055d71c9">gff_get_zone_status</a> (self, status, time_reached)</td></tr>
+<tr class="separator:a90d7d67e58b964b72fe2b5de055d71c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a902f2fc47d142322a49c639e598871ad" id="r_a902f2fc47d142322a49c639e598871ad"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a902f2fc47d142322a49c639e598871ad">gff_evaluate_reactions_single</a> (self, y, t, rho, ierr, molar_flow, energy_rate, nu_e_loss_rate, nu_rate)</td></tr>
+<tr class="separator:a902f2fc47d142322a49c639e598871ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7455636152dee7ac0224adb3cf127cae" id="r_a7455636152dee7ac0224adb3cf127cae"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7455636152dee7ac0224adb3cf127cae">gff_evaluate_reactions_multi</a> (self, y, t, rho, ierr, molar_flow, energy_rate, nu_e_loss_rate, nu_rate)</td></tr>
+<tr class="separator:a7455636152dee7ac0224adb3cf127cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c5d5f665d165a944e7c97f92389cf96" id="r_a1c5d5f665d165a944e7c97f92389cf96"><td class="memItemLeft" align="right" valign="top">integer(c_size_t) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c5d5f665d165a944e7c97f92389cf96">gff_get_num_network_species</a> (self)</td></tr>
+<tr class="separator:a1c5d5f665d165a944e7c97f92389cf96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a505143b1a6e1e110e224a1c4d1245f30" id="r_a505143b1a6e1e110e224a1c4d1245f30"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a505143b1a6e1e110e224a1c4d1245f30">gff_get_network_species</a> (self, names, a, z, mass)</td></tr>
+<tr class="separator:a505143b1a6e1e110e224a1c4d1245f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad83356f17b1c69f69eca162a9a418004" id="r_ad83356f17b1c69f69eca162a9a418004"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad83356f17b1c69f69eca162a9a418004">gff_register_network_species</a> (self)</td></tr>
+<tr class="separator:ad83356f17b1c69f69eca162a9a418004"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2447de05b41d68be32c8b02814a0cbdb" id="r_a2447de05b41d68be32c8b02814a0cbdb"><td class="memItemLeft" align="right" valign="top">integer(c_size_t) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2447de05b41d68be32c8b02814a0cbdb">gff_get_num_reactions</a> (self)</td></tr>
+<tr class="separator:a2447de05b41d68be32c8b02814a0cbdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9bcffef6e79d104e1635bae295d29cf" id="r_ac9bcffef6e79d104e1635bae295d29cf"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9bcffef6e79d104e1635bae295d29cf">gff_get_reaction_ids</a> (self, ids)</td></tr>
+<tr class="separator:ac9bcffef6e79d104e1635bae295d29cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb4a579b468ac4e50436c71eef2cd786" id="r_afb4a579b468ac4e50436c71eef2cd786"><td class="memItemLeft" align="right" valign="top">integer(c_size_t) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb4a579b468ac4e50436c71eef2cd786">gff_get_num_energy_channels</a> (self)</td></tr>
 <tr class="separator:afb4a579b468ac4e50436c71eef2cd786"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9103feba62a80f9680f6e8eefa6efd19" id="r_a9103feba62a80f9680f6e8eefa6efd19"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9103feba62a80f9680f6e8eefa6efd19">gff_get_energy_channel_names</a> (self, names)</td></tr>
@@ -286,13 +420,395 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147aa15140bb392838790a9de6f3ffd0de79" name="a244769a94919381fd624416c41519147aa15140bb392838790a9de6f3ffd0de79"></a>gf_invalid_timesteps&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a33cceb543129fe9b37ddd809147a7163" name="a244769a94919381fd624416c41519147a33cceb543129fe9b37ddd809147a7163"></a>gf_unknonwn_free_type&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a8cd904db660f5f0b5772ba6642e9d509" name="a244769a94919381fd624416c41519147a8cd904db660f5f0b5772ba6642e9d509"></a>gf_invalid_type&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a7acd580dc124a683002b519b904b3328" name="a244769a94919381fd624416c41519147a7acd580dc124a683002b519b904b3328"></a>gf_config_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147aaa181f4d173a0622faaea861dc3e3fbf" name="a244769a94919381fd624416c41519147aaa181f4d173a0622faaea861dc3e3fbf"></a>gf_invalid_state&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147afd2f45233df6cc2aecab6854f73c37e1" name="a244769a94919381fd624416c41519147afd2f45233df6cc2aecab6854f73c37e1"></a>gf_zone_failure&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a7404c48f0eb555ce6f07190b9d3e104a" name="a244769a94919381fd624416c41519147a7404c48f0eb555ce6f07190b9d3e104a"></a>gf_single_zone&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147aea92a4518d63ce2b52e0a4ab413c1843" name="a244769a94919381fd624416c41519147aea92a4518d63ce2b52e0a4ab413c1843"></a>gf_multi_zone&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a4f6a1ff4d912966361b5b33100223a2d" name="a244769a94919381fd624416c41519147a4f6a1ff4d912966361b5b33100223a2d"></a>gf_failed_to_partition_engine_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a0a533a4973051534d57305dcf1f84cfd" name="a244769a94919381fd624416c41519147a0a533a4973051534d57305dcf1f84cfd"></a>gf_bad_rhs_engine_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147af629b435abfde46f208462a58572ca09" name="a244769a94919381fd624416c41519147af629b435abfde46f208462a58572ca09"></a>gf_unknown_jacobian_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a128146cf44f7a610b0087eed4188d5dd" name="a244769a94919381fd624416c41519147a128146cf44f7a610b0087eed4188d5dd"></a>gf_reaction_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147a6491aab4b3f189791a8beeabb6cb98b5" name="a244769a94919381fd624416c41519147a6491aab4b3f189791a8beeabb6cb98b5"></a>gf_debug_error&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147af01c597bd7c5542f513a72ee09c6e5dc" name="a244769a94919381fd624416c41519147af01c597bd7c5542f513a72ee09c6e5dc"></a>gf_invalid_num_species&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a244769a94919381fd624416c41519147ae2d437b21b1fbb2054eb4ebf4fdfedd4" name="a244769a94919381fd624416c41519147ae2d437b21b1fbb2054eb4ebf4fdfedd4"></a>gf_unknown_free_type&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="ab996e171dfffbb0aee5f1cdd06bc7093" name="ab996e171dfffbb0aee5f1cdd06bc7093"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab996e171dfffbb0aee5f1cdd06bc7093">&#9670;&#160;</a></span>anonymous enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">anonymous enum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab996e171dfffbb0aee5f1cdd06bc7093a89ca3ec7ae8ce365a57e6d8bf3d4205d" name="ab996e171dfffbb0aee5f1cdd06bc7093a89ca3ec7ae8ce365a57e6d8bf3d4205d"></a>gf_screening_bare&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab996e171dfffbb0aee5f1cdd06bc7093ab6558f2b8e92d6c2499293f991c6da5e" name="ab996e171dfffbb0aee5f1cdd06bc7093ab6558f2b8e92d6c2499293f991c6da5e"></a>gf_screening_weak&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab996e171dfffbb0aee5f1cdd06bc7093a722eef92e133a9547844b70b66d65466" name="ab996e171dfffbb0aee5f1cdd06bc7093a722eef92e133a9547844b70b66d65466"></a>gf_screening_cd09&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1" name="ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1"></a>gf_screening_blended&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="adb6f25b441e77d573042aae7d358b066" name="adb6f25b441e77d573042aae7d358b066"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb6f25b441e77d573042aae7d358b066">&#9670;&#160;</a></span>anonymous enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">anonymous enum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="adb6f25b441e77d573042aae7d358b066adf0c689845e3ce71dff89a13bfd2cbdc" name="adb6f25b441e77d573042aae7d358b066adf0c689845e3ce71dff89a13bfd2cbdc"></a>gf_jacobian_analytic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adb6f25b441e77d573042aae7d358b066a4bdd7aa9b3508eda0e9e1435702480a2" name="adb6f25b441e77d573042aae7d358b066a4bdd7aa9b3508eda0e9e1435702480a2"></a>gf_jacobian_automatic_differentiation&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
 </div>
 <h2 class="groupheader">Function/Subroutine Documentation</h2>
+<a id="a38b98f28ffb2c78127208e69d48d5353" name="a38b98f28ffb2c78127208e69d48d5353"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38b98f28ffb2c78127208e69d48d5353">&#9670;&#160;</a></span>c_to_fortran_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable gridfire_mod::c_to_fortran_string </td>
+          <td>(</td>
+          <td class="paramtype">type(c_ptr), intent(in)</td>          <td class="paramname"><span class="paramname"><em>c_str</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad8a482157320b7f1d724410ac2f52b5b" name="ad8a482157320b7f1d724410ac2f52b5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8a482157320b7f1d724410ac2f52b5b">&#9670;&#160;</a></span>copy_c_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::copy_c_string </td>
+          <td>(</td>
+          <td class="paramtype">type(c_ptr), intent(in)</td>          <td class="paramname"><span class="paramname"><em>c_str</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(out)</td>          <td class="paramname"><span class="paramname"><em>f_str</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0850e494c8cddf49a0a95362c5f5e785" name="a0850e494c8cddf49a0a95362c5f5e785"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0850e494c8cddf49a0a95362c5f5e785">&#9670;&#160;</a></span>gff_clear_rate_multipliers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_clear_rate_multipliers </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af56b7dbe69cb9d3d1f7b13fe8aaf92e1" name="af56b7dbe69cb9d3d1f7b13fe8aaf92e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af56b7dbe69cb9d3d1f7b13fe8aaf92e1">&#9670;&#160;</a></span>gff_clear_shared_composition_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_clear_shared_composition_groups </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aca2fb3620bcd80a84608aaebc5d14d46" name="aca2fb3620bcd80a84608aaebc5d14d46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca2fb3620bcd80a84608aaebc5d14d46">&#9670;&#160;</a></span>gff_default_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">type(<a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a>) function gridfire_mod::gff_default_config</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2a40748161780fcff9688b8f28b82192" name="a2a40748161780fcff9688b8f28b82192"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a40748161780fcff9688b8f28b82192">&#9670;&#160;</a></span>gff_evaluate_multi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_evaluate_multi </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>t</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_nuc</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dedt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dedrho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>nu_e_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>eps_by_channel</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>dydt</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7455636152dee7ac0224adb3cf127cae" name="a7455636152dee7ac0224adb3cf127cae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7455636152dee7ac0224adb3cf127cae">&#9670;&#160;</a></span>gff_evaluate_reactions_multi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_evaluate_reactions_multi </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>t</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>molar_flow</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>energy_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>nu_e_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>nu_rate</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a902f2fc47d142322a49c639e598871ad" name="a902f2fc47d142322a49c639e598871ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a902f2fc47d142322a49c639e598871ad">&#9670;&#160;</a></span>gff_evaluate_reactions_single()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_evaluate_reactions_single </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(in)</td>          <td class="paramname"><span class="paramname"><em>t</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(in)</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>molar_flow</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>energy_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>nu_e_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>nu_rate</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae9de20ec0a9017beb668e4c8cb8b3504" name="ae9de20ec0a9017beb668e4c8cb8b3504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9de20ec0a9017beb668e4c8cb8b3504">&#9670;&#160;</a></span>gff_evaluate_single()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_evaluate_single </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(in)</td>          <td class="paramname"><span class="paramname"><em>t</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(in)</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>eps_nuc</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dedt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>dedrho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out), optional, target</td>          <td class="paramname"><span class="paramname"><em>nu_e_loss_rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>eps_by_channel</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>dydt</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a7849171498b7e8bcebbdec1c9de81a41" name="a7849171498b7e8bcebbdec1c9de81a41"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7849171498b7e8bcebbdec1c9de81a41">&#9670;&#160;</a></span>gff_evolve_multi()</h2>
 
@@ -522,6 +1038,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aa922b4dc2be9f29bc7949786ba370a90" name="aa922b4dc2be9f29bc7949786ba370a90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa922b4dc2be9f29bc7949786ba370a90">&#9670;&#160;</a></span>gff_get_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">type(<a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a>) function gridfire_mod::gff_get_config </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a9103feba62a80f9680f6e8eefa6efd19" name="a9103feba62a80f9680f6e8eefa6efd19"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9103feba62a80f9680f6e8eefa6efd19">&#9670;&#160;</a></span>gff_get_energy_channel_names()</h2>
 
@@ -560,6 +1093,42 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a505143b1a6e1e110e224a1c4d1245f30" name="a505143b1a6e1e110e224a1c4d1245f30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a505143b1a6e1e110e224a1c4d1245f30">&#9670;&#160;</a></span>gff_get_network_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_get_network_species </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>names</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(c_int), dimension(:), intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(c_int), dimension(:), intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>z</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>mass</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="afb4a579b468ac4e50436c71eef2cd786" name="afb4a579b468ac4e50436c71eef2cd786"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afb4a579b468ac4e50436c71eef2cd786">&#9670;&#160;</a></span>gff_get_num_energy_channels()</h2>
 
@@ -571,6 +1140,149 @@ Variables</h2></td></tr>
           <td>(</td>
           <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
           <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1c5d5f665d165a944e7c97f92389cf96" name="a1c5d5f665d165a944e7c97f92389cf96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c5d5f665d165a944e7c97f92389cf96">&#9670;&#160;</a></span>gff_get_num_network_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(c_size_t) function gridfire_mod::gff_get_num_network_species </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2447de05b41d68be32c8b02814a0cbdb" name="a2447de05b41d68be32c8b02814a0cbdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2447de05b41d68be32c8b02814a0cbdb">&#9670;&#160;</a></span>gff_get_num_reactions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(c_size_t) function gridfire_mod::gff_get_num_reactions </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2d3287cf4d1acd7a64e3a97a9a376b17" name="a2d3287cf4d1acd7a64e3a97a9a376b17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d3287cf4d1acd7a64e3a97a9a376b17">&#9670;&#160;</a></span>gff_get_provenance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable gridfire_mod::gff_get_provenance </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a92506234cce78894e6a852d5a336240f" name="a92506234cce78894e6a852d5a336240f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92506234cce78894e6a852d5a336240f">&#9670;&#160;</a></span>gff_get_rate_multiplier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_get_rate_multiplier </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>reaction_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(out)</td>          <td class="paramname"><span class="paramname"><em>factor</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac9bcffef6e79d104e1635bae295d29cf" name="ac9bcffef6e79d104e1635bae295d29cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9bcffef6e79d104e1635bae295d29cf">&#9670;&#160;</a></span>gff_get_reaction_ids()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_get_reaction_ids </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>ids</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad80f50f6ad3cd2eddddab625b0a64e21" name="ad80f50f6ad3cd2eddddab625b0a64e21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad80f50f6ad3cd2eddddab625b0a64e21">&#9670;&#160;</a></span>gff_get_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable gridfire_mod::gff_get_version</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a90d7d67e58b964b72fe2b5de055d71c9" name="a90d7d67e58b964b72fe2b5de055d71c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90d7d67e58b964b72fe2b5de055d71c9">&#9670;&#160;</a></span>gff_get_zone_status()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_get_zone_status </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(c_int), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>status</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out), optional, target, contiguous</td>          <td class="paramname"><span class="paramname"><em>time_reached</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -603,6 +1315,168 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a6b1d8fdf5cfd6c53da18cea731fa050f" name="a6b1d8fdf5cfd6c53da18cea731fa050f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b1d8fdf5cfd6c53da18cea731fa050f">&#9670;&#160;</a></span>gff_load_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_load_config </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>path</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9f78e3fa65bd8a2a847f2f60b1805c11" name="a9f78e3fa65bd8a2a847f2f60b1805c11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f78e3fa65bd8a2a847f2f60b1805c11">&#9670;&#160;</a></span>gff_mass_fractions_to_molar_multi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_mass_fractions_to_molar_multi </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a04ecbb998be45cdd37ff8439dc34dd6f" name="a04ecbb998be45cdd37ff8439dc34dd6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04ecbb998be45cdd37ff8439dc34dd6f">&#9670;&#160;</a></span>gff_mass_fractions_to_molar_single()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_mass_fractions_to_molar_single </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6dce20d34590674d99a6e7124039c9c3" name="a6dce20d34590674d99a6e7124039c9c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dce20d34590674d99a6e7124039c9c3">&#9670;&#160;</a></span>gff_molar_to_mass_fractions_multi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_molar_to_mass_fractions_multi </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:,:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aefcac50ae2eb6f8f414f9b1032018dd4" name="aefcac50ae2eb6f8f414f9b1032018dd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefcac50ae2eb6f8f414f9b1032018dd4">&#9670;&#160;</a></span>gff_molar_to_mass_fractions_single()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_molar_to_mass_fractions_single </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(out)</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out)</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad83356f17b1c69f69eca162a9a418004" name="ad83356f17b1c69f69eca162a9a418004"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad83356f17b1c69f69eca162a9a418004">&#9670;&#160;</a></span>gff_register_network_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_register_network_species </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(inout)</td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a6789b386afad10758a817d943be754e0" name="a6789b386afad10758a817d943be754e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6789b386afad10758a817d943be754e0">&#9670;&#160;</a></span>gff_register_species()</h2>
 
@@ -618,6 +1492,157 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">character(len=*), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>species_list</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa022aeb7ae2117c0c54257c4f43b3808" name="aa022aeb7ae2117c0c54257c4f43b3808"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa022aeb7ae2117c0c54257c4f43b3808">&#9670;&#160;</a></span>gff_report_or_stop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_report_or_stop </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(c_int), intent(in)</td>          <td class="paramname"><span class="paramname"><em>c_ierr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>prefix</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a30f17a87742006a98fe4b7fd489e9ff3" name="a30f17a87742006a98fe4b7fd489e9ff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30f17a87742006a98fe4b7fd489e9ff3">&#9670;&#160;</a></span>gff_save_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_save_config </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>path</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afaeb3e886795c50fe000a2f263f46a33" name="afaeb3e886795c50fe000a2f263f46a33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaeb3e886795c50fe000a2f263f46a33">&#9670;&#160;</a></span>gff_set_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_set_config </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">type(<a class="el" href="structgridfire__mod_1_1gfconfig.html">gfconfig</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6e70229e4b1256318fb9538f715deb23" name="a6e70229e4b1256318fb9538f715deb23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e70229e4b1256318fb9538f715deb23">&#9670;&#160;</a></span>gff_set_passive_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_set_passive_species </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>species_list</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7edd1428f16d110fae84072f4afd15ab" name="a7edd1428f16d110fae84072f4afd15ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7edd1428f16d110fae84072f4afd15ab">&#9670;&#160;</a></span>gff_set_rate_multiplier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_set_rate_multiplier </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>reaction_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), intent(in)</td>          <td class="paramname"><span class="paramname"><em>factor</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer, intent(out), optional</td>          <td class="paramname"><span class="paramname"><em>ierr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7103cbf52bb44c98db49842ec2018502" name="a7103cbf52bb44c98db49842ec2018502"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7103cbf52bb44c98db49842ec2018502">&#9670;&#160;</a></span>gff_set_shared_composition_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine gridfire_mod::gff_set_shared_composition_groups </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="structgridfire__mod_1_1gridfire.html">gridfire</a>), intent(in)</td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(c_int), dimension(:), intent(in), target, contiguous</td>          <td class="paramname"><span class="paramname"><em>group</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(c_double), dimension(:), intent(in), target, contiguous</td>          <td class="paramname"><span class="paramname"><em>mass</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -664,7 +1689,24 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">character(len=*), intent(in)</td>          <td class="paramname"><span class="paramname"><em>solver_name</em></span>&#160;)</td>
+          <td class="paramtype">character(len=*), intent(in), optional</td>          <td class="paramname"><span class="paramname"><em>solver_name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a598d4cb70bd67d3cdfc443ca255c3009" name="a598d4cb70bd67d3cdfc443ca255c3009"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a598d4cb70bd67d3cdfc443ca255c3009">&#9670;&#160;</a></span>gff_shared_composition_groups_from_mask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(c_int) function, dimension(size(flagged)) gridfire_mod::gff_shared_composition_groups_from_mask </td>
+          <td>(</td>
+          <td class="paramtype">integer(c_int), dimension(:), intent(in)</td>          <td class="paramname"><span class="paramname"><em>flagged</em></span></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">

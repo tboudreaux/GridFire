@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -132,6 +132,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a78f7b315bfa0a1f34d8fd5ab652b6934" id="r_a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78f7b315bfa0a1f34d8fd5ab652b6934">generateJacobianMatrix</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho, const <a class="el" href="namespacegridfire_1_1engine.html#a9de1791ec719c0a9b76b835703336870">SparsityPattern</a> &amp;sparsityPattern) const =0</td></tr>
 <tr class="memdesc:a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian matrix for the current state with a specified sparsity pattern.  <br /></td></tr>
 <tr class="separator:a78f7b315bfa0a1f34d8fd5ab652b6934"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab4b4317fcf83a8401b274cc94e7feea" id="r_aab4b4317fcf83a8401b274cc94e7feea"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab4b4317fcf83a8401b274cc94e7feea">calculateRHSAndEnergyFromRawAbundances</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, std::span&lt; const double &gt; rawAbundances, const double T9, const double rho) const</td></tr>
+<tr class="memdesc:aab4b4317fcf83a8401b274cc94e7feea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the RHS on an integrator iterate that may hold small negative abundances.  <br /></td></tr>
+<tr class="separator:aab4b4317fcf83a8401b274cc94e7feea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac89259082775f48201e295374f9f94e6" id="r_ac89259082775f48201e295374f9f94e6"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac89259082775f48201e295374f9f94e6">generateJacobianMatrixFromRawAbundances</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, std::span&lt; const double &gt; rawAbundances, const double T9, const double rho) const</td></tr>
+<tr class="memdesc:ac89259082775f48201e295374f9f94e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian of calculateRHSAndEnergyFromRawAbundances at the same iterate.  <br /></td></tr>
+<tr class="separator:ac89259082775f48201e295374f9f94e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf0f13b9eae66da6119e6fca826379e8" id="r_abf0f13b9eae66da6119e6fca826379e8"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf0f13b9eae66da6119e6fca826379e8">calculateMolarReactionFlow</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const =0</td></tr>
 <tr class="memdesc:abf0f13b9eae66da6119e6fca826379e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the molar reaction flow for a given reaction.  <br /></td></tr>
 <tr class="separator:abf0f13b9eae66da6119e6fca826379e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,6 +181,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac7786da06b52ba15298df3db015e4496" id="r_ac7786da06b52ba15298df3db015e4496"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7786da06b52ba15298df3db015e4496">calculateEnergyChannels</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const</td></tr>
 <tr class="memdesc:ac7786da06b52ba15298df3db015e4496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the nuclear energy generation rate attributed to each energy channel.  <br /></td></tr>
 <tr class="separator:ac7786da06b52ba15298df3db015e4496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a827a580e5b83c834ee00ecc5cfe8ec7d" id="r_a827a580e5b83c834ee00ecc5cfe8ec7d"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_reaction_contributions.html">ReactionContributions</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a827a580e5b83c834ee00ecc5cfe8ec7d">calculateReactionContributions</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a827a580e5b83c834ee00ecc5cfe8ec7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each reaction's flow, energy release, neutrino energy loss and neutrino emission rate at one state.  <br /></td></tr>
+<tr class="separator:a827a580e5b83c834ee00ecc5cfe8ec7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abca0a8fa907bd1192a7e35770da583b8" id="r_abca0a8fa907bd1192a7e35770da583b8"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abca0a8fa907bd1192a7e35770da583b8">getEnergyChannelNames</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx) const</td></tr>
 <tr class="memdesc:abca0a8fa907bd1192a7e35770da583b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of the energy channels reported by <a class="el" href="#ac7786da06b52ba15298df3db015e4496" title="Calculate the nuclear energy generation rate attributed to each energy channel.">calculateEnergyChannels()</a>.  <br /></td></tr>
 <tr class="separator:abca0a8fa907bd1192a7e35770da583b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -293,7 +302,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html" title="Structure holding derivatives of energy generation rate with respect to T and rho.">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a> containing dEps/dT and dEps/dRho.</dd></dl>
 <p>This method computes the partial derivatives of the specific nuclear energy generation rate with respect to temperature and density for the current state. </p>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a8c12a3dd77c7f277a982b2e826de1b95">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#ab6e0458acf7855ff6472b96801048479">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#aa265b90b5ec153e1e71acb2d0e8fad36">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a1e6fe11b37d5ef6da00ec36d06ebc957">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a01c0ea8802358c2cbc6d8571a145775a">PyDynamicEngine</a>.</p>
@@ -353,10 +362,114 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Molar flow rate for the reaction (e.g., mol/g/s).</dd></dl>
-<p>This method computes the net rate at which the given reaction proceeds under the current state. </p>
+<dl class="section return"><dt>Returns</dt><dd>Forward (one-way) molar flow of the reaction [mol/g/s], including electron screening.</dd></dl>
+<p>This is the forward flow exactly as the RHS uses it (screened, before the reverse flow is subtracted). It is a one-way flow on purpose: callers use it as a measure of how fast a reaction runs (culling, QSE timescales), and a net flow would hide fast reactions that are in equilibrium. </p>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#aededeeeec7833c8f40b0aa27ff165833">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#afb78ba1245f5b61a29d6163c4548f6b6">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a154eda68e5df7f45b0e59b17761177b3">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#a0ef7edd271cec2b1b0e74b828ee25dba">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a2f723f732e9a83c24c1e654885ec7eea">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="a827a580e5b83c834ee00ecc5cfe8ec7d" name="a827a580e5b83c834ee00ecc5cfe8ec7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a827a580e5b83c834ee00ecc5cfe8ec7d">&#9670;&#160;</a></span>calculateReactionContributions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_reaction_contributions.html">ReactionContributions</a> &gt; gridfire::engine::DynamicEngine::calculateReactionContributions </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Each reaction's flow, energy release, neutrino energy loss and neutrino emission rate at one state. </p>
+<dl class="section return"><dt>Returns</dt><dd>Per-reaction contributions in <a class="el" href="#a77a889cbc3791beca4abb95cb663a4d6" title="Get the set of logical reactions in the network.">getNetworkReactions()</a> order (see <a class="el" href="structgridfire_1_1engine_1_1_reaction_contributions.html" title="Structure holding derivatives of energy generation rate with respect to T and rho.">ReactionContributions</a>), or std::nullopt if the engine does not support them. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ac0a3f2d933c6dd33ebbbff6ac3ea7cb8">gridfire::engine::GraphEngine</a>.</p>
+
+</div>
+</div>
+<a id="aab4b4317fcf83a8401b274cc94e7feea" name="aab4b4317fcf83a8401b274cc94e7feea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab4b4317fcf83a8401b274cc94e7feea">&#9670;&#160;</a></span>calculateRHSAndEnergyFromRawAbundances()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt; gridfire::engine::DynamicEngine::calculateRHSAndEnergyFromRawAbundances </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::span&lt; const double &gt;</td>          <td class="paramname"><span class="paramname"><em>rawAbundances</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the RHS on an integrator iterate that may hold small negative abundances. </p>
+<p>Implicit integrators evaluate the RHS at Newton iterates, which can dip slightly below zero for a species being destroyed. Evaluating the mass-action products on those raw values keeps the destruction term's restoring force (-lambda Y pushes a negative Y back up); clamping them to zero would flatten the RHS there while the Jacobian still reports the slope, and Newton then converges to negative abundances.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>The scratchpad context for the current state. </td></tr>
+    <tr><td class="paramname">comp</td><td>The iterate with negative abundances set to zero (a Composition cannot hold negative values); supplies everything that is not a mass-action product, e.g. rates and Ye. </td></tr>
+    <tr><td class="paramname">rawAbundances</td><td>The iterate's molar abundances in <a class="el" href="classgridfire_1_1engine_1_1_engine.html#afa8b1970e20f4bab61e4d31ead09f930" title="Get the list of species in the network.">getNetworkSpecies()</a> order, possibly negative. </td></tr>
+    <tr><td class="paramname">T9</td><td>Temperature in units of 10^9 K. </td></tr>
+    <tr><td class="paramname">rho</td><td>Density in g/cm^3.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>The default ignores rawAbundances and evaluates calculateRHSAndEnergy on comp (the clamped iterate), which is correct for any engine; engines that can evaluate on raw iterates override it. When no abundance is negative the result must equal calculateRHSAndEnergy on comp. </p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#adb4bd115d9de04f0cd28bcbca31106d4">gridfire::engine::GraphEngine</a>.</p>
 
 </div>
 </div>
@@ -612,6 +725,55 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>This method must compute and store the Jacobian matrix (∂(dY/dt)_i/∂Y_j) for the current state, considering only the specified subset of active species. The matrix can then be accessed via getJacobianMatrixEntry(). </p>
 
 <p>Implemented in <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html#a6c279469be6f58b4213ea9f9cf9d07cc">gridfire::engine::AdaptiveEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_defined_engine_view.html#a1457e3aa9caae5d2fba17adc62f47c79">gridfire::engine::DefinedEngineView</a>, <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a72130974401a22155dfd9a2e68192d56">gridfire::engine::GraphEngine</a>, <a class="el" href="classgridfire_1_1engine_1_1_multiscale_partitioning_engine_view.html#ae8be625f7535f2957a5de7b525020388">gridfire::engine::MultiscalePartitioningEngineView</a>, and <a class="el" href="class_py_dynamic_engine.html#a5a2697b43cddeef2aeb40b604a0de933">PyDynamicEngine</a>.</p>
+
+</div>
+</div>
+<a id="ac89259082775f48201e295374f9f94e6" name="ac89259082775f48201e295374f9f94e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac89259082775f48201e295374f9f94e6">&#9670;&#160;</a></span>generateJacobianMatrixFromRawAbundances()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a> gridfire::engine::DynamicEngine::generateJacobianMatrixFromRawAbundances </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::composition::CompositionAbstract &amp;</td>          <td class="paramname"><span class="paramname"><em>comp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::span&lt; const double &gt;</td>          <td class="paramname"><span class="paramname"><em>rawAbundances</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generate the Jacobian of calculateRHSAndEnergyFromRawAbundances at the same iterate. </p>
+<p>Parameters as for calculateRHSAndEnergyFromRawAbundances. The default ignores rawAbundances and returns generateJacobianMatrix on comp. </p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a160bdd3131e563affced34bcd4970c89">gridfire::engine::GraphEngine</a>.</p>
 
 </div>
 </div>
@@ -1086,7 +1248,7 @@ These methods return an unfinalized composition which must then be finalized by 
 <p>This method is intended to be implemented by derived classes to update their internal state based on the provided network conditions. For example, an adaptive engine might use this to re-evaluate which reactions and species are active. For other engines that do not support manually updating, this method might do nothing.</p>
 <dl class="section user"><dt>Usage Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input = { ... };</div>
 <div class="line">myEngine.update(input);</div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:30</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:31</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>The internal state of the engine is updated to reflect the new conditions. </dd></dl>
 

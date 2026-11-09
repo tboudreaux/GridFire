@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -108,6 +108,7 @@ $(function(){initNavTree('screening__abstract_8h.html',''); initResizable(true);
 <div class="textblock"><code>#include &quot;<a class="el" href="reaction_8h.html">gridfire/reaction/reaction.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/atomic/atomicSpecies.h&quot;</code><br />
 <code>#include &quot;cppad/cppad.hpp&quot;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for screening_abstract.h:</div>
@@ -124,6 +125,9 @@ This graph shows which files directly or indirectly include this file:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">gridfire::screening::ScreeningModel</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstract base class for plasma screening models.  <a href="classgridfire_1_1screening_1_1_screening_model.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">gridfire::screening::ScreeningModel::StateLogDerivatives</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">d(ln f)/d(ln T) and d(ln f)/d(ln rho) of one reaction's screening factor at fixed composition.  <a href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>

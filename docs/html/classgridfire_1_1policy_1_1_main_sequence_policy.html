@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -121,7 +121,7 @@ Inheritance diagram for gridfire::policy::MainSequencePolicy:</div>
 <div class="dynheader">
 Collaboration diagram for gridfire::policy::MainSequencePolicy:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1policy_1_1_main_sequence_policy__coll__graph.svg" width="100%" height="545"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1policy_1_1_main_sequence_policy__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -132,6 +132,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0fcac0f9d41917f888788a772daaaebc" id="r_a0fcac0f9d41917f888788a772daaaebc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fcac0f9d41917f888788a772daaaebc">MainSequencePolicy</a> (std::vector&lt; fourdst::atomic::Species &gt; seed_species, const std::vector&lt; double &gt; &amp;mass_fractions)</td></tr>
 <tr class="memdesc:a0fcac0f9d41917f888788a772daaaebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the policy from a list of species and their mass fractions.  <br /></td></tr>
 <tr class="separator:a0fcac0f9d41917f888788a772daaaebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a063dab46e98fd56c31819c2bf75060ab" id="r_a063dab46e98fd56c31819c2bf75060ab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a063dab46e98fd56c31819c2bf75060ab">MainSequencePolicy</a> (const fourdst::composition::Composition &amp;composition, const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;config)</td></tr>
+<tr class="memdesc:a063dab46e98fd56c31819c2bf75060ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">As MainSequencePolicy(const Composition&amp;), building the engine with the given configuration.  <br /></td></tr>
+<tr class="separator:a063dab46e98fd56c31819c2bf75060ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad18ebe6858d8ba88b47e6b56142ffc12" id="r_ad18ebe6858d8ba88b47e6b56142ffc12"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad18ebe6858d8ba88b47e6b56142ffc12">MainSequencePolicy</a> (std::vector&lt; fourdst::atomic::Species &gt; seed_species, const std::vector&lt; double &gt; &amp;mass_fractions, const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;config)</td></tr>
+<tr class="memdesc:ad18ebe6858d8ba88b47e6b56142ffc12"><td class="mdescLeft">&#160;</td><td class="mdescRight">As MainSequencePolicy(seed_species, mass_fractions), building the engine with the given configuration.  <br /></td></tr>
+<tr class="separator:ad18ebe6858d8ba88b47e6b56142ffc12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa73765ea363dab0357b18532335bd40b" id="r_aa73765ea363dab0357b18532335bd40b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa73765ea363dab0357b18532335bd40b">getConfig</a> () const</td></tr>
+<tr class="memdesc:aa73765ea363dab0357b18532335bd40b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The configuration <a class="el" href="#a3b600b9f02113d6ae3be22c556872ba9" title="Constructs and returns the complete, multi-layered dynamic engine.">construct()</a> builds the engine with.  <br /></td></tr>
+<tr class="separator:aa73765ea363dab0357b18532335bd40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6520ddfead2ba2700e2b1329774b4ff6" id="r_a6520ddfead2ba2700e2b1329774b4ff6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6520ddfead2ba2700e2b1329774b4ff6">name</a> () const override</td></tr>
 <tr class="memdesc:a6520ddfead2ba2700e2b1329774b4ff6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the policy.  <br /></td></tr>
 <tr class="separator:a6520ddfead2ba2700e2b1329774b4ff6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,6 +189,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a9b55ccd1a059ede5127b07a18274f6e9" id="r_a9b55ccd1a059ede5127b07a18274f6e9"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b55ccd1a059ede5127b07a18274f6e9">m_initializing_composition</a></td></tr>
 <tr class="memdesc:a9b55ccd1a059ede5127b07a18274f6e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The initial composition used to build the network.  <br /></td></tr>
 <tr class="separator:a9b55ccd1a059ede5127b07a18274f6e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bf1d13c8e19bb6d287126f124e1325d" id="r_a3bf1d13c8e19bb6d287126f124e1325d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bf1d13c8e19bb6d287126f124e1325d">m_config</a></td></tr>
+<tr class="memdesc:a3bf1d13c8e19bb6d287126f124e1325d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration passed to the engine built by <a class="el" href="#a3b600b9f02113d6ae3be22c556872ba9" title="Constructs and returns the complete, multi-layered dynamic engine.">construct()</a>.  <br /></td></tr>
+<tr class="separator:a3bf1d13c8e19bb6d287126f124e1325d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57a7bbb55eb6f96396d87811f34cc0a4" id="r_a57a7bbb55eb6f96396d87811f34cc0a4"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1partition_1_1_partition_function.html">partition::PartitionFunction</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57a7bbb55eb6f96396d87811f34cc0a4">m_partition_function</a></td></tr>
 <tr class="memdesc:a57a7bbb55eb6f96396d87811f34cc0a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The partition function used in network construction.  <br /></td></tr>
 <tr class="separator:a57a7bbb55eb6f96396d87811f34cc0a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,7 +219,7 @@ Private Attributes</h2></td></tr>
 <p>This policy composes the <code><a class="el" href="classgridfire_1_1policy_1_1_proton_proton_chain_policy.html" title="Proton-Proton Chain Policy.">ProtonProtonChainPolicy</a></code> and <code><a class="el" href="classgridfire_1_1policy_1_1_c_n_o_chain_policy.html" title="CNO Chain Policy.">CNOChainPolicy</a></code> to define the required reactions. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acd3224e5781f3d19a8ff300b7fd9a21c" name="acd3224e5781f3d19a8ff300b7fd9a21c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd3224e5781f3d19a8ff300b7fd9a21c">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acd3224e5781f3d19a8ff300b7fd9a21c">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -251,7 +263,7 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a id="a0fcac0f9d41917f888788a772daaaebc" name="a0fcac0f9d41917f888788a772daaaebc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0fcac0f9d41917f888788a772daaaebc">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fcac0f9d41917f888788a772daaaebc">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,6 +309,58 @@ Private Attributes</h2></td></tr>
 <div class="line">std::vector&lt;double&gt; mass_fractions = {0.7, 0.28, 0.01, 0.01};</div>
 <div class="line">LowMassMainSequencePolicy <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>(species, mass_fractions);</div>
 </div><!-- fragment --> </dd></dl>
+
+</div>
+</div>
+<a id="a063dab46e98fd56c31819c2bf75060ab" name="a063dab46e98fd56c31819c2bf75060ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a063dab46e98fd56c31819c2bf75060ab">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::policy::MainSequencePolicy::MainSequencePolicy </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::composition::Composition &amp;</td>          <td class="paramname"><span class="paramname"><em>composition</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>As MainSequencePolicy(const Composition&amp;), building the engine with the given configuration. </p>
+<p>The constructors without a configuration use <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>{}. </p>
+
+</div>
+</div>
+<a id="ad18ebe6858d8ba88b47e6b56142ffc12" name="ad18ebe6858d8ba88b47e6b56142ffc12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad18ebe6858d8ba88b47e6b56142ffc12">&#9670;&#160;</a></span>MainSequencePolicy() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::policy::MainSequencePolicy::MainSequencePolicy </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; fourdst::atomic::Species &gt;</td>          <td class="paramname"><span class="paramname"><em>seed_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>mass_fractions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>As MainSequencePolicy(seed_species, mass_fractions), building the engine with the given configuration. </p>
 
 </div>
 </div>
@@ -395,7 +459,7 @@ Private Attributes</h2></td></tr>
 <div class="line">solver::CVODESolverStrategy <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(<a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>);</div>
 <div class="line"><span class="comment">// ... run solver ...</span></div>
 <div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:8</div></div>
 </div><!-- fragment --> </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html#a1ee276d40dfdfe1bf313b29436cbcfba">gridfire::policy::NetworkPolicy</a>.</p>
@@ -600,6 +664,33 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aa73765ea363dab0357b18532335bd40b" name="aa73765ea363dab0357b18532335bd40b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa73765ea363dab0357b18532335bd40b">&#9670;&#160;</a></span>getConfig()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp; gridfire::policy::MainSequencePolicy::getConfig </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The configuration <a class="el" href="#a3b600b9f02113d6ae3be22c556872ba9" title="Constructs and returns the complete, multi-layered dynamic engine.">construct()</a> builds the engine with. </p>
+
+</div>
+</div>
 <a id="a6520ddfead2ba2700e2b1329774b4ff6" name="a6520ddfead2ba2700e2b1329774b4ff6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6520ddfead2ba2700e2b1329774b4ff6">&#9670;&#160;</a></span>name()</h2>
 
@@ -631,6 +722,30 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3bf1d13c8e19bb6d287126f124e1325d" name="a3bf1d13c8e19bb6d287126f124e1325d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bf1d13c8e19bb6d287126f124e1325d">&#9670;&#160;</a></span>m_config</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> gridfire::policy::MainSequencePolicy::m_config</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configuration passed to the engine built by <a class="el" href="#a3b600b9f02113d6ae3be22c556872ba9" title="Constructs and returns the complete, multi-layered dynamic engine.">construct()</a>. </p>
+
+</div>
+</div>
 <a id="a9b55ccd1a059ede5127b07a18274f6e9" name="a9b55ccd1a059ede5127b07a18274f6e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9b55ccd1a059ede5127b07a18274f6e9">&#9670;&#160;</a></span>m_initializing_composition</h2>
 

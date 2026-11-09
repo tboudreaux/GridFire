@@ -7,5 +7,6 @@ var searchData=
   ['weakreaction_4',['WeakReaction',['../classgridfire_1_1rates_1_1weak_1_1_weak_reaction.html',1,'gridfire::rates::weak']]],
   ['weakreactionentry_5',['WeakReactionEntry',['../structgridfire_1_1rates_1_1weak_1_1_weak_reaction_entry.html',1,'gridfire::rates::weak']]],
   ['weakreactionmap_6',['WeakReactionMap',['../classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html',1,'gridfire::rates::weak']]],
-  ['weakscreeningmodel_7',['WeakScreeningModel',['../classgridfire_1_1screening_1_1_weak_screening_model.html',1,'gridfire::screening']]]
+  ['weakscreeningmodel_7',['WeakScreeningModel',['../classgridfire_1_1screening_1_1_weak_screening_model.html',1,'gridfire::screening']]],
+  ['weight_8',['Weight',['../structgridfire_1_1screening_1_1_blended_screening_model_1_1_weight.html',1,'gridfire::screening::BlendedScreeningModel']]]
 ];

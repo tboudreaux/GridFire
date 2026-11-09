@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -102,14 +102,20 @@ $(function(){initNavTree('functions_vars_r.html',''); initResizable(true); });
 <div class="textblock">Here is a list of all variables with links to the classes they belong to:</div>
 
 <h3><a id="index_r" name="index_r"></a>- r -</h3><ul>
+<li>rate_multiplier_generation&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#abbc5f332ebc5e224de0c6822dfc0b1f8">gridfire::engine::scratch::GraphEngineScratchPad</a></li>
 <li>reactant_powers&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a4360de7e2c518db798d97dac87bea252">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
 <li>reactants_str&#160;:&#160;<a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html#a67afc513db8dbcc43d79733e22ca8d39">gridfire::reaclib::ReactionRecord</a></li>
 <li>reaction_channel&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_energy_channels.html#a6c021cb2a7d5808898318abf735e5a09">gridfire::engine::EnergyChannels</a></li>
 <li>reaction_contribution_map&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_r_h_s_output_data.html#a2db417ee42ef71d581ab69cf58c18fa9">gridfire::solver::PointSolver::CVODERHSOutputData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2839fe5ea6e7e9f9c1a9e1de6be7180b">gridfire::solver::PointSolver::CVODEUserData</a></li>
+<li>reaction_energy_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#ae84a903d5b11fcdec8ab8de569176539">gridfire::InstantaneousRates</a></li>
 <li>reaction_hash&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a2a63022b616788e377c804fcf1ccf847">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
+<li>reaction_ids&#160;:&#160;<a class="el" href="struct_g_f_context.html#a7891b0c0d211ff200a83f3828df83443">GFContext</a>, <a class="el" href="structgridfire_1_1_instantaneous_rates.html#acf5146995686437e44646d259e019d0f">gridfire::InstantaneousRates</a></li>
 <li>reaction_index&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ac6acad530a508ccb16ae103191490083">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
 <li>reaction_index_map&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_defined_engine_view_scratch_pad.html#a95b8528f60ca591bb9d8833e68cd6924">gridfire::engine::scratch::DefinedEngineViewScratchPad</a></li>
 <li>reaction_indices&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputation_kernel_results.html#a07d074407f8494d3190e51bd3362a463">gridfire::engine::GraphEngine::PrecomputationKernelResults</a></li>
+<li>reaction_molar_flow&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#a8d4ed19bfb446e0351c87dcd7cc0c0c8">gridfire::InstantaneousRates</a></li>
+<li>reaction_neutrino_energy_loss_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#ab9f732c061b77379fa2cfad5449377c1">gridfire::InstantaneousRates</a></li>
+<li>reaction_neutrino_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#a7b8242022d4af43f72ad95643bb53f3c">gridfire::InstantaneousRates</a></li>
 <li>reaction_type&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#aad61f7b0e307ef79e69833a04a857b30">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
 <li>reactionContributionMap&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae2c64bfc1ae2ca7eeb59ba42b1d93c16">gridfire::solver::PointSolverTimestepContext</a></li>
 <li>reactionContributions&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html#a6fe60255a07ec56ea4db49cbc3f03c65">gridfire::engine::StepDerivatives&lt; T &gt;</a></li>
@@ -118,9 +124,10 @@ $(function(){initNavTree('functions_vars_r.html',''); initResizable(true); });
 <li>relativeCullingThreshold&#160;:&#160;<a class="el" href="structgridfire_1_1config_1_1_adaptive_engine_view_config.html#af2a3b7cc7a0475853dfcae401702f6fb">gridfire::config::AdaptiveEngineViewConfig</a></li>
 <li>relativeThreshold&#160;:&#160;<a class="el" href="structgridfire_1_1config_1_1_boundary_flux_config.html#a835ab5b530f90a686e273a2933b1007f">gridfire::config::BoundaryFluxConfig</a></li>
 <li>relTol&#160;:&#160;<a class="el" href="structgridfire_1_1config_1_1_point_solver_config.html#ada6489cf79ba825a7870bd84ee99f150">gridfire::config::PointSolverConfig</a></li>
+<li>resolved&#160;:&#160;<a class="el" href="structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_cached_reaction.html#a058cf4b342e0ac6520c63f2f65f7d274">gridfire::screening::CD09ScreeningModel::CachedReaction</a></li>
 <li>reverse&#160;:&#160;<a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html#aa1fd4f510d7c00d2e4197e9b9caf29fd">gridfire::reaclib::ReactionRecord</a></li>
 <li>reverse_symmetry_factor&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae70bcf64f86170160d837abd5bdce873">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
-<li>rho&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html#a7ff42828a485eabd21811a9775eb4d3c">gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2eb3a8c09b537971bd6818df3e86ea23">gridfire::solver::PointSolver::CVODEUserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a7c4618a9939276f502f18faebd4cbda8">gridfire::solver::PointSolverTimestepContext</a></li>
+<li>rho&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html#a7ff42828a485eabd21811a9775eb4d3c">gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData</a>, <a class="el" href="structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_partials_cache.html#ab9c775afeecdc57a7e8f4d57f38139af">gridfire::screening::CD09ScreeningModel::PartialsCache</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2eb3a8c09b537971bd6818df3e86ea23">gridfire::solver::PointSolver::CVODEUserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a7c4618a9939276f502f18faebd4cbda8">gridfire::solver::PointSolverTimestepContext</a></li>
 <li>rhoYe_axis&#160;:&#160;<a class="el" href="structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html#a30362f5bb497ae74cf6a10fd701273a0">gridfire::rates::weak::IsotopeGrid</a></li>
 <li>rhsADFun&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#af484620a6c7022af3e0775bfa2568f79">gridfire::engine::scratch::GraphEngineScratchPad</a></li>
 <li>rpName&#160;:&#160;<a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html#a523b7cfb0a6d8ddccd785aef2f425ad1">gridfire::reaclib::ReactionRecord</a></li>

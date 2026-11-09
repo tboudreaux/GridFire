@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -107,7 +107,7 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 <hr  />
 <p> <img src="https://img.shields.io/pypi/v/gridfire?style=for-the-badge" alt="PyPI - Version" class="inline"/> <img src="https://img.shields.io/pypi/wheel/gridfire?style=for-the-badge" alt="PyPI - Wheel" class="inline"/></p>
 <p><img src="https://img.shields.io/github/license/4D-STAR/GridFire?style=for-the-badge" alt="GitHub License" class="inline"/> <img src="https://img.shields.io/badge/Funded%20by-ERC-blue?style=for-the-badge&amp;logo=europeancommission" alt="ERC" class="inline"/></p>
-<p>![Dynamic Regex Badge](<a href="https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&search=version%3A%20'(.%2B)'%2C&style=for-the-badge&label=Main%20Branch%20Version">https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&amp;search=version%3A%20'(.%2B)'%2C&amp;style=for-the-badge&amp;label=Main%20Branch%20Version</a>) <img src="https://img.shields.io/github/commit-activity/w/4D-STAR/GridFire?style=for-the-badge" alt="GitHub commit activity" class="inline"/></p>
+<p>![Dynamic Regex Badge](<a href="https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&search=version%3A%20'(.%2B)'%2C&style=for-the-badge&label=Main%20Branch%20Version">https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&amp;search=version%3A%20'(.%2B)'%2C&amp;style=for-the-badge&amp;label=Main%20Branch%20Version</a>) <img src="https://img.shields.io/github/commit-activity/w/4D-STAR/GridFire?style=for-the-badge" alt="GitHub commit activity" class="inline"/> <img src="https://img.shields.io/github/actions/workflow/status/4D-STAR/GridFire/packaging.yml?branch=main&amp;style=for-the-badge&amp;label=Packaging" alt="Packaging" class="inline"/></p>
 <hr  />
 <h1><a class="anchor" id="autotoc_md2"></a>
 Introduction</h1>
@@ -122,29 +122,35 @@ Funding</h2>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Usage</h1>
 <h2><a class="anchor" id="autotoc_md6"></a>
-Python installation</h2>
-<p>By far the easiest way to install is with pip. This will install either pre-compiled wheels or, if your system has not had a wheel compiled for it, it will try to build locally (this may take <b>a long time</b>). The python bindings are just that and should maintain nearly the same speed as the C++ code. End users are strongly encouraged to use the python module rather than the C++ code.</p>
-<h3><a class="anchor" id="autotoc_md7"></a>
-pypi</h3>
-<p>Installing from pip is as simple as. </p><div class="fragment"><div class="line">pip install gridfire</div>
-</div><!-- fragment --><p>These wheels have been compiled on many systems</p>
+Packaging status</h2>
+<p>Every supported way of installing and linking GridFire is built and tested on each platform wheels are released for, by the <a href="https://github.com/4D-STAR/GridFire/actions/workflows/packaging.yml">Packaging workflow</a> (on every push to <code>main</code>). The table shows the latest result on <code>main</code>; how each check works, and how to run them locally, is described in tests/packaging/ci.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Version   </th><th class="markdownTableHeadNone">Platform   </th><th class="markdownTableHeadNone">Architecture   </th><th class="markdownTableHeadNone">CPython Versions   </th><th class="markdownTableHeadNone">PyPy Versions    </th></tr>
+<th class="markdownTableHeadNone">Check   </th><th class="markdownTableHeadNone">linux-x86_64   </th><th class="markdownTableHeadNone">linux-aarch64   </th><th class="markdownTableHeadNone">macos-arm64    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0.7.0_rc1   </td><td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">arm64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11    </td></tr>
+<td class="markdownTableBodyNone">wheel builds and repairs as a release does   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-wheel.json" alt="linux-x86_64 wheel" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-wheel.json" alt="linux-aarch64 wheel" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-wheel.json" alt="macos-arm64 wheel" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">0.7.0_rc1   </td><td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">aarch64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11    </td></tr>
+<td class="markdownTableBodyNone">wheel installs next to the fourdst wheel and imports   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-python-install.json" alt="linux-x86_64 python-install" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-python-install.json" alt="linux-aarch64 python-install" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-python-install.json" alt="macos-arm64 python-install" class="inline"/>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0.7.0_rc1   </td><td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">x86_64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11    </td></tr>
+<td class="markdownTableBodyNone">C++, C and Fortran programs built with gf-config flags   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-gf-config.json" alt="linux-x86_64 gf-config" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-gf-config.json" alt="linux-aarch64 gf-config" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-gf-config.json" alt="macos-arm64 gf-config" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">0.5.0   </td><td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">arm64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11    </td></tr>
+<td class="markdownTableBodyNone">C++, C and Fortran programs built with the wheel's pkg-config files   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-pkg-config.json" alt="linux-x86_64 pkg-config" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-pkg-config.json" alt="linux-aarch64 pkg-config" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-pkg-config.json" alt="macos-arm64 pkg-config" class="inline"/>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0.5.0   </td><td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">aarch64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11    </td></tr>
+<td class="markdownTableBodyNone">concurrent contexts from a GCC/libgomp OpenMP host program   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-threads-libgomp.json" alt="linux-x86_64 threads-libgomp" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-threads-libgomp.json" alt="linux-aarch64 threads-libgomp" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-threads-libgomp.json" alt="macos-arm64 threads-libgomp" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">0.5.0   </td><td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">x86_64   </td><td class="markdownTableBodyNone">3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std &amp; t), 3.14 (std &amp; t)   </td><td class="markdownTableBodyNone">3.10, 3.11   </td></tr>
+<td class="markdownTableBodyNone">CMake find_package against the wheel (C++, C, Fortran)   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-cmake-find.json" alt="linux-x86_64 cmake-find" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-cmake-find.json" alt="linux-aarch64 cmake-find" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-cmake-find.json" alt="macos-arm64 cmake-find" class="inline"/>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">CMake FetchContent building GridFire from source (C++, C, Fortran)   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-cmake-fetch.json" alt="linux-x86_64 cmake-fetch" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-cmake-fetch.json" alt="linux-aarch64 cmake-fetch" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-cmake-fetch.json" alt="macos-arm64 cmake-fetch" class="inline"/>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Meson subproject from a clean source tree (C++, C, Fortran)   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-meson-subproject.json" alt="linux-x86_64 meson-subproject" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-meson-subproject.json" alt="linux-aarch64 meson-subproject" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-meson-subproject.json" alt="macos-arm64 meson-subproject" class="inline"/>   </td></tr>
 </table>
-<blockquote class="doxtable">
+<h2><a class="anchor" id="autotoc_md7"></a>
+Python installation</h2>
+<p>By far the easiest way to install is with pip. This will install either pre-compiled wheels or, if your system has not had a wheel compiled for it, it will try to build locally (this may take <b>a long time</b>). The python bindings are just that and should maintain nearly the same speed as the C++ code. End users are strongly encouraged to use the python module rather than the C++ code.</p>
+<h3><a class="anchor" id="autotoc_md8"></a>
+pypi</h3>
+<p>Installing from pip is as simple as. </p><div class="fragment"><div class="line">pip install gridfire</div>
+</div><!-- fragment --><blockquote class="doxtable">
 <p><b>Note</b>: Currently macOS x86_64 does <b>not</b> have a precompiled wheel. Due to that platform being phased out it is likely that there will never be precompiled wheels or releases for it. </p>
 </blockquote>
 <blockquote class="doxtable">
@@ -156,7 +162,7 @@ pypi</h3>
 <blockquote class="doxtable">
 <p><b>Note:</b> If your system does not have a prebuilt wheel the source distribution will download from pypi and try to build. This may simply not work if you do not have the correct system dependencies installed. If it fails the best bet is to try to build boost &gt;= 1.83.0 from source and install (<a href="https://www.boost.org/">https://www.boost.org/</a>) as that is the most common broken dependency. </p>
 </blockquote>
-<h3><a class="anchor" id="autotoc_md8"></a>
+<h3><a class="anchor" id="autotoc_md9"></a>
 source</h3>
 <p>The user may also build the python bindings directly from source</p>
 <div class="fragment"><div class="line">git clone https://github.com/4D-STAR/GridFire</div>
@@ -168,14 +174,14 @@ source</h3>
 <blockquote class="doxtable">
 <p><b>Note:</b> If you are using macos you should use the included <code>pip_install_mac_patch.sh</code> script instead of <code>pip install .</code> as this will automatically patch the build shared object libraries such that they can be loaded by the macos dynamic loader. </p>
 </blockquote>
-<h3><a class="anchor" id="autotoc_md9"></a>
+<h3><a class="anchor" id="autotoc_md10"></a>
 source for developers</h3>
 <p>If you are a developer and would like an editable and incremental python install <code>meson-python</code> makes this very easy</p>
 <div class="fragment"><div class="line">git clone https://github.com/4D-STAR/GridFire</div>
 <div class="line">cd GridFire</div>
 <div class="line">pip install -e . --no-build-isolation -vv</div>
 </div><!-- fragment --><p>This will generate incremental builds whenever source code changes, and you run a python script automatically (note that since <code>meson setup</code> must run for each of these it does still take a few seconds to recompile regardless of how small a source code change you have made). It is <b>strongly</b> recommended that developers use this approach and end users <em>do not</em>.</p>
-<h4><a class="anchor" id="autotoc_md10"></a>
+<h4><a class="anchor" id="autotoc_md11"></a>
 Patching Shared Object Files</h4>
 <p>If you need to patch shared object files generated by meson-python directly you should first locate the shared object file these will be in the site-packages and site-packages/fourdst directories for your python environment.</p>
 <p>Look for files named</p>
@@ -189,123 +195,81 @@ Patching Shared Object Files</h4>
 <p>If for example there are 4 occurrences of the path <code>@loader_path/../.fourdst.mesonpy.libs</code> in <code>_phys.cpython-3*-darwin.so</code> then you should run the following command 3 times </p><div class="fragment"><div class="line">install_name_tool -delete_rpath @loader_path/../.fourdst.mesonpy.libs site-packages/fourdst/_phys.cpython-314-darwin.so</div>
 </div><!-- fragment --><p>the same for the other shared object file (make sure to count the duplicate rpath entries for each separately as there may be a different number of duplicates in each shared object file).</p>
 <p>We also include a script at <code>pip_install_mac_patch.sh</code> which will do this automatically for you.</p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 Automatic Build and Installation</h2>
-<h3><a class="anchor" id="autotoc_md12"></a>
-Script Build and Installation Instructions</h3>
-<p>The easiest way to build GridFire is using the <code>install.sh</code> or <code>install-tui.sh</code> scripts in the root directory. To use these scripts, simply run:</p>
-<div class="fragment"><div class="line">./install.sh</div>
-<div class="line"># or</div>
-<div class="line">./install-tui.sh</div>
-</div><!-- fragment --><p> The regular installation script will select a standard "ideal" set of build options for you. If you want more control over the build options, you can use the <code>install-tui.sh</code> script, which will provide a text-based user interface to select the build options you want.</p>
-<p>Generally, both are intended to be easy to use and will prompt you automatically to install any missing dependencies.</p>
 <h3><a class="anchor" id="autotoc_md13"></a>
 Currently, known good platforms</h3>
 <p>The installation script has been tested and found to work on clean installations of the following platforms:</p><ul>
 <li>MacOS 15.3.2 (Apple Silicon + brew installed)</li>
 <li>Fedora 42.0 (aarch64)</li>
-<li>Ubuntu 25.04 (aarch64)</li>
-<li>Ubuntu 22.04 (X86_64)</li>
+<li>Ubuntu 24.04 (X86_64)</li>
 </ul>
-<blockquote class="doxtable">
-<p><b>Note:</b> On Ubuntu 22.04 the user needs to install boost libraries manually as the versions in the Ubuntu repositories are too old. The installer automatically detects this and will instruct the user in how to do this. </p>
-</blockquote>
 <h2><a class="anchor" id="autotoc_md14"></a>
 Manual Build Instructions</h2>
-<h3><a class="anchor" id="autotoc_md15"></a>
-Prerequisites</h3>
-<p>These only need to be manually installed if the user is not making use of the <code>install.sh</code> or <code>install-tui.sh</code></p>
-<h4><a class="anchor" id="autotoc_md16"></a>
+<h4><a class="anchor" id="autotoc_md15"></a>
 Required</h4>
 <ul>
-<li>C++ compiler supporting C++23 standard</li>
+<li>C++ compiler supporting C++23 standard<ul>
+<li>clang &gt;= 17.0.0</li>
+<li>gcc &gt;= 14.0</li>
+</ul>
+</li>
 <li>Meson build system (&gt;= 1.5.0)</li>
 <li>Python 3.8 or newer</li>
 <li>CMake 3.20 or newer</li>
 <li>ninja 1.10.0 or newer</li>
 <li>Python packages: <code>meson-python&gt;=0.15.0</code></li>
-<li>Boost libraries (&gt;= 1.83.0) installed system-wide (or at least findable by meson with pkg-config)</li>
 </ul>
-<h4><a class="anchor" id="autotoc_md17"></a>
-Optional</h4>
-<ul>
-<li>dialog (used by the <code>install.sh</code> script, not needed if using pip or meson directly)</li>
-<li>pip (used by the <code>install.sh</code> script or by calling pip directly, not needed if using meson directly)</li>
-</ul>
-<blockquote class="doxtable">
-<p><b>Note:</b> Boost is the only external library dependency used by GridFire directly. </p>
-</blockquote>
 <blockquote class="doxtable">
 <p><b>Note:</b> Windows is not supported at this time and <em>there are no plans to support it in the future</em>. Windows users are encouraged to use WSL2 or a Linux VM. </p>
 </blockquote>
-<blockquote class="doxtable">
-<p><b>Note:</b> If <code>install-tui.sh</code> is not able to find a usable version of boost it will provide directions to fetch, compile, and install a usable version. </p>
-</blockquote>
-<h3><a class="anchor" id="autotoc_md18"></a>
-Install Scripts</h3>
-<p>GridFire ships with an installer (<code>install.sh</code>) which is intended to make the process of installation both easier and more repeatable.</p>
-<h4><a class="anchor" id="autotoc_md19"></a>
-Ease of Installation</h4>
-<p>Both scripts are intended to automate installation more or less completely. This includes dependency checking. In the event that a dependency cannot be found they try to install (after explicitly asking for user permission). If that does not work they will provide a clear message as to what went wrong.</p>
-<h4><a class="anchor" id="autotoc_md20"></a>
-Reproducibility</h4>
-<p>The TUI mode provides easy modification of meson build system and compiler settings which can then be saved to a config file. This config file can then be loaded by either tui mode or cli mode (with the <code>--config</code>) flag meaning that build configurations can be made and reused. Note that this is <b>not</b> a deterministically reproducible build system as it does not interact with any system dependencies or settings, only meson and compiler settings.</p>
-<h4><a class="anchor" id="autotoc_md21"></a>
-Examples</h4>
-<h5><a class="anchor" id="autotoc_md22"></a>
-TUI config and saving</h5>
-<p><a href="https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW"><img src="https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW.svg" alt="asciicast" style="pointer-events: none;" class="inline"/></a></p>
-<h5><a class="anchor" id="autotoc_md23"></a>
-TUI config loading and meson setup</h5>
-<p><a href="https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK"><img src="https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK.svg" alt="asciicast" style="pointer-events: none;" class="inline"/></a></p>
-<h5><a class="anchor" id="autotoc_md24"></a>
-CLI config loading, setup, and build</h5>
-<p><a href="https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC"><img src="https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC.svg" alt="asciicast" style="pointer-events: none;" class="inline"/></a></p>
-<blockquote class="doxtable">
-<p><b>Note:</b> <code>install-tui.sh</code> is simply a script which calls <code>install.sh</code> with the <code>--tui</code> flag. You can get the exact same results by running <code>install.sh --tui</code>. </p>
-</blockquote>
-<blockquote class="doxtable">
-<p><b>Note:</b> Call <code>install.sh</code> with the <code>--help</code> or <code>--h</code> flag to see command line options </p>
-</blockquote>
-<blockquote class="doxtable">
-<p><b>Note:</b> <code>clang</code> tends to compile GridFire much faster than <code>gcc</code> thus why I select it in the above asciinema recording. </p>
-</blockquote>
-<h3><a class="anchor" id="autotoc_md25"></a>
+<h3><a class="anchor" id="autotoc_md16"></a>
 Dependency Installation on Common Platforms</h3>
 <ul>
 <li><b>Ubuntu/Debian:</b> <div class="fragment"><div class="line">sudo apt-get update</div>
-<div class="line">sudo apt-get install -y build-essential meson python3 python3-pip libboost-all-dev</div>
-</div><!-- fragment --></li>
+<div class="line">sudo apt install pipx pkg-config gcc-14 g++-14</div>
+<div class="line">pipx install meson ninja cmake</div>
+<div class="line">pipx ensurepath</div>
+</div><!-- fragment --> <blockquote class="doxtable">
+<p>Note: Ubuntu tends to ship with older versions of compilers, you may need to adjust the specific compiler name or add additional repositories if you are running a version of ubuntu older than 24.04 LTS </p>
+</blockquote>
+</li>
 </ul>
-<blockquote class="doxtable">
-<p><b>Note:</b> Depending on the ubuntu version you have the libboost-all-dev libraries may be too old. If this is the case refer to the boost documentation for how to download and install a version <code>&gt;=1.83.0</code> </p>
-</blockquote>
-<blockquote class="doxtable">
-<p><b>Note:</b> On recent versions of ubuntu python has switched to being externally managed by the system. We <b>strongly</b> recommend that if you install manually all python packages are installed inside some kind of virtual environment (e.g. <code>pyenv</code>, <code>conda</code>, <code>python-venv</code>, etc...). When using the installer script this is handled automatically using <code>python-venv</code>. </p>
-</blockquote>
 <ul>
-<li><b>Fedora/CentOS/RHEL:</b> <div class="fragment"><div class="line">sudo dnf install -y gcc-c++ meson python3 python3-pip boost-devel</div>
+<li><b>Fedora/CentOS/RHEL:</b> <div class="fragment"><div class="line">sudo dnf install pkgconf-pkg-config meson ninja-build cmake</div>
+</div><!-- fragment --></li>
+<li><b>Arch:</b> <div class="fragment"><div class="line">sudo pacman -Syu pkgconf meson ninja cmake</div>
 </div><!-- fragment --></li>
 <li><b>macOS (Homebrew):</b> <div class="fragment"><div class="line">brew update</div>
-<div class="line">brew install boost meson python</div>
+<div class="line">brew install pkg-config meson ninja cmake gcc</div>
 </div><!-- fragment --></li>
 </ul>
-<h3><a class="anchor" id="autotoc_md26"></a>
+<blockquote class="doxtable">
+<p>Note: macos &gt;= 15.2.0 ships with a version of clang which works for compilation (and therefore you dont need gcc. I have not tested on versions of macos prior to this). </p>
+</blockquote>
+<h3><a class="anchor" id="autotoc_md17"></a>
 Building the C++ Library</h3>
 <div class="fragment"><div class="line">meson setup build</div>
 <div class="line">meson compile -C build</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md27"></a>
+</div><!-- fragment --><blockquote class="doxtable">
+<p>Note: On Ubuntu (or any system which does not have a supported version of the compiler as the default) you should use </p><div class="fragment"><div class="line">CC=gcc-14 CXX=g++-14 meson setup build</div>
+<div class="line">meson compile -C build</div>
+</div><!-- fragment --> </blockquote>
+<h4><a class="anchor" id="autotoc_md18"></a>
 Clang vs. GCC</h4>
 <p>As noted above <code>clang</code> tends to compile GridFire much faster than <code>gcc</code>. If your system has both <code>clang</code> and <code>gcc</code> installed you may force meson to use clang via environmental variables</p>
+<blockquote class="doxtable">
+<p>Note: There is an issue I have not resolved on ubuntu 24.04 where clang++-18 fails to find the expected header therefore we reccomend the use of gcc-14 and g++-14 on ubuntu 24.04 </p>
+</blockquote>
 <div class="fragment"><div class="line">CC=clang CXX=clang++ meson setup build_clang</div>
 <div class="line">meson compile -C build_clang</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md28"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md19"></a>
 Installing the Library</h3>
 <div class="fragment"><div class="line">meson install -C build</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md29"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md20"></a>
 Minimum compiler versions</h3>
-<p>GridFire uses C++23 features and therefore only compilers and standard library implementations which support C++23 are supported. Generally we have found that <code>gcc &gt;= 13.0.0</code> or <code>clang &gt;= 16.0.0</code> work well.</p>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<p>GridFire uses C++23 features and therefore only compilers and standard library implementations which support C++23 are supported. Generally we have found that <code>gcc &gt;= 14.0.0</code> or <code>clang &gt;= 17.0.0</code> work well.</p>
+<h2><a class="anchor" id="autotoc_md21"></a>
 Code Architecture and Logical Flow</h2>
 <p>GridFire is organized into a series of composable modules, each responsible for a specific aspect of nuclear reaction network modeling. The core components include:</p>
 <ul>
@@ -314,23 +278,23 @@ Code Architecture and Logical Flow</h2>
 <li><b>Screening Module:</b> Implements nuclear reaction screening corrections (e.g. <code>WeakScreening</code> (<a href="https://adsabs.harvard.edu/full/1954AuJPh...7..373S">Salpeter, 1954</a>), <code>BareScreening</code>) affecting reaction rates.</li>
 <li><b>Reaction Module:</b> Parses and manages Reaclib reaction rate data, providing temperature- and density-dependent rate evaluations.</li>
 <li><b>Partition Module:</b> Implements partition functions (e.g., <code>GroundStatePartitionFunction</code>, <code>RauscherThielemannPartitionFunction</code> (<a href="https://www.sciencedirect.com/science/article/pii/S0092640X00908349?via%3Dihub]">Rauscher &amp; Thielemann, 2000</a>) to weight reaction rates based on nuclear properties.</li>
-<li><b>Solver Module:</b> Defines numerical integration strategies (e.g., <code>CVODESolverStrategy</code>) for solving the stiff ODE systems arising from reaction networks.</li>
+<li><b>Solver Module:</b> Defines the numerical integrators (<code>PointSolver</code> for one zone, <code>GridSolver</code> for many, both CVODE) for solving the stiff ODE systems arising from reaction networks.</li>
 <li><b>io Module:</b> Defines shared interface for parsing network data from files</li>
 <li><b>trigger Module:</b> Defines interface for complex trigger logic so that repartitioning can be followed.</li>
 <li><b>Policy Module:</b> Contains "policies" which are small modular units of code that enforce certain contracts. For example the <code>ProtonProtonReactionChainPolicy</code> enforces than an engine must include at least all the reactions in the proton-proton chain. This module exposes the primary construction interface for users. I.e. select a policy (such as <code>MainSequencePolicy</code>), provide a composition, and get back an engine which satisfies that policy.</li>
 <li><b>Python Interface:</b> Exposes <em>almost</em> all C++ functionality to Python, allowing users to define compositions, configure engines, and run simulations directly from Python scripts.</li>
 </ul>
 <p>Generally a user will start by selecting a base engine (currently we only offer <code>GraphEngine</code>), which constructs the full reaction network graph from a given composition. The user can then apply various engine views to adapt the network topology, such as partitioning fast and slow reactions, adaptively culling low-flow pathways, or priming the network with specific species. Finally, a numerical solver is selected to integrate the network over time, producing updated abundances and diagnostics.</p>
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md22"></a>
 Engines</h2>
 <p>GridFire is, at its core, based on a series of <code>Engines</code>. These are constructs which know how to report information on series of ODEs which need to be solved to evolve abundances. The important thing to understand about <code>Engines</code> is that they contain all the detailed physics GridFire uses. For example a <code>Solver</code> takes an <code>Engine</code> but does not compute physics itself. Rather, it asks the <code>Engine</code> for stuff like the jacobian matrix, stoichiometry, nuclear energy generation rate, and change in abundance with time.</p>
 <p>Refer to the API documentation for the exact interface which an <code>Engine</code> must implement to be compatible with GridFire solvers.</p>
 <p>Currently, we only implement <code>GraphEngine</code> which is intended to be a very general and adaptable <code>Engine</code>.</p>
-<h3><a class="anchor" id="autotoc_md32"></a>
+<h3><a class="anchor" id="autotoc_md23"></a>
 GraphEngine</h3>
 <p>In GridFire the <code>GraphEngine</code> will generally be the most fundamental building block of a nuclear network. A <code>GraphEngine</code> represents a directional hypergraph connecting some set of atomic species through reactions listed in the <a href="https://reaclib.jinaweb.org/index.php">JINA Reaclib database</a>.</p>
 <p><code>GraphEngine</code>s are constructed from a seed composition of species from which they recursively expand their topology outward, following known reaction pathways and adding new species to the tracked list as they expand.</p>
-<h3><a class="anchor" id="autotoc_md33"></a>
+<h3><a class="anchor" id="autotoc_md24"></a>
 GraphEngine Configuration Options</h3>
 <p>GraphEngine exposes runtime configuration methods to tailor network construction and rate evaluations:</p>
 <ul>
@@ -341,23 +305,61 @@ GraphEngine Configuration Options</h3>
 <li><code>NetworkConstructionFlags</code>: A bitwise flag telling the network how to construct itself. That is, what reaction types should be used in construction. For example one might use <code>NetworkConstructionFlags::STRONG | NetworkConstructionFlags::BETA_PLUS</code> to use all strong reactions and β+ decay. By Default this is set to use reaclib strong and reaclib weak (no WRL included by default due to current pathological stiffness issues).</li>
 </ul>
 </li>
-<li><b>setPrecomputation(bool precompute):</b><ul>
-<li>Enable/disable caching of reaction rates and stoichiometric data at initialization.</li>
-<li><em>Effect:</em> Reduces per-step overhead; increases memory and setup time.</li>
+<li><b>Physics options</b> live in <code><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a></code> (<code>engine</code> and <code>solver</code> members). Pass one to a policy (<code>MainSequencePolicy(composition, config)</code>); from C and Fortran use <code><a class="el" href="struct_g_f_config.html">GFConfig</a></code> (see Configuration from C and Fortran). The engine options are:</li>
 </ul>
-</li>
-<li><b>setScreeningModel(ScreeningType type):</b><ul>
-<li>Choose plasma screening (models: <code>BARE</code>, <code>WEAK</code>).</li>
-<li><em>Effect:</em> Alters rate enhancement under dense/low-T conditions, impacting stiffness.</li>
-</ul>
-</li>
-<li><b>setUseReverseReactions(bool useReverse):</b><ul>
-<li>Toggle inclusion of reverse (detailed balance) reactions.</li>
-<li><em>Effect:</em> Improves equilibrium fidelity; increases network size and stiffness.</li>
-</ul>
-</li>
-</ul>
-<h3><a class="anchor" id="autotoc_md34"></a>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Option (<code>config.engine.…</code>)   </th><th class="markdownTableHeadNone">Default   </th><th class="markdownTableHeadNone">Effect    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>screening</code>   </td><td class="markdownTableBodyNone"><code>BLENDED</code>   </td><td class="markdownTableBodyNone">Plasma screening: <code>BARE</code> (none), <code>WEAK</code> (Salpeter 1954), <code>CD09</code> (Chugunov &amp; DeWitt 2009), or <code>BLENDED</code> (Salpeter handing over to CD09 between the <code>screeningBlend</code> exponents)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>jacobian</code>   </td><td class="markdownTableBodyNone"><code>ANALYTIC</code>   </td><td class="markdownTableBodyNone">How the species Jacobian is computed: <code>ANALYTIC</code> or <code>AUTOMATIC_DIFFERENTIATION</code> (CppAD)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>useReverseReactions</code>   </td><td class="markdownTableBodyNone"><code>false</code>   </td><td class="markdownTableBodyNone">Add reverse (photodisintegration) rates from detailed balance for strong reactions with two reactants and two products. Negligible for hydrogen and helium burning, which is why it is off    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>passiveSpecies</code>   </td><td class="markdownTableBodyNone">none   </td><td class="markdownTableBodyNone">Species carried in the composition without reactions: they count towards Y_e and screening but never change    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>energyChannels.splitHydrogenPPCNO</code>   </td><td class="markdownTableBodyNone"><code>true</code>   </td><td class="markdownTableBodyNone">Report hydrogen burning as separate pp and CNO energy channels   </td></tr>
+</table>
+<h3><a class="anchor" id="autotoc_md25"></a>
+Rate multipliers</h3>
+<p>Any reaction's rate can be scaled by a constant factor, for example to sample rate uncertainties in Monte Carlo runs. A factor applies to everything computed afterwards: abundances, energy generation, neutrino losses, both Jacobian methods, the eps derivatives and the per-reaction contributions. When reverse reactions are on, the reverse rate is scaled with its forward rate, so detailed balance holds. The network is not rebuilt, so changing factors between runs is cheap.</p>
+<p>Reactions are named by the ids GridFire reports (<code>getNetworkReactions()</code> in C++ and Python, <code>gf_get_reaction_id</code> in C, <code>gff_get_reaction_ids</code> in Fortran), for example <code>p(p,e+)d</code> or <code>n14(p,g)o15</code>. A factor of 1 removes a multiplier and 0 switches the reaction off. An unknown reaction id, or a negative or non-finite factor, is an error, so a host code can check its list of perturbed rates at start-up.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone">Set   </th><th class="markdownTableHeadNone">Read   </th><th class="markdownTableHeadNone">Clear    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">C++ / Python (<code>GraphEngine</code>)   </td><td class="markdownTableBodyNone"><code>setRateMultiplier(id, factor)</code>   </td><td class="markdownTableBodyNone"><code>getRateMultiplier(id)</code>, <code>getRateMultipliers()</code>   </td><td class="markdownTableBodyNone"><code>clearRateMultipliers()</code>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">C   </td><td class="markdownTableBodyNone"><code>gf_set_rate_multiplier(ctx, id, factor)</code>   </td><td class="markdownTableBodyNone"><code>gf_get_rate_multiplier(ctx, id, &amp;factor)</code>   </td><td class="markdownTableBodyNone"><code>gf_clear_rate_multipliers(ctx)</code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Fortran   </td><td class="markdownTableBodyNone"><code>netgff_set_rate_multiplier(id, factor[, ierr])</code>   </td><td class="markdownTableBodyNone"><code>netgff_get_rate_multiplier(id, factor[, ierr])</code>   </td><td class="markdownTableBodyNone"><code>netgff_clear_rate_multipliers([ierr])</code>   </td></tr>
+</table>
+<p>In C++ and Python the <code>GraphEngine</code> is the bottom of a policy's engine stack:</p>
+<div class="fragment"><div class="line">policy = MainSequencePolicy(comp)</div>
+<div class="line">net = policy.construct()</div>
+<div class="line">graph = policy.get_engine_stack()[0]</div>
+<div class="line">graph.setRateMultiplier(<span class="stringliteral">&quot;p(p,e+)d&quot;</span>, 1.1)      <span class="comment"># +10% on p + p</span></div>
+<div class="line">graph.setRateMultiplier(<span class="stringliteral">&quot;n14(p,g)o15&quot;</span>, 0.9)   <span class="comment"># -10% on N-14(p,g)</span></div>
+<div class="line">print(graph.getRateMultipliers())             <span class="comment"># [(&#39;n14(p,g)o15&#39;, 0.9), (&#39;p(p,e+)d&#39;, 1.1)]</span></div>
+</div><!-- fragment --><p>Do not change multipliers while another thread is evaluating with the same engine.</p>
+<h3><a class="anchor" id="autotoc_md26"></a>
+Provenance</h3>
+<p><code>gf_get_provenance</code> (C), <code>gff_get_provenance</code> (Fortran) and <code><a class="el" href="namespacegridfire.html#ac8cc23fda7b228a4f4beb0f58c3cb86f" title="A description of the physics a GridFire calculation uses, for a host code to record with its results.">gridfire::describe_provenance</a></code> (C++) describe what a calculation uses, one <code>key: value</code> line per item, for a host code to write next to its results:</p>
+<div class="fragment"><div class="line">gridfire_version: 1.2.0</div>
+<div class="line">policy: MAIN_SEQUENCE_POLICY</div>
+<div class="line">network: 98 species, 350 reactions, hash 1a113533eac1d97d</div>
+<div class="line">strong_rates: REACLIB (pynucastro snapshot reaclib_pynucastro_latest_Z26), data hash 5ab8a8f6f54ff09c</div>
+<div class="line">weak_rates: Ravlic, Giraud, Paar &amp; Zegers (2024), arXiv:2412.00650, data hash 60af6d0fc70e66b2</div>
+<div class="line">rate_multipliers: n14(p,g)o15=0.9, p(p,e+)d=1.1</div>
+<div class="line">screening: BLENDED (Salpeter 1954 -&gt; Chugunov &amp; DeWitt 2009), handover for weak-screening exponent 0.5 to 1.5</div>
+<div class="line">jacobian: ANALYTIC</div>
+<div class="line">reverse_reactions: off</div>
+<div class="line">passive_species: none</div>
+<div class="line">energy_channels: hydrogen split into pp and CNO</div>
+<div class="line">solver: CVODE, abs_tol 1e-08, rel_tol 1e-05, clamp_negative_iterates false, max_step_failure_restarts 3</div>
+</div><!-- fragment --><p>Two runs that print the same description used the same code version, rate data, network and physics options. <code><a class="el" href="gridfire__extern_8h.html#a466a8d47041d75c7de3854348a47712a">gf_get_version()</a></code> / <code>gff_get_version()</code> give the version alone.</p>
+<h3><a class="anchor" id="autotoc_md27"></a>
 Available Partition Functions</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -369,249 +371,275 @@ Available Partition Functions</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>CompositePartitionFunction</code>   </td><td class="markdownTableBodyNone">"Composite"   </td><td class="markdownTableBodyNone">Combines multiple partition functions for situations where different partitions functions are used for different domains   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md35"></a>
+<h3><a class="anchor" id="autotoc_md28"></a>
 AutoDiff</h3>
 <p>One of the primary tasks any engine must accomplish is to report the jacobian matrix of the system to the solver. <code>GraphEngine</code> uses <code>CppAD</code>, a C++ auto differentiation library, to generate analytic jacobian matrices very efficiently.</p>
-<h2><a class="anchor" id="autotoc_md36"></a>
+<h2><a class="anchor" id="autotoc_md29"></a>
 Reaclib in GridFire</h2>
 <p>All reactions in JINA Reaclib which only include reactants iron and lighter were downloaded on June 17th, 2025 where the most recent documented change on the JINA Reaclib site was on June 24th, 2021.</p>
 <p>All of these reactions have been compiled into a header file which is then statically compiled into the gridfire binaries (specifically into lib_reaction_reaclib.cpp.o). This does increase the binary size by a few MB; however, the benefit is faster load times and more importantly no need for end users to manage resource files.</p>
 <p>If a developer wants to add new reaclib reactions we include a script at <code>utils/reaclib/format.py</code> which can ingest a reaclib data file and produce the needed header file. More details on this process are included in <code>utils/reaclib/readme.md</code></p>
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h2><a class="anchor" id="autotoc_md30"></a>
 Engine Views</h2>
 <p>The GridFire engine supports multiple engine view strategies to adapt or restrict network topology. Generally when extending GridFire the approach is likely to be one of adding new <code>EngineViews</code>.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">View Name   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Algorithm / Reference   </th><th class="markdownTableHeadNone">When to Use    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">AdaptiveEngineView   </td><td class="markdownTableBodyNone">Dynamically culls low-flow species and reactions during runtime   </td><td class="markdownTableBodyNone">Iterative flux thresholding to remove reactions below a flow threshold   </td><td class="markdownTableBodyNone">Large networks to reduce computational cost    </td></tr>
-<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">DefinedEngineView   </td><td class="markdownTableBodyNone">Restricts the network to a user-specified subset of species and reactions   </td><td class="markdownTableBodyNone">Static network masking based on user-provided species/reaction lists   </td><td class="markdownTableBodyNone">Targeted pathway studies or code-to-code comparisons    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">FileDefinedEngineView   </td><td class="markdownTableBodyNone">Load a defined engine view from a file using some parser   </td><td class="markdownTableBodyNone">Same as DefinedEngineView but loads from a file   </td><td class="markdownTableBodyNone">Same as DefinedEngineView    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">MultiscalePartitioningEngineView   </td><td class="markdownTableBodyNone">Partitions the network into fast and slow subsets based on reaction timescales   </td><td class="markdownTableBodyNone">Network partitioning following Hix &amp; Thielemann Silicon Burning I &amp; II (DOI:10.1086/177016,10.1086/306692)   </td><td class="markdownTableBodyNone">Stiff, multi-scale networks requiring tailored integration    </td></tr>
+<td class="markdownTableBodyNone">FileDefinedEngineView   </td><td class="markdownTableBodyNone">Load a defined engine view from a file using some parser   </td><td class="markdownTableBodyNone">Same as DefinedEngineView but loads from a file   </td><td class="markdownTableBodyNone">Same as DefinedEngineView    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">MultiscalePartitioningEngineView   </td><td class="markdownTableBodyNone">Partitions the network into fast and slow subsets based on reaction timescales   </td><td class="markdownTableBodyNone">Network partitioning following Hix &amp; Thielemann Silicon Burning I &amp; II (DOI:10.1086/177016,10.1086/306692)   </td><td class="markdownTableBodyNone">Stiff, multi-scale networks requiring tailored integration    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">NetworkPrimingEngineView   </td><td class="markdownTableBodyNone">Primes the network with an initial species or set of species for ignition studies   </td><td class="markdownTableBodyNone">Single-species ignition and network priming   </td><td class="markdownTableBodyNone">Investigations of ignition triggers or initial seed sensitivities   </td></tr>
 </table>
 <p>These engine views implement the common Engine interface and may be composed in any order to build complex network pipelines. New view types can be added by deriving from the <code>EngineView</code> base class, and linked into the composition chain without modifying core engine code.</p>
-<h3><a class="anchor" id="autotoc_md38"></a>
+<h3><a class="anchor" id="autotoc_md31"></a>
 A Note about composability</h3>
 <p>There are certain functions for which it is expected that a call to an engine view will propagate the result down the chain of engine views, eventually reaching the base engine (e.g. <code>DynamicEngine::update</code>). We do not strongly enforce this as it is not hard to contrive a situation where that is not the mose useful behavior; however, we do strongly encourage developers to think carefully about passing along calls to base engine methods when implementing new views.</p>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md32"></a>
 Numerical Solver Strategies</h2>
-<p>GridFire defines a flexible solver architecture through the <code>networkfire::solver::NetworkSolverStrategy</code> interface, enabling multiple ODE integration algorithms to be used interchangeably with any engine that implements the <code>Engine</code> or <code>DynamicEngine</code> contract.</p>
-<h3><a class="anchor" id="autotoc_md40"></a>
-NetworkSolverStrategy&lt;EngineT&gt;:</h3>
-<p>All GridFire solvers implement the abstract strategy templated by <code>NetworkSolverStrategy</code> which enforces only that there is some <code>evaluate</code> method with the following signature</p>
-<div class="fragment"><div class="line">NetOut evaluate(<span class="keyword">const</span> NetIn&amp; netIn);</div>
-</div><!-- fragment --><p> Which is intended to integrate some network over some time and returns updated abundances, temperature, density, and diagnostics.</p>
-<h3><a class="anchor" id="autotoc_md41"></a>
+<p>GridFire integrates a network with a solver that works on any <code>DynamicEngine</code>. The solver itself is stateless and can be shared; the state of one calculation (CVODE memory, step history, the engine's scratch space) lives in a separate <em>context</em>, so one engine and solver can serve many zones or threads, each with its own context.</p>
+<h3><a class="anchor" id="autotoc_md33"></a>
+Solvers</h3>
+<ul>
+<li><code><a class="el" href="classgridfire_1_1solver_1_1_point_solver.html" title="Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.">gridfire::solver::PointSolver</a></code>: one zone. <code>evaluate(ctx, netIn)</code> integrates to <code>netIn.tMax</code> and returns a <code>NetOut</code>; <code>evaluateRates(ctx, netIn)</code> returns the instantaneous rates (<code>InstantaneousRates</code>) without integrating.</li>
+<li><code><a class="el" href="classgridfire_1_1solver_1_1_grid_solver.html">gridfire::solver::GridSolver</a></code>: many zones at once (spread over OpenMP threads when available), built on a <code>PointSolver</code>.</li>
+</ul>
+<p>The context for a <code>PointSolver</code> is a <code>PointSolverContext</code>, made from the engine's state blob (the <code>scratch_blob</code> a policy's <code>construct()</code> returns, or <code>engine.constructStateBlob(nullptr)</code>).</p>
+<h3><a class="anchor" id="autotoc_md34"></a>
 NetIn and NetOut</h3>
-<p>GridFire solvers use a unified input and output type for their public interface (though as developers will quickly learn, internally these are immediately broken down into simpler data structures). All solvers expect a <code>NetIn</code> struct for the input type to the <code>evaluate</code> method and return a <code>NetOut</code> struct.</p>
-<h4><a class="anchor" id="autotoc_md42"></a>
+<p>GridFire solvers use a unified input and output type for their public interface.</p>
+<h4><a class="anchor" id="autotoc_md35"></a>
 NetIn</h4>
 <p>A <code>NetIn</code> struct contains</p><ul>
-<li>The composition to start the timestep at. (<code>NetIn::composition</code>)</li>
+<li>The composition to start the timestep at, as molar abundances (<code>NetIn::composition</code>)</li>
 <li>The temperature in Kelvin (<code>NetIn::temperature</code>)</li>
 <li>The density in g/cm^3 (<code>NetIn::density</code>)</li>
-<li>The max time to evolve the network to in seconds (<code>NetIn::tMax</code>)</li>
-<li>The initial timestep to use in seconds (<code>NetIn::dt0</code>)</li>
-<li>The initial energy in the system in ergs (<code>NetIn::energy</code>)</li>
+<li>The time to evolve the network for, in seconds (<code>NetIn::tMax</code>)</li>
+<li>The initial timestep in seconds (<code>NetIn::dt0</code>)</li>
+<li>The initial energy in the system in erg/g (<code>NetIn::energy</code>)</li>
 </ul>
-<p>&gt;<b>Note:</b> It is often useful to set <code>NetIn::dt0</code> to something <em>very</em> small and &gt;let an iterative time stepper push the timestep up. Often for main sequence &gt;burning I use ~1e-12 for dt0</p>
-<p>&gt;<b>Note:</b> The composition must be a <code>fourdst::composition::Composition</code> &gt;object. This is made available through the <code>foursdt</code> library and the &gt;<code>fourdst/composition/Composition.h</code> header. <code>fourdst</code> is installed &gt;automatically with GridFire</p>
-<p>&gt;<b>Note:</b> In Python composition comes from <code>fourdst.composition.Composition</code> &gt;and similarly is installed automatically when building GridFire python &gt;bindings.</p>
-<h4><a class="anchor" id="autotoc_md43"></a>
+<p>&gt;<b>Note:</b> The composition must be a <code>fourdst::composition::Composition</code> &gt;object, from the <code>fourdst/composition/composition.h</code> header. <code>fourdst</code> is installed &gt;automatically with GridFire. In Python it is <code>fourdst.composition.Composition</code>.</p>
+<h4><a class="anchor" id="autotoc_md36"></a>
 NetOut</h4>
 <p>A <code>NetOut</code> struct contains</p><ul>
-<li>The final composition after evolving to <code>tMax</code> (<code>NetOut::composition</code>)</li>
-<li>The number of steps the solver took to evolve to <code>tmax</code> (<code>NetOut::num_steps</code>)</li>
-<li>The final specific energy generated by the network while evolving to <code>tMax</code> (<code>NetOut::energy</code>) [erg/g]</li>
-<li>The derivative of energy with respect to temperature at the end of the evolution (<code>NetOut::dEps_dT</code>)</li>
-<li>The derivative of energy with respect to density at the end of the evolution (<code>NetOut::dEps_dRho</code>)</li>
-<li>The total specific energy lost to neutrinos while evolving to <code>tMax</code> (<code>NetOut::total_neutrino_loss</code>) [erg/g]</li>
-<li>The total flux of neutrinos while evolving to <code>tMax</code> (<code>NetOut::total_neutrino_flux</code>)</li>
+<li>The final composition (<code>NetOut::composition</code>) and the number of steps taken (<code>NetOut::num_steps</code>)</li>
+<li>The specific energy released over the step (<code>NetOut::energy</code>) [erg/g]</li>
+<li>The neutrino energy lost and neutrinos emitted over the step (<code>NetOut::specific_neutrino_energy_loss</code>, <code>NetOut::specific_neutrino_flux</code>)</li>
+<li>At the final state: the energy generation rate net of neutrinos (<code>NetOut::eps_nuc</code>) [erg/g/s], its derivatives (<code>dEps_dT</code>, <code>dEps_dRho</code>, <code>dlnEps_dlnT</code>, <code>dlnEps_dlnRho</code>), the neutrino loss rate (<code>neutrino_energy_loss_rate</code>) and <code>eps_nuc</code> split by energy channel (<code>energy_channel_names</code>, <code>eps_by_channel</code>)</li>
+<li>For multi-zone solvers, whether the zone converged (<code>converged</code>, <code>time_reached</code>, <code>failure_message</code>)</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md44"></a>
-CVODESolverStrategy</h3>
-<p>We use the CVODE module from <a href="https://computing.llnl.gov/projects/sundials/cvode">SUNDIALS</a> as our primary numerical solver. Specifically we use the BDF linear multistep method from that which includes advanced adaptive timestepping.</p>
-<p>Further, we use a trigger system to periodically repartition the network as the state of the network changes. This keeps the stiffness of the network tractable. The algorithm we use for that is</p>
-<ol type="1">
-<li>Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval</li>
-<li>OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold</li>
-<li>OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)</li>
-<li>OR if the number of convergence failures grows more than 100% from one step to the next or exceeds 5 at any given step.</li>
-</ol>
-<p>Moreover, callback functions can be registered in either python or C++ which will take a <code>const CVODESolverStrategy::TimestepContext&amp;</code> struct as argument. This allows for more complex logging logic. Note that callbacks <b>do not</b> let you reach inside the solver and adjust the state of the network. They are only intended for investigation not extension of physics. If you wish to extend the physics this must be implemented at the engine or engine view level.</p>
-<h2><a class="anchor" id="autotoc_md45"></a>
+<h3><a class="anchor" id="autotoc_md37"></a>
+PointSolver</h3>
+<p>We use the CVODE module from <a href="https://computing.llnl.gov/projects/sundials/cvode">SUNDIALS</a> as our numerical solver, specifically its BDF linear multistep method with adaptive timestepping and a dense linear solver. The tolerances (<code>solver.pointSolver.absTol</code>, <code>relTol</code>) and the step-failure handling are set in the configuration.</p>
+<p>A callback can be registered, in Python or C++, on the solver context (<code>PointSolverContext::callback</code>). It is called after every accepted step with a <code>const PointSolverTimestepContext&amp;</code>, which holds the time, step size, state vector, engine and more. Callbacks are for inspection: they cannot change the state of the network. Physics changes belong in an engine or engine view.</p>
+<h2><a class="anchor" id="autotoc_md38"></a>
 Python Extensibility</h2>
 <p>Through the Python bindings, users can subclass engine view classes directly in Python, override methods like <code>evaluate</code> or <code>generateStoichiometryMatrix</code>, and pass instances back into C++ solvers. This enables rapid prototyping of custom view strategies without touching C++ sources.</p>
-<h1><a class="anchor" id="autotoc_md46"></a>
+<h1><a class="anchor" id="autotoc_md39"></a>
 Usage Examples</h1>
-<h2><a class="anchor" id="autotoc_md47"></a>
+<h2><a class="anchor" id="autotoc_md40"></a>
 C++</h2>
-<h3><a class="anchor" id="autotoc_md48"></a>
-GraphEngine Initialization</h3>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main(){</div>
-<div class="line">    <span class="comment">// Define a composition and initialize the engine</span></div>
-<div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    gridfire::GraphEngine engine(comp);</div>
-<div class="line">}</div>
-<div class="ttc" id="aengine__graph_8h_html"><div class="ttname"><a href="engine__graph_8h.html">engine_graph.h</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md49"></a>
-Adaptive Network View</h3>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__adaptive_8h.html">gridfire/engine/views/engine_adaptive.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main(){</div>
-<div class="line">    fourdst::composition::Composition comp;</div>
-<div class="line">    gridfire::GraphEngine baseEngine(comp);</div>
-<div class="line">    <span class="comment">// Dynamically adapt network topology based on reaction flows</span></div>
-<div class="line">    gridfire::AdaptiveEngineView adaptiveView(baseEngine);</div>
-<div class="line">}</div>
-<div class="ttc" id="aengine__adaptive_8h_html"><div class="ttname"><a href="engine__adaptive_8h.html">engine_adaptive.h</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md50"></a>
+<p>All of GridFire is available through the unified header <code><a class="el" href="gridfire_8h.html">gridfire/gridfire.h</a></code>. See Building a program against GridFire for compiler flags. For example, with the pip wheel installed:</p>
+<div class="fragment"><div class="line">c++ -std=c++23 example.cpp $(gf-config --cflags --libs) -o example</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md41"></a>
 Composition Initialization</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/utils.h&quot;</span> <span class="comment">// for buildCompositionFromMassFractions</span></div>
-<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/utils/utils.h&quot;</span> <span class="comment">// buildCompositionFromMassFractions</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="comment">// From molar abundances (what GridFire works in) ...</span></div>
+<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition fromY(</div>
+<div class="line">        std::vector&lt;std::string&gt;{<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>}, {0.7, 0.0725, 8.3e-4});</div>
 <div class="line"> </div>
-<div class="line">    std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
-<div class="line">    std::vector&lt;double&gt; massFractions = {0.7, 0.29, 0.01};</div>
-<div class="line">    </div>
-<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition comp = fourdst::composition::buildCompositionFromMassFractions(symbols, massFractions);</div>
+<div class="line">    <span class="comment">// ... or from mass fractions, which must sum to 1</span></div>
+<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition fromX = fourdst::composition::buildCompositionFromMassFractions(</div>
+<div class="line">        std::vector&lt;std::string&gt;{<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>}, {0.7, 0.29, 0.01});</div>
 <div class="line"> </div>
-<div class="line">    std::cout &lt;&lt; comp &lt;&lt; std::endl;</div>
+<div class="line">    std::cout &lt;&lt; fromY &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span> &lt;&lt; fromX &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;X(He-4) = &quot;</span> &lt;&lt; fromX.getMassFraction(<span class="stringliteral">&quot;He-4&quot;</span>) &lt;&lt; <span class="stringliteral">&quot;, Y(He-4) = &quot;</span> &lt;&lt; fromX.getMolarAbundance(<span class="stringliteral">&quot;He-4&quot;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line">}</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md51"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md42"></a>
 Common Workflow Example</h3>
-<p>A representative workflow often composes multiple engine views to balance accuracy, stability, and performance when integrating stiff nuclear networks:</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</span> <span class="comment">// Unified header for real usage</span></div>
-<div class="line"> </div>
+<p>Most programs let a policy build the network, then burn with a <code>PointSolver</code>:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/utils.h&quot;</span> <span class="comment">// for buildCompositionFromMassFractions</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main(){</div>
-<div class="line">    <span class="comment">// 1. Define initial composition</span></div>
-<div class="line">    std::unordered_map&lt;std::string, double&gt; initialMassFractions = {</div>
-<div class="line">        {<span class="stringliteral">&quot;H-1&quot;</span>, 0.7},</div>
-<div class="line">        {<span class="stringliteral">&quot;He-4&quot;</span>, 0.29},</div>
-<div class="line">        {<span class="stringliteral">&quot;C-12&quot;</span>, 0.01}</div>
-<div class="line">    };</div>
-<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(initialMassFractions);</div>
-<div class="line">    </div>
-<div class="line">    <span class="comment">// In this example we will not use the policy module (for sake of demonstration of what is happening under the hood)</span></div>
-<div class="line">    <span class="comment">//  however, for end users we **strongly** recommend using the policy module to construct engines. It will</span></div>
-<div class="line">    <span class="comment">//  ensure that you are not missing important reactions or seed species.</span></div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 2. Create base network engine (full reaction graph)</span></div>
-<div class="line">    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 3. Partition network into fast/slow subsets (reduces stiffness)</span></div>
-<div class="line">    gridfire::MultiscalePartitioningEngineView msView(baseEngine);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 4. Adaptively cull negligible flux pathways (reduces dimension &amp; stiffness)</span></div>
-<div class="line">    gridfire::AdaptiveEngineView adaptView(msView);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 5. Construct implicit solver (handles remaining stiffness)</span></div>
-<div class="line">    gridfire::CVODESolverStrategey solver(adaptView);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 6. Prepare input conditions</span></div>
-<div class="line">    NetIn input{</div>
-<div class="line">        comp,     <span class="comment">// composition</span></div>
-<div class="line">        1.5e7,      <span class="comment">// temperature [K]</span></div>
-<div class="line">        1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
-<div class="line">        1e-12,     <span class="comment">// initial timestep [s]</span></div>
-<div class="line">        3e17      <span class="comment">// integration end time [s]</span></div>
-<div class="line">    };</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 7. Execute integration</span></div>
-<div class="line">    NetOut output = solver.evaluate(input);</div>
-<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
-<div class="line">}</div>
-<div class="ttc" id="agridfire_8h_html"><div class="ttname"><a href="gridfire_8h.html">gridfire.h</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md52"></a>
-Callback and Policy Example</h3>
-<p>Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide different context to the callback function, you should use the struct <code><a class="el" href="namespacegridfire_1_1solver.html">gridfire::solver</a>::&lt;SolverName&gt;::TimestepContext</code> as the argument type for the callback function. This struct contains all the information provided by that solver to the callback function.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</span> <span class="comment">// Unified header for real usage</span></div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span> <span class="comment">// for Composition</span></div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/utils.h&quot;</span> <span class="comment">// for buildCompositionFromMassFractions</span></div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/atomic/species.h&quot;</span> <span class="comment">// For strongly typed species</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> callback(<span class="keyword">const</span> gridfire::solver::CVODESolverStrategy::TimestepContext&amp; context) {</div>
-<div class="line">    <span class="keywordtype">int</span> H1Index = context.engine.getSpeciesIndex(fourdst::atomic::H_1);</div>
-<div class="line">    <span class="keywordtype">int</span> He4Index = context.engine.getSpeciesIndex(fourdst::atomic::He_4);</div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacegridfire.html">gridfire</a>;</div>
 <div class="line"> </div>
-<div class="line">    std::cout &lt;&lt; context.t &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; context.state(H1Index) &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; context.state(He4Index) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">    <span class="comment">// 1. Initial composition (molar abundances)</span></div>
+<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition comp(</div>
+<div class="line">        std::vector&lt;std::string&gt;{<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-3&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span>},</div>
+<div class="line">        {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05});</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 2. Let a policy build the network: it guarantees the seed species and key reactions are present</span></div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>;                  <span class="comment">// defaults; change physics options here</span></div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1policy_1_1_main_sequence_policy.html">policy::MainSequencePolicy</a> <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>(comp, <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>);</div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1policy_1_1_construction_results.html">policy::ConstructionResults</a> net = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.construct();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 3. A solver for the engine, and a context holding one calculation&#39;s state (CVODE memory, scratch space)</span></div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1solver_1_1_point_solver.html">solver::PointSolver</a> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(net.<a class="code hl_variable" href="structgridfire_1_1policy_1_1_construction_results.html#a0ca2e3cb09fef16ca4466a3dc759d8b1">engine</a>);</div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1solver_1_1_point_solver_context.html">solver::PointSolverContext</a> ctx(*net.<a class="code hl_variable" href="structgridfire_1_1policy_1_1_construction_results.html#a1d36074833fb53b63e7967193f1434b4">scratch_blob</a>);</div>
+<div class="line">    ctx.stdout_logging = <span class="keyword">false</span>;                     <span class="comment">// no per-step log</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 4. Burn for 1 Myr at solar-core conditions</span></div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1">composition</a> = comp;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">temperature</a> = 1.5e7;  <span class="comment">// K</span></div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">density</a> = 150.0;      <span class="comment">// g/cm^3</span></div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1">tMax</a> = 3.15e13;       <span class="comment">// s</span></div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a4e556f7bb18f46654b3445476734076a">dt0</a> = 1e-12;          <span class="comment">// s, first step (CVODE grows it quickly)</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1_net_out.html">NetOut</a> output = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluate(ctx, input);</div>
+<div class="line">    std::cout &lt;&lt; output.<a class="code hl_variable" href="structgridfire_1_1_net_out.html#a51c16703132cf739ec2fd89eae7badd6">num_steps</a> &lt;&lt; <span class="stringliteral">&quot; steps; X(H-1): &quot;</span> &lt;&lt; comp.getMassFraction(<span class="stringliteral">&quot;H-1&quot;</span>) &lt;&lt; <span class="stringliteral">&quot; -&gt; &quot;</span></div>
+<div class="line">              &lt;&lt; output.<a class="code hl_variable" href="structgridfire_1_1_net_out.html#a073529511ae0e52f868b47cce0e8ac0a">composition</a>.getMassFraction(<span class="stringliteral">&quot;H-1&quot;</span>) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span></div>
+<div class="line">              &lt;&lt; <span class="stringliteral">&quot;eps_nuc = &quot;</span> &lt;&lt; output.<a class="code hl_variable" href="structgridfire_1_1_net_out.html#a45642cab003f11cc0936e2f4a91a4ca4">eps_nuc</a> &lt;&lt; <span class="stringliteral">&quot; erg/g/s, energy released = &quot;</span> &lt;&lt; output.<a class="code hl_variable" href="structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6">energy</a> &lt;&lt; <span class="stringliteral">&quot; erg/g\n&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// 5. Instantaneous rates at a state, without integrating</span></div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a> <a class="code hl_namespace" href="namespacegridfire_1_1rates.html">rates</a> = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluateRates(ctx, input);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;eps_nuc now = &quot;</span> &lt;&lt; <a class="code hl_namespace" href="namespacegridfire_1_1rates.html">rates</a>.eps_nuc &lt;&lt; <span class="stringliteral">&quot; erg/g/s, d eps/dT = &quot;</span> &lt;&lt; <a class="code hl_namespace" href="namespacegridfire_1_1rates.html">rates</a>.dEps_dT &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line">}</div>
+<div class="ttc" id="aclassgridfire_1_1policy_1_1_main_sequence_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></div><div class="ttdoc">A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.</div><div class="ttdef"><b>Definition</b> stellar_policy.h:61</div></div>
+<div class="ttc" id="aclassgridfire_1_1solver_1_1_point_solver_html"><div class="ttname"><a href="classgridfire_1_1solver_1_1_point_solver.html">gridfire::solver::PointSolver</a></div><div class="ttdoc">Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.</div><div class="ttdef"><b>Definition</b> PointSolver.h:186</div></div>
+<div class="ttc" id="agridfire_8h_html"><div class="ttname"><a href="gridfire_8h.html">gridfire.h</a></div></div>
+<div class="ttc" id="anamespacegridfire_1_1config_html"><div class="ttname"><a href="namespacegridfire_1_1config.html">gridfire::config</a></div><div class="ttdef"><b>Definition</b> config.h:10</div></div>
+<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:26</div></div>
+<div class="ttc" id="anamespacegridfire_1_1rates_html"><div class="ttname"><a href="namespacegridfire_1_1rates.html">gridfire::rates</a></div><div class="ttdef"><b>Definition</b> weak.h:28</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:8</div></div>
+<div class="ttc" id="anamespacegridfire_html"><div class="ttname"><a href="namespacegridfire.html">gridfire</a></div><div class="ttdef"><b>Definition</b> config.h:10</div></div>
+<div class="ttc" id="astructgridfire_1_1_instantaneous_rates_html"><div class="ttname"><a href="structgridfire_1_1_instantaneous_rates.html">gridfire::InstantaneousRates</a></div><div class="ttdoc">Instantaneous rates at one state (composition, T, rho), with nothing integrated.</div><div class="ttdef"><b>Definition</b> types.h:98</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:31</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a06f0dff9f8927b7cf2da3004c8fa1577"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">gridfire::NetIn::density</a></div><div class="ttdeci">double density</div><div class="ttdoc">Density in g/cm^3.</div><div class="ttdef"><b>Definition</b> types.h:36</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a0a8d820cfeaa92ee31f253795c57e0d1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1">gridfire::NetIn::tMax</a></div><div class="ttdeci">double tMax</div><div class="ttdoc">Maximum time.</div><div class="ttdef"><b>Definition</b> types.h:33</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a13058f4929e72c1187abbebcddb8aed1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1">gridfire::NetIn::composition</a></div><div class="ttdeci">fourdst::composition::Composition composition</div><div class="ttdoc">Composition of the network.</div><div class="ttdef"><b>Definition</b> types.h:32</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a4e556f7bb18f46654b3445476734076a"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a4e556f7bb18f46654b3445476734076a">gridfire::NetIn::dt0</a></div><div class="ttdeci">double dt0</div><div class="ttdoc">Initial time step.</div><div class="ttdef"><b>Definition</b> types.h:34</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a5be0f5195a5cd1dd177b9fc5ab83a7be"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">gridfire::NetIn::temperature</a></div><div class="ttdeci">double temperature</div><div class="ttdoc">Temperature in Kelvin.</div><div class="ttdef"><b>Definition</b> types.h:35</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:41</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html_a073529511ae0e52f868b47cce0e8ac0a"><div class="ttname"><a href="structgridfire_1_1_net_out.html#a073529511ae0e52f868b47cce0e8ac0a">gridfire::NetOut::composition</a></div><div class="ttdeci">fourdst::composition::Composition composition</div><div class="ttdoc">Composition of the network after evaluation (the input composition for a zone that failed)</div><div class="ttdef"><b>Definition</b> types.h:42</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html_a43d5a861708992c949f616aa2a035ec6"><div class="ttname"><a href="structgridfire_1_1_net_out.html#a43d5a861708992c949f616aa2a035ec6">gridfire::NetOut::energy</a></div><div class="ttdeci">double energy</div><div class="ttdoc">Energy in ergs after evaluation.</div><div class="ttdef"><b>Definition</b> types.h:44</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html_a45642cab003f11cc0936e2f4a91a4ca4"><div class="ttname"><a href="structgridfire_1_1_net_out.html#a45642cab003f11cc0936e2f4a91a4ca4">gridfire::NetOut::eps_nuc</a></div><div class="ttdeci">double eps_nuc</div><div class="ttdoc">Instantaneous specific nuclear energy generation rate, net of reaction neutrino losses,...</div><div class="ttdef"><b>Definition</b> types.h:56</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_out_html_a51c16703132cf739ec2fd89eae7badd6"><div class="ttname"><a href="structgridfire_1_1_net_out.html#a51c16703132cf739ec2fd89eae7badd6">gridfire::NetOut::num_steps</a></div><div class="ttdeci">int num_steps</div><div class="ttdoc">Number of steps taken in the evaluation.</div><div class="ttdef"><b>Definition</b> types.h:43</div></div>
+<div class="ttc" id="astructgridfire_1_1config_1_1_grid_fire_config_html"><div class="ttname"><a href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a></div><div class="ttdef"><b>Definition</b> config.h:70</div></div>
+<div class="ttc" id="astructgridfire_1_1policy_1_1_construction_results_html"><div class="ttname"><a href="structgridfire_1_1policy_1_1_construction_results.html">gridfire::policy::ConstructionResults</a></div><div class="ttdef"><b>Definition</b> policy_abstract.h:67</div></div>
+<div class="ttc" id="astructgridfire_1_1policy_1_1_construction_results_html_a0ca2e3cb09fef16ca4466a3dc759d8b1"><div class="ttname"><a href="structgridfire_1_1policy_1_1_construction_results.html#a0ca2e3cb09fef16ca4466a3dc759d8b1">gridfire::policy::ConstructionResults::engine</a></div><div class="ttdeci">const engine::DynamicEngine &amp; engine</div><div class="ttdef"><b>Definition</b> policy_abstract.h:68</div></div>
+<div class="ttc" id="astructgridfire_1_1policy_1_1_construction_results_html_a1d36074833fb53b63e7967193f1434b4"><div class="ttname"><a href="structgridfire_1_1policy_1_1_construction_results.html#a1d36074833fb53b63e7967193f1434b4">gridfire::policy::ConstructionResults::scratch_blob</a></div><div class="ttdeci">std::unique_ptr&lt; engine::scratch::StateBlob &gt; scratch_blob</div><div class="ttdef"><b>Definition</b> policy_abstract.h:69</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_context_html"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_context.html">gridfire::solver::PointSolverContext</a></div><div class="ttdef"><b>Definition</b> PointSolver.h:107</div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md43"></a>
+GraphEngine Initialization</h3>
+<p>A <code>GraphEngine</code> can also be built directly, from a seed composition or an explicit <code>reaction::ReactionSet</code>. Unlike a policy, this does not check that the network contains the species and reactions a burning stage needs.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main(){</div>
-<div class="line">    std::vector&lt;std::string&gt; symbols = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>};</div>
-<div class="line">    std::vector&lt;double&gt; X = {0.7, 0.29, 0.01};</div>
+<div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacegridfire.html">gridfire</a>;</div>
+<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition comp(</div>
+<div class="line">        std::vector&lt;std::string&gt;{<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>}, {0.7, 0.07, 2.5e-4, 7.9e-5, 6.0e-4});</div>
 <div class="line"> </div>
-<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);</div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a> stellarPolicy(netIn.composition);</div>
-<div class="line">    <a class="code hl_class" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a>&amp; engine = stellarPolicy.construct();</div>
-<div class="line">    </div>
-<div class="line">    gridfire::solver::CVODESolverStrategy solver(adaptView);</div>
-<div class="line">    solver.set_callback(callback);</div>
+<div class="line">    <span class="comment">// Physics options for the engine (see &quot;GraphEngine Configuration Options&quot;)</span></div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>;</div>
+<div class="line">    <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>.engine.screening = <a class="code hl_enumvalue" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">screening::ScreeningType::BLENDED</a>;</div>
+<div class="line">    <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>.engine.useReverseReactions = <span class="keyword">false</span>;</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 6. Prepare input conditions</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> input{</div>
-<div class="line">        comp,     <span class="comment">// composition</span></div>
-<div class="line">        1.5e7,      <span class="comment">// temperature [K]</span></div>
-<div class="line">        1.5e2,      <span class="comment">// density [g/cm^3]</span></div>
-<div class="line">        1e-12,     <span class="comment">// initial timestep [s]</span></div>
-<div class="line">        3e17      <span class="comment">// integration end time [s]</span></div>
-<div class="line">    };</div>
+<div class="line">    <span class="comment">// Grow the network from the seed composition: SecondOrder follows reactions two steps out</span></div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html">partition::RauscherThielemannPartitionFunction</a> partitionFunction; <span class="comment">// used for reverse rates</span></div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1engine_1_1_graph_engine.html">engine::GraphEngine</a> <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>(comp, partitionFunction,</div>
+<div class="line">                                     <a class="code hl_enumvalue" href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a264572d66aed5373d19dc80c7cde1f46">engine::NetworkBuildDepth::SecondOrder</a>,</div>
+<div class="line">                                     <a class="code hl_enumvalue" href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee">engine::NetworkConstructionFlags::DEFAULT</a>, <a class="code hl_namespace" href="namespacegridfire_1_1config.html">config</a>);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// 7. Execute integration</span></div>
-<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a> output = solver.evaluate(input);</div>
-<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Final results are: &quot;</span> &lt;&lt; output &lt;&lt; std::endl;</div>
+<div class="line">    <span class="comment">// Engines keep per-calculation state in a StateBlob, so one engine can serve many threads or zones</span></div>
+<div class="line">    <span class="keyword">const</span> <span class="keyword">auto</span> ctx = <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>.constructStateBlob(<span class="keyword">nullptr</span>);</div>
+<div class="line">    std::cout &lt;&lt; <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>.getNetworkSpecies(*ctx).size() &lt;&lt; <span class="stringliteral">&quot; species, &quot;</span></div>
+<div class="line">              &lt;&lt; <a class="code hl_namespace" href="namespacegridfire_1_1engine.html">engine</a>.getNetworkReactions(*ctx).size() &lt;&lt; <span class="stringliteral">&quot; reactions\n&quot;</span>;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassgridfire_1_1engine_1_1_dynamic_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></div><div class="ttdoc">Abstract class for engines supporting Jacobian and stoichiometry operations.</div><div class="ttdef"><b>Definition</b> engine_abstract.h:185</div></div>
-<div class="ttc" id="aclassgridfire_1_1policy_1_1_main_sequence_policy_html"><div class="ttname"><a href="classgridfire_1_1policy_1_1_main_sequence_policy.html">gridfire::policy::MainSequencePolicy</a></div><div class="ttdoc">A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.</div><div class="ttdef"><b>Definition</b> stellar_policy.h:60</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:30</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_out_html"><div class="ttname"><a href="structgridfire_1_1_net_out.html">gridfire::NetOut</a></div><div class="ttdef"><b>Definition</b> types.h:40</div></div>
-</div><!-- fragment --><p> &gt;<b>Note:</b> If you want to see exactly why each repartitioning stage was triggered in a human readable manner add the flag True to <code>solver.evaluate</code> (<code>solver.evaluate(input, true)</code>).</p>
-<p>&gt;<b>Note:</b> A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.</p>
-<p>&gt;<b>Note:</b> The order of species in the boost state vector (<code>ctx.state</code>) is <b>not guaranteed</b> to be any particular order run over run. Therefore, in order to reliably extract </p><blockquote class="doxtable">
-<p>values from it, you <b>must</b> use the <code>getSpeciesIndex</code> method of the engine to get the index of the species you are interested in (these will always be in the same order). </p>
-</blockquote>
-<p>If you wish to know what is provided by a solver context without investigating the code you can simply do</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> callback(<span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a>&amp; context) {</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [parameterName, description] : context.describe()) {</div>
-<div class="line">        std::cout &lt;&lt; parameterName &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; description &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="ttc" id="aclassgridfire_1_1engine_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_graph_engine.html">gridfire::engine::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:105</div></div>
+<div class="ttc" id="aclassgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_html"><div class="ttname"><a href="classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html">gridfire::partition::RauscherThielemannPartitionFunction</a></div><div class="ttdoc">Partition function using Rauscher-Thielemann tabulated normalized G-values.</div><div class="ttdef"><b>Definition</b> partition_rauscher_thielemann.h:24</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html_a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee"><div class="ttname"><a href="namespacegridfire_1_1engine.html#a775506bb881280f73264db27cb8388f9a5b39c8b553c821e7cddc6da64b5bd2ee">gridfire::engine::NetworkConstructionFlags::DEFAULT</a></div><div class="ttdeci">@ DEFAULT</div><div class="ttdef"><b>Definition</b> construction.h:41</div></div>
+<div class="ttc" id="anamespacegridfire_1_1engine_html_a782fbc9eca00df10e4a204ae6da733e7a264572d66aed5373d19dc80c7cde1f46"><div class="ttname"><a href="namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7a264572d66aed5373d19dc80c7cde1f46">gridfire::engine::NetworkBuildDepth::SecondOrder</a></div><div class="ttdeci">@ SecondOrder</div><div class="ttdef"><b>Definition</b> building.h:32</div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098"><div class="ttname"><a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">gridfire::screening::ScreeningType::BLENDED</a></div><div class="ttdeci">@ BLENDED</div><div class="ttdoc">Salpeter weak screening blended into Chugunov &amp; DeWitt (2009) as coupling grows (BlendedScreeningMode...</div><div class="ttdef"><b>Definition</b> screening_types.h:52</div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md44"></a>
+Callback Example</h3>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire_8h.html">gridfire/gridfire.h</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/composition/composition.h&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/atomic/species.h&quot;</span> <span class="comment">// strongly typed species, e.g. fourdst::atomic::H_1</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &lt;nvector/nvector_serial.h&gt;</span> <span class="comment">// NV_Ith_S, to read the CVODE state vector</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> callback(<span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html">gridfire::solver::PointSolverTimestepContext</a>&amp; context) {</div>
+<div class="line">    <span class="comment">// The state vector holds the network species in the engine&#39;s order (then the accumulated energy), so look</span></div>
+<div class="line">    <span class="comment">// species up by index rather than assuming an order</span></div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">size_t</span> iH1 = context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ab47a6b0cf09ea0ad87faaca2cca41557">engine</a>.<a class="code hl_function" href="classgridfire_1_1engine_1_1_dynamic_engine.html#a16bd2fae51fa738da62f2a767f6875d2">getSpeciesIndex</a>(context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a9a88f0368ec8e36c804799d0de7a76a0">state_ctx</a>, fourdst::atomic::H_1);</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">size_t</span> iHe4 = context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ab47a6b0cf09ea0ad87faaca2cca41557">engine</a>.<a class="code hl_function" href="classgridfire_1_1engine_1_1_dynamic_engine.html#a16bd2fae51fa738da62f2a767f6875d2">getSpeciesIndex</a>(context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a9a88f0368ec8e36c804799d0de7a76a0">state_ctx</a>, fourdst::atomic::He_4);</div>
+<div class="line">    <span class="keywordflow">if</span> (context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ac5fd90d8ee8b31790ec3f75bffbc330e">num_steps</a> % 50 == 0) {</div>
+<div class="line">        std::cout &lt;&lt; context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ad4c0ed91a8735f3cda2003dc322e3797">t</a> &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; NV_Ith_S(context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae0cc0270ead108365f0345c94f97f175">state</a>, iH1) &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; NV_Ith_S(context.<a class="code hl_variable" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae0cc0270ead108365f0345c94f97f175">state</a>, iHe4) &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line">    }</div>
-<div class="line">    std::cout &lt;&lt; std::flush();</div>
-<div class="line">    exit(0);</div>
 <div class="line">}</div>
-<div class="ttc" id="astructgridfire_1_1solver_1_1_solver_context_base_html"><div class="ttname"><a href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a></div><div class="ttdef"><b>Definition</b> strategy_abstract.h:16</div></div>
-</div><!-- fragment --><p>If you set this as the callback (to any solver strategy) it will print out the available parameters and what they are and then close the code. This is useful when writing new callbacks.</p>
-<h4><a class="anchor" id="autotoc_md53"></a>
-Callback Context</h4>
-<p>Since each solver may provide different context to the callback function, and it may be frustrating to refer to the documentation every time, we also enforce that all solvers must implement a <code>descripe_callback_context</code> method which returns a vector of tuples&lt;string, string&gt; where the first element is the name of the field and the second is its datatype. It is on the developer to ensure that this information is accurate.</p>
-<div class="fragment"><div class="line">...</div>
-<div class="line">std::cout &lt;&lt; solver.describe_callback_context() &lt;&lt; std::endl;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md54"></a>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacegridfire.html">gridfire</a>;</div>
+<div class="line">    <span class="keyword">const</span> fourdst::composition::Composition comp(</div>
+<div class="line">        std::vector&lt;std::string&gt;{<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-3&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span>},</div>
+<div class="line">        {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05});</div>
+<div class="line"> </div>
+<div class="line">    <a class="code hl_class" href="classgridfire_1_1policy_1_1_main_sequence_policy.html">policy::MainSequencePolicy</a> <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>(comp);</div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1policy_1_1_construction_results.html">policy::ConstructionResults</a> net = <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">policy</a>.construct();</div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_class" href="classgridfire_1_1solver_1_1_point_solver.html">solver::PointSolver</a> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>(net.<a class="code hl_variable" href="structgridfire_1_1policy_1_1_construction_results.html#a0ca2e3cb09fef16ca4466a3dc759d8b1">engine</a>);</div>
+<div class="line"> </div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1solver_1_1_point_solver_context.html">solver::PointSolverContext</a> ctx(*net.<a class="code hl_variable" href="structgridfire_1_1policy_1_1_construction_results.html#a1d36074833fb53b63e7967193f1434b4">scratch_blob</a>);</div>
+<div class="line">    ctx.stdout_logging = <span class="keyword">false</span>;</div>
+<div class="line">    ctx.callback = callback;      <span class="comment">// called after every accepted step</span></div>
+<div class="line"> </div>
+<div class="line">    <a class="code hl_struct" href="structgridfire_1_1_net_in.html">NetIn</a> input;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1">composition</a> = comp;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">temperature</a> = 1.5e7;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">density</a> = 150.0;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1">tMax</a> = 3.15e13;</div>
+<div class="line">    input.<a class="code hl_variable" href="structgridfire_1_1_net_in.html#a4e556f7bb18f46654b3445476734076a">dt0</a> = 1e-12;</div>
+<div class="line"> </div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;t,Y(H-1),Y(He-4)\n&quot;</span>;</div>
+<div class="line">    <span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1_net_out.html">NetOut</a> output = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluate(ctx, input);</div>
+<div class="line">    std::cout &lt;&lt; output &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassgridfire_1_1engine_1_1_dynamic_engine_html_a16bd2fae51fa738da62f2a767f6875d2"><div class="ttname"><a href="classgridfire_1_1engine_1_1_dynamic_engine.html#a16bd2fae51fa738da62f2a767f6875d2">gridfire::engine::DynamicEngine::getSpeciesIndex</a></div><div class="ttdeci">virtual size_t getSpeciesIndex(scratch::StateBlob &amp;ctx, const fourdst::atomic::Species &amp;species) const =0</div><div class="ttdoc">Get the index of a species in the network.</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html">gridfire::solver::PointSolverTimestepContext</a></div><div class="ttdef"><b>Definition</b> PointSolver.h:49</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_a9a88f0368ec8e36c804799d0de7a76a0"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a9a88f0368ec8e36c804799d0de7a76a0">gridfire::solver::PointSolverTimestepContext::state_ctx</a></div><div class="ttdeci">engine::scratch::StateBlob &amp; state_ctx</div><div class="ttdoc">Reference to the engine scratch state blob.</div><div class="ttdef"><b>Definition</b> PointSolver.h:62</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_ab47a6b0cf09ea0ad87faaca2cca41557"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ab47a6b0cf09ea0ad87faaca2cca41557">gridfire::solver::PointSolverTimestepContext::engine</a></div><div class="ttdeci">const engine::DynamicEngine &amp; engine</div><div class="ttdoc">Reference to the engine.</div><div class="ttdef"><b>Definition</b> PointSolver.h:57</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_ac5fd90d8ee8b31790ec3f75bffbc330e"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ac5fd90d8ee8b31790ec3f75bffbc330e">gridfire::solver::PointSolverTimestepContext::num_steps</a></div><div class="ttdeci">const size_t num_steps</div><div class="ttdoc">Number of CVODE steps taken so far.</div><div class="ttdef"><b>Definition</b> PointSolver.h:56</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_ad4c0ed91a8735f3cda2003dc322e3797"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ad4c0ed91a8735f3cda2003dc322e3797">gridfire::solver::PointSolverTimestepContext::t</a></div><div class="ttdeci">const double t</div><div class="ttdoc">Current integration time [s].</div><div class="ttdef"><b>Definition</b> PointSolver.h:50</div></div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_ae0cc0270ead108365f0345c94f97f175"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae0cc0270ead108365f0345c94f97f175">gridfire::solver::PointSolverTimestepContext::state</a></div><div class="ttdeci">const N_Vector &amp; state</div><div class="ttdoc">Current CVODE state vector (N_Vector).</div><div class="ttdef"><b>Definition</b> PointSolver.h:51</div></div>
+</div><!-- fragment --><p>&gt;<b>Note:</b> The order of species in the state vector (<code>context.state</code>) is the engine's, not the order of the input &gt;composition. Use the engine's <code>getSpeciesIndex</code> (or <code>context.networkSpecies</code>) to find a species.</p>
+<p>To see everything a timestep context provides, register a callback that prints its <code>describe()</code> and exits:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> describe_callback(<span class="keyword">const</span> <a class="code hl_struct" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html">gridfire::solver::PointSolverTimestepContext</a>&amp; context) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [name, description] : context.<a class="code hl_function" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a5307efe7f090f77b17d78a6d789d929b">describe</a>()) {</div>
+<div class="line">        std::cout &lt;&lt; name &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; description &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">    }</div>
+<div class="line">    std::exit(0);</div>
+<div class="line">}</div>
+<div class="ttc" id="astructgridfire_1_1solver_1_1_point_solver_timestep_context_html_a5307efe7f090f77b17d78a6d789d929b"><div class="ttname"><a href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a5307efe7f090f77b17d78a6d789d929b">gridfire::solver::PointSolverTimestepContext::describe</a></div><div class="ttdeci">std::vector&lt; std::tuple&lt; std::string, std::string &gt; &gt; describe() const override</div><div class="ttdoc">Describe the context for callback functions.</div><div class="ttdef"><b>Definition</b> PointSolver.cpp:91</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md45"></a>
 Python</h2>
-<p>The python bindings intentionally look <b>very</b> similar to the C++ code. Generally all examples can be adapted to python by replacing includes of paths with imports of modules such that</p>
-<p><code>#include "gridfire/engine/GraphEngine.h"</code> becomes <code>import <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">gridfire.engine.GraphEngine</a></code></p>
+<p>The python bindings intentionally look <b>very</b> similar to the C++ code: namespaces become modules, so <code><a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html" title="A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.">gridfire::policy::MainSequencePolicy</a></code> is <code><a class="el" href="classgridfire_1_1policy_1_1_main_sequence_policy.html" title="A NetworkPolicy for building reaction networks suitable for low-mass main-sequence stars.">gridfire.policy.MainSequencePolicy</a></code>, <code><a class="el" href="classgridfire_1_1solver_1_1_point_solver.html" title="Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.">gridfire::solver::PointSolver</a></code> is <code><a class="el" href="classgridfire_1_1solver_1_1_point_solver.html" title="Stiff ODE integrator backed by SUNDIALS CVODE (BDF) for network + energy.">gridfire.solver.PointSolver</a></code>, and <code><a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></code> is <code>gridfire.type.NetIn</code>. Compositions come from <code>fourdst.composition</code>.</p>
 <p>All GridFire C++ types have been bound and can be passed around as one would expect.</p>
-<h3><a class="anchor" id="autotoc_md55"></a>
+<h3><a class="anchor" id="autotoc_md46"></a>
 Python Example for End Users</h3>
 <p>The syntax for registration is very similar to C++. There are a few things to note about this more robust example</p>
 <ol type="1">
@@ -619,7 +647,7 @@ Python Example for End Users</h3>
 <li>If you have tools such as mypy installed you will see that the python bindings are strongly typed. This is intentional to help users avoid mistakes when writing code. <div class="fragment"><div class="line"><span class="keyword">from</span> fourdst.composition <span class="keyword">import</span> Composition</div>
 <div class="line"><span class="keyword">from</span> gridfire.type <span class="keyword">import</span> NetIn</div>
 <div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1policy.html">gridfire.policy</a> <span class="keyword">import</span> MainSequencePolicy</div>
-<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> CVODESolverStrategy</div>
+<div class="line"><span class="keyword">from</span> <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">gridfire.solver</a> <span class="keyword">import</span> PointSolver, PointSolverContext</div>
 <div class="line"><span class="keyword">from</span> enum <span class="keyword">import</span> Enum</div>
 <div class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> Dict, Union, SupportsFloat</div>
 <div class="line"><span class="keyword">import</span> json</div>
@@ -657,9 +685,9 @@ Python Example for End Users</h3>
 <div class="line">    self.step_data[self.num_steps][StepData.TIME] = context.t</div>
 <div class="line">    self.step_data[self.num_steps][StepData.DT] = context.dt</div>
 <div class="line">    comp_data: Dict[str, SupportsFloat] = {}</div>
-<div class="line">    <span class="keywordflow">for</span> species <span class="keywordflow">in</span> engine.getNetworkSpecies():</div>
-<div class="line">      sid = engine.getSpeciesIndex(species)</div>
-<div class="line">      comp_data[species.name()] = context.state[sid]</div>
+<div class="line">    comp = context.composition</div>
+<div class="line">    <span class="keywordflow">for</span> species <span class="keywordflow">in</span> engine.getNetworkSpecies(context.state_ctx):</div>
+<div class="line">      comp_data[species.name()] = comp.getMolarAbundance(species)</div>
 <div class="line">    self.step_data[self.num_steps][StepData.COMP] = comp_data</div>
 <div class="line">    self.num_steps += 1</div>
 <div class="line"> </div>
@@ -693,15 +721,18 @@ Python Example for End Users</h3>
 <div class="line">  netIn = init_netIn(temp, rho, time, comp)</div>
 <div class="line"> </div>
 <div class="line">  policy = MainSequencePolicy(comp)</div>
-<div class="line">  engine = policy.construct()</div>
+<div class="line">  construct = policy.construct()</div>
 <div class="line"> </div>
-<div class="line">  solver = CVODESolverStrategy(engine)</div>
+<div class="line">  engine = construct.engine</div>
+<div class="line">  context = PointSolverContext(construct.scratch_blob)</div>
 <div class="line"> </div>
-<div class="line">  step_logger = StepLogger()</div>
-<div class="line">  solver.set_callback(<span class="keyword">lambda</span> context: step_logger.log_step(context))</div>
+<div class="line">  solver = PointSolver(engine)</div>
 <div class="line"> </div>
-<div class="line">  solver.evaluate(netIn, <span class="keyword">False</span>)</div>
-<div class="line">  step_logger.to_xml(<span class="stringliteral">&quot;log_data.xml&quot;</span>)</div>
+<div class="line">  logger = StepLogger()</div>
+<div class="line"> </div>
+<div class="line">  context.callback = <span class="keyword">lambda</span> ctx: logger.log_step(ctx)</div>
+<div class="line">  solver.evaluate(context, netIn)</div>
+<div class="line">  logger.to_xml(<span class="stringliteral">&quot;log_data.xml&quot;</span>)</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordflow">if</span> __name__ == <span class="stringliteral">&quot;__main__&quot;</span>:</div>
 <div class="line">  <span class="keyword">import</span> argparse</div>
@@ -711,11 +742,9 @@ Python Example for End Users</h3>
 <div class="line">  parser.add_argument(<span class="stringliteral">&quot;--tMax&quot;</span>, type=float, help=<span class="stringliteral">&quot;Time in s&quot;</span>, default=3.1536 * 1e17)</div>
 <div class="line">  args = parser.parse_args()</div>
 <div class="line">  main(args.temp, args.rho, args.tMax)</div>
-<div class="ttc" id="anamespacegridfire_1_1policy_html"><div class="ttname"><a href="namespacegridfire_1_1policy.html">gridfire::policy</a></div><div class="ttdef"><b>Definition</b> chains.h:26</div></div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
 </div><!-- fragment --></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md56"></a>
+<h1><a class="anchor" id="autotoc_md47"></a>
 External Usage</h1>
 <p>C++ does not have a stable ABI nor does it make any strong guarantees about stl container layouts between compiler versions. Therefore, GridFire includes a set of stable C bindings which can be used to interface with a limited subset of GridFire functionality from other languages.</p>
 <blockquote class="doxtable">
@@ -727,215 +756,218 @@ External Usage</h1>
 <blockquote class="doxtable">
 <p><b>Note:</b> Because the C API does not pass the general Composition object a <code>mass_lost</code> output parameter has been added to the evolve calls, this tracks the total mass in species which have not been registered with the C API GridFire by the caller </p>
 </blockquote>
-<h2><a class="anchor" id="autotoc_md57"></a>
+<blockquote class="doxtable">
+<p><b>Note:</b> The C and Fortran APIs take and return <b>molar abundances</b> (Y). <code>gf_mass_fractions_to_molar</code> and <code>gf_molar_to_mass_fractions</code> (<code>gff_mass_fractions_to_molar</code> / <code>gff_molar_to_mass_fractions</code>) convert, in the registered species order. </p>
+</blockquote>
+<h2><a class="anchor" id="autotoc_md48"></a>
+Building a program against GridFire</h2>
+<p>The pip wheel ships everything a C, C++ or Fortran program needs: headers, <code>libgridfire</code>, <code>libgridfire_extern</code> (the C API), <code><a class="el" href="gridfire__mod_8f90.html">gridfire_mod.f90</a></code> (the Fortran module source, compiled with your own Fortran compiler so its <code>.mod</code> file matches), pkg-config files and a CMake package.</p>
+<p><b><code>gf-config</code></b>, installed with the wheel, prints compiler and linker flags:</p>
+<div class="fragment"><div class="line">c++ -std=c++23 prog.cpp $(gf-config --cflags --libs) -o prog                               # C++</div>
+<div class="line">cc prog.c $(gf-config --component c --cflags --libs) -o prog                               # C API</div>
+<div class="line">gfortran $(gf-config --fortran-source) prog.f90 $(gf-config --component fortran --cflags --libs) -o prog  # Fortran</div>
+</div><!-- fragment --><p><b>pkg-config:</b> the packages are <code>gridfire</code>, <code>gridfire_extern</code> and <code>gridfire_fortran</code>. The Fortran package's <code>fortran_source</code> variable is the path of <code><a class="el" href="gridfire__mod_8f90.html">gridfire_mod.f90</a></code>.</p>
+<div class="fragment"><div class="line">export PKG_CONFIG_PATH=&quot;$(gf-config --pkg-config-path)&quot;</div>
+<div class="line">cc prog.c $(pkg-config --cflags --libs gridfire_extern) -o prog</div>
+</div><!-- fragment --><p><b>CMake, with an installed GridFire</b> (the wheel, or <code>meson install</code>): the imported targets are <code>GridFire::gridfire</code> (C++), <code>GridFire::gridfire_extern</code> (C) and <code>GridFire::gridfire_fortran</code> (Fortran; it compiles <code><a class="el" href="gridfire__mod_8f90.html">gridfire_mod.f90</a></code> with your project's compiler). Configure with <code>-DCMAKE_PREFIX_PATH="$(gf-config --cmake-prefix)"</code> for the wheel.</p>
+<div class="fragment"><div class="line">find_package(GridFire 1.2 REQUIRED COMPONENTS CXX C Fortran)</div>
+<div class="line">target_link_libraries(my_code PRIVATE GridFire::gridfire_fortran)</div>
+</div><!-- fragment --><p><b>CMake, building GridFire from source:</b> FetchContent uses an installed GridFire when it finds one and otherwise fetches it and builds it with Meson (which, with ninja, must be installed) while CMake configures:</p>
+<div class="fragment"><div class="line">include(FetchContent)</div>
+<div class="line">FetchContent_Declare(GridFire</div>
+<div class="line">    GIT_REPOSITORY https://github.com/4D-STAR/GridFire.git</div>
+<div class="line">    GIT_TAG        v1.2.0</div>
+<div class="line">    GIT_SHALLOW    TRUE</div>
+<div class="line">    FIND_PACKAGE_ARGS 1.2 COMPONENTS CXX C Fortran)</div>
+<div class="line">FetchContent_MakeAvailable(GridFire)</div>
+</div><!-- fragment --><p>The cache variables <code>GRIDFIRE_BUILDTYPE</code> and <code>GRIDFIRE_MESON_OPTIONS</code> pass options through to that Meson build.</p>
+<p><b>Meson subproject:</b> put <a href="tests/packaging/meson_consumer/gridfire.wrap"><code>tests/packaging/meson_consumer/gridfire.wrap</code></a> in your <code>subprojects/</code> directory, then</p>
+<div class="fragment"><div class="line">gridfire_dep = dependency(&#39;gridfire&#39;, version: &#39;&gt;=1.2.0&#39;, default_options: [&#39;build_fortran=true&#39;, &#39;build_tests=false&#39;])</div>
+<div class="line">gridfire_extern_dep = dependency(&#39;gridfire_extern&#39;, version: &#39;&gt;=1.2.0&#39;)</div>
+<div class="line">gridfire_fortran_dep = dependency(&#39;gridfire_fortran&#39;, version: &#39;&gt;=1.2.0&#39;)</div>
+</div><!-- fragment --><p>Each route is checked on every supported platform; see Packaging status.</p>
+<h2><a class="anchor" id="autotoc_md49"></a>
+Thread safety</h2>
+<p>In OpenMP builds, which include the published wheels:</p>
+<ul>
+<li>Build and free contexts from serial code, while no other GridFire call is running: <code>gf_init</code> through <code>gf_construct_solver_from_engine</code>, and <code>gf_free</code>. Make the first <code>gf_init</code> call outside any parallel region.</li>
+<li>Once built, <b>separate</b> contexts may evolve and evaluate concurrently from any threads, including OpenMP threads of a GCC/libgomp host program such as a <code>gfortran -fopenmp</code> code.</li>
+<li>A single context must never be used by two threads at once.</li>
+<li><code>MULTI_ZONE</code> contexts spread their zones over GridFire's own OpenMP threads; call them from serial code.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md50"></a>
 C API Overview</h2>
-<p>In general when using the C API the workflow is to </p>
+<p>In general when using the C API the workflow is to</p>
 <ol type="1">
-<li>create a <code>gf_context</code> pointer. This object holds the state of GridFire so that it does not need to be re-initialized for each call.</li>
-<li>call initialization routines on the context to set up the engine and solver you wish to use.</li>
-<li>call the <code>gf_evolve</code> function to evolve a network over some time.</li>
-<li>At each state check the ret code of the function to ensure that no errors occurred. Valid ret-codes are 0 and 1. All other ret codes indicate an error.</li>
-<li>Finally, call <code>gf_free</code> to free the context and all associated memory.</li>
+<li>Create a context with <code>gf_init(SINGLE_ZONE)</code> (or <code>MULTI_ZONE</code>, then <code>gf_set_num_zones</code>).</li>
+<li>Optionally set the configuration (<code>gf_config_defaults</code>, then <code>gf_set_config</code>, or <code>gf_load_config</code> from TOML).</li>
+<li>Register your species, build the engine with <code>gf_construct_engine_from_policy</code>, then the solver with <code>gf_construct_solver_from_engine</code>.</li>
+<li>Call <code>gf_evolve</code> to burn over a time step, <code>gf_evaluate</code> for instantaneous rates without integrating, or <code>gf_evaluate_reactions</code> for per-reaction contributions.</li>
+<li>Check every return code: <code>GF_SUCCESS</code> (0) is success (<code>gf_register_species</code> returns <code>FDSSE_SUCCESS</code>, 1), and <code>gf_get_last_error_message(ctx)</code> describes a failure.</li>
+<li>Call <code>gf_free</code> to release the context.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md58"></a>
+<h3><a class="anchor" id="autotoc_md51"></a>
+Configuration from C and Fortran</h3>
+<p><code>struct <a class="el" href="struct_g_f_config.html">GFConfig</a></code> (<code>type(GFConfig)</code> in Fortran) holds the solver tolerances and engine options. Fill it with the defaults first, change what you need, and set it <b>before</b> <code>gf_construct_engine_from_policy</code>:</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_struct" href="struct_g_f_config.html">GFConfig</a> config;</div>
+<div class="line"><a class="code hl_function" href="gridfire__extern_8h.html#a92a78d72b49ed04ed5cda8fd86335c44">gf_config_defaults</a>(&amp;config);</div>
+<div class="line">config.engine_screening = <a class="code hl_enumvalue" href="gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5ab89369d34c335c08c8e216b08dac100d">GF_SCREENING_CD09</a>;</div>
+<div class="line">config.engine_jacobian = <a class="code hl_enumvalue" href="gridfire__extern_8h.html#a492973c745cc4e499433e93522e93280a65176f8c5ef74176604d225a6f0855db">GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION</a>;</div>
+<div class="line">config.engine_use_reverse_reactions = 1;</div>
+<div class="line">config.solver_rel_tol = 1e-8;</div>
+<div class="line"><a class="code hl_function" href="gridfire__extern_8h.html#a59b3d75c4e9a34c9d55010cca32b5fc7">gf_set_config</a>(ctx, &amp;config);</div>
+<div class="ttc" id="agridfire__extern_8h_html_a492973c745cc4e499433e93522e93280a65176f8c5ef74176604d225a6f0855db"><div class="ttname"><a href="gridfire__extern_8h.html#a492973c745cc4e499433e93522e93280a65176f8c5ef74176604d225a6f0855db">GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION</a></div><div class="ttdeci">@ GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION</div><div class="ttdef"><b>Definition</b> gridfire_extern.h:108</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a49c17ba8fa9b62ddf52a74145e97b1a5ab89369d34c335c08c8e216b08dac100d"><div class="ttname"><a href="gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5ab89369d34c335c08c8e216b08dac100d">GF_SCREENING_CD09</a></div><div class="ttdeci">@ GF_SCREENING_CD09</div><div class="ttdef"><b>Definition</b> gridfire_extern.h:101</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a59b3d75c4e9a34c9d55010cca32b5fc7"><div class="ttname"><a href="gridfire__extern_8h.html#a59b3d75c4e9a34c9d55010cca32b5fc7">gf_set_config</a></div><div class="ttdeci">int gf_set_config(void *ptr, const struct GFConfig *config)</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a92a78d72b49ed04ed5cda8fd86335c44"><div class="ttname"><a href="gridfire__extern_8h.html#a92a78d72b49ed04ed5cda8fd86335c44">gf_config_defaults</a></div><div class="ttdeci">int gf_config_defaults(struct GFConfig *config)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:213</div></div>
+<div class="ttc" id="astruct_g_f_config_html"><div class="ttname"><a href="struct_g_f_config.html">GFConfig</a></div><div class="ttdef"><b>Definition</b> gridfire_extern.h:120</div></div>
+</div><!-- fragment --><p><code>gf_save_config</code> and <code>gf_load_config</code> write and read the same settings as TOML.</p>
+<h3><a class="anchor" id="autotoc_md52"></a>
 C Example</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="gridfire__extern_8h.html">gridfire/extern/gridfire_extern.h</a>&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#define NUM_SPECIES 8</span></div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// Define a macro to check return codes</span></div>
-<div class="line"><span class="preprocessor">#define GF_CHECK_RET_CODE(ret, ctx, msg) \</span></div>
-<div class="line"><span class="preprocessor">    if (ret != 0 &amp;&amp; ret != 1) { \</span></div>
-<div class="line"><span class="preprocessor">        printf(&quot;Error %s: %s\n&quot;, msg, gf_get_last_error_message(ctx)); \</span></div>
-<div class="line"><span class="preprocessor">        gf_free(ctx); \</span></div>
-<div class="line"><span class="preprocessor">        return ret; \</span></div>
-<div class="line"><span class="preprocessor">    }</span></div>
+<div class="line"><span class="comment">/* Report a failed call and stop (gf_register_species reports success as FDSSE_SUCCESS) */</span></div>
+<div class="line"><span class="preprocessor">#define CHECK(call, ctx, what)                                                                          \</span></div>
+<div class="line"><span class="preprocessor">    do {                                                                                                \</span></div>
+<div class="line"><span class="preprocessor">        const int ret_ = (call);                                                                        \</span></div>
+<div class="line"><span class="preprocessor">        if (ret_ != GF_SUCCESS &amp;&amp; ret_ != FDSSE_SUCCESS) {                                              \</span></div>
+<div class="line"><span class="preprocessor">            printf(&quot;%s failed: %s [%s]\n&quot;, what, gf_get_last_error_message(ctx), gf_error_code_to_string(ret_)); \</span></div>
+<div class="line"><span class="preprocessor">            gf_free(SINGLE_ZONE, ctx);                                                                  \</span></div>
+<div class="line"><span class="preprocessor">            return 1;                                                                                   \</span></div>
+<div class="line"><span class="preprocessor">        }                                                                                               \</span></div>
+<div class="line"><span class="preprocessor">    } while (0)</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="keywordtype">void</span>* gf_context = <a class="code hl_function" href="gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034">gf_init</a>();</div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>) {</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span>* species_names[NUM_SPECIES] = {<span class="stringliteral">&quot;H-1&quot;</span>, <span class="stringliteral">&quot;He-3&quot;</span>, <span class="stringliteral">&quot;He-4&quot;</span>, <span class="stringliteral">&quot;C-12&quot;</span>, <span class="stringliteral">&quot;N-14&quot;</span>, <span class="stringliteral">&quot;O-16&quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span>};</div>
+<div class="line">    <span class="comment">/* Molar abundances */</span></div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">double</span> Y[NUM_SPECIES] = {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05};</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">double</span> T = 1.5e7;    <span class="comment">/* K */</span></div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">double</span> rho = 150.0;  <span class="comment">/* g/cm^3 */</span></div>
 <div class="line"> </div>
-<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span>* species_names[NUM_SPECIES];</div>
-<div class="line">    species_names[0] = <span class="stringliteral">&quot;H-1&quot;</span>;</div>
-<div class="line">    species_names[1] = <span class="stringliteral">&quot;He-3&quot;</span>;</div>
-<div class="line">    species_names[2] = <span class="stringliteral">&quot;He-4&quot;</span>;</div>
-<div class="line">    species_names[3] = <span class="stringliteral">&quot;C-12&quot;</span>;</div>
-<div class="line">    species_names[4] = <span class="stringliteral">&quot;N-14&quot;</span>;</div>
-<div class="line">    species_names[5] = <span class="stringliteral">&quot;O-16&quot;</span>;</div>
-<div class="line">    species_names[6] = <span class="stringliteral">&quot;Ne-20&quot;</span>;</div>
-<div class="line">    species_names[7] = <span class="stringliteral">&quot;Mg-24&quot;</span>;</div>
-<div class="line">    <span class="keyword">const</span> <span class="keywordtype">double</span> abundances[NUM_SPECIES] = {0.702616602672027, 9.74791583949078e-06, 0.06895512307276903, 0.00025, 7.855418029399437e-05, 0.0006014411598306529, 8.103062886768109e-05, 2.151340851063217e-05};</div>
+<div class="line">    <span class="keywordtype">void</span>* ctx = <a class="code hl_function" href="gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034">gf_init</a>(<a class="code hl_enumvalue" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e">SINGLE_ZONE</a>);</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680">gf_register_species</a>(ctx, NUM_SPECIES, species_names), ctx, <span class="stringliteral">&quot;gf_register_species&quot;</span>);</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6">gf_construct_engine_from_policy</a>(ctx, <span class="stringliteral">&quot;MAIN_SEQUENCE_POLICY&quot;</span>, Y, NUM_SPECIES), ctx, <span class="stringliteral">&quot;engine&quot;</span>);</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a>(ctx), ctx, <span class="stringliteral">&quot;solver&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordtype">int</span> ret = <a class="code hl_function" href="gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680">gf_register_species</a>(gf_context, NUM_SPECIES, species_names);</div>
-<div class="line">    GF_CHECK_RET_CODE(ret, gf_context, <span class="stringliteral">&quot;Species Registration&quot;</span>);</div>
+<div class="line">    <span class="comment">/* Perturb two rates, e.g. for one Monte Carlo sample */</span></div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#aacfac2971a49c6437bd48a684db0a42c">gf_set_rate_multiplier</a>(ctx, <span class="stringliteral">&quot;p(p,e+)d&quot;</span>, 1.1), ctx, <span class="stringliteral">&quot;gf_set_rate_multiplier&quot;</span>);</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#aacfac2971a49c6437bd48a684db0a42c">gf_set_rate_multiplier</a>(ctx, <span class="stringliteral">&quot;n14(p,g)o15&quot;</span>, 0.9), ctx, <span class="stringliteral">&quot;gf_set_rate_multiplier&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">    ret = <a class="code hl_function" href="gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6">gf_construct_engine_from_policy</a>(gf_context, <span class="stringliteral">&quot;MAIN_SEQUENCE_POLICY&quot;</span>, abundances, NUM_SPECIES);</div>
-<div class="line">    GF_CHECK_RET_CODE(ret, gf_context, <span class="stringliteral">&quot;Policy and Engine Construction&quot;</span>);</div>
+<div class="line">    <span class="comment">/* Outputs: the caller provides arrays of the right size */</span></div>
+<div class="line">    <span class="keywordtype">size_t</span> num_channels = 0;</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#a35461bcef871f0358a24e4c8e82ba12e">gf_get_num_energy_channels</a>(ctx, &amp;num_channels), ctx, <span class="stringliteral">&quot;gf_get_num_energy_channels&quot;</span>);</div>
+<div class="line">    <span class="keywordtype">double</span> Y_out[NUM_SPECIES], eps_by_channel[16];</div>
+<div class="line">    <span class="keywordtype">double</span> energy, dEps_dT, dEps_dRho, nu_loss, nu_flux, mass_lost, eps_nuc, dlnEps_dlnT, dlnEps_dlnRho, nu_rate;</div>
+<div class="line">    <span class="keywordflow">if</span> (num_channels &gt; 16) <span class="keywordflow">return</span> 1;</div>
 <div class="line"> </div>
-<div class="line">    ret = <a class="code hl_function" href="gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a>(gf_context, <span class="stringliteral">&quot;CVODE&quot;</span>);</div>
-<div class="line">    GF_CHECK_RET_CODE(ret, gf_context, <span class="stringliteral">&quot;Solver Construction&quot;</span>);</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a>(<a class="code hl_enumvalue" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e">SINGLE_ZONE</a>, ctx, Y, NUM_SPECIES, &amp;T, &amp;rho,</div>
+<div class="line">                    3.15e13,  <span class="comment">/* burn for 1 Myr (s) */</span></div>
+<div class="line">                    1e-12,    <span class="comment">/* initial step (s) */</span></div>
+<div class="line">                    Y_out, &amp;energy, &amp;dEps_dT, &amp;dEps_dRho, &amp;nu_loss, &amp;nu_flux, &amp;mass_lost,</div>
+<div class="line">                    &amp;eps_nuc, &amp;dlnEps_dlnT, &amp;dlnEps_dlnRho, &amp;nu_rate, eps_by_channel),</div>
+<div class="line">          ctx, <span class="stringliteral">&quot;gf_evolve&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// When using the C API it is assumed that the caller will ensure that the output arrays are large enough to hold the results.</span></div>
-<div class="line">    <span class="keywordtype">double</span> Y_out[NUM_SPECIES];</div>
-<div class="line">    <span class="keywordtype">double</span> energy_out;</div>
-<div class="line">    <span class="keywordtype">double</span> dEps_dT;</div>
-<div class="line">    <span class="keywordtype">double</span> dEps_dRho;</div>
-<div class="line">    <span class="keywordtype">double</span> neutrino_energy_loss;</div>
-<div class="line">    <span class="keywordtype">double</span> neutrino_flux;</div>
-<div class="line">    <span class="keywordtype">double</span> mass_lost;</div>
-<div class="line"> </div>
-<div class="line">    ret = <a class="code hl_function" href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a>(</div>
-<div class="line">        gf_context,</div>
-<div class="line">        abundances,</div>
-<div class="line">        NUM_SPECIES,</div>
-<div class="line">        1.5e7,    <span class="comment">// Temperature in K</span></div>
-<div class="line">        1.5e2,    <span class="comment">// Density in g/cm^3</span></div>
-<div class="line">        3e17,      <span class="comment">// Time step in seconds</span></div>
-<div class="line">        1e-12, <span class="comment">// Initial time step in seconds</span></div>
-<div class="line">        Y_out,</div>
-<div class="line">        &amp;energy_out,</div>
-<div class="line">        &amp;dEps_dT,</div>
-<div class="line">        &amp;dEps_dRho,</div>
-<div class="line">        &amp;neutrino_energy_loss,</div>
-<div class="line">        &amp;neutrino_flux,</div>
-<div class="line">        &amp;mass_lost</div>
-<div class="line">    );</div>
-<div class="line"> </div>
-<div class="line">    GF_CHECK_RET_CODE(ret, gf_context, <span class="stringliteral">&quot;Evolution&quot;</span>);</div>
-<div class="line"> </div>
-<div class="line"> </div>
-<div class="line">    printf(<span class="stringliteral">&quot;Evolved abundances:\n&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NUM_SPECIES; i++) {</div>
-<div class="line">        printf(<span class="stringliteral">&quot;Species %s: %e\n&quot;</span>, species_names[i], Y_out[i]);</div>
+<div class="line">        printf(<span class="stringliteral">&quot;%-6s %.6e -&gt; %.6e\n&quot;</span>, species_names[i], Y[i], Y_out[i]);</div>
 <div class="line">    }</div>
-<div class="line">    printf(<span class="stringliteral">&quot;Energy output: %e\n&quot;</span>, energy_out);</div>
-<div class="line">    printf(<span class="stringliteral">&quot;dEps/dT: %e\n&quot;</span>, dEps_dT);</div>
-<div class="line">    printf(<span class="stringliteral">&quot;dEps/dRho: %e\n&quot;</span>, dEps_dRho);</div>
-<div class="line">    printf(<span class="stringliteral">&quot;Mass lost: %e\n&quot;</span>, mass_lost);</div>
+<div class="line">    printf(<span class="stringliteral">&quot;eps_nuc = %.6e erg/g/s, energy released = %.6e erg/g\n&quot;</span>, eps_nuc, energy);</div>
 <div class="line"> </div>
-<div class="line">    <a class="code hl_function" href="gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5">gf_free</a>(gf_context);</div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span>* provenance = NULL;</div>
+<div class="line">    CHECK(<a class="code hl_function" href="gridfire__extern_8h.html#a97f4474bcaf282980682acc62e16b60c">gf_get_provenance</a>(ctx, &amp;provenance), ctx, <span class="stringliteral">&quot;gf_get_provenance&quot;</span>);</div>
+<div class="line">    printf(<span class="stringliteral">&quot;%s&quot;</span>, provenance);</div>
 <div class="line"> </div>
+<div class="line">    <a class="code hl_function" href="gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5">gf_free</a>(<a class="code hl_enumvalue" href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e">SINGLE_ZONE</a>, ctx);</div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="agridfire__extern_8h_html"><div class="ttname"><a href="gridfire__extern_8h.html">gridfire_extern.h</a></div></div>
-<div class="ttc" id="agridfire__extern_8h_html_a0d42f6060caa8e73b2ef36f591a12034"><div class="ttname"><a href="gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034">gf_init</a></div><div class="ttdeci">void * gf_init(const enum GF_TYPE type)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:117</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_a1a963d1279164f2a870be4e9e1dba1d5"><div class="ttname"><a href="gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5">gf_free</a></div><div class="ttdeci">int gf_free(const enum GF_TYPE type, void *ctx)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:127</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_a60e36bee7b809c1358ea1a8cbdb3f652"><div class="ttname"><a href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a></div><div class="ttdeci">int gf_evolve(enum GF_TYPE type, void *ptr, const void *Y_in, size_t num_species, const void *T, const void *rho, double tMax, double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, void *eps_nuc, void *dlnEps_dlnT, void *dlnEps_dlnRho, void *neutrino_energy_loss_rate, void *eps_by_channel)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:207</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_ae70b23310adcce0925900ca00a18a4a6"><div class="ttname"><a href="gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6">gf_construct_engine_from_policy</a></div><div class="ttdeci">int gf_construct_engine_from_policy(void *ptr, const char *policy_name, const double *abundances, size_t num_species)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:184</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_aed17ad088b2c25c0c2bf5549527e53fd"><div class="ttname"><a href="gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a></div><div class="ttdeci">int gf_construct_solver_from_engine(void *ptr)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:197</div></div>
-<div class="ttc" id="agridfire__extern_8h_html_af7e09bf5cf979211260e715faaa3a680"><div class="ttname"><a href="gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680">gf_register_species</a></div><div class="ttdeci">int gf_register_species(void *ptr, const int num_species, const char **species_names)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:158</div></div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md59"></a>
+<div class="ttc" id="agridfire__extern_8h_html_a0d42f6060caa8e73b2ef36f591a12034"><div class="ttname"><a href="gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034">gf_init</a></div><div class="ttdeci">void * gf_init(const enum GF_TYPE type)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:370</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a1a963d1279164f2a870be4e9e1dba1d5"><div class="ttname"><a href="gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5">gf_free</a></div><div class="ttdeci">int gf_free(const enum GF_TYPE type, void *ctx)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:392</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a35461bcef871f0358a24e4c8e82ba12e"><div class="ttname"><a href="gridfire__extern_8h.html#a35461bcef871f0358a24e4c8e82ba12e">gf_get_num_energy_channels</a></div><div class="ttdeci">int gf_get_num_energy_channels(void *ptr, size_t *num_channels)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:766</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a60e36bee7b809c1358ea1a8cbdb3f652"><div class="ttname"><a href="gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652">gf_evolve</a></div><div class="ttdeci">int gf_evolve(enum GF_TYPE type, void *ptr, const void *Y_in, size_t num_species, const void *T, const void *rho, double tMax, double dt0, void *Y_out, void *energy_out, void *dEps_dT, void *dEps_dRho, void *specific_neutrino_energy_loss, void *specific_neutrino_flux, void *mass_lost, void *eps_nuc, void *dlnEps_dlnT, void *dlnEps_dlnRho, void *neutrino_energy_loss_rate, void *eps_by_channel)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:472</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_a97f4474bcaf282980682acc62e16b60c"><div class="ttname"><a href="gridfire__extern_8h.html#a97f4474bcaf282980682acc62e16b60c">gf_get_provenance</a></div><div class="ttdeci">int gf_get_provenance(void *ptr, const char **description)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:272</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_aacfac2971a49c6437bd48a684db0a42c"><div class="ttname"><a href="gridfire__extern_8h.html#aacfac2971a49c6437bd48a684db0a42c">gf_set_rate_multiplier</a></div><div class="ttdeci">int gf_set_rate_multiplier(void *ptr, const char *reaction_id, double factor)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:306</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_ae70b23310adcce0925900ca00a18a4a6"><div class="ttname"><a href="gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6">gf_construct_engine_from_policy</a></div><div class="ttdeci">int gf_construct_engine_from_policy(void *ptr, const char *policy_name, const double *abundances, size_t num_species)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:449</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_aed17ad088b2c25c0c2bf5549527e53fd"><div class="ttname"><a href="gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd">gf_construct_solver_from_engine</a></div><div class="ttdeci">int gf_construct_solver_from_engine(void *ptr)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:462</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e"><div class="ttname"><a href="gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e">SINGLE_ZONE</a></div><div class="ttdeci">@ SINGLE_ZONE</div><div class="ttdef"><b>Definition</b> gridfire_extern.h:29</div></div>
+<div class="ttc" id="agridfire__extern_8h_html_af7e09bf5cf979211260e715faaa3a680"><div class="ttname"><a href="gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680">gf_register_species</a></div><div class="ttdeci">int gf_register_species(void *ptr, const int num_species, const char **species_names)</div><div class="ttdef"><b>Definition</b> gridfire_extern.cpp:423</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md53"></a>
 Fortran API Overview</h2>
-<p>GridFire makes use of the stable C API and Fortran 2003's <code>iso_c_bindings</code> to provide a Fortran interface for legacy code. The fortran interface is designed to be very similar to the C API and exposes the same functionality.</p>
+<p>GridFire makes use of the stable C API and Fortran 2003's <code>iso_c_binding</code> to provide a Fortran interface for legacy code. The Fortran interface mirrors the C API: every C function has a type-bound procedure with the <code>gff_</code> prefix (GridFire Fortran) on a <code>type(GridFire)</code> object.</p>
 <ol type="1">
-<li><code>GridFiregff_init</code>: Initializes a GridFire context and returns a handle to it.</li>
-<li><code>GridFireregister_species</code>: Registers species with the GridFire context.</li>
-<li><code>GridFiresetup_policy</code>: Configures the engine using a specified policy and initial abundances.</li>
-<li><code>GridFiresetup_solver</code>: Sets up the solver for the engine.</li>
-<li><code>GridFireevolve</code>: Evolves the network over a specified time step.</li>
-<li><code>GridFireget_last_error</code>: Retrieves the last error message from the GridFire context.</li>
-<li><code>GridFiregff_free</code>: Frees the GridFire context and associated resources.</li>
+<li><code>netgff_init(SINGLE_ZONE)</code> (or <code>gff_init(MULTI_ZONE, zones)</code>): create the context.</li>
+<li><code>netgff_set_config(config)</code>: optional; <code>config = gff_default_config()</code>, then change fields of the <code><a class="el" href="struct_g_f_config.html">GFConfig</a></code>.</li>
+<li><code>netgff_register_species(names)</code>, <code>netgff_setup_policy("MAIN_SEQUENCE_POLICY", Y)</code>, <code>netgff_setup_solver()</code>.</li>
+<li><code>netgff_evolve(...)</code>, <code>netgff_evaluate(...)</code>, <code>netgff_evaluate_reactions(...)</code>: scalar arguments for one zone, arrays for <code>MULTI_ZONE</code>.</li>
+<li><code>netgff_set_rate_multiplier</code>, <code>netgff_get_provenance()</code>, <code>gff_get_version()</code>: see Rate multipliers and Provenance.</li>
+<li><code>netgff_get_last_error()</code>: the message for the last failure.</li>
+<li><code>netgff_free()</code>.</li>
 </ol>
-<blockquote class="doxtable">
-<p><b>Note:</b> You must instantiate a <code>GridFire</code> type object to access these methods. </p>
-</blockquote>
-<blockquote class="doxtable">
-<p><b>Note:</b> free and init have had the <code>gff_</code> prefix (GridFire Fortran) to avoid name clashes with common Fortran functions. </p>
-</blockquote>
-<p>When building GridFire a fortran module file <code>gridfire_mod.mod</code> is generated which contains all the necessary bindings to use GridFire from Fortran. You must also link your code against the C API library <code>libgridfire_extern</code>.</p>
-<h3><a class="anchor" id="autotoc_md60"></a>
+<p>Calls that can fail take an <code>ierr</code> argument. Where it is optional (the configuration and rate-multiplier calls), a failure stops the program when <code>ierr</code> is absent and is returned when it is present.</p>
+<p>The module is shipped as source, <code><a class="el" href="gridfire__mod_8f90.html">gridfire_mod.f90</a></code>, because <code>.mod</code> files are specific to a compiler and its version: compile it with the compiler that builds your program and link against <code>libgridfire_extern</code>. <code>gf-config</code>, pkg-config, CMake and Meson all do this for you; see Building a program against GridFire.</p>
+<h3><a class="anchor" id="autotoc_md54"></a>
 Fortran Example</h3>
 <div class="fragment"><div class="line"><span class="keyword">program</span> main</div>
-<div class="line">    <span class="keywordtype">use </span>iso_c_binding</div>
-<div class="line">    <span class="keywordtype">use </span><a class="code hl_namespace" href="namespacegridfire__mod.html">gridfire_mod</a></div>
-<div class="line">    <span class="keywordtype">implicit none</span></div>
+<div class="line">  <span class="keywordtype">use </span>iso_c_binding</div>
+<div class="line">  <span class="keywordtype">use </span><a class="code hl_namespace" href="namespacegridfire__mod.html">gridfire_mod</a></div>
+<div class="line">  <span class="keywordtype">implicit none</span></div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordtype">type</span>(GridFire) :: net</div>
-<div class="line">    <span class="keywordtype">integer(c_int)</span> :: ierr</div>
-<div class="line">    <span class="keywordtype">integer</span> :: i</div>
+<div class="line">  <span class="comment">! Names are blank-padded; the module trims them</span></div>
+<div class="line">  <span class="keywordtype">character(len=5)</span>, <span class="keywordtype">dimension(8)</span> :: species_names = [ &amp;</div>
+<div class="line">          <span class="stringliteral">&quot;H-1  &quot;</span>, <span class="stringliteral">&quot;He-3 &quot;</span>, <span class="stringliteral">&quot;He-4 &quot;</span>, <span class="stringliteral">&quot;C-12 &quot;</span>, <span class="stringliteral">&quot;N-14 &quot;</span>, <span class="stringliteral">&quot;O-16 &quot;</span>, <span class="stringliteral">&quot;Ne-20&quot;</span>, <span class="stringliteral">&quot;Mg-24&quot;</span> ]</div>
+<div class="line">  <span class="comment">! Molar abundances (Y = X / A), solar-ish</span></div>
+<div class="line"><span class="keywordtype">  real</span>(c_double), <span class="keywordtype">dimension(8)</span> :: Y_in = [ &amp;</div>
+<div class="line">          0.7026166d0, 9.7479d-06, 0.0689551d0, 0.00025d0, 7.8554d-05, 0.00060144d0, 8.103d-05, 2.1513d-05 ]</div>
+<div class="line"><span class="keywordtype">  real</span>(c_double), <span class="keywordtype">dimension(8)</span> :: Y_out</div>
+<div class="line"><span class="keywordtype">  real</span>(c_double), <span class="keywordtype">allocatable</span> :: eps_by_channel(:)</div>
+<div class="line"><span class="keywordtype">  real</span>(c_double) :: energy, dedt, dedrho, nu_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_rate</div>
+<div class="line"><span class="keywordtype">  real</span>(c_double) :: T = 1.5d7       <span class="comment">! K</span></div>
+<div class="line"><span class="keywordtype">  real</span>(c_double) :: rho = 150.0d0   <span class="comment">! g/cm^3</span></div>
+<div class="line"><span class="keywordtype">  real</span>(c_double) :: tMax = 3.15d13  <span class="comment">! 1 Myr, in s</span></div>
+<div class="line">  <span class="keywordtype">type</span>(GridFire) :: net</div>
+<div class="line">  <span class="keywordtype">type</span>(GFConfig) :: config</div>
+<div class="line">  <span class="keywordtype">integer</span> :: i, ierr</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">! --- 1. Define Species and Initial Conditions ---</span></div>
-<div class="line">    <span class="comment">! Note: String lengths must match or exceed the longest name.</span></div>
-<div class="line">    <span class="comment">! We pad with spaces, which &#39;trim&#39; handles inside the module.</span></div>
-<div class="line">    <span class="keywordtype">character(len=5)</span>, <span class="keywordtype">dimension(8)</span> :: species_names = [ &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;H-1  &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;He-3 &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;He-4 &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;C-12 &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;N-14 &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;O-16 &quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;Ne-20&quot;</span>, &amp;</div>
-<div class="line">            <span class="stringliteral">&quot;Mg-24&quot;</span>  &amp;</div>
-<div class="line">        ]</div>
+<div class="line">  <span class="keyword">call </span>net%gff_init(<a class="code hl_variable" href="namespacegridfire__mod.html#ace5f00c48b7d638def9833111aa65c38">single_zone</a>)</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">! Initial Mass Fractions (converted to Molar Abundances Y = X/A)</span></div>
-<div class="line">    <span class="comment">! Standard solar-ish composition</span></div>
-<div class="line"><span class="keywordtype">    real</span>(c_double), <span class="keywordtype">dimension(8)</span> :: Y_in = [ &amp;</div>
-<div class="line">        0.702616602672027,     &amp;</div>
-<div class="line">        9.74791583949078e-06,  &amp;</div>
-<div class="line">        0.06895512307276903,   &amp;</div>
-<div class="line">        0.00025,               &amp;</div>
-<div class="line">        7.855418029399437e-05, &amp;</div>
-<div class="line">        0.0006014411598306529, &amp;</div>
-<div class="line">        8.103062886768109e-05, &amp;</div>
-<div class="line">        2.151340851063217e-05  &amp;</div>
-<div class="line">        ]</div>
+<div class="line">  config = <a class="code hl_function" href="namespacegridfire__mod.html#aca2fb3620bcd80a84608aaebc5d14d46">gff_default_config</a>()</div>
+<div class="line">  config%engine_screening = <a class="code hl_enumvalue" href="namespacegridfire__mod.html#ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1">gf_screening_blended</a></div>
+<div class="line">  <span class="keyword">call </span>net%gff_set_config(config)</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">! Output buffers</span></div>
-<div class="line"><span class="keywordtype">    real</span>(c_double), <span class="keywordtype">dimension(8)</span> :: Y_out</div>
-<div class="line"><span class="keywordtype">    real</span>(c_double) :: energy_out, dedt, dedrho, nu_E_loss, nu_flux, dmass</div>
+<div class="line">  <span class="keyword">call </span>net%gff_register_species(species_names)</div>
+<div class="line">  <span class="keyword">call </span>net%gff_setup_policy(<span class="stringliteral">&quot;MAIN_SEQUENCE_POLICY&quot;</span>, y_in)</div>
+<div class="line">  <span class="keyword">call </span>net%gff_setup_solver()</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">! Thermodynamic Conditions (Solar Core-ish)</span></div>
-<div class="line"><span class="keywordtype">    real</span>(c_double) :: T = 1.5e7      <span class="comment">! 15 Million K</span></div>
-<div class="line"><span class="keywordtype">    real</span>(c_double) :: rho = 150.0e0  <span class="comment">! 150 g/cm^3</span></div>
-<div class="line"><span class="keywordtype">    real</span>(c_double) :: dt = 3.1536e17     <span class="comment">! ~10 Gyr timestep</span></div>
+<div class="line">  <span class="comment">! One Monte Carlo sample: perturb two rates. With ierr present an unknown id is reported, not fatal</span></div>
+<div class="line">  <span class="keyword">call </span>net%gff_set_rate_multiplier(<span class="stringliteral">&quot;p(p,e+)d&quot;</span>, 1.1d0, ierr)</div>
+<div class="line">  <span class="keywordflow">if</span> (ierr /= <a class="code hl_enumvalue" href="namespacegridfire__mod.html#a244769a94919381fd624416c41519147afcd18f5d78d9f7b0b6418eec99888bdc">gf_success</a>) print *, <span class="stringliteral">&quot;p(p,e+)d is not in the network&quot;</span></div>
+<div class="line">  <span class="keyword">call </span>net%gff_set_rate_multiplier(<span class="stringliteral">&quot;n14(p,g)o15&quot;</span>, 0.9d0)</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">! --- 2. Initialize GridFire ---</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;Initializing GridFire...&quot;</span></div>
-<div class="line">    <span class="keyword">call </span>net%gff_init()</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">! --- 3. Register Species ---</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;Registering species...&quot;</span></div>
-<div class="line">    <span class="keyword">call </span>net%register_species(species_names)</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">! --- 4. Configure Engine &amp; Solver ---</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;Setting up Main Sequence Policy...&quot;</span></div>
-<div class="line">    <span class="keyword">call </span>net%setup_policy(<span class="stringliteral">&quot;MAIN_SEQUENCE_POLICY&quot;</span>, y_in)</div>
-<div class="line"> </div>
-<div class="line">    print *, <span class="stringliteral">&quot;Setting up CVODE Solver...&quot;</span></div>
-<div class="line">    <span class="keyword">call </span>net%setup_solver(<span class="stringliteral">&quot;CVODE&quot;</span>)</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">! --- 5. Evolve ---</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;Evolving system (dt =&quot;</span>, dt, <span class="stringliteral">&quot;s)...&quot;</span></div>
-<div class="line">    <span class="keyword">call </span>net%evolve(y_in, t, rho, dt, y_out, energy_out, dedt, dedrho, nu_e_loss, nu_flux, dmass, ierr)</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (ierr /= 0) <span class="keywordflow">then</span></div>
-<div class="line">        print *, <span class="stringliteral">&quot;Evolution Failed with error code: &quot;</span>, ierr</div>
-<div class="line">        print *, <span class="stringliteral">&quot;Error Message: &quot;</span>, net%get_last_error()</div>
-<div class="line">        <span class="keyword">call </span>net%gff_free() <span class="comment">! Always cleanup</span></div>
-<div class="line">        stop</div>
-<div class="line"><span class="keywordflow">    end if</span></div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">! --- 6. Report Results ---</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;--- Results ---&quot;</span></div>
-<div class="line">    print <span class="stringliteral">&#39;(A, ES12.5, A)&#39;</span>, <span class="stringliteral">&quot;Energy Generation: &quot;</span>, energy_out, <span class="stringliteral">&quot; erg/g/s&quot;</span></div>
-<div class="line">    print <span class="stringliteral">&#39;(A, ES12.5)&#39;</span>,    <span class="stringliteral">&quot;dEps/dT:           &quot;</span>, dedt</div>
-<div class="line">    print <span class="stringliteral">&#39;(A, ES12.5)&#39;</span>,    <span class="stringliteral">&quot;Mass Change:       &quot;</span>, dmass</div>
-<div class="line"> </div>
-<div class="line">    print *, <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line">    print *, <span class="stringliteral">&quot;Abundances:&quot;</span></div>
-<div class="line">    <span class="keywordflow">do</span> i = 1, <span class="keyword">size</span>(species_names)</div>
-<div class="line">        print <span class="stringliteral">&#39;(A, &quot; : &quot;, ES12.5, &quot; -&gt; &quot;, ES12.5)&#39;</span>, &amp;</div>
-<div class="line">                trim(species_names(i)), y_in(i), y_out(i)</div>
-<div class="line"><span class="keywordflow">    end do</span></div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">! --- 7. Cleanup ---</span></div>
+<div class="line">  <span class="keyword">allocate</span>(eps_by_channel(net%gff_get_num_energy_channels()))</div>
+<div class="line">  <span class="keyword">call </span>net%gff_evolve(y_in, t, rho, tmax, 1d-12, y_out, energy, dedt, dedrho, nu_loss, nu_flux, mass_lost, &amp;</div>
+<div class="line">          eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_rate, eps_by_channel, ierr)</div>
+<div class="line">  <span class="keywordflow">if</span> (ierr /= <a class="code hl_enumvalue" href="namespacegridfire__mod.html#a244769a94919381fd624416c41519147afcd18f5d78d9f7b0b6418eec99888bdc">gf_success</a>) <span class="keywordflow">then</span></div>
+<div class="line">    print *, <span class="stringliteral">&quot;Evolution failed: &quot;</span>, net%gff_get_last_error()</div>
 <div class="line">    <span class="keyword">call </span>net%gff_free()</div>
+<div class="line">    error stop 1</div>
+<div class="line"><span class="keywordflow">  end if</span></div>
 <div class="line"> </div>
+<div class="line">  print <span class="stringliteral">&#39;(a, es13.6, a)&#39;</span>, <span class="stringliteral">&quot;eps_nuc: &quot;</span>, eps_nuc, <span class="stringliteral">&quot; erg/g/s&quot;</span></div>
+<div class="line">  <span class="keywordflow">do</span> i = 1, <span class="keyword">size</span>(species_names)</div>
+<div class="line">    print <span class="stringliteral">&#39;(a6, es13.6, &quot; -&gt; &quot;, es13.6)&#39;</span>, species_names(i), y_in(i), y_out(i)</div>
+<div class="line"><span class="keywordflow">  end do</span></div>
+<div class="line">  print <span class="stringliteral">&#39;(a)&#39;</span>, net%gff_get_provenance()</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">call </span>net%gff_free()</div>
 <div class="line"><span class="keyword">end program </span>main</div>
-<div class="ttc" id="anamespacegridfire__mod_html"><div class="ttname"><a href="namespacegridfire__mod.html">gridfire_mod</a></div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:1</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md61"></a>
+<div class="ttc" id="anamespacegridfire__mod_html"><div class="ttname"><a href="namespacegridfire__mod.html">gridfire_mod</a></div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:7</div></div>
+<div class="ttc" id="anamespacegridfire__mod_html_a244769a94919381fd624416c41519147afcd18f5d78d9f7b0b6418eec99888bdc"><div class="ttname"><a href="namespacegridfire__mod.html#a244769a94919381fd624416c41519147afcd18f5d78d9f7b0b6418eec99888bdc">gridfire_mod::gf_success</a></div><div class="ttdeci">@ gf_success</div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:32</div></div>
+<div class="ttc" id="anamespacegridfire__mod_html_ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1"><div class="ttname"><a href="namespacegridfire__mod.html#ab996e171dfffbb0aee5f1cdd06bc7093ad5d005328b544f38412810b964d190a1">gridfire_mod::gf_screening_blended</a></div><div class="ttdeci">@ gf_screening_blended</div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:97</div></div>
+<div class="ttc" id="anamespacegridfire__mod_html_aca2fb3620bcd80a84608aaebc5d14d46"><div class="ttname"><a href="namespacegridfire__mod.html#aca2fb3620bcd80a84608aaebc5d14d46">gridfire_mod::gff_default_config</a></div><div class="ttdeci">type(gfconfig) function gff_default_config()</div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:644</div></div>
+<div class="ttc" id="anamespacegridfire__mod_html_ace5f00c48b7d638def9833111aa65c38"><div class="ttname"><a href="namespacegridfire__mod.html#ace5f00c48b7d638def9833111aa65c38">gridfire_mod::single_zone</a></div><div class="ttdeci">type(gf_type), parameter, public single_zone</div><div class="ttdef"><b>Definition</b> gridfire_mod.f90:15</div></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md55"></a>
 Related Projects</h1>
 <p>GridFire integrates with and builds upon several key 4D-STAR libraries:</p>
 <ul>

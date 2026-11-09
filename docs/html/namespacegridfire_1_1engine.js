@@ -21,6 +21,7 @@ var namespacegridfire_1_1engine =
     [ "NetworkPrimingEngineView", "classgridfire_1_1engine_1_1_network_priming_engine_view.html", "classgridfire_1_1engine_1_1_network_priming_engine_view" ],
     [ "PrimingReport", "structgridfire_1_1engine_1_1_priming_report.html", "structgridfire_1_1engine_1_1_priming_report" ],
     [ "Reaction", "classgridfire_1_1engine_1_1_reaction.html", "classgridfire_1_1engine_1_1_reaction" ],
+    [ "ReactionContributions", "structgridfire_1_1engine_1_1_reaction_contributions.html", "structgridfire_1_1engine_1_1_reaction_contributions" ],
     [ "ReactionSet", "classgridfire_1_1engine_1_1_reaction_set.html", "classgridfire_1_1engine_1_1_reaction_set" ],
     [ "StepDerivatives", "structgridfire_1_1engine_1_1_step_derivatives.html", "structgridfire_1_1engine_1_1_step_derivatives" ],
     [ "EngineType", "conceptgridfire_1_1engine_1_1_engine_type.html", null ],
@@ -41,6 +42,10 @@ var namespacegridfire_1_1engine =
       [ "PRIMING_ENGINE_VIEW", "namespacegridfire_1_1engine.html#a5387db1ec0b039955487fbc4c0034854a23901438f732b89f022567965207ad92", null ],
       [ "DEFINED_ENGINE_VIEW", "namespacegridfire_1_1engine.html#a5387db1ec0b039955487fbc4c0034854a33b468ddf562923b7641ab60bb6aa708", null ],
       [ "FILE_DEFINED_ENGINE_VIEW", "namespacegridfire_1_1engine.html#a5387db1ec0b039955487fbc4c0034854a048f6da02134ba0aedf95f8171611bf3", null ]
+    ] ],
+    [ "JacobianMethod", "namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fc", [
+      [ "ANALYTIC", "namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15", null ],
+      [ "AUTOMATIC_DIFFERENTIATION", "namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fca29f78cdd0a6cec0de89a309a16d6b031", null ]
     ] ],
     [ "NetworkBuildDepth", "namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7", [
       [ "Full", "namespacegridfire_1_1engine.html#a782fbc9eca00df10e4a204ae6da733e7abbd47109890259c0127154db1af26c75", null ],

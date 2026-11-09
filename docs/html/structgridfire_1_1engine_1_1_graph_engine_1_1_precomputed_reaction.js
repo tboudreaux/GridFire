@@ -1,8 +1,12 @@
 var structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction =
 [
     [ "affected_species_indices", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a8be44cfc0731bb53861e1772027b36a4", null ],
+    [ "analytic_rate_derivative", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#aeefa981a20bb13cca12713ce60fa413e", null ],
     [ "channel_index", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a8fe365872231c6e36a7655cd68a23a7a", null ],
+    [ "electron_capture", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae861a2b286e79a282256364a8c86a504", null ],
+    [ "emits_neutrino", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a84005dba9d4ec51096f7bf6d776c7a86", null ],
     [ "energy_per_flow", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#abf3cae9950c125671ebd306b22390d0b", null ],
+    [ "neutrino_energy_per_flow", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a51384a6469ecadff32e1f0395358f9c6", null ],
     [ "product_powers", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae0dce375a45959da6c75fec3ede46fea", null ],
     [ "reactant_powers", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a4360de7e2c518db798d97dac87bea252", null ],
     [ "reaction_hash", "structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a2a63022b616788e377c804fcf1ccf847", null ],

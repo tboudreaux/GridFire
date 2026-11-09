@@ -1,13 +1,9 @@
 var searchData=
 [
-  ['j_0',['J',['../structgridfire_1_1solver_1_1_point_solver_context.html#a0ddfaa67469e8a86d2bd5d7a9b9aa581',1,'gridfire::solver::PointSolverContext']]],
-  ['jac_5fwork_1',['jac_work',['../structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#a880842c920f730a70b11fef372e267c0',1,'gridfire::engine::scratch::GraphEngineScratchPad']]],
-  ['jacobian_2ecpp_2',['jacobian.cpp',['../jacobian_8cpp.html',1,'']]],
-  ['jacobian_2eh_3',['jacobian.h',['../jacobian_8h.html',1,'']]],
-  ['jacobian_5fformat_2eh_4',['jacobian_format.h',['../jacobian__format_8h.html',1,'']]],
-  ['jacobianentry_5',['JacobianEntry',['../namespacegridfire_1_1engine.html#aa7b127f4fe99188e3d94ff11608d54f0',1,'gridfire::engine']]],
-  ['jacobianerror_6',['JacobianError',['../classgridfire_1_1exceptions_1_1_jacobian_error.html',1,'gridfire::exceptions']]],
-  ['jacobianmatrixstate_7',['JacobianMatrixState',['../classgridfire_1_1engine_1_1_graph_engine.html#a19305dc4affde99bb84056c9eeda9f1e',1,'gridfire::engine::GraphEngine']]],
-  ['jacobiansubsetcache_8',['jacobianSubsetCache',['../structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#acf12f4a0a11a2078365f6f5d3133f3ca',1,'gridfire::engine::scratch::GraphEngineScratchPad']]],
-  ['jacworkcache_9',['jacWorkCache',['../structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#a1f9875b88274f94d11299b633c013e1e',1,'gridfire::engine::scratch::GraphEngineScratchPad']]]
+  ['kb_0',['kB',['../structgridfire_1_1engine_1_1_graph_engine_1_1constants.html#ad7870fe7ff2c070650d15685c50700c5',1,'gridfire::engine::GraphEngine::constants::kB'],['../structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_physical_constants.html#a468be15a8a8b833279596cb31055e272',1,'gridfire::screening::CD09ScreeningModel::PhysicalConstants::kB']]],
+  ['keys_1',['keys',['../structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_keys.html#aae1b8abb620a1d63e39111bdbe1c404b',1,'gridfire::screening::CD09ScreeningModel::PairKeys']]],
+  ['kinsol_2',['KINSOL',['../namespacegridfire_1_1utils.html#a7cea622c9311bfd0f0b9d7b6298ea04ea78689531838e490ef6bb41a3b5c43b7d',1,'gridfire::utils']]],
+  ['kinsol_5fret_5fcode_5fmap_3',['kinsol_ret_code_map',['../namespacegridfire_1_1utils.html#a96fc2701cfd6cb8172282e9999fe4b34',1,'gridfire::utils']]],
+  ['kinsolsolverfailureerror_4',['KINSolSolverFailureError',['../classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html',1,'gridfire::exceptions']]],
+  ['known_20good_20platforms_5',['Currently, known good platforms',['../index.html#autotoc_md13',1,'']]]
 ];

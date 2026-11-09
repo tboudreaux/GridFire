@@ -10,6 +10,7 @@ var namespacestd =
     [ "formatter< gridfire::engine::scratch::StateBlob >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_state_blob_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_state_blob_01_4" ],
     [ "formatter< gridfire::NetIn >", "structstd_1_1formatter_3_01gridfire_1_1_net_in_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1_net_in_01_4" ],
     [ "formatter< gridfire::NetOut >", "structstd_1_1formatter_3_01gridfire_1_1_net_out_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1_net_out_01_4" ],
+    [ "formatter< gridfire::policy::HydrogenHeliumBurningPolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_hydrogen_helium_burning_policy_01_4.html", null ],
     [ "formatter< gridfire::policy::MainSequencePolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_main_sequence_policy_01_4.html", null ],
     [ "formatter< gridfire::policy::NetworkPolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_network_policy_01_4.html", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_network_policy_01_4" ],
     [ "hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4" ],

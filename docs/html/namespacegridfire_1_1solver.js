@@ -12,5 +12,7 @@ var namespacegridfire_1_1solver =
     [ "IsEngine", "conceptgridfire_1_1solver_1_1_is_engine.html", null ],
     [ "MultiZoneDynamicNetworkSolver", "namespacegridfire_1_1solver.html#a521165ce7610e3438607af6500f82fdd", null ],
     [ "SingleZoneDynamicNetworkSolver", "namespacegridfire_1_1solver.html#a3ba32e30d3e30cbbca5ffb22dff077ee", null ],
-    [ "TimestepCallback", "namespacegridfire_1_1solver.html#a472214bac45251c72c311af1d615e6ea", null ]
+    [ "TimestepCallback", "namespacegridfire_1_1solver.html#a472214bac45251c72c311af1d615e6ea", null ],
+    [ "evaluate_instantaneous_rates", "namespacegridfire_1_1solver.html#afc6a503bc1b8bdcec9f16442c50a3d17", null ],
+    [ "shared_composition_groups_from_mask", "namespacegridfire_1_1solver.html#aa3278f02d5ca79add04772dd654758cf", null ]
 ];

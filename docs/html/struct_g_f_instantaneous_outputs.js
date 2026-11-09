@@ -1,6 +1,7 @@
 var struct_g_f_instantaneous_outputs =
 [
     [ "write", "struct_g_f_instantaneous_outputs.html#aca73df0afa75287b8628cb887d6a9e71", null ],
+    [ "write_zero", "struct_g_f_instantaneous_outputs.html#aa18b5fb3598bcb47fb2f42d84c7e453d", null ],
     [ "dlnEps_dlnRho", "struct_g_f_instantaneous_outputs.html#a9455a4037f5a7682dd972bdfd477317c", null ],
     [ "dlnEps_dlnT", "struct_g_f_instantaneous_outputs.html#a385081374aaee62a7e0f7ee55da04fe7", null ],
     [ "eps_by_channel", "struct_g_f_instantaneous_outputs.html#a8bc29b3e77f77c0832b217c3fc1da51b", null ],

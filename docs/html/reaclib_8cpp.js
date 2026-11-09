@@ -1,6 +1,8 @@
 var reaclib_8cpp =
 [
     [ "gridfire::reaclib::ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", "structgridfire_1_1reaclib_1_1_reaction_record" ],
+    [ "gridfire::reaclib::data_hash", "namespacegridfire_1_1reaclib.html#a29e2bc67bc8e570fa6a3d0725ae729a2", null ],
+    [ "gridfire::reaclib::electron_capture_name", "namespacegridfire_1_1reaclib.html#a028bf8d5e4d0368c49d6f6b04425abc8", null ],
     [ "gridfire::reaclib::get_all_reaclib_reactions", "namespacegridfire_1_1reaclib.html#a5f2326f2f76cb1895d6cf5daed9b030b", null ],
     [ "gridfire::reaclib::initializeAllReaclibReactions", "namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276", null ],
     [ "gridfire::reaclib::operator<<", "namespacegridfire_1_1reaclib.html#a6bb94d5adc7bb9db5a67f770f7453e63", null ],

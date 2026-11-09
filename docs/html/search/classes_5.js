@@ -13,6 +13,7 @@ var searchData=
   ['formatter_3c_20gridfire_3a_3aengine_3a_3ascratch_3a_3astateblob_20_3e_10',['formatter&lt; gridfire::engine::scratch::StateBlob &gt;',['../structstd_1_1formatter_3_01gridfire_1_1engine_1_1scratch_1_1_state_blob_01_4.html',1,'std']]],
   ['formatter_3c_20gridfire_3a_3anetin_20_3e_11',['formatter&lt; gridfire::NetIn &gt;',['../structstd_1_1formatter_3_01gridfire_1_1_net_in_01_4.html',1,'std']]],
   ['formatter_3c_20gridfire_3a_3anetout_20_3e_12',['formatter&lt; gridfire::NetOut &gt;',['../structstd_1_1formatter_3_01gridfire_1_1_net_out_01_4.html',1,'std']]],
-  ['formatter_3c_20gridfire_3a_3apolicy_3a_3amainsequencepolicy_20_3e_13',['formatter&lt; gridfire::policy::MainSequencePolicy &gt;',['../structstd_1_1formatter_3_01gridfire_1_1policy_1_1_main_sequence_policy_01_4.html',1,'std']]],
-  ['formatter_3c_20gridfire_3a_3apolicy_3a_3anetworkpolicy_20_3e_14',['formatter&lt; gridfire::policy::NetworkPolicy &gt;',['../structstd_1_1formatter_3_01gridfire_1_1policy_1_1_network_policy_01_4.html',1,'std']]]
+  ['formatter_3c_20gridfire_3a_3apolicy_3a_3ahydrogenheliumburningpolicy_20_3e_13',['formatter&lt; gridfire::policy::HydrogenHeliumBurningPolicy &gt;',['../structstd_1_1formatter_3_01gridfire_1_1policy_1_1_hydrogen_helium_burning_policy_01_4.html',1,'std']]],
+  ['formatter_3c_20gridfire_3a_3apolicy_3a_3amainsequencepolicy_20_3e_14',['formatter&lt; gridfire::policy::MainSequencePolicy &gt;',['../structstd_1_1formatter_3_01gridfire_1_1policy_1_1_main_sequence_policy_01_4.html',1,'std']]],
+  ['formatter_3c_20gridfire_3a_3apolicy_3a_3anetworkpolicy_20_3e_15',['formatter&lt; gridfire::policy::NetworkPolicy &gt;',['../structstd_1_1formatter_3_01gridfire_1_1policy_1_1_network_policy_01_4.html',1,'std']]]
 ];

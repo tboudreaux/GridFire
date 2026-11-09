@@ -5,6 +5,7 @@ var dir_8e34b6fea5a3d13256b367f27bc2135d =
     [ "hashing.h", "hashing_8h.html", "hashing_8h" ],
     [ "logging.h", "logging_8h.html", "logging_8h" ],
     [ "macros.h", "macros_8h.html", "macros_8h" ],
+    [ "provenance.h", "provenance_8h.html", "provenance_8h" ],
     [ "sundials.h", "sundials_8h.html", "sundials_8h" ],
     [ "table_format.h", "table__format_8h.html", "table__format_8h" ],
     [ "utils.h", "utils_2utils_8h.html", null ]

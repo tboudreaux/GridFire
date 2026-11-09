@@ -18,6 +18,7 @@ var structgridfire_1_1solver_1_1_point_solver_context =
     [ "detailed_step_logging", "structgridfire_1_1solver_1_1_point_solver_context.html#a895377662ff062bb83dd77226fa01c69", null ],
     [ "engine_ctx", "structgridfire_1_1solver_1_1_point_solver_context.html#a637809fbd1ff29044b4b72f9860b62e9", null ],
     [ "J", "structgridfire_1_1solver_1_1_point_solver_context.html#a0ddfaa67469e8a86d2bd5d7a9b9aa581", null ],
+    [ "last_accepted_time", "structgridfire_1_1solver_1_1_point_solver_context.html#af44a733a7bb82bc89262e5ea793c7b89", null ],
     [ "last_composition_hash", "structgridfire_1_1solver_1_1_point_solver_context.html#a5146d445436c49b9575e4d96102f3bf6", null ],
     [ "last_good_time_step", "structgridfire_1_1solver_1_1_point_solver_context.html#a4b57947a21bd3969e229e9ed53185ae2", null ],
     [ "last_size", "structgridfire_1_1solver_1_1_point_solver_context.html#a2d97cecbfee3e4a4bc40a94fc14e1ebb", null ],

@@ -27,5 +27,6 @@ var namespacegridfire_1_1exceptions =
     [ "UnableToSetNetworkReactionsError", "classgridfire_1_1exceptions_1_1_unable_to_set_network_reactions_error.html", null ],
     [ "UninitializedJacobianError", "classgridfire_1_1exceptions_1_1_uninitialized_jacobian_error.html", null ],
     [ "UnknownJacobianError", "classgridfire_1_1exceptions_1_1_unknown_jacobian_error.html", null ],
+    [ "UnsupportedEngineError", "classgridfire_1_1exceptions_1_1_unsupported_engine_error.html", null ],
     [ "UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", "classgridfire_1_1exceptions_1_1_utility_error" ]
 ];

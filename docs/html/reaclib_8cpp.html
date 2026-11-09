@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -111,8 +111,10 @@ $(function(){initNavTree('reaclib_8cpp.html',''); initResizable(true); });
 <code>#include &quot;fourdst/atomic/species.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="reaclib_8h.html">gridfire/reaction/reaclib.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="reactions__data_8h.html">gridfire/reaction/reactions_data.h</a>&quot;</code><br />
+<code>#include &quot;xxhash64.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="types_2types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="error__reaction_8h.html">gridfire/exceptions/error_reaction.h</a>&quot;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
@@ -143,11 +145,16 @@ Functions</h2></td></tr>
 <tr class="separator:a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0deac6cbef076e8884e66fd3ab66e0" id="r_afc0deac6cbef076e8884e66fd3ab66e0"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaclib.html#afc0deac6cbef076e8884e66fd3ab66e0">gridfire::reaclib::parseSpeciesString</a> (const std::string_view str)</td></tr>
 <tr class="separator:afc0deac6cbef076e8884e66fd3ab66e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028bf8d5e4d0368c49d6f6b04425abc8" id="r_a028bf8d5e4d0368c49d6f6b04425abc8"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaclib.html#a028bf8d5e4d0368c49d6f6b04425abc8">gridfire::reaclib::electron_capture_name</a> (const std::string &amp;rpName, const std::string_view label)</td></tr>
+<tr class="separator:a028bf8d5e4d0368c49d6f6b04425abc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02ff11b88be94392151873e06a30b276" id="r_a02ff11b88be94392151873e06a30b276"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaclib.html#a02ff11b88be94392151873e06a30b276">gridfire::reaclib::initializeAllReaclibReactions</a> ()</td></tr>
 <tr class="separator:a02ff11b88be94392151873e06a30b276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f2326f2f76cb1895d6cf5daed9b030b" id="r_a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaclib.html#a5f2326f2f76cb1895d6cf5daed9b030b">gridfire::reaclib::get_all_reaclib_reactions</a> ()</td></tr>
 <tr class="memdesc:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides global access to the fully initialized REACLIB reaction set.  <br /></td></tr>
 <tr class="separator:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29e2bc67bc8e570fa6a3d0725ae729a2" id="r_a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1reaclib.html#a29e2bc67bc8e570fa6a3d0725ae729a2">gridfire::reaclib::data_hash</a> ()</td></tr>
+<tr class="memdesc:a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">XXH64 of the REACLIB data compiled into this build: identifies the rate coefficients exactly.  <br /></td></tr>
+<tr class="separator:a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

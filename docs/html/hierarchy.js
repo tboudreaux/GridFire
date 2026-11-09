@@ -14,6 +14,8 @@ var hierarchy =
     ] ],
     [ "gridfire::config::BoundaryFluxConfig", "structgridfire_1_1config_1_1_boundary_flux_config.html", null ],
     [ "gridfire::rates::weak::BoundsErrorInfo", "structgridfire_1_1rates_1_1weak_1_1_bounds_error_info.html", null ],
+    [ "gridfire_mod::c_strlen", "interfacegridfire__mod_1_1c__strlen.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::CachedReaction", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_cached_reaction.html", null ],
     [ "gridfire::utils::ColumnBase", "classgridfire_1_1utils_1_1_column_base.html", [
       [ "gridfire::utils::Column< T >", "classgridfire_1_1utils_1_1_column.html", null ]
     ] ],
@@ -83,11 +85,16 @@ var hierarchy =
             [ "gridfire::exceptions::CVODESolverFailureError", "classgridfire_1_1exceptions_1_1_c_v_o_d_e_solver_failure_error.html", null ],
             [ "gridfire::exceptions::KINSolSolverFailureError", "classgridfire_1_1exceptions_1_1_k_i_n_sol_solver_failure_error.html", null ]
           ] ],
-          [ "gridfire::exceptions::SingularJacobianError", "classgridfire_1_1exceptions_1_1_singular_jacobian_error.html", null ]
+          [ "gridfire::exceptions::SingularJacobianError", "classgridfire_1_1exceptions_1_1_singular_jacobian_error.html", null ],
+          [ "gridfire::exceptions::UnsupportedEngineError", "classgridfire_1_1exceptions_1_1_unsupported_engine_error.html", null ]
         ] ],
         [ "gridfire::exceptions::UtilityError", "classgridfire_1_1exceptions_1_1_utility_error.html", [
           [ "gridfire::exceptions::HashingError", "classgridfire_1_1exceptions_1_1_hashing_error.html", null ]
         ] ]
+      ] ],
+      [ "std::runtime_error", null, [
+        [ "GFConfigError", "struct_g_f_config_error.html", null ],
+        [ "GFInvalidStateError", "struct_g_f_invalid_state_error.html", null ]
       ] ]
     ] ],
     [ "gridfire::engine::MultiscalePartitioningEngineView::FluxValidationResult", "structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_flux_validation_result.html", null ],
@@ -104,31 +111,60 @@ var hierarchy =
     ] ],
     [ "std::formatter< gridfire::engine::NetworkJacobian >", "structstd_1_1formatter_3_01gridfire_1_1engine_1_1_network_jacobian_01_4.html", null ],
     [ "std::formatter< gridfire::policy::NetworkPolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_network_policy_01_4.html", [
+      [ "std::formatter< gridfire::policy::HydrogenHeliumBurningPolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_hydrogen_helium_burning_policy_01_4.html", null ],
       [ "std::formatter< gridfire::policy::MainSequencePolicy >", "structstd_1_1formatter_3_01gridfire_1_1policy_1_1_main_sequence_policy_01_4.html", null ]
     ] ],
+    [ "gridfire_mod::gf_clear_rate_multipliers", "interfacegridfire__mod_1_1gf__clear__rate__multipliers.html", null ],
+    [ "gridfire_mod::gf_config_defaults", "interfacegridfire__mod_1_1gf__config__defaults.html", null ],
     [ "gridfire_mod::gf_construct_engine_from_policy", "interfacegridfire__mod_1_1gf__construct__engine__from__policy.html", null ],
     [ "gridfire_mod::gf_construct_solver_from_engine", "interfacegridfire__mod_1_1gf__construct__solver__from__engine.html", null ],
+    [ "gridfire_mod::gf_evaluate_c", "interfacegridfire__mod_1_1gf__evaluate__c.html", null ],
+    [ "gridfire_mod::gf_evaluate_reactions_c", "interfacegridfire__mod_1_1gf__evaluate__reactions__c.html", null ],
     [ "gridfire_mod::gf_evolve_c_array", "interfacegridfire__mod_1_1gf__evolve__c__array.html", null ],
     [ "gridfire_mod::gf_evolve_c_scalar", "interfacegridfire__mod_1_1gf__evolve__c__scalar.html", null ],
     [ "gridfire_mod::gf_free", "interfacegridfire__mod_1_1gf__free.html", null ],
+    [ "gridfire_mod::gf_get_config", "interfacegridfire__mod_1_1gf__get__config.html", null ],
     [ "gridfire_mod::gf_get_energy_channel_name", "interfacegridfire__mod_1_1gf__get__energy__channel__name.html", null ],
     [ "gridfire_mod::gf_get_last_error_message", "interfacegridfire__mod_1_1gf__get__last__error__message.html", null ],
+    [ "gridfire_mod::gf_get_network_species", "interfacegridfire__mod_1_1gf__get__network__species.html", null ],
     [ "gridfire_mod::gf_get_num_energy_channels", "interfacegridfire__mod_1_1gf__get__num__energy__channels.html", null ],
+    [ "gridfire_mod::gf_get_num_network_species", "interfacegridfire__mod_1_1gf__get__num__network__species.html", null ],
+    [ "gridfire_mod::gf_get_num_reactions", "interfacegridfire__mod_1_1gf__get__num__reactions.html", null ],
+    [ "gridfire_mod::gf_get_provenance", "interfacegridfire__mod_1_1gf__get__provenance.html", null ],
+    [ "gridfire_mod::gf_get_rate_multiplier", "interfacegridfire__mod_1_1gf__get__rate__multiplier.html", null ],
+    [ "gridfire_mod::gf_get_reaction_id", "interfacegridfire__mod_1_1gf__get__reaction__id.html", null ],
+    [ "gridfire_mod::gf_get_version", "interfacegridfire__mod_1_1gf__get__version.html", null ],
+    [ "gridfire_mod::gf_get_zone_status", "interfacegridfire__mod_1_1gf__get__zone__status.html", null ],
     [ "gridfire_mod::gf_init", "interfacegridfire__mod_1_1gf__init.html", null ],
+    [ "gridfire_mod::gf_load_config", "interfacegridfire__mod_1_1gf__load__config.html", null ],
+    [ "gridfire_mod::gf_mass_fractions_to_molar", "interfacegridfire__mod_1_1gf__mass__fractions__to__molar.html", null ],
+    [ "gridfire_mod::gf_molar_to_mass_fractions", "interfacegridfire__mod_1_1gf__molar__to__mass__fractions.html", null ],
+    [ "gridfire_mod::gf_register_network_species", "interfacegridfire__mod_1_1gf__register__network__species.html", null ],
     [ "gridfire_mod::gf_register_species", "interfacegridfire__mod_1_1gf__register__species.html", null ],
+    [ "gridfire_mod::gf_save_config", "interfacegridfire__mod_1_1gf__save__config.html", null ],
+    [ "gridfire_mod::gf_set_config", "interfacegridfire__mod_1_1gf__set__config.html", null ],
     [ "gridfire_mod::gf_set_num_zones", "interfacegridfire__mod_1_1gf__set__num__zones.html", null ],
+    [ "gridfire_mod::gf_set_passive_species", "interfacegridfire__mod_1_1gf__set__passive__species.html", null ],
+    [ "gridfire_mod::gf_set_rate_multiplier", "interfacegridfire__mod_1_1gf__set__rate__multiplier.html", null ],
+    [ "gridfire_mod::gf_set_shared_composition_groups", "interfacegridfire__mod_1_1gf__set__shared__composition__groups.html", null ],
+    [ "gridfire_mod::gf_shared_composition_groups_from_mask", "interfacegridfire__mod_1_1gf__shared__composition__groups__from__mask.html", null ],
     [ "gridfire_mod::gf_type", "structgridfire__mod_1_1gf__type.html", null ],
+    [ "GFConfig", "struct_g_f_config.html", null ],
+    [ "gridfire_mod::gfconfig", "structgridfire__mod_1_1gfconfig.html", null ],
     [ "GFContext", "struct_g_f_context.html", [
       [ "GFGridContext", "struct_g_f_grid_context.html", null ],
       [ "GFPointContext", "struct_g_f_point_context.html", null ]
     ] ],
+    [ "GFEvaluationOutputs", "struct_g_f_evaluation_outputs.html", null ],
     [ "GFInstantaneousOutputs", "struct_g_f_instantaneous_outputs.html", null ],
+    [ "GFReactionOutputs", "struct_g_f_reaction_outputs.html", null ],
     [ "gridfire_mod::gridfire", "structgridfire__mod_1_1gridfire.html", null ],
     [ "gridfire::config::GridFireConfig", "structgridfire_1_1config_1_1_grid_fire_config.html", null ],
     [ "std::hash< gridfire::rates::weak::TableAxes >", "structstd_1_1hash_3_01gridfire_1_1rates_1_1weak_1_1_table_axes_01_4.html", null ],
     [ "std::hash< gridfire::reaction::Reaction >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_01_4.html", null ],
     [ "std::hash< gridfire::reaction::ReactionSet >", "structstd_1_1hash_3_01gridfire_1_1reaction_1_1_reaction_set_01_4.html", null ],
     [ "gridfire::partition::RauscherThielemannPartitionFunction::IdentifiedIsotope", "structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_identified_isotope.html", null ],
+    [ "gridfire::InstantaneousRates", "structgridfire_1_1_instantaneous_rates.html", null ],
     [ "gridfire::rates::weak::InterpolationError", "structgridfire_1_1rates_1_1weak_1_1_interpolation_error.html", null ],
     [ "gridfire::partition::RauscherThielemannPartitionFunction::InterpolationPoints", "structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_interpolation_points.html", null ],
     [ "gridfire::partition::RauscherThielemannPartitionFunction::IsotopeData", "structgridfire_1_1partition_1_1_rauscher_thielemann_partition_function_1_1_isotope_data.html", null ],
@@ -148,14 +184,23 @@ var hierarchy =
     [ "gridfire::engine::NetworkJacobian", "classgridfire_1_1engine_1_1_network_jacobian.html", null ],
     [ "gridfire::policy::NetworkPolicy", "classgridfire_1_1policy_1_1_network_policy.html", [
       [ "PyNetworkPolicy", "class_py_network_policy.html", null ],
+      [ "gridfire::policy::HydrogenHeliumBurningPolicy", "classgridfire_1_1policy_1_1_hydrogen_helium_burning_policy.html", null ],
       [ "gridfire::policy::MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html", null ]
     ] ],
+    [ "gridfire::screening::CD09ScreeningModel::PairEval< T >", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_eval.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PairKey", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_key.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PairKeyHash", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_key_hash.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PairKeys", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_keys.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PairSpec", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_pair_spec.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PartialsCache", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_partials_cache.html", null ],
     [ "gridfire::partition::PartitionFunction", "classgridfire_1_1partition_1_1_partition_function.html", [
       [ "PyPartitionFunction", "class_py_partition_function.html", null ],
       [ "gridfire::partition::CompositePartitionFunction", "classgridfire_1_1partition_1_1_composite_partition_function.html", null ],
       [ "gridfire::partition::GroundStatePartitionFunction", "classgridfire_1_1partition_1_1_ground_state_partition_function.html", null ],
       [ "gridfire::partition::RauscherThielemannPartitionFunction", "classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html", null ]
     ] ],
+    [ "gridfire::screening::CD09ScreeningModel::PhysicalConstants", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_physical_constants.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::PlasmaState< T >", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_plasma_state.html", null ],
     [ "fourdst::plugin::PluginBase", null, [
       [ "SolverPluginInterface", "class_solver_plugin_interface.html", null ]
     ] ],
@@ -185,6 +230,7 @@ var hierarchy =
       [ "gridfire::policy::MultiReactionChainPolicy", "classgridfire_1_1policy_1_1_multi_reaction_chain_policy.html", [
         [ "gridfire::policy::CNOChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_chain_policy.html", null ],
         [ "gridfire::policy::HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", null ],
+        [ "gridfire::policy::HydrogenHeliumReactionChainPolicy", "classgridfire_1_1policy_1_1_hydrogen_helium_reaction_chain_policy.html", null ],
         [ "gridfire::policy::MainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html", null ],
         [ "gridfire::policy::ProtonProtonChainPolicy", "classgridfire_1_1policy_1_1_proton_proton_chain_policy.html", null ]
       ] ],
@@ -193,6 +239,7 @@ var hierarchy =
         [ "gridfire::policy::CNOIIChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_i_chain_policy.html", null ],
         [ "gridfire::policy::CNOIIIChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_i_i_chain_policy.html", null ],
         [ "gridfire::policy::CNOIVChainPolicy", "classgridfire_1_1policy_1_1_c_n_o_i_v_chain_policy.html", null ],
+        [ "gridfire::policy::HeliumBurningChainPolicy", "classgridfire_1_1policy_1_1_helium_burning_chain_policy.html", null ],
         [ "gridfire::policy::HotCNOIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_chain_policy.html", null ],
         [ "gridfire::policy::HotCNOIIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_chain_policy.html", null ],
         [ "gridfire::policy::HotCNOIIIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html", null ],
@@ -202,16 +249,24 @@ var hierarchy =
         [ "gridfire::policy::TripleAlphaChainPolicy", "classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html", null ]
       ] ]
     ] ],
+    [ "gridfire::engine::ReactionContributions", "structgridfire_1_1engine_1_1_reaction_contributions.html", null ],
     [ "gridfire::engine::AdaptiveEngineView::ReactionFlow", "structgridfire_1_1engine_1_1_adaptive_engine_view_1_1_reaction_flow.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::ReactionPartials", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_reaction_partials.html", null ],
     [ "gridfire::reaclib::ReactionRecord", "structgridfire_1_1reaclib_1_1_reaction_record.html", null ],
     [ "gridfire::engine::ReactionSet", "classgridfire_1_1engine_1_1_reaction_set.html", null ],
     [ "gridfire::reaction::ReactionSet", "classgridfire_1_1reaction_1_1_reaction_set.html", null ],
+    [ "gridfire::screening::CD09ScreeningModel::ResolvedReaction", "structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_resolved_reaction.html", null ],
+    [ "gridfire::screening::ScreeningBlendWindow", "structgridfire_1_1screening_1_1_screening_blend_window.html", null ],
     [ "gridfire::screening::ScreeningModel", "classgridfire_1_1screening_1_1_screening_model.html", [
       [ "PyScreening", "class_py_screening.html", null ],
       [ "gridfire::screening::BareScreeningModel", "classgridfire_1_1screening_1_1_bare_screening_model.html", null ],
+      [ "gridfire::screening::BlendedScreeningModel", "classgridfire_1_1screening_1_1_blended_screening_model.html", null ],
+      [ "gridfire::screening::CD09ScreeningModel", "classgridfire_1_1screening_1_1_c_d09_screening_model.html", null ],
       [ "gridfire::screening::IntermediateScreeningModel", "classgridfire_1_1screening_1_1_intermediate_screening_model.html", null ],
       [ "gridfire::screening::WeakScreeningModel", "classgridfire_1_1screening_1_1_weak_screening_model.html", null ]
     ] ],
+    [ "gridfire::SharedCompositionResult", "structgridfire_1_1_shared_composition_result.html", null ],
+    [ "gridfire::ShellState", "structgridfire_1_1_shell_state.html", null ],
     [ "gridfire::solver::SingleZoneNetworkSolver< EngineT >", "classgridfire_1_1solver_1_1_single_zone_network_solver.html", null ],
     [ "gridfire::solver::SingleZoneNetworkSolver< engine::DynamicEngine >", "classgridfire_1_1solver_1_1_single_zone_network_solver.html", [
       [ "PySingleZoneDynamicNetworkSolver", "class_py_single_zone_dynamic_network_solver.html", null ],
@@ -224,6 +279,7 @@ var hierarchy =
       [ "gridfire::solver::PointSolverContext", "structgridfire_1_1solver_1_1_point_solver_context.html", null ]
     ] ],
     [ "gridfire::engine::scratch::StateBlob", "classgridfire_1_1engine_1_1scratch_1_1_state_blob.html", null ],
+    [ "gridfire::screening::ScreeningModel::StateLogDerivatives", "structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html", null ],
     [ "gridfire::engine::StepDerivatives< T >", "structgridfire_1_1engine_1_1_step_derivatives.html", null ],
     [ "gridfire::utils::TableBase", "classgridfire_1_1utils_1_1_table_base.html", [
       [ "gridfire::utils::Table< T >", "classgridfire_1_1utils_1_1_table.html", null ]
@@ -254,5 +310,6 @@ var hierarchy =
     [ "gridfire::rates::weak::WeakRateInterpolator", "classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html", null ],
     [ "gridfire::rates::weak::WeakRatePayload", "structgridfire_1_1rates_1_1weak_1_1_weak_rate_payload.html", null ],
     [ "gridfire::rates::weak::WeakReactionEntry", "structgridfire_1_1rates_1_1weak_1_1_weak_reaction_entry.html", null ],
-    [ "gridfire::rates::weak::WeakReactionMap", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html", null ]
+    [ "gridfire::rates::weak::WeakReactionMap", "classgridfire_1_1rates_1_1weak_1_1_weak_reaction_map.html", null ],
+    [ "gridfire::screening::BlendedScreeningModel::Weight", "structgridfire_1_1screening_1_1_blended_screening_model_1_1_weight.html", null ]
 ];

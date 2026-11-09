@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -101,6 +101,7 @@ $(function(){initNavTree('classgridfire_1_1reaction_1_1_reaclib_reaction.html','
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
@@ -196,6 +197,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a181b2c75af1f2701c43594c5bb2bac2d" id="r_a181b2c75af1f2701c43594c5bb2bac2d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a181b2c75af1f2701c43594c5bb2bac2d">is_reverse</a> () const override</td></tr>
 <tr class="memdesc:a181b2c75af1f2701c43594c5bb2bac2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if this is a reverse reaction rate.  <br /></td></tr>
 <tr class="separator:a181b2c75af1f2701c43594c5bb2bac2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03df62cbeb776ba09f8b640d8f73017f" id="r_a03df62cbeb776ba09f8b640d8f73017f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03df62cbeb776ba09f8b640d8f73017f">is_electron_capture</a> () const</td></tr>
+<tr class="memdesc:a03df62cbeb776ba09f8b640d8f73017f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the reaction captures an electron, whose REACLIB rate must be scaled by rho * Ye.  <br /></td></tr>
+<tr class="separator:a03df62cbeb776ba09f8b640d8f73017f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b30c49925823c87980b4fca17c8282e" id="r_a0b30c49925823c87980b4fca17c8282e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b30c49925823c87980b4fca17c8282e">excess_energy</a> () const</td></tr>
 <tr class="memdesc:a0b30c49925823c87980b4fca17c8282e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the excess energy from the mass difference of reactants and products.  <br /></td></tr>
 <tr class="separator:a0b30c49925823c87980b4fca17c8282e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -225,6 +229,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4282f85c34d6db1994c07e7a40f66d80 inherit pub_methods_classgridfire_1_1reaction_1_1_reaction" id="r_a4282f85c34d6db1994c07e7a40f66d80"><td class="memItemLeft" align="right" valign="top">virtual CppAD::AD&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a4282f85c34d6db1994c07e7a40f66d80">calculate_energy_generation_rate</a> (const CppAD::AD&lt; double &gt; &amp;T9, const CppAD::AD&lt; double &gt; &amp;rho, const CppAD::AD&lt; double &gt; &amp;Ye, const CppAD::AD&lt; double &gt; &amp;mue, const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;Y, const std::unordered_map&lt; size_t, fourdst::atomic::Species &gt; &amp;index_to_species_map) const</td></tr>
 <tr class="memdesc:a4282f85c34d6db1994c07e7a40f66d80 inherit pub_methods_classgridfire_1_1reaction_1_1_reaction"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience: AD-enabled energy generation rate (AD version).  <br /></td></tr>
 <tr class="separator:a4282f85c34d6db1994c07e7a40f66d80 inherit pub_methods_classgridfire_1_1reaction_1_1_reaction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ad598a65d0f6081cd978c103d313047b1" id="r_ad598a65d0f6081cd978c103d313047b1"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ad598a65d0f6081cd978c103d313047b1"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad598a65d0f6081cd978c103d313047b1">electron_density_factor</a> (const T rho, const T Ye) const</td></tr>
+<tr class="memdesc:ad598a65d0f6081cd978c103d313047b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factor converting the REACLIB fit to the physical rate: rho * Ye for electron captures, 1 otherwise.  <br /></td></tr>
+<tr class="separator:ad598a65d0f6081cd978c103d313047b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -264,6 +275,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:af52b42d940f6a09dba5d28898d2b0b1f" id="r_af52b42d940f6a09dba5d28898d2b0b1f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af52b42d940f6a09dba5d28898d2b0b1f">m_reverse</a> = false</td></tr>
 <tr class="memdesc:af52b42d940f6a09dba5d28898d2b0b1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating if this is a reverse reaction rate.  <br /></td></tr>
 <tr class="separator:af52b42d940f6a09dba5d28898d2b0b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adccc536c4cd1767261b447844b28fede" id="r_adccc536c4cd1767261b447844b28fede"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adccc536c4cd1767261b447844b28fede">m_electronCapture</a> = false</td></tr>
+<tr class="memdesc:adccc536c4cd1767261b447844b28fede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Captures an electron (e.g. be7(e-,)li7): REACLIB tabulates these per unit electron density.  <br /></td></tr>
+<tr class="separator:adccc536c4cd1767261b447844b28fede"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -861,6 +875,40 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
+<a id="ad598a65d0f6081cd978c103d313047b1" name="ad598a65d0f6081cd978c103d313047b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad598a65d0f6081cd978c103d313047b1">&#9670;&#160;</a></span>electron_density_factor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T gridfire::reaction::ReaclibReaction::electron_density_factor </td>
+          <td>(</td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T</td>          <td class="paramname"><span class="paramname"><em>Ye</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Factor converting the REACLIB fit to the physical rate: rho * Ye for electron captures, 1 otherwise. </p>
+<p>REACLIB electron-capture rates are given per unit electron density (as MESA's reaction_ye_rho_exponents and pynucastro also assume), so the rate in 1/s is the fit times rho * Ye. </p>
+
+</div>
+</div>
 <a id="a0b30c49925823c87980b4fca17c8282e" name="a0b30c49925823c87980b4fca17c8282e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b30c49925823c87980b4fca17c8282e">&#9670;&#160;</a></span>excess_energy()</h2>
 
@@ -980,6 +1028,33 @@ template&lt;typename T&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The reaction ID. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html#a94b92308b9619ec20c690e55157786ba">gridfire::reaction::Reaction</a>.</p>
+
+</div>
+</div>
+<a id="a03df62cbeb776ba09f8b640d8f73017f" name="a03df62cbeb776ba09f8b640d8f73017f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03df62cbeb776ba09f8b640d8f73017f">&#9670;&#160;</a></span>is_electron_capture()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::reaction::ReaclibReaction::is_electron_capture </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>True if the reaction captures an electron, whose REACLIB rate must be scaled by rho * Ye. </p>
 
 </div>
 </div>
@@ -1495,6 +1570,30 @@ template&lt;typename T&gt; </div>
 </div><div class="memdoc">
 
 <p>Chapter number from the REACLIB database, defining the reaction structure. </p>
+
+</div>
+</div>
+<a id="adccc536c4cd1767261b447844b28fede" name="adccc536c4cd1767261b447844b28fede"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adccc536c4cd1767261b447844b28fede">&#9670;&#160;</a></span>m_electronCapture</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::reaction::ReaclibReaction::m_electronCapture = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Captures an electron (e.g. be7(e-,)li7): REACLIB tabulates these per unit electron density. </p>
 
 </div>
 </div>

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -103,11 +103,13 @@ $(function(){initNavTree('strategy__abstract_8h.html',''); initResizable(true); 
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">strategy_abstract.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="engine__abstract_8h.html">gridfire/engine/engine_abstract.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="error__solver_8h.html">gridfire/exceptions/error_solver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="types_2types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;any&gt;</code><br />
@@ -157,6 +159,12 @@ Typedefs</h2></td></tr>
 <tr class="separator:a3ba32e30d3e30cbbca5ffb22dff077ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a521165ce7610e3438607af6500f82fdd" id="r_a521165ce7610e3438607af6500f82fdd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1solver.html#a521165ce7610e3438607af6500f82fdd">gridfire::solver::MultiZoneDynamicNetworkSolver</a> = <a class="el" href="classgridfire_1_1solver_1_1_multi_zone_network_solver.html">MultiZoneNetworkSolver</a>&lt;<a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a>&gt;</td></tr>
 <tr class="separator:a521165ce7610e3438607af6500f82fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:afc6a503bc1b8bdcec9f16442c50a3d17" id="r_afc6a503bc1b8bdcec9f16442c50a3d17"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1solver.html#afc6a503bc1b8bdcec9f16442c50a3d17">gridfire::solver::evaluate_instantaneous_rates</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;engine, <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &amp;engine_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, bool include_channels=true, bool include_reactions=true)</td></tr>
+<tr class="memdesc:afc6a503bc1b8bdcec9f16442c50a3d17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous rates at netIn's state straight from the engine, with no integration.  <br /></td></tr>
+<tr class="separator:afc6a503bc1b8bdcec9f16442c50a3d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

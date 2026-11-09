@@ -2,6 +2,8 @@ var classgridfire_1_1policy_1_1_main_sequence_policy =
 [
     [ "MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html#acd3224e5781f3d19a8ff300b7fd9a21c", null ],
     [ "MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a0fcac0f9d41917f888788a772daaaebc", null ],
+    [ "MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a063dab46e98fd56c31819c2bf75060ab", null ],
+    [ "MainSequencePolicy", "classgridfire_1_1policy_1_1_main_sequence_policy.html#ad18ebe6858d8ba88b47e6b56142ffc12", null ],
     [ "build_partition_function", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a5f38cd1549544854e60c2c7a847c0ea7", null ],
     [ "check_status", "classgridfire_1_1policy_1_1_main_sequence_policy.html#ac3263f792de714d5ffed31bfac17d808", null ],
     [ "construct", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a3b600b9f02113d6ae3be22c556872ba9", null ],
@@ -12,7 +14,9 @@ var classgridfire_1_1policy_1_1_main_sequence_policy =
     [ "get_seed_species", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a041b0a99120efdc6abae312c568a9e15", null ],
     [ "get_stack_scratch_blob", "classgridfire_1_1policy_1_1_main_sequence_policy.html#ad0376d9982ee21d37d7a5fe60e408765", null ],
     [ "get_status", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a1ecfb6ea2e18e8cf55228f80ee5c50ed", null ],
+    [ "getConfig", "classgridfire_1_1policy_1_1_main_sequence_policy.html#aa73765ea363dab0357b18532335bd40b", null ],
     [ "name", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a6520ddfead2ba2700e2b1329774b4ff6", null ],
+    [ "m_config", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a3bf1d13c8e19bb6d287126f124e1325d", null ],
     [ "m_initializing_composition", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a9b55ccd1a059ede5127b07a18274f6e9", null ],
     [ "m_network_stack", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a0416e55a72362487212a92b3d18dfb14", null ],
     [ "m_partition_function", "classgridfire_1_1policy_1_1_main_sequence_policy.html#a57a7bbb55eb6f96396d87811f34cc0a4", null ],

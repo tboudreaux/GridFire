@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -136,6 +136,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aea8914f56e34445aacf0a5d0af073897" id="r_aea8914f56e34445aacf0a5d0af073897"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea8914f56e34445aacf0a5d0af073897">AdaptiveEngineView</a> (<a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine)</td></tr>
 <tr class="memdesc:aea8914f56e34445aacf0a5d0af073897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classgridfire_1_1engine_1_1_adaptive_engine_view.html" title="An engine view that dynamically adapts the reaction network based on runtime conditions.">AdaptiveEngineView</a>.  <br /></td></tr>
 <tr class="separator:aea8914f56e34445aacf0a5d0af073897"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa85f1c5771b7fac51891f9c3059a4946" id="r_aa85f1c5771b7fac51891f9c3059a4946"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa85f1c5771b7fac51891f9c3059a4946">AdaptiveEngineView</a> (<a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;baseEngine, const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;config)</td></tr>
+<tr class="memdesc:aa85f1c5771b7fac51891f9c3059a4946"><td class="mdescLeft">&#160;</td><td class="mdescRight">As <a class="el" href="#aea8914f56e34445aacf0a5d0af073897" title="Constructs an AdaptiveEngineView.">AdaptiveEngineView(DynamicEngine&amp;)</a>, with the given configuration (engine.views.adaptiveEngineView) instead of <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>{}.  <br /></td></tr>
+<tr class="separator:aa85f1c5771b7fac51891f9c3059a4946"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ccb1567690f0e9cd291dca5f10944c5" id="r_a5ccb1567690f0e9cd291dca5f10944c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ccb1567690f0e9cd291dca5f10944c5">getConfig</a> () const</td></tr>
+<tr class="memdesc:a5ccb1567690f0e9cd291dca5f10944c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The configuration this view was built with.  <br /></td></tr>
+<tr class="separator:a5ccb1567690f0e9cd291dca5f10944c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7b6561da6dd8513fef5c8c03737d433" id="r_aa7b6561da6dd8513fef5c8c03737d433"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7b6561da6dd8513fef5c8c03737d433">project</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
 <tr class="memdesc:aa7b6561da6dd8513fef5c8c03737d433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the active species and reactions based on the current conditions.  <br /></td></tr>
 <tr class="separator:aa7b6561da6dd8513fef5c8c03737d433"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -201,6 +207,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af0bd5e2e94280acec2d6f6885a25f251"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e5d6985c84cc9c404080f8add5f5c18" id="r_a2e5d6985c84cc9c404080f8add5f5c18"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e5d6985c84cc9c404080f8add5f5c18">constructStateBlob</a> (const <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> *blob) const override</td></tr>
 <tr class="separator:a2e5d6985c84cc9c404080f8add5f5c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1engine_1_1_dynamic_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a></td></tr>
+<tr class="memitem:aab4b4317fcf83a8401b274cc94e7feea inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine" id="r_aab4b4317fcf83a8401b274cc94e7feea"><td class="memItemLeft" align="right" valign="top">virtual std::expected&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt;, <a class="el" href="namespacegridfire_1_1engine.html#a4d057e41b489bf20744dfa8d2958ad5a">EngineStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html#aab4b4317fcf83a8401b274cc94e7feea">calculateRHSAndEnergyFromRawAbundances</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, std::span&lt; const double &gt; rawAbundances, const double T9, const double rho) const</td></tr>
+<tr class="memdesc:aab4b4317fcf83a8401b274cc94e7feea inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the RHS on an integrator iterate that may hold small negative abundances.  <br /></td></tr>
+<tr class="separator:aab4b4317fcf83a8401b274cc94e7feea inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac89259082775f48201e295374f9f94e6 inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine" id="r_ac89259082775f48201e295374f9f94e6"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html">NetworkJacobian</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html#ac89259082775f48201e295374f9f94e6">generateJacobianMatrixFromRawAbundances</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, std::span&lt; const double &gt; rawAbundances, const double T9, const double rho) const</td></tr>
+<tr class="memdesc:ac89259082775f48201e295374f9f94e6 inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the Jacobian of calculateRHSAndEnergyFromRawAbundances at the same iterate.  <br /></td></tr>
+<tr class="separator:ac89259082775f48201e295374f9f94e6 inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a827a580e5b83c834ee00ecc5cfe8ec7d inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine" id="r_a827a580e5b83c834ee00ecc5cfe8ec7d"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_reaction_contributions.html">ReactionContributions</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html#a827a580e5b83c834ee00ecc5cfe8ec7d">calculateReactionContributions</a> (<a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">scratch::StateBlob</a> &amp;ctx, const fourdst::composition::CompositionAbstract &amp;comp, double T9, double rho) const</td></tr>
+<tr class="memdesc:a827a580e5b83c834ee00ecc5cfe8ec7d inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each reaction's flow, energy release, neutrino energy loss and neutrino emission rate at one state.  <br /></td></tr>
+<tr class="separator:a827a580e5b83c834ee00ecc5cfe8ec7d inherit pub_methods_classgridfire_1_1engine_1_1_dynamic_engine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1engine_1_1_engine"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1engine_1_1_engine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1engine_1_1_engine.html">gridfire::engine::Engine</a></td></tr>
 <tr class="memitem:af0ea99416c28933d364a872fc6aff556 inherit pub_methods_classgridfire_1_1engine_1_1_engine" id="r_af0ea99416c28933d364a872fc6aff556"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html#af0ea99416c28933d364a872fc6aff556">~Engine</a> ()=default</td></tr>
 <tr class="memdesc:af0ea99416c28933d364a872fc6aff556 inherit pub_methods_classgridfire_1_1engine_1_1_engine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
@@ -309,7 +325,7 @@ AdaptiveEngineView::update() </dd></dl>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aea8914f56e34445aacf0a5d0af073897" name="aea8914f56e34445aacf0a5d0af073897"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea8914f56e34445aacf0a5d0af073897">&#9670;&#160;</a></span>AdaptiveEngineView()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aea8914f56e34445aacf0a5d0af073897">&#9670;&#160;</a></span>AdaptiveEngineView() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -339,6 +355,29 @@ AdaptiveEngineView::update() </dd></dl>
   </dd>
 </dl>
 <p>Initializes the active species and reactions to the full network, and constructs the initial index maps. </p>
+
+</div>
+</div>
+<a id="aa85f1c5771b7fac51891f9c3059a4946" name="aa85f1c5771b7fac51891f9c3059a4946"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa85f1c5771b7fac51891f9c3059a4946">&#9670;&#160;</a></span>AdaptiveEngineView() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire::engine::AdaptiveEngineView::AdaptiveEngineView </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>baseEngine</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>As <a class="el" href="#aea8914f56e34445aacf0a5d0af073897" title="Constructs an AdaptiveEngineView.">AdaptiveEngineView(DynamicEngine&amp;)</a>, with the given configuration (engine.views.adaptiveEngineView) instead of <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a>{}. </p>
 
 </div>
 </div>
@@ -1080,6 +1119,33 @@ AdaptiveEngineView::update() </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the base engine. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1engine_1_1_engine_view.html#a7884ea8e5618e295e64150f3ecf2c6b5">gridfire::engine::EngineView&lt; DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a5ccb1567690f0e9cd291dca5f10944c5" name="a5ccb1567690f0e9cd291dca5f10944c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ccb1567690f0e9cd291dca5f10944c5">&#9670;&#160;</a></span>getConfig()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> gridfire::engine::AdaptiveEngineView::getConfig </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The configuration this view was built with. </p>
 
 </div>
 </div>

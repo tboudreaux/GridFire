@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -117,10 +117,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a5f2326f2f76cb1895d6cf5daed9b030b" id="r_a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f2326f2f76cb1895d6cf5daed9b030b">get_all_reaclib_reactions</a> ()</td></tr>
 <tr class="memdesc:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides global access to the fully initialized REACLIB reaction set.  <br /></td></tr>
 <tr class="separator:a5f2326f2f76cb1895d6cf5daed9b030b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29e2bc67bc8e570fa6a3d0725ae729a2" id="r_a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29e2bc67bc8e570fa6a3d0725ae729a2">data_hash</a> ()</td></tr>
+<tr class="memdesc:a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">XXH64 of the REACLIB data compiled into this build: identifies the rate coefficients exactly.  <br /></td></tr>
+<tr class="separator:a29e2bc67bc8e570fa6a3d0725ae729a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb94d5adc7bb9db5a67f770f7453e63" id="r_a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb94d5adc7bb9db5a67f770f7453e63">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html">ReactionRecord</a> &amp;r)</td></tr>
 <tr class="separator:a6bb94d5adc7bb9db5a67f770f7453e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0deac6cbef076e8884e66fd3ab66e0" id="r_afc0deac6cbef076e8884e66fd3ab66e0"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc0deac6cbef076e8884e66fd3ab66e0">parseSpeciesString</a> (const std::string_view str)</td></tr>
 <tr class="separator:afc0deac6cbef076e8884e66fd3ab66e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028bf8d5e4d0368c49d6f6b04425abc8" id="r_a028bf8d5e4d0368c49d6f6b04425abc8"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a028bf8d5e4d0368c49d6f6b04425abc8">electron_capture_name</a> (const std::string &amp;rpName, const std::string_view label)</td></tr>
+<tr class="separator:a028bf8d5e4d0368c49d6f6b04425abc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02ff11b88be94392151873e06a30b276" id="r_a02ff11b88be94392151873e06a30b276"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02ff11b88be94392151873e06a30b276">initializeAllReaclibReactions</a> ()</td></tr>
 <tr class="separator:a02ff11b88be94392151873e06a30b276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -128,10 +133,62 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:af6ff0dfe7ffe34c73ba9acbab5ef8a66" id="r_af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ff0dfe7ffe34c73ba9acbab5ef8a66">s_initialized</a> = false</td></tr>
 <tr class="separator:af6ff0dfe7ffe34c73ba9acbab5ef8a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a464e208a786f5b138680f05d2677eb57" id="r_a464e208a786f5b138680f05d2677eb57"><td class="memItemLeft" align="right" valign="top">constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a464e208a786f5b138680f05d2677eb57">DATA_SOURCE</a> = &quot;REACLIB (pynucastro snapshot reaclib_pynucastro_latest_Z26)&quot;</td></tr>
+<tr class="memdesc:a464e208a786f5b138680f05d2677eb57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the REACLIB snapshot compiled into this build (the file utils/reaclib/format.py converted).  <br /></td></tr>
+<tr class="separator:a464e208a786f5b138680f05d2677eb57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f75b17a44c23261a221f7558b1a63d9" id="r_a1f75b17a44c23261a221f7558b1a63d9"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f75b17a44c23261a221f7558b1a63d9">s_all_reaclib_reactions_ptr</a> = nullptr</td></tr>
 <tr class="separator:a1f75b17a44c23261a221f7558b1a63d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a29e2bc67bc8e570fa6a3d0725ae729a2" name="a29e2bc67bc8e570fa6a3d0725ae729a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29e2bc67bc8e570fa6a3d0725ae729a2">&#9670;&#160;</a></span>data_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t gridfire::reaclib::data_hash </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>XXH64 of the REACLIB data compiled into this build: identifies the rate coefficients exactly. </p>
+
+</div>
+</div>
+<a id="a028bf8d5e4d0368c49d6f6b04425abc8" name="a028bf8d5e4d0368c49d6f6b04425abc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a028bf8d5e4d0368c49d6f6b04425abc8">&#9670;&#160;</a></span>electron_capture_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::string gridfire::reaclib::electron_capture_name </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>rpName</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string_view</td>          <td class="paramname"><span class="paramname"><em>label</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>REACLIB marks electron captures by their label ("ec..."), but the name generator (utils/reaclib/format.py, before it was fixed) wrote every charge-raising two-body reaction as emitting a positron. That gave pep (p + e- + p -&gt; d, label "ecw") the pp name p(p,e+)d, so it was merged into pp: its rate lost the rho*Y_e factor REACLIB electron-capture rates need, and its neutrinos were given the pp energy. An electron-capture-labelled entry named with an emitted positron is renamed with the electron as a projectile, e.g. p(p,e+)d -&gt; p(e-p,)d. </p>
+
+</div>
+</div>
 <a id="a5f2326f2f76cb1895d6cf5daed9b030b" name="a5f2326f2f76cb1895d6cf5daed9b030b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5f2326f2f76cb1895d6cf5daed9b030b">&#9670;&#160;</a></span>get_all_reaclib_reactions()</h2>
 
@@ -225,6 +282,30 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="a464e208a786f5b138680f05d2677eb57" name="a464e208a786f5b138680f05d2677eb57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a464e208a786f5b138680f05d2677eb57">&#9670;&#160;</a></span>DATA_SOURCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* gridfire::reaclib::DATA_SOURCE = &quot;REACLIB (pynucastro snapshot reaclib_pynucastro_latest_Z26)&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Name of the REACLIB snapshot compiled into this build (the file utils/reaclib/format.py converted). </p>
+
+</div>
+</div>
 <a id="a1f75b17a44c23261a221f7558b1a63d9" name="a1f75b17a44c23261a221f7558b1a63d9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1f75b17a44c23261a221f7558b1a63d9">&#9670;&#160;</a></span>s_all_reaclib_reactions_ptr</h2>
 

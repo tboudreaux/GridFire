@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -164,9 +164,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9292384722bcb0245acab9affcdb8c6d" id="r_a9292384722bcb0245acab9affcdb8c6d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacegridfire_1_1engine.html#aa7b127f4fe99188e3d94ff11608d54f0">JacobianEntry</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9292384722bcb0245acab9affcdb8c6d">nans</a> () const</td></tr>
 <tr class="memdesc:a9292384722bcb0245acab9affcdb8c6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves all entries in the Jacobian matrix that are NaN (Not a Number).  <br /></td></tr>
 <tr class="separator:a9292384722bcb0245acab9affcdb8c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb5643398b6f5fbf0ab8f09580b93402" id="r_adb5643398b6f5fbf0ab8f09580b93402"><td class="memItemLeft" align="right" valign="top">Eigen::SparseMatrix&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb5643398b6f5fbf0ab8f09580b93402">data</a> () const</td></tr>
-<tr class="memdesc:adb5643398b6f5fbf0ab8f09580b93402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the underlying sparse matrix data.  <br /></td></tr>
-<tr class="separator:adb5643398b6f5fbf0ab8f09580b93402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acefa2e59154369d77a6b8597ae3471f1" id="r_acefa2e59154369d77a6b8597ae3471f1"><td class="memItemLeft" align="right" valign="top">const Eigen::SparseMatrix&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acefa2e59154369d77a6b8597ae3471f1">data</a> () const</td></tr>
+<tr class="memdesc:acefa2e59154369d77a6b8597ae3471f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the underlying sparse matrix data.  <br /></td></tr>
+<tr class="separator:acefa2e59154369d77a6b8597ae3471f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa15b6de68c69b48c57ed1cc943164d32" id="r_aa15b6de68c69b48c57ed1cc943164d32"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; fourdst::atomic::Species, size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa15b6de68c69b48c57ed1cc943164d32">mapping</a> () const</td></tr>
 <tr class="memdesc:aa15b6de68c69b48c57ed1cc943164d32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides access to the species-to-index mapping.  <br /></td></tr>
 <tr class="separator:aa15b6de68c69b48c57ed1cc943164d32"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,8 +285,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adb5643398b6f5fbf0ab8f09580b93402" name="adb5643398b6f5fbf0ab8f09580b93402"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb5643398b6f5fbf0ab8f09580b93402">&#9670;&#160;</a></span>data()</h2>
+<a id="acefa2e59154369d77a6b8597ae3471f1" name="acefa2e59154369d77a6b8597ae3471f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acefa2e59154369d77a6b8597ae3471f1">&#9670;&#160;</a></span>data()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -295,7 +295,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::SparseMatrix&lt; double &gt; gridfire::engine::NetworkJacobian::data </td>
+          <td class="memname">const Eigen::SparseMatrix&lt; double &gt; &amp; gridfire::engine::NetworkJacobian::data </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

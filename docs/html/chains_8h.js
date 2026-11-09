@@ -16,5 +16,7 @@ var chains_8h =
     [ "gridfire::policy::HotCNOIIIChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_i_i_i_chain_policy" ],
     [ "gridfire::policy::HotCNOChainPolicy", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy.html", "classgridfire_1_1policy_1_1_hot_c_n_o_chain_policy" ],
     [ "gridfire::policy::TripleAlphaChainPolicy", "classgridfire_1_1policy_1_1_triple_alpha_chain_policy.html", "classgridfire_1_1policy_1_1_triple_alpha_chain_policy" ],
+    [ "gridfire::policy::HeliumBurningChainPolicy", "classgridfire_1_1policy_1_1_helium_burning_chain_policy.html", "classgridfire_1_1policy_1_1_helium_burning_chain_policy" ],
+    [ "gridfire::policy::HydrogenHeliumReactionChainPolicy", "classgridfire_1_1policy_1_1_hydrogen_helium_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_hydrogen_helium_reaction_chain_policy" ],
     [ "gridfire::policy::MainSequenceReactionChainPolicy", "classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy.html", "classgridfire_1_1policy_1_1_main_sequence_reaction_chain_policy" ]
 ];

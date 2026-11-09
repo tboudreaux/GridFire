@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -133,7 +133,6 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition of a reaction network into named energy generation channels.  <a href="structgridfire_1_1engine_1_1_energy_channels.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_energy_derivatives.html">EnergyDerivatives</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure holding derivatives of energy generation rate with respect to T and rho.  <a href="structgridfire_1_1engine_1_1_energy_derivatives.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_engine.html">Engine</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class for a reaction network engine.  <a href="classgridfire_1_1engine_1_1_engine.html#details">More...</a><br /></td></tr>
@@ -160,6 +159,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_reaction.html">Reaction</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single nuclear reaction from a specific data source.  <a href="classgridfire_1_1engine_1_1_reaction.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1engine_1_1_reaction_contributions.html">ReactionContributions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure holding derivatives of energy generation rate with respect to T and rho.  <a href="structgridfire_1_1engine_1_1_reaction_contributions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1engine_1_1_reaction_set.html">ReactionSet</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -238,6 +240,11 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a5387db1ec0b039955487fbc4c0034854"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration of different engine types available in GridFire.  <a href="#a5387db1ec0b039955487fbc4c0034854">More...</a><br /></td></tr>
 <tr class="separator:a5387db1ec0b039955487fbc4c0034854"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae94ff81f7ddd22c1bb5215917103d0fc" id="r_ae94ff81f7ddd22c1bb5215917103d0fc"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae94ff81f7ddd22c1bb5215917103d0fc">JacobianMethod</a> { <a class="el" href="#ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15">ANALYTIC</a>
+, <a class="el" href="#ae94ff81f7ddd22c1bb5215917103d0fca29f78cdd0a6cec0de89a309a16d6b031">AUTOMATIC_DIFFERENTIATION</a>
+ }</td></tr>
+<tr class="memdesc:ae94ff81f7ddd22c1bb5215917103d0fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">How GraphEngine computes the species Jacobian dYdot_i/dY_j.  <a href="#ae94ff81f7ddd22c1bb5215917103d0fc">More...</a><br /></td></tr>
+<tr class="separator:ae94ff81f7ddd22c1bb5215917103d0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada706e6a92b733f6be85aa4425b135c1" id="r_ada706e6a92b733f6be85aa4425b135c1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada706e6a92b733f6be85aa4425b135c1">PrimingReportStatus</a> { <a class="el" href="#ada706e6a92b733f6be85aa4425b135c1ad0749aaba8b833466dfcbb0428e4f89c">SUCCESS</a>
 , <a class="el" href="#ada706e6a92b733f6be85aa4425b135c1aa79c9fd21a71b9db74af815d8fed8397">ALREADY_PRIMED</a>
 , <a class="el" href="#ada706e6a92b733f6be85aa4425b135c1afae3583994fb36fc9a5efcfe0a9b35c9">SOLVER_FAILURE</a>
@@ -447,6 +454,37 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a5387db1ec0b039955487fbc4c0034854a23901438f732b89f022567965207ad92" name="a5387db1ec0b039955487fbc4c0034854a23901438f732b89f022567965207ad92"></a>PRIMING_ENGINE_VIEW&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5387db1ec0b039955487fbc4c0034854a33b468ddf562923b7641ab60bb6aa708" name="a5387db1ec0b039955487fbc4c0034854a33b468ddf562923b7641ab60bb6aa708"></a>DEFINED_ENGINE_VIEW&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5387db1ec0b039955487fbc4c0034854a048f6da02134ba0aedf95f8171611bf3" name="a5387db1ec0b039955487fbc4c0034854a048f6da02134ba0aedf95f8171611bf3"></a>FILE_DEFINED_ENGINE_VIEW&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="ae94ff81f7ddd22c1bb5215917103d0fc" name="ae94ff81f7ddd22c1bb5215917103d0fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae94ff81f7ddd22c1bb5215917103d0fc">&#9670;&#160;</a></span>JacobianMethod</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ae94ff81f7ddd22c1bb5215917103d0fc">gridfire::engine::JacobianMethod</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>How <a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html" title="A reaction network engine that uses a graph-based representation.">GraphEngine</a> computes the species Jacobian dYdot_i/dY_j. </p>
+<p>Both methods differentiate the same right-hand side and agree to round-off, including the derivatives with respect to species that are currently absent (Y_j = 0). They differ only in cost. Set through GridFireConfig::engine.jacobian. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15" name="ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15"></a>ANALYTIC&#160;</td><td class="fielddoc"><p>Assembled directly from the precomputed reaction topology (reactant powers, symmetry factors, stoichiometry) and the screening model's analytic derivatives. Tens of times faster than the tape. Falls back to AUTOMATIC_DIFFERENTIATION for a screening model without analytic derivatives. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ae94ff81f7ddd22c1bb5215917103d0fca29f78cdd0a6cec0de89a309a16d6b031" name="ae94ff81f7ddd22c1bb5215917103d0fca29f78cdd0a6cec0de89a309a16d6b031"></a>AUTOMATIC_DIFFERENTIATION&#160;</td><td class="fielddoc"><p>Dense reverse-mode sweeps over the CppAD tape of calculateAllDerivatives. Kept as the reference implementation and as the fallback for screening models without analytic derivatives. </p>
+</td></tr>
 </table>
 
 </div>

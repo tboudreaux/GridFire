@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -105,6 +105,9 @@ $(function(){initNavTree('_point_solver_8cpp.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_point_solver_8h.html">gridfire/solver/strategies/PointSolver.h</a>&quot;</code><br />
+<code>#include &quot;fourdst/constants/const.h&quot;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;span&gt;</code><br />
 <code>#include &quot;<a class="el" href="types_2types_8h.html">gridfire/types/types.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="table__format_8h.html">gridfire/utils/table_format.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="dynamic__engine__diagnostics_8h.html">gridfire/engine/diagnostics/dynamic_engine_diagnostics.h</a>&quot;</code><br />
@@ -118,12 +121,15 @@ $(function(){initNavTree('_point_solver_8cpp.html',''); initResizable(true); });
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &quot;fourdst/atomic/species.h&quot;</code><br />
 <code>#include &quot;fourdst/composition/exceptions/exceptions_composition.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__graph_8h.html">gridfire/engine/engine_graph.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine__partitioning__trigger_8h.html">gridfire/solver/strategies/triggers/engine_partitioning_trigger.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="trigger__pprint_8h.html">gridfire/trigger/procedures/trigger_pprint.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="error__solver_8h.html">gridfire/exceptions/error_solver.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__multiscale_8h.html">gridfire/engine/views/engine_multiscale.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine__view__abstract_8h.html">gridfire/engine/views/engine_view_abstract.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="sundials_8h.html">gridfire/utils/sundials.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="config_8h.html">gridfire/config/config.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">

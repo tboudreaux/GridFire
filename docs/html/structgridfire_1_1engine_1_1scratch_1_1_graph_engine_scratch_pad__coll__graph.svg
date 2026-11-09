@@ -47,7 +47,7 @@
   </g>
 </defs>
 <script type="application/ecmascript">
-var viewWidth = 961;
+var viewWidth = 958;
 var viewHeight = 277;
 var sectionId = 'dynsection-1';
 </script>
@@ -59,9 +59,9 @@ var sectionId = 'dynsection-1';
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Scratchpad for storing CppAD automatic differentiation state for GraphEngine.">
-<polygon fill="#999999" stroke="#666666" points="952.8,-172.12 823.55,-172.12 823.55,-141.62 952.8,-141.62 952.8,-172.12"/>
-<text xml:space="preserve" text-anchor="start" x="831.55" y="-158.62" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::engine::scratch</text>
-<text xml:space="preserve" text-anchor="middle" x="888.17" y="-147.38" font-family="Helvetica,sans-Serif" font-size="10.00">::GraphEngineScratchPad</text>
+<polygon fill="#999999" stroke="#666666" points="949.8,-172.12 820.55,-172.12 820.55,-141.62 949.8,-141.62 949.8,-172.12"/>
+<text xml:space="preserve" text-anchor="start" x="828.55" y="-158.62" font-family="Helvetica,sans-Serif" font-size="10.00">gridfire::engine::scratch</text>
+<text xml:space="preserve" text-anchor="middle" x="885.17" y="-147.38" font-family="Helvetica,sans-Serif" font-size="10.00">::GraphEngineScratchPad</text>
 </a>
 </g>
 </g>
@@ -79,8 +79,8 @@ var sectionId = 'dynsection-1';
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node2&#45;&gt;Node1</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M675.67,-243.11C714.77,-235.68 763.95,-224 805.55,-206.88 827.37,-197.89 850.1,-183.49 866.01,-172.45"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="675.09,-239.66 665.89,-244.91 676.36,-246.54 675.09,-239.66"/>
+<path fill="none" stroke="#63b8ff" d="M675.65,-248.97C714.28,-244.35 762.51,-235.35 802.55,-217.88 827.84,-206.84 852.62,-186.6 868.12,-172.47"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="675.55,-245.46 666.01,-250.05 676.33,-252.42 675.55,-245.46"/>
 </a>
 </g>
 </g>
@@ -97,11 +97,12 @@ var sectionId = 'dynsection-1';
 <g id="edge2_Node000001_Node000003" class="edge">
 <title>Node3&#45;&gt;Node1</title>
 <g id="a_edge2_Node000001_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M669.98,-198.61C715.77,-189.81 777.22,-178 823.08,-169.19"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="669.35,-195.17 660.19,-200.5 670.67,-202.05 669.35,-195.17"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M669.26,-198.62C714.4,-189.85 774.94,-178.09 820.26,-169.29"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="668.77,-195.15 659.62,-200.49 670.11,-202.02 668.77,-195.15"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="751.92" y="-193.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> local_abundance_cache</text>
+<text xml:space="preserve" text-anchor="middle" x="750.42" y="-204.87" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> flow_abundances</text>
+<text xml:space="preserve" text-anchor="middle" x="750.42" y="-193.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey">local_abundance_cache</text>
 </g>
 <!-- Node4 -->
 <g id="Node000004" class="node">
@@ -119,11 +120,11 @@ var sectionId = 'dynsection-1';
 <g id="edge3_Node000001_Node000004" class="edge">
 <title>Node4&#45;&gt;Node1</title>
 <g id="a_edge3_Node000001_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M677.2,-156.88C722.14,-156.88 779.76,-156.88 823.27,-156.88"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="677.28,-153.38 667.28,-156.88 677.28,-160.38 677.28,-153.38"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M676.98,-156.88C721.08,-156.88 777.36,-156.88 820.13,-156.88"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="676.99,-153.38 666.99,-156.88 676.99,-160.38 676.99,-153.38"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="751.92" y="-158.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> stepDerivativesCache</text>
+<text xml:space="preserve" text-anchor="middle" x="750.42" y="-158.62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> stepDerivativesCache</text>
 </g>
 <!-- Node5 -->
 <g id="Node000005" class="node">
@@ -212,11 +213,11 @@ var sectionId = 'dynsection-1';
 <g id="edge8_Node000001_Node000008" class="edge">
 <title>Node8&#45;&gt;Node1</title>
 <g id="a_edge8_Node000001_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M691.77,-107.5C734.77,-118.37 785.92,-131.29 825.09,-141.19"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="692.76,-104.14 682.21,-105.09 691.05,-110.93 692.76,-104.14"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M691.81,-107.75C734.1,-118.55 784.17,-131.33 822.62,-141.15"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="692.7,-104.36 682.14,-105.28 690.96,-111.14 692.7,-104.36"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="751.92" y="-137.65" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> jacobianSubsetCache</text>
+<text xml:space="preserve" text-anchor="middle" x="750.42" y="-137.65" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> jacobianSubsetCache</text>
 </g>
 <!-- Node9 -->
 <g id="Node000009" class="node">
@@ -233,11 +234,11 @@ var sectionId = 'dynsection-1';
 <g id="edge9_Node000001_Node000009" class="edge">
 <title>Node9&#45;&gt;Node1</title>
 <g id="a_edge9_Node000001_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M678.61,-42.48C717.43,-55.42 765.4,-73.63 805.55,-95.62 829.17,-108.56 853.52,-127.73 869.4,-141.17"/>
-<polygon fill="#9a32cd" stroke="#9a32cd" points="679.94,-39.23 669.35,-39.44 677.76,-45.89 679.94,-39.23"/>
+<path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M678.35,-42.92C716.43,-55.88 763.27,-73.98 802.55,-95.62 826.13,-108.62 850.49,-127.78 866.38,-141.2"/>
+<polygon fill="#9a32cd" stroke="#9a32cd" points="679.88,-39.74 669.29,-39.88 677.66,-46.38 679.88,-39.74"/>
 </a>
 </g>
-<text xml:space="preserve" text-anchor="middle" x="751.92" y="-97.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> jacWorkCache</text>
+<text xml:space="preserve" text-anchor="middle" x="750.42" y="-97.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="grey"> jacWorkCache</text>
 </g>
 </g>
 </svg>

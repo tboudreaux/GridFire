@@ -7,6 +7,8 @@ var structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad =
     [ "clone", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#aa5ececd1fb07a0aabb662c42dcb824b5", null ],
     [ "initialize", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#adcd7fe8dfb789527428a868e646053ca", null ],
     [ "is_initialized", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#ac31f77dafaa622ad33496a451caca1ba", null ],
+    [ "flow_abundances", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#af213e1285816be4ffee224afc04d37f0", null ],
+    [ "flow_abundances_hash", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#aa43799cbf652f10cc43e60bdcf2c50b0", null ],
     [ "has_initialized", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#ab1bc25e2aef7ac5a886811db9173f440", null ],
     [ "ID", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#aeebd0f52a1d433864e30af093684f353", null ],
     [ "jac_work", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#a880842c920f730a70b11fef372e267c0", null ],
@@ -14,6 +16,7 @@ var structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad =
     [ "jacWorkCache", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#a1f9875b88274f94d11299b633c013e1e", null ],
     [ "local_abundance_cache", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#afe0786c5a0a72b48c3597406fedbdb9c", null ],
     [ "most_recent_rhs_calculation", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#a78e01ce42f453f050d6aca21eb654475", null ],
+    [ "rate_multiplier_generation", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#abbc5f332ebc5e224de0c6822dfc0b1f8", null ],
     [ "rhsADFun", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#af484620a6c7022af3e0775bfa2568f79", null ],
     [ "stepDerivativesCache", "structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#abcadc5999eabeb91cc45887323da5cc1", null ]
 ];

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -125,6 +125,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a59893f7cf809d922b6d113ed2cf96881" id="r_a59893f7cf809d922b6d113ed2cf96881"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">gridfire::NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59893f7cf809d922b6d113ed2cf96881">evaluate</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn) const override</td></tr>
 <tr class="memdesc:a59893f7cf809d922b6d113ed2cf96881"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the network for a given timestep.  <br /></td></tr>
 <tr class="separator:a59893f7cf809d922b6d113ed2cf96881"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06dcce20f180cd4b06600cfad22df966" id="r_a06dcce20f180cd4b06600cfad22df966"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">gridfire::InstantaneousRates</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06dcce20f180cd4b06600cfad22df966">evaluateRates</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn) const override</td></tr>
+<tr class="memdesc:a06dcce20f180cd4b06600cfad22df966"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's state, without integrating (netIn.tMax and dt0 are ignored).  <br /></td></tr>
+<tr class="separator:a06dcce20f180cd4b06600cfad22df966"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad12800bb3b8d8aac175d793810820c7b" id="r_ad12800bb3b8d8aac175d793810820c7b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_shared_composition_result.html">gridfire::SharedCompositionResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad12800bb3b8d8aac175d793810820c7b">evaluateSharedComposition</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;netIn, const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">gridfire::ShellState</a> &gt; &amp;shells) const override</td></tr>
+<tr class="memdesc:ad12800bb3b8d8aac175d793810820c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Burn one composition shared by several shells, each at its own temperature and density, for netIn.tMax: dY/dt = sum_i w_i f(Y, T_i, rho_i). netIn supplies the composition, tMax and dt0; its temperature and density are ignored.  <br /></td></tr>
+<tr class="separator:ad12800bb3b8d8aac175d793810820c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgridfire_1_1solver_1_1_single_zone_network_solver"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classgridfire_1_1solver_1_1_single_zone_network_solver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a></td></tr>
 <tr class="memitem:a73803c687b93d07f5c148662cc972e70 inherit pub_methods_classgridfire_1_1solver_1_1_single_zone_network_solver" id="r_a73803c687b93d07f5c148662cc972e70"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a73803c687b93d07f5c148662cc972e70">SingleZoneNetworkSolver</a> (const EngineT &amp;engine)</td></tr>
 <tr class="memdesc:a73803c687b93d07f5c148662cc972e70 inherit pub_methods_classgridfire_1_1solver_1_1_single_zone_network_solver"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the NetworkSolverStrategy.  <br /></td></tr>
@@ -215,6 +221,85 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The output conditions after the timestep. </dd></dl>
 
 <p>Implements <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#abc4e0a88955a1bbac7886132240ca02d">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a06dcce20f180cd4b06600cfad22df966" name="a06dcce20f180cd4b06600cfad22df966"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06dcce20f180cd4b06600cfad22df966">&#9670;&#160;</a></span>evaluateRates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">gridfire::InstantaneousRates</a> PySingleZoneDynamicNetworkSolver::evaluateRates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn's state, without integrating (netIn.tMax and dt0 are ignored). </p>
+<p>A pass-through to the engine (see evaluate_instantaneous_rates) using this solver's context, so a consumer holding a solver stack can get the rates that <a class="el" href="#a59893f7cf809d922b6d113ed2cf96881" title="Evaluates the network for a given timestep.">evaluate()</a> would report at the end of a step, at any state. The integrator state in solver_ctx is not touched. Solvers that support it override this; the default throws exceptions::SolverError. </p>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ad12800bb3b8d8aac175d793810820c7b" name="ad12800bb3b8d8aac175d793810820c7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad12800bb3b8d8aac175d793810820c7b">&#9670;&#160;</a></span>evaluateSharedComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_shared_composition_result.html">gridfire::SharedCompositionResult</a> PySingleZoneDynamicNetworkSolver::evaluateSharedComposition </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">gridfire::NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">gridfire::ShellState</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>shells</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Burn one composition shared by several shells, each at its own temperature and density, for netIn.tMax: dY/dt = sum_i w_i f(Y, T_i, rho_i). netIn supplies the composition, tMax and dt0; its temperature and density are ignored. </p>
+<p>This is a convective zone under instantaneous mixing: the shells exchange material much faster than they burn, so they hold one composition and the zone burns at the mass-weighted mean of its shells' rates. Each shell's energy and neutrino losses are integrated separately. The default throws exceptions::SolverError.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">shells</td><td>The shells' states and mass weights (weights summing to 1). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a5c6519aa6d1f0f21a451be0fd510fda0">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a>.</p>
 
 </div>
 </div>

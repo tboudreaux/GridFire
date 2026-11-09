@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -113,7 +113,16 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html">BareScreeningModel</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A screening model that applies no screening effect.  <a href="classgridfire_1_1screening_1_1_bare_screening_model.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html">BlendedScreeningModel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screening that uses a weak-coupling prescription where it is valid and a strong-coupling one where it is not, with a smooth handover between them.  <a href="classgridfire_1_1screening_1_1_blended_screening_model.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html">CD09ScreeningModel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global (weak <img class="formulaInl" alt="$\to$" src="form_18.png" width="13" height="8"/> intermediate <img class="formulaInl" alt="$\to$" src="form_18.png" width="13" height="8"/> strong) plasma screening following Chugunov &amp; DeWitt (2009).  <a href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_intermediate_screening_model.html">IntermediateScreeningModel</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">ScreeningBlendWindow</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html" title="Screening that uses a weak-coupling prescription where it is valid and a strong-coupling one where it...">BlendedScreeningModel</a> hands over from its weak to its strong prescription.  <a href="structgridfire_1_1screening_1_1_screening_blend_window.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstract base class for plasma screening models.  <a href="classgridfire_1_1screening_1_1_screening_model.html#details">More...</a><br /></td></tr>
@@ -131,15 +140,17 @@ Typedefs</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:aa82aafbc4f8c28d0a75b60798e3a7d25" id="r_aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> { <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71">BARE</a>
 , <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">WEAK</a>
+, <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a2254972b13fe72ea6aafdf47eaf4acf8">CD09</a>
+, <a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">BLENDED</a>
  }</td></tr>
 <tr class="memdesc:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the available plasma screening models.  <a href="#aa82aafbc4f8c28d0a75b60798e3a7d25">More...</a><br /></td></tr>
 <tr class="separator:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6ca8556d27ac373e176f5b23437c416e" id="r_a6ca8556d27ac373e176f5b23437c416e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ca8556d27ac373e176f5b23437c416e">selectScreeningModel</a> (<a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> type)</td></tr>
-<tr class="memdesc:a6ca8556d27ac373e176f5b23437c416e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factory function to select and create a screening model.  <br /></td></tr>
-<tr class="separator:a6ca8556d27ac373e176f5b23437c416e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9853b45cf9e4f5270664f8326eaba178" id="r_a9853b45cf9e4f5270664f8326eaba178"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9853b45cf9e4f5270664f8326eaba178">selectScreeningModel</a> (<a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> type, const <a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">ScreeningBlendWindow</a> &amp;window={})</td></tr>
+<tr class="memdesc:a9853b45cf9e4f5270664f8326eaba178"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factory function to select and create a screening model.  <br /></td></tr>
+<tr class="separator:a9853b45cf9e4f5270664f8326eaba178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ae7dd1a7ccb7bf3c05084094ab008d8a3" name="ae7dd1a7ccb7bf3c05084094ab008d8a3"></a>
@@ -191,13 +202,19 @@ Functions</h2></td></tr>
 <li>The final screening factor is <code>exp(H_12)</code>. A special calculation is performed for the triple-alpha reaction. </li>
 </ol>
 </td></tr>
+<tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25a2254972b13fe72ea6aafdf47eaf4acf8" name="aa82aafbc4f8c28d0a75b60798e3a7d25a2254972b13fe72ea6aafdf47eaf4acf8"></a>CD09&#160;</td><td class="fielddoc"><p>Chugunov &amp; DeWitt (2009) screening, valid from weak through strong coupling (<a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html" title="Global (weak  intermediate  strong) plasma screening following Chugunov &amp; DeWitt (2009).">CD09ScreeningModel</a>). </p>
+<p>Their eq. (A4) interpolation between the Salpeter weak limit (with the electrons' contribution weighted by their degeneracy) and the strong-coupling fit, eqs. (23)-(25). Suited to dense or degenerate plasmas (low-mass stars, red-giant and white-dwarf cores) where weak screening is not valid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098" name="aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098"></a>BLENDED&#160;</td><td class="fielddoc"><p>Salpeter weak screening blended into Chugunov &amp; DeWitt (2009) as coupling grows (<a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html" title="Screening that uses a weak-coupling prescription where it is valid and a strong-coupling one where it...">BlendedScreeningModel</a> of <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html" title="Implements the weak screening model based on the Debye-Hückel approximation.">WeakScreeningModel</a> and <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html" title="Global (weak  intermediate  strong) plasma screening following Chugunov &amp; DeWitt (2009).">CD09ScreeningModel</a>). </p>
+<p>Pure Salpeter while its exponent <img class="formulaInl" alt="$H$" src="form_9.png" width="11" height="10"/> is below <a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html#a9194fa48c5c6fa00de70338f005e3e41" title="Below this weak-screening exponent the weak prescription is used alone.">ScreeningBlendWindow::weakExponent</a>, where weak screening is accurate (e.g. every pp-chain and CNO reaction in the Sun), pure CD09 above <a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html#a80c13017f3cacfa554f1fc660739a0e7" title="Above this weak-screening exponent the strong prescription is used alone.">ScreeningBlendWindow::strongExponent</a>, and a smooth blend between. </p>
+</td></tr>
 </table>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6ca8556d27ac373e176f5b23437c416e" name="a6ca8556d27ac373e176f5b23437c416e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ca8556d27ac373e176f5b23437c416e">&#9670;&#160;</a></span>selectScreeningModel()</h2>
+<a id="a9853b45cf9e4f5270664f8326eaba178" name="a9853b45cf9e4f5270664f8326eaba178"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9853b45cf9e4f5270664f8326eaba178">&#9670;&#160;</a></span>selectScreeningModel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,8 +222,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt; gridfire::screening::selectScreeningModel </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">ScreeningBlendWindow</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>window</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -225,14 +246,14 @@ Functions</h2></td></tr>
 <li>A non-null <code>std::unique_ptr&lt;<a class="el" href="classgridfire_1_1screening_1_1_screening_model.html" title="An abstract base class for plasma screening models.">ScreeningModel</a>&gt;</code> is always returned.</li>
 </ul>
 <p><b>Usage</b> </p><div class="fragment"><div class="line"><span class="comment">// Select the weak screening model</span></div>
-<div class="line"><span class="keyword">auto</span> screening_model = <a class="code hl_function" href="#a6ca8556d27ac373e176f5b23437c416e">gridfire::screening::selectScreeningModel</a>(<a class="code hl_enumvalue" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a>);</div>
+<div class="line"><span class="keyword">auto</span> screening_model = <a class="code hl_function" href="#a9853b45cf9e4f5270664f8326eaba178">gridfire::screening::selectScreeningModel</a>(<a class="code hl_enumvalue" href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a>);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Use the model to calculate screening factors</span></div>
 <div class="line"><span class="comment">// (assuming other parameters are initialized)</span></div>
 <div class="line">std::vector&lt;double&gt; factors = screening_model-&gt;calculateScreeningFactors(</div>
 <div class="line">    reactions, species, Y, T9, rho</div>
 <div class="line">);</div>
-<div class="ttc" id="anamespacegridfire_1_1screening_html_a6ca8556d27ac373e176f5b23437c416e"><div class="ttname"><a href="#a6ca8556d27ac373e176f5b23437c416e">gridfire::screening::selectScreeningModel</a></div><div class="ttdeci">std::unique_ptr&lt; ScreeningModel &gt; selectScreeningModel(ScreeningType type)</div><div class="ttdoc">A factory function to select and create a screening model.</div><div class="ttdef"><b>Definition</b> screening_types.cpp:9</div></div>
+<div class="ttc" id="anamespacegridfire_1_1screening_html_a9853b45cf9e4f5270664f8326eaba178"><div class="ttname"><a href="#a9853b45cf9e4f5270664f8326eaba178">gridfire::screening::selectScreeningModel</a></div><div class="ttdeci">std::unique_ptr&lt; ScreeningModel &gt; selectScreeningModel(ScreeningType type, const ScreeningBlendWindow &amp;window={})</div><div class="ttdoc">A factory function to select and create a screening model.</div><div class="ttdef"><b>Definition</b> screening_types.cpp:12</div></div>
 <div class="ttc" id="anamespacegridfire_1_1screening_html_aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8"><div class="ttname"><a href="#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::ScreeningType::WEAK</a></div><div class="ttdeci">@ WEAK</div><div class="ttdoc">Weak screening model (Salpeter, 1954).</div><div class="ttdef"><b>Definition</b> screening_types.h:35</div></div>
 </div><!-- fragment --> 
 </div>

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -141,9 +141,21 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:abf3cae9950c125671ebd306b22390d0b" id="r_abf3cae9950c125671ebd306b22390d0b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf3cae9950c125671ebd306b22390d0b">energy_per_flow</a> {}</td></tr>
 <tr class="memdesc:abf3cae9950c125671ebd306b22390d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Energy released per unit net molar flow, net of neutrino losses [erg][mol^-1].  <br /></td></tr>
 <tr class="separator:abf3cae9950c125671ebd306b22390d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51384a6469ecadff32e1f0395358f9c6" id="r_a51384a6469ecadff32e1f0395358f9c6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51384a6469ecadff32e1f0395358f9c6">neutrino_energy_per_flow</a> {}</td></tr>
+<tr class="memdesc:a51384a6469ecadff32e1f0395358f9c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Energy carried off by neutrinos per unit net molar flow [erg][mol^-1].  <br /></td></tr>
+<tr class="separator:a51384a6469ecadff32e1f0395358f9c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84005dba9d4ec51096f7bf6d776c7a86" id="r_a84005dba9d4ec51096f7bf6d776c7a86"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84005dba9d4ec51096f7bf6d776c7a86">emits_neutrino</a> {}</td></tr>
+<tr class="memdesc:a84005dba9d4ec51096f7bf6d776c7a86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weak reaction: each unit of net flow emits one neutrino per nucleus.  <br /></td></tr>
+<tr class="separator:a84005dba9d4ec51096f7bf6d776c7a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fe365872231c6e36a7655cd68a23a7a" id="r_a8fe365872231c6e36a7655cd68a23a7a"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8fe365872231c6e36a7655cd68a23a7a">channel_index</a> {}</td></tr>
 <tr class="memdesc:a8fe365872231c6e36a7655cd68a23a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index into m_energy_channels.names.  <br /></td></tr>
 <tr class="separator:a8fe365872231c6e36a7655cd68a23a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeefa981a20bb13cca12713ce60fa413e" id="r_aeefa981a20bb13cca12713ce60fa413e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeefa981a20bb13cca12713ce60fa413e">analytic_rate_derivative</a> {}</td></tr>
+<tr class="memdesc:aeefa981a20bb13cca12713ce60fa413e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rate has an analytic d ln k / dT9 (REACLIB fits; not tabulated weak rates)  <br /></td></tr>
+<tr class="separator:aeefa981a20bb13cca12713ce60fa413e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae861a2b286e79a282256364a8c86a504" id="r_ae861a2b286e79a282256364a8c86a504"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae861a2b286e79a282256364a8c86a504">electron_capture</a> {}</td></tr>
+<tr class="memdesc:ae861a2b286e79a282256364a8c86a504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rate scales with rho * Ye (a REACLIB electron capture), so it depends on every Y_k through Ye.  <br /></td></tr>
+<tr class="separator:ae861a2b286e79a282256364a8c86a504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a8be44cfc0731bb53861e1772027b36a4" name="a8be44cfc0731bb53861e1772027b36a4"></a>
@@ -157,6 +169,22 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeefa981a20bb13cca12713ce60fa413e" name="aeefa981a20bb13cca12713ce60fa413e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeefa981a20bb13cca12713ce60fa413e">&#9670;&#160;</a></span>analytic_rate_derivative</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::engine::GraphEngine::PrecomputedReaction::analytic_rate_derivative {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The rate has an analytic d ln k / dT9 (REACLIB fits; not tabulated weak rates) </p>
 
 </div>
 </div>
@@ -176,6 +204,38 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ae861a2b286e79a282256364a8c86a504" name="ae861a2b286e79a282256364a8c86a504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae861a2b286e79a282256364a8c86a504">&#9670;&#160;</a></span>electron_capture</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::engine::GraphEngine::PrecomputedReaction::electron_capture {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Rate scales with rho * Ye (a REACLIB electron capture), so it depends on every Y_k through Ye. </p>
+
+</div>
+</div>
+<a id="a84005dba9d4ec51096f7bf6d776c7a86" name="a84005dba9d4ec51096f7bf6d776c7a86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84005dba9d4ec51096f7bf6d776c7a86">&#9670;&#160;</a></span>emits_neutrino</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::engine::GraphEngine::PrecomputedReaction::emits_neutrino {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Weak reaction: each unit of net flow emits one neutrino per nucleus. </p>
+
+</div>
+</div>
 <a id="abf3cae9950c125671ebd306b22390d0b" name="abf3cae9950c125671ebd306b22390d0b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf3cae9950c125671ebd306b22390d0b">&#9670;&#160;</a></span>energy_per_flow</h2>
 
@@ -189,6 +249,22 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Energy released per unit net molar flow, net of neutrino losses [erg][mol^-1]. </p>
+
+</div>
+</div>
+<a id="a51384a6469ecadff32e1f0395358f9c6" name="a51384a6469ecadff32e1f0395358f9c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51384a6469ecadff32e1f0395358f9c6">&#9670;&#160;</a></span>neutrino_energy_per_flow</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double gridfire::engine::GraphEngine::PrecomputedReaction::neutrino_energy_per_flow {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Energy carried off by neutrinos per unit net molar flow [erg][mol^-1]. </p>
 
 </div>
 </div>

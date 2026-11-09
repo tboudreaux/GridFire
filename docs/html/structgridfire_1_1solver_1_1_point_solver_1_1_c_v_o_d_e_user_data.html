@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -154,6 +154,9 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a25faf0a584babf267399789bfad17652"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab26b161db829d2dc43e644f4388f9749" id="r_ab26b161db829d2dc43e644f4388f9749"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab26b161db829d2dc43e644f4388f9749">total_neutrino_flux</a> = 0.0</td></tr>
 <tr class="separator:ab26b161db829d2dc43e644f4388f9749"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a342d536f11969b60ba232b1d02d0ab8d" id="r_a342d536f11969b60ba232b1d02d0ab8d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a342d536f11969b60ba232b1d02d0ab8d">shells</a></td></tr>
+<tr class="memdesc:a342d536f11969b60ba232b1d02d0ab8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shells sharing this composition (empty: the single state T9, rho). Weights sum to 1.  <br /></td></tr>
+<tr class="separator:a342d536f11969b60ba232b1d02d0ab8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A helper struct to pass C++ context to C-style CVODE callbacks. </p>
@@ -380,6 +383,22 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a342d536f11969b60ba232b1d02d0ab8d" name="a342d536f11969b60ba232b1d02d0ab8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a342d536f11969b60ba232b1d02d0ab8d">&#9670;&#160;</a></span>shells</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a>&gt; gridfire::solver::PointSolver::CVODEUserData::shells</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shells sharing this composition (empty: the single state T9, rho). Weights sum to 1. </p>
 
 </div>
 </div>

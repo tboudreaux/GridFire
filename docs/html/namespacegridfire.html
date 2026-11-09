@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -143,9 +143,18 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous rates at one state (composition, T, rho), with nothing integrated.  <a href="structgridfire_1_1_instantaneous_rates.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_net_in.html">NetIn</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_shared_composition_result.html">SharedCompositionResult</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result of burning one composition shared by several shells (SingleZoneNetworkSolver::evaluateSharedComposition).  <a href="structgridfire_1_1_shared_composition_result.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One shell of a shared-composition group: its thermodynamic state and its share of the group's mass.  <a href="structgridfire_1_1_shell_state.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
@@ -156,6 +165,15 @@ Concepts</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aa87de07db0112a775d7e9e2a3154c2bb" id="r_aa87de07db0112a775d7e9e2a3154c2bb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa87de07db0112a775d7e9e2a3154c2bb">version_string</a> ()</td></tr>
+<tr class="memdesc:aa87de07db0112a775d7e9e2a3154c2bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">GridFire's version, e.g. "1.2.0".  <br /></td></tr>
+<tr class="separator:aa87de07db0112a775d7e9e2a3154c2bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87a41d58cb0be26627de7cbf41f60998" id="r_a87a41d58cb0be26627de7cbf41f60998"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87a41d58cb0be26627de7cbf41f60998">network_hash</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions)</td></tr>
+<tr class="memdesc:a87a41d58cb0be26627de7cbf41f60998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Order-independent XXH64 of the reaction ids in a network: two networks with the same reactions agree.  <br /></td></tr>
+<tr class="separator:a87a41d58cb0be26627de7cbf41f60998"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8cc23fda7b228a4f4beb0f58c3cb86f" id="r_ac8cc23fda7b228a4f4beb0f58c3cb86f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8cc23fda7b228a4f4beb0f58c3cb86f">describe_provenance</a> (const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;config, const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> *engine=nullptr, <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> *ctx=nullptr, std::string_view policy_name={})</td></tr>
+<tr class="memdesc:ac8cc23fda7b228a4f4beb0f58c3cb86f"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of the physics a GridFire calculation uses, for a host code to record with its results.  <br /></td></tr>
+<tr class="separator:ac8cc23fda7b228a4f4beb0f58c3cb86f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ee5ace587287cdba8f9755a0ef0b498" id="r_a0ee5ace587287cdba8f9755a0ef0b498"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ee5ace587287cdba8f9755a0ef0b498">gf_metadata</a> ()</td></tr>
 <tr class="separator:a0ee5ace587287cdba8f9755a0ef0b498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45c5e5933ef14301b6f7ec2fff6a0966" id="r_a45c5e5933ef14301b6f7ec2fff6a0966"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45c5e5933ef14301b6f7ec2fff6a0966">gf_version</a> ()</td></tr>
@@ -190,6 +208,18 @@ Functions</h2></td></tr>
 <tr class="separator:ab6c262cb95aefce7b7217be05def6a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a286ece04602867606e20af9f4f4ad4e7" id="r_a286ece04602867606e20af9f4f4ad4e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a286ece04602867606e20af9f4f4ad4e7">gf_get_compiler_flags_formatted</a> (just_gridfire=False)</td></tr>
 <tr class="separator:a286ece04602867606e20af9f4f4ad4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c5e82f4b24da35d8274f0c3a0adef4a" id="r_a1c5e82f4b24da35d8274f0c3a0adef4a"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c5e82f4b24da35d8274f0c3a0adef4a">gf_get_fortran_source</a> ()</td></tr>
+<tr class="separator:a1c5e82f4b24da35d8274f0c3a0adef4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5a67425d1118b4ba8a2e56887c00352" id="r_ad5a67425d1118b4ba8a2e56887c00352"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5a67425d1118b4ba8a2e56887c00352">gf_get_cmake_prefix</a> ()</td></tr>
+<tr class="separator:ad5a67425d1118b4ba8a2e56887c00352"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2475babd11bef3c64786d6b2e56c2f89" id="r_a2475babd11bef3c64786d6b2e56c2f89"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2475babd11bef3c64786d6b2e56c2f89">_require_c_api</a> ()</td></tr>
+<tr class="separator:a2475babd11bef3c64786d6b2e56c2f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bec6c276690dded3d967affa7b2dd36" id="r_a1bec6c276690dded3d967affa7b2dd36"><td class="memItemLeft" align="right" valign="top">List[str]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1bec6c276690dded3d967affa7b2dd36">gf_cflags</a> (str component=&quot;cpp&quot;)</td></tr>
+<tr class="separator:a1bec6c276690dded3d967affa7b2dd36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a510af740edda615b678a528745cf6d63" id="r_a510af740edda615b678a528745cf6d63"><td class="memItemLeft" align="right" valign="top">List[str]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a510af740edda615b678a528745cf6d63">gf_libs</a> (str component=&quot;cpp&quot;)</td></tr>
+<tr class="separator:a510af740edda615b678a528745cf6d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6e9629b3f2c78b9f933311f4c0157ed" id="r_af6e9629b3f2c78b9f933311f4c0157ed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6e9629b3f2c78b9f933311f4c0157ed">gf_config_main</a> (argv=None)</td></tr>
+<tr class="separator:af6e9629b3f2c78b9f933311f4c0157ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -211,8 +241,78 @@ Variables</h2></td></tr>
 <tr class="separator:a62cc4eb0aa62cc209ee4583b8cc0df52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1322f32e7c01a82e55767967a23420d" id="r_af1322f32e7c01a82e55767967a23420d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1322f32e7c01a82e55767967a23420d">_PACKAGE_DIR</a> = Path(__file__).resolve().parent</td></tr>
 <tr class="separator:af1322f32e7c01a82e55767967a23420d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ecaa6ed75a3f304ac21c8e82d687a1b" id="r_a1ecaa6ed75a3f304ac21c8e82d687a1b"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ecaa6ed75a3f304ac21c8e82d687a1b">_COMPONENTS</a> = (&quot;cpp&quot;, &quot;c&quot;, &quot;fortran&quot;)</td></tr>
+<tr class="separator:a1ecaa6ed75a3f304ac21c8e82d687a1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a2475babd11bef3c64786d6b2e56c2f89" name="a2475babd11bef3c64786d6b2e56c2f89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2475babd11bef3c64786d6b2e56c2f89">&#9670;&#160;</a></span>_require_c_api()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">gridfire._require_c_api </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac8cc23fda7b228a4f4beb0f58c3cb86f" name="ac8cc23fda7b228a4f4beb0f58c3cb86f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8cc23fda7b228a4f4beb0f58c3cb86f">&#9670;&#160;</a></span>describe_provenance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string gridfire::describe_provenance </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">config::GridFireConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> *</td>          <td class="paramname"><span class="paramname"><em>engine</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>policy_name</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A description of the physics a GridFire calculation uses, for a host code to record with its results. </p>
+<p>One "key: value" line per item: GridFire version, network policy, network size and hash, the rate libraries and the hashes of their compiled data, screening, Jacobian method, passive species, energy channels and solver tolerances. The network lines are omitted when engine is null (no network built yet).</p>
+<p>Two runs that print the same description used the same code version, rates, network and physics options. </p>
+
+</div>
+</div>
 <a id="a1de3db5e65a2e834c55f458307cab68e" name="a1de3db5e65a2e834c55f458307cab68e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1de3db5e65a2e834c55f458307cab68e">&#9670;&#160;</a></span>gf_author()</h2>
 
@@ -228,6 +328,23 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="a1bec6c276690dded3d967affa7b2dd36" name="a1bec6c276690dded3d967affa7b2dd36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bec6c276690dded3d967affa7b2dd36">&#9670;&#160;</a></span>gf_cflags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> List[str] gridfire.gf_cflags </td>
+          <td>(</td>
+          <td class="paramtype">str </td>          <td class="paramname"><span class="paramname"><em>component</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;cpp&quot;</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">Compile flags for a program using GridFire through the C++ library, the C API, or the Fortran module.</pre> 
 </div>
 </div>
 <a id="a454366ce631749963d3c6b387bcbc3e7" name="a454366ce631749963d3c6b387bcbc3e7"></a>
@@ -262,6 +379,32 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="af6e9629b3f2c78b9f933311f4c0157ed" name="af6e9629b3f2c78b9f933311f4c0157ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6e9629b3f2c78b9f933311f4c0157ed">&#9670;&#160;</a></span>gf_config_main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> int gridfire.gf_config_main </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>argv</em></span><span class="paramdefsep"> = </span><span class="paramdefval">None</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">gf-config: print what a build needs to use this GridFire installation.
+
+Examples:
+    gf-config --cflags --libs                      # C++ library
+    gf-config --component c --cflags --libs        # C API (gridfire/extern/gridfire_extern.h)
+    gf-config --component fortran --libs           # Fortran: link flags
+    gf-config --fortran-source                     # Fortran: the module source to compile with your compiler
+    PKG_CONFIG_PATH=$(gf-config --pkg-config-path) pkg-config --cflags --libs gridfire_extern
+    cmake -DCMAKE_PREFIX_PATH="$(gf-config --cmake-prefix)" ...   # then find_package(GridFire)
+</pre> 
 </div>
 </div>
 <a id="a787f9de5930793c2976d22426ae971b5" name="a787f9de5930793c2976d22426ae971b5"></a>
@@ -315,6 +458,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ad5a67425d1118b4ba8a2e56887c00352" name="ad5a67425d1118b4ba8a2e56887c00352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a67425d1118b4ba8a2e56887c00352">&#9670;&#160;</a></span>gf_get_cmake_prefix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> str gridfire.gf_get_cmake_prefix </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">Directory to add to CMAKE_PREFIX_PATH so that find_package(GridFire) finds this installation.</pre> 
+</div>
+</div>
 <a id="a286ece04602867606e20af9f4f4ad4e7" name="a286ece04602867606e20af9f4f4ad4e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a286ece04602867606e20af9f4f4ad4e7">&#9670;&#160;</a></span>gf_get_compiler_flags_formatted()</h2>
 
@@ -347,6 +507,23 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="a1c5e82f4b24da35d8274f0c3a0adef4a" name="a1c5e82f4b24da35d8274f0c3a0adef4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c5e82f4b24da35d8274f0c3a0adef4a">&#9670;&#160;</a></span>gf_get_fortran_source()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> str gridfire.gf_get_fortran_source </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">Path of gridfire_mod.f90, the Fortran interface; compile it with the same compiler as your program.</pre> 
 </div>
 </div>
 <a id="a40cbecad1b1a87c6711ee7e20517f092" name="a40cbecad1b1a87c6711ee7e20517f092"></a>
@@ -434,6 +611,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a510af740edda615b678a528745cf6d63" name="a510af740edda615b678a528745cf6d63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a510af740edda615b678a528745cf6d63">&#9670;&#160;</a></span>gf_libs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> List[str] gridfire.gf_libs </td>
+          <td>(</td>
+          <td class="paramtype">str </td>          <td class="paramname"><span class="paramname"><em>component</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;cpp&quot;</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">Link flags (library paths, libraries and run-time search paths) for the given component.</pre> 
+</div>
+</div>
 <a id="a081c76fc9fbac9b5b380c8e4fa0e7be0" name="a081c76fc9fbac9b5b380c8e4fa0e7be0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a081c76fc9fbac9b5b380c8e4fa0e7be0">&#9670;&#160;</a></span>gf_license()</h2>
 
@@ -499,6 +693,60 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a87a41d58cb0be26627de7cbf41f60998" name="a87a41d58cb0be26627de7cbf41f60998"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87a41d58cb0be26627de7cbf41f60998">&#9670;&#160;</a></span>network_hash()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t gridfire::network_hash </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Order-independent XXH64 of the reaction ids in a network: two networks with the same reactions agree. </p>
+
+</div>
+</div>
+<a id="aa87de07db0112a775d7e9e2a3154c2bb" name="aa87de07db0112a775d7e9e2a3154c2bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa87de07db0112a775d7e9e2a3154c2bb">&#9670;&#160;</a></span>version_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string gridfire::version_string </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GridFire's version, e.g. "1.2.0". </p>
 
 </div>
 </div>
@@ -651,6 +899,28 @@ Variables</h2></td></tr>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1ecaa6ed75a3f304ac21c8e82d687a1b" name="a1ecaa6ed75a3f304ac21c8e82d687a1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ecaa6ed75a3f304ac21c8e82d687a1b">&#9670;&#160;</a></span>_COMPONENTS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">tuple gridfire._COMPONENTS = (&quot;cpp&quot;, &quot;c&quot;, &quot;fortran&quot;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

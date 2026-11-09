@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -145,6 +145,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a56440c3329be6e245274e612a6048b92" id="r_a56440c3329be6e245274e612a6048b92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56440c3329be6e245274e612a6048b92">evaluate</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
 <tr class="memdesc:a56440c3329be6e245274e612a6048b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integrate from t=0 to netIn.tMax and return final composition and energy.  <br /></td></tr>
 <tr class="separator:a56440c3329be6e245274e612a6048b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a424dac12741a602cbb6b978ab1fb0f93" id="r_a424dac12741a602cbb6b978ab1fb0f93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a424dac12741a602cbb6b978ab1fb0f93">evaluateRates</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn) const override</td></tr>
+<tr class="memdesc:a424dac12741a602cbb6b978ab1fb0f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous rates at netIn's state, without integrating (see <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a" title="Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn&#39;s ...">SingleZoneNetworkSolver::evaluateRates</a>). Uses the engine scratch in solver_ctx (a <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a>); CVODE state is not touched, so this may be called between <a class="el" href="#a56440c3329be6e245274e612a6048b92" title="Integrate from t=0 to netIn.tMax and return final composition and energy.">evaluate()</a> calls.  <br /></td></tr>
+<tr class="separator:a424dac12741a602cbb6b978ab1fb0f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad5a0f7a32afedddbc8e9e3504685f38" id="r_aad5a0f7a32afedddbc8e9e3504685f38"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_shared_composition_result.html">SharedCompositionResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad5a0f7a32afedddbc8e9e3504685f38">evaluateSharedComposition</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a> &gt; &amp;shells) const override</td></tr>
+<tr class="memdesc:aad5a0f7a32afedddbc8e9e3504685f38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Burn a composition shared by several shells (see <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a5c6519aa6d1f0f21a451be0fd510fda0" title="Burn one composition shared by several shells, each at its own temperature and density,...">SingleZoneNetworkSolver::evaluateSharedComposition</a>).  <br /></td></tr>
+<tr class="separator:aad5a0f7a32afedddbc8e9e3504685f38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a017888703ce6de13d4340a268898b7fd" id="r_a017888703ce6de13d4340a268898b7fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a017888703ce6de13d4340a268898b7fd">evaluate</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, bool displayTrigger, bool forceReinitialize=false) const</td></tr>
 <tr class="memdesc:a017888703ce6de13d4340a268898b7fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call to evaluate which will let the user control if the trigger reasoning is displayed.  <br /></td></tr>
 <tr class="separator:a017888703ce6de13d4340a268898b7fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,14 +170,26 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:a0a34c72f685d5392c2d77cf4cf2ab520" id="r_a0a34c72f685d5392c2d77cf4cf2ab520"><td class="memTemplParams" colspan="2">template&lt;typename PerState&gt; </td></tr>
+<tr class="memitem:a0a34c72f685d5392c2d77cf4cf2ab520"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0a34c72f685d5392c2d77cf4cf2ab520">for_each_state</a> (N_Vector y, const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> *data, PerState &amp;&amp;per_state) const</td></tr>
+<tr class="memdesc:a0a34c72f685d5392c2d77cf4cf2ab520"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the engine at every state of data (its shells, or T9/rho), with y as calculate_rhs passes it.  <br /></td></tr>
+<tr class="separator:a0a34c72f685d5392c2d77cf4cf2ab520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af84914eaaa62fb54743c1b1b16f7e014" id="r_af84914eaaa62fb54743c1b1b16f7e014"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af84914eaaa62fb54743c1b1b16f7e014">integrate_shells_over_step</a> (<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *sctx_p, const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> &amp;data, double t0, double t1, std::vector&lt; double &gt; &amp;totals) const</td></tr>
+<tr class="memdesc:af84914eaaa62fb54743c1b1b16f7e014"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add each shell's energy, neutrino loss and neutrino flux over the accepted step [t0, t1] to totals (3 per shell)  <br /></td></tr>
+<tr class="separator:af84914eaaa62fb54743c1b1b16f7e014"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0827b5535916e8072fb599dadf83325a" id="r_a0827b5535916e8072fb599dadf83325a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0827b5535916e8072fb599dadf83325a">evaluate_impl</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, bool displayTrigger, bool forceReinitialize, const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a> &gt; &amp;shells, std::vector&lt; double &gt; *quadrature_out) const</td></tr>
+<tr class="memdesc:a0827b5535916e8072fb599dadf83325a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The implementation behind <a class="el" href="#a56440c3329be6e245274e612a6048b92" title="Integrate from t=0 to netIn.tMax and return final composition and energy.">evaluate()</a> and <a class="el" href="#aad5a0f7a32afedddbc8e9e3504685f38" title="Burn a composition shared by several shells (see SingleZoneNetworkSolver::evaluateSharedComposition).">evaluateSharedComposition()</a>; shells empty for a single state.  <br /></td></tr>
+<tr class="separator:a0827b5535916e8072fb599dadf83325a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a866bd58075b05c95222dd95abb86ca25" id="r_a866bd58075b05c95222dd95abb86ca25"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_r_h_s_output_data.html">CVODERHSOutputData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a866bd58075b05c95222dd95abb86ca25">calculate_rhs</a> (sunrealtype t, N_Vector y, N_Vector ydot, const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> *data) const</td></tr>
 <tr class="memdesc:a866bd58075b05c95222dd95abb86ca25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute RHS into ydot at time t from the engine and current state y.  <br /></td></tr>
 <tr class="separator:a866bd58075b05c95222dd95abb86ca25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f0ae9414dec5e9764b3b20592420a5a" id="r_a0f0ae9414dec5e9764b3b20592420a5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f0ae9414dec5e9764b3b20592420a5a">initialize_cvode_integration_resources</a> (<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *ctx, uint64_t N, size_t numSpecies, double current_time, const fourdst::composition::Composition &amp;composition, double absTol, double relTol, double accumulatedEnergy) const</td></tr>
 <tr class="memdesc:a0f0ae9414dec5e9764b3b20592420a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate and initialize CVODE vectors, linear algebra, tolerances, and constraints.  <br /></td></tr>
 <tr class="separator:a0f0ae9414dec5e9764b3b20592420a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2223ce9c3db01bcc21da63da5b4f56f" id="r_ad2223ce9c3db01bcc21da63da5b4f56f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2223ce9c3db01bcc21da63da5b4f56f">describe_cvode_failure</a> (<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *sctx_p, double t) const</td></tr>
+<tr class="memdesc:ad2223ce9c3db01bcc21da63da5b4f56f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and print per-component error ratios; run diagnostic helpers.  <br /></td></tr>
+<tr class="separator:ad2223ce9c3db01bcc21da63da5b4f56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11c00afbad3e94d036e18c9312263091" id="r_a11c00afbad3e94d036e18c9312263091"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11c00afbad3e94d036e18c9312263091">log_step_diagnostics</a> (<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *sctx_p, <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &amp;ctx, const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> &amp;user_data, bool displayJacobianStiffness, bool displaySpeciesBalance, bool to_file, std::optional&lt; std::string &gt; filename) const</td></tr>
-<tr class="memdesc:a11c00afbad3e94d036e18c9312263091"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute and print per-component error ratios; run diagnostic helpers.  <br /></td></tr>
 <tr class="separator:a11c00afbad3e94d036e18c9312263091"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
@@ -229,12 +247,12 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><span class="keyword">auto</span> out = <a class="code hl_namespace" href="namespacegridfire_1_1solver.html">solver</a>.evaluate(in);</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Final energy: &quot;</span> &lt;&lt; out.energy &lt;&lt; <span class="stringliteral">&quot; erg/g\n&quot;</span>;</div>
 <div class="ttc" id="anamespacegridfire_1_1engine_html"><div class="ttname"><a href="namespacegridfire_1_1engine.html">gridfire::engine</a></div><div class="ttdef"><b>Definition</b> dynamic_engine_diagnostics.h:40</div></div>
-<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:7</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:30</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a06f0dff9f8927b7cf2da3004c8fa1577"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">gridfire::NetIn::density</a></div><div class="ttdeci">double density</div><div class="ttdoc">Density in g/cm^3.</div><div class="ttdef"><b>Definition</b> types.h:35</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a0a8d820cfeaa92ee31f253795c57e0d1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1">gridfire::NetIn::tMax</a></div><div class="ttdeci">double tMax</div><div class="ttdoc">Maximum time.</div><div class="ttdef"><b>Definition</b> types.h:32</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a13058f4929e72c1187abbebcddb8aed1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1">gridfire::NetIn::composition</a></div><div class="ttdeci">fourdst::composition::Composition composition</div><div class="ttdoc">Composition of the network.</div><div class="ttdef"><b>Definition</b> types.h:31</div></div>
-<div class="ttc" id="astructgridfire_1_1_net_in_html_a5be0f5195a5cd1dd177b9fc5ab83a7be"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">gridfire::NetIn::temperature</a></div><div class="ttdeci">double temperature</div><div class="ttdoc">Temperature in Kelvin.</div><div class="ttdef"><b>Definition</b> types.h:34</div></div>
+<div class="ttc" id="anamespacegridfire_1_1solver_html"><div class="ttname"><a href="namespacegridfire_1_1solver.html">gridfire::solver</a></div><div class="ttdef"><b>Definition</b> GridSolver.h:8</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html"><div class="ttname"><a href="structgridfire_1_1_net_in.html">gridfire::NetIn</a></div><div class="ttdef"><b>Definition</b> types.h:31</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a06f0dff9f8927b7cf2da3004c8fa1577"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a06f0dff9f8927b7cf2da3004c8fa1577">gridfire::NetIn::density</a></div><div class="ttdeci">double density</div><div class="ttdoc">Density in g/cm^3.</div><div class="ttdef"><b>Definition</b> types.h:36</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a0a8d820cfeaa92ee31f253795c57e0d1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a0a8d820cfeaa92ee31f253795c57e0d1">gridfire::NetIn::tMax</a></div><div class="ttdeci">double tMax</div><div class="ttdoc">Maximum time.</div><div class="ttdef"><b>Definition</b> types.h:33</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a13058f4929e72c1187abbebcddb8aed1"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a13058f4929e72c1187abbebcddb8aed1">gridfire::NetIn::composition</a></div><div class="ttdeci">fourdst::composition::Composition composition</div><div class="ttdoc">Composition of the network.</div><div class="ttdef"><b>Definition</b> types.h:32</div></div>
+<div class="ttc" id="astructgridfire_1_1_net_in_html_a5be0f5195a5cd1dd177b9fc5ab83a7be"><div class="ttname"><a href="structgridfire_1_1_net_in.html#a5be0f5195a5cd1dd177b9fc5ab83a7be">gridfire::NetIn::temperature</a></div><div class="ttdeci">double temperature</div><div class="ttdoc">Temperature in Kelvin.</div><div class="ttdef"><b>Definition</b> types.h:35</div></div>
 </div><!-- fragment --> </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2f6ca4d9a525746c4e037bc3df66096c" name="a2f6ca4d9a525746c4e037bc3df66096c"></a>
@@ -548,6 +566,39 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="ad2223ce9c3db01bcc21da63da5b4f56f" name="ad2223ce9c3db01bcc21da63da5b4f56f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2223ce9c3db01bcc21da63da5b4f56f">&#9670;&#160;</a></span>describe_cvode_failure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string gridfire::solver::PointSolver::describe_cvode_failure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *</td>          <td class="paramname"><span class="paramname"><em>sctx_p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>t</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute and print per-component error ratios; run diagnostic helpers. </p>
+<p>Gathers CVODE's estimated local errors, converts the state to a Composition, and prints a sorted table of species with the highest error ratios; then invokes diagnostic routines to inspect Jacobian stiffness and species balance.</p>
+<p>Describe a failed CVODE step: time, step size, and the components that dominate CVODE's weighted local error estimate (the quantity whose norm decides whether a step is accepted). </p>
+
+</div>
+</div>
 <a id="a56440c3329be6e245274e612a6048b92" name="a56440c3329be6e245274e612a6048b92"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a56440c3329be6e245274e612a6048b92">&#9670;&#160;</a></span>evaluate() <span class="overload">[1/2]</span></h2>
 
@@ -654,6 +705,167 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a0827b5535916e8072fb599dadf83325a" name="a0827b5535916e8072fb599dadf83325a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0827b5535916e8072fb599dadf83325a">&#9670;&#160;</a></span>evaluate_impl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_net_out.html">NetOut</a> gridfire::solver::PointSolver::evaluate_impl </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>displayTrigger</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>forceReinitialize</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>shells</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; *</td>          <td class="paramname"><span class="paramname"><em>quadrature_out</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The implementation behind <a class="el" href="#a56440c3329be6e245274e612a6048b92" title="Integrate from t=0 to netIn.tMax and return final composition and energy.">evaluate()</a> and <a class="el" href="#aad5a0f7a32afedddbc8e9e3504685f38" title="Burn a composition shared by several shells (see SingleZoneNetworkSolver::evaluateSharedComposition).">evaluateSharedComposition()</a>; shells empty for a single state. </p>
+
+</div>
+</div>
+<a id="a424dac12741a602cbb6b978ab1fb0f93" name="a424dac12741a602cbb6b978ab1fb0f93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a424dac12741a602cbb6b978ab1fb0f93">&#9670;&#160;</a></span>evaluateRates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a> gridfire::solver::PointSolver::evaluateRates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Instantaneous rates at netIn's state, without integrating (see <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a" title="Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn&#39;s ...">SingleZoneNetworkSolver::evaluateRates</a>). Uses the engine scratch in solver_ctx (a <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a>); CVODE state is not touched, so this may be called between <a class="el" href="#a56440c3329be6e245274e612a6048b92" title="Integrate from t=0 to netIn.tMax and return final composition and energy.">evaluate()</a> calls. </p>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="aad5a0f7a32afedddbc8e9e3504685f38" name="aad5a0f7a32afedddbc8e9e3504685f38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad5a0f7a32afedddbc8e9e3504685f38">&#9670;&#160;</a></span>evaluateSharedComposition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_shared_composition_result.html">SharedCompositionResult</a> gridfire::solver::PointSolver::evaluateSharedComposition </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structgridfire_1_1_shell_state.html">ShellState</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>shells</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel override">override</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Burn a composition shared by several shells (see <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a5c6519aa6d1f0f21a451be0fd510fda0" title="Burn one composition shared by several shells, each at its own temperature and density,...">SingleZoneNetworkSolver::evaluateSharedComposition</a>). </p>
+<p>The RHS and Jacobian are the mass-weighted sums of the engine's at each shell's state. Each shell's energy and neutrino losses are integrated over every accepted step by Gauss-Legendre quadrature on CVODE's interpolant. The group's step-acceptance logic (triggers, restarts) uses the mass-weighted mean temperature and density. </p>
+
+<p>Reimplemented from <a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a5c6519aa6d1f0f21a451be0fd510fda0">gridfire::solver::SingleZoneNetworkSolver&lt; engine::DynamicEngine &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a0a34c72f685d5392c2d77cf4cf2ab520" name="a0a34c72f685d5392c2d77cf4cf2ab520"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a34c72f685d5392c2d77cf4cf2ab520">&#9670;&#160;</a></span>for_each_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PerState&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::solver::PointSolver::for_each_state </td>
+          <td>(</td>
+          <td class="paramtype">N_Vector</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PerState &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>per_state</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Run the engine at every state of data (its shells, or T9/rho), with y as calculate_rhs passes it. </p>
+
+</div>
+</div>
 <a id="a7bff4ac62f118bb51adba9dee62d6874" name="a7bff4ac62f118bb51adba9dee62d6874"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7bff4ac62f118bb51adba9dee62d6874">&#9670;&#160;</a></span>getConfig()</h2>
 
@@ -741,6 +953,52 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="af84914eaaa62fb54743c1b1b16f7e014" name="af84914eaaa62fb54743c1b1b16f7e014"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af84914eaaa62fb54743c1b1b16f7e014">&#9670;&#160;</a></span>integrate_shells_over_step()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::solver::PointSolver::integrate_shells_over_step </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html">PointSolverContext</a> *</td>          <td class="paramname"><span class="paramname"><em>sctx_p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html">CVODEUserData</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>t0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>t1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>totals</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add each shell's energy, neutrino loss and neutrino flux over the accepted step [t0, t1] to totals (3 per shell) </p>
+
+</div>
+</div>
 <a id="a11c00afbad3e94d036e18c9312263091" name="a11c00afbad3e94d036e18c9312263091"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a11c00afbad3e94d036e18c9312263091">&#9670;&#160;</a></span>log_step_diagnostics()</h2>
 
@@ -792,9 +1050,6 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Compute and print per-component error ratios; run diagnostic helpers. </p>
-<p>Gathers CVODE's estimated local errors, converts the state to a Composition, and prints a sorted table of species with the highest error ratios; then invokes diagnostic routines to inspect Jacobian stiffness and species balance. </p>
 
 </div>
 </div>

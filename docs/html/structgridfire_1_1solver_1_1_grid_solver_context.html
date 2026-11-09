@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -116,11 +116,17 @@ Inheritance diagram for gridfire::solver::GridSolverContext:</div>
 <div class="dynheader">
 Collaboration diagram for gridfire::solver::GridSolverContext:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1solver_1_1_grid_solver_context__coll__graph.svg" width="100%" height="518"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1solver_1_1_grid_solver_context__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a42b1d8173d3ff9ad6a2805ad360f407f" id="r_a42b1d8173d3ff9ad6a2805ad360f407f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42b1d8173d3ff9ad6a2805ad360f407f">set_shared_composition_groups</a> (std::vector&lt; int &gt; group_of_zone, std::vector&lt; double &gt; zone_mass)</td></tr>
+<tr class="memdesc:a42b1d8173d3ff9ad6a2805ad360f407f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Burn the zones of each group as one composition from the next evaluate() on.  <br /></td></tr>
+<tr class="separator:a42b1d8173d3ff9ad6a2805ad360f407f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61c91e5e805b3d72448951f9696c8b89" id="r_a61c91e5e805b3d72448951f9696c8b89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61c91e5e805b3d72448951f9696c8b89">clear_shared_composition_groups</a> ()</td></tr>
+<tr class="memdesc:a61c91e5e805b3d72448951f9696c8b89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Burn every zone on its own again.  <br /></td></tr>
+<tr class="separator:a61c91e5e805b3d72448951f9696c8b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58a8e377f76fbb26f11da469411faaaa" id="r_a58a8e377f76fbb26f11da469411faaaa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58a8e377f76fbb26f11da469411faaaa">init</a> () override</td></tr>
 <tr class="separator:a58a8e377f76fbb26f11da469411faaaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd581b8d3f5c54b4e62536e87134dd9" id="r_a8cd581b8d3f5c54b4e62536e87134dd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cd581b8d3f5c54b4e62536e87134dd9">reset</a> ()</td></tr>
@@ -147,6 +153,15 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:afe3a8b9630757cbbb4df07de04674e4c" id="r_afe3a8b9630757cbbb4df07de04674e4c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe3a8b9630757cbbb4df07de04674e4c">solver_workspaces</a></td></tr>
 <tr class="separator:afe3a8b9630757cbbb4df07de04674e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6577a1ef60c9afdd8988fc79bed299e9" id="r_a6577a1ef60c9afdd8988fc79bed299e9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::exception_ptr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6577a1ef60c9afdd8988fc79bed299e9">zone_failures</a></td></tr>
+<tr class="memdesc:a6577a1ef60c9afdd8988fc79bed299e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception of each zone of the latest evaluate() call (null for zones that converged)  <br /></td></tr>
+<tr class="separator:a6577a1ef60c9afdd8988fc79bed299e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86b9de03c971882dd1e635e61d662209" id="r_a86b9de03c971882dd1e635e61d662209"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86b9de03c971882dd1e635e61d662209">shared_composition_groups</a></td></tr>
+<tr class="memdesc:a86b9de03c971882dd1e635e61d662209"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared-composition group of each zone (-1: burnt on its own); empty when no groups are set.  <br /></td></tr>
+<tr class="separator:a86b9de03c971882dd1e635e61d662209"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c26dfae135d657dd47560a403a27e36" id="r_a9c26dfae135d657dd47560a403a27e36"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c26dfae135d657dd47560a403a27e36">zone_masses</a></td></tr>
+<tr class="memdesc:a9c26dfae135d657dd47560a403a27e36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mass of each zone, used to weight the shells of a group (any units; only ratios within a group matter)  <br /></td></tr>
+<tr class="separator:a9c26dfae135d657dd47560a403a27e36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a583ef194f336094dda0afdee6379c504" id="r_a583ef194f336094dda0afdee6379c504"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::function&lt; void(const <a class="el" href="classgridfire_1_1solver_1_1_timestep_context_base.html">TimestepContextBase</a> &amp;)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a583ef194f336094dda0afdee6379c504">timestep_callbacks</a></td></tr>
 <tr class="separator:a583ef194f336094dda0afdee6379c504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc27a38a9db7b8863784adb42c9eaf18" id="r_adc27a38a9db7b8863784adb42c9eaf18"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc27a38a9db7b8863784adb42c9eaf18">ctx_template</a></td></tr>
@@ -216,6 +231,25 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a61c91e5e805b3d72448951f9696c8b89" name="a61c91e5e805b3d72448951f9696c8b89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61c91e5e805b3d72448951f9696c8b89">&#9670;&#160;</a></span>clear_shared_composition_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::solver::GridSolverContext::clear_shared_composition_groups </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Burn every zone on its own again. </p>
 
 </div>
 </div>
@@ -328,6 +362,43 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a42b1d8173d3ff9ad6a2805ad360f407f" name="a42b1d8173d3ff9ad6a2805ad360f407f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42b1d8173d3ff9ad6a2805ad360f407f">&#9670;&#160;</a></span>set_shared_composition_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void gridfire::solver::GridSolverContext::set_shared_composition_groups </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; int &gt;</td>          <td class="paramname"><span class="paramname"><em>group_of_zone</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt;</td>          <td class="paramname"><span class="paramname"><em>zone_mass</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Burn the zones of each group as one composition from the next evaluate() on. </p>
+<p>Zones with the same non-negative group id share one composition, the mass-weighted average of their inputs, which burns at the mass-weighted mean of their rates (<a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#a5c6519aa6d1f0f21a451be0fd510fda0" title="Burn one composition shared by several shells, each at its own temperature and density,...">SingleZoneNetworkSolver::evaluateSharedComposition</a>): a convective zone under instantaneous mixing. Each zone still gets its own energy, neutrino losses and instantaneous rates. Zones with group -1 burn on their own, exactly as without groups. The members of a group use the first member's tMax and dt0.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">group_of_zone</td><td>One entry per zone of the next evaluate() call: -1, or a group id &gt;= 0 </td></tr>
+    <tr><td class="paramname">zone_mass</td><td>One entry per zone: the zone's mass (positive for every zone in a group) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classgridfire_1_1exceptions_1_1_solver_error.html" title="Base class for all exceptions related to solver operations.">exceptions::SolverError</a></td><td>if the sizes differ, an id is below -1, or a grouped zone's mass is not positive and finite </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="af90f3a9d7f688b52cd3ee201af6b0b7f" name="af90f3a9d7f688b52cd3ee201af6b0b7f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af90f3a9d7f688b52cd3ee201af6b0b7f">&#9670;&#160;</a></span>set_stdout_logging()</h2>
 
@@ -367,6 +438,22 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a86b9de03c971882dd1e635e61d662209" name="a86b9de03c971882dd1e635e61d662209"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86b9de03c971882dd1e635e61d662209">&#9670;&#160;</a></span>shared_composition_groups</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; gridfire::solver::GridSolverContext::shared_composition_groups</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shared-composition group of each zone (-1: burnt on its own); empty when no groups are set. </p>
 
 </div>
 </div>
@@ -423,6 +510,38 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6577a1ef60c9afdd8988fc79bed299e9" name="a6577a1ef60c9afdd8988fc79bed299e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6577a1ef60c9afdd8988fc79bed299e9">&#9670;&#160;</a></span>zone_failures</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::exception_ptr&gt; gridfire::solver::GridSolverContext::zone_failures</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exception of each zone of the latest evaluate() call (null for zones that converged) </p>
+
+</div>
+</div>
+<a id="a9c26dfae135d657dd47560a403a27e36" name="a9c26dfae135d657dd47560a403a27e36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c26dfae135d657dd47560a403a27e36">&#9670;&#160;</a></span>zone_masses</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; gridfire::solver::GridSolverContext::zone_masses</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mass of each zone, used to weight the shells of a group (any units; only ratios within a group matter) </p>
 
 </div>
 </div>

@@ -1,5 +1,8 @@
 var namespacegridfire_1_1reaction =
 [
+    [ "weak", "namespacegridfire_1_1reaction_1_1weak.html", [
+      [ "tabulated_neutrino_energy_MeV", "namespacegridfire_1_1reaction_1_1weak.html#aaccaaa5a265e27ca4a4f0e44f88a5260", null ]
+    ] ],
     [ "LogicalReaclibReaction", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_logical_reaclib_reaction" ],
     [ "RateCoefficientSet", "structgridfire_1_1reaction_1_1_rate_coefficient_set.html", "structgridfire_1_1reaction_1_1_rate_coefficient_set" ],
     [ "ReaclibReaction", "classgridfire_1_1reaction_1_1_reaclib_reaction.html", "classgridfire_1_1reaction_1_1_reaclib_reaction" ],

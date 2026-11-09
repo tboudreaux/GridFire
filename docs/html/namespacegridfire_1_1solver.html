@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -102,7 +102,8 @@ $(function(){initNavTree('namespacegridfire_1_1solver.html',''); initResizable(t
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#concepts">Concepts</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">gridfire::solver Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -146,6 +147,15 @@ Typedefs</h2></td></tr>
 <tr class="separator:a3ba32e30d3e30cbbca5ffb22dff077ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a521165ce7610e3438607af6500f82fdd" id="r_a521165ce7610e3438607af6500f82fdd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a521165ce7610e3438607af6500f82fdd">MultiZoneDynamicNetworkSolver</a> = <a class="el" href="classgridfire_1_1solver_1_1_multi_zone_network_solver.html">MultiZoneNetworkSolver</a>&lt;<a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a>&gt;</td></tr>
 <tr class="separator:a521165ce7610e3438607af6500f82fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:aa3278f02d5ca79add04772dd654758cf" id="r_aa3278f02d5ca79add04772dd654758cf"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3278f02d5ca79add04772dd654758cf">shared_composition_groups_from_mask</a> (const std::vector&lt; bool &gt; &amp;flagged)</td></tr>
+<tr class="memdesc:aa3278f02d5ca79add04772dd654758cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Group ids for <a class="el" href="structgridfire_1_1solver_1_1_grid_solver_context.html#a42b1d8173d3ff9ad6a2805ad360f407f" title="Burn the zones of each group as one composition from the next evaluate() on.">GridSolverContext::set_shared_composition_groups</a> from a per-zone flag, for zones ordered in space: each contiguous run of flagged zones (e.g. convective) is one group, the rest are -1.  <br /></td></tr>
+<tr class="separator:aa3278f02d5ca79add04772dd654758cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc6a503bc1b8bdcec9f16442c50a3d17" id="r_afc6a503bc1b8bdcec9f16442c50a3d17"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc6a503bc1b8bdcec9f16442c50a3d17">evaluate_instantaneous_rates</a> (const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;engine, <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &amp;engine_ctx, const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;netIn, bool include_channels=true, bool include_reactions=true)</td></tr>
+<tr class="memdesc:afc6a503bc1b8bdcec9f16442c50a3d17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantaneous rates at netIn's state straight from the engine, with no integration.  <br /></td></tr>
+<tr class="separator:afc6a503bc1b8bdcec9f16442c50a3d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="a521165ce7610e3438607af6500f82fdd" name="a521165ce7610e3438607af6500f82fdd"></a>
@@ -191,6 +201,94 @@ Typedefs</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Type alias for a timestep callback function. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="afc6a503bc1b8bdcec9f16442c50a3d17" name="afc6a503bc1b8bdcec9f16442c50a3d17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc6a503bc1b8bdcec9f16442c50a3d17">&#9670;&#160;</a></span>evaluate_instantaneous_rates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a> gridfire::solver::evaluate_instantaneous_rates </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">engine::DynamicEngine</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">engine::scratch::StateBlob</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>engine_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>netIn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>include_channels</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>include_reactions</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Instantaneous rates at netIn's state straight from the engine, with no integration. </p>
+<p>One calculateRHSAndEnergy call (eps, neutrino losses, dY/dt) and one calculateEpsDerivatives call, plus calculateEnergyChannels when include_channels is set and calculateReactionContributions (each reaction's energy, neutrino loss and neutrino emission rates) when include_reactions is set. netIn.tMax, dt0 and energy are ignored. Network species missing from netIn.composition are taken as absent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine_ctx</td><td>Scratch state of engine (its own, or one cloned from it); only engine scratch is touched. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classgridfire_1_1exceptions_1_1_solver_error.html" title="Base class for all exceptions related to solver operations.">exceptions::SolverError</a></td><td>for a non-positive or non-finite temperature or density, a negative or non-finite abundance, or a positive abundance of a species that is not in the network. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classgridfire_1_1exceptions_1_1_bad_r_h_s_engine_error.html" title="Exception for errors in calculating the right-hand side (RHS).">exceptions::BadRHSEngineError</a></td><td>if the engine cannot evaluate the RHS. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa3278f02d5ca79add04772dd654758cf" name="aa3278f02d5ca79add04772dd654758cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3278f02d5ca79add04772dd654758cf">&#9670;&#160;</a></span>shared_composition_groups_from_mask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; int &gt; gridfire::solver::shared_composition_groups_from_mask </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; bool &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>flagged</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Group ids for <a class="el" href="structgridfire_1_1solver_1_1_grid_solver_context.html#a42b1d8173d3ff9ad6a2805ad360f407f" title="Burn the zones of each group as one composition from the next evaluate() on.">GridSolverContext::set_shared_composition_groups</a> from a per-zone flag, for zones ordered in space: each contiguous run of flagged zones (e.g. convective) is one group, the rest are -1. </p>
 
 </div>
 </div>

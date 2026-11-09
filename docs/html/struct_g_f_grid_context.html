@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -127,19 +127,63 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae6bbc4c400e9afb1d57087a7cdc00d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8136e0c3ad23934ff254fac1f33ab5b8" id="r_a8136e0c3ad23934ff254fac1f33ab5b8"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8136e0c3ad23934ff254fac1f33ab5b8">get_zones</a> () const</td></tr>
 <tr class="separator:a8136e0c3ad23934ff254fac1f33ab5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab3519b4fabea5f40b08431339d0ce68" id="r_aab3519b4fabea5f40b08431339d0ce68"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab3519b4fabea5f40b08431339d0ce68">set_shared_composition_groups</a> (const int *group, const double *mass)</td></tr>
+<tr class="separator:aab3519b4fabea5f40b08431339d0ce68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0847618b16306584cdca07d81d6ac48" id="r_ac0847618b16306584cdca07d81d6ac48"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0847618b16306584cdca07d81d6ac48">evolve</a> (const double *Y_in, size_t num_species, const double *T, const double *rho, double tMax, double dt0, double *Y_out, double *energy_out, double *dEps_dT, double *dEps_dRho, double *specific_neutrino_energy_loss, double *specific_neutrino_flux, double *mass_lost, const <a class="el" href="struct_g_f_instantaneous_outputs.html">GFInstantaneousOutputs</a> &amp;instantaneous) const</td></tr>
 <tr class="separator:ac0847618b16306584cdca07d81d6ac48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_struct_g_f_context"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_struct_g_f_context')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="struct_g_f_context.html">GFContext</a></td></tr>
 <tr class="memitem:a4da09184145ea3bddef5dee206dea458 inherit pub_methods_struct_g_f_context" id="r_a4da09184145ea3bddef5dee206dea458"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a4da09184145ea3bddef5dee206dea458">~GFContext</a> ()=default</td></tr>
 <tr class="separator:a4da09184145ea3bddef5dee206dea458 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ae589b6e9dd946e37c64a8ed5ec10af inherit pub_methods_struct_g_f_context" id="r_a4ae589b6e9dd946e37c64a8ed5ec10af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a4ae589b6e9dd946e37c64a8ed5ec10af">set_config</a> (const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a> &amp;new_config)</td></tr>
+<tr class="memdesc:a4ae589b6e9dd946e37c64a8ed5ec10af inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the configuration. Throws <a class="el" href="struct_g_f_config_error.html" title="Raised by the C API for an invalid configuration, or a configuration change after the engine was buil...">GFConfigError</a> once the engine has been built, since it would not apply.  <br /></td></tr>
+<tr class="separator:a4ae589b6e9dd946e37c64a8ed5ec10af inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85f89417b4ea5874beca88c7d51e45da inherit pub_methods_struct_g_f_context" id="r_a85f89417b4ea5874beca88c7d51e45da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a85f89417b4ea5874beca88c7d51e45da">load_config</a> (const std::string &amp;path)</td></tr>
+<tr class="memdesc:a85f89417b4ea5874beca88c7d51e45da inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the configuration with one read from a TOML file (the format written by save_config).  <br /></td></tr>
+<tr class="separator:a85f89417b4ea5874beca88c7d51e45da inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a167990ab05e573dba54380cf43f97181 inherit pub_methods_struct_g_f_context" id="r_a167990ab05e573dba54380cf43f97181"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a167990ab05e573dba54380cf43f97181">save_config</a> (const std::string &amp;path) const</td></tr>
+<tr class="memdesc:a167990ab05e573dba54380cf43f97181 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the current configuration as TOML, a complete file to edit and pass to load_config.  <br /></td></tr>
+<tr class="separator:a167990ab05e573dba54380cf43f97181 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c06049a803c0858e3730c93e1fe805e inherit pub_methods_struct_g_f_context" id="r_a0c06049a803c0858e3730c93e1fe805e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a0c06049a803c0858e3730c93e1fe805e">set_rate_multiplier</a> (const std::string &amp;reaction_id, double factor)</td></tr>
+<tr class="separator:a0c06049a803c0858e3730c93e1fe805e inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7d60aad7bf812d361f3c9e1a77bfa73 inherit pub_methods_struct_g_f_context" id="r_ab7d60aad7bf812d361f3c9e1a77bfa73"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ab7d60aad7bf812d361f3c9e1a77bfa73">get_rate_multiplier</a> (const std::string &amp;reaction_id) const</td></tr>
+<tr class="memdesc:ab7d60aad7bf812d361f3c9e1a77bfa73 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">The factor set for a reaction (1 if none); same errors as set_rate_multiplier.  <br /></td></tr>
+<tr class="separator:ab7d60aad7bf812d361f3c9e1a77bfa73 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1a31be95d81b2bf4bfe15a061acf9b5 inherit pub_methods_struct_g_f_context" id="r_ae1a31be95d81b2bf4bfe15a061acf9b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ae1a31be95d81b2bf4bfe15a061acf9b5">clear_rate_multipliers</a> ()</td></tr>
+<tr class="memdesc:ae1a31be95d81b2bf4bfe15a061acf9b5 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove every rate multiplier (needs the engine).  <br /></td></tr>
+<tr class="separator:ae1a31be95d81b2bf4bfe15a061acf9b5 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade5bc65d49e406fe31aae184d59bc32e inherit pub_methods_struct_g_f_context" id="r_ade5bc65d49e406fe31aae184d59bc32e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ade5bc65d49e406fe31aae184d59bc32e">set_passive_species</a> (const std::vector&lt; std::string &gt; &amp;names)</td></tr>
+<tr class="memdesc:ade5bc65d49e406fe31aae184d59bc32e inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the species carried without reactions (config engine.passiveSpecies). Throws once the engine exists.  <br /></td></tr>
+<tr class="separator:ade5bc65d49e406fe31aae184d59bc32e inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aa1a97ebb8defa14f5ff839fecd1a72 inherit pub_methods_struct_g_f_context" id="r_a0aa1a97ebb8defa14f5ff839fecd1a72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a0aa1a97ebb8defa14f5ff839fecd1a72">mass_fractions_to_molar</a> (const double *X, size_t num_species, size_t num_zones, double *Y) const</td></tr>
+<tr class="memdesc:a0aa1a97ebb8defa14f5ff839fecd1a72 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Y for num_zones zones of mass fractions X (registered species order), via buildCompositionFromMassFractions.  <br /></td></tr>
+<tr class="separator:a0aa1a97ebb8defa14f5ff839fecd1a72 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b64f753751392d5a7e8b9ff9f807f94 inherit pub_methods_struct_g_f_context" id="r_a2b64f753751392d5a7e8b9ff9f807f94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a2b64f753751392d5a7e8b9ff9f807f94">molar_to_mass_fractions</a> (const double *Y, size_t num_species, size_t num_zones, double *X) const</td></tr>
+<tr class="memdesc:a2b64f753751392d5a7e8b9ff9f807f94 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalised mass fractions X for num_zones zones of molar abundances Y, via Composition::getMassFraction.  <br /></td></tr>
+<tr class="separator:a2b64f753751392d5a7e8b9ff9f807f94 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3067d7c133f7e60849e8214fad6ed4e inherit pub_methods_struct_g_f_context" id="r_ad3067d7c133f7e60849e8214fad6ed4e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ad3067d7c133f7e60849e8214fad6ed4e">init_species_map</a> (const std::vector&lt; std::string &gt; &amp;species_names)</td></tr>
 <tr class="separator:ad3067d7c133f7e60849e8214fad6ed4e inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18aab1769f5e3071d768753141f15c6c inherit pub_methods_struct_g_f_context" id="r_a18aab1769f5e3071d768753141f15c6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a18aab1769f5e3071d768753141f15c6c">init_engine_from_policy</a> (const std::string &amp;policy_name, const double *abundances, size_t num_species)</td></tr>
+<tr class="memitem:a18aab1769f5e3071d768753141f15c6c inherit pub_methods_struct_g_f_context" id="r_a18aab1769f5e3071d768753141f15c6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a18aab1769f5e3071d768753141f15c6c">init_engine_from_policy</a> (const std::string &amp;<a class="el" href="struct_g_f_context.html#a2c4202aa83c65a58af41fb9d5c149569">policy_name</a>, const double *abundances, size_t num_species)</td></tr>
 <tr class="separator:a18aab1769f5e3071d768753141f15c6c inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aa31d479303659b475558ef2df30cbe inherit pub_methods_struct_g_f_context" id="r_a4aa31d479303659b475558ef2df30cbe"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a4aa31d479303659b475558ef2df30cbe">init_composition_from_abundance_vector</a> (const std::vector&lt; double &gt; &amp;abundances, size_t num_species) const</td></tr>
 <tr class="separator:a4aa31d479303659b475558ef2df30cbe inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2527ea2c4b69ec4c835c7e9d3fee0ff6 inherit pub_methods_struct_g_f_context" id="r_a2527ea2c4b69ec4c835c7e9d3fee0ff6"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a2527ea2c4b69ec4c835c7e9d3fee0ff6">network_species</a> () const</td></tr>
+<tr class="memdesc:a2527ea2c4b69ec4c835c7e9d3fee0ff6 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">The engine's network species, in network order. Throws if no engine has been built yet.  <br /></td></tr>
+<tr class="separator:a2527ea2c4b69ec4c835c7e9d3fee0ff6 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5287fcaeb8c93b1a018afbafa9f725ec inherit pub_methods_struct_g_f_context" id="r_a5287fcaeb8c93b1a018afbafa9f725ec"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a5287fcaeb8c93b1a018afbafa9f725ec">network_reactions</a> () const</td></tr>
+<tr class="memdesc:a5287fcaeb8c93b1a018afbafa9f725ec inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reactions in the engine's network. Throws if no engine has been built yet.  <br /></td></tr>
+<tr class="separator:a5287fcaeb8c93b1a018afbafa9f725ec inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad1dfdf9710de5f0af09555d96351159 inherit pub_methods_struct_g_f_context" id="r_aad1dfdf9710de5f0af09555d96351159"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#aad1dfdf9710de5f0af09555d96351159">register_network_species</a> ()</td></tr>
+<tr class="memdesc:aad1dfdf9710de5f0af09555d96351159 inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the network's own species, in network order, as the species of every later call.  <br /></td></tr>
+<tr class="separator:aad1dfdf9710de5f0af09555d96351159 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67c503ac6fa81dd51d1233391f67bb88 inherit pub_methods_struct_g_f_context" id="r_a67c503ac6fa81dd51d1233391f67bb88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a67c503ac6fa81dd51d1233391f67bb88">evaluate</a> (const double *Y, size_t num_species, const double *T, const double *rho, size_t num_zones, const <a class="el" href="struct_g_f_evaluation_outputs.html">GFEvaluationOutputs</a> &amp;out) const</td></tr>
+<tr class="separator:a67c503ac6fa81dd51d1233391f67bb88 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57bee67f8899b8a848b7b6ce70cb6e6a inherit pub_methods_struct_g_f_context" id="r_a57bee67f8899b8a848b7b6ce70cb6e6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a57bee67f8899b8a848b7b6ce70cb6e6a">evaluate_reactions</a> (const double *Y, size_t num_species, const double *T, const double *rho, size_t num_zones, const <a class="el" href="struct_g_f_reaction_outputs.html">GFReactionOutputs</a> &amp;out) const</td></tr>
+<tr class="memdesc:a57bee67f8899b8a848b7b6ce70cb6e6a inherit pub_methods_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each reaction's flow, energy, neutrino loss and neutrino emission rate for num_zones states (no solver).  <br /></td></tr>
+<tr class="separator:a57bee67f8899b8a848b7b6ce70cb6e6a inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7abb052098804c7f2fd7d25098b83ed6 inherit pub_methods_struct_g_f_context" id="r_a7abb052098804c7f2fd7d25098b83ed6"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a7abb052098804c7f2fd7d25098b83ed6">get_energy_channel_names</a> () const</td></tr>
 <tr class="separator:a7abb052098804c7f2fd7d25098b83ed6 inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2baa64da7ad128be0dc2d0b2fa2a547d inherit pub_methods_struct_g_f_context" id="r_a2baa64da7ad128be0dc2d0b2fa2a547d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a2baa64da7ad128be0dc2d0b2fa2a547d">validate_zone</a> (const double *Y, size_t num_species, double T, double rho, size_t zone) const</td></tr>
+<tr class="separator:a2baa64da7ad128be0dc2d0b2fa2a547d inherit pub_methods_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -151,17 +195,42 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a9e6229b2d28959adb9aae6524ed5f730"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d17021ee5be4abe7db9286d7bcd695d" id="r_a4d17021ee5be4abe7db9286d7bcd695d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d17021ee5be4abe7db9286d7bcd695d">zones</a></td></tr>
 <tr class="separator:a4d17021ee5be4abe7db9286d7bcd695d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa937c4b0a447132dc33a4efefff5ec19" id="r_aa937c4b0a447132dc33a4efefff5ec19"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa937c4b0a447132dc33a4efefff5ec19">shared_composition_groups</a></td></tr>
+<tr class="memdesc:aa937c4b0a447132dc33a4efefff5ec19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared-composition group of each zone (-1: on its own) and zone masses; empty: no groups.  <br /></td></tr>
+<tr class="separator:aa937c4b0a447132dc33a4efefff5ec19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61eae1716fcb873307e2c2db5b2c0ada" id="r_a61eae1716fcb873307e2c2db5b2c0ada"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61eae1716fcb873307e2c2db5b2c0ada">zone_masses</a></td></tr>
+<tr class="separator:a61eae1716fcb873307e2c2db5b2c0ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_g_f_context"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_struct_g_f_context')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_g_f_context.html">GFContext</a></td></tr>
 <tr class="memitem:a6d053d819a80084fcda10cb00d06f9f8 inherit pub_attribs_struct_g_f_context" id="r_a6d053d819a80084fcda10cb00d06f9f8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html">gridfire::policy::NetworkPolicy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a6d053d819a80084fcda10cb00d06f9f8">policy</a></td></tr>
 <tr class="separator:a6d053d819a80084fcda10cb00d06f9f8 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab566b9194a7869f6b69ba7adc67d5d34 inherit pub_attribs_struct_g_f_context" id="r_ab566b9194a7869f6b69ba7adc67d5d34"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ab566b9194a7869f6b69ba7adc67d5d34">engine</a></td></tr>
+<tr class="memitem:ab566b9194a7869f6b69ba7adc67d5d34 inherit pub_attribs_struct_g_f_context" id="r_ab566b9194a7869f6b69ba7adc67d5d34"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ab566b9194a7869f6b69ba7adc67d5d34">engine</a> = nullptr</td></tr>
 <tr class="separator:ab566b9194a7869f6b69ba7adc67d5d34 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46ce879428ea972843583af6e8a7d69 inherit pub_attribs_struct_g_f_context" id="r_ab46ce879428ea972843583af6e8a7d69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ab46ce879428ea972843583af6e8a7d69">config</a></td></tr>
+<tr class="memdesc:ab46ce879428ea972843583af6e8a7d69 inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for the engine and solver; set before init_engine_from_policy.  <br /></td></tr>
+<tr class="separator:ab46ce879428ea972843583af6e8a7d69 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af77eab6a1ee3b0c1ebf50b7200040dfa inherit pub_attribs_struct_g_f_context" id="r_af77eab6a1ee3b0c1ebf50b7200040dfa"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">gridfire::engine::scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#af77eab6a1ee3b0c1ebf50b7200040dfa">engine_ctx</a></td></tr>
 <tr class="separator:af77eab6a1ee3b0c1ebf50b7200040dfa inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad65d2f34696aa6368a49768fc5c0ebf7 inherit pub_attribs_struct_g_f_context" id="r_ad65d2f34696aa6368a49768fc5c0ebf7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ad65d2f34696aa6368a49768fc5c0ebf7">speciesList</a></td></tr>
 <tr class="separator:ad65d2f34696aa6368a49768fc5c0ebf7 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0364143c4a7dfd5ccdca00ac8d278574 inherit pub_attribs_struct_g_f_context" id="r_a0364143c4a7dfd5ccdca00ac8d278574"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a0364143c4a7dfd5ccdca00ac8d278574">network_species_names</a></td></tr>
+<tr class="memdesc:a0364143c4a7dfd5ccdca00ac8d278574 inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Null-terminated names handed out by gf_get_network_species.  <br /></td></tr>
+<tr class="separator:a0364143c4a7dfd5ccdca00ac8d278574 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7891b0c0d211ff200a83f3828df83443 inherit pub_attribs_struct_g_f_context" id="r_a7891b0c0d211ff200a83f3828df83443"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a7891b0c0d211ff200a83f3828df83443">reaction_ids</a></td></tr>
+<tr class="memdesc:a7891b0c0d211ff200a83f3828df83443 inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Null-terminated ids handed out by gf_get_reaction_id.  <br /></td></tr>
+<tr class="separator:a7891b0c0d211ff200a83f3828df83443 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c4202aa83c65a58af41fb9d5c149569 inherit pub_attribs_struct_g_f_context" id="r_a2c4202aa83c65a58af41fb9d5c149569"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a2c4202aa83c65a58af41fb9d5c149569">policy_name</a></td></tr>
+<tr class="memdesc:a2c4202aa83c65a58af41fb9d5c149569 inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Policy the engine was built from (empty before gf_construct_engine_from_policy)  <br /></td></tr>
+<tr class="separator:a2c4202aa83c65a58af41fb9d5c149569 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1e76d2806f82ade32a11b94ada5f533 inherit pub_attribs_struct_g_f_context" id="r_ac1e76d2806f82ade32a11b94ada5f533"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#ac1e76d2806f82ade32a11b94ada5f533">provenance</a></td></tr>
+<tr class="memdesc:ac1e76d2806f82ade32a11b94ada5f533 inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text handed out by gf_get_provenance.  <br /></td></tr>
+<tr class="separator:ac1e76d2806f82ade32a11b94ada5f533 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82e384a1c565caee2f23eaeccd701a58 inherit pub_attribs_struct_g_f_context" id="r_a82e384a1c565caee2f23eaeccd701a58"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a82e384a1c565caee2f23eaeccd701a58">last_error</a></td></tr>
 <tr class="separator:a82e384a1c565caee2f23eaeccd701a58 inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a803b00563fd094e76974d2e509017cbb inherit pub_attribs_struct_g_f_context" id="r_a803b00563fd094e76974d2e509017cbb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a803b00563fd094e76974d2e509017cbb">zone_status</a></td></tr>
+<tr class="memdesc:a803b00563fd094e76974d2e509017cbb inherit pub_attribs_struct_g_f_context"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outcome of each zone of the latest gf_evolve call (GF_SUCCESS or the zone's error code), and the time it reached.  <br /></td></tr>
+<tr class="separator:a803b00563fd094e76974d2e509017cbb inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b84eaf14337b988625cdb3e6b6c704d inherit pub_attribs_struct_g_f_context" id="r_a5b84eaf14337b988625cdb3e6b6c704d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_g_f_context.html#a5b84eaf14337b988625cdb3e6b6c704d">zone_time_reached</a></td></tr>
+<tr class="separator:a5b84eaf14337b988625cdb3e6b6c704d inherit pub_attribs_struct_g_f_context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac0847618b16306584cdca07d81d6ac48" name="ac0847618b16306584cdca07d81d6ac48"></a>
@@ -297,6 +366,28 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aab3519b4fabea5f40b08431339d0ce68" name="aab3519b4fabea5f40b08431339d0ce68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab3519b4fabea5f40b08431339d0ce68">&#9670;&#160;</a></span>set_shared_composition_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFGridContext::set_shared_composition_groups </td>
+          <td>(</td>
+          <td class="paramtype">const int *</td>          <td class="paramname"><span class="paramname"><em>group</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>mass</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set (or, with group == nullptr, clear) the shared-composition groups applied to every later <a class="el" href="#ac0847618b16306584cdca07d81d6ac48">evolve()</a>. Throws <a class="el" href="struct_g_f_invalid_state_error.html" title="Raised by the C API for an invalid thermodynamic state or composition passed in by the caller (as opp...">GFInvalidStateError</a> for an id below -1 or a grouped zone without a positive, finite mass. </p>
+
+</div>
+</div>
 <a id="ae6bbc4c400e9afb1d57087a7cdc00d60" name="ae6bbc4c400e9afb1d57087a7cdc00d60"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae6bbc4c400e9afb1d57087a7cdc00d60">&#9670;&#160;</a></span>set_zones()</h2>
 
@@ -337,6 +428,22 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aa937c4b0a447132dc33a4efefff5ec19" name="aa937c4b0a447132dc33a4efefff5ec19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa937c4b0a447132dc33a4efefff5ec19">&#9670;&#160;</a></span>shared_composition_groups</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; GFGridContext::shared_composition_groups</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shared-composition group of each zone (-1: on its own) and zone masses; empty: no groups. </p>
+
+</div>
+</div>
 <a id="a92cf3bc0d148eda660cccce86bffedc3" name="a92cf3bc0d148eda660cccce86bffedc3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a92cf3bc0d148eda660cccce86bffedc3">&#9670;&#160;</a></span>solver</h2>
 
@@ -359,6 +466,20 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::unique_ptr&lt;<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">gridfire::solver::SolverContextBase</a>&gt; GFGridContext::solver_ctx</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a61eae1716fcb873307e2c2db5b2c0ada" name="a61eae1716fcb873307e2c2db5b2c0ada"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61eae1716fcb873307e2c2db5b2c0ada">&#9670;&#160;</a></span>zone_masses</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; GFGridContext::zone_masses</td>
         </tr>
       </table>
 </div><div class="memdoc">

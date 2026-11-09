@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -171,6 +171,15 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a78e01ce42f453f050d6aca21eb654475" id="r_a78e01ce42f453f050d6aca21eb654475"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html">StepDerivatives</a>&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78e01ce42f453f050d6aca21eb654475">most_recent_rhs_calculation</a></td></tr>
 <tr class="memdesc:a78e01ce42f453f050d6aca21eb654475"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most recent RHS calculation result for warm-starting.  <br /></td></tr>
 <tr class="separator:a78e01ce42f453f050d6aca21eb654475"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af213e1285816be4ffee224afc04d37f0" id="r_af213e1285816be4ffee224afc04d37f0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af213e1285816be4ffee224afc04d37f0">flow_abundances</a></td></tr>
+<tr class="memdesc:af213e1285816be4ffee224afc04d37f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Network-ordered abundances of the composition last passed to calculateMolarReactionFlow.  <br /></td></tr>
+<tr class="separator:af213e1285816be4ffee224afc04d37f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa43799cbf652f10cc43e60bdcf2c50b0" id="r_aa43799cbf652f10cc43e60bdcf2c50b0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa43799cbf652f10cc43e60bdcf2c50b0">flow_abundances_hash</a></td></tr>
+<tr class="memdesc:aa43799cbf652f10cc43e60bdcf2c50b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hash of the composition flow_abundances was built from.  <br /></td></tr>
+<tr class="separator:aa43799cbf652f10cc43e60bdcf2c50b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbc5f332ebc5e224de0c6822dfc0b1f8" id="r_abbc5f332ebc5e224de0c6822dfc0b1f8"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbc5f332ebc5e224de0c6822dfc0b1f8">rate_multiplier_generation</a> = 0</td></tr>
+<tr class="memdesc:abbc5f332ebc5e224de0c6822dfc0b1f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The engine's rate-multiplier generation that rhsADFun's dynamic parameters hold. The engine's tape is recorded with every multiplier at 1, which is generation 0 (<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c53d2d1e10e285ec07a523d0e48418d" title="Bring a state blob&#39;s copy of the AD tape up to date with the current multipliers.">GraphEngine::syncTapeRateMultipliers</a>).  <br /></td></tr>
+<tr class="separator:abbc5f332ebc5e224de0c6822dfc0b1f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1bc25e2aef7ac5a886811db9173f440" id="r_ab1bc25e2aef7ac5a886811db9173f440"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1bc25e2aef7ac5a886811db9173f440">has_initialized</a> = false</td></tr>
 <tr class="memdesc:ab1bc25e2aef7ac5a886811db9173f440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating whether the scratchpad has been initialized.  <br /></td></tr>
 <tr class="separator:ab1bc25e2aef7ac5a886811db9173f440"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -299,7 +308,7 @@ Static Public Attributes</h2></td></tr>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Now safe to use for thread-local computations</span></div>
 <div class="line"><span class="keyword">auto</span>&amp; adfun = <a class="code hl_namespace" href="namespacegridfire_1_1engine_1_1scratch.html">scratch</a>.rhsADFun.value();</div>
-<div class="ttc" id="aclassgridfire_1_1engine_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_graph_engine.html">gridfire::engine::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:101</div></div>
+<div class="ttc" id="aclassgridfire_1_1engine_1_1_graph_engine_html"><div class="ttname"><a href="classgridfire_1_1engine_1_1_graph_engine.html">gridfire::engine::GraphEngine</a></div><div class="ttdoc">A reaction network engine that uses a graph-based representation.</div><div class="ttdef"><b>Definition</b> engine_graph.h:105</div></div>
 </div><!-- fragment --> </dd></dl>
 
 </div>
@@ -335,6 +344,39 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="af213e1285816be4ffee224afc04d37f0" name="af213e1285816be4ffee224afc04d37f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af213e1285816be4ffee224afc04d37f0">&#9670;&#160;</a></span>flow_abundances</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; gridfire::engine::scratch::GraphEngineScratchPad::flow_abundances</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Network-ordered abundances of the composition last passed to calculateMolarReactionFlow. </p>
+<p>Callers evaluate that method for every reaction at one composition, so the abundances (needed for the screening factor) are built once per composition. Not copied by <a class="el" href="#aa5ececd1fb07a0aabb662c42dcb824b5" title="Create a deep copy of this scratchpad.">clone()</a>: it is only a cache. </p>
+
+</div>
+</div>
+<a id="aa43799cbf652f10cc43e60bdcf2c50b0" name="aa43799cbf652f10cc43e60bdcf2c50b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa43799cbf652f10cc43e60bdcf2c50b0">&#9670;&#160;</a></span>flow_abundances_hash</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;std::size_t&gt; gridfire::engine::scratch::GraphEngineScratchPad::flow_abundances_hash</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hash of the composition flow_abundances was built from. </p>
+
+</div>
+</div>
 <a id="ab1bc25e2aef7ac5a886811db9173f440" name="ab1bc25e2aef7ac5a886811db9173f440"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1bc25e2aef7ac5a886811db9173f440">&#9670;&#160;</a></span>has_initialized</h2>
 
@@ -453,6 +495,22 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The most recent RHS calculation result for warm-starting. </p>
+
+</div>
+</div>
+<a id="abbc5f332ebc5e224de0c6822dfc0b1f8" name="abbc5f332ebc5e224de0c6822dfc0b1f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbc5f332ebc5e224de0c6822dfc0b1f8">&#9670;&#160;</a></span>rate_multiplier_generation</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::uint64_t gridfire::engine::scratch::GraphEngineScratchPad::rate_multiplier_generation = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The engine's rate-multiplier generation that rhsADFun's dynamic parameters hold. The engine's tape is recorded with every multiplier at 1, which is generation 0 (<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c53d2d1e10e285ec07a523d0e48418d" title="Bring a state blob&#39;s copy of the AD tape up to date with the current multipliers.">GraphEngine::syncTapeRateMultipliers</a>). </p>
 
 </div>
 </div>

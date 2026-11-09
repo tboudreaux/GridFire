@@ -16,6 +16,7 @@ var structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data =
     [ "rel_tol", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a19722e6617d804d995210652c6cdb20f", null ],
     [ "rho", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2eb3a8c09b537971bd6818df3e86ea23", null ],
     [ "sctx", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a1797578ad8bed04e9a7e3f44fa49e532", null ],
+    [ "shells", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a342d536f11969b60ba232b1d02d0ab8d", null ],
     [ "solver_instance", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a6a9e63ce74c9b26309097d8aeeb228ed", null ],
     [ "T9", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a50ec51653a2a23a46a0cddee3196d2d3", null ],
     [ "total_neutrino_flux", "structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#ab26b161db829d2dc43e644f4388f9749", null ]

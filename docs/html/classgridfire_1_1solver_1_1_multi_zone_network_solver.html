@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -122,6 +122,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8e5b61c8a13ab247ab88f2b361fa65ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9f86bfb1e576a2a520bee7b205bf0d1" id="r_ab9f86bfb1e576a2a520bee7b205bf0d1"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="structgridfire_1_1_net_out.html">NetOut</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9f86bfb1e576a2a520bee7b205bf0d1">evaluate</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const std::vector&lt; <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &gt; &amp;netIns) const =0</td></tr>
 <tr class="separator:ab9f86bfb1e576a2a520bee7b205bf0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6ce658dd7094fe706d293d6c766006a" id="r_aa6ce658dd7094fe706d293d6c766006a"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6ce658dd7094fe706d293d6c766006a">evaluateRates</a> (<a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;solver_ctx, const std::vector&lt; <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &gt; &amp;netIns) const</td></tr>
+<tr class="memdesc:aa6ce658dd7094fe706d293d6c766006a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a" title="Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn&#39;s ...">SingleZoneNetworkSolver::evaluateRates</a> for every zone, without integrating. The default throws <a class="el" href="classgridfire_1_1exceptions_1_1_solver_error.html" title="Base class for all exceptions related to solver operations.">exceptions::SolverError</a>.  <br /></td></tr>
+<tr class="separator:aa6ce658dd7094fe706d293d6c766006a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -221,6 +224,41 @@ template&lt;IsEngine EngineT&gt; </div>
 </div><div class="memdoc">
 
 <p>Implemented in <a class="el" href="classgridfire_1_1solver_1_1_grid_solver.html#aba2dba489f9fa8e644606fbf2b913fca">gridfire::solver::GridSolver</a>, and <a class="el" href="class_py_multi_zone_dynamic_network_solver.html#aad0d16a83dcaee1da199e271f0cf10f0">PyMultiZoneDynamicNetworkSolver</a>.</p>
+
+</div>
+</div>
+<a id="aa6ce658dd7094fe706d293d6c766006a" name="aa6ce658dd7094fe706d293d6c766006a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6ce658dd7094fe706d293d6c766006a">&#9670;&#160;</a></span>evaluateRates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;IsEngine EngineT&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt; <a class="el" href="structgridfire_1_1_instantaneous_rates.html">InstantaneousRates</a> &gt; <a class="el" href="classgridfire_1_1solver_1_1_multi_zone_network_solver.html">gridfire::solver::MultiZoneNetworkSolver</a>&lt; EngineT &gt;::evaluateRates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structgridfire_1_1solver_1_1_solver_context_base.html">SolverContextBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>solver_ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structgridfire_1_1_net_in.html">NetIn</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>netIns</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classgridfire_1_1solver_1_1_single_zone_network_solver.html#ad6c27ec03fe3202e04441027a487958a" title="Instantaneous eps, its T and rho derivatives, neutrino losses, dY/dt and channel energies at netIn&#39;s ...">SingleZoneNetworkSolver::evaluateRates</a> for every zone, without integrating. The default throws <a class="el" href="classgridfire_1_1exceptions_1_1_solver_error.html" title="Base class for all exceptions related to solver operations.">exceptions::SolverError</a>. </p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1solver_1_1_grid_solver.html#a8deff79742f46282be8e8391326171c9">gridfire::solver::GridSolver</a>, and <a class="el" href="class_py_multi_zone_dynamic_network_solver.html#ac0be482049db66dd67cb90cc87ae5973">PyMultiZoneDynamicNetworkSolver</a>.</p>
 
 </div>
 </div>

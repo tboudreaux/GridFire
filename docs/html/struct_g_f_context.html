@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -116,36 +116,98 @@ Inheritance diagram for GFContext:</div>
 <div class="dynheader">
 Collaboration diagram for GFContext:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="struct_g_f_context__coll__graph.svg" width="100%" height="529"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="struct_g_f_context__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4da09184145ea3bddef5dee206dea458" id="r_a4da09184145ea3bddef5dee206dea458"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4da09184145ea3bddef5dee206dea458">~GFContext</a> ()=default</td></tr>
 <tr class="separator:a4da09184145ea3bddef5dee206dea458"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ae589b6e9dd946e37c64a8ed5ec10af" id="r_a4ae589b6e9dd946e37c64a8ed5ec10af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ae589b6e9dd946e37c64a8ed5ec10af">set_config</a> (const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a> &amp;new_config)</td></tr>
+<tr class="memdesc:a4ae589b6e9dd946e37c64a8ed5ec10af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the configuration. Throws <a class="el" href="struct_g_f_config_error.html" title="Raised by the C API for an invalid configuration, or a configuration change after the engine was buil...">GFConfigError</a> once the engine has been built, since it would not apply.  <br /></td></tr>
+<tr class="separator:a4ae589b6e9dd946e37c64a8ed5ec10af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85f89417b4ea5874beca88c7d51e45da" id="r_a85f89417b4ea5874beca88c7d51e45da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85f89417b4ea5874beca88c7d51e45da">load_config</a> (const std::string &amp;path)</td></tr>
+<tr class="memdesc:a85f89417b4ea5874beca88c7d51e45da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the configuration with one read from a TOML file (the format written by save_config).  <br /></td></tr>
+<tr class="separator:a85f89417b4ea5874beca88c7d51e45da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a167990ab05e573dba54380cf43f97181" id="r_a167990ab05e573dba54380cf43f97181"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a167990ab05e573dba54380cf43f97181">save_config</a> (const std::string &amp;path) const</td></tr>
+<tr class="memdesc:a167990ab05e573dba54380cf43f97181"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the current configuration as TOML, a complete file to edit and pass to load_config.  <br /></td></tr>
+<tr class="separator:a167990ab05e573dba54380cf43f97181"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c06049a803c0858e3730c93e1fe805e" id="r_a0c06049a803c0858e3730c93e1fe805e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c06049a803c0858e3730c93e1fe805e">set_rate_multiplier</a> (const std::string &amp;reaction_id, double factor)</td></tr>
+<tr class="separator:a0c06049a803c0858e3730c93e1fe805e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7d60aad7bf812d361f3c9e1a77bfa73" id="r_ab7d60aad7bf812d361f3c9e1a77bfa73"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7d60aad7bf812d361f3c9e1a77bfa73">get_rate_multiplier</a> (const std::string &amp;reaction_id) const</td></tr>
+<tr class="memdesc:ab7d60aad7bf812d361f3c9e1a77bfa73"><td class="mdescLeft">&#160;</td><td class="mdescRight">The factor set for a reaction (1 if none); same errors as set_rate_multiplier.  <br /></td></tr>
+<tr class="separator:ab7d60aad7bf812d361f3c9e1a77bfa73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1a31be95d81b2bf4bfe15a061acf9b5" id="r_ae1a31be95d81b2bf4bfe15a061acf9b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1a31be95d81b2bf4bfe15a061acf9b5">clear_rate_multipliers</a> ()</td></tr>
+<tr class="memdesc:ae1a31be95d81b2bf4bfe15a061acf9b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove every rate multiplier (needs the engine).  <br /></td></tr>
+<tr class="separator:ae1a31be95d81b2bf4bfe15a061acf9b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade5bc65d49e406fe31aae184d59bc32e" id="r_ade5bc65d49e406fe31aae184d59bc32e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade5bc65d49e406fe31aae184d59bc32e">set_passive_species</a> (const std::vector&lt; std::string &gt; &amp;names)</td></tr>
+<tr class="memdesc:ade5bc65d49e406fe31aae184d59bc32e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the species carried without reactions (config engine.passiveSpecies). Throws once the engine exists.  <br /></td></tr>
+<tr class="separator:ade5bc65d49e406fe31aae184d59bc32e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aa1a97ebb8defa14f5ff839fecd1a72" id="r_a0aa1a97ebb8defa14f5ff839fecd1a72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0aa1a97ebb8defa14f5ff839fecd1a72">mass_fractions_to_molar</a> (const double *X, size_t num_species, size_t num_zones, double *Y) const</td></tr>
+<tr class="memdesc:a0aa1a97ebb8defa14f5ff839fecd1a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Y for num_zones zones of mass fractions X (registered species order), via buildCompositionFromMassFractions.  <br /></td></tr>
+<tr class="separator:a0aa1a97ebb8defa14f5ff839fecd1a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b64f753751392d5a7e8b9ff9f807f94" id="r_a2b64f753751392d5a7e8b9ff9f807f94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b64f753751392d5a7e8b9ff9f807f94">molar_to_mass_fractions</a> (const double *Y, size_t num_species, size_t num_zones, double *X) const</td></tr>
+<tr class="memdesc:a2b64f753751392d5a7e8b9ff9f807f94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalised mass fractions X for num_zones zones of molar abundances Y, via Composition::getMassFraction.  <br /></td></tr>
+<tr class="separator:a2b64f753751392d5a7e8b9ff9f807f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3067d7c133f7e60849e8214fad6ed4e" id="r_ad3067d7c133f7e60849e8214fad6ed4e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3067d7c133f7e60849e8214fad6ed4e">init_species_map</a> (const std::vector&lt; std::string &gt; &amp;species_names)</td></tr>
 <tr class="separator:ad3067d7c133f7e60849e8214fad6ed4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18aab1769f5e3071d768753141f15c6c" id="r_a18aab1769f5e3071d768753141f15c6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18aab1769f5e3071d768753141f15c6c">init_engine_from_policy</a> (const std::string &amp;policy_name, const double *abundances, size_t num_species)</td></tr>
+<tr class="memitem:a18aab1769f5e3071d768753141f15c6c" id="r_a18aab1769f5e3071d768753141f15c6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18aab1769f5e3071d768753141f15c6c">init_engine_from_policy</a> (const std::string &amp;<a class="el" href="#a2c4202aa83c65a58af41fb9d5c149569">policy_name</a>, const double *abundances, size_t num_species)</td></tr>
 <tr class="separator:a18aab1769f5e3071d768753141f15c6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1d09e19a43ddca42a1c3d360daf548e" id="r_ae1d09e19a43ddca42a1c3d360daf548e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1d09e19a43ddca42a1c3d360daf548e">init_solver_from_engine</a> ()=0</td></tr>
 <tr class="separator:ae1d09e19a43ddca42a1c3d360daf548e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aa31d479303659b475558ef2df30cbe" id="r_a4aa31d479303659b475558ef2df30cbe"><td class="memItemLeft" align="right" valign="top">fourdst::composition::Composition&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4aa31d479303659b475558ef2df30cbe">init_composition_from_abundance_vector</a> (const std::vector&lt; double &gt; &amp;abundances, size_t num_species) const</td></tr>
 <tr class="separator:a4aa31d479303659b475558ef2df30cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2527ea2c4b69ec4c835c7e9d3fee0ff6" id="r_a2527ea2c4b69ec4c835c7e9d3fee0ff6"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; fourdst::atomic::Species &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2527ea2c4b69ec4c835c7e9d3fee0ff6">network_species</a> () const</td></tr>
+<tr class="memdesc:a2527ea2c4b69ec4c835c7e9d3fee0ff6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The engine's network species, in network order. Throws if no engine has been built yet.  <br /></td></tr>
+<tr class="separator:a2527ea2c4b69ec4c835c7e9d3fee0ff6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5287fcaeb8c93b1a018afbafa9f725ec" id="r_a5287fcaeb8c93b1a018afbafa9f725ec"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5287fcaeb8c93b1a018afbafa9f725ec">network_reactions</a> () const</td></tr>
+<tr class="memdesc:a5287fcaeb8c93b1a018afbafa9f725ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reactions in the engine's network. Throws if no engine has been built yet.  <br /></td></tr>
+<tr class="separator:a5287fcaeb8c93b1a018afbafa9f725ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad1dfdf9710de5f0af09555d96351159" id="r_aad1dfdf9710de5f0af09555d96351159"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad1dfdf9710de5f0af09555d96351159">register_network_species</a> ()</td></tr>
+<tr class="memdesc:aad1dfdf9710de5f0af09555d96351159"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the network's own species, in network order, as the species of every later call.  <br /></td></tr>
+<tr class="separator:aad1dfdf9710de5f0af09555d96351159"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67c503ac6fa81dd51d1233391f67bb88" id="r_a67c503ac6fa81dd51d1233391f67bb88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67c503ac6fa81dd51d1233391f67bb88">evaluate</a> (const double *Y, size_t num_species, const double *T, const double *rho, size_t num_zones, const <a class="el" href="struct_g_f_evaluation_outputs.html">GFEvaluationOutputs</a> &amp;out) const</td></tr>
+<tr class="separator:a67c503ac6fa81dd51d1233391f67bb88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57bee67f8899b8a848b7b6ce70cb6e6a" id="r_a57bee67f8899b8a848b7b6ce70cb6e6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57bee67f8899b8a848b7b6ce70cb6e6a">evaluate_reactions</a> (const double *Y, size_t num_species, const double *T, const double *rho, size_t num_zones, const <a class="el" href="struct_g_f_reaction_outputs.html">GFReactionOutputs</a> &amp;out) const</td></tr>
+<tr class="memdesc:a57bee67f8899b8a848b7b6ce70cb6e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each reaction's flow, energy, neutrino loss and neutrino emission rate for num_zones states (no solver).  <br /></td></tr>
+<tr class="separator:a57bee67f8899b8a848b7b6ce70cb6e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7abb052098804c7f2fd7d25098b83ed6" id="r_a7abb052098804c7f2fd7d25098b83ed6"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7abb052098804c7f2fd7d25098b83ed6">get_energy_channel_names</a> () const</td></tr>
 <tr class="separator:a7abb052098804c7f2fd7d25098b83ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2baa64da7ad128be0dc2d0b2fa2a547d" id="r_a2baa64da7ad128be0dc2d0b2fa2a547d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2baa64da7ad128be0dc2d0b2fa2a547d">validate_zone</a> (const double *Y, size_t num_species, double T, double rho, size_t zone) const</td></tr>
+<tr class="separator:a2baa64da7ad128be0dc2d0b2fa2a547d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a6d053d819a80084fcda10cb00d06f9f8" id="r_a6d053d819a80084fcda10cb00d06f9f8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1policy_1_1_network_policy.html">gridfire::policy::NetworkPolicy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d053d819a80084fcda10cb00d06f9f8">policy</a></td></tr>
 <tr class="separator:a6d053d819a80084fcda10cb00d06f9f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab566b9194a7869f6b69ba7adc67d5d34" id="r_ab566b9194a7869f6b69ba7adc67d5d34"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab566b9194a7869f6b69ba7adc67d5d34">engine</a></td></tr>
+<tr class="memitem:ab566b9194a7869f6b69ba7adc67d5d34" id="r_ab566b9194a7869f6b69ba7adc67d5d34"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab566b9194a7869f6b69ba7adc67d5d34">engine</a> = nullptr</td></tr>
 <tr class="separator:ab566b9194a7869f6b69ba7adc67d5d34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46ce879428ea972843583af6e8a7d69" id="r_ab46ce879428ea972843583af6e8a7d69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab46ce879428ea972843583af6e8a7d69">config</a></td></tr>
+<tr class="memdesc:ab46ce879428ea972843583af6e8a7d69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for the engine and solver; set before init_engine_from_policy.  <br /></td></tr>
+<tr class="separator:ab46ce879428ea972843583af6e8a7d69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af77eab6a1ee3b0c1ebf50b7200040dfa" id="r_af77eab6a1ee3b0c1ebf50b7200040dfa"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1engine_1_1scratch_1_1_state_blob.html">gridfire::engine::scratch::StateBlob</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af77eab6a1ee3b0c1ebf50b7200040dfa">engine_ctx</a></td></tr>
 <tr class="separator:af77eab6a1ee3b0c1ebf50b7200040dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad65d2f34696aa6368a49768fc5c0ebf7" id="r_ad65d2f34696aa6368a49768fc5c0ebf7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; fourdst::atomic::Species &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad65d2f34696aa6368a49768fc5c0ebf7">speciesList</a></td></tr>
 <tr class="separator:ad65d2f34696aa6368a49768fc5c0ebf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0364143c4a7dfd5ccdca00ac8d278574" id="r_a0364143c4a7dfd5ccdca00ac8d278574"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0364143c4a7dfd5ccdca00ac8d278574">network_species_names</a></td></tr>
+<tr class="memdesc:a0364143c4a7dfd5ccdca00ac8d278574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Null-terminated names handed out by gf_get_network_species.  <br /></td></tr>
+<tr class="separator:a0364143c4a7dfd5ccdca00ac8d278574"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7891b0c0d211ff200a83f3828df83443" id="r_a7891b0c0d211ff200a83f3828df83443"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7891b0c0d211ff200a83f3828df83443">reaction_ids</a></td></tr>
+<tr class="memdesc:a7891b0c0d211ff200a83f3828df83443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Null-terminated ids handed out by gf_get_reaction_id.  <br /></td></tr>
+<tr class="separator:a7891b0c0d211ff200a83f3828df83443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c4202aa83c65a58af41fb9d5c149569" id="r_a2c4202aa83c65a58af41fb9d5c149569"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c4202aa83c65a58af41fb9d5c149569">policy_name</a></td></tr>
+<tr class="memdesc:a2c4202aa83c65a58af41fb9d5c149569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Policy the engine was built from (empty before gf_construct_engine_from_policy)  <br /></td></tr>
+<tr class="separator:a2c4202aa83c65a58af41fb9d5c149569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1e76d2806f82ade32a11b94ada5f533" id="r_ac1e76d2806f82ade32a11b94ada5f533"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1e76d2806f82ade32a11b94ada5f533">provenance</a></td></tr>
+<tr class="memdesc:ac1e76d2806f82ade32a11b94ada5f533"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text handed out by gf_get_provenance.  <br /></td></tr>
+<tr class="separator:ac1e76d2806f82ade32a11b94ada5f533"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82e384a1c565caee2f23eaeccd701a58" id="r_a82e384a1c565caee2f23eaeccd701a58"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82e384a1c565caee2f23eaeccd701a58">last_error</a></td></tr>
 <tr class="separator:a82e384a1c565caee2f23eaeccd701a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a803b00563fd094e76974d2e509017cbb" id="r_a803b00563fd094e76974d2e509017cbb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a803b00563fd094e76974d2e509017cbb">zone_status</a></td></tr>
+<tr class="memdesc:a803b00563fd094e76974d2e509017cbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outcome of each zone of the latest gf_evolve call (GF_SUCCESS or the zone's error code), and the time it reached.  <br /></td></tr>
+<tr class="separator:a803b00563fd094e76974d2e509017cbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b84eaf14337b988625cdb3e6b6c704d" id="r_a5b84eaf14337b988625cdb3e6b6c704d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b84eaf14337b988625cdb3e6b6c704d">zone_time_reached</a></td></tr>
+<tr class="separator:a5b84eaf14337b988625cdb3e6b6c704d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4da09184145ea3bddef5dee206dea458" name="a4da09184145ea3bddef5dee206dea458"></a>
@@ -174,6 +236,110 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae1a31be95d81b2bf4bfe15a061acf9b5" name="ae1a31be95d81b2bf4bfe15a061acf9b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1a31be95d81b2bf4bfe15a061acf9b5">&#9670;&#160;</a></span>clear_rate_multipliers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::clear_rate_multipliers </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove every rate multiplier (needs the engine). </p>
+
+</div>
+</div>
+<a id="a67c503ac6fa81dd51d1233391f67bb88" name="a67c503ac6fa81dd51d1233391f67bb88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67c503ac6fa81dd51d1233391f67bb88">&#9670;&#160;</a></span>evaluate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::evaluate </td>
+          <td>(</td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_zones</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_g_f_evaluation_outputs.html">GFEvaluationOutputs</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Instantaneous eps_nuc, its derivatives, neutrino losses, channel energies and dY/dt for num_zones states (Y holds num_species abundances per zone, in registered species order). No solver is involved. </p>
+
+</div>
+</div>
+<a id="a57bee67f8899b8a848b7b6ce70cb6e6a" name="a57bee67f8899b8a848b7b6ce70cb6e6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57bee67f8899b8a848b7b6ce70cb6e6a">&#9670;&#160;</a></span>evaluate_reactions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::evaluate_reactions </td>
+          <td>(</td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_zones</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_g_f_reaction_outputs.html">GFReactionOutputs</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Each reaction's flow, energy, neutrino loss and neutrino emission rate for num_zones states (no solver). </p>
+
+</div>
+</div>
 <a id="a7abb052098804c7f2fd7d25098b83ed6" name="a7abb052098804c7f2fd7d25098b83ed6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7abb052098804c7f2fd7d25098b83ed6">&#9670;&#160;</a></span>get_energy_channel_names()</h2>
 
@@ -196,6 +362,33 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab7d60aad7bf812d361f3c9e1a77bfa73" name="ab7d60aad7bf812d361f3c9e1a77bfa73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7d60aad7bf812d361f3c9e1a77bfa73">&#9670;&#160;</a></span>get_rate_multiplier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double GFContext::get_rate_multiplier </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction_id</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The factor set for a reaction (1 if none); same errors as set_rate_multiplier. </p>
 
 </div>
 </div>
@@ -306,7 +499,297 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a85f89417b4ea5874beca88c7d51e45da" name="a85f89417b4ea5874beca88c7d51e45da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85f89417b4ea5874beca88c7d51e45da">&#9670;&#160;</a></span>load_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::load_config </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace the configuration with one read from a TOML file (the format written by save_config). </p>
+
+</div>
+</div>
+<a id="a0aa1a97ebb8defa14f5ff839fecd1a72" name="a0aa1a97ebb8defa14f5ff839fecd1a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aa1a97ebb8defa14f5ff839fecd1a72">&#9670;&#160;</a></span>mass_fractions_to_molar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::mass_fractions_to_molar </td>
+          <td>(</td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>X</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_zones</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Y for num_zones zones of mass fractions X (registered species order), via buildCompositionFromMassFractions. </p>
+
+</div>
+</div>
+<a id="a2b64f753751392d5a7e8b9ff9f807f94" name="a2b64f753751392d5a7e8b9ff9f807f94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b64f753751392d5a7e8b9ff9f807f94">&#9670;&#160;</a></span>molar_to_mass_fractions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::molar_to_mass_fractions </td>
+          <td>(</td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_zones</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *</td>          <td class="paramname"><span class="paramname"><em>X</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Normalised mass fractions X for num_zones zones of molar abundances Y, via Composition::getMassFraction. </p>
+
+</div>
+</div>
+<a id="a5287fcaeb8c93b1a018afbafa9f725ec" name="a5287fcaeb8c93b1a018afbafa9f725ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5287fcaeb8c93b1a018afbafa9f725ec">&#9670;&#160;</a></span>network_reactions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">gridfire::reaction::ReactionSet</a> &amp; GFContext::network_reactions </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reactions in the engine's network. Throws if no engine has been built yet. </p>
+
+</div>
+</div>
+<a id="a2527ea2c4b69ec4c835c7e9d3fee0ff6" name="a2527ea2c4b69ec4c835c7e9d3fee0ff6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2527ea2c4b69ec4c835c7e9d3fee0ff6">&#9670;&#160;</a></span>network_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt; fourdst::atomic::Species &gt; &amp; GFContext::network_species </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The engine's network species, in network order. Throws if no engine has been built yet. </p>
+
+</div>
+</div>
+<a id="aad1dfdf9710de5f0af09555d96351159" name="aad1dfdf9710de5f0af09555d96351159"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad1dfdf9710de5f0af09555d96351159">&#9670;&#160;</a></span>register_network_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::register_network_species </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Register the network's own species, in network order, as the species of every later call. </p>
+
+</div>
+</div>
+<a id="a167990ab05e573dba54380cf43f97181" name="a167990ab05e573dba54380cf43f97181"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a167990ab05e573dba54380cf43f97181">&#9670;&#160;</a></span>save_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::save_config </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write the current configuration as TOML, a complete file to edit and pass to load_config. </p>
+
+</div>
+</div>
+<a id="a4ae589b6e9dd946e37c64a8ed5ec10af" name="a4ae589b6e9dd946e37c64a8ed5ec10af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ae589b6e9dd946e37c64a8ed5ec10af">&#9670;&#160;</a></span>set_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::set_config </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>new_config</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace the configuration. Throws <a class="el" href="struct_g_f_config_error.html" title="Raised by the C API for an invalid configuration, or a configuration change after the engine was buil...">GFConfigError</a> once the engine has been built, since it would not apply. </p>
+
+</div>
+</div>
+<a id="ade5bc65d49e406fe31aae184d59bc32e" name="ade5bc65d49e406fe31aae184d59bc32e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade5bc65d49e406fe31aae184d59bc32e">&#9670;&#160;</a></span>set_passive_species()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::set_passive_species </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>names</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the species carried without reactions (config engine.passiveSpecies). Throws once the engine exists. </p>
+
+</div>
+</div>
+<a id="a0c06049a803c0858e3730c93e1fe805e" name="a0c06049a803c0858e3730c93e1fe805e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c06049a803c0858e3730c93e1fe805e">&#9670;&#160;</a></span>set_rate_multiplier()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::set_rate_multiplier </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>factor</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Scale one reaction's rate (GraphEngine::setRateMultiplier). Needs the engine; throws <a class="el" href="struct_g_f_config_error.html" title="Raised by the C API for an invalid configuration, or a configuration change after the engine was buil...">GFConfigError</a> before it exists or for a factor that is negative or not finite, and <a class="el" href="classgridfire_1_1exceptions_1_1_reaction_error.html" title="Base class for all exceptions related to reaction operations.">gridfire::exceptions::ReactionError</a> for an unknown id. </p>
+
+</div>
+</div>
+<a id="a2baa64da7ad128be0dc2d0b2fa2a547d" name="a2baa64da7ad128be0dc2d0b2fa2a547d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2baa64da7ad128be0dc2d0b2fa2a547d">&#9670;&#160;</a></span>validate_zone()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GFContext::validate_zone </td>
+          <td>(</td>
+          <td class="paramtype">const double *</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>num_species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>zone</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Throws <a class="el" href="struct_g_f_invalid_state_error.html" title="Raised by the C API for an invalid thermodynamic state or composition passed in by the caller (as opp...">GFInvalidStateError</a> unless T, rho and the abundances of one zone are physical and Y has no positive abundance outside the network (which the integrator would have to drop). </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="ab46ce879428ea972843583af6e8a7d69" name="ab46ce879428ea972843583af6e8a7d69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab46ce879428ea972843583af6e8a7d69">&#9670;&#160;</a></span>config</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1config_1_1_grid_fire_config.html">gridfire::config::GridFireConfig</a> GFContext::config</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Used for the engine and solver; set before init_engine_from_policy. </p>
+
+</div>
+</div>
 <a id="ab566b9194a7869f6b69ba7adc67d5d34" name="ab566b9194a7869f6b69ba7adc67d5d34"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab566b9194a7869f6b69ba7adc67d5d34">&#9670;&#160;</a></span>engine</h2>
 
@@ -314,7 +797,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a>* GFContext::engine</td>
+          <td class="memname">const <a class="el" href="classgridfire_1_1engine_1_1_dynamic_engine.html">gridfire::engine::DynamicEngine</a>* GFContext::engine = nullptr</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -340,12 +823,36 @@ Public Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::string GFContext::last_error</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0364143c4a7dfd5ccdca00ac8d278574" name="a0364143c4a7dfd5ccdca00ac8d278574"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0364143c4a7dfd5ccdca00ac8d278574">&#9670;&#160;</a></span>network_species_names</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; GFContext::network_species_names</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Null-terminated names handed out by gf_get_network_species. </p>
 
 </div>
 </div>
@@ -363,6 +870,54 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2c4202aa83c65a58af41fb9d5c149569" name="a2c4202aa83c65a58af41fb9d5c149569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c4202aa83c65a58af41fb9d5c149569">&#9670;&#160;</a></span>policy_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string GFContext::policy_name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Policy the engine was built from (empty before gf_construct_engine_from_policy) </p>
+
+</div>
+</div>
+<a id="ac1e76d2806f82ade32a11b94ada5f533" name="ac1e76d2806f82ade32a11b94ada5f533"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1e76d2806f82ade32a11b94ada5f533">&#9670;&#160;</a></span>provenance</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string GFContext::provenance</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Text handed out by gf_get_provenance. </p>
+
+</div>
+</div>
+<a id="a7891b0c0d211ff200a83f3828df83443" name="a7891b0c0d211ff200a83f3828df83443"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7891b0c0d211ff200a83f3828df83443">&#9670;&#160;</a></span>reaction_ids</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; GFContext::reaction_ids</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Null-terminated ids handed out by gf_get_reaction_id. </p>
+
+</div>
+</div>
 <a id="ad65d2f34696aa6368a49768fc5c0ebf7" name="ad65d2f34696aa6368a49768fc5c0ebf7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad65d2f34696aa6368a49768fc5c0ebf7">&#9670;&#160;</a></span>speciesList</h2>
 
@@ -373,6 +928,52 @@ Public Attributes</h2></td></tr>
           <td class="memname">std::vector&lt;fourdst::atomic::Species&gt; GFContext::speciesList</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a803b00563fd094e76974d2e509017cbb" name="a803b00563fd094e76974d2e509017cbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a803b00563fd094e76974d2e509017cbb">&#9670;&#160;</a></span>zone_status</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; GFContext::zone_status</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Outcome of each zone of the latest gf_evolve call (GF_SUCCESS or the zone's error code), and the time it reached. </p>
+
+</div>
+</div>
+<a id="a5b84eaf14337b988625cdb3e6b6c704d" name="a5b84eaf14337b988625cdb3e6b6c704d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b84eaf14337b988625cdb3e6b6c704d">&#9670;&#160;</a></span>zone_time_reached</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; GFContext::zone_time_reached</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -110,7 +110,7 @@ $(function(){initNavTree('structgridfire_1_1config_1_1_engine_config.html',''); 
 <div class="dynheader">
 Collaboration diagram for gridfire::config::EngineConfig:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1config_1_1_engine_config__coll__graph.svg" width="363" height="259"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structgridfire_1_1config_1_1_engine_config__coll__graph.svg" width="100%" height="484"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -119,6 +119,17 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a31bbebaca0d4ee0dbfcef886ed22fc8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b2dc9fc04af89518be754d297a0b237" id="r_a3b2dc9fc04af89518be754d297a0b237"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1config_1_1_energy_channel_config.html">EnergyChannelConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b2dc9fc04af89518be754d297a0b237">energyChannels</a></td></tr>
 <tr class="separator:a3b2dc9fc04af89518be754d297a0b237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c376f22f71461981249b42bda93f701" id="r_a7c376f22f71461981249b42bda93f701"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c376f22f71461981249b42bda93f701">screening</a> = <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">screening::ScreeningType::BLENDED</a></td></tr>
+<tr class="memdesc:a7c376f22f71461981249b42bda93f701"><td class="mdescLeft">&#160;</td><td class="mdescRight">Electron screening of reaction rates (default BLENDED) (WEAK: Salpeter 1954; CD09: Chugunov &amp; DeWitt 2009, weak to strong coupling; BLENDED: Salpeter handing over to CD09 as coupling grows; BARE: none)  <br /></td></tr>
+<tr class="separator:a7c376f22f71461981249b42bda93f701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29d7150ec0a95500fde872711d12e784" id="r_a29d7150ec0a95500fde872711d12e784"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">screening::ScreeningBlendWindow</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29d7150ec0a95500fde872711d12e784">screeningBlend</a></td></tr>
+<tr class="separator:a29d7150ec0a95500fde872711d12e784"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1c228ee8c8e7d00c6fada3f49447f43" id="r_ab1c228ee8c8e7d00c6fada3f49447f43"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1c228ee8c8e7d00c6fada3f49447f43">passiveSpecies</a></td></tr>
+<tr class="separator:ab1c228ee8c8e7d00c6fada3f49447f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe5e8ee97d1fca8dd5e56dd1a7f90e8f" id="r_abe5e8ee97d1fca8dd5e56dd1a7f90e8f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fc">engine::JacobianMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe5e8ee97d1fca8dd5e56dd1a7f90e8f">jacobian</a> = <a class="el" href="namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15">engine::JacobianMethod::ANALYTIC</a></td></tr>
+<tr class="separator:abe5e8ee97d1fca8dd5e56dd1a7f90e8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabacc48e13a3089033e08eac6d36b019" id="r_aabacc48e13a3089033e08eac6d36b019"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabacc48e13a3089033e08eac6d36b019">useReverseReactions</a> = false</td></tr>
+<tr class="separator:aabacc48e13a3089033e08eac6d36b019"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a3b2dc9fc04af89518be754d297a0b237" name="a3b2dc9fc04af89518be754d297a0b237"></a>
@@ -132,6 +143,82 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="abe5e8ee97d1fca8dd5e56dd1a7f90e8f" name="abe5e8ee97d1fca8dd5e56dd1a7f90e8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5e8ee97d1fca8dd5e56dd1a7f90e8f">&#9670;&#160;</a></span>jacobian</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fc">engine::JacobianMethod</a> gridfire::config::EngineConfig::jacobian = <a class="el" href="namespacegridfire_1_1engine.html#ae94ff81f7ddd22c1bb5215917103d0fca8e6d7210129786a1d1e43b61143a5a15">engine::JacobianMethod::ANALYTIC</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>How GraphEngine computes the species Jacobian </p>
+
+</div>
+</div>
+<a id="ab1c228ee8c8e7d00c6fada3f49447f43" name="ab1c228ee8c8e7d00c6fada3f49447f43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1c228ee8c8e7d00c6fada3f49447f43">&#9670;&#160;</a></span>passiveSpecies</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; gridfire::config::EngineConfig::passiveSpecies</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Species carried in the composition without any reactions (e.g. the metals a stellar code lumps into Z, represented by one isotope): they count towards Y_e and screening, and their abundances never change. A passive species may not take part in any reaction of the network. </p>
+
+</div>
+</div>
+<a id="a7c376f22f71461981249b42bda93f701" name="a7c376f22f71461981249b42bda93f701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c376f22f71461981249b42bda93f701">&#9670;&#160;</a></span>screening</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">screening::ScreeningType</a> gridfire::config::EngineConfig::screening = <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">screening::ScreeningType::BLENDED</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Electron screening of reaction rates (default BLENDED) (WEAK: Salpeter 1954; CD09: Chugunov &amp; DeWitt 2009, weak to strong coupling; BLENDED: Salpeter handing over to CD09 as coupling grows; BARE: none) </p>
+
+</div>
+</div>
+<a id="a29d7150ec0a95500fde872711d12e784" name="a29d7150ec0a95500fde872711d12e784"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29d7150ec0a95500fde872711d12e784">&#9670;&#160;</a></span>screeningBlend</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">screening::ScreeningBlendWindow</a> gridfire::config::EngineConfig::screeningBlend</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Where BLENDED screening hands over from Salpeter to CD09 (weak-screening exponent H) </p>
+
+</div>
+</div>
+<a id="aabacc48e13a3089033e08eac6d36b019" name="aabacc48e13a3089033e08eac6d36b019"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabacc48e13a3089033e08eac6d36b019">&#9670;&#160;</a></span>useReverseReactions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool gridfire::config::EngineConfig::useReverseReactions = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Include reverse (photodisintegration) rates, from detailed balance, for strong reactions with two reactants and two products. Negligible for hydrogen and helium burning, so off by default. </p>
 
 </div>
 </div>

@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -103,7 +103,10 @@ $(function(){initNavTree('functions_r.html',''); initResizable(true); });
 
 <h3><a id="index_r" name="index_r"></a>- r -</h3><ul>
 <li>rank()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_network_jacobian.html#af9544f4cec7b450027fe991614adabfa">gridfire::engine::NetworkJacobian</a></li>
+<li>rate_multiplier_generation&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#abbc5f332ebc5e224de0c6822dfc0b1f8">gridfire::engine::scratch::GraphEngineScratchPad</a></li>
 <li>rateCoefficients()&#160;:&#160;<a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#adfed51cf788a7ed4770cbd5945ddab2f">gridfire::reaction::ReaclibReaction</a></li>
+<li>rateMultiplier()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a6c74adfbfdbb7206017248777cd268b5">gridfire::engine::GraphEngine</a></li>
+<li>rateMultiplierAs()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#ad2e3ae5a4fa84221f10c59bb16697fec">gridfire::engine::GraphEngine</a></li>
 <li>RauscherThielemannPartitionFunction()&#160;:&#160;<a class="el" href="classgridfire_1_1partition_1_1_rauscher_thielemann_partition_function.html#ae67464baee3b12cdc0470be74524866c">gridfire::partition::RauscherThielemannPartitionFunction</a></li>
 <li>rawState()&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a8515c5878d2c0046b1c15176032ce9b6">gridfire::solver::PointSolverTimestepContext</a></li>
 <li>ReaclibReaction()&#160;:&#160;<a class="el" href="classgridfire_1_1reaction_1_1_reaclib_reaction.html#a264112a230817a6080c770686e5bcc01">gridfire::reaction::ReaclibReaction</a>, <a class="el" href="classgridfire_1_1reaction_1_1_weak_reaclib_reaction.html#a264112a230817a6080c770686e5bcc01">gridfire::reaction::WeakReaclibReaction</a></li>
@@ -113,10 +116,16 @@ $(function(){initNavTree('functions_r.html',''); initResizable(true); });
 <li>reactants_str&#160;:&#160;<a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html#a67afc513db8dbcc43d79733e22ca8d39">gridfire::reaclib::ReactionRecord</a></li>
 <li>reaction_channel&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_energy_channels.html#a6c021cb2a7d5808898318abf735e5a09">gridfire::engine::EnergyChannels</a></li>
 <li>reaction_contribution_map&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_r_h_s_output_data.html#a2db417ee42ef71d581ab69cf58c18fa9">gridfire::solver::PointSolver::CVODERHSOutputData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2839fe5ea6e7e9f9c1a9e1de6be7180b">gridfire::solver::PointSolver::CVODEUserData</a></li>
+<li>reaction_energy_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#ae84a903d5b11fcdec8ab8de569176539">gridfire::InstantaneousRates</a></li>
 <li>reaction_hash&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#a2a63022b616788e377c804fcf1ccf847">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
+<li>reaction_ids&#160;:&#160;<a class="el" href="struct_g_f_context.html#a7891b0c0d211ff200a83f3828df83443">GFContext</a>, <a class="el" href="structgridfire_1_1_instantaneous_rates.html#acf5146995686437e44646d259e019d0f">gridfire::InstantaneousRates</a></li>
 <li>reaction_index&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ac6acad530a508ccb16ae103191490083">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
 <li>reaction_index_map&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_defined_engine_view_scratch_pad.html#a95b8528f60ca591bb9d8833e68cd6924">gridfire::engine::scratch::DefinedEngineViewScratchPad</a></li>
 <li>reaction_indices&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputation_kernel_results.html#a07d074407f8494d3190e51bd3362a463">gridfire::engine::GraphEngine::PrecomputationKernelResults</a></li>
+<li>reaction_molar_flow&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#a8d4ed19bfb446e0351c87dcd7cc0c0c8">gridfire::InstantaneousRates</a></li>
+<li>reaction_neutrino_energy_loss_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#ab9f732c061b77379fa2cfad5449377c1">gridfire::InstantaneousRates</a></li>
+<li>reaction_neutrino_rate&#160;:&#160;<a class="el" href="structgridfire_1_1_instantaneous_rates.html#a7b8242022d4af43f72ad95643bb53f3c">gridfire::InstantaneousRates</a></li>
+<li>reaction_partials()&#160;:&#160;<a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a8afc8d5feb4d7391c7f6762dd78b1cef">gridfire::screening::CD09ScreeningModel</a></li>
 <li>reaction_type&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#aad61f7b0e307ef79e69833a04a857b30">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
 <li>reactionContributionMap&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#ae2c64bfc1ae2ca7eeb59ba42b1d93c16">gridfire::solver::PointSolverTimestepContext</a></li>
 <li>reactionContributions&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_step_derivatives.html#a6fe60255a07ec56ea4db49cbc3f03c65">gridfire::engine::StepDerivatives&lt; T &gt;</a></li>
@@ -124,7 +133,9 @@ $(function(){initNavTree('functions_r.html',''); initResizable(true); });
 <li>reactionPtr&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_adaptive_engine_view_1_1_reaction_flow.html#a10984b31880df00b0d78d76f55c0b143">gridfire::engine::AdaptiveEngineView::ReactionFlow</a></li>
 <li>ReactionSet()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_reaction_set.html#a9a63306b92e23e3651c955ab614084de">gridfire::engine::ReactionSet</a>, <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html#a9a63306b92e23e3651c955ab614084de">gridfire::reaction::ReactionSet</a></li>
 <li>ReactionSetType&#160;:&#160;<a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_boundary_flux_trigger.html#a5b910788387e82528b76dbc9334bf8b9">gridfire::trigger::solver::CVODE::BoundaryFluxTrigger</a></li>
+<li>rebuildRateMultipliers()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#a5a36cc2ce098e691b4b29413bc99e13c">gridfire::engine::GraphEngine</a></li>
 <li>recordADTape()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine.html#af9cba639f9eeac0b746ef073670292e6">gridfire::engine::GraphEngine</a></li>
+<li>register_network_species()&#160;:&#160;<a class="el" href="struct_g_f_context.html#aad1dfdf9710de5f0af09555d96351159">GFContext</a></li>
 <li>rel_failure()&#160;:&#160;<a class="el" href="classgridfire_1_1trigger_1_1solver_1_1_c_v_o_d_e_1_1_convergence_failure_trigger.html#af9029eaecd0c7ee738e1a845be69b503">gridfire::trigger::solver::CVODE::ConvergenceFailureTrigger</a></li>
 <li>rel_tol&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a19722e6617d804d995210652c6cdb20f">gridfire::solver::PointSolver::CVODEUserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#afac00ebe1c8bdea292cebf8b377e8181">gridfire::solver::PointSolverContext</a></li>
 <li>relativeCullingThreshold&#160;:&#160;<a class="el" href="structgridfire_1_1config_1_1_adaptive_engine_view_config.html#af2a3b7cc7a0475853dfcae401702f6fb">gridfire::config::AdaptiveEngineViewConfig</a></li>
@@ -137,10 +148,12 @@ $(function(){initNavTree('functions_r.html',''); initResizable(true); });
 <li>reset_all()&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#a3a339c970f45511a22ab8be1bd906a30">gridfire::solver::PointSolverContext</a></li>
 <li>reset_cvode()&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#a66b1b37b00a5f7c858424d09781d7ebb">gridfire::solver::PointSolverContext</a></li>
 <li>reset_user()&#160;:&#160;<a class="el" href="structgridfire_1_1solver_1_1_point_solver_context.html#aac1be4b918a38bfa9c37545510cd0a99">gridfire::solver::PointSolverContext</a></li>
+<li>resolve()&#160;:&#160;<a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a01162b823577f07290d2d7fad08ffcbc">gridfire::screening::CD09ScreeningModel</a></li>
+<li>resolved&#160;:&#160;<a class="el" href="structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_cached_reaction.html#a058cf4b342e0ac6520c63f2f65f7d274">gridfire::screening::CD09ScreeningModel::CachedReaction</a></li>
 <li>rev_sparse_jac()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html#af5b5eff42682cf278fa4559e50c47eed">gridfire::engine::GraphEngine::AtomicReverseRate</a>, <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#ae9d61bdda761da89733408c232d7220e">gridfire::rates::weak::WeakReaction::AtomicWeakRate</a></li>
 <li>reverse()&#160;:&#160;<a class="el" href="classgridfire_1_1engine_1_1_graph_engine_1_1_atomic_reverse_rate.html#a23aed1727ab0cbba996561421e754018">gridfire::engine::GraphEngine::AtomicReverseRate</a>, <a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_reaction_1_1_atomic_weak_rate.html#aad13654ea15547c2c95035c3b7937d58">gridfire::rates::weak::WeakReaction::AtomicWeakRate</a>, <a class="el" href="structgridfire_1_1reaclib_1_1_reaction_record.html#aa1fd4f510d7c00d2e4197e9b9caf29fd">gridfire::reaclib::ReactionRecord</a></li>
 <li>reverse_symmetry_factor&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_graph_engine_1_1_precomputed_reaction.html#ae70bcf64f86170160d837abd5bdce873">gridfire::engine::GraphEngine::PrecomputedReaction</a></li>
-<li>rho&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html#a7ff42828a485eabd21811a9775eb4d3c">gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2eb3a8c09b537971bd6818df3e86ea23">gridfire::solver::PointSolver::CVODEUserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a7c4618a9939276f502f18faebd4cbda8">gridfire::solver::PointSolverTimestepContext</a></li>
+<li>rho&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1_multiscale_partitioning_engine_view_1_1_q_s_e_solver_1_1_user_data.html#a7ff42828a485eabd21811a9775eb4d3c">gridfire::engine::MultiscalePartitioningEngineView::QSESolver::UserData</a>, <a class="el" href="structgridfire_1_1screening_1_1_c_d09_screening_model_1_1_partials_cache.html#ab9c775afeecdc57a7e8f4d57f38139af">gridfire::screening::CD09ScreeningModel::PartialsCache</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_1_1_c_v_o_d_e_user_data.html#a2eb3a8c09b537971bd6818df3e86ea23">gridfire::solver::PointSolver::CVODEUserData</a>, <a class="el" href="structgridfire_1_1solver_1_1_point_solver_timestep_context.html#a7c4618a9939276f502f18faebd4cbda8">gridfire::solver::PointSolverTimestepContext</a></li>
 <li>rhoYe_axis&#160;:&#160;<a class="el" href="structgridfire_1_1rates_1_1weak_1_1_isotope_grid.html#a30362f5bb497ae74cf6a10fd701273a0">gridfire::rates::weak::IsotopeGrid</a></li>
 <li>rhsADFun&#160;:&#160;<a class="el" href="structgridfire_1_1engine_1_1scratch_1_1_graph_engine_scratch_pad.html#af484620a6c7022af3e0775bfa2568f79">gridfire::engine::scratch::GraphEngineScratchPad</a></li>
 <li>RowDataTable&#160;:&#160;<a class="el" href="classgridfire_1_1rates_1_1weak_1_1_weak_rate_interpolator.html#afd3e0e1c5edaf12609b5fc81c379e3e5">gridfire::rates::weak::WeakRateInterpolator</a></li>

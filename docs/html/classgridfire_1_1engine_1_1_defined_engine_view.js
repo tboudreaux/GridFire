@@ -31,5 +31,6 @@ var classgridfire_1_1engine_1_1_defined_engine_view =
     [ "project", "classgridfire_1_1engine_1_1_defined_engine_view.html#af52e0ce2ce80f08642c9a6dbf0adc929", null ],
     [ "m_baseEngine", "classgridfire_1_1engine_1_1_defined_engine_view.html#a1e46935f049537e675fb132564d6eacd", null ],
     [ "m_isStale", "classgridfire_1_1engine_1_1_defined_engine_view.html#a3156dfef68cd3636f8cf7a13b5388e75", null ],
-    [ "m_logger", "classgridfire_1_1engine_1_1_defined_engine_view.html#a3ba348cf85f0098071d23b0a3cea7078", null ]
+    [ "m_logger", "classgridfire_1_1engine_1_1_defined_engine_view.html#a3ba348cf85f0098071d23b0a3cea7078", null ],
+    [ "m_peNames", "classgridfire_1_1engine_1_1_defined_engine_view.html#a010830d984e3b5b98e53a93243513051", null ]
 ];

@@ -1,0 +1,138 @@
+\_form#0=44x13:$h = \ln f$
+\_form#1=254x14:\[    \ln f = (1 - w)\, H + w\, h_{\rm strong}, \qquad H = \ln f_{\rm weak},
+\]
+\_form#2=346x31:\[    w = s^2 (3 - 2s), \qquad
+    s = \min\left(1, \max\left(0, \frac{\ln(H / H_{\rm weak})}{\ln(H_{\rm strong} / H_{\rm weak})}\right)\right),
+\]
+\_form#3=83x14:$[H_{\rm weak}, H_{\rm strong}]$
+\_form#4=114x15:$H = Z_1 Z_2 e^2 / \lambda_D k_B T$
+\_form#5=10x6:$w$
+\_form#6=34x14:$dw/ds$
+\_form#7=21x13:$\ln f$
+\_form#8=48x15:$^{14}{\rm N}(p,\gamma)$
+\_form#9=11x10:$H$
+\_form#10=13x13:$\partial_x$
+\_form#11=14x13:$Y_k$
+\_form#12=23x10:$\ln T$
+\_form#13=20x13:$\ln\rho$
+\_form#14=414x31:\[    \partial_x \ln f = (1 - w)\, \partial_x H + w\, \partial_x h_{\rm strong}
+                      + (h_{\rm strong} - H)\, \frac{6 s (1 - s)}{\ln(H_{\rm strong} / H_{\rm weak})}\,
+                        \frac{\partial_x H}{H},
+\]
+\_form#15=45x13:$\ln H_{\rm weak}$
+\_form#16=98x14:$\ln(H_{\rm strong} / H_{\rm weak})$
+\_form#17=54x14:$dw/d\ln H$
+\_form#18=13x8:$\to$
+\_form#19=26x11:$i + j$
+\_form#20=51x15:$F_{ij} = e^{h_{ij}}$
+\_form#21=374x35:\[    h_{ij} = P_{ij} \left[ f_0\!\left(\frac{\Gamma_i}{t_{ij}}\right) + f_0\!\left(\frac{\Gamma_j}{t_{ij}}\right)
+             - f_0\!\left(\frac{\Gamma_{\rm comp}}{t_{ij}}\right) \right],
+    \qquad P_{ij} = \frac{C_{ij} + \Gamma_{ij}^2}{1 + \Gamma_{ij}^2},
+\]
+\_form#22=94x15:$\Gamma_e = e^2 / (a_e k_B T)$
+\_form#23=93x16:$a_e = (3 / 4\pi n_e)^{1/3}$
+\_form#24=68x19:$\Gamma_i = \Gamma_e Z_i^{5/3}$
+\_form#25=129x16:$\Gamma_{\rm comp} = \Gamma_e (Z_i + Z_j)^{5/3}$
+\_form#26=126x15:$\Gamma_{ij} = Z_i Z_j e^2 / (a_{ij} k_B T)$
+\_form#27=91x14:$a_{ij} = (a_i + a_j)/2$
+\_form#28=64x19:$a_i = a_e Z_i^{1/3}$
+\_form#29=191x21:$\tau_{ij} = \left(27\pi^2 \mu_{ij} Z_i^2 Z_j^2 e^4 / 2\hbar^2 k_B T\right)^{1/3}$
+\_form#30=93x14:$= 3 E_{\rm Gamow} / k_B T$
+\_form#31=73x14:$\zeta_{ij} = 3 \Gamma_{ij} / \tau_{ij}$
+\_form#32=185x21:$t_{ij} = \left(1 + c_1 \zeta_{ij} + c_2 \zeta_{ij}^2 + c_3 \zeta_{ij}^3\right)^{1/3}$
+\_form#33=73x16:$c_1 = 0.013\, y_{ij}^2$
+\_form#34=83x16:$c_2 = 0.406\, y_{ij}^{0.14}$
+\_form#35=136x16:$c_3 = 0.062\, y_{ij}^{0.19} + 1.8/\Gamma_{ij}$
+\_form#36=128x15:$y_{ij} = 4 Z_i Z_j / (Z_i + Z_j)^2$
+\_form#37=11x13:$f_0$
+\_form#38=598x24:\[        f_0(\Gamma) = A_1\left[\sqrt{\Gamma(A_2 + \Gamma)} - A_2 \ln\left(\sqrt{\Gamma/A_2} + \sqrt{1 + \Gamma/A_2}\right)\right]
+                    + 2A_3\left[\sqrt{\Gamma} - \arctan\sqrt{\Gamma}\right]
+                    + B_1\left[\Gamma - B_2 \ln\left(1 + \Gamma/B_2\right)\right]
+                    + \frac{B_3}{2} \ln\left(1 + \Gamma^2/B_4\right),
+\]
+\_form#39=71x13:$A_1 = -0.907$
+\_form#40=74x13:$A_2 = 0.62954$
+\_form#41=134x15:$A_3 = -\sqrt{3}/2 - A_1/\sqrt{A_2}$
+\_form#42=73x13:$B_1 = 0.00456$
+\_form#43=60x13:$B_2 = 211.6$
+\_form#44=66x14:$B_3 = -10^{-4}$
+\_form#45=73x13:$B_4 = 0.00462$
+\_form#46=56x16:$-\Gamma^{3/2}/\sqrt{3}$
+\_form#47=34x11:$\Gamma \ll 1$
+\_form#48=15x13:$A_3$
+\_form#49=34x11:$\Gamma \gg 1$
+\_form#50=15x14:$P_{ij}$
+\_form#51=41x14:$P_{ij} \to 1$
+\_form#52=49x11:$e^2 = \alpha \hbar c$
+\_form#53=81x16:$C_{ij} = h_{ij}^{\rm DH} / h_{ij}^{\rm lin}$
+\_form#54=245x24:$h_{ij}^{\rm lin} = \Gamma_e^{3/2} \left[(Z_i + Z_j)^{5/2} - Z_i^{5/2} - Z_j^{5/2}\right] / \sqrt{3}$
+\_form#55=21x11:$h^{\rm DH}$
+\_form#56=429x35:\[    h_{ij}^{\rm DH} = 0.188\, Z_i Z_j \sqrt{\rho \zeta / T_6^3}, \qquad
+    \zeta = \sum_k Z_k^2 Y_k + \theta_e \sum_k Z_k Y_k, \qquad
+    \theta_e = \frac{F_{-1/2}(\eta)}{F_{1/2}(\eta)},
+\]
+\_form#57=13x14:$F_j$
+\_form#58=34x13:$\theta_e = 1$
+\_form#59=34x13:$\theta_e = 0$
+\_form#60=10x13:$\theta_e$
+\_form#61=121x16:$\psi = F_{1/2}(\eta) = n_e \lambda_e^3 / 2$
+\_form#62=11x13:$\lambda_e$
+\_form#63=401x31:\[    \theta_e = \left(1 + a\psi + b\psi^{3/2} + c\psi^2\right)^{-1/3}, \qquad
+    a = \frac{3}{2\sqrt{2}}, \quad b = -0.1915, \quad c = \frac{\pi}{6},
+\]
+\_form#64=6x6:$a$
+\_form#65=5x6:$c$
+\_form#66=88x15:$\theta_e \simeq 1 - \psi / 2\sqrt{2}$
+\_form#67=54x14:$\theta_e \simeq 3 / 2\eta$
+\_form#68=5x10:$b$
+\_form#69=74x11:$-12 \le \eta \le 80$
+\_form#70=140x15:$h(^4{\rm He}, ^4{\rm He}) + h(^4{\rm He}, ^8{\rm Be})$
+\_form#71=29x9:$3 \times 4$
+\_form#72=86x10:$2 \cdot 2 + 2 \cdot 4 = 12$
+\_form#73=50x13:$L = \ln\Gamma_e$
+\_form#74=85x14:$\partial L/\partial\ln T = -1$
+\_form#75=85x14:$\partial L/\partial\ln\rho = 1/3$
+\_form#76=99x14:$\partial L/\partial Y_k = Z_k / 3Y_e$
+\_form#77=26x14:$\ln\tau_{ij}$
+\_form#78=89x14:$\partial/\partial\ln T = -1/3$
+\_form#79=30x14:$\ln C_{ij}$
+\_form#80=25x14:$\zeta / Y_e$
+\_form#81=29x14:$\theta_e(\psi)$
+\_form#82=78x15:$\psi \propto \rho Y_e T^{-3/2}$
+\_form#83=159x15:$\partial\ln F_{ij}/\partial Y_k = \alpha_{ij} Z_k + \beta_{ij} Z_k^2$
+\_form#84=14x10:$\tau_{ij}$
+\_form#85=28x14:$(p,\gamma)$
+\_form#86=29x14:$(p,\alpha)$
+\_form#87=28x14:$(p,n)$
+\_form#88=176x16:$\theta_e = (1 + a\psi + b\psi^{3/2} + c\psi^2)^{-1/3}$
+\_form#89=68x15:$a = 3/(2\sqrt{2})$
+\_form#90=60x15:$F_{-1/2}/F_{1/2}$
+\_form#91=128x15:$c = \Gamma(5/2)^2 / 1.5^3 = \pi/6$
+\_form#92=596x24:\[    f_0(\Gamma) = A_1\left[\sqrt{\Gamma(A_2 + \Gamma)} - A_2 \ln\left(\sqrt{\Gamma/A_2} + \sqrt{1 + \Gamma/A_2}\right)\right]
+                + 2A_3\left[\sqrt{\Gamma} - \arctan\sqrt{\Gamma}\right]
+                + B_1\left[\Gamma - B_2 \ln(1 + \Gamma/B_2)\right] + \frac{B_3}{2} \ln(1 + \Gamma^2/B_4)
+\]
+\_form#93=406x16:$ f_0'(\Gamma) = A_1\sqrt{\Gamma/(A_2 + \Gamma)} + A_3\sqrt{\Gamma}/(1 + \Gamma) + B_1\Gamma/(B_2 + \Gamma) + B_3\Gamma/(B_4 + \Gamma^2) $
+\_form#94=10x11:$e^2$
+\_form#95=49x11:$e^2 = \alpha\hbar c$
+\_form#96=124x15:$\psi = {\rm psiCoeff}\,\rho Y_e T^{-3/2}$
+\_form#97=145x16:$= (N_A/2)\, h^3 (2\pi m_e k_B)^{-3/2}$
+\_form#98=79x14:$Y_e = \sum_k Z_k Y_k$
+\_form#99=150x15:$\zeta = \sum_k Z_k^2 Y_k + \theta_e \sum_k Z_k Y_k$
+\_form#100=6x13:$\zeta$
+\_form#101=54x14:$d\theta_e / d\ln\psi$
+\_form#102=14x13:$\Gamma_e$
+\_form#103=25x13:$T^{1/3}$
+\_form#104=24x16:$\Gamma_e^{3/2}$
+\_form#105=19x16:$h^{\rm lin}_{ij}$
+\_form#106=76x16:$0.188 \sqrt{\rho\zeta / T_6^3}$
+\_form#107=166x20:$\Gamma_{ij}/\Gamma_e = 2 Z_i Z_j / (Z_i^{1/3} + Z_j^{1/3})$
+\_form#108=24x19:$Z_i^{5/3}$
+\_form#109=24x20:$Z_j^{5/3}$
+\_form#110=66x16:$(Z_i + Z_j)^{5/3}$
+\_form#111=146x20:$(Z_i + Z_j)^{5/2} - Z_i^{5/2} - Z_j^{5/2}$
+\_form#112=40x16:$\tau_{ij} T^{1/3}$
+\_form#113=68x13:$H = \ln f_{\rm weak}$
+\_form#114=24x13:$H \le$
+\_form#115=24x13:$H \ge$
+\_form#116=25x10:$\ln H$

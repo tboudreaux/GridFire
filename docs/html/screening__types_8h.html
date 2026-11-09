@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -100,6 +100,7 @@ $(function(){initNavTree('screening__types_8h.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -119,6 +120,12 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="screening__types_8h__dep__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">gridfire::screening::ScreeningBlendWindow</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html" title="Screening that uses a weak-coupling prescription where it is valid and a strong-coupling one where it...">BlendedScreeningModel</a> hands over from its weak to its strong prescription.  <a href="structgridfire_1_1screening_1_1_screening_blend_window.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire.html">gridfire</a></td></tr>
@@ -130,15 +137,17 @@ Namespaces</h2></td></tr>
 Enumerations</h2></td></tr>
 <tr class="memitem:aa82aafbc4f8c28d0a75b60798e3a7d25" id="r_aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">gridfire::screening::ScreeningType</a> { <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25ad80b95b1abb9c8659fa4cc9d3d29bb71">gridfire::screening::BARE</a>
 , <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a32c7d8943bec86a6d7d5e03598670ca8">gridfire::screening::WEAK</a>
+, <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a2254972b13fe72ea6aafdf47eaf4acf8">gridfire::screening::CD09</a>
+, <a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25a3ba39f6fa64f612db49d92e6f893d098">gridfire::screening::BLENDED</a>
  }</td></tr>
 <tr class="memdesc:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates the available plasma screening models.  <a href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">More...</a><br /></td></tr>
 <tr class="separator:aa82aafbc4f8c28d0a75b60798e3a7d25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6ca8556d27ac373e176f5b23437c416e" id="r_a6ca8556d27ac373e176f5b23437c416e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1screening.html#a6ca8556d27ac373e176f5b23437c416e">gridfire::screening::selectScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> type)</td></tr>
-<tr class="memdesc:a6ca8556d27ac373e176f5b23437c416e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factory function to select and create a screening model.  <br /></td></tr>
-<tr class="separator:a6ca8556d27ac373e176f5b23437c416e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9853b45cf9e4f5270664f8326eaba178" id="r_a9853b45cf9e4f5270664f8326eaba178"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classgridfire_1_1screening_1_1_screening_model.html">ScreeningModel</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegridfire_1_1screening.html#a9853b45cf9e4f5270664f8326eaba178">gridfire::screening::selectScreeningModel</a> (<a class="el" href="namespacegridfire_1_1screening.html#aa82aafbc4f8c28d0a75b60798e3a7d25">ScreeningType</a> type, const <a class="el" href="structgridfire_1_1screening_1_1_screening_blend_window.html">ScreeningBlendWindow</a> &amp;window={})</td></tr>
+<tr class="memdesc:a9853b45cf9e4f5270664f8326eaba178"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factory function to select and create a screening model.  <br /></td></tr>
+<tr class="separator:a9853b45cf9e4f5270664f8326eaba178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

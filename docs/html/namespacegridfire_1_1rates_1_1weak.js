@@ -38,7 +38,9 @@ var namespacegridfire_1_1rates_1_1weak =
       [ "ELECTRON_CAPTURE", "namespacegridfire_1_1rates_1_1weak.html#ae834fb6f8cd1ac922967d5296a25bec7a26b6967eb578cb1b08373b342bf72ef7", null ],
       [ "POSITRON_CAPTURE", "namespacegridfire_1_1rates_1_1weak.html#ae834fb6f8cd1ac922967d5296a25bec7ae0be5539e1cf1c424806baa62540aa9d", null ]
     ] ],
+    [ "data_hash", "namespacegridfire_1_1rates_1_1weak.html#a9781a906e8e344088e57e58997a5347a", null ],
     [ "weak_reaction_type_name", "namespacegridfire_1_1rates_1_1weak.html#a81f6133710abef28d9d2b030fdbaaeef", null ],
+    [ "DATA_SOURCE", "namespacegridfire_1_1rates_1_1weak.html#a18c833c72d43ebe012d2a5b7d7a01a7f", null ],
     [ "InterpolationErrorTypeMap", "namespacegridfire_1_1rates_1_1weak.html#a7a262a98e1956c33645bad4eb4e40c7a", null ],
     [ "UNIFIED_WEAK_DATA", "namespacegridfire_1_1rates_1_1weak.html#ac48364695089056d9a9b10689c4338e7", null ]
 ];

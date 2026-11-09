@@ -29,7 +29,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.2.0</span>
+   <div id="projectname">GridFire<span id="projectnumber">&#160;v1.3.0</span>
    </div>
    <div id="projectbrief">General Purpose Nuclear Network</div>
   </td>
@@ -100,6 +100,7 @@ $(function(){initNavTree('classgridfire_1_1screening_1_1_screening_model.html','
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgridfire_1_1screening_1_1_screening_model-members.html">List of all members</a>  </div>
@@ -114,9 +115,15 @@ $(function(){initNavTree('classgridfire_1_1screening_1_1_screening_model.html','
 <div class="dynheader">
 Inheritance diagram for gridfire::screening::ScreeningModel:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1screening_1_1_screening_model__inherit__graph.svg" width="378" height="232"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classgridfire_1_1screening_1_1_screening_model__inherit__graph.svg" width="378" height="363"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">StateLogDerivatives</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">d(ln f)/d(ln T) and d(ln f)/d(ln rho) of one reaction's screening factor at fixed composition.  <a href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a107ff2897f040d6f27f69d56a0bdd28d" id="r_a107ff2897f040d6f27f69d56a0bdd28d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> = CppAD::AD&lt;double&gt;</td></tr>
@@ -134,6 +141,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1da8242c7591ab32453d1e0109999d6c" id="r_a1da8242c7591ab32453d1e0109999d6c"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1da8242c7591ab32453d1e0109999d6c">calculateScreeningFactors</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; CppAD::AD&lt; double &gt; &gt; &amp;Y, <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> T9, <a class="el" href="#a107ff2897f040d6f27f69d56a0bdd28d">ADDouble</a> rho) const =0</td></tr>
 <tr class="memdesc:a1da8242c7591ab32453d1e0109999d6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates screening factors using CppAD types for automatic differentiation.  <br /></td></tr>
 <tr class="separator:a1da8242c7591ab32453d1e0109999d6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7220eecabe64e4a8acb68f05cf4187a9" id="r_a7220eecabe64e4a8acb68f05cf4187a9"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7220eecabe64e4a8acb68f05cf4187a9">calculateScreeningFactor</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;reaction, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, const double T9, const double rho) const</td></tr>
+<tr class="memdesc:a7220eecabe64e4a8acb68f05cf4187a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screening factor of a single reaction (same value calculateScreeningFactors gives it).  <br /></td></tr>
+<tr class="separator:a7220eecabe64e4a8acb68f05cf4187a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d5e7d37a1ff5ccba84e48551f0d722e" id="r_a4d5e7d37a1ff5ccba84e48551f0d722e"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d5e7d37a1ff5ccba84e48551f0d722e">calculateScreeningLogDerivatives</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
+<tr class="memdesc:a4d5e7d37a1ff5ccba84e48551f0d722e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Composition derivatives of the screening factors, for the analytic network Jacobian.  <br /></td></tr>
+<tr class="separator:a4d5e7d37a1ff5ccba84e48551f0d722e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60c8f1a54718563ca1055f63b83ae2b2" id="r_a60c8f1a54718563ca1055f63b83ae2b2"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">StateLogDerivatives</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60c8f1a54718563ca1055f63b83ae2b2">calculateScreeningStateLogDerivatives</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho) const</td></tr>
+<tr class="memdesc:a60c8f1a54718563ca1055f63b83ae2b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature and density derivatives of the screening factors, for the analytic d(eps)/dT and d(eps)/d(rho).  <br /></td></tr>
+<tr class="separator:a60c8f1a54718563ca1055f63b83ae2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Subsets of reactions</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>As calculateScreeningFactors, calculateScreeningLogDerivatives and calculateScreeningStateLogDerivatives, but only the reactions with a non-zero entry in <code class="param">needed</code> have to be correct; the others may hold anything (a model that can skip them, such as <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html" title="Global (weak  intermediate  strong) plasma screening following Chugunov &amp; DeWitt (2009).">CD09ScreeningModel</a>, returns factor 1 and zero derivatives). Used by <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html" title="Screening that uses a weak-coupling prescription where it is valid and a strong-coupling one where it...">BlendedScreeningModel</a>, which needs its strong prescription only where the blend gives it weight. The defaults evaluate every reaction. </p>
+</div></td></tr>
+<tr class="memitem:a2a992efc7ad8c779fd0aa6555582317b" id="r_a2a992efc7ad8c779fd0aa6555582317b"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a992efc7ad8c779fd0aa6555582317b">calculateScreeningFactors</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho, const std::vector&lt; char &gt; &amp;needed) const</td></tr>
+<tr class="separator:a2a992efc7ad8c779fd0aa6555582317b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a6b66ee7c858bf213c38d1ac5c5382b" id="r_a1a6b66ee7c858bf213c38d1ac5c5382b"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a6b66ee7c858bf213c38d1ac5c5382b">calculateScreeningLogDerivatives</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho, const std::vector&lt; char &gt; &amp;needed) const</td></tr>
+<tr class="separator:a1a6b66ee7c858bf213c38d1ac5c5382b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee139c1affbad3e3a5fc93be37839756" id="r_aee139c1affbad3e3a5fc93be37839756"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">StateLogDerivatives</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee139c1affbad3e3a5fc93be37839756">calculateScreeningStateLogDerivatives</a> (const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;reactions, const std::vector&lt; fourdst::atomic::Species &gt; &amp;species, const std::vector&lt; double &gt; &amp;Y, double T9, double rho, const std::vector&lt; char &gt; &amp;needed) const</td></tr>
+<tr class="separator:aee139c1affbad3e3a5fc93be37839756"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An abstract base class for plasma screening models. </p>
@@ -186,8 +211,57 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7220eecabe64e4a8acb68f05cf4187a9" name="a7220eecabe64e4a8acb68f05cf4187a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7220eecabe64e4a8acb68f05cf4187a9">&#9670;&#160;</a></span>calculateScreeningFactor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double gridfire::screening::ScreeningModel::calculateScreeningFactor </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction.html">reaction::Reaction</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reaction</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Screening factor of a single reaction (same value calculateScreeningFactors gives it). </p>
+<p>Used where one reaction's screened flow is needed on its own (e.g. culling and QSE timescales). The default builds a one-reaction set; models override it to avoid that allocation. </p>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#af8a566ce226da8b25ddef7f46b49d97e">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html#ad0cdf9994403b75edcf41bb46f35ef10">gridfire::screening::BlendedScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a833942b9620d5bb7c7a06506dbdd03ae">gridfire::screening::CD09ScreeningModel</a>, and <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a8e80eca3c3d93cea38370aafc5bbb2ed">gridfire::screening::WeakScreeningModel</a>.</p>
+
+</div>
+</div>
 <a id="a1da8242c7591ab32453d1e0109999d6c" name="a1da8242c7591ab32453d1e0109999d6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1da8242c7591ab32453d1e0109999d6c">&#9670;&#160;</a></span>calculateScreeningFactors() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1da8242c7591ab32453d1e0109999d6c">&#9670;&#160;</a></span>calculateScreeningFactors() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,12 +317,12 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A vector of screening factors (dimensionless), as AD types.</dd></dl>
 <p><b>Note</b> This method is essential for including the effects of screening in the Jacobian matrix of the reaction network. </p>
 
-<p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#a0ac3685a90c1e65a84e03cfb2fed29e5">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_intermediate_screening_model.html#a765e369256282f0f25e66e13c33dcbd9">gridfire::screening::IntermediateScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a8b0590814e7058b4ff3f0cd6f4124773">gridfire::screening::WeakScreeningModel</a>, and <a class="el" href="class_py_screening.html#a68a126de903e1a87a1d7d1cfec8add0f">PyScreening</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#a0ac3685a90c1e65a84e03cfb2fed29e5">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html#ae856317e4e3123c4b597284250acea36">gridfire::screening::BlendedScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a95d91d5d9385665618ee4bd6120f2870">gridfire::screening::CD09ScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_intermediate_screening_model.html#a765e369256282f0f25e66e13c33dcbd9">gridfire::screening::IntermediateScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a8b0590814e7058b4ff3f0cd6f4124773">gridfire::screening::WeakScreeningModel</a>, and <a class="el" href="class_py_screening.html#a68a126de903e1a87a1d7d1cfec8add0f">PyScreening</a>.</p>
 
 </div>
 </div>
 <a id="ab08c4490f9da18254a7c6f29be1f62ce" name="ab08c4490f9da18254a7c6f29be1f62ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab08c4490f9da18254a7c6f29be1f62ce">&#9670;&#160;</a></span>calculateScreeningFactors() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab08c4490f9da18254a7c6f29be1f62ce">&#9670;&#160;</a></span>calculateScreeningFactors() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,7 +393,258 @@ Public Member Functions</h2></td></tr>
 <div class="line">    <span class="comment">// ... use screening_factors[i] ...</span></div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#ad252ce1de82401bab24747aabf0c8a3a">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_intermediate_screening_model.html#a86a218ce82306ed582296cbeb3de0250">gridfire::screening::IntermediateScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a6a215d082b0d05126fb2b19fd1983446">gridfire::screening::WeakScreeningModel</a>, and <a class="el" href="class_py_screening.html#aa67b5f0528006d9c742033b8c5ab3a05">PyScreening</a>.</p>
+<p>Implemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#ad252ce1de82401bab24747aabf0c8a3a">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html#a31a2c7ed30160b5e3365dde026c8b474">gridfire::screening::BlendedScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#abffa35c1017a9ebc1bc5dfc5f71d4fe3">gridfire::screening::CD09ScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_intermediate_screening_model.html#a86a218ce82306ed582296cbeb3de0250">gridfire::screening::IntermediateScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a6a215d082b0d05126fb2b19fd1983446">gridfire::screening::WeakScreeningModel</a>, and <a class="el" href="class_py_screening.html#aa67b5f0528006d9c742033b8c5ab3a05">PyScreening</a>.</p>
+
+</div>
+</div>
+<a id="a2a992efc7ad8c779fd0aa6555582317b" name="a2a992efc7ad8c779fd0aa6555582317b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a992efc7ad8c779fd0aa6555582317b">&#9670;&#160;</a></span>calculateScreeningFactors() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt; double &gt; gridfire::screening::ScreeningModel::calculateScreeningFactors </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; char &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>needed</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a26a8f5c3575fe17fa1b7945c9125256b">gridfire::screening::CD09ScreeningModel</a>.</p>
+
+</div>
+</div>
+<a id="a4d5e7d37a1ff5ccba84e48551f0d722e" name="a4d5e7d37a1ff5ccba84e48551f0d722e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d5e7d37a1ff5ccba84e48551f0d722e">&#9670;&#160;</a></span>calculateScreeningLogDerivatives() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; std::vector&lt; double &gt; &gt; gridfire::screening::ScreeningModel::calculateScreeningLogDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Composition derivatives of the screening factors, for the analytic network Jacobian. </p>
+<dl class="section return"><dt>Returns</dt><dd>d(ln f_r)/dY_k row-major (reactions.size() x species.size()), consistent with the double-precision calculateScreeningFactors at the same state, or std::nullopt when the model has no analytic derivatives. The default returns std::nullopt, so the engine falls back to the CppAD Jacobian and a model without this method stays correct. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#aa8bc17c9d203e8860189e33346ee8712">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html#abd6ca7c9dbc3b074e5a6f34d6b8daf19">gridfire::screening::BlendedScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#aaec3f82bc34624f6e9162f29c7039129">gridfire::screening::CD09ScreeningModel</a>, and <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#ab0a2cd2cab8430276148e007e7c5b2a2">gridfire::screening::WeakScreeningModel</a>.</p>
+
+</div>
+</div>
+<a id="a1a6b66ee7c858bf213c38d1ac5c5382b" name="a1a6b66ee7c858bf213c38d1ac5c5382b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a6b66ee7c858bf213c38d1ac5c5382b">&#9670;&#160;</a></span>calculateScreeningLogDerivatives() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; std::vector&lt; double &gt; &gt; gridfire::screening::ScreeningModel::calculateScreeningLogDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; char &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>needed</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#a51ed7499076cb6c0b6fcb21954a32e2c">gridfire::screening::CD09ScreeningModel</a>.</p>
+
+</div>
+</div>
+<a id="a60c8f1a54718563ca1055f63b83ae2b2" name="a60c8f1a54718563ca1055f63b83ae2b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60c8f1a54718563ca1055f63b83ae2b2">&#9670;&#160;</a></span>calculateScreeningStateLogDerivatives() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">StateLogDerivatives</a> &gt; &gt; gridfire::screening::ScreeningModel::calculateScreeningStateLogDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Temperature and density derivatives of the screening factors, for the analytic d(eps)/dT and d(eps)/d(rho). </p>
+<dl class="section return"><dt>Returns</dt><dd>One entry per reaction, consistent with the double-precision calculateScreeningFactors at the same state, or std::nullopt when the model has no analytic derivatives. The default returns std::nullopt, so the engine falls back to CppAD and a model without this method stays correct. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_bare_screening_model.html#ac865adc50860ec14b973897600ab6d2b">gridfire::screening::BareScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_blended_screening_model.html#a1a1d2885312edcc27bf44572a319ee80">gridfire::screening::BlendedScreeningModel</a>, <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#aa2c9c000bda06f7a384814daff6eb7fa">gridfire::screening::CD09ScreeningModel</a>, and <a class="el" href="classgridfire_1_1screening_1_1_weak_screening_model.html#a6fff15d623599a1e0edeff3a7e7ce08d">gridfire::screening::WeakScreeningModel</a>.</p>
+
+</div>
+</div>
+<a id="aee139c1affbad3e3a5fc93be37839756" name="aee139c1affbad3e3a5fc93be37839756"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee139c1affbad3e3a5fc93be37839756">&#9670;&#160;</a></span>calculateScreeningStateLogDerivatives() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; std::vector&lt; <a class="el" href="structgridfire_1_1screening_1_1_screening_model_1_1_state_log_derivatives.html">StateLogDerivatives</a> &gt; &gt; gridfire::screening::ScreeningModel::calculateScreeningStateLogDerivatives </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgridfire_1_1reaction_1_1_reaction_set.html">reaction::ReactionSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reactions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; fourdst::atomic::Species &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>species</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T9</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rho</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; char &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>needed</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classgridfire_1_1screening_1_1_c_d09_screening_model.html#ad97e43a98be8e41bda61eda1d256af6d">gridfire::screening::CD09ScreeningModel</a>.</p>
 
 </div>
 </div>

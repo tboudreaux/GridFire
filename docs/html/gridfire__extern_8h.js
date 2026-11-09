@@ -1,5 +1,6 @@
 var gridfire__extern_8h =
 [
+    [ "GFConfig", "struct_g_f_config.html", "struct_g_f_config" ],
     [ "FDSSE_ERROR_CODES", "gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040", [
       [ "FDSSE_NON_4DSTAR_ERROR", "gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040a76f3a3438cbcb1c380a616c270e66ee9", null ],
       [ "FDSSE_UNKNOWN_ERROR", "gridfire__extern_8h.html#a94348e7f89768e5dbe4b60018a4af040ae27be048c2b90a7bde7584fd10695524", null ],
@@ -45,21 +46,57 @@ var gridfire__extern_8h =
       [ "GF_INVALID_NUM_SPECIES", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a2ea660d6f401acd8d088d0f1eec3009d", null ],
       [ "GF_INVALID_TIMESTEPS", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a370a59544c9149a2cb8e68d2ef0a6704", null ],
       [ "GF_UNKNOWN_FREE_TYPE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828aab79067da1d23257067b79d683a9e5e0", null ],
-      [ "GF_INVALID_TYPE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828ad4b502b385ec0751273cb37b0604b031", null ]
+      [ "GF_INVALID_TYPE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828ad4b502b385ec0751273cb37b0604b031", null ],
+      [ "GF_CONFIG_ERROR", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a7e5d8a4ae619862b66c3adecb5192ad6", null ],
+      [ "GF_INVALID_STATE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828a705e59615e3fd13c3a818ec507a59048", null ],
+      [ "GF_ZONE_FAILURE", "gridfire__extern_8h.html#a356f381bb83c032241c5cdab44a5d828ad56f45020dde80226d9310ca35995938", null ]
+    ] ],
+    [ "GF_JACOBIAN_METHOD", "gridfire__extern_8h.html#a492973c745cc4e499433e93522e93280", [
+      [ "GF_JACOBIAN_ANALYTIC", "gridfire__extern_8h.html#a492973c745cc4e499433e93522e93280a68e4230ede8f773652a27c81eb3c571e", null ],
+      [ "GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION", "gridfire__extern_8h.html#a492973c745cc4e499433e93522e93280a65176f8c5ef74176604d225a6f0855db", null ]
+    ] ],
+    [ "GF_SCREENING_TYPE", "gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5", [
+      [ "GF_SCREENING_BARE", "gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5a9d47f20b9508125ef19cbc029f509daf", null ],
+      [ "GF_SCREENING_WEAK", "gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5ad16a8c7916ca2ac2e2184edee791cf03", null ],
+      [ "GF_SCREENING_CD09", "gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5ab89369d34c335c08c8e216b08dac100d", null ],
+      [ "GF_SCREENING_BLENDED", "gridfire__extern_8h.html#a49c17ba8fa9b62ddf52a74145e97b1a5a27cdfcbcf8f01fa37ae78716ad0c7516", null ]
     ] ],
     [ "GF_TYPE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42d", [
       [ "SINGLE_ZONE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42da458c9dcd06d6bf0c8d6e3764725cad5e", null ],
       [ "MULTI_ZONE", "gridfire__extern_8h.html#aef130f2ece7c95a5d172559febbbd42dad797211cef0edf4e738cf9e846a5b70d", null ]
     ] ],
+    [ "gf_clear_rate_multipliers", "gridfire__extern_8h.html#acb3cd1bac1ca82789e2a12096a6f0c7b", null ],
+    [ "gf_config_defaults", "gridfire__extern_8h.html#a92a78d72b49ed04ed5cda8fd86335c44", null ],
     [ "gf_construct_engine_from_policy", "gridfire__extern_8h.html#ae70b23310adcce0925900ca00a18a4a6", null ],
     [ "gf_construct_solver_from_engine", "gridfire__extern_8h.html#aed17ad088b2c25c0c2bf5549527e53fd", null ],
     [ "gf_error_code_to_string", "gridfire__extern_8h.html#ac7089c7bad97d0ffe7c9445dcd0258f2", null ],
+    [ "gf_evaluate", "gridfire__extern_8h.html#a825c5da5a92dbe5880a209331b4139e8", null ],
+    [ "gf_evaluate_reactions", "gridfire__extern_8h.html#a7876d099606d9891411174c21c75932d", null ],
     [ "gf_evolve", "gridfire__extern_8h.html#a60e36bee7b809c1358ea1a8cbdb3f652", null ],
     [ "gf_free", "gridfire__extern_8h.html#a1a963d1279164f2a870be4e9e1dba1d5", null ],
+    [ "gf_get_config", "gridfire__extern_8h.html#a723951a3042c4d042fd5d2891fbadcd7", null ],
     [ "gf_get_energy_channel_name", "gridfire__extern_8h.html#acc53a08c0da3e7c3ec9f041d2e443752", null ],
     [ "gf_get_last_error_message", "gridfire__extern_8h.html#a851d8c23bdc73852988b870c5f409639", null ],
+    [ "gf_get_network_species", "gridfire__extern_8h.html#a08dfc49e75f1c6f981ca365ca7572bc6", null ],
     [ "gf_get_num_energy_channels", "gridfire__extern_8h.html#a35461bcef871f0358a24e4c8e82ba12e", null ],
+    [ "gf_get_num_network_species", "gridfire__extern_8h.html#a472c8eb7501bd7989fc14c6a2b1b2f78", null ],
+    [ "gf_get_num_reactions", "gridfire__extern_8h.html#a6d7accda3c44bd9854381f85cba80a7b", null ],
+    [ "gf_get_provenance", "gridfire__extern_8h.html#a97f4474bcaf282980682acc62e16b60c", null ],
+    [ "gf_get_rate_multiplier", "gridfire__extern_8h.html#ac4a08a141d2c6938afbd9886b804bddb", null ],
+    [ "gf_get_reaction_id", "gridfire__extern_8h.html#aef224f823358830633594df3711c4fbb", null ],
+    [ "gf_get_version", "gridfire__extern_8h.html#a466a8d47041d75c7de3854348a47712a", null ],
+    [ "gf_get_zone_status", "gridfire__extern_8h.html#a59d3a7933e066cbbceecbeeaf45a0f5b", null ],
     [ "gf_init", "gridfire__extern_8h.html#a0d42f6060caa8e73b2ef36f591a12034", null ],
+    [ "gf_load_config", "gridfire__extern_8h.html#afb88d0e84a3a723329995831a241cd4b", null ],
+    [ "gf_mass_fractions_to_molar", "gridfire__extern_8h.html#a13d92f938ebc087ec9f9be677222704d", null ],
+    [ "gf_molar_to_mass_fractions", "gridfire__extern_8h.html#ac90a999c1c47bd516df1eef65a99236b", null ],
+    [ "gf_register_network_species", "gridfire__extern_8h.html#a38fb53e71dcfad863ceb116d94efefc5", null ],
     [ "gf_register_species", "gridfire__extern_8h.html#af7e09bf5cf979211260e715faaa3a680", null ],
-    [ "gf_set_num_zones", "gridfire__extern_8h.html#a541a743ca349b42f627a357dff5a7d18", null ]
+    [ "gf_save_config", "gridfire__extern_8h.html#a55a59533bbbdb5cb80baa33a60cf453e", null ],
+    [ "gf_set_config", "gridfire__extern_8h.html#a59b3d75c4e9a34c9d55010cca32b5fc7", null ],
+    [ "gf_set_num_zones", "gridfire__extern_8h.html#a541a743ca349b42f627a357dff5a7d18", null ],
+    [ "gf_set_passive_species", "gridfire__extern_8h.html#a97af1165ee02d4c688e4d8909fdd530d", null ],
+    [ "gf_set_rate_multiplier", "gridfire__extern_8h.html#aacfac2971a49c6437bd48a684db0a42c", null ],
+    [ "gf_set_shared_composition_groups", "gridfire__extern_8h.html#aeedc04aa619a9fd09f427340dbabd646", null ],
+    [ "gf_shared_composition_groups_from_mask", "gridfire__extern_8h.html#aeda0b3b4182a3a13248e9a0a19e97cc1", null ]
 ];
