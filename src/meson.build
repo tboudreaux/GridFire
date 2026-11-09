@@ -38,6 +38,7 @@ gridfire_sources = files(
     'lib/policy/stellar_policy.cpp',
     'lib/utils/logging.cpp',
     'lib/utils/provenance.cpp',
+    'lib/utils/gf_omp.cpp',
 )
 
 
@@ -80,6 +81,17 @@ gridfire_link_whole = [libcvode_static, libkinsol_static, libcppad_static]
 gridfire_link_args = cpp.get_supported_link_arguments(
     '-Wl,--exclude-libs,libcvode-static.a:libkinsol_static.a'
 )
+
+# Installed libraries find their dependencies (the fourdst libraries, mimalloc, each other) in their own directory
+# (normal installs; the wheel sets its own run-time paths below).
+# A program's RUNPATH covers only its direct dependencies on Linux, so without this a program linked against an
+# install outside the system library path fails to load libgridfire's dependencies. The fourdst libraries carry
+# the same $ORIGIN. macOS needs nothing: dependents are found through the program's @rpath.
+if host_machine.system() == 'darwin'
+    gridfire_install_rpath = ''
+else
+    gridfire_install_rpath = '$ORIGIN'
+endif
 
 if get_option('build_python')
     if get_option('plugin_support')
@@ -160,23 +172,37 @@ else
         link_whole: gridfire_link_whole,
         link_args: gridfire_link_args,
         cpp_args: gridfire_args,
+        install_rpath: gridfire_install_rpath,
         install : true
     )
 endif
+
+# Plain version (the project version carries a leading 'v') so parents can require e.g. '>=1.2.0'
+gridfire_dep_version = meson.project_version().strip('v')
 
 if get_option('build_python')
     gridfire_iface_dep = declare_dependency(
         dependencies: gridfire_build_dependencies,
     ).partial_dependency(compile_args: true, includes: true)
 
+    # Consumers of libgridfire (the extension, the C API, the tools) take only its compile flags from the static
+    # dependencies (SUNDIALS and CppAD live inside libgridfire and must not be linked twice), but they call the
+    # shared fourdst libraries and the OpenMP runtime directly, so those are linked in full.
+    gridfire_shared_link_deps = [composition_dep, log_dep, const_dep, config_dep]
+    if get_option('openmp_support')
+        gridfire_shared_link_deps += [openmp_dep]
+    endif
+
     gridfire_dep = declare_dependency(
+        version: gridfire_dep_version,
         include_directories: include_directories('include'),
         link_with: libgridfire,
-        dependencies: [gridfire_iface_dep],
+        dependencies: [gridfire_iface_dep] + gridfire_shared_link_deps,
         compile_args: gridfire_args,
     )
 else
     gridfire_dep = declare_dependency(
+        version: gridfire_dep_version,
         include_directories: include_directories('include'),
         link_with: libgridfire,
         dependencies: gridfire_build_dependencies,

@@ -10,13 +10,26 @@ if get_option('build_python')
   gridfire_includedir = gridfire_pkg_dir / 'include'
   gridfire_libdir     = gridfire_pkg_dir / 'lib'
   gridfire_pcdir      = gridfire_libdir / 'pkgconfig'
+  gridfire_datadir    = gridfire_pkg_dir / 'share'
 else
   gridfire_includedir = get_option('includedir')
   gridfire_libdir     = get_option('libdir')
   gridfire_pcdir      = get_option('libdir') / 'pkgconfig'
+  gridfire_datadir    = get_option('datadir') / 'gridfire'
 endif
+# The Fortran interface is installed as source: a compiled .mod only works with the gfortran version that wrote it
+gridfire_fortran_srcdir = gridfire_datadir / 'fortran'
 
 gridfire_vendor_includedir = gridfire_includedir / 'gridfire' / 'vendor'
+
+# Where dependency subprojects are unpacked, as [sources, build] pairs to try in order. As the top-level project
+# that is GridFire's own subprojects/ directory; as a subproject of another project, Meson may unpack them in the
+# parent's top-level subprojects/ instead. Used to find headers to vendor (see gridfire_subproject_dir_of below).
+fs = import('fs')
+gridfire_subproject_roots = [
+    [meson.project_source_root() / 'subprojects', meson.project_build_root() / 'subprojects'],
+    [meson.global_source_root() / 'subprojects', meson.global_build_root() / 'subprojects'],
+]
 
 gridfire_fourdst_vendor_includedir = gridfire_includedir / 'fourdst' / 'vendor'
 

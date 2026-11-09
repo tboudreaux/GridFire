@@ -1,0 +1,13 @@
+# Put this in your project's subprojects/ directory; then dependency('gridfire'), dependency('gridfire_extern') and
+# dependency('gridfire_fortran') fetch and build GridFire when it is not installed. Pin revision to a release tag,
+# and ask for a version (dependency('gridfire', version: '>=1.2.0')) so an older installed GridFire is not mixed in.
+# GridFire needs C++23 (cpp_std=c++23). On macOS with Meson 1.9 and recent Xcode, also set b_ndebug=if-release:
+# with assertions on, Meson adds a libc++ define that Apple's libc++ now rejects.
+[wrap-git]
+url = https://github.com/4D-STAR/GridFire.git
+revision = v1.2.0
+depth = 1
+directory = gridfire
+
+[provide]
+dependency_names = gridfire, gridfire_extern, gridfire_fortran

@@ -1,4 +1,5 @@
 #include "gridfire/utils/provenance.h"
+#include "gridfire/utils/gf_omp.h"
 #include "gridfire/gridfire.h"
 #include "fourdst/composition/exceptions/exceptions_composition.h"
 #include "gridfire/extern/gridfire_context.h"
@@ -367,6 +368,18 @@ extern "C" {
     }
 
     void* gf_init(const enum GF_TYPE type) {
+#if defined(GF_USE_OPENMP)
+        // Separate contexts may be used concurrently from the host's threads, which needs CppAD's per-thread setup.
+        // It has to happen outside a parallel region, so do it here (normally the host's serial start-up).
+        if (!gridfire::omp::parallel_mode_initialized()) {
+            try {
+                gridfire::omp::init_parallel_mode();
+            } catch (const std::exception&) {
+                // Inside a parallel region (or more OpenMP threads than CppAD supports): leave it to a later gf_init
+                // from serial code; the header documents that the first gf_init belongs there.
+            }
+        }
+#endif
         if (type == MULTI_ZONE) {
             return new GFGridContext();
         }

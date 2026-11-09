@@ -3,6 +3,25 @@
 
 #include <stddef.h>
 
+/*
+ * Thread safety (OpenMP builds, which include the published wheels)
+ *
+ *   - Build and free contexts from serial code, while no other GridFire call is running: gf_init through
+ *     gf_construct_solver_from_engine, and gf_free. Engine construction and destruction register and remove CppAD
+ *     atomic functions in a process-wide table, which CppAD does not allow from several threads.
+ *   - Once built, separate contexts may be used concurrently: gf_evolve, gf_evaluate and gf_evaluate_reactions on
+ *     different contexts, from any threads. These may be OpenMP threads of any runtime (including GCC's libgomp, as
+ *     in a gfortran -fopenmp program, while GridFire carries its own) or plain threads; up to 512 at once
+ *     (CPPAD_MAX_NUM_THREADS). Results are bit-identical to running the same contexts serially (test
+ *     extern_c_threads, run with both libomp and libgomp hosts).
+ *   - A single context must never be used by two threads at once: it holds the solver state and scratch memory.
+ *   - Make the first gf_init call outside any parallel region; it prepares CppAD for use from several threads.
+ *   - MULTI_ZONE contexts spread their zones over GridFire's own OpenMP threads; call them from serial code (calling
+ *     them from inside a host parallel region is untested and oversubscribes the cores).
+ *
+ * Builds without OpenMP: contexts are independent, but use them from one thread.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -232,6 +251,11 @@ extern "C" {
      *                                   (see gf_get_num_energy_channels); sums to eps_nuc
      *
      * eps_nuc, its derivatives, and eps_by_channel are all evaluated at the same final state.
+     *
+     * Calls share no integrator state: each one integrates from Y_in at t = 0 with a fresh step-size and error
+     * history (the solver only keeps its allocated memory between calls), so the result depends on the inputs, the
+     * configuration and the rate multipliers alone, never on earlier calls. The network is fixed for the life of the
+     * context (see gf_get_num_network_species), so nothing is pruned or repartitioned between calls either.
      */
     int gf_evolve(
         enum GF_TYPE type,

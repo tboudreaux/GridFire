@@ -32,7 +32,9 @@ mkdir -p "${FINAL_WHEEL_DIR}"
 
 export MACOSX_DEPLOYMENT_TARGET=15.0
 
-LLVM_VER="17.0.6"
+# LLVM 19 or newer: Apple clang 17 (Xcode 16.3+/26) emits OpenMP calls (__kmpc_dispatch_deinit) that older libomp
+# lacks, and libgridfire then fails to link. Keep in step with LIBOMP_LLVM_VERSION in .github/workflows/packaging.yml.
+LLVM_VER="19.1.7"
 LIBOMP_PREFIX="${WORK_DIR}/libomp-${MACOSX_DEPLOYMENT_TARGET}-${LLVM_VER}"
 
 if [[ ! -f "${LIBOMP_PREFIX}/lib/libomp.dylib" ]]; then

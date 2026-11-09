@@ -103,6 +103,7 @@ namespace {
         .def(
             "construct",
             &T::construct,
+            py::keep_alive<0, 1>(), // the results refer to engines the policy owns
             "Construct the network according to the policy."
 
         )
@@ -259,7 +260,7 @@ void register_network_policy_bindings(pybind11::module &m) {
             [](const gridfire::policy::ConstructionResults &self) -> const gridfire::engine::DynamicEngine& {
                 return self.engine;
             },
-            py::return_value_policy::reference
+            py::return_value_policy::reference_internal // keeps the results (and through them the policy) alive
         )
         .def_property_readonly("scratch_blob",
             [](const gridfire::policy::ConstructionResults &self) {

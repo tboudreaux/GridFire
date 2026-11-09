@@ -1,0 +1,13 @@
+# GridFire C API (gridfire/extern/gridfire_extern.h) as installed by the gridfire Python wheel. Relocatable: every
+# path is relative to this file. libgridfire_extern finds libgridfire and fourdst through its own run-time paths;
+# the extra -rpath entries are for linkers that resolve indirect dependencies at link time (GNU ld).
+prefix=${pcfiledir}/../..
+includedir=${prefix}/include
+libdir=${prefix}/lib
+fourdst_libdir=${prefix}/../fourdst/lib
+
+Name: gridfire_extern
+Description: GridFire nuclear reaction network solver (C API, gridfire Python wheel)
+Version: @VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lgridfire_extern -Wl,-rpath,${libdir} -Wl,-rpath,${fourdst_libdir} -Wl,-rpath,${fourdst_libdir}/vendor

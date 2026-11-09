@@ -126,3 +126,114 @@ def gf_get_compiler_flags_formatted(just_gridfire=False) -> int:
     flags = gf_compiler_flags(just_gridfire)
     print(" ".join(flags))
     return 0
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# gf-config: compiler and linker flags for programs that use GridFire from C++, C or Fortran
+# ---------------------------------------------------------------------------------------------------------------------
+
+_COMPONENTS = ("cpp", "c", "fortran")
+
+
+def gf_get_fortran_source() -> str:
+    """Path of gridfire_mod.f90, the Fortran interface; compile it with the same compiler as your program."""
+    return os.fspath(_PACKAGE_DIR / "share" / "fortran" / "gridfire_mod.f90")
+
+
+def gf_get_cmake_prefix() -> str:
+    """Directory to add to CMAKE_PREFIX_PATH so that find_package(GridFire) finds this installation."""
+    return os.fspath(_PACKAGE_DIR)
+
+
+def _require_c_api():
+    lib_dir = _PACKAGE_DIR / "lib"
+    if not any(lib_dir.glob("libgridfire_extern.*")):
+        raise RuntimeError(
+            f"This gridfire installation ({_PACKAGE_DIR}) has no C API library (libgridfire_extern). "
+            "Install a gridfire wheel built with the C API."
+        )
+
+
+def gf_cflags(component: str = "cpp") -> List[str]:
+    """Compile flags for a program using GridFire through the C++ library, the C API, or the Fortran module."""
+    if component == "cpp":
+        return gf_get_include_flags() + fst.get_include_flags() + gf_get_extra_flags()
+    if component in ("c", "fortran"):
+        _require_c_api()
+        return ["-I" + os.fspath(_PACKAGE_DIR / "include")]
+    raise ValueError(f"Unknown component {component!r}; expected one of {', '.join(_COMPONENTS)}")
+
+
+def gf_libs(component: str = "cpp") -> List[str]:
+    """Link flags (library paths, libraries and run-time search paths) for the given component."""
+    lib_dir = os.fspath(_PACKAGE_DIR / "lib")
+    if component == "cpp":
+        return ["-L" + lib_dir, "-lgridfire", "-Wl,-rpath," + lib_dir] + fst.get_lib_flags()
+    if component in ("c", "fortran"):
+        _require_c_api()
+        # The C API library finds libgridfire and the fourdst libraries through its own run-time paths; the extra
+        # -rpath entries let linkers that resolve indirect dependencies at link time (GNU ld) find them too.
+        flags = ["-L" + lib_dir, "-lgridfire_extern", "-Wl,-rpath," + lib_dir]
+        flags += ["-Wl,-rpath," + d for d in fst.get_lib_dirs()]
+        return flags
+    raise ValueError(f"Unknown component {component!r}; expected one of {', '.join(_COMPONENTS)}")
+
+
+def gf_config_main(argv=None) -> int:
+    """
+    gf-config: print what a build needs to use this GridFire installation.
+
+    Examples:
+        gf-config --cflags --libs                      # C++ library
+        gf-config --component c --cflags --libs        # C API (gridfire/extern/gridfire_extern.h)
+        gf-config --component fortran --libs           # Fortran: link flags
+        gf-config --fortran-source                     # Fortran: the module source to compile with your compiler
+        PKG_CONFIG_PATH=$(gf-config --pkg-config-path) pkg-config --cflags --libs gridfire_extern
+        cmake -DCMAKE_PREFIX_PATH="$(gf-config --cmake-prefix)" ...   # then find_package(GridFire)
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        prog="gf-config",
+        description="Compiler and linker flags for programs that use GridFire.",
+    )
+    parser.add_argument("--component", choices=_COMPONENTS, default="cpp",
+                        help="interface to build against: the C++ library (default), the C API, or the Fortran module")
+    parser.add_argument("--cflags", action="store_true", help="compile flags")
+    parser.add_argument("--libs", action="store_true", help="link flags")
+    parser.add_argument("--fortran-source", action="store_true", help="path of gridfire_mod.f90")
+    parser.add_argument("--include-dir", action="store_true", help="GridFire's header directory")
+    parser.add_argument("--lib-dir", action="store_true", help="GridFire's library directory")
+    parser.add_argument("--pkg-config-path", action="store_true",
+                        help="directory of gridfire.pc, gridfire_extern.pc and gridfire_fortran.pc, for PKG_CONFIG_PATH")
+    parser.add_argument("--cmake-prefix", action="store_true",
+                        help="directory to add to CMAKE_PREFIX_PATH for find_package(GridFire)")
+    parser.add_argument("--version", action="store_true", help="GridFire version")
+    args = parser.parse_args(argv)
+
+    out: List[str] = []
+    try:
+        if args.version:
+            out.append(gf_version())
+        if args.include_dir:
+            out.append(os.fspath(_PACKAGE_DIR / "include"))
+        if args.lib_dir:
+            out.append(os.fspath(_PACKAGE_DIR / "lib"))
+        if args.fortran_source:
+            out.append(gf_get_fortran_source())
+        if args.pkg_config_path:
+            out.append(os.fspath(_PACKAGE_DIR / "lib" / "pkgconfig"))
+        if args.cmake_prefix:
+            out.append(gf_get_cmake_prefix())
+        if args.cflags:
+            out.append(" ".join(gf_cflags(args.component)))
+        if args.libs:
+            out.append(" ".join(gf_libs(args.component)))
+    except RuntimeError as e:
+        print(f"gf-config: {e}", file=sys.stderr)
+        return 1
+    if not out:
+        parser.print_help()
+        return 1
+    print("\n".join(out))  # one item per line; unquoted $(gf-config --cflags --libs) joins them with spaces
+    return 0

@@ -58,3 +58,14 @@ gf_extern_c_rate_multipliers = executable('gf_extern_c_rate_multipliers', 'gridf
            dependencies: [gridfire_extern_dep, meson.get_compiler('c').find_library('m', required: false)]
 )
 test('extern_c_rate_multipliers', gf_extern_c_rate_multipliers, suite: 'extern', timeout: 600)
+
+if get_option('openmp_support')
+    # Separate contexts used from the caller's own OpenMP threads must not interfere
+    gf_extern_c_threads = executable('gf_extern_c_threads', 'gridfire_threads.c',
+               install: false,
+               c_args: ['-Wall', '-Wextra'],
+               dependencies: [gridfire_extern_dep, dependency('openmp', language: 'c'),
+                              meson.get_compiler('c').find_library('m', required: false)]
+    )
+    test('extern_c_threads', gf_extern_c_threads, suite: 'extern', timeout: 900, env: ['OMP_NUM_THREADS=8'])
+endif

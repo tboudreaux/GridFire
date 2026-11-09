@@ -183,6 +183,11 @@ namespace gridfire::engine {
         );
         /** @} */
 
+        /// Defined in libgridfire, so the CppAD members are always freed by the CppAD allocator that created them:
+        /// an implicit (inline) destructor would run CppAD's header-only teardown in the calling program, which has
+        /// its own allocator state and aborts ("return_memory: attempt to return memory not in use").
+        ~GraphEngine() override;
+
         /// The configuration this engine was built with.
         [[nodiscard]] config::GridFireConfig getConfig() const { return *m_config; }
 

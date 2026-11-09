@@ -40,11 +40,20 @@ cppad_dep = declare_dependency(
 )
 
 message('Staging vendored CppAD headers for ' + gridfire_vendor_includedir)
+cppad_src_include = ''
+foreach root : gridfire_subproject_roots
+    if cppad_src_include == '' and fs.is_dir(root[0] / 'CppAD-20250000.2' / 'include' / 'cppad')
+        cppad_src_include = root[0] / 'CppAD-20250000.2' / 'include' / 'cppad'
+    endif
+endforeach
+if cppad_src_include == ''
+    error('Cannot find the CppAD subproject sources to vendor their headers.')
+endif
 
 custom_target(
     'vendor_cppad_headers',
     command: copytree_cmd + [
-        meson.project_source_root() / 'subprojects' / 'CppAD-20250000.2' / 'include' / 'cppad',
+        cppad_src_include,
         '@OUTPUT@',
     ],
     output: 'cppad',

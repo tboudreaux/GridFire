@@ -43,8 +43,12 @@ namespace {
             py::arg("rho"),
             "Calculate the right-hand side (dY/dt) and energy generation rate."
         )
+        // fourdst's Python module registers Composition, not CompositionAbstract, so take the concrete type
         .def("calculateEpsDerivatives",
-            &gridfire::engine::DynamicEngine::calculateEpsDerivatives,
+            [](const gridfire::engine::DynamicEngine& self, sp::StateBlob& ctx,
+               const fourdst::composition::Composition& comp, const double T9, const double rho) {
+                return self.calculateEpsDerivatives(ctx, comp, T9, rho);
+            },
             py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
@@ -52,7 +56,10 @@ namespace {
             "Calculate deps/dT and deps/drho"
         )
         .def("calculateReactionContributions",
-            &gridfire::engine::DynamicEngine::calculateReactionContributions,
+            [](const gridfire::engine::DynamicEngine& self, sp::StateBlob& ctx,
+               const fourdst::composition::Composition& comp, const double T9, const double rho) {
+                return self.calculateReactionContributions(ctx, comp, T9, rho);
+            },
             py::arg("ctx"),
             py::arg("comp"),
             py::arg("T9"),
@@ -241,6 +248,14 @@ void register_base_engine_bindings(const pybind11::module &m) {
     py::class_<gridfire::engine::StepDerivatives<double>>(m, "StepDerivatives")
         .def_readonly("dYdt", &gridfire::engine::StepDerivatives<double>::dydt, "The right-hand side (dY/dt) of the ODE system.")
         .def_readonly("energy", &gridfire::engine::StepDerivatives<double>::nuclearEnergyGenerationRate, "The energy generation rate.");
+
+    py::class_<gridfire::engine::EnergyDerivatives>(m, "EnergyDerivatives",
+        "Temperature and density derivatives of the energy generation rate")
+        .def_readonly("dEps_dT", &gridfire::engine::EnergyDerivatives::dEps_dT, "d eps / dT (erg/g/s/K)")
+        .def_readonly("dEps_dRho", &gridfire::engine::EnergyDerivatives::dEps_dRho, "d eps / d rho (erg cm^3/g^2/s)")
+        .def("__repr__", [](const gridfire::engine::EnergyDerivatives& d) {
+            return std::format("EnergyDerivatives(dEps_dT={}, dEps_dRho={})", d.dEps_dT, d.dEps_dRho);
+        });
 
     py::class_<gridfire::engine::ReactionContributions>(m, "ReactionContributions",
         "What each reaction contributes at one state, in getNetworkReactions() order; the entries sum to the RHS totals")

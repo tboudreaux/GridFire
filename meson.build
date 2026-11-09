@@ -37,16 +37,23 @@ subdir('src')
 # Build the Python bindings
 subdir('build-python')
 
-# Build the test suite
-subdir('tests')
+# As a subproject (pulled in by another Meson project) GridFire only provides its libraries, through the
+# dependencies gridfire, gridfire_extern and gridfire_fortran: no test suite, tools or benchmarks
+if not meson.is_subproject()
+    # Build the test suite
+    subdir('tests')
 
-# Build the tool suite
-subdir('tools')
+    # Build the tool suite
+    subdir('tools')
 
-# Build the benchmark suite
-subdir('benchmarks')
+    # Build the benchmark suite
+    subdir('benchmarks')
+endif
 
 # Build the pkg-config file
 subdir('build-extra/pkg-config')
+
+# CMake package configuration (find_package(GridFire))
+subdir('build-extra/cmake')
 
 

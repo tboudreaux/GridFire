@@ -32,11 +32,11 @@ class AdaptiveEngineView(DynamicEngine):
         """
         Get a copy of the configuration this view was built with.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -122,11 +122,11 @@ class DefinedEngineView(DynamicEngine):
         """
         Construct a defined engine view with a list of tracked reactions and a base engine.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -269,11 +269,11 @@ class FileDefinedEngineView(DefinedEngineView):
         """
         Construct a defined engine view from a file and a base engine.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -405,11 +405,11 @@ class GraphEngine(DynamicEngine):
         """
         Add a reaction to the engine's network manually using a reaction identifier string.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -549,11 +549,11 @@ class MultiscalePartitioningEngineView(DynamicEngine):
         """
         Construct a multiscale partitioning engine view with a base engine.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -887,11 +887,11 @@ class NetworkPrimingEngineView(DefinedEngineView):
         """
         Construct a priming engine view with a priming species and a base engine.
         """
-    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ...:
+    def calculateEpsDerivatives(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> EnergyDerivatives:
         """
         Calculate deps/dT and deps/drho
         """
-    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: ..., T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
+    def calculateReactionContributions(self, ctx: scratchpads.StateBlob, comp: fourdst._phys.composition.Composition, T9: typing.SupportsFloat, rho: typing.SupportsFloat) -> ReactionContributions | None:
         """
         Each reaction's molar flow, energy rate, neutrino energy loss rate and neutrino emission rate (None if unsupported)
         """
@@ -1083,6 +1083,20 @@ class SpeciesStatus:
     @property
     def value(self) -> int:
         ...
+class EnergyDerivatives:
+    """
+    Temperature and density derivatives of the energy generation rate
+    """
+    @property
+    def dEps_dT(self) -> float:
+        """
+        d eps / dT (erg/g/s/K)
+        """
+    @property
+    def dEps_dRho(self) -> float:
+        """
+        d eps / d rho (erg cm^3/g^2/s)
+        """
 class ReactionContributions:
     """
     What each reaction contributes at one state, in getNetworkReactions() order; the entries sum to the RHS totals

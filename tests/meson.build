@@ -1,9 +1,9 @@
 # Google Test dependency. include_type 'non-system' turns gtest's -isystem into -I so that, listed first, its headers
 # take precedence over any other googletest copy reachable through gridfire's include path (e.g. a conda prefix).
-gtest_dep = dependency('gtest', main: false, required: true, include_type: 'non-system')
-gtest_main_dep = dependency('gtest_main', required: true, include_type: 'non-system')
-
 if get_option('build_tests')
+    gtest_dep = dependency('gtest', main: false, required: true, include_type: 'non-system')
+    gtest_main_dep = dependency('gtest_main', required: true, include_type: 'non-system')
+
     # Shared fixtures and helpers (tests/support)
     test_support_lib = static_library(
         'gf_test_support',

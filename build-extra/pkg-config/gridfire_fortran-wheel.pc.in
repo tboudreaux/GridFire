@@ -1,0 +1,13 @@
+# GridFire Fortran interface as installed by the gridfire Python wheel. The module ships as source; compile it with
+# your own compiler:  gfortran -c $(pkg-config --variable=fortran_source gridfire_fortran)
+# and link your program with $(pkg-config --libs gridfire_fortran) (the C API underneath).
+prefix=${pcfiledir}/../..
+libdir=${prefix}/lib
+fourdst_libdir=${prefix}/../fourdst/lib
+fortran_source=${prefix}/share/fortran/gridfire_mod.f90
+
+Name: gridfire_fortran
+Description: GridFire nuclear reaction network solver (Fortran interface, gridfire Python wheel)
+Version: @VERSION@
+Cflags:
+Libs: -L${libdir} -lgridfire_extern -Wl,-rpath,${libdir} -Wl,-rpath,${fourdst_libdir} -Wl,-rpath,${fourdst_libdir}/vendor

@@ -202,6 +202,8 @@ namespace gridfire::engine {
         syncInternalMaps();
     }
 
+    GraphEngine::~GraphEngine() = default;
+
     void GraphEngine::configure(const config::GridFireConfig &config) {
         m_config.mutate([&config](auto& cfg) {
             cfg = config;

@@ -1,0 +1,187 @@
+# Packaging checks: every supported way of getting and linking GridFire, on every platform wheels are released for.
+#
+#   wheel jobs   build the wheel as a release does, then use it from C++, C and Fortran (gf-config, pkg-config,
+#                CMake find_package) and from a GCC/libgomp OpenMP host program
+#   source jobs  use the source tree directly: CMake FetchContent, Meson subproject
+#
+# Each job records pass/fail per check (tests/packaging/ci); the report job combines them into one table in the run
+# summary and, for pushes to main, publishes one shields.io badge per platform and check to the ci-status branch
+# (see the README's "Packaging status" table).
+#
+# Run locally with act (Linux jobs only; macOS: tests/packaging/ci/macos.sh), see tests/packaging/ci/README.md. Under
+# act the artifact steps are skipped (its artifact server loses uploads); the report reads the shared workspace.
+name: Packaging
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: packaging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: linux-${{ matrix.arch }} ${{ matrix.mode }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+        mode: [wheel, source]
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      # The image the release wheels are built in (utils/wheels/build-wheels-linux_*.sh)
+      - name: Packaging checks
+        run: |
+          mkdir -p ci-out
+          docker run --rm -v "$PWD:/io/src:ro" -v "$PWD/ci-out:/io/out" \
+            "tboudreaux/manylinux_2_28_${{ matrix.arch }}_boost_1_88_0:latest" \
+            bash /io/src/tests/packaging/ci/linux.sh "${{ matrix.mode }}" "linux-${{ matrix.arch }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### linux-${{ matrix.arch }} ${{ matrix.mode }}"
+            python3 tests/packaging/ci/report.py ci-out --present || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && !env.ACT
+        with:
+          name: packaging-results-linux-${{ matrix.arch }}-${{ matrix.mode }}
+          path: ci-out/results-*.json
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always() && !env.ACT
+        with:
+          name: packaging-logs-linux-${{ matrix.arch }}-${{ matrix.mode }}
+          path: ci-out/logs
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.mode == 'wheel' && !env.ACT
+        with:
+          name: wheel-linux-${{ matrix.arch }}
+          path: ci-out/wheel/*.whl
+          if-no-files-found: ignore
+
+  macos:
+    name: macos-arm64
+    runs-on: macos-15
+    timeout-minutes: 150
+    env:
+      # Keep in step with utils/wheels/build-wheels-macos_aarch64.sh
+      MACOSX_DEPLOYMENT_TARGET: "15.0"
+      LIBOMP_LLVM_VERSION: "19.1.7"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Homebrew GCC: gfortran for the Fortran consumers, gcc-NN (libgomp) for the OpenMP host check
+      - name: Tools
+        run: brew install gcc pkgconf ninja || true
+
+      # LLVM libomp built for the deployment target, as release wheels bundle (utils/wheels/build-wheels-macos_aarch64.sh)
+      - uses: actions/cache@v4
+        with:
+          path: ~/libomp-${{ env.MACOSX_DEPLOYMENT_TARGET }}-${{ env.LIBOMP_LLVM_VERSION }}
+          key: libomp-${{ env.LIBOMP_LLVM_VERSION }}-macos${{ env.MACOSX_DEPLOYMENT_TARGET }}-arm64
+
+      - name: Packaging checks
+        run: |
+          export PYTHON=python3 LIBOMP_PREFIX="$HOME/libomp-${MACOSX_DEPLOYMENT_TARGET}-${LIBOMP_LLVM_VERSION}"
+          tests/packaging/ci/macos.sh macos-arm64 ci-out
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### macos-arm64"
+            python3 tests/packaging/ci/report.py ci-out --present || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && !env.ACT
+        with:
+          name: packaging-results-macos-arm64
+          path: ci-out/results-*.json
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always() && !env.ACT
+        with:
+          name: packaging-logs-macos-arm64
+          path: ci-out/logs
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: '!env.ACT'
+        with:
+          name: wheel-macos-arm64
+          path: ci-out/wheel/*.whl
+          if-no-files-found: ignore
+
+  report:
+    name: report
+    needs: [linux, macos]
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # only used to publish the badges to the ci-status branch, on pushes to main
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        if: '!env.ACT'
+        with:
+          pattern: packaging-results-*
+          path: results
+          merge-multiple: true
+
+      # Under act (--bind) all jobs share this workspace, and act's artifact server is unreliable: read ci-out directly
+      - name: Collect results (act)
+        if: env.ACT
+        run: mkdir -p results && cp ci-out/results-*.json results/ || true
+
+      - name: Combine results
+        id: combine
+        run: |
+          set +e
+          python3 tests/packaging/ci/report.py results --badges status > table.md
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+          { echo "## Packaging checks"; echo; cat table.md; } >> "$GITHUB_STEP_SUMMARY"
+          cat table.md
+
+      # One orphan commit, force-pushed, so the branch never grows: badges/<platform>-<check>.json and status.md
+      - name: Publish badges
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !env.ACT
+        run: |
+          cd status
+          mkdir badges && mv ./*-*.json badges/
+          git init -q -b ci-status
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Packaging status for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-status
+
+      - name: Fail if any check failed
+        if: steps.combine.outputs.rc != '0'
+        run: exit 1

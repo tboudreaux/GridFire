@@ -7,6 +7,7 @@
 #include "gridfire/types/types.h"
 #include "gridfire/exceptions/error_reaction.h"
 
+#include <mutex>
 #include <stdexcept>
 #include <sstream>
 #include <vector>
@@ -181,9 +182,6 @@ namespace gridfire::reaclib {
     }
 
     static void initializeAllReaclibReactions() {
-        if (s_initialized) {
-            return;
-        }
 
         // Cast the raw byte data to our structured record format.
         const auto* records = reinterpret_cast<const ReactionRecord*>(raw_reactions_data);
@@ -247,10 +245,9 @@ namespace gridfire::reaclib {
     // --- Public Interface Implementation ---
 
     const reaction::ReactionSet &get_all_reaclib_reactions() {
-        // This ensures that the initialization happens only on the first call.
-        if (!s_initialized) {
-            initializeAllReaclibReactions();
-        }
+        // Built once, on first use; call_once makes concurrent first calls (contexts built in parallel) safe
+        static std::once_flag once;
+        std::call_once(once, initializeAllReaclibReactions);
         if (s_all_reaclib_reactions_ptr == nullptr) {
             throw std::runtime_error("Reaclib reactions have not been initialized.");
         }

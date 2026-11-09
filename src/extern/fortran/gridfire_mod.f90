@@ -1,3 +1,9 @@
+! Fortran interface to GridFire's C API (gridfire/extern/gridfire_extern.h). Compile this file with the compiler
+! that builds your program (gf-config --fortran-source gives its installed path) and link against gridfire_extern.
+!
+! Thread safety, as for the C API: set GridFire objects up (gff_init through gff_setup_solver) and free them from
+! serial code; once set up, separate objects may evolve and evaluate concurrently from OpenMP threads (one object per
+! thread at a time). MULTI_ZONE objects only from serial code.
 module gridfire_mod
     use iso_c_binding
     implicit none

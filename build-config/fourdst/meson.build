@@ -21,10 +21,20 @@ if get_option('build_python')
     endforeach
 
     cpp = meson.get_compiler('cpp')
-    comp_lib  = cpp.find_library('composition', dirs: fourdst_lib_dirs)
-    log_lib   = cpp.find_library('logging',     dirs: fourdst_lib_dirs)
-    const_lib = cpp.find_library('const',       dirs: fourdst_lib_dirs)
-    refl_lib  = cpp.find_library('reflect_cpp', dirs: fourdst_lib_dirs)
+    # Check the libraries exist, but link them by name: linking the found files directly makes Meson add the build
+    # environment's absolute fourdst/lib to every binary's rpath, which is meaningless in the installed wheel (the
+    # relative rpaths set in src/meson.build are what find fourdst there).
+    fourdst_L_args = []
+    foreach d : fourdst_lib_dirs
+        fourdst_L_args += ['-L' + d]
+    endforeach
+    foreach name : ['composition', 'logging', 'const', 'reflect_cpp']
+        cpp.find_library(name, dirs: fourdst_lib_dirs)
+    endforeach
+    comp_lib  = declare_dependency(link_args: fourdst_L_args + ['-lcomposition'])
+    log_lib   = declare_dependency(link_args: fourdst_L_args + ['-llogging'])
+    const_lib = declare_dependency(link_args: fourdst_L_args + ['-lconst'])
+    refl_lib  = declare_dependency(link_args: fourdst_L_args + ['-lreflect_cpp'])
 
     composition_dep = declare_dependency(compile_args: fourdst_inc_args, dependencies: [comp_lib, refl_lib])
     log_dep         = declare_dependency(compile_args: fourdst_inc_args, dependencies: log_lib)

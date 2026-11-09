@@ -2,6 +2,7 @@
 
 #include "gridfire/config/config.h"
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h> // std::vector<std::string> fields (passiveSpecies)
 
 namespace py = pybind11;
 

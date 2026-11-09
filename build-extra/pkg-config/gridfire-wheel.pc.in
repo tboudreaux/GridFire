@@ -1,9 +1,13 @@
+# GridFire C++ library as installed by the gridfire Python wheel. Relocatable: every path is relative to this file,
+# and fourdst is the fourdst wheel in the same site-packages. Compile with -std=c++23 (or `gf-config --cflags`).
 prefix=${pcfiledir}/../..
 includedir=${prefix}/include
 libdir=${prefix}/lib
+fourdst_prefix=${prefix}/../fourdst
+fourdst_libdir=${fourdst_prefix}/lib
 
 Name: gridfire
-Description: GridFire nuclear reaction network solver (bundled with the gridfire Python wheel)
+Description: GridFire nuclear reaction network solver (C++ library, gridfire Python wheel)
 Version: @VERSION@
-Cflags: -I${includedir} -I${includedir}/gridfire/vendor -I${includedir}/fourdst/vendor
-Libs: -L${libdir} -lgridfire -Wl,-rpath,${libdir}
+Cflags: -I${includedir} -I${includedir}/gridfire/vendor -I${fourdst_prefix}/include -I${fourdst_prefix}/include/fourdst/vendor
+Libs: -L${libdir} -lgridfire -Wl,-rpath,${libdir} -L${fourdst_libdir} -L${fourdst_libdir}/vendor -lcomposition -llogging -lconst -lreflect_cpp -Wl,-rpath,${fourdst_libdir} -Wl,-rpath,${fourdst_libdir}/vendor
