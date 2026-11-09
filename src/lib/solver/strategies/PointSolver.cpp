@@ -29,6 +29,8 @@
 #include "gridfire/solver/strategies/triggers/engine_partitioning_trigger.h"
 #include "gridfire/trigger/procedures/trigger_pprint.h"
 #include "gridfire/exceptions/error_solver.h"
+#include "gridfire/engine/views/engine_multiscale.h"
+#include "gridfire/engine/views/engine_view_abstract.h"
 #include "gridfire/utils/sundials.h"
 #include "gridfire/config/config.h"
 
@@ -224,14 +226,42 @@ namespace gridfire::solver {
     }
 
 
+    namespace {
+        /**
+         * Walk the engine stack and reject views PointSolver cannot integrate correctly. Runs once per solver
+         * construction, never per step.
+         *
+         * MultiscalePartitioningEngineView: holding its fast species at their QSE abundances while CVODE integrates
+         * the rest does not converge as the tolerances tighten, and does not conserve the CNO nuclei over long runs
+         * (at T = 1.5e7 K, rho = 150 over 3e15 s, N-14 ends 10-60x above the bare engine's value depending on
+         * rel_tol). Until that is fixed the solver refuses it rather than return a wrong answer.
+         */
+        void reject_unsupported_engines(const engine::DynamicEngine& engine) {
+            const engine::DynamicEngine* current = &engine;
+            while (current) {
+                if (dynamic_cast<const engine::MultiscalePartitioningEngineView*>(current)) {
+                    throw exceptions::UnsupportedEngineError(
+                        "PointSolver cannot integrate through a MultiscalePartitioningEngineView: its QSE partitioning "
+                        "currently gives non-convergent, non-conserving results. Build the solver on the engine below it "
+                        "(view.getBaseEngine()), optionally wrapped in an AdaptiveEngineView or DefinedEngineView, instead.");
+                }
+                const auto* view = dynamic_cast<const engine::EngineView<engine::DynamicEngine>*>(current);
+                current = view ? &view->getBaseEngine() : nullptr;
+            }
+        }
+    }
+
     PointSolver::PointSolver(
         const DynamicEngine &engine
-    ): SingleZoneNetworkSolver(engine) {}
+    ): SingleZoneNetworkSolver(engine) {
+        reject_unsupported_engines(engine);
+    }
 
     PointSolver::PointSolver(
         const engine::DynamicEngine &engine,
         const config::GridFireConfig &config
     ) : SingleZoneNetworkSolver(engine) {
+        reject_unsupported_engines(engine);
         m_config.mutate([&config](auto& cfg) {
             cfg = config;
         });
@@ -1133,17 +1163,23 @@ namespace gridfire::solver {
         // Add weight * J_state into the dense matrix. The Jacobian's own index order need not match the solver's, so
         // map it once (N lookups) and walk only the stored entries, rather than looking up every (species, species)
         // pair (N^2 lookups).
-        std::vector<long int> solver_index(numSpecies, -1);
+        // An engine view that culls species (AdaptiveEngineView, DefinedEngineView) passes its active species to the
+        // base engine, which returns a Jacobian in its own, larger index space with only the active block filled.
+        // So the Jacobian may be bigger than the solver's system: map it by species and drop entries for species the
+        // solver does not integrate (they are zero for a culling view). Every solver species must be in it, though.
+        std::vector<long int> solver_index;
         const auto add_jacobian = [&](const NetworkJacobian& jac, const double weight) {
             const auto& jac_index_of = jac.mapping();
-            if (jac.shape() != std::tuple<size_t, size_t>{numSpecies, numSpecies}) {
+            const size_t jac_dim = std::max(std::get<0>(jac.shape()), std::get<1>(jac.shape()));
+            if (jac_dim < numSpecies) {
                 throw exceptions::IllConditionedJacobianError(std::format(
                     "Jacobian generated at time {} has shape ({} x {}) but the network has {} species.",
                     t, std::get<0>(jac.shape()), std::get<1>(jac.shape()), numSpecies));
             }
+            solver_index.assign(jac_dim, -1);
             for (size_t k = 0; k < numSpecies; ++k) {
                 const auto it = jac_index_of.find(species_list[k]);
-                if (it == jac_index_of.end() || it->second >= numSpecies) {
+                if (it == jac_index_of.end() || it->second >= jac_dim) {
                     throw exceptions::IllConditionedJacobianError(std::format(
                         "Jacobian generated at time {} has no entry for network species {}.", t, species_list[k].name()));
                 }
@@ -1153,7 +1189,12 @@ namespace gridfire::solver {
             for (int outer = 0; outer < jac_matrix.outerSize(); ++outer) {
                 for (Eigen::SparseMatrix<double>::InnerIterator it(jac_matrix, outer); it; ++it) {
                     // J(i,j) = d(f_i)/d(y_j), column-major: J_data[j*N + i]
-                    J_data[solver_index[it.col()] * N + solver_index[it.row()]] += weight * it.value();
+                    const long int i = solver_index[it.row()];
+                    const long int j = solver_index[it.col()];
+                    if (i < 0 || j < 0) {
+                        continue; // species outside the solver's system
+                    }
+                    J_data[j * N + i] += weight * it.value();
                 }
             }
         };

@@ -87,16 +87,6 @@ Installing from pip is as simple as.
 pip install gridfire
 ```
 
-These wheels have been compiled on many systems
-
-| Version   | Platform | Architecture | CPython Versions                                           | PyPy Versions |
-|-----------|----------|--------------|------------------------------------------------------------|---------------|
-| 0.7.0_rc1 | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.7.0_rc1 | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.7.0_rc1 | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 
 > **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Due
 > to that platform being phased out it is likely that there will never be
@@ -458,11 +448,6 @@ These engine views implement the common Engine interface and may be composed in
 any order to build complex network pipelines. New view types can be added by
 deriving from the `EngineView` base class, and linked into the composition
 chain without modifying core engine code.
-
->**Note:** The shipped policies (`MainSequencePolicy`, `HydrogenHeliumBurningPolicy`) currently build a bare
->`GraphEngine` with a fixed network, without views. A view's state blob extends its base engine's: build it with
->`view.constructStateBlob(baseBlob)`. Integrating with `PointSolver` through a hand-built view stack is not covered
->by the test suite at present.
 
 ### A Note about composability
 There are certain functions for which it is expected that a call to an engine
@@ -853,7 +838,7 @@ from other languages.
 ## Building a program against GridFire
 The pip wheel ships everything a C, C++ or Fortran program needs: headers, `libgridfire`, `libgridfire_extern` (the
 C API), `gridfire_mod.f90` (the Fortran module source, compiled with your own Fortran compiler so its `.mod` file
-matches), pkg-config files and a CMake package. Pick whichever route suits your build system.
+matches), pkg-config files and a CMake package.
 
 **`gf-config`**, installed with the wheel, prints compiler and linker flags:
 
@@ -900,8 +885,7 @@ The cache variables `GRIDFIRE_BUILDTYPE` and `GRIDFIRE_MESON_OPTIONS` pass optio
 in your `subprojects/` directory, then
 
 ```meson
-gridfire_dep = dependency('gridfire', version: '>=1.2.0',
-                          default_options: ['build_fortran=true', 'build_tests=false'])
+gridfire_dep = dependency('gridfire', version: '>=1.2.0', default_options: ['build_fortran=true', 'build_tests=false'])
 gridfire_extern_dep = dependency('gridfire_extern', version: '>=1.2.0')
 gridfire_fortran_dep = dependency('gridfire_fortran', version: '>=1.2.0')
 ```
@@ -914,22 +898,19 @@ In OpenMP builds, which include the published wheels:
 - Build and free contexts from serial code, while no other GridFire call is running: `gf_init` through
   `gf_construct_solver_from_engine`, and `gf_free`. Make the first `gf_init` call outside any parallel region.
 - Once built, **separate** contexts may evolve and evaluate concurrently from any threads, including OpenMP threads of
-  a GCC/libgomp host program such as a `gfortran -fopenmp` code. Results are bit-identical to running the same
-  contexts serially.
+  a GCC/libgomp host program such as a `gfortran -fopenmp` code. 
 - A single context must never be used by two threads at once.
 - `MULTI_ZONE` contexts spread their zones over GridFire's own OpenMP threads; call them from serial code.
 
 ## C API Overview
 In general when using the C API the workflow is to
 
-1. Create a context with `gf_init(SINGLE_ZONE)` (or `MULTI_ZONE`, then `gf_set_num_zones`). It holds GridFire's
-   state, so the network is built once and reused for every call.
+1. Create a context with `gf_init(SINGLE_ZONE)` (or `MULTI_ZONE`, then `gf_set_num_zones`). 
 2. Optionally set the configuration (`gf_config_defaults`, then `gf_set_config`, or `gf_load_config` from TOML).
 3. Register your species, build the engine with `gf_construct_engine_from_policy`, then the solver with
    `gf_construct_solver_from_engine`.
 4. Call `gf_evolve` to burn over a time step, `gf_evaluate` for instantaneous rates without integrating, or
-   `gf_evaluate_reactions` for per-reaction contributions. Each `gf_evolve` call starts afresh from its inputs: calls
-   share no integrator state, so a result depends only on the inputs, the configuration and the rate multipliers.
+   `gf_evaluate_reactions` for per-reaction contributions.
 5. Check every return code: `GF_SUCCESS` (0) is success (`gf_register_species` returns `FDSSE_SUCCESS`, 1), and
    `gf_get_last_error_message(ctx)` describes a failure.
 6. Call `gf_free` to release the context.
@@ -938,7 +919,7 @@ In general when using the C API the workflow is to
 `struct GFConfig` (`type(GFConfig)` in Fortran) holds the solver tolerances and engine options. Fill it with the
 defaults first, change what you need, and set it **before** `gf_construct_engine_from_policy`:
 
-```c
+```C
 struct GFConfig config;
 gf_config_defaults(&config);
 config.engine_screening = GF_SCREENING_CD09;
@@ -952,7 +933,7 @@ gf_set_config(ctx, &config);
 
 ### C Example
 
-```c
+```C
 #include "gridfire/extern/gridfire_extern.h"
 #include <stdio.h>
 

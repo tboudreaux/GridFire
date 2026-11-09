@@ -37,6 +37,16 @@ namespace gridfire::exceptions {
     };
 
     /**
+     * @class UnsupportedEngineError
+     * @brief Exception thrown when a solver is given an engine it cannot integrate correctly.
+     *
+     * For example, PointSolver rejects an engine stack that contains a MultiscalePartitioningEngineView.
+     */
+    class UnsupportedEngineError final : public SolverError {
+        using SolverError::SolverError;
+    };
+
+    /**
      * @class SUNDIALSError
      * @brief Base class for exceptions related to SUNDIALS solver operations.
      *

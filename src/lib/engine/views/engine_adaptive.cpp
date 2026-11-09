@@ -325,12 +325,8 @@ namespace gridfire::engine {
     }
 
     std::unique_ptr<scratch::StateBlob> AdaptiveEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
-        std::unique_ptr<scratch::StateBlob> i_blob;
-        if (blob) {
-            i_blob = blob->clone_structure();
-        } else {
-            i_blob = std::make_unique<scratch::StateBlob>();
-        }
+        // A view's state extends its base engine's, so with no blob given start from a fresh one for the base
+        std::unique_ptr<scratch::StateBlob> i_blob = blob ? blob->clone_structure() : m_baseEngine.constructStateBlob(nullptr);
         i_blob->enroll<scratch::AdaptiveEngineViewScratchPad>();
         auto* state = scratch::get_state<scratch::AdaptiveEngineViewScratchPad, false>(*i_blob);
         state->initialize(*this);

@@ -28,6 +28,7 @@ if get_option('build_tests')
         ['unit/rate_multiplier_test.cpp', 'unit', 300],
         ['property/engine_properties_test.cpp', 'property', 900],
         ['integration/solver_integration_test.cpp', 'integration', 1800],
+        ['integration/engine_view_integration_test.cpp', 'integration', 900],
     ]
 
     foreach t : gridfire_tests

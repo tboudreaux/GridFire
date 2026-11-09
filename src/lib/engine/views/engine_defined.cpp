@@ -26,9 +26,8 @@ namespace gridfire::engine {
         const std::vector<std::string>& peNames,
         GraphEngine& baseEngine
     ) :
-    m_baseEngine(baseEngine) {
-        // collect(peNames);
-    }
+    m_baseEngine(baseEngine),
+    m_peNames(peNames) {}
 
     const DynamicEngine & DefinedEngineView::getBaseEngine() const {
         return m_baseEngine;
@@ -285,7 +284,11 @@ namespace gridfire::engine {
     }
 
     std::unique_ptr<scratch::StateBlob> DefinedEngineView::constructStateBlob(const scratch::StateBlob *blob) const {
-        throw exceptions::ScratchPadError("DefinedEngineView does not support StateBlob construction. This will be implemented in a future version.");
+        // A view's state extends its base engine's, so with no blob given start from a fresh one for the base
+        std::unique_ptr<scratch::StateBlob> i_blob = blob ? blob->clone_structure() : m_baseEngine.constructStateBlob(nullptr);
+        i_blob->enroll<scratch::DefinedEngineViewScratchPad>();
+        collect(*i_blob, m_peNames);
+        return i_blob;
     }
 
     std::vector<size_t> DefinedEngineView::constructSpeciesIndexMap(

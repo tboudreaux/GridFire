@@ -274,6 +274,7 @@ namespace gridfire::engine {
     protected:
         bool m_isStale = true;
         GraphEngine& m_baseEngine;
+        std::vector<std::string> m_peNames; ///< Reactions that define the view; collected into each StateBlob
     private:
         quill::Logger* m_logger = LogManager::getInstance().getLogger("log"); ///< Logger instance for trace and debug information.
     private:

@@ -42,6 +42,7 @@ void register_exception_bindings(const py::module &m) {
     py::register_exception<gridfire::exceptions::SolverError>(m, "SolverError", m.attr("GridFireError"));
     py::register_exception<gridfire::exceptions::SingularJacobianError>(m, "SingularJacobianError", m.attr("SolverError"));
     py::register_exception<gridfire::exceptions::IllConditionedJacobianError>(m, "IllConditionedJacobianError", m.attr("SolverError"));
+    py::register_exception<gridfire::exceptions::UnsupportedEngineError>(m, "UnsupportedEngineError", m.attr("SolverError"));
     py::register_exception<gridfire::exceptions::SUNDIALSError>(m, "SUNDIALSError", m.attr("SolverError"));
     py::register_exception<gridfire::exceptions::CVODESolverFailureError>(m, "CVODESolverFailureError", m.attr("SUNDIALSError"));
     py::register_exception<gridfire::exceptions::KINSolSolverFailureError>(m, "KINSolSolverFailureError", m.attr("SUNDIALSError"));
