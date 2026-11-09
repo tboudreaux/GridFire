@@ -11,6 +11,7 @@
 
 ![Dynamic Regex Badge](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2F4D-STAR%2FGridFire%2Frefs%2Fheads%2Fmain%2Fmeson.build&search=version%3A%20'(.%2B)'%2C&style=for-the-badge&label=Main%20Branch%20Version)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/4D-STAR/GridFire?style=for-the-badge)
+![Packaging](https://img.shields.io/github/actions/workflow/status/4D-STAR/GridFire/packaging.yml?branch=main&style=for-the-badge&label=Packaging)
 
 
 ---
@@ -55,6 +56,24 @@ European Union or the European Research Council.
 
 # Usage
 
+## Packaging status
+Every supported way of installing and linking GridFire is built and tested on each platform wheels are released for,
+by the [Packaging workflow](https://github.com/4D-STAR/GridFire/actions/workflows/packaging.yml) (on every push to
+`main`). The table shows the latest result on `main`; how each check works, and how to run them locally, is described
+in [tests/packaging/ci](tests/packaging/ci/README.md).
+
+| Check | linux-x86_64 | linux-aarch64 | macos-arm64 |
+|---|---|---|---|
+| wheel builds and repairs as a release does | ![linux-x86_64 wheel](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-wheel.json) | ![linux-aarch64 wheel](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-wheel.json) | ![macos-arm64 wheel](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-wheel.json) |
+| wheel installs next to the fourdst wheel and imports | ![linux-x86_64 python-install](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-python-install.json) | ![linux-aarch64 python-install](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-python-install.json) | ![macos-arm64 python-install](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-python-install.json) |
+| C++, C and Fortran programs built with gf-config flags | ![linux-x86_64 gf-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-gf-config.json) | ![linux-aarch64 gf-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-gf-config.json) | ![macos-arm64 gf-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-gf-config.json) |
+| C++, C and Fortran programs built with the wheel's pkg-config files | ![linux-x86_64 pkg-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-pkg-config.json) | ![linux-aarch64 pkg-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-pkg-config.json) | ![macos-arm64 pkg-config](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-pkg-config.json) |
+| concurrent contexts from a GCC/libgomp OpenMP host program | ![linux-x86_64 threads-libgomp](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-threads-libgomp.json) | ![linux-aarch64 threads-libgomp](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-threads-libgomp.json) | ![macos-arm64 threads-libgomp](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-threads-libgomp.json) |
+| CMake find_package against the wheel (C++, C, Fortran) | ![linux-x86_64 cmake-find](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-cmake-find.json) | ![linux-aarch64 cmake-find](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-cmake-find.json) | ![macos-arm64 cmake-find](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-cmake-find.json) |
+| CMake FetchContent building GridFire from source (C++, C, Fortran) | ![linux-x86_64 cmake-fetch](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-cmake-fetch.json) | ![linux-aarch64 cmake-fetch](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-cmake-fetch.json) | ![macos-arm64 cmake-fetch](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-cmake-fetch.json) |
+| Meson subproject from a clean source tree (C++, C, Fortran) | ![linux-x86_64 meson-subproject](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-x86_64-meson-subproject.json) | ![linux-aarch64 meson-subproject](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/linux-aarch64-meson-subproject.json) | ![macos-arm64 meson-subproject](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/4D-STAR/GridFire/ci-status/badges/macos-arm64-meson-subproject.json) |
+
+
 ## Python installation
 By far the easiest way to install is with pip. This will install either
 pre-compiled wheels or, if your system has not had a wheel compiled for it, it
@@ -68,16 +87,6 @@ Installing from pip is as simple as.
 pip install gridfire
 ```
 
-These wheels have been compiled on many systems
-
-| Version   | Platform | Architecture | CPython Versions                                           | PyPy Versions |
-|-----------|----------|--------------|------------------------------------------------------------|---------------|
-| 0.7.0_rc1 | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.7.0_rc1 | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.7.0_rc1 | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | macOS    | arm64        | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | Linux    | aarch64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
-| 0.5.0     | Linux    | x86\_64      | 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 (std & t), 3.14 (std & t) | 3.10, 3.11    |
 
 > **Note**: Currently macOS x86\_64 does **not** have a precompiled wheel. Due
 > to that platform being phased out it is likely that there will never be
@@ -152,137 +161,59 @@ the same for the other shared object file (make sure to count the duplicate rpat
 We also include a script at `pip_install_mac_patch.sh` which will do this automatically for you.
 
 ## Automatic Build and Installation
-### Script Build and Installation Instructions
-
-The easiest way to build GridFire is using the `install.sh` or `install-tui.sh`
-scripts in the root directory. To use these scripts, simply run:
-
-```bash
-./install.sh
-# or
-./install-tui.sh
-```
-The regular installation script will select a standard "ideal" set of build
-options for you. If you want more control over the build options, you can use
-the `install-tui.sh` script, which will provide a text-based user interface to
-select the build options you want.
-
-Generally, both are intended to be easy to use and will prompt you
-automatically to install any missing dependencies.
-
-
 ### Currently, known good platforms
 The installation script has been tested and found to work on clean
 installations of the following platforms:
 - MacOS 15.3.2 (Apple Silicon + brew installed)
 - Fedora 42.0 (aarch64)
-- Ubuntu 25.04 (aarch64)
-- Ubuntu 22.04 (X86_64)
-
-> **Note:** On Ubuntu 22.04 the user needs to install boost libraries manually
-> as the versions in the Ubuntu repositories
-> are too old. The installer automatically detects this and will instruct the
-> user in how to do this.
+- Ubuntu 24.04 (X86_64)
 
 ## Manual Build Instructions
 
-### Prerequisites
-These only need to be manually installed if the user is not making use of the
-`install.sh` or `install-tui.sh`
-
 #### Required
 - C++ compiler supporting C++23 standard
+  - clang >= 17.0.0
+  - gcc >= 14.0
 - Meson build system (>= 1.5.0)
 - Python 3.8 or newer
 - CMake 3.20 or newer
 - ninja 1.10.0 or newer
 - Python packages: `meson-python>=0.15.0`
-- Boost libraries (>= 1.83.0) installed system-wide (or at least findable by
-  meson with pkg-config)
-
-#### Optional
-- dialog (used by the `install.sh` script, not needed if using pip or meson
-  directly)
-- pip (used by the `install.sh` script or by calling pip directly, not needed
-  if using meson directly)
-
-> **Note:** Boost is the only external library dependency used by GridFire directly.
 
 > **Note:** Windows is not supported at this time and *there are no plans to
 > support it in the future*. Windows users are encouraged to use WSL2 or a
 > Linux VM.
 
-> **Note:** If `install-tui.sh` is not able to find a usable version of boost
-> it will provide directions to fetch, compile, and install a usable version.
-
-### Install Scripts
-GridFire ships with an installer (`install.sh`) which is intended to make the
-process of installation both easier and more repeatable.
-
-#### Ease of Installation
-Both scripts are intended to automate installation more or less completely. This
-includes dependency checking. In the event that a dependency cannot be found
-they try to install (after explicitly asking for user permission). If that does
-not work they will provide a clear message as to what went wrong.
-
-#### Reproducibility
-The TUI mode provides easy modification of meson build system and compiler
-settings which can then be saved to a config file. This config file can then be
-loaded by either tui mode or cli mode (with the `--config`) flag meaning that
-build configurations can be made and reused. Note that this is **not** a
-deterministically reproducible build system as it does not interact with any
-system dependencies or settings, only meson and compiler settings.
-
-#### Examples
-
-##### TUI config and saving
-[![asciicast](https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW.svg)](https://asciinema.org/a/ahIrQPL71ErZv5EKKujfO1ZEW)
-
-##### TUI config loading and meson setup
-[![asciicast](https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK.svg)](https://asciinema.org/a/zGdzt9kYsETltG0TJKC50g3BK)
-
-##### CLI config loading, setup, and build
-[![asciicast](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC.svg)](https://asciinema.org/a/GYaWTXZbDJRD4ohde0s3DkFMC)
-
-
-> **Note:** `install-tui.sh` is simply a script which calls `install.sh` with
-> the `--tui` flag. You can get the exact same results by running `install.sh
-> --tui`.
-
-> **Note:** Call `install.sh` with the `--help` or `--h` flag to see command
-> line options
-
-> **Note:** `clang` tends to compile GridFire much faster than `gcc` thus why I
-> select it in the above asciinema recording.
 
 ### Dependency Installation on Common Platforms
 
 - **Ubuntu/Debian:**
 ```bash
 sudo apt-get update
-sudo apt-get install -y build-essential meson python3 python3-pip libboost-all-dev
+sudo apt install pipx pkg-config gcc-14 g++-14
+pipx install meson ninja cmake
+pipx ensurepath
 ```
-
-> **Note:** Depending on the ubuntu version you have the libboost-all-dev
-> libraries may be too old. If this is the case refer to the boost
-> documentation for how to download and install a version `>=1.83.0`
-
-> **Note:** On recent versions of ubuntu python has switched to being
-> externally managed by the system. We **strongly** recommend that if you
-> install manually all python packages are installed inside some kind of
-> virtual environment (e.g. `pyenv`, `conda`, `python-venv`, etc...). When using
-> the installer script this is handled automatically using `python-venv`.
+> Note: Ubuntu tends to ship with older versions of compilers, you may need to adjust the specific compiler name
+> or add additional repositories if you are running a version of ubuntu older than 24.04 LTS
 
 - **Fedora/CentOS/RHEL:**
 ```bash
-sudo dnf install -y gcc-c++ meson python3 python3-pip boost-devel
+sudo dnf install pkgconf-pkg-config meson ninja-build cmake
+```
+
+- **Arch:**
+```bash
+sudo pacman -Syu pkgconf meson ninja cmake
 ```
 
 - **macOS (Homebrew):**
 ```bash
 brew update
-brew install boost meson python
+brew install pkg-config meson ninja cmake gcc
 ```
+
+> Note: macos >= 15.2.0 ships with a version of clang which works for compilation (and therefore you dont need gcc. I have not tested on versions of macos prior to this).
 
 ### Building the C++ Library
 ```bash
@@ -290,10 +221,19 @@ meson setup build
 meson compile -C build
 ```
 
+> Note: On Ubuntu (or any system which does not have a supported version of the compiler as the default) you should use
+> ```bash
+> CC=gcc-14 CXX=g++-14 meson setup build
+> meson compile -C build
+> ```
+
 #### Clang vs. GCC
 As noted above `clang` tends to compile GridFire much faster than `gcc`. If
 your system has both `clang` and `gcc` installed you may force meson to use
 clang via environmental variables
+
+> Note: There is an issue I have not resolved on ubuntu 24.04 where clang++-18 fails to find the expected header
+> therefore we reccomend the use of gcc-14 and g++-14 on ubuntu 24.04
 
 ```bash
 CC=clang CXX=clang++ meson setup build_clang
@@ -308,7 +248,7 @@ meson install -C build
 ### Minimum compiler versions
 GridFire uses C++23 features and therefore only compilers and standard library
 implementations which support C++23 are supported. Generally we have found that
-`gcc >= 13.0.0` or `clang >= 16.0.0` work well.
+`gcc >= 14.0.0` or `clang >= 17.0.0` work well.
 
 
 ## Code Architecture and Logical Flow
@@ -334,9 +274,8 @@ include:
   ([Rauscher & Thielemann,
   2000](https://www.sciencedirect.com/science/article/pii/S0092640X00908349?via%3Dihub]))
   to weight reaction rates based on nuclear properties.
-- **Solver Module:** Defines numerical integration strategies (e.g.,
-  `CVODESolverStrategy`) for solving the stiff ODE systems arising from reaction
-  networks.
+- **Solver Module:** Defines the numerical integrators (`PointSolver` for one zone, `GridSolver` for many, both
+  CVODE) for solving the stiff ODE systems arising from reaction networks.
 - **io Module:** Defines shared interface for parsing network data from files
 - **trigger Module:** Defines interface for complex trigger logic so that repartitioning can be followed.
 - **Policy Module:** Contains "policies" which are small modular units of code that enforce certain contracts.
@@ -395,17 +334,70 @@ construction and rate evaluations:
     detailed balance for inverse rates.
   - `NetworkConstructionFlags`: A bitwise flag telling the network how to construct itself. That is, what reaction types should be used in construction. For example one might use `NetworkConstructionFlags::STRONG | NetworkConstructionFlags::BETA_PLUS` to use all strong reactions and β+ decay. By Default this is set to use reaclib strong and reaclib weak (no WRL included by default due to current pathological stiffness issues).
 
-- **setPrecomputation(bool precompute):**
-  - Enable/disable caching of reaction rates and stoichiometric data at initialization.
-  - *Effect:* Reduces per-step overhead; increases memory and setup time.
+- **Physics options** live in `gridfire::config::GridFireConfig` (`engine` and `solver` members). Pass one to a
+  policy (`MainSequencePolicy(composition, config)`); from C and Fortran use `GFConfig` (see
+  [Configuration from C and Fortran](#configuration-from-c-and-fortran)). The engine options are:
 
-- **setScreeningModel(ScreeningType type):**
-  - Choose plasma screening (models: `BARE`, `WEAK`).
-  - *Effect:* Alters rate enhancement under dense/low-T conditions, impacting stiffness.
+  | Option (`config.engine.…`) | Default | Effect |
+    |---|---|---|
+  | `screening` | `BLENDED` | Plasma screening: `BARE` (none), `WEAK` (Salpeter 1954), `CD09` (Chugunov & DeWitt 2009), or `BLENDED` (Salpeter handing over to CD09 between the `screeningBlend` exponents) |
+  | `jacobian` | `ANALYTIC` | How the species Jacobian is computed: `ANALYTIC` or `AUTOMATIC_DIFFERENTIATION` (CppAD) |
+  | `useReverseReactions` | `false` | Add reverse (photodisintegration) rates from detailed balance for strong reactions with two reactants and two products. Negligible for hydrogen and helium burning, which is why it is off |
+  | `passiveSpecies` | none | Species carried in the composition without reactions: they count towards Y_e and screening but never change |
+  | `energyChannels.splitHydrogenPPCNO` | `true` | Report hydrogen burning as separate pp and CNO energy channels |
 
-- **setUseReverseReactions(bool useReverse):**
-  - Toggle inclusion of reverse (detailed balance) reactions.
-  - *Effect:* Improves equilibrium fidelity; increases network size and stiffness.
+### Rate multipliers
+Any reaction's rate can be scaled by a constant factor, for example to sample rate uncertainties in Monte Carlo
+runs. A factor applies to everything computed afterwards: abundances, energy generation, neutrino losses, both
+Jacobian methods, the eps derivatives and the per-reaction contributions. When reverse reactions are on, the reverse
+rate is scaled with its forward rate, so detailed balance holds. The network is not rebuilt, so changing factors
+between runs is cheap.
+
+Reactions are named by the ids GridFire reports (`getNetworkReactions()` in C++ and Python, `gf_get_reaction_id` in
+C, `gff_get_reaction_ids` in Fortran), for example `p(p,e+)d` or `n14(p,g)o15`. A factor of 1 removes a multiplier
+and 0 switches the reaction off. An unknown reaction id, or a negative or non-finite factor, is an error, so a host
+code can check its list of perturbed rates at start-up.
+
+| | Set | Read | Clear |
+|---|---|---|---|
+| C++ / Python (`GraphEngine`) | `setRateMultiplier(id, factor)` | `getRateMultiplier(id)`, `getRateMultipliers()` | `clearRateMultipliers()` |
+| C | `gf_set_rate_multiplier(ctx, id, factor)` | `gf_get_rate_multiplier(ctx, id, &factor)` | `gf_clear_rate_multipliers(ctx)` |
+| Fortran | `net%gff_set_rate_multiplier(id, factor[, ierr])` | `net%gff_get_rate_multiplier(id, factor[, ierr])` | `net%gff_clear_rate_multipliers([ierr])` |
+
+In C++ and Python the `GraphEngine` is the bottom of a policy's engine stack:
+
+```python
+policy = MainSequencePolicy(comp)
+net = policy.construct()
+graph = policy.get_engine_stack()[0]
+graph.setRateMultiplier("p(p,e+)d", 1.1)      # +10% on p + p
+graph.setRateMultiplier("n14(p,g)o15", 0.9)   # -10% on N-14(p,g)
+print(graph.getRateMultipliers())             # [('n14(p,g)o15', 0.9), ('p(p,e+)d', 1.1)]
+```
+
+Do not change multipliers while another thread is evaluating with the same engine.
+
+### Provenance
+`gf_get_provenance` (C), `gff_get_provenance` (Fortran) and `gridfire::describe_provenance` (C++) describe what a
+calculation uses, one `key: value` line per item, for a host code to write next to its results:
+
+```
+gridfire_version: 1.2.0
+policy: MAIN_SEQUENCE_POLICY
+network: 98 species, 350 reactions, hash 1a113533eac1d97d
+strong_rates: REACLIB (pynucastro snapshot reaclib_pynucastro_latest_Z26), data hash 5ab8a8f6f54ff09c
+weak_rates: Ravlic, Giraud, Paar & Zegers (2024), arXiv:2412.00650, data hash 60af6d0fc70e66b2
+rate_multipliers: n14(p,g)o15=0.9, p(p,e+)d=1.1
+screening: BLENDED (Salpeter 1954 -> Chugunov & DeWitt 2009), handover for weak-screening exponent 0.5 to 1.5
+jacobian: ANALYTIC
+reverse_reactions: off
+passive_species: none
+energy_channels: hydrogen split into pp and CNO
+solver: CVODE, abs_tol 1e-08, rel_tol 1e-05, clamp_negative_iterates false, max_step_failure_restarts 3
+```
+
+Two runs that print the same description used the same code version, rate data, network and physics options.
+`gf_get_version()` / `gff_get_version()` give the version alone.
 
 ### Available Partition Functions
 
@@ -447,7 +439,6 @@ likely to be one of adding new `EngineViews`.
 
 | View Name                        | Purpose                                                                           | Algorithm / Reference                                                                                      | When to Use                                                       |
 |----------------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| AdaptiveEngineView               | Dynamically culls low-flow species and reactions during runtime                   | Iterative flux thresholding to remove reactions below a flow threshold                                     | Large networks to reduce computational cost                       |
 | DefinedEngineView                | Restricts the network to a user-specified subset of species and reactions         | Static network masking based on user-provided species/reaction lists                                       | Targeted pathway studies or code-to-code comparisons              |
 | FileDefinedEngineView            | Load a defined engine view from a file using some parser                          | Same as DefinedEngineView but loads from a file                                                            | Same as DefinedEngineView                                         |
 | MultiscalePartitioningEngineView | Partitions the network into fast and slow subsets based on reaction timescales    | Network partitioning following Hix & Thielemann Silicon Burning I & II (DOI:10.1086/177016,10.1086/306692) | Stiff, multi-scale networks requiring tailored integration        |
@@ -469,77 +460,56 @@ new views.
 
 ## Numerical Solver Strategies
 
-GridFire defines a flexible solver architecture through the
-`networkfire::solver::NetworkSolverStrategy` interface, enabling multiple ODE
-integration algorithms to be used interchangeably with any engine that
-implements the `Engine` or `DynamicEngine` contract.
+GridFire integrates a network with a solver that works on any `DynamicEngine`. The solver itself is stateless and
+can be shared; the state of one calculation (CVODE memory, step history, the engine's scratch space) lives in a
+separate *context*, so one engine and solver can serve many zones or threads, each with its own context.
 
-### NetworkSolverStrategy&lt;EngineT&gt;:
-All GridFire solvers implement the abstract strategy templated by
-`NetworkSolverStrategy` which enforces only that there is some `evaluate`
-method with the following signature
+### Solvers
+- `gridfire::solver::PointSolver`: one zone. `evaluate(ctx, netIn)` integrates to `netIn.tMax` and returns a `NetOut`;
+  `evaluateRates(ctx, netIn)` returns the instantaneous rates (`InstantaneousRates`) without integrating.
+- `gridfire::solver::GridSolver`: many zones at once (spread over OpenMP threads when available), built on a
+  `PointSolver`.
 
-```cpp
-NetOut evaluate(const NetIn& netIn);
-```
-Which is intended to integrate some network over some time and returns updated
-abundances, temperature, density, and diagnostics.
+The context for a `PointSolver` is a `PointSolverContext`, made from the engine's state blob (the `scratch_blob` a
+policy's `construct()` returns, or `engine.constructStateBlob(nullptr)`).
 
 ### NetIn and NetOut
-GridFire solvers use a unified input and output type for their public interface
-(though as developers will quickly learn, internally these are immediately
-broken down into simpler data structures). All solvers expect a `NetIn` struct
-for the input type to the `evaluate` method and return a `NetOut` struct.
+GridFire solvers use a unified input and output type for their public interface.
 
 #### NetIn
 A `NetIn` struct contains
-- The composition to start the timestep at. (`NetIn::composition`)
+- The composition to start the timestep at, as molar abundances (`NetIn::composition`)
 - The temperature in Kelvin (`NetIn::temperature`)
 - The density in g/cm^3 (`NetIn::density`)
-- The max time to evolve the network to in seconds (`NetIn::tMax`)
-- The initial timestep to use in seconds (`NetIn::dt0`)
-- The initial energy in the system in ergs (`NetIn::energy`)
-
->**Note:** It is often useful to set `NetIn::dt0` to something *very* small and
->let an iterative time stepper push the timestep up. Often for main sequence
->burning I use ~1e-12 for dt0
+- The time to evolve the network for, in seconds (`NetIn::tMax`)
+- The initial timestep in seconds (`NetIn::dt0`)
+- The initial energy in the system in erg/g (`NetIn::energy`)
 
 >**Note:** The composition must be a `fourdst::composition::Composition`
->object. This is made available through the `foursdt` library and the
->`fourdst/composition/Composition.h` header. `fourdst` is installed
->automatically with GridFire
-
->**Note:** In Python composition comes from `fourdst.composition.Composition`
->and similarly is installed automatically when building GridFire python
->bindings.
+>object, from the `fourdst/composition/composition.h` header. `fourdst` is installed
+>automatically with GridFire. In Python it is `fourdst.composition.Composition`.
 
 #### NetOut
 A `NetOut` struct contains
-- The final composition after evolving to `tMax` (`NetOut::composition`)
-- The number of steps the solver took to evolve to `tmax` (`NetOut::num_steps`)
-- The final specific energy generated by the network while evolving to `tMax` (`NetOut::energy`) [erg/g]
-- The derivative of energy with respect to temperature at the end of the evolution (`NetOut::dEps_dT`)
-- The derivative of energy with respect to density at the end of the evolution (`NetOut::dEps_dRho`)
-- The total specific energy lost to neutrinos while evolving to `tMax` (`NetOut::total_neutrino_loss`) [erg/g]
-- The total flux of neutrinos while evolving to `tMax` (`NetOut::total_neutrino_flux`)
+- The final composition (`NetOut::composition`) and the number of steps taken (`NetOut::num_steps`)
+- The specific energy released over the step (`NetOut::energy`) [erg/g]
+- The neutrino energy lost and neutrinos emitted over the step (`NetOut::specific_neutrino_energy_loss`,
+  `NetOut::specific_neutrino_flux`)
+- At the final state: the energy generation rate net of neutrinos (`NetOut::eps_nuc`) [erg/g/s], its derivatives
+  (`dEps_dT`, `dEps_dRho`, `dlnEps_dlnT`, `dlnEps_dlnRho`), the neutrino loss rate
+  (`neutrino_energy_loss_rate`) and `eps_nuc` split by energy channel (`energy_channel_names`, `eps_by_channel`)
+- For multi-zone solvers, whether the zone converged (`converged`, `time_reached`, `failure_message`)
 
-### CVODESolverStrategy
+### PointSolver
 
-We use the CVODE module from [SUNDIALS](https://computing.llnl.gov/projects/sundials/cvode) as our primary numerical
-solver. Specifically we use the BDF linear multistep method from that which includes advanced adaptive timestepping.
+We use the CVODE module from [SUNDIALS](https://computing.llnl.gov/projects/sundials/cvode) as our numerical solver,
+specifically its BDF linear multistep method with adaptive timestepping and a dense linear solver. The tolerances
+(`solver.pointSolver.absTol`, `relTol`) and the step-failure handling are set in the configuration.
 
-Further, we use a trigger system to periodically repartition the network as the state of the network changes. This
-keeps the stiffness of the network tractable. The algorithm we use for that is
-
-1. Trigger every 1000th time that the simulation time exceeds the simulationTimeInterval
-2. OR if any off-diagonal Jacobian entry exceeds the offDiagonalThreshold
-3. OR every 10th time that the timestep growth exceeds the timestepGrowthThreshold (relative or absolute)
-4. OR if the number of convergence failures grows more than 100% from one step to the next or exceeds 5 at any given step.
-
-Moreover, callback functions can be registered in either python or C++ which will take a `const CVODESolverStrategy::TimestepContext&` struct
-as argument. This allows for more complex logging logic. Note that callbacks **do not** let you reach inside the
-solver and adjust the state of the network. They are only intended for investigation not extension of physics. If you
-wish to extend the physics this must be implemented at the engine or engine view level.
+A callback can be registered, in Python or C++, on the solver context (`PointSolverContext::callback`). It is called
+after every accepted step with a `const PointSolverTimestepContext&`, which holds the time, step size, state vector,
+engine and more. Callbacks are for inspection: they cannot change the state of the network. Physics changes belong
+in an engine or engine view.
 
 ## Python Extensibility
 Through the Python bindings, users can subclass engine view classes directly in
@@ -551,192 +521,188 @@ view strategies without touching C++ sources.
 # Usage Examples
 
 ## C++
+All of GridFire is available through the unified header `gridfire/gridfire.h`. See
+[Building a program against GridFire](#building-a-program-against-gridfire) for compiler flags. For example, with the
+pip wheel installed:
 
-### GraphEngine Initialization
-```c++
-#include "gridfire/engine/engine_graph.h"
-#include "fourdst/composition/composition.h"
-
-int main(){
-    // Define a composition and initialize the engine
-    fourdst::composition::Composition comp;
-    gridfire::GraphEngine engine(comp);
-}
-```
-
-### Adaptive Network View
-```c++
-#include "gridfire/engine/views/engine_adaptive.h"
-#include "gridfire/engine/engine_graph.h"
-
-int main(){
-    fourdst::composition::Composition comp;
-    gridfire::GraphEngine baseEngine(comp);
-    // Dynamically adapt network topology based on reaction flows
-    gridfire::AdaptiveEngineView adaptiveView(baseEngine);
-}
+```bash
+c++ -std=c++23 example.cpp $(gf-config --cflags --libs) -o example
 ```
 
 ### Composition Initialization
 ```c++
 #include "fourdst/composition/composition.h"
-#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
-#include <vector>
-#include <string>
+#include "fourdst/composition/utils/utils.h" // buildCompositionFromMassFractions
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 int main() {
+    // From molar abundances (what GridFire works in) ...
+    const fourdst::composition::Composition fromY(
+        std::vector<std::string>{"H-1", "He-4", "C-12"}, {0.7, 0.0725, 8.3e-4});
 
-    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> massFractions = {0.7, 0.29, 0.01};
-    
-    const fourdst::composition::Composition comp = fourdst::composition::buildCompositionFromMassFractions(symbols, massFractions);
+    // ... or from mass fractions, which must sum to 1
+    const fourdst::composition::Composition fromX = fourdst::composition::buildCompositionFromMassFractions(
+        std::vector<std::string>{"H-1", "He-4", "C-12"}, {0.7, 0.29, 0.01});
 
-    std::cout << comp << std::endl;
+    std::cout << fromY << "\n" << fromX << "\n";
+    std::cout << "X(He-4) = " << fromX.getMassFraction("He-4") << ", Y(He-4) = " << fromX.getMolarAbundance("He-4") << "\n";
 }
 ```
 
 ### Common Workflow Example
-
-A representative workflow often composes multiple engine views to balance
-accuracy, stability, and performance when integrating stiff nuclear networks:
+Most programs let a policy build the network, then burn with a `PointSolver`:
 
 ```c++
-#include "gridfire/gridfire.h" // Unified header for real usage
-
+#include "gridfire/gridfire.h"
 #include "fourdst/composition/composition.h"
-#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
-
-int main(){
-    // 1. Define initial composition
-    std::unordered_map<std::string, double> initialMassFractions = {
-        {"H-1", 0.7},
-        {"He-4", 0.29},
-        {"C-12", 0.01}
-    };
-    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(initialMassFractions);
-    
-    // In this example we will not use the policy module (for sake of demonstration of what is happening under the hood)
-    //  however, for end users we **strongly** recommend using the policy module to construct engines. It will
-    //  ensure that you are not missing important reactions or seed species.
-
-    // 2. Create base network engine (full reaction graph)
-    gridfire::GraphEngine baseEngine(comp, NetworkBuildDepth::SecondOrder)
-
-    // 3. Partition network into fast/slow subsets (reduces stiffness)
-    gridfire::MultiscalePartitioningEngineView msView(baseEngine);
-
-    // 4. Adaptively cull negligible flux pathways (reduces dimension & stiffness)
-    gridfire::AdaptiveEngineView adaptView(msView);
-
-    // 5. Construct implicit solver (handles remaining stiffness)
-    gridfire::CVODESolverStrategey solver(adaptView);
-
-    // 6. Prepare input conditions
-    NetIn input{
-        comp,     // composition
-        1.5e7,      // temperature [K]
-        1.5e2,      // density [g/cm^3]
-        1e-12,     // initial timestep [s]
-        3e17      // integration end time [s]
-    };
-
-    // 7. Execute integration
-    NetOut output = solver.evaluate(input);
-    std::cout << "Final results are: " << output << std::endl;
-}
-```
-
-### Callback and Policy Example
-Custom callback functions can be registered with any solver. Because it might make sense for each solver to provide
-different context to the callback function, you should use the struct `gridfire::solver::<SolverName>::TimestepContext`
-as the argument type for the callback function. This struct contains all the information provided by that solver to
-the callback function.
-
-```c++
-#include "gridfire/gridfire.h" // Unified header for real usage
-
-#include "fourdst/composition/composition.h" // for Composition
-#include "fourdst/composition/utils.h" // for buildCompositionFromMassFractions
-#include "fourdst/atomic/species.h" // For strongly typed species
 
 #include <iostream>
+#include <string>
+#include <vector>
 
-void callback(const gridfire::solver::CVODESolverStrategy::TimestepContext& context) {
-    int H1Index = context.engine.getSpeciesIndex(fourdst::atomic::H_1);
-    int He4Index = context.engine.getSpeciesIndex(fourdst::atomic::He_4);
+int main() {
+    using namespace gridfire;
 
-    std::cout << context.t << "," << context.state(H1Index) << "," << context.state(He4Index) << "\n";
-}
+    // 1. Initial composition (molar abundances)
+    const fourdst::composition::Composition comp(
+        std::vector<std::string>{"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"},
+        {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05});
 
-int main(){
-    std::vector<std::string> symbols = {"H-1", "He-4", "C-12"};
-    std::vector<double> X = {0.7, 0.29, 0.01};
+    // 2. Let a policy build the network: it guarantees the seed species and key reactions are present
+    config::GridFireConfig config;                  // defaults; change physics options here
+    policy::MainSequencePolicy policy(comp, config);
+    const policy::ConstructionResults net = policy.construct();
 
+    // 3. A solver for the engine, and a context holding one calculation's state (CVODE memory, scratch space)
+    const solver::PointSolver solver(net.engine);
+    solver::PointSolverContext ctx(*net.scratch_blob);
+    ctx.stdout_logging = false;                     // no per-step log
 
-    const fourdst::composition::Composition composition = fourdst::composition::buildCompositionFromMassFractions(symbols, X);
-    gridfire::policy::MainSequencePolicy stellarPolicy(netIn.composition);
-    gridfire::engine::DynamicEngine& engine = stellarPolicy.construct();
-    
-    gridfire::solver::CVODESolverStrategy solver(adaptView);
-    solver.set_callback(callback);
+    // 4. Burn for 1 Myr at solar-core conditions
+    NetIn input;
+    input.composition = comp;
+    input.temperature = 1.5e7;  // K
+    input.density = 150.0;      // g/cm^3
+    input.tMax = 3.15e13;       // s
+    input.dt0 = 1e-12;          // s, first step (CVODE grows it quickly)
 
-    // 6. Prepare input conditions
-    gridfire::NetIn input{
-        comp,     // composition
-        1.5e7,      // temperature [K]
-        1.5e2,      // density [g/cm^3]
-        1e-12,     // initial timestep [s]
-        3e17      // integration end time [s]
-    };
+    const NetOut output = solver.evaluate(ctx, input);
+    std::cout << output.num_steps << " steps; X(H-1): " << comp.getMassFraction("H-1") << " -> "
+              << output.composition.getMassFraction("H-1") << "\n"
+              << "eps_nuc = " << output.eps_nuc << " erg/g/s, energy released = " << output.energy << " erg/g\n";
 
-    // 7. Execute integration
-    gridfire::NetOut output = solver.evaluate(input);
-    std::cout << "Final results are: " << output << std::endl;
+    // 5. Instantaneous rates at a state, without integrating
+    const InstantaneousRates rates = solver.evaluateRates(ctx, input);
+    std::cout << "eps_nuc now = " << rates.eps_nuc << " erg/g/s, d eps/dT = " << rates.dEps_dT << "\n";
 }
 ```
->**Note:** If you want to see exactly why each repartitioning stage was triggered in a human readable manner add the flag True to `solver.evaluate` (`solver.evaluate(input, true)`).
 
->**Note:** A fully detailed list of all available information in the TimestepContext struct is available in the API documentation.
-
->**Note:** The order of species in the boost state vector (`ctx.state`) is **not guaranteed** to be any particular order run over run. Therefore, in order to reliably extract
-> values from it, you **must** use the `getSpeciesIndex` method of the engine to get the index of the species you are interested in (these will always be in the same order).
-
-If you wish to know what is provided by a solver context without investigating the code you can simply do
+### GraphEngine Initialization
+A `GraphEngine` can also be built directly, from a seed composition or an explicit `reaction::ReactionSet`. Unlike a
+policy, this does not check that the network contains the species and reactions a burning stage needs.
 
 ```c++
-void callback(const gridfire::solver::SolverContextBase& context) {
-    for (const auto& [parameterName, description] : context.describe()) {
-        std::cout << parameterName << ": " << description << "\n";
+#include "gridfire/gridfire.h"
+#include "fourdst/composition/composition.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    using namespace gridfire;
+    const fourdst::composition::Composition comp(
+        std::vector<std::string>{"H-1", "He-4", "C-12", "N-14", "O-16"}, {0.7, 0.07, 2.5e-4, 7.9e-5, 6.0e-4});
+
+    // Physics options for the engine (see "GraphEngine Configuration Options")
+    config::GridFireConfig config;
+    config.engine.screening = screening::ScreeningType::BLENDED;
+    config.engine.useReverseReactions = false;
+
+    // Grow the network from the seed composition: SecondOrder follows reactions two steps out
+    const partition::RauscherThielemannPartitionFunction partitionFunction; // used for reverse rates
+    const engine::GraphEngine engine(comp, partitionFunction,
+                                     engine::NetworkBuildDepth::SecondOrder,
+                                     engine::NetworkConstructionFlags::DEFAULT, config);
+
+    // Engines keep per-calculation state in a StateBlob, so one engine can serve many threads or zones
+    const auto ctx = engine.constructStateBlob(nullptr);
+    std::cout << engine.getNetworkSpecies(*ctx).size() << " species, "
+              << engine.getNetworkReactions(*ctx).size() << " reactions\n";
+}
+```
+
+### Callback Example
+```c++
+#include "gridfire/gridfire.h"
+#include "fourdst/composition/composition.h"
+#include "fourdst/atomic/species.h" // strongly typed species, e.g. fourdst::atomic::H_1
+
+#include <nvector/nvector_serial.h> // NV_Ith_S, to read the CVODE state vector
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+void callback(const gridfire::solver::PointSolverTimestepContext& context) {
+    // The state vector holds the network species in the engine's order (then the accumulated energy), so look
+    // species up by index rather than assuming an order
+    const size_t iH1 = context.engine.getSpeciesIndex(context.state_ctx, fourdst::atomic::H_1);
+    const size_t iHe4 = context.engine.getSpeciesIndex(context.state_ctx, fourdst::atomic::He_4);
+    if (context.num_steps % 50 == 0) {
+        std::cout << context.t << "," << NV_Ith_S(context.state, iH1) << "," << NV_Ith_S(context.state, iHe4) << "\n";
     }
-    std::cout << std::flush();
-    exit(0);
+}
+
+int main() {
+    using namespace gridfire;
+    const fourdst::composition::Composition comp(
+        std::vector<std::string>{"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"},
+        {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05});
+
+    policy::MainSequencePolicy policy(comp);
+    const policy::ConstructionResults net = policy.construct();
+    const solver::PointSolver solver(net.engine);
+
+    solver::PointSolverContext ctx(*net.scratch_blob);
+    ctx.stdout_logging = false;
+    ctx.callback = callback;      // called after every accepted step
+
+    NetIn input;
+    input.composition = comp;
+    input.temperature = 1.5e7;
+    input.density = 150.0;
+    input.tMax = 3.15e13;
+    input.dt0 = 1e-12;
+
+    std::cout << "t,Y(H-1),Y(He-4)\n";
+    const NetOut output = solver.evaluate(ctx, input);
+    std::cout << output << "\n";
 }
 ```
 
-If you set this as the callback (to any solver strategy) it will print out the available parameters and what they
-are and then close the code. This is useful when writing new callbacks.
+>**Note:** The order of species in the state vector (`context.state`) is the engine's, not the order of the input
+>composition. Use the engine's `getSpeciesIndex` (or `context.networkSpecies`) to find a species.
 
-
-#### Callback Context
-
-Since each solver may provide different context to the callback function, and it may be frustrating to refer to the
-documentation every time, we also enforce that all solvers must implement a `descripe_callback_context` method which
-returns a vector of tuples<string, string> where the first element is the name of the field and the second is its
-datatype. It is on the developer to ensure that this information is accurate.
+To see everything a timestep context provides, register a callback that prints its `describe()` and exits:
 
 ```c++
-...
-std::cout << solver.describe_callback_context() << std::endl;
+void describe_callback(const gridfire::solver::PointSolverTimestepContext& context) {
+    for (const auto& [name, description] : context.describe()) {
+        std::cout << name << ": " << description << "\n";
+    }
+    std::exit(0);
+}
 ```
 
 ## Python
-The python bindings intentionally look **very** similar to the C++ code.
-Generally all examples can be adapted to python by replacing includes of paths
-with imports of modules such that
-
-`#include "gridfire/engine/GraphEngine.h"` becomes `import gridfire.engine.GraphEngine`
+The python bindings intentionally look **very** similar to the C++ code: namespaces become modules, so
+`gridfire::policy::MainSequencePolicy` is `gridfire.policy.MainSequencePolicy`, `gridfire::solver::PointSolver` is
+`gridfire.solver.PointSolver`, and `gridfire::NetIn` is `gridfire.type.NetIn`. Compositions come from
+`fourdst.composition`.
 
 All GridFire C++ types have been bound and can be passed around as one would expect.
 
@@ -753,7 +719,7 @@ The syntax for registration is very similar to C++. There are a few things to no
 from fourdst.composition import Composition
 from gridfire.type import NetIn
 from gridfire.policy import MainSequencePolicy
-from gridfire.solver import CVODESolverStrategy
+from gridfire.solver import PointSolver, PointSolverContext
 from enum import Enum
 from typing import Dict, Union, SupportsFloat
 import json
@@ -791,9 +757,9 @@ class StepLogger:
     self.step_data[self.num_steps][StepData.TIME] = context.t
     self.step_data[self.num_steps][StepData.DT] = context.dt
     comp_data: Dict[str, SupportsFloat] = {}
-    for species in engine.getNetworkSpecies():
-      sid = engine.getSpeciesIndex(species)
-      comp_data[species.name()] = context.state[sid]
+    comp = context.composition
+    for species in engine.getNetworkSpecies(context.state_ctx):
+      comp_data[species.name()] = comp.getMolarAbundance(species)
     self.step_data[self.num_steps][StepData.COMP] = comp_data
     self.num_steps += 1
 
@@ -827,15 +793,18 @@ def main(temp: float, rho: float, time: float):
   netIn = init_netIn(temp, rho, time, comp)
 
   policy = MainSequencePolicy(comp)
-  engine = policy.construct()
+  construct = policy.construct()
 
-  solver = CVODESolverStrategy(engine)
+  engine = construct.engine
+  context = PointSolverContext(construct.scratch_blob)
 
-  step_logger = StepLogger()
-  solver.set_callback(lambda context: step_logger.log_step(context))
+  solver = PointSolver(engine)
 
-  solver.evaluate(netIn, False)
-  step_logger.to_xml("log_data.xml")
+  logger = StepLogger()
+
+  context.callback = lambda ctx: logger.log_step(ctx)
+  solver.evaluate(context, netIn)
+  logger.to_xml("log_data.xml")
 
 if __name__ == "__main__":
   import argparse
@@ -845,7 +814,6 @@ if __name__ == "__main__":
   parser.add_argument("--tMax", type=float, help="Time in s", default=3.1536 * 1e17)
   args = parser.parse_args()
   main(args.temp, args.rho, args.tMax)
-
 ```
 
 
@@ -862,210 +830,248 @@ from other languages.
 
 > **Note:** Because the C API does not pass the general Composition object a `mass_lost`
 > output parameter has been added to the evolve calls, this tracks the total mass in species which have not been registered with the C API GridFire by the caller
+
+> **Note:** The C and Fortran APIs take and return **molar abundances** (Y). `gf_mass_fractions_to_molar` and
+> `gf_molar_to_mass_fractions` (`gff_mass_fractions_to_molar` / `gff_molar_to_mass_fractions`) convert, in the
+> registered species order.
+
+## Building a program against GridFire
+The pip wheel ships everything a C, C++ or Fortran program needs: headers, `libgridfire`, `libgridfire_extern` (the
+C API), `gridfire_mod.f90` (the Fortran module source, compiled with your own Fortran compiler so its `.mod` file
+matches), pkg-config files and a CMake package.
+
+**`gf-config`**, installed with the wheel, prints compiler and linker flags:
+
+```bash
+c++ -std=c++23 prog.cpp $(gf-config --cflags --libs) -o prog                               # C++
+cc prog.c $(gf-config --component c --cflags --libs) -o prog                               # C API
+gfortran $(gf-config --fortran-source) prog.f90 $(gf-config --component fortran --cflags --libs) -o prog  # Fortran
+```
+
+**pkg-config:** the packages are `gridfire`, `gridfire_extern` and `gridfire_fortran`. The Fortran package's
+`fortran_source` variable is the path of `gridfire_mod.f90`.
+
+```bash
+export PKG_CONFIG_PATH="$(gf-config --pkg-config-path)"
+cc prog.c $(pkg-config --cflags --libs gridfire_extern) -o prog
+```
+
+**CMake, with an installed GridFire** (the wheel, or `meson install`): the imported targets are
+`GridFire::gridfire` (C++), `GridFire::gridfire_extern` (C) and `GridFire::gridfire_fortran` (Fortran; it compiles
+`gridfire_mod.f90` with your project's compiler). Configure with
+`-DCMAKE_PREFIX_PATH="$(gf-config --cmake-prefix)"` for the wheel.
+
+```cmake
+find_package(GridFire 1.2 REQUIRED COMPONENTS CXX C Fortran)
+target_link_libraries(my_code PRIVATE GridFire::gridfire_fortran)
+```
+
+**CMake, building GridFire from source:** FetchContent uses an installed GridFire when it finds one and otherwise
+fetches it and builds it with Meson (which, with ninja, must be installed) while CMake configures:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(GridFire
+    GIT_REPOSITORY https://github.com/4D-STAR/GridFire.git
+    GIT_TAG        v1.2.0
+    GIT_SHALLOW    TRUE
+    FIND_PACKAGE_ARGS 1.2 COMPONENTS CXX C Fortran)
+FetchContent_MakeAvailable(GridFire)
+```
+
+The cache variables `GRIDFIRE_BUILDTYPE` and `GRIDFIRE_MESON_OPTIONS` pass options through to that Meson build.
+
+**Meson subproject:** put [`tests/packaging/meson_consumer/gridfire.wrap`](tests/packaging/meson_consumer/gridfire.wrap)
+in your `subprojects/` directory, then
+
+```meson
+gridfire_dep = dependency('gridfire', version: '>=1.2.0', default_options: ['build_fortran=true', 'build_tests=false'])
+gridfire_extern_dep = dependency('gridfire_extern', version: '>=1.2.0')
+gridfire_fortran_dep = dependency('gridfire_fortran', version: '>=1.2.0')
+```
+
+Each route is checked on every supported platform; see [Packaging status](#packaging-status).
+
+## Thread safety
+In OpenMP builds, which include the published wheels:
+
+- Build and free contexts from serial code, while no other GridFire call is running: `gf_init` through
+  `gf_construct_solver_from_engine`, and `gf_free`. Make the first `gf_init` call outside any parallel region.
+- Once built, **separate** contexts may evolve and evaluate concurrently from any threads, including OpenMP threads of
+  a GCC/libgomp host program such as a `gfortran -fopenmp` code.
+- A single context must never be used by two threads at once.
+- `MULTI_ZONE` contexts spread their zones over GridFire's own OpenMP threads; call them from serial code.
+
 ## C API Overview
 In general when using the C API the workflow is to
 
-1. create a `gf_context` pointer. This object holds the state of GridFire so that it does not need to be re-initialized for each call.
-2. call initialization routines on the context to set up the engine and solver you wish to use.
-3. call the `gf_evolve` function to evolve a network over some time.
-4. At each state check the ret code of the function to ensure that no errors occurred. Valid ret-codes are 0 and 1. All other ret codes indicate an error.
-5. Finally, call `gf_free` to free the context and all associated memory.
+1. Create a context with `gf_init(SINGLE_ZONE)` (or `MULTI_ZONE`, then `gf_set_num_zones`).
+2. Optionally set the configuration (`gf_config_defaults`, then `gf_set_config`, or `gf_load_config` from TOML).
+3. Register your species, build the engine with `gf_construct_engine_from_policy`, then the solver with
+   `gf_construct_solver_from_engine`.
+4. Call `gf_evolve` to burn over a time step, `gf_evaluate` for instantaneous rates without integrating, or
+   `gf_evaluate_reactions` for per-reaction contributions.
+5. Check every return code: `GF_SUCCESS` (0) is success (`gf_register_species` returns `FDSSE_SUCCESS`, 1), and
+   `gf_get_last_error_message(ctx)` describes a failure.
+6. Call `gf_free` to release the context.
+
+### Configuration from C and Fortran
+`struct GFConfig` (`type(GFConfig)` in Fortran) holds the solver tolerances and engine options. Fill it with the
+defaults first, change what you need, and set it **before** `gf_construct_engine_from_policy`:
+
+```C
+struct GFConfig config;
+gf_config_defaults(&config);
+config.engine_screening = GF_SCREENING_CD09;
+config.engine_jacobian = GF_JACOBIAN_AUTOMATIC_DIFFERENTIATION;
+config.engine_use_reverse_reactions = 1;
+config.solver_rel_tol = 1e-8;
+gf_set_config(ctx, &config);
+```
+
+`gf_save_config` and `gf_load_config` write and read the same settings as TOML.
 
 ### C Example
 
-```c++
+```C
 #include "gridfire/extern/gridfire_extern.h"
 #include <stdio.h>
 
 #define NUM_SPECIES 8
 
-// Define a macro to check return codes
-#define GF_CHECK_RET_CODE(ret, ctx, msg) \
-    if (ret != 0 && ret != 1) { \
-        printf("Error %s: %s\n", msg, gf_get_last_error_message(ctx)); \
-        gf_free(ctx); \
-        return ret; \
-    }
+/* Report a failed call and stop (gf_register_species reports success as FDSSE_SUCCESS) */
+#define CHECK(call, ctx, what)                                                                          \
+    do {                                                                                                \
+        const int ret_ = (call);                                                                        \
+        if (ret_ != GF_SUCCESS && ret_ != FDSSE_SUCCESS) {                                              \
+            printf("%s failed: %s [%s]\n", what, gf_get_last_error_message(ctx), gf_error_code_to_string(ret_)); \
+            gf_free(SINGLE_ZONE, ctx);                                                                  \
+            return 1;                                                                                   \
+        }                                                                                               \
+    } while (0)
 
-int main() {
-    void* gf_context = gf_init();
+int main(void) {
+    const char* species_names[NUM_SPECIES] = {"H-1", "He-3", "He-4", "C-12", "N-14", "O-16", "Ne-20", "Mg-24"};
+    /* Molar abundances */
+    const double Y[NUM_SPECIES] = {0.7026166, 9.7479e-06, 0.0689551, 0.00025, 7.8554e-05, 0.00060144, 8.103e-05, 2.1513e-05};
+    const double T = 1.5e7;    /* K */
+    const double rho = 150.0;  /* g/cm^3 */
 
-    const char* species_names[NUM_SPECIES];
-    species_names[0] = "H-1";
-    species_names[1] = "He-3";
-    species_names[2] = "He-4";
-    species_names[3] = "C-12";
-    species_names[4] = "N-14";
-    species_names[5] = "O-16";
-    species_names[6] = "Ne-20";
-    species_names[7] = "Mg-24";
-    const double abundances[NUM_SPECIES] = {0.702616602672027, 9.74791583949078e-06, 0.06895512307276903, 0.00025, 7.855418029399437e-05, 0.0006014411598306529, 8.103062886768109e-05, 2.151340851063217e-05};
+    void* ctx = gf_init(SINGLE_ZONE);
+    CHECK(gf_register_species(ctx, NUM_SPECIES, species_names), ctx, "gf_register_species");
+    CHECK(gf_construct_engine_from_policy(ctx, "MAIN_SEQUENCE_POLICY", Y, NUM_SPECIES), ctx, "engine");
+    CHECK(gf_construct_solver_from_engine(ctx), ctx, "solver");
 
-    int ret = gf_register_species(gf_context, NUM_SPECIES, species_names);
-    GF_CHECK_RET_CODE(ret, gf_context, "Species Registration");
+    /* Perturb two rates, e.g. for one Monte Carlo sample */
+    CHECK(gf_set_rate_multiplier(ctx, "p(p,e+)d", 1.1), ctx, "gf_set_rate_multiplier");
+    CHECK(gf_set_rate_multiplier(ctx, "n14(p,g)o15", 0.9), ctx, "gf_set_rate_multiplier");
 
-    ret = gf_construct_engine_from_policy(gf_context, "MAIN_SEQUENCE_POLICY", abundances, NUM_SPECIES);
-    GF_CHECK_RET_CODE(ret, gf_context, "Policy and Engine Construction");
+    /* Outputs: the caller provides arrays of the right size */
+    size_t num_channels = 0;
+    CHECK(gf_get_num_energy_channels(ctx, &num_channels), ctx, "gf_get_num_energy_channels");
+    double Y_out[NUM_SPECIES], eps_by_channel[16];
+    double energy, dEps_dT, dEps_dRho, nu_loss, nu_flux, mass_lost, eps_nuc, dlnEps_dlnT, dlnEps_dlnRho, nu_rate;
+    if (num_channels > 16) return 1;
 
-    ret = gf_construct_solver_from_engine(gf_context, "CVODE");
-    GF_CHECK_RET_CODE(ret, gf_context, "Solver Construction");
+    CHECK(gf_evolve(SINGLE_ZONE, ctx, Y, NUM_SPECIES, &T, &rho,
+                    3.15e13,  /* burn for 1 Myr (s) */
+                    1e-12,    /* initial step (s) */
+                    Y_out, &energy, &dEps_dT, &dEps_dRho, &nu_loss, &nu_flux, &mass_lost,
+                    &eps_nuc, &dlnEps_dlnT, &dlnEps_dlnRho, &nu_rate, eps_by_channel),
+          ctx, "gf_evolve");
 
-    // When using the C API it is assumed that the caller will ensure that the output arrays are large enough to hold the results.
-    double Y_out[NUM_SPECIES];
-    double energy_out;
-    double dEps_dT;
-    double dEps_dRho;
-    double neutrino_energy_loss;
-    double neutrino_flux;
-    double mass_lost;
-
-    ret = gf_evolve(
-        gf_context,
-        abundances,
-        NUM_SPECIES,
-        1.5e7,    // Temperature in K
-        1.5e2,    // Density in g/cm^3
-        3e17,      // Time step in seconds
-        1e-12, // Initial time step in seconds
-        Y_out,
-        &energy_out,
-        &dEps_dT,
-        &dEps_dRho,
-        &neutrino_energy_loss,
-        &neutrino_flux,
-        &mass_lost
-    );
-
-    GF_CHECK_RET_CODE(ret, gf_context, "Evolution");
-
-
-    printf("Evolved abundances:\n");
     for (size_t i = 0; i < NUM_SPECIES; i++) {
-        printf("Species %s: %e\n", species_names[i], Y_out[i]);
+        printf("%-6s %.6e -> %.6e\n", species_names[i], Y[i], Y_out[i]);
     }
-    printf("Energy output: %e\n", energy_out);
-    printf("dEps/dT: %e\n", dEps_dT);
-    printf("dEps/dRho: %e\n", dEps_dRho);
-    printf("Mass lost: %e\n", mass_lost);
+    printf("eps_nuc = %.6e erg/g/s, energy released = %.6e erg/g\n", eps_nuc, energy);
 
-    gf_free(gf_context);
+    const char* provenance = NULL;
+    CHECK(gf_get_provenance(ctx, &provenance), ctx, "gf_get_provenance");
+    printf("%s", provenance);
 
+    gf_free(SINGLE_ZONE, ctx);
     return 0;
 }
-
 ```
 
 ## Fortran API Overview
 
-GridFire makes use of the stable C API and Fortran 2003's `iso_c_bindings` to provide a Fortran interface for legacy
-code. The fortran interface is designed to be very similar to the C API and exposes the same functionality.
+GridFire makes use of the stable C API and Fortran 2003's `iso_c_binding` to provide a Fortran interface for legacy
+code. The Fortran interface mirrors the C API: every C function has a type-bound procedure with the `gff_` prefix
+(GridFire Fortran) on a `type(GridFire)` object.
 
-1. `GridFire%gff_init`: Initializes a GridFire context and returns a handle to it.
-2. `GridFire%register_species`: Registers species with the GridFire context.
-3. `GridFire%setup_policy`: Configures the engine using a specified policy and initial abundances.
-4. `GridFire%setup_solver`: Sets up the solver for the engine.
-5. `GridFire%evolve`: Evolves the network over a specified time step.
-6. `GridFire%get_last_error`: Retrieves the last error message from the GridFire context.
-7. `GridFire%gff_free`: Frees the GridFire context and associated resources.
+1. `net%gff_init(SINGLE_ZONE)` (or `gff_init(MULTI_ZONE, zones)`): create the context.
+2. `net%gff_set_config(config)`: optional; `config = gff_default_config()`, then change fields of the `GFConfig`.
+3. `net%gff_register_species(names)`, `net%gff_setup_policy("MAIN_SEQUENCE_POLICY", Y)`, `net%gff_setup_solver()`.
+4. `net%gff_evolve(...)`, `net%gff_evaluate(...)`, `net%gff_evaluate_reactions(...)`: scalar arguments for one zone,
+   arrays for `MULTI_ZONE`.
+5. `net%gff_set_rate_multiplier`, `net%gff_get_provenance()`, `gff_get_version()`: see
+   [Rate multipliers](#rate-multipliers) and [Provenance](#provenance).
+6. `net%gff_get_last_error()`: the message for the last failure.
+7. `net%gff_free()`.
 
-> **Note:** You must instantiate a `GridFire` type object to access these methods.
+Calls that can fail take an `ierr` argument. Where it is optional (the configuration and rate-multiplier calls), a
+failure stops the program when `ierr` is absent and is returned when it is present.
 
-> **Note:** free and init have had the `gff_` prefix (GridFire Fortran) to avoid name clashes with common Fortran functions.
-
-When building GridFire a fortran module file `gridfire_mod.mod` is generated which contains all the necessary
-bindings to use GridFire from Fortran. You must also link your code against the C API library `libgridfire_extern`.
+The module is shipped as source, `gridfire_mod.f90`, because `.mod` files are specific to a compiler and its version:
+compile it with the compiler that builds your program and link against `libgridfire_extern`. `gf-config`,
+pkg-config, CMake and Meson all do this for you; see [Building a program against GridFire](#building-a-program-against-gridfire).
 
 ### Fortran Example
 
 ```fortran
 program main
-    use iso_c_binding
-    use gridfire_mod
-    implicit none
+  use iso_c_binding
+  use gridfire_mod
+  implicit none
 
-    type(GridFire) :: net
-    integer(c_int) :: ierr
-    integer :: i
+  ! Names are blank-padded; the module trims them
+  character(len=5), dimension(8) :: species_names = [ &
+          "H-1  ", "He-3 ", "He-4 ", "C-12 ", "N-14 ", "O-16 ", "Ne-20", "Mg-24" ]
+  ! Molar abundances (Y = X / A), solar-ish
+  real(c_double), dimension(8) :: Y_in = [ &
+          0.7026166d0, 9.7479d-06, 0.0689551d0, 0.00025d0, 7.8554d-05, 0.00060144d0, 8.103d-05, 2.1513d-05 ]
+  real(c_double), dimension(8) :: Y_out
+  real(c_double), allocatable :: eps_by_channel(:)
+  real(c_double) :: energy, dedt, dedrho, nu_loss, nu_flux, mass_lost, eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_rate
+  real(c_double) :: T = 1.5d7       ! K
+  real(c_double) :: rho = 150.0d0   ! g/cm^3
+  real(c_double) :: tMax = 3.15d13  ! 1 Myr, in s
+  type(GridFire) :: net
+  type(GFConfig) :: config
+  integer :: i, ierr
 
-    ! --- 1. Define Species and Initial Conditions ---
-    ! Note: String lengths must match or exceed the longest name.
-    ! We pad with spaces, which 'trim' handles inside the module.
-    character(len=5), dimension(8) :: species_names = [ &
-            "H-1  ", &
-            "He-3 ", &
-            "He-4 ", &
-            "C-12 ", &
-            "N-14 ", &
-            "O-16 ", &
-            "Ne-20", &
-            "Mg-24"  &
-        ]
+  call net%gff_init(SINGLE_ZONE)
 
-    ! Initial Mass Fractions (converted to Molar Abundances Y = X/A)
-    ! Standard solar-ish composition
-    real(c_double), dimension(8) :: Y_in = [ &
-        0.702616602672027,     &
-        9.74791583949078e-06,  &
-        0.06895512307276903,   &
-        0.00025,               &
-        7.855418029399437e-05, &
-        0.0006014411598306529, &
-        8.103062886768109e-05, &
-        2.151340851063217e-05  &
-        ]
+  config = gff_default_config()
+  config%engine_screening = GF_SCREENING_BLENDED
+  call net%gff_set_config(config)
 
-    ! Output buffers
-    real(c_double), dimension(8) :: Y_out
-    real(c_double) :: energy_out, dedt, dedrho, nu_E_loss, nu_flux, dmass
+  call net%gff_register_species(species_names)
+  call net%gff_setup_policy("MAIN_SEQUENCE_POLICY", Y_in)
+  call net%gff_setup_solver()
 
-    ! Thermodynamic Conditions (Solar Core-ish)
-    real(c_double) :: T = 1.5e7      ! 15 Million K
-    real(c_double) :: rho = 150.0e0  ! 150 g/cm^3
-    real(c_double) :: dt = 3.1536e17     ! ~10 Gyr timestep
+  ! One Monte Carlo sample: perturb two rates. With ierr present an unknown id is reported, not fatal
+  call net%gff_set_rate_multiplier("p(p,e+)d", 1.1d0, ierr)
+  if (ierr /= GF_SUCCESS) print *, "p(p,e+)d is not in the network"
+  call net%gff_set_rate_multiplier("n14(p,g)o15", 0.9d0)
 
-    ! --- 2. Initialize GridFire ---
-    print *, "Initializing GridFire..."
-    call net%gff_init()
-
-    ! --- 3. Register Species ---
-    print *, "Registering species..."
-    call net%register_species(species_names)
-
-    ! --- 4. Configure Engine & Solver ---
-    print *, "Setting up Main Sequence Policy..."
-    call net%setup_policy("MAIN_SEQUENCE_POLICY", Y_in)
-
-    print *, "Setting up CVODE Solver..."
-    call net%setup_solver("CVODE")
-
-    ! --- 5. Evolve ---
-    print *, "Evolving system (dt =", dt, "s)..."
-    call net%evolve(Y_in, T, rho, dt, Y_out, energy_out, dedt, dedrho, nu_E_loss, nu_flux, dmass, ierr)
-
-    if (ierr /= 0) then
-        print *, "Evolution Failed with error code: ", ierr
-        print *, "Error Message: ", net%get_last_error()
-        call net%gff_free() ! Always cleanup
-        stop
-    end if
-
-    ! --- 6. Report Results ---
-    print *, ""
-    print *, "--- Results ---"
-    print '(A, ES12.5, A)', "Energy Generation: ", energy_out, " erg/g/s"
-    print '(A, ES12.5)',    "dEps/dT:           ", dedt
-    print '(A, ES12.5)',    "Mass Change:       ", dmass
-
-    print *, ""
-    print *, "Abundances:"
-    do i = 1, size(species_names)
-        print '(A, " : ", ES12.5, " -> ", ES12.5)', &
-                trim(species_names(i)), Y_in(i), Y_out(i)
-    end do
-
-    ! --- 7. Cleanup ---
+  allocate(eps_by_channel(net%gff_get_num_energy_channels()))
+  call net%gff_evolve(Y_in, T, rho, tMax, 1d-12, Y_out, energy, dedt, dedrho, nu_loss, nu_flux, mass_lost, &
+          eps_nuc, dlneps_dlnt, dlneps_dlnrho, nu_rate, eps_by_channel, ierr)
+  if (ierr /= GF_SUCCESS) then
+    print *, "Evolution failed: ", net%gff_get_last_error()
     call net%gff_free()
+    error stop 1
+  end if
 
+  print '(a, es13.6, a)', "eps_nuc: ", eps_nuc, " erg/g/s"
+  do i = 1, size(species_names)
+    print '(a6, es13.6, " -> ", es13.6)', species_names(i), Y_in(i), Y_out(i)
+  end do
+  print '(a)', net%gff_get_provenance()
+
+  call net%gff_free()
 end program main
 ```
 
